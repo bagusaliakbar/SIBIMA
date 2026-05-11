@@ -103,6 +103,12 @@
             <td>: {{ $thesisDefenseSchedule->moderator->name }}</td>
             <td></td>
         </tr>
+        @if($thesisDefenseSchedule->meeting_link)
+        <tr>
+            <td class="label">Link Meeting</td>
+            <td colspan="2">: {{ $thesisDefenseSchedule->meeting_link }}</td>
+        </tr>
+        @endif
     </table>
 
     <table class="schedule">

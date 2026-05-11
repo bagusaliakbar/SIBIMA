@@ -17,10 +17,48 @@
     <div class="w-full mx-auto">
         <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 rounded-lg">
             <div class="p-6 sm:p-8">
-                <form method="POST" action="{{ route('users.store') }}">
+                <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Foto Profil -->
+                        <div class="md:col-span-2 mb-4" x-data="{ photoName: null, photoPreview: null }">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Foto Profil</label>
+                            
+                            <div class="flex items-center space-x-5">
+                                <!-- Preview -->
+                                <div class="shrink-0">
+                                    <template x-if="! photoPreview">
+                                        <div class="w-20 h-20 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center border-2 border-slate-200 dark:border-slate-600 shadow-inner">
+                                            <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        </div>
+                                    </template>
+                                    <template x-if="photoPreview">
+                                        <span class="block rounded-xl h-20 w-20 bg-cover bg-no-repeat bg-center border-2 border-orange-500 shadow-md"
+                                              x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+                                        </span>
+                                    </template>
+                                </div>
+
+                                <div>
+                                    <input type="file" id="avatar" name="avatar" class="hidden" x-ref="avatar"
+                                           x-on:change="
+                                                photoName = $refs.avatar.files[0].name;
+                                                const reader = new FileReader();
+                                                reader.onload = (e) => {
+                                                    photoPreview = e.target.result;
+                                                };
+                                                reader.readAsDataURL($refs.avatar.files[0]);
+                                           " />
+                                    <button type="button" x-on:click.prevent="$refs.avatar.click()" class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md font-semibold text-xs text-slate-700 dark:text-slate-300 uppercase tracking-widest shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 disabled:opacity-25 transition-all">
+                                        Pilih Foto
+                                    </button>
+                                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Format: JPG, PNG, JPEG. Max 2MB.</p>
+                                </div>
+                            </div>
+                            <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+                        </div>
+
                         <!-- Nama -->
                         <div class="md:col-span-2">
                             <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nama Lengkap</label>

@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Storage;
 use App\Notifications\GeneralNotification;
 use Illuminate\Support\Facades\Notification;
 
+use App\Models\Wave;
+
 class ThesisDefenseApplicationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         
@@ -31,14 +33,21 @@ class ThesisDefenseApplicationController extends Controller
         }
 
         if ($user->role === 'admin') {
-            $applications = ThesisDefenseApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2'])
+            $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
+            $selectedWaveId = $request->get('wave_id', $activeWave?->id);
+
+            $applications = ThesisDefenseApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave'])
+                ->when($selectedWaveId, function($q) use ($selectedWaveId) {
+                    $q->where('wave_id', $selectedWaveId);
+                })
                 ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate(10)
+                ->appends(['wave_id' => $selectedWaveId]);
             
-            // Get active template for admin
+            $waves = Wave::orderBy('created_at', 'desc')->get();
             $template = ThesisDefenseTemplate::where('is_active', true)->latest()->first();
             
-            return view('thesis_defenses.admin_index', compact('applications', 'template'));
+            return view('thesis_defenses.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave'));
         }
 
         return redirect()->route('dashboard');
@@ -50,39 +59,20 @@ class ThesisDefenseApplicationController extends Controller
             abort(403);
         }
 
+        $activeWave = Wave::active();
+        if (!$activeWave) {
+            return redirect()->back()->with('error', 'Pendaftaran sidang skripsi belum dibuka (tidak ada gelombang aktif).');
+        }
+
         $thesis = Thesis::where('student_id', Auth::id())->first();
         
         if (!$thesis || !$thesis->isAccSidangFinal()) {
             return redirect()->back()->with('error', 'Anda belum memenuhi syarat untuk mengajukan sidang skripsi.');
         }
 
-        $request->validate([
-            'file_formulir' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'file_transkrip' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_acc_pembimbing' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_logbook' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_pembayaran' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_skripsi' => 'required|file|mimes:pdf,doc,docx|max:10240',
-            'file_ktm' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_pkkmb_univ' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_pkkmb_fak' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_makrab' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_cisco' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_workshop' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_organisasi' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_toefl' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_kewirausahaan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_tahsin' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_komputer' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_perpus_pinjam' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_perpus_sumbang' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_ijazah' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        ]);
-
-        $data = [
-            'thesis_id' => $thesis->id,
-            'status' => 'pending',
-        ];
+        $existingApplication = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+            ->where('wave_id', $activeWave->id)
+            ->first();
 
         $files = [
             'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
@@ -91,14 +81,52 @@ class ThesisDefenseApplicationController extends Controller
             'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
         ];
 
+        $rules = [];
+        foreach ($files as $file) {
+            $isRejected = isset($existingApplication->file_reviews[$file]['status']) && $existingApplication->file_reviews[$file]['status'] === 'rejected';
+            $isMissing = !$existingApplication || !$existingApplication->$file;
+
+            if ($isMissing || $isRejected) {
+                if ($file === 'file_skripsi') {
+                    $rules[$file] = 'required|file|mimes:pdf,doc,docx|max:10240';
+                } elseif (in_array($file, ['file_formulir'])) {
+                    $rules[$file] = 'required|file|mimes:pdf,doc,docx|max:2048';
+                } else {
+                    $rules[$file] = 'required|file|mimes:pdf,jpg,jpeg,png|max:2048';
+                }
+            } else {
+                $rules[$file] = 'nullable|file';
+            }
+        }
+
+        $request->validate($rules);
+
+        $data = [
+            'thesis_id' => $thesis->id,
+            'wave_id' => $activeWave->id,
+            'status' => 'pending',
+        ];
+
         foreach ($files as $file) {
             if ($request->hasFile($file)) {
                 $path = $request->file($file)->store('thesis_defense_applications', 'public');
                 $data[$file] = $path;
+
+                // Clear rejection status for this file
+                if ($existingApplication) {
+                    $reviews = $existingApplication->file_reviews;
+                    unset($reviews[$file]);
+                    $existingApplication->file_reviews = $reviews;
+                    $existingApplication->save();
+                }
             }
         }
 
-        ThesisDefenseApplication::create($data);
+        if ($existingApplication) {
+            $existingApplication->update($data);
+        } else {
+            ThesisDefenseApplication::create($data);
+        }
 
         \App\Models\ActivityLog::log('Pengajuan Sidang', "Mahasiswa mengajukan sidang skripsi.", 'Sidang');
 
@@ -149,11 +177,13 @@ class ThesisDefenseApplicationController extends Controller
         $request->validate([
             'status' => 'required|in:approved,rejected',
             'admin_feedback' => 'nullable|string',
+            'file_reviews' => 'nullable|array',
         ]);
 
         $application->update([
             'status' => $request->status,
             'admin_feedback' => $request->admin_feedback,
+            'file_reviews' => $request->file_reviews,
         ]);
 
         \App\Models\ActivityLog::log('Validasi Sidang', "Admin memperbarui status sidang mahasiswa " . $application->thesis->student->name . " menjadi: " . strtoupper($request->status), 'Sidang');

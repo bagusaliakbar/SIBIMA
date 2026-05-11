@@ -6,6 +6,39 @@
     </x-slot>
 
     <div class="w-full space-y-6">
+        {{-- Wave Filter Section --}}
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div>
+                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Gelombang Pelaksanaan</h3>
+                    <div class="flex items-center gap-2 mt-0.5 text-[10px] font-bold">
+                        <span class="text-slate-400 uppercase tracking-widest">Gelombang Aktif :</span>
+                        @if($activeWave)
+                            <span class="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 rounded">{{ $activeWave->name }}</span>
+                        @else
+                            <span class="text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 px-1.5 rounded uppercase tracking-tighter">Tidak Ada Gelombang Aktif</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2">
+                <select name="wave_id" onchange="this.form.submit()" 
+                        class="pl-4 pr-10 py-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[200px]">
+                    <option value="">Semua Gelombang</option>
+                    @foreach($waves as $wave)
+                        <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
+                            {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '(Arsip)' }}
+                        </option>
+                    @endforeach
+                </select>
+                @if($selectedWaveId)
+                    <a href="{{ route('seminar-applications.index') }}" class="p-2 text-slate-400 hover:text-rose-600 transition-colors" title="Clear Filter">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </a>
+                @endif
+            </form>
+        </div>
         {{-- Template Management Section --}}
         <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 p-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -185,17 +218,58 @@
                                                     <form action="{{ route('seminar-applications.validate', $app->id) }}" method="POST">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <div class="p-6 bg-slate-50/50 dark:bg-slate-900/50">
-                                                            <div class="mb-4">
-                                                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Status Validasi</label>
-                                                                <select name="status" class="block w-full rounded-md border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-orange-500 focus:border-orange-500 shadow-sm text-slate-800 dark:text-slate-100">
-                                                                    <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>Setujui (Berkas Lengkap)</option>
-                                                                    <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>Tolak (Berkas Bermasalah)</option>
+                                                        <div class="p-6 bg-slate-50/50 dark:bg-slate-900/50 space-y-6">
+                                                            <div>
+                                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">Validasi Per Berkas</label>
+                                                                <div class="space-y-3">
+                                                                    @php
+                                                                        $fileFields = [
+                                                                            'file_acc_pembimbing' => 'ACC Pembimbing',
+                                                                            'file_pembayaran' => 'Bukti Pembayaran',
+                                                                            'file_kartu_bimbingan' => 'Kartu Bimbingan',
+                                                                            'file_skripsi' => 'Soft Copy Skripsi',
+                                                                            'file_formulir' => 'Formulir Seminar'
+                                                                        ];
+                                                                    @endphp
+                                                                    @foreach($fileFields as $field => $label)
+                                                                        <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                                                                            <div class="flex items-center justify-between mb-2">
+                                                                                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">{{ $label }}</span>
+                                                                                <div class="flex items-center gap-2">
+                                                                                    <label class="inline-flex items-center">
+                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
+                                                                                               {{ !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved' ? 'checked' : '' }}
+                                                                                               class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900">
+                                                                                        <span class="ml-1.5 text-[10px] font-bold text-emerald-600 uppercase">OK</span>
+                                                                                    </label>
+                                                                                    <label class="inline-flex items-center ml-2">
+                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected"
+                                                                                               {{ isset($app->file_reviews[$field]['status']) && $app->file_reviews[$field]['status'] === 'rejected' ? 'checked' : '' }}
+                                                                                               class="w-3 h-3 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900">
+                                                                                        <span class="ml-1.5 text-[10px] font-bold text-rose-600 uppercase">REJECT</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="text" name="file_reviews[{{ $field }}][note]" 
+                                                                                   value="{{ $app->file_reviews[$field]['note'] ?? '' }}"
+                                                                                   placeholder="Catatan jika ditolak..."
+                                                                                   class="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-[10px] focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+                                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Status Akhir Pengajuan</label>
+                                                                <select name="status" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 shadow-sm text-slate-800 dark:text-slate-100 py-3">
+                                                                    <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>SETUJUI SEMUA (BERKAS OK)</option>
+                                                                    <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>TOLAK / PERLU REVISI BERKAS</option>
                                                                 </select>
                                                             </div>
+                                                            
                                                             <div>
-                                                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Catatan / Alasan</label>
-                                                                <textarea name="admin_feedback" rows="4" class="block w-full rounded-md border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-orange-500 focus:border-orange-500 shadow-sm placeholder:text-slate-400 text-slate-800 dark:text-slate-100" placeholder="Opsional: tambahkan alasan jika ditolak atau catatan tambahan untuk mahasiswa...">{{ $app->admin_feedback }}</textarea>
+                                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Catatan Admin (Global)</label>
+                                                                <textarea name="admin_feedback" rows="3" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 shadow-sm placeholder:text-slate-400 text-slate-800 dark:text-slate-100 py-3 italic" placeholder="Contoh: Silakan upload ulang berkas yang ditolak...">{{ $app->admin_feedback }}</textarea>
                                                             </div>
                                                         </div>
                                                         <div class="px-6 py-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">

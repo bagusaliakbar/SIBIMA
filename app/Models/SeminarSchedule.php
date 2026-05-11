@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class SeminarSchedule extends Model
 {
-    protected $fillable = ['title', 'date', 'chairman_id', 'moderator_id', 'location', 'created_by'];
+    protected $fillable = ['title', 'date', 'chairman_id', 'moderator_id', 'location', 'created_by', 'wave_id', 'meeting_link'];
+
+    public function wave()
+    {
+        return $this->belongsTo(Wave::class);
+    }
 
     public function chairman()
     {

@@ -51,11 +51,11 @@
                 </div>
                 
                 <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar relative z-10">
+                    <!-- General Menu -->
                     <div class="px-4 mb-4">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Menu Utama</p>
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Menu Utama</p>
                     </div>
-                    
-                    <nav class="space-y-1.5 mb-8">
+                    <nav class="space-y-1 mb-10">
                         <a href="{{ route('dashboard') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('dashboard') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -63,58 +63,45 @@
                         </a>
                         
                         @if(Auth::user()->role === 'mahasiswa')
-                        <a href="{{ route('seminar-applications.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Pendaftaran Seminar
-                        </a>
-                        <a href="{{ route('thesis-defense-applications.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Pendaftaran Sidang
-                        </a>
-                        @endif
+                        @php 
+                            $thesis = \App\Models\Thesis::where('student_id', Auth::id())->first();
+                            $isGraduated = $thesis && $thesis->status === 'completed';
+                        @endphp
 
-                        @if(Auth::user()->role === 'admin')
-                        <a href="{{ route('seminar-applications.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Validasi Seminar
-                        </a>
-                        <a href="{{ route('thesis-defense-applications.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Validasi Sidang
-                        </a>
-                        @endif
-
-                        <a href="{{ route('chat.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('chat.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('chat.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                            Pesan
-                        </a>
-                    </nav>
-
-                    <div class="px-4 mb-4">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Akademik & Progress</p>
-                    </div>
-                    
-                    <nav class="space-y-1.5 mb-8">
-                        @if(Auth::user()->role === 'mahasiswa')
-                            @php $hasThesis = \App\Models\Thesis::where('student_id', Auth::id())->exists(); @endphp
-                            @if($hasThesis)
+                        @if(!$isGraduated)
+                        <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Tahapan Skripsi</p>
+                        </div>
+                        <nav class="space-y-1 mb-10">
+                            @if($thesis)
                             <a href="#" onclick="alert('Anda sudah melakukan pengajuan judul skripsi.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
                                 <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                Pengajuan Judul
+                                1. Pengajuan Judul
                             </a>
                             @else
                             <a href="{{ route('theses.create') }}" 
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                Pengajuan Judul
+                                1. Pengajuan Judul
                             </a>
                             @endif
-                            
+
+                            <a href="{{ route('seminar-applications.index') }}" 
+                               class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                2. Pendaftaran Seminar
+                            </a>
+                            <a href="{{ route('thesis-defense-applications.index') }}" 
+                               class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                3. Pendaftaran Sidang
+                            </a>
+                        </nav>
+
+                        <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Aktivitas & Bimbingan</p>
+                        </div>
+                        <nav class="space-y-1 mb-10">
                             <a href="{{ route('mentoring-sessions.index') }}" 
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('mentoring-sessions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('mentoring-sessions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -125,17 +112,47 @@
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('logbooks.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                 Logbook Bimbingan
                             </a>
+                        </nav>
                         @endif
-                        
-                        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'dosen')
+
+                        <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pasca Seminar & Sidang</p>
+                        </div>
+                        <nav class="space-y-1 mb-10">
+                            <a href="{{ route('student-seminar-revisions.index') }}" 
+                               class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student-seminar-revisions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-seminar-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Revisi Seminar
+                            </a>
+                            <a href="{{ route('student-defense-revisions.index') }}" 
+                               class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student-defense-revisions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-defense-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Revisi Sidang
+                            </a>
+                        </nav>
+                        @endif
+
+                    <!-- Admin Specific -->
+                    @if(Auth::user()->role === 'admin')
+                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pelaksanaan Skripsi</p>
+                    </div>
+                    <nav class="space-y-1 mb-10">
+                        <a href="{{ route('seminar-applications.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Validasi Seminar
+                        </a>
+                        <a href="{{ route('thesis-defense-applications.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            Validasi Sidang
+                        </a>
                         <a href="{{ route('theses.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            {{ Auth::user()->role === 'admin' ? 'Daftar Pengajuan Skripsi' : 'Mahasiswa Bimbingan' }}
+                            Daftar Pengajuan
                         </a>
-                        @endif
-
-                        @if(Auth::user()->role === 'admin')
                         <a href="{{ route('seminar-schedules.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-schedules.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-schedules.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -146,46 +163,91 @@
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-schedules.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             Jadwal Sidang
                         </a>
-                        @endif
-
-                        @if(Auth::user()->role === 'dosen')
-                        <a href="{{ route('mentoring-sessions.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('mentoring-sessions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('mentoring-sessions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Jadwal Bimbingan
-                        </a>
-                        <a href="{{ route('logbooks.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('logbooks.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('logbooks.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            Logbook Mahasiswa
-                        </a>
-                        @endif
                     </nav>
 
-                    @if(Auth::user()->role === 'admin')
-                    <div class="px-4 mb-4">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Manajemen Sistem</p>
+                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Monitoring</p>
                     </div>
-                    <nav class="space-y-1.5 mb-8">
+                    <nav class="space-y-1 mb-10">
+                        <a href="{{ route('monitoring.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                            Monitoring Judul
+                        </a>
+                        <a href="{{ route('monitoring.revisions') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.revisions') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.revisions') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            Monitoring Revisi Seminar
+                        </a>
+                        <a href="{{ route('monitoring.defense-revisions') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.defense-revisions') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.defense-revisions') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            Monitoring Revisi Sidang
+                        </a>
+                        <a href="{{ route('monitoring.defense-scores') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.defense-scores') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.defense-scores') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a.75.75 0 00-1.061 0l-1.061 1.06a.75.75 0 101.06 1.061l1.061-1.06a.75.75 0 000-1.061zM6 8a2 2 0 11-4 0 2 2 0 014 0zM22 12a10 10 0 11-20 0 10 10 0 0120 0z"></path></svg>
+                            Nilai Sidang
+                        </a>
+                    </nav>
+
+                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Sistem & Konfigurasi</p>
+                    </div>
+                    <nav class="space-y-1 mb-10">
                         <a href="{{ route('announcements.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('announcements.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('announcements.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                             Pengumuman
-                        </a>
-                        <a href="{{ route('monitoring.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
-                            Monitoring
                         </a>
                         <a href="{{ route('users.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('users.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Data Pengguna
                         </a>
+                        <a href="{{ route('waves.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('waves.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('waves.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Gelombang Pelaksanaan
+                        </a>
                         <a href="{{ route('admin.logs') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.logs') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.logs') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Log Sistem
+                        </a>
+                    </nav>
+                    @endif
+
+                    <!-- Dosen Specific -->
+                    @if(Auth::user()->role === 'dosen')
+                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Dokumentasi & Bimbingan</p>
+                    </div>
+                    <nav class="space-y-1 mb-10">
+                        <a href="{{ route('theses.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            Mahasiswa Bimbingan
+                        </a>
+                        <a href="{{ route('mentoring-sessions.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('mentoring-sessions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('mentoring-sessions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Jadwal Bimbingan
+                        </a>
+                        <a href="{{ route('seminar-examiner.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-examiner.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-examiner.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            Penguji Seminar
+                        </a>
+                        <a href="{{ route('defense-examiner.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('defense-examiner.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('defense-examiner.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            Penguji Sidang
+                        </a>
+                        <a href="{{ route('logbooks.index') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('logbooks.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('logbooks.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Logbook Mahasiswa
                         </a>
                     </nav>
                     @endif
@@ -383,16 +445,16 @@
                             }
                         </script>
                         
-                        <div class="flex items-center pl-5 border-l border-slate-100 dark:border-slate-700 ml-2">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center pl-5 border-l border-slate-100 dark:border-slate-700 ml-2 group/profile">
                             <div class="hidden sm:flex flex-col items-end mr-4">
-                                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none mb-1">{{ Auth::user()->name }}</span>
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none mb-1 group-hover/profile:text-orange-600 transition-colors">{{ Auth::user()->name }}</span>
                                 <span class="text-[10px] font-black text-orange-600 uppercase tracking-widest">{{ Auth::user()->role }}</span>
                             </div>
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center font-black shadow-lg shadow-orange-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700 cursor-pointer hover:scale-110 transition-transform relative overflow-hidden group">
-                                <span class="relative z-10">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                            <div class="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-orange-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700 cursor-pointer hover:scale-110 transition-transform relative group">
+                                <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                                 <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </header>
 

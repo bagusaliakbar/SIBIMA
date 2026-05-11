@@ -103,6 +103,12 @@
             <td>: {{ $seminarSchedule->moderator->name }}</td>
             <td></td>
         </tr>
+        @if($seminarSchedule->meeting_link)
+        <tr>
+            <td class="label">Link</td>
+            <td colspan="2">: {{ $seminarSchedule->meeting_link }}</td>
+        </tr>
+        @endif
     </table>
 
     <table class="schedule">

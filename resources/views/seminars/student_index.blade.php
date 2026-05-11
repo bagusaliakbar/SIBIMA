@@ -73,54 +73,74 @@
                 @endif
 
                 <div class="p-6">
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">Berkas yang Diunggah:</h4>
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">Detail Berkas:</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="{{ Storage::url($application->file_acc_pembimbing) }}" target="_blank" class="flex items-center p-3 border border-slate-100 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                            <svg class="w-8 h-8 text-orange-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            <div>
-                                <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Bukti ACC Pembimbing</p>
-                                <p class="text-[10px] text-slate-400">Klik untuk melihat file</p>
+                        @php
+                            $fileFields = [
+                                'file_acc_pembimbing' => ['label' => 'Bukti ACC Pembimbing', 'icon' => 'orange', 'svg' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+                                'file_pembayaran' => ['label' => 'Bukti Pembayaran', 'icon' => 'emerald', 'svg' => 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z'],
+                                'file_kartu_bimbingan' => ['label' => 'Kartu Bimbingan', 'icon' => 'blue', 'svg' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
+                                'file_skripsi' => ['label' => 'Soft File Skripsi', 'icon' => 'indigo', 'svg' => 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z'],
+                                'file_formulir' => ['label' => 'Formulir Seminar', 'icon' => 'pink', 'svg' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z']
+                            ];
+                        @endphp
+                        @foreach($fileFields as $field => $info)
+                            <div class="relative p-4 border rounded-xl transition-all {{ isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected' ? 'border-rose-200 bg-rose-50/30 dark:bg-rose-900/10 dark:border-rose-800' : 'border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50' }}">
+                                <div class="flex items-start">
+                                    <div class="p-2 bg-{{ $info['icon'] }}-100 dark:bg-{{ $info['icon'] }}-900/30 rounded-lg mr-3">
+                                        <svg class="w-5 h-5 text-{{ $info['icon'] }}-600 dark:text-{{ $info['icon'] }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $info['svg'] }}"></path></svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ $info['label'] }}</p>
+                                            @if(isset($application->file_reviews[$field]['status']))
+                                                <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded {{ $application->file_reviews[$field]['status'] === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                                                    {{ $application->file_reviews[$field]['status'] }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="mt-1 flex items-center gap-2">
+                                            <a href="{{ Storage::url($application->$field) }}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline">Lihat Berkas</a>
+                                        </div>
+                                        @if(isset($application->file_reviews[$field]['note']) && $application->file_reviews[$field]['note'])
+                                            <div class="mt-2 p-2 bg-rose-100/50 dark:bg-rose-900/30 rounded border border-rose-200/50 dark:border-rose-800/50">
+                                                <p class="text-[10px] text-rose-700 dark:text-rose-400 font-medium italic">"{{ $application->file_reviews[$field]['note'] }}"</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                        </a>
-                        <a href="{{ Storage::url($application->file_pembayaran) }}" target="_blank" class="flex items-center p-3 border border-slate-100 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                            <svg class="w-8 h-8 text-emerald-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                            <div>
-                                <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Bukti Pembayaran</p>
-                                <p class="text-[10px] text-slate-400">Klik untuk melihat file</p>
-                            </div>
-                        </a>
-                        <a href="{{ Storage::url($application->file_kartu_bimbingan) }}" target="_blank" class="flex items-center p-3 border border-slate-100 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                            <svg class="w-8 h-8 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            <div>
-                                <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Kartu Bimbingan / Logbook</p>
-                                <p class="text-[10px] text-slate-400">Klik untuk melihat file</p>
-                            </div>
-                        </a>
-                        <a href="{{ Storage::url($application->file_skripsi) }}" target="_blank" class="flex items-center p-3 border border-slate-100 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                            <svg class="w-8 h-8 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                            <div>
-                                <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Soft File Skripsi</p>
-                                <p class="text-[10px] text-slate-400">Klik untuk melihat file</p>
-                            </div>
-                        </a>
-                        <a href="{{ Storage::url($application->file_formulir) }}" target="_blank" class="flex items-center p-3 border border-slate-100 dark:border-slate-700 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                            <svg class="w-8 h-8 text-pink-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            <div>
-                                <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Formulir Seminar</p>
-                                <p class="text-[10px] text-slate-400">Klik untuk melihat file</p>
-                            </div>
-                        </a>
+                        @endforeach
                     </div>
 
                     @if($application->status === 'rejected')
-                        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700 text-center">
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Silakan perbaiki berkas Anda dan ajukan kembali.</p>
-                            <form action="{{ route('seminar-applications.destroy', $application->id) }}" method="POST">
+                        <div class="mt-10 pt-8 border-t border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center gap-3 mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-800/50">
+                                <div class="p-2 bg-amber-100 dark:bg-amber-800 rounded-lg">
+                                    <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <p class="text-xs text-amber-700 dark:text-amber-300 font-bold">Silakan unggah ulang berkas yang ditolak (<span class="text-rose-600">REJECT</span>) di bawah ini:</p>
+                            </div>
+
+                            <form action="{{ route('seminar-applications.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                @method('DELETE')
-                                <button type="submit" class="px-6 py-2 bg-orange-600 text-white text-sm font-bold rounded-md hover:bg-orange-700 transition-colors shadow-sm">
-                                    Ajukan Ulang
-                                </button>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    @foreach($fileFields as $field => $info)
+                                        @if(isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected')
+                                            <div class="space-y-2">
+                                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">{{ $info['label'] }} <span class="text-red-500">*</span></label>
+                                                <input type="file" name="{{ $field }}" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                                                @error($field) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+
+                                <div class="mt-8 flex justify-end">
+                                    <button type="submit" class="px-8 py-3 bg-orange-600 text-white font-bold rounded-md hover:bg-orange-700 transition-colors shadow-md">
+                                        Perbarui Pengajuan
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     @endif

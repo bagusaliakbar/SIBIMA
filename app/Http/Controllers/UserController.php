@@ -62,10 +62,16 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', Rules\Password::defaults()],
+            'password' => ['required', \Illuminate\Validation\Rules\Password::defaults()],
             'role' => ['required', 'in:dosen,mahasiswa'],
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
+
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
 
         User::create([
             'name' => $request->name,
@@ -73,6 +79,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'identifier' => $request->identifier,
+            'avatar' => $avatarPath,
             'is_active' => true,
         ]);
 
@@ -114,7 +121,8 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$user->id],
             'role' => ['required', 'in:dosen,mahasiswa'],
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class.',identifier,'.$user->id],
-            'password' => ['nullable', Rules\Password::defaults()],
+            'password' => ['nullable', \Illuminate\Validation\Rules\Password::defaults()],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
         $data = [
@@ -123,6 +131,15 @@ class UserController extends Controller
             'role' => $request->role,
             'identifier' => $request->identifier,
         ];
+
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if ($user->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);

@@ -30,8 +30,14 @@
 
                     <div>
                         <x-input-label for="location" value="Lokasi / Ruangan" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <x-text-input id="location" name="location" type="text" class="mt-1 block w-full text-sm" placeholder="Contoh: Online = Channel 2 atau Ruang Rapat Lt. 2" />
+                        <x-text-input id="location" name="location" type="text" class="mt-1 block w-full text-sm" placeholder="Contoh: Online atau Ruang Rapat Lt. 2" />
                         <x-input-error :messages="$errors->get('location')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="meeting_link" value="Link (Google Meet/Zoom)" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
+                        <x-text-input id="meeting_link" name="meeting_link" type="url" class="mt-1 block w-full text-sm" placeholder="https://meet.google.com/xxx-xxxx-xxx" />
+                        <x-input-error :messages="$errors->get('meeting_link')" class="mt-2" />
                     </div>
 
                     <div>
@@ -107,12 +113,15 @@
 
                                     <div class="md:col-span-4" x-show="row.type === 'student'">
                                         <x-input-label value="Mahasiswa & Judul" class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1" />
-                                        <select :name="`details[${index}][thesis_id]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
+                                        <select :name="`details[${index}][thesis_id]`" x-model="row.thesis_id" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Pilih Mahasiswa</option>
                                             @foreach($theses as $thesis)
                                                 <option value="{{ $thesis->id }}">{{ $thesis->student->name }} - {{ Str::limit($thesis->title, 50) }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="mt-1 text-[9px] text-slate-500 font-medium" x-show="row.thesis_id">
+                                            Pembimbing: <span class="font-bold text-orange-600 dark:text-orange-400" x-text="getAdvisors(row.thesis_id)"></span>
+                                        </div>
                                     </div>
 
                                     <div class="md:col-span-2" x-show="row.type === 'student'">
@@ -120,7 +129,7 @@
                                         <select :name="`details[${index}][examiner1_id]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Pilih Penguji</option>
                                             @foreach($dosens as $dosen)
-                                                <option value="{{ $dosen->id }}" x-show="!isAdvisor({{ $dosen->id }}, row.thesis_id)">{{ $dosen->name }}</option>
+                                                <option value="{{ $dosen->id }}" x-show="!isAdvisor({{ $dosen->id }}, row.thesis_id)" :disabled="isAdvisor({{ $dosen->id }}, row.thesis_id)">{{ $dosen->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -130,7 +139,7 @@
                                         <select :name="`details[${index}][examiner2_id]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Pilih Penguji</option>
                                             @foreach($dosens as $dosen)
-                                                <option value="{{ $dosen->id }}" x-show="!isAdvisor({{ $dosen->id }}, row.thesis_id)">{{ $dosen->name }}</option>
+                                                <option value="{{ $dosen->id }}" x-show="!isAdvisor({{ $dosen->id }}, row.thesis_id)" :disabled="isAdvisor({{ $dosen->id }}, row.thesis_id)">{{ $dosen->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -178,6 +187,14 @@
                     const thesis = this.theses.find(t => t.id == thesisId);
                     if (!thesis) return false;
                     return thesis.pembimbing1_id == dosenId || thesis.pembimbing2_id == dosenId;
+                },
+                getAdvisors(thesisId) {
+                    if (!thesisId) return '';
+                    const thesis = this.theses.find(t => t.id == thesisId);
+                    if (!thesis) return '';
+                    let advisors = thesis.pembimbing1.name;
+                    if (thesis.pembimbing2) advisors += ' & ' + thesis.pembimbing2.name;
+                    return advisors;
                 }
             }
         }

@@ -36,4 +36,9 @@ class SeminarScheduleDetail extends Model
     {
         return $this->belongsTo(User::class, 'examiner2_id');
     }
+
+    public function revisions()
+    {
+        return $this->hasMany(SeminarRevision::class, 'seminar_schedule_detail_id');
+    }
 }

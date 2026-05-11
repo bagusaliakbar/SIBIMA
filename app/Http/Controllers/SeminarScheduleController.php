@@ -11,19 +11,30 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use App\Models\Wave;
+
 class SeminarScheduleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()->role !== 'admin') {
             abort(403);
         }
 
-        $schedules = SeminarSchedule::with(['chairman', 'moderator', 'creator'])
-            ->orderBy('date', 'desc')
-            ->paginate(10);
+        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
+        $selectedWaveId = $request->get('wave_id', $activeWave?->id);
 
-        return view('seminar_schedules.index', compact('schedules'));
+        $schedules = SeminarSchedule::with(['chairman', 'moderator', 'creator'])
+            ->when($selectedWaveId, function($query) use ($selectedWaveId) {
+                $query->where('wave_id', $selectedWaveId);
+            })
+            ->orderBy('date', 'desc')
+            ->paginate(10)
+            ->appends(['wave_id' => $selectedWaveId]);
+
+        $waves = Wave::orderBy('created_at', 'desc')->get();
+
+        return view('seminar_schedules.index', compact('schedules', 'waves', 'selectedWaveId', 'activeWave'));
     }
 
     public function create()
@@ -32,10 +43,18 @@ class SeminarScheduleController extends Controller
             abort(403);
         }
 
+        $activeWave = Wave::active();
+        if (!$activeWave) {
+            return redirect()->route('waves.index')->with('error', 'Silakan aktifkan gelombang terlebih dahulu sebelum membuat jadwal.');
+        }
+
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->where('acc_up_p1', true)
             ->where('acc_up_p2', true)
+            ->whereHas('seminarApplication', function($q) use ($activeWave) {
+                $q->where('wave_id', $activeWave->id);
+            })
             ->get();
 
         return view('seminar_schedules.create', compact('dosens', 'theses'));
@@ -47,25 +66,33 @@ class SeminarScheduleController extends Controller
             abort(403);
         }
 
+        $activeWave = Wave::active();
+        if (!$activeWave) {
+            return redirect()->route('waves.index')->with('error', 'Tidak ada gelombang aktif.');
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date',
             'chairman_id' => 'required|exists:users,id',
             'moderator_id' => 'required|exists:users,id',
             'location' => 'nullable|string|max:255',
+            'meeting_link' => 'nullable|url',
             'details' => 'required|array|min:1',
             'details.*.start_time' => 'required',
             'details.*.end_time' => 'required',
         ]);
 
-        DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request, $activeWave) {
             $schedule = SeminarSchedule::create([
                 'title' => $request->title,
                 'date' => $request->date,
                 'chairman_id' => $request->chairman_id,
                 'moderator_id' => $request->moderator_id,
                 'location' => $request->location,
+                'meeting_link' => $request->meeting_link,
                 'created_by' => Auth::id(),
+                'wave_id' => $activeWave->id,
             ]);
 
             foreach ($request->details as $index => $detail) {
@@ -136,6 +163,7 @@ class SeminarScheduleController extends Controller
             'chairman_id' => 'required|exists:users,id',
             'moderator_id' => 'required|exists:users,id',
             'location' => 'nullable|string|max:255',
+            'meeting_link' => 'nullable|url',
             'details' => 'required|array|min:1',
         ]);
 
@@ -146,6 +174,7 @@ class SeminarScheduleController extends Controller
                 'chairman_id' => $request->chairman_id,
                 'moderator_id' => $request->moderator_id,
                 'location' => $request->location,
+                'meeting_link' => $request->meeting_link,
             ]);
 
             $seminarSchedule->details()->delete();

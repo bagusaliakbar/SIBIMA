@@ -20,9 +20,25 @@
         @endif
 
         <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 rounded-lg">
-            <div class="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
-                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Daftar Jadwal Sidang</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 uppercase font-medium">Manajemen seluruh jadwal sidang yang telah diterbitkan</p>
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Daftar Jadwal Sidang</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 uppercase font-medium">Manajemen seluruh jadwal sidang yang telah diterbitkan</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="relative group">
+                        <select name="wave_id" onchange="this.form.submit()" 
+                                class="pl-4 pr-10 py-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[200px] text-slate-700 dark:text-slate-300">
+                            <option value="">Semua Gelombang</option>
+                            @foreach($waves as $wave)
+                                <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
+                                    {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
             </div>
 
             <div class="overflow-x-auto">

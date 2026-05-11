@@ -45,6 +45,11 @@ class Thesis extends Model
         return $this->acc_sidang_p1 && $this->acc_sidang_p2;
     }
 
+    public function isGraduated()
+    {
+        return $this->status === 'completed';
+    }
+
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
@@ -78,5 +83,15 @@ class Thesis extends Model
     public function logbooks()
     {
         return $this->hasMany(Logbook::class);
+    }
+
+    public function seminarApplication()
+    {
+        return $this->hasOne(SeminarApplication::class);
+    }
+
+    public function defenseApplication()
+    {
+        return $this->hasOne(ThesisDefenseApplication::class);
     }
 }

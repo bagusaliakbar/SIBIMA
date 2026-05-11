@@ -8,6 +8,7 @@ class ThesisDefenseApplication extends Model
 {
     protected $fillable = [
         'thesis_id',
+        'wave_id',
         'file_formulir',
         'file_transkrip',
         'file_acc_pembimbing',
@@ -30,10 +31,20 @@ class ThesisDefenseApplication extends Model
         'file_ijazah',
         'status',
         'admin_feedback',
+        'file_reviews',
+    ];
+
+    protected $casts = [
+        'file_reviews' => 'array',
     ];
 
     public function thesis()
     {
         return $this->belongsTo(Thesis::class);
+    }
+
+    public function wave()
+    {
+        return $this->belongsTo(Wave::class);
     }
 }

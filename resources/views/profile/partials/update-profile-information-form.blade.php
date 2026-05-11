@@ -13,9 +13,42 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
+
+        <div x-data="{ photoName: null, photoPreview: null }">
+            <x-input-label for="avatar" :value="__('Foto Profil')" />
+            
+            <!-- Current Profile Photo -->
+            <div class="mt-2" x-show="! photoPreview">
+                <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="rounded-xl h-20 w-20 object-cover border-2 border-orange-100 dark:border-slate-700 shadow-sm">
+            </div>
+
+            <!-- New Profile Photo Preview -->
+            <div class="mt-2" x-show="photoPreview" style="display: none;">
+                <span class="block rounded-xl h-20 w-20 bg-cover bg-no-repeat bg-center border-2 border-orange-500 shadow-md"
+                      x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+                </span>
+            </div>
+
+            <input type="file" id="avatar" name="avatar" class="hidden"
+                   x-ref="avatar"
+                   x-on:change="
+                        photoName = $refs.avatar.files[0].name;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            photoPreview = e.target.result;
+                        };
+                        reader.readAsDataURL($refs.avatar.files[0]);
+                   " />
+
+            <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.avatar.click()">
+                {{ __('Pilih Foto Baru') }}
+            </x-secondary-button>
+
+            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />

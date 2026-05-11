@@ -39,68 +39,78 @@
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->moderator->name }}</span>
                         </div>
                     </div>
-                    <div class="flex flex-col md:items-end justify-start">
+                    <div class="flex flex-col md:items-end justify-start space-y-3">
                         <div class="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
                             <span class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mr-3">Tempat:</span>
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $thesisDefenseSchedule->location ?: '-' }}</span>
                         </div>
+                        @if($thesisDefenseSchedule->meeting_link)
+                        <a href="{{ $thesisDefenseSchedule->meeting_link }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg border border-orange-700 transition-colors shadow-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            <span class="text-xs font-black uppercase tracking-widest">Join Google Meet / Link</span>
+                        </a>
+                        @endif
                     </div>
                 </div>
 
-                <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50 dark:bg-slate-900/50 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center">
-                                <th class="border border-slate-200 dark:border-slate-700 py-4 px-3 w-12">NO</th>
-                                <th class="border border-slate-200 dark:border-slate-700 py-4 px-3 w-32">WAKTU</th>
-                                <th class="border border-slate-200 dark:border-slate-700 py-4 px-3">DETAIL KEGIATAN / PESERTA</th>
-                                <th class="border border-slate-200 dark:border-slate-700 py-4 px-3 w-48">PEMBIMBING</th>
-                                <th class="border border-slate-200 dark:border-slate-700 py-4 px-3 w-48">PENGUJI</th>
+                            <tr class="bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center">
+                                <th class="py-4 px-3 w-12 border-b border-r border-slate-200 dark:border-slate-700">NO</th>
+                                <th class="py-4 px-3 w-32 border-b border-r border-slate-200 dark:border-slate-700">WAKTU</th>
+                                <th class="py-4 px-3 border-b border-r border-slate-200 dark:border-slate-700">DETAIL KEGIATAN / PESERTA</th>
+                                <th class="py-4 px-3 w-48 border-b border-r border-slate-200 dark:border-slate-700">PEMBIMBING</th>
+                                <th class="py-4 px-3 w-48 border-b border-slate-200 dark:border-slate-700">PENGUJI</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
                             @php $studentNo = 1; @endphp
                             @foreach($thesisDefenseSchedule->details as $detail)
                                 @if($detail->thesis_id)
-                                    <tr class="dark:bg-slate-800/50">
-                                        <td class="border border-slate-200 dark:border-slate-700 py-4 px-3 text-center font-bold text-slate-800 dark:text-slate-200">{{ $studentNo++ }}</td>
-                                        <td class="border border-slate-200 dark:border-slate-700 py-4 px-3 text-center">
-                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }}-{{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
+                                    <tr class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                        <td class="py-5 px-3 text-center border-r border-slate-100 dark:border-slate-700/50 font-bold text-slate-800 dark:text-slate-200">{{ $studentNo++ }}</td>
+                                        <td class="py-5 px-3 text-center border-r border-slate-100 dark:border-slate-700/50">
+                                            <span class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
+                                            </span>
                                         </td>
-                                        <td class="border border-slate-200 dark:border-slate-700 py-4 px-4">
-                                            <div class="space-y-1">
-                                                <div class="flex items-center">
-                                                    <span class="text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded mr-2 uppercase tracking-tighter">{{ $detail->thesis->student->identifier }}</span>
+                                        <td class="py-5 px-6 border-r border-slate-100 dark:border-slate-700/50">
+                                            <div class="space-y-2">
+                                                <div class="flex items-center flex-wrap gap-2">
+                                                    <span class="inline-flex items-center px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[10px] font-black rounded uppercase tracking-tighter border border-orange-200 dark:border-orange-800/50">
+                                                        {{ $detail->thesis->student->identifier }}
+                                                    </span>
                                                     <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $detail->thesis->student->name }}</span>
                                                 </div>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic">{{ $detail->thesis->title }}</p>
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic max-w-lg">{{ $detail->thesis->title }}</p>
                                             </div>
                                         </td>
-                                        <td class="border border-slate-200 dark:border-slate-700 py-4 px-4">
+                                        <td class="py-5 px-5 border-r border-slate-100 dark:border-slate-700/50">
                                             <div class="space-y-2">
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-400 mr-2">1.</span>
+                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->thesis->pembimbing1->name }}</span>
                                                 </div>
                                                 @if($detail->thesis->pembimbing2)
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-400 mr-2">2.</span>
+                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->thesis->pembimbing2->name }}</span>
                                                 </div>
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="border border-slate-200 dark:border-slate-700 py-4 px-4">
+                                        <td class="py-5 px-5">
                                             <div class="space-y-2">
                                                 @if($detail->examiner1)
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-400 mr-2">1.</span>
+                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->examiner1->name }}</span>
                                                 </div>
                                                 @endif
                                                 @if($detail->examiner2)
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-400 mr-2">2.</span>
+                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->examiner2->name }}</span>
                                                 </div>
                                                 @endif
@@ -108,13 +118,13 @@
                                         </td>
                                     </tr>
                                 @else
-                                    <tr class="bg-slate-50/50 dark:bg-slate-900/30 italic">
-                                        <td class="border border-slate-200 dark:border-slate-700 py-3 px-3 text-center font-bold text-slate-400">#</td>
-                                        <td class="border border-slate-200 dark:border-slate-700 py-3 px-3 text-center">
-                                            <span class="text-xs font-bold text-slate-500">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }}-{{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
+                                    <tr class="bg-slate-50/50 dark:bg-slate-900/30">
+                                        <td class="py-3 px-3 text-center border-r border-slate-100 dark:border-slate-700/50 font-bold text-slate-400">#</td>
+                                        <td class="py-3 px-3 text-center border-r border-slate-100 dark:border-slate-700/50">
+                                            <span class="text-xs font-bold text-slate-500 italic">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
                                         </td>
-                                        <td colspan="3" class="border border-slate-200 dark:border-slate-700 py-3 px-6">
-                                            <span class="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">{{ $detail->activity_name }}</span>
+                                        <td colspan="3" class="py-3 px-8">
+                                            <span class="text-[11px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-[0.1em] italic">{{ $detail->activity_name }}</span>
                                         </td>
                                     </tr>
                                 @endif

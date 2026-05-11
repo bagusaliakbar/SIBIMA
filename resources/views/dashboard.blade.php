@@ -18,12 +18,64 @@
     <div class="space-y-6">
         @if(Auth::user()->role === 'mahasiswa')
             @php
+                $isGraduated = $thesis && $thesis->status === 'completed';
                 $progressPercent = 0;
-                if ($thesis) $progressPercent += 25;
-                if ($pastSessionsCount > 0) $progressPercent += min(25, ($pastSessionsCount / 8) * 25);
-                if ($seminar && $seminar->status === 'approved') $progressPercent += 25;
-                if ($thesis && $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) $progressPercent += 25;
+                $steps = 0;
+                $seminarDone = false;
+                $defenseDone = false;
+
+                // Step 1: Judul (0% -> 20%)
+                if ($thesis) { 
+                    $progressPercent = 20; 
+                    $steps++; 
+                    
+                    // Step 2: Bab 1-3 (20% -> 40%)
+                    $mentoring1 = min(4, $pastSessionsCount);
+                    $progressPercent += ($mentoring1 / 4) * 20;
+                    if ($mentoring1 >= 4) $steps++;
+                    
+                    // Step 3: Seminar (40% -> 60%)
+                    $seminarDone = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']));
+                    if ($seminarDone) { 
+                        $progressPercent = 60; 
+                        $steps++; 
+                        
+                        // Step 4: Bab 4-5 (60% -> 80%)
+                        $mentoring2 = max(0, min(4, $pastSessionsCount - 4));
+                        $progressPercent += ($mentoring2 / 4) * 20;
+                        if ($mentoring2 >= 4) $steps++;
+                        
+                        // Step 5: Sidang (80% -> 100%)
+                        $hasDefenseRevisions = \App\Models\ThesisDefenseRevision::whereHas('detail', function($q) use ($thesis) {
+                            $q->where('thesis_id', $thesis?->id);
+                        })->exists();
+                        
+                        $defenseDone = ($defense && in_array($defense->status, ['approved', 'completed', 'finished'])) || $hasDefenseRevisions;
+                        if ($defenseDone) { 
+                            $progressPercent = 90; // Almost there
+                            $steps++; 
+                        }
+
+                        // Step 6: Kelulusan (100%)
+                        if ($isGraduated) { 
+                            $progressPercent = 100; 
+                            $steps++; 
+                        }
+                    }
+                }
             @endphp
+
+            @if($isStale)
+                <div class="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 p-4 rounded-xl mb-6 flex items-center gap-4 animate-pulse">
+                    <div class="w-10 h-10 bg-red-600 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black text-red-800 dark:text-red-200 uppercase tracking-tight">Peringatan Progress!</h4>
+                        <p class="text-xs text-red-600 dark:text-red-400 font-medium">Anda belum melakukan bimbingan selama <b>{{ $daysSinceLastSession }} hari</b>. Segera hubungi pembimbing Anda!</p>
+                    </div>
+                </div>
+            @endif
             <!-- Timeline Progres Mahasiswa -->
             <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mb-6 relative overflow-hidden transition-all duration-300">
                 <!-- Background Pattern -->
@@ -49,50 +101,99 @@
                     <div class="relative flex justify-between">
                         <!-- Step 1: Judul -->
                         <div class="flex flex-col items-center group">
-                            <div class="w-11 h-11 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $thesis ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500' }}">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $thesis ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500' }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
-                            <div class="mt-4 text-center">
-                                <span class="block text-[11px] font-black {{ $thesis ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter">Pengajuan Judul</span>
-                                <span class="text-[9px] font-bold {{ $thesis ? 'text-emerald-500' : 'text-slate-400' }}">{{ $thesis ? 'Selesai' : 'Belum' }}</span>
+                            <div class="mt-3 text-center">
+                                <span class="block text-[10px] font-black {{ $thesis ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Judul</span>
+                                <span class="text-[8px] font-bold {{ $thesis ? 'text-emerald-500' : 'text-slate-400' }}">{{ $thesis ? 'Selesai' : 'Belum' }}</span>
                             </div>
                         </div>
 
-                        <!-- Step 2: Bimbingan -->
+                        <!-- Step 2: Bab 1-3 -->
                         <div class="flex flex-col items-center group">
-                            <div class="w-11 h-11 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $pastSessionsCount >= 8 ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($pastSessionsCount > 0 ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $pastSessionsCount >= 4 ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($pastSessionsCount > 0 ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                             </div>
-                            <div class="mt-4 text-center">
-                                <span class="block text-[11px] font-black {{ $pastSessionsCount > 0 ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter">Bimbingan</span>
-                                <span class="text-[9px] font-bold {{ $pastSessionsCount >= 8 ? 'text-emerald-500' : 'text-slate-400' }}">{{ $pastSessionsCount }}/8 Sesi</span>
+                            <div class="mt-3 text-center">
+                                <span class="block text-[10px] font-black {{ $pastSessionsCount >= 4 ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Bab 1-3</span>
+                                <span class="text-[8px] font-bold {{ $pastSessionsCount >= 4 ? 'text-emerald-500' : 'text-slate-400' }}">{{ min(4, $pastSessionsCount) }}/4 Sesi</span>
                             </div>
                         </div>
 
                         <!-- Step 3: Seminar -->
                         <div class="flex flex-col items-center group">
-                            <div class="w-11 h-11 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ ($seminar && $seminar->status === 'approved') ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($seminar ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $seminarDone ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($seminar ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                             </div>
-                            <div class="mt-4 text-center">
-                                <span class="block text-[11px] font-black {{ $seminar ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter">Seminar</span>
-                                <span class="text-[9px] font-bold {{ ($seminar && $seminar->status === 'approved') ? 'text-emerald-500' : 'text-slate-400' }}">{{ $seminar ? ucfirst($seminar->status) : 'Belum' }}</span>
+                            <div class="mt-3 text-center">
+                                <span class="block text-[10px] font-black {{ $seminarDone ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Seminar</span>
+                                <span class="text-[8px] font-bold {{ $seminarDone ? 'text-emerald-500' : 'text-slate-400' }}">{{ $seminarDone ? 'Selesai' : ($seminar ? ucfirst($seminar->status) : 'Belum') }}</span>
                             </div>
                         </div>
 
-                        <!-- Step 4: Sidang -->
+                        <!-- Step 4: Penelitian -->
                         <div class="flex flex-col items-center group">
-                            <div class="w-11 h-11 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ ($thesis && $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500' }}">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $pastSessionsCount >= 8 ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($pastSessionsCount >= 4 ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                             </div>
-                            <div class="mt-4 text-center">
-                                <span class="block text-[11px] font-black {{ ($thesis && $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter">Sidang Akhir</span>
-                                <span class="text-[9px] font-bold {{ ($thesis && $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) ? 'text-emerald-500' : 'text-slate-400' }}">{{ ($thesis && $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) ? 'Siap' : 'Belum' }}</span>
+                            <div class="mt-3 text-center">
+                                <span class="block text-[10px] font-black {{ $pastSessionsCount >= 8 ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Bab 4-5</span>
+                                <span class="text-[8px] font-bold {{ $pastSessionsCount >= 8 ? 'text-emerald-500' : 'text-slate-400' }}">{{ min(4, max(0, $pastSessionsCount - 4)) }}/4 Sesi</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Sidang -->
+                        <div class="flex flex-col items-center group">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $defenseDone ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($defense ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <span class="block text-[10px] font-black {{ $defenseDone ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Sidang</span>
+                                <span class="text-[8px] font-bold {{ $defenseDone ? 'text-emerald-500' : 'text-slate-400' }}">{{ $defenseDone ? 'Selesai' : ($defense ? ucfirst($defense->status) : 'Belum') }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 6: Lulus -->
+                        <div class="flex flex-col items-center group">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $isGraduated ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-200 dark:shadow-emerald-900/20' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500' }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <span class="block text-[10px] font-black {{ $isGraduated ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Lulus</span>
+                                <span class="text-[8px] font-bold {{ $isGraduated ? 'text-emerald-500' : 'text-slate-400' }}">{{ $isGraduated ? 'Selamat!' : 'Belum' }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            @if($isGraduated)
+            <div class="bg-slate-900 dark:bg-slate-800/80 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden mb-8 border border-white/10 backdrop-blur-md">
+                <!-- Background Decoration -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full -ml-24 -mb-24 blur-3xl"></div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                    <div class="flex-1 text-center md:text-left">
+                        <div class="inline-flex items-center px-3 py-1 bg-orange-500/10 text-orange-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-full mb-4 border border-orange-500/20">
+                            Status: LULUS
+                        </div>
+                        <h2 class="text-3xl font-black tracking-tight mb-3 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Selamat, {{ Auth::user()->name }}!</h2>
+                        <p class="text-slate-400 font-medium text-base leading-relaxed max-w-2xl">
+                            Seluruh tahapan skripsi telah Anda selesaikan dengan baik. Anda kini dinyatakan <span class="text-amber-400 font-bold">LULUS</span>. Terima kasih atas dedikasi dan kerja keras Anda selama ini.
+                        </p>
+                    </div>
+
+                    <div class="hidden lg:block w-px h-24 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+
+                    <div class="text-center md:text-right">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Tanggal Yudisium</p>
+                        <p class="text-xl font-black text-white tracking-tighter">{{ now()->format('d F Y') }}</p>
+                    </div>
+                </div>
+            </div>
+            @endif
         @endif
         <!-- Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -267,6 +368,219 @@
                             <canvas id="activityChart"></canvas>
                         </div>
                     </div>
+                </div>
+            </div>
+        @if(Auth::user()->role === 'admin')
+            <!-- Chart 3: Dosen Workload (Full Width) -->
+            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Distribusi Beban Kerja Dosen (Top 10)
+                    </h3>
+                    <div class="h-80">
+                        <canvas id="workloadChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endif
+
+        @if(Auth::user()->role === 'mahasiswa' && ($mySeminarSchedule || $myDefenseSchedule))
+            {{-- Student Schedule Section (already here) --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                @if($mySeminarSchedule)
+                    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-full -mr-12 -mt-12 opacity-50"></div>
+                        <div class="relative">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    Jadwal Seminar Skripsi
+                                </h3>
+                                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Terjadwal</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex-shrink-0 w-12 h-12 bg-slate-50 dark:bg-slate-900/50 rounded-xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->translatedFormat('M') }}</span>
+                                        <span class="text-lg font-black text-slate-800 dark:text-slate-100 leading-none mt-1">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->format('d') }}</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Hari & Tanggal</p>
+                                        <p class="text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->translatedFormat('l, d F Y') }}</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Waktu</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($mySeminarSchedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($mySeminarSchedule->end_time)->format('H:i') }} WIB</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ruangan/Tempat</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $mySeminarSchedule->schedule->location ?: '-' }}</p>
+                                    </div>
+                                </div>
+                                @if($mySeminarSchedule->schedule->meeting_link)
+                                    <div class="pt-2">
+                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            Join Online Meeting
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if($myDefenseSchedule)
+                    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-12 -mt-12 opacity-50"></div>
+                        <div class="relative">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Jadwal Sidang Skripsi
+                                </h3>
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Terjadwal</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex-shrink-0 w-12 h-12 bg-slate-50 dark:bg-slate-900/50 rounded-xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->translatedFormat('M') }}</span>
+                                        <span class="text-lg font-black text-slate-800 dark:text-slate-100 leading-none mt-1">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->format('d') }}</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Hari & Tanggal</p>
+                                        <p class="text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->translatedFormat('l, d F Y') }}</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Waktu</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($myDefenseSchedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($myDefenseSchedule->end_time)->format('H:i') }} WIB</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ruangan/Tempat</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $myDefenseSchedule->schedule->location ?: '-' }}</p>
+                                    </div>
+                                </div>
+                                @if($myDefenseSchedule->schedule->meeting_link)
+                                    <div class="pt-2">
+                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            Join Online Meeting
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
+
+        @if(Auth::user()->role === 'dosen' && ($examinerSeminarSchedules->count() > 0 || $examinerDefenseSchedules->count() > 0))
+            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden mb-6 transition-all duration-300">
+                <div class="px-6 py-4 border-b border-slate-50 dark:border-slate-700 bg-slate-900 text-white flex justify-between items-center">
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-tight flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                            Jadwal Menguji Seminar & Sidang
+                        </h3>
+                        <p class="text-[10px] text-slate-400 font-medium mt-0.5 uppercase tracking-widest">Daftar Mahasiswa yang akan Anda uji.</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
+                                <th class="px-6 py-3">Mahasiswa</th>
+                                <th class="px-6 py-3">Posisi</th>
+                                <th class="px-6 py-3">Jenis Ujian</th>
+                                <th class="px-6 py-3">Waktu & Tempat</th>
+                                <th class="px-6 py-3 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                            @foreach($examinerSeminarSchedules as $detail)
+                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
+                                            <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1">{{ $detail->thesis->title }}</p>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
+                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200">Pembimbing</span>
+                                        @else
+                                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Penguji</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Seminar</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-[11px]">
+                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->translatedFormat('d M Y') }}</p>
+                                            <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
+                                            @if($detail->schedule->meeting_link)
+                                                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
+                                                    <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    Link Google Meet
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-orange-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
+                                            Buka Lembar Revisi
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @foreach($examinerDefenseSchedules as $detail)
+                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
+                                            <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1">{{ $detail->thesis->title }}</p>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
+                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200">Pembimbing</span>
+                                        @else
+                                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Penguji</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Sidang</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-[11px]">
+                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->translatedFormat('d M Y') }}</p>
+                                            <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
+                                            @if($detail->schedule->meeting_link)
+                                                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
+                                                    <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    Link Google Meet
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
+                                            Buka Lembar Penilaian
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         @endif
@@ -514,6 +828,55 @@
                         plugins: { legend: { display: false } }
                     }
                 });
+
+                @if(Auth::user()->role === 'admin')
+                    // Workload Chart
+                    const workCtx = document.getElementById('workloadChart').getContext('2d');
+                    new Chart(workCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: {!! json_encode(array_keys($dosenWorkload)) !!},
+                            datasets: [{
+                                label: 'Jumlah Mahasiswa',
+                                data: {!! json_encode(array_values($dosenWorkload)) !!},
+                                backgroundColor: '#10b981',
+                                borderRadius: 8,
+                                barThickness: 30
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: { 
+                                x: { 
+                                    beginAtZero: true, 
+                                    grid: { color: darkMode ? '#334155' : '#f1f5f9' }, 
+                                    ticks: { color: darkMode ? '#94a3b8' : '#64748b', stepSize: 1 } 
+                                }, 
+                                y: { 
+                                    grid: { display: false },
+                                    ticks: { 
+                                        color: darkMode ? '#f1f5f9' : '#1e293b',
+                                        font: { weight: 'bold', size: 11 }
+                                    }
+                                } 
+                            },
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: darkMode ? '#1e293b' : '#fff',
+                                    titleColor: darkMode ? '#fff' : '#1e293b',
+                                    bodyColor: darkMode ? '#cbd5e1' : '#64748b',
+                                    borderColor: darkMode ? '#334155' : '#e2e8f0',
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    displayColors: false
+                                }
+                            }
+                        }
+                    });
+                @endif
             @endif
         });
     </script>

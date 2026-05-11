@@ -11,6 +11,7 @@ class SeminarApplication extends Model
 
     protected $fillable = [
         'thesis_id',
+        'wave_id',
         'file_acc_pembimbing',
         'file_pembayaran',
         'file_kartu_bimbingan',
@@ -18,10 +19,20 @@ class SeminarApplication extends Model
         'file_formulir',
         'status',
         'admin_feedback',
+        'file_reviews',
+    ];
+
+    protected $casts = [
+        'file_reviews' => 'array',
     ];
 
     public function thesis()
     {
         return $this->belongsTo(Thesis::class);
+    }
+
+    public function wave()
+    {
+        return $this->belongsTo(Wave::class);
     }
 }

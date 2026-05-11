@@ -36,4 +36,34 @@ class ThesisDefenseScheduleDetail extends Model
     {
         return $this->belongsTo(User::class, 'examiner2_id');
     }
+
+    public function revisions()
+    {
+        return $this->hasMany(ThesisDefenseRevision::class, 'thesis_defense_schedule_detail_id');
+    }
+
+    public function isRevisionAllApproved()
+    {
+        $this->load(['revisions', 'thesis']);
+        
+        if (!$this->thesis) return false;
+
+        $requiredIds = array_unique([
+            $this->examiner1_id,
+            $this->examiner2_id,
+            $this->thesis->pembimbing1_id
+        ]);
+
+        // Remove nulls just in case
+        $requiredIds = array_filter($requiredIds);
+
+        foreach ($requiredIds as $id) {
+            $rev = $this->revisions->where('examiner_id', $id)->first();
+            if (!$rev || $rev->status !== 'approved') {
+                return false;
+            }
+        }
+
+        return count($requiredIds) > 0;
+    }
 }

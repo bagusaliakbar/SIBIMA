@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'identifier',
         'is_active',
+        'avatar',
     ];
 
     /**
@@ -73,5 +74,19 @@ class User extends Authenticatable
     public function thesis()
     {
         return $this->hasOne(Thesis::class, 'student_id');
+    }
+
+    /**
+     * Get the URL for the user's avatar.
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        // Fallback to initials-based SVG if no avatar is uploaded
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&color=FFFFFF&background=f97316&bold=true";
     }
 }

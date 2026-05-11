@@ -17,11 +17,13 @@ Route::get('/dashboard', function () {
     $activeThesesCount = 0;
     $sessionsThisWeek = 0;
     $seminar = null;
+    $defense = null;
 
     $thesisStatusCounts = [];
     $monthlyMentoringCounts = [];
     $studentProgressDistribution = [];
-    
+    $dosenWorkload = [];
+
     // Initialize Dosen specific variables to avoid compact error for other roles
     $totalActiveStudentsP1 = 0;
     $totalActiveStudentsP2 = 0;
@@ -29,11 +31,18 @@ Route::get('/dashboard', function () {
     $approvedSessionsThisWeek = 0;
     $totalCompletedSessions = 0;
     $averageStudentProgress = 0;
+    $isStale = false;
+    $daysSinceLastSession = null;
+
+    $mySeminarSchedule = null;
+    $myDefenseSchedule = null;
+    $examinerSeminarSchedules = collect();
+    $examinerDefenseSchedules = collect();
 
     if (Auth::user()->role === 'mahasiswa') {
         $thesis = \App\Models\Thesis::with(['pembimbing1', 'pembimbing2'])
-                    ->where('student_id', Auth::id())->first();
-                    
+            ->where('student_id', Auth::id())->first();
+
         if ($thesis) {
             $upcomingSessions = \App\Models\MentoringSession::where('thesis_id', $thesis->id)
                 ->where('scheduled_at', '>=', now())
@@ -41,7 +50,7 @@ Route::get('/dashboard', function () {
                 ->orderBy('scheduled_at', 'asc')
                 ->take(5)
                 ->get();
-                
+
             $pastSessionsCount = \App\Models\MentoringSession::where('thesis_id', $thesis->id)
                 ->where('status', 'completed')
                 ->count();
@@ -50,38 +59,96 @@ Route::get('/dashboard', function () {
                 ->where('dosen_id', $thesis->pembimbing1_id)
                 ->where('status', 'completed')
                 ->count();
-                
+
             $pastSessionsCountP2 = \App\Models\MentoringSession::where('thesis_id', $thesis->id)
                 ->where('dosen_id', $thesis->pembimbing2_id)
                 ->where('status', 'completed')
                 ->count();
-                
+
             $recentLogbooks = \App\Models\MentoringSession::where('thesis_id', $thesis->id)
                 ->whereNotNull('notes')
                 ->where('status', 'completed')
                 ->orderBy('scheduled_at', 'desc')
                 ->take(5)
                 ->get();
-            
+
             $seminar = \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->first();
+            $defense = \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->first();
+
+            $mySeminarSchedule = \App\Models\SeminarScheduleDetail::with(['schedule', 'examiner1', 'examiner2'])
+                ->where('thesis_id', $thesis->id)
+                ->first();
+            
+            $myDefenseSchedule = \App\Models\ThesisDefenseScheduleDetail::with(['schedule', 'examiner1', 'examiner2'])
+                ->where('thesis_id', $thesis->id)
+                ->first();
+
+            // Deadline Alert Logic
+            $lastSession = \App\Models\MentoringSession::where('thesis_id', $thesis->id)
+                ->where('status', 'completed')
+                ->orderBy('scheduled_at', 'desc')
+                ->first();
+            
+            $daysSinceLastSession = $lastSession ? (int)now()->diffInDays($lastSession->scheduled_at) : null;
+            $isStale = $daysSinceLastSession !== null && $daysSinceLastSession >= 14;
+
+            // Auto-sync Graduation Status
+            if ($thesis->status !== 'completed') {
+                $defenseSchedule = \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->first();
+                if ($defenseSchedule && $defenseSchedule->isRevisionAllApproved()) {
+                    $thesis->update(['status' => 'completed']);
+                    $thesis->refresh(); // Update the local $thesis object
+                }
+            }
         }
     } elseif (Auth::user()->role === 'dosen') {
         $dosenId = Auth::id();
-        $activeTheses = \App\Models\Thesis::where('status', 'active')
+
+        $examinerSeminarSchedules = \App\Models\SeminarScheduleDetail::with(['schedule', 'thesis.student'])
             ->where(function($q) use ($dosenId) {
+                $q->where('examiner1_id', $dosenId)
+                ->orWhere('examiner2_id', $dosenId)
+                ->orWhereHas('thesis', function($sq) use ($dosenId) {
+                    $sq->where('pembimbing1_id', $dosenId)
+                      ->orWhere('pembimbing2_id', $dosenId);
+                });
+            })
+            ->whereHas('schedule', function($q) {
+                $q->where('date', '>=', now()->toDateString());
+            })
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        $examinerDefenseSchedules = \App\Models\ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student'])
+            ->where(function($q) use ($dosenId) {
+                $q->where('examiner1_id', $dosenId)
+                ->orWhere('examiner2_id', $dosenId)
+                ->orWhereHas('thesis', function($sq) use ($dosenId) {
+                    $sq->where('pembimbing1_id', $dosenId)
+                      ->orWhere('pembimbing2_id', $dosenId);
+                });
+            })
+            ->whereHas('schedule', function($q) {
+                $q->where('date', '>=', now()->toDateString());
+            })
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        $activeTheses = \App\Models\Thesis::where('status', 'active')
+            ->where(function ($q) use ($dosenId) {
                 $q->where('pembimbing1_id', $dosenId)
-                  ->orWhere('pembimbing2_id', $dosenId);
+                    ->orWhere('pembimbing2_id', $dosenId);
             })->get();
-            
+
         $activeThesesCount = $activeTheses->count();
         $totalActiveStudentsP1 = $activeTheses->where('pembimbing1_id', $dosenId)->count();
         $totalActiveStudentsP2 = $activeTheses->where('pembimbing2_id', $dosenId)->count();
-            
+
         $dosenThesisIds = $activeTheses->pluck('id');
-            
+
         $sessionsThisWeekQuery = \App\Models\MentoringSession::whereIn('thesis_id', $dosenThesisIds)
             ->whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()]);
-        
+
         $sessionsThisWeek = (clone $sessionsThisWeekQuery)->count();
         $pendingSessionsThisWeek = (clone $sessionsThisWeekQuery)->where('status', 'pending')->count();
         $approvedSessionsThisWeek = (clone $sessionsThisWeekQuery)->where('status', 'approved')->count();
@@ -89,21 +156,21 @@ Route::get('/dashboard', function () {
         $totalCompletedSessions = \App\Models\MentoringSession::whereIn('thesis_id', $dosenThesisIds)
             ->where('status', 'completed')
             ->count();
-            
+
         $upcomingSessions = \App\Models\MentoringSession::whereIn('thesis_id', $dosenThesisIds)
             ->where('scheduled_at', '>=', now())
             ->whereIn('status', ['pending', 'approved'])
             ->orderBy('scheduled_at', 'asc')
             ->take(5)
             ->get();
-            
+
         $recentLogbooks = \App\Models\MentoringSession::whereIn('thesis_id', $dosenThesisIds)
             ->whereNotNull('notes')
             ->where('status', 'completed')
             ->orderBy('scheduled_at', 'desc')
             ->take(5)
             ->get();
-            
+
         // Calculate average progress
         $totalProgressSum = 0;
         foreach ($activeTheses as $t) {
@@ -111,8 +178,10 @@ Route::get('/dashboard', function () {
             $comp = \App\Models\MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->count();
             $p += min(25, ($comp / 8) * 25);
             $sem = \App\Models\SeminarApplication::where('thesis_id', $t->id)->first();
-            if ($sem && $sem->status === 'approved') $p += 25;
-            if ($t->acc_sidang_p1 && $t->acc_sidang_p2) $p += 25;
+            if ($sem && $sem->status === 'approved')
+                $p += 25;
+            if ($t->acc_sidang_p1 && $t->acc_sidang_p2)
+                $p += 25;
             $totalProgressSum += $p;
         }
         $averageStudentProgress = $activeThesesCount > 0 ? round($totalProgressSum / $activeThesesCount) : 0;
@@ -136,16 +205,16 @@ Route::get('/dashboard', function () {
 
     } elseif (Auth::user()->role === 'admin') {
         $activeThesesCount = \App\Models\Thesis::where('status', 'active')->count();
-        
+
         $sessionsThisWeek = \App\Models\MentoringSession::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])
             ->count();
-            
+
         $upcomingSessions = \App\Models\MentoringSession::where('scheduled_at', '>=', now())
             ->whereIn('status', ['pending', 'approved'])
             ->orderBy('scheduled_at', 'asc')
             ->take(5)
             ->get();
-            
+
         $recentLogbooks = \App\Models\MentoringSession::whereNotNull('notes')
             ->where('status', 'completed')
             ->orderBy('scheduled_at', 'desc')
@@ -166,15 +235,52 @@ Route::get('/dashboard', function () {
                 ->whereMonth('scheduled_at', $month->month)
                 ->count();
         }
+
+        // Workload Data for Admin
+        $dosens = \App\Models\User::where('role', 'dosen')->get();
+        foreach ($dosens as $d) {
+            $count = \App\Models\Thesis::where('status', 'active')
+                ->where(function ($q) use ($d) {
+                    $q->where('pembimbing1_id', $d->id)
+                        ->orWhere('pembimbing2_id', $d->id);
+                })->count();
+            if ($count > 0) {
+                $dosenWorkload[$d->name] = $count;
+            }
+        }
+        arsort($dosenWorkload);
+        $dosenWorkload = array_slice($dosenWorkload, 0, 10, true);
     }
     $announcements = \App\Models\Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get();
-    
+
     return view('dashboard', compact(
-        'thesis', 'upcomingSessions', 'pastSessionsCount', 'pastSessionsCountP1', 'pastSessionsCountP2',
-        'recentLogbooks', 'activeThesesCount', 'sessionsThisWeek', 'announcements', 'seminar',
-        'thesisStatusCounts', 'monthlyMentoringCounts', 'studentProgressDistribution',
-        'totalActiveStudentsP1', 'totalActiveStudentsP2', 'pendingSessionsThisWeek', 
-        'approvedSessionsThisWeek', 'totalCompletedSessions', 'averageStudentProgress'
+        'thesis',
+        'upcomingSessions',
+        'pastSessionsCount',
+        'pastSessionsCountP1',
+        'pastSessionsCountP2',
+        'recentLogbooks',
+        'activeThesesCount',
+        'sessionsThisWeek',
+        'announcements',
+        'seminar',
+        'defense',
+        'thesisStatusCounts',
+        'monthlyMentoringCounts',
+        'studentProgressDistribution',
+        'totalActiveStudentsP1',
+        'totalActiveStudentsP2',
+        'pendingSessionsThisWeek',
+        'approvedSessionsThisWeek',
+        'totalCompletedSessions',
+        'averageStudentProgress',
+        'dosenWorkload',
+        'isStale',
+        'daysSinceLastSession',
+        'mySeminarSchedule',
+        'myDefenseSchedule',
+        'examinerSeminarSchedules',
+        'examinerDefenseSchedules'
     ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -183,12 +289,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // Chat Routes
     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
     Route::get('/chat/{user}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
     Route::post('/chat/{user}', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
-    
+
     Route::get('/theses/export-excel', [App\Http\Controllers\ThesisController::class, 'exportExcel'])->name('theses.export-excel');
     Route::get('/theses/export-pdf', [App\Http\Controllers\ThesisController::class, 'exportPdf'])->name('theses.export-pdf');
     Route::post('/theses/{thesis}/toggle-acc/{type}', [App\Http\Controllers\ThesisController::class, 'toggleAcc'])->name('theses.toggle-acc');
@@ -202,6 +308,33 @@ Route::middleware('auth')->group(function () {
     Route::get('/seminar-applications/{application}/download-zip', [App\Http\Controllers\SeminarApplicationController::class, 'downloadZip'])->name('seminar-applications.download-zip');
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
 
+    // Seminar Examiner Routes
+    Route::get('/seminar-examiner', [App\Http\Controllers\SeminarExaminerController::class, 'index'])->name('seminar-examiner.index');
+    Route::get('/seminar-examiner/{detail}', [App\Http\Controllers\SeminarExaminerController::class, 'show'])->name('seminar-examiner.show');
+    Route::post('/seminar-examiner/{detail}/revision', [App\Http\Controllers\SeminarExaminerController::class, 'storeRevision'])->name('seminar-examiner.store-revision');
+    Route::post('/seminar-examiner/revisions/{revision}/approve', [App\Http\Controllers\SeminarExaminerController::class, 'approveRevision'])->name('seminar-examiner.approve-revision');
+
+    // Thesis Defense Examiner Routes
+    Route::get('/defense-examiner', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'index'])->name('defense-examiner.index');
+    Route::get('/defense-examiner/{detail}', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'show'])->name('defense-examiner.show');
+    Route::get('/defense-examiner/{detail}/grading', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'grading'])->name('defense-examiner.grading');
+    Route::post('/defense-examiner/{detail}/grading', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'storeGrading'])->name('defense-examiner.store-grading');
+    Route::post('/defense-examiner/{detail}/revision', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'storeRevision'])->name('defense-examiner.store-revision');
+    Route::post('/defense-examiner/revisions/{revision}/approve', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'approveRevision'])->name('defense-examiner.approve-revision');
+    Route::post('/defense-examiner/{detail}/approve-direct', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'approveRevisionDirect'])->name('defense-examiner.approve-revision-direct');
+
+    // Student Seminar Revision Routes
+    Route::get('/student-seminar-revisions', [App\Http\Controllers\StudentSeminarRevisionController::class, 'index'])->name('student-seminar-revisions.index');
+    Route::get('/student-seminar-revisions/{revision}', [App\Http\Controllers\StudentSeminarRevisionController::class, 'show'])->name('student-seminar-revisions.show');
+    Route::post('/student-seminar-revisions/{revision}/reply', [App\Http\Controllers\StudentSeminarRevisionController::class, 'storeReply'])->name('student-seminar-revisions.store-reply');
+    Route::get('/student-seminar-revisions/{revision}/print', [App\Http\Controllers\StudentSeminarRevisionController::class, 'printPdf'])->name('student-seminar-revisions.print-pdf');
+
+    // Student Thesis Defense Revision Routes
+    Route::get('/student-defense-revisions', [App\Http\Controllers\StudentThesisDefenseRevisionController::class, 'index'])->name('student-defense-revisions.index');
+    Route::get('/student-defense-revisions/{revision}', [App\Http\Controllers\StudentThesisDefenseRevisionController::class, 'show'])->name('student-defense-revisions.show');
+    Route::post('/student-defense-revisions/{revision}/reply', [App\Http\Controllers\StudentThesisDefenseRevisionController::class, 'storeReply'])->name('student-defense-revisions.store-reply');
+    Route::get('/student-defense-revisions/{revision}/print', [App\Http\Controllers\StudentThesisDefenseRevisionController::class, 'printPdf'])->name('student-defense-revisions.print-pdf');
+
     // Thesis Defense Applications (Sidang)
     Route::get('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'index'])->name('thesis-defense-applications.index');
     Route::post('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'store'])->name('thesis-defense-applications.store');
@@ -209,33 +342,36 @@ Route::middleware('auth')->group(function () {
     Route::patch('/thesis-defense-applications/{application}/validate', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'validateApplication'])->name('thesis-defense-applications.validate');
     Route::get('/thesis-defense-applications/{application}/download-zip', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'downloadZip'])->name('thesis-defense-applications.download-zip');
     Route::delete('/thesis-defense-applications/{application}', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'destroy'])->name('thesis-defense-applications.destroy');
-    
+
     Route::resource('mentoring-sessions', App\Http\Controllers\MentoringSessionController::class);
     Route::patch('/mentoring-sessions/{session}/status', [App\Http\Controllers\MentoringSessionController::class, 'updateStatus'])->name('mentoring-sessions.status');
     Route::post('/mentoring-sessions/{session}/upload-document', [App\Http\Controllers\MentoringSessionController::class, 'uploadDocument'])->name('mentoring-sessions.upload-document');
     Route::delete('/mentoring-sessions/{session}/document', [App\Http\Controllers\MentoringSessionController::class, 'deleteDocument'])->name('mentoring-sessions.delete-document');
-    
+
     // Logbooks
     Route::get('/logbooks', [App\Http\Controllers\LogbookController::class, 'index'])->name('logbooks.index');
     Route::get('/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('logbooks.export-pdf');
     Route::get('/theses/{thesis}/logbooks', [App\Http\Controllers\LogbookController::class, 'show'])->name('theses.logbooks');
     Route::get('/theses/{thesis}/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('theses.logbooks.export-pdf');
-    
+
     // Announcements (Admin Only)
     Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
     Route::post('/announcements', [App\Http\Controllers\AnnouncementController::class, 'store'])->name('announcements.store');
     Route::patch('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'update'])->name('announcements.update');
     Route::delete('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
     Route::post('/announcements/{announcement}/toggle', [App\Http\Controllers\AnnouncementController::class, 'toggleStatus'])->name('announcements.toggle');
-    
+
     // System Logs (Admin Only)
     Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
     Route::get('/admin/logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.logs');
 
     // Monitoring (Admin Only)
+    Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
+    Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
+    Route::get('/monitoring/defense-scores', [App\Http\Controllers\MonitoringController::class, 'defenseScores'])->name('monitoring.defense-scores');
     Route::get('/monitoring/export', [App\Http\Controllers\MonitoringController::class, 'export'])->name('monitoring.export');
     Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
-    
+
     // Seminar Schedule (Admin Only)
     Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
     Route::get('/seminar-schedules/{seminar_schedule}/export-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportPdf'])->name('seminar-schedules.export-pdf');
@@ -243,12 +379,16 @@ Route::middleware('auth')->group(function () {
     // Thesis Defense Schedule (Sidang) (Admin Only)
     Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
     Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
-    
+
     // User Management (Admin Only)
     Route::get('/users/export', [App\Http\Controllers\UserController::class, 'export'])->name('users.export');
     Route::post('/users/import', [App\Http\Controllers\UserController::class, 'import'])->name('users.import');
     Route::post('/users/{user}/toggle', [App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle');
     Route::resource('users', App\Http\Controllers\UserController::class)->except(['show']);
+
+    // Wave Management (Admin Only)
+    Route::post('/waves/{wave}/toggle', [App\Http\Controllers\WaveController::class, 'toggle'])->name('waves.toggle');
+    Route::resource('waves', App\Http\Controllers\WaveController::class)->except(['show', 'create', 'edit']);
 
     // Notifications
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
@@ -256,4 +396,4 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
