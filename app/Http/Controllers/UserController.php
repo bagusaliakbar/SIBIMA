@@ -65,6 +65,7 @@ class UserController extends Controller
             'password' => ['required', \Illuminate\Validation\Rules\Password::defaults()],
             'role' => ['required', 'in:dosen,mahasiswa'],
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class],
+            'entry_year' => ['nullable', 'integer', 'min:2000', 'max:'.(date('Y') + 1)],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
@@ -79,6 +80,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'identifier' => $request->identifier,
+            'entry_year' => $request->entry_year,
             'avatar' => $avatarPath,
             'is_active' => true,
         ]);
@@ -121,6 +123,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$user->id],
             'role' => ['required', 'in:dosen,mahasiswa'],
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class.',identifier,'.$user->id],
+            'entry_year' => ['nullable', 'integer', 'min:2000', 'max:'.(date('Y') + 1)],
             'password' => ['nullable', \Illuminate\Validation\Rules\Password::defaults()],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
@@ -130,6 +133,7 @@ class UserController extends Controller
             'email' => $request->email,
             'role' => $request->role,
             'identifier' => $request->identifier,
+            'entry_year' => $request->entry_year,
         ];
 
         if ($request->hasFile('avatar')) {

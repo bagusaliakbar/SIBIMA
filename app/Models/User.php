@@ -26,7 +26,35 @@ class User extends Authenticatable
         'identifier',
         'is_active',
         'avatar',
+        'entry_year',
     ];
+
+    /**
+     * Get current semester based on entry year
+     */
+    public function getCurrentSemesterAttribute()
+    {
+        if (!$this->entry_year) return null;
+
+        $now = now();
+        $yearDiff = $now->year - $this->entry_year;
+        
+        // In Indonesia, odd semester (ganjil) starts around July/August
+        // even semester (genap) starts around January/February
+        $month = $now->month;
+        
+        if ($month >= 7) {
+            return ($yearDiff * 2) + 1;
+        } else {
+            return $yearDiff * 2;
+        }
+    }
+
+    public function getIsCriticalSemesterAttribute()
+    {
+        $sem = $this->current_semester;
+        return $sem !== null && $sem >= 13;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

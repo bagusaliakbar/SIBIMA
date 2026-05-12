@@ -22,7 +22,7 @@ class ThesisDefenseScheduleController extends Controller
         }
 
         $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
-        $selectedWaveId = $request->get('wave_id', $activeWave?->id);
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
         $schedules = ThesisDefenseSchedule::with(['chairman', 'moderator', 'creator'])
             ->when($selectedWaveId, function($query) use ($selectedWaveId) {
@@ -209,6 +209,18 @@ class ThesisDefenseScheduleController extends Controller
 
     public function exportPdf(ThesisDefenseSchedule $thesisDefenseSchedule)
     {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->id !== $thesisDefenseSchedule->chairman_id && $user->id !== $thesisDefenseSchedule->moderator_id) {
+            // Check if user is one of the examiners in the details
+            $isExaminer = $thesisDefenseSchedule->details()->where(function($q) use ($user) {
+                $q->where('examiner1_id', $user->id)
+                  ->orWhere('examiner2_id', $user->id);
+            })->exists();
+
+            if (!$isExaminer) {
+                abort(403);
+            }
+        }
         $thesisDefenseSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
         $pdf = Pdf::loadView('thesis_defense_schedules.pdf', compact('thesisDefenseSchedule'))

@@ -24,7 +24,7 @@
 
                     <div>
                         <x-input-label for="date" value="Tanggal Pelaksanaan" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <x-text-input id="date" name="date" type="date" class="mt-1 block w-full text-sm" required />
+                        <x-text-input id="date" name="date" type="date" @change="recheckAll()" class="mt-1 block w-full text-sm" required />
                         <x-input-error :messages="$errors->get('date')" class="mt-2" />
                     </div>
 
@@ -42,7 +42,7 @@
 
                     <div>
                         <x-input-label for="chairman_id" value="Ketua Sidang" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <select id="chairman_id" name="chairman_id" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm" required>
+                        <select id="chairman_id" name="chairman_id" x-model="chairman_id" @change="recheckAll()" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm" required>
                             <option value="">Pilih Ketua Sidang</option>
                             @foreach($dosens as $dosen)
                                 <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
@@ -53,7 +53,7 @@
 
                     <div>
                         <x-input-label for="moderator_id" value="Moderator" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <select id="moderator_id" name="moderator_id" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm" required>
+                        <select id="moderator_id" name="moderator_id" x-model="moderator_id" @change="recheckAll()" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm" required>
                             <option value="">Pilih Moderator</option>
                             @foreach($dosens as $dosen)
                                 <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
@@ -98,11 +98,11 @@
                                     <!-- Time -->
                                     <div class="md:col-span-2">
                                         <x-input-label value="Waktu Mulai" class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1" />
-                                        <input type="time" :name="`details[${index}][start_time]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500" required>
+                                        <input type="time" :name="`details[${index}][start_time]`" x-model="row.start_time" @change="checkConflict(index)" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500" required>
                                     </div>
                                     <div class="md:col-span-2">
                                         <x-input-label value="Waktu Selesai" class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1" />
-                                        <input type="time" :name="`details[${index}][end_time]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500" required>
+                                        <input type="time" :name="`details[${index}][end_time]`" x-model="row.end_time" @change="checkConflict(index)" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500" required>
                                     </div>
 
                                     <!-- Content -->
@@ -126,7 +126,7 @@
 
                                     <div class="md:col-span-2" x-show="row.type === 'student'">
                                         <x-input-label value="Penguji 1" class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1" />
-                                        <select :name="`details[${index}][examiner1_id]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
+                                        <select :name="`details[${index}][examiner1_id]`" x-model="row.examiner1_id" @change="checkConflict(index)" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Pilih Penguji</option>
                                             @foreach($dosens as $dosen)
                                                 <option value="{{ $dosen->id }}" x-show="!isAdvisor({{ $dosen->id }}, row.thesis_id)" :disabled="isAdvisor({{ $dosen->id }}, row.thesis_id)">{{ $dosen->name }}</option>
@@ -136,12 +136,27 @@
 
                                     <div class="md:col-span-2" x-show="row.type === 'student'">
                                         <x-input-label value="Penguji 2" class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1" />
-                                        <select :name="`details[${index}][examiner2_id]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
+                                        <select :name="`details[${index}][examiner2_id]`" x-model="row.examiner2_id" @change="checkConflict(index)" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Pilih Penguji</option>
                                             @foreach($dosens as $dosen)
                                                 <option value="{{ $dosen->id }}" x-show="!isAdvisor({{ $dosen->id }}, row.thesis_id)" :disabled="isAdvisor({{ $dosen->id }}, row.thesis_id)">{{ $dosen->name }}</option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                </div>
+
+                                <!-- Conflict Warning -->
+                                <div x-show="row.conflicts && row.conflicts.length > 0" x-transition class="mt-3 p-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <div>
+                                            <p class="text-[10px] font-black text-rose-700 dark:text-rose-300 uppercase tracking-widest">Peringatan Bentrok Jadwal</p>
+                                            <ul class="mt-1 space-y-1">
+                                                <template x-for="msg in row.conflicts">
+                                                    <li class="text-[10px] text-rose-600 dark:text-rose-400 font-medium list-disc ml-3" x-text="msg"></li>
+                                                </template>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -164,8 +179,10 @@
     <script>
         function scheduleForm() {
             return {
+                chairman_id: '',
+                moderator_id: '',
                 rows: [
-                    { type: 'activity', start_time: '', end_time: '', activity_name: '', thesis_id: '', examiner1_id: '', examiner2_id: '' }
+                    { type: 'activity', start_time: '', end_time: '', activity_name: '', thesis_id: '', examiner1_id: '', examiner2_id: '', conflicts: [] }
                 ],
                 theses: @json($theses),
                 addRow(type) {
@@ -176,7 +193,8 @@
                         activity_name: '',
                         thesis_id: '',
                         examiner1_id: '',
-                        examiner2_id: ''
+                        examiner2_id: '',
+                        conflicts: []
                     });
                 },
                 removeRow(index) {
@@ -195,6 +213,58 @@
                     let advisors = thesis.pembimbing1.name;
                     if (thesis.pembimbing2) advisors += ' & ' + thesis.pembimbing2.name;
                     return advisors;
+                },
+                async checkConflict(index) {
+                    const row = this.rows[index];
+                    const date = document.getElementById('date').value;
+                    
+                    if (!date || !row.start_time || !row.end_time) return;
+
+                    const dosenIds = [];
+                    if (this.chairman_id) dosenIds.push(this.chairman_id);
+                    if (this.moderator_id) dosenIds.push(this.moderator_id);
+                    if (row.examiner1_id) dosenIds.push(row.examiner1_id);
+                    if (row.examiner2_id) dosenIds.push(row.examiner2_id);
+
+                    if (dosenIds.length === 0) {
+                        row.conflicts = [];
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('{{ route("check-dosen-availability") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                dosen_ids: dosenIds,
+                                date: date,
+                                start_time: row.start_time,
+                                end_time: row.end_time,
+                                schedule_type: 'seminar'
+                            })
+                        });
+
+                        const data = await response.json();
+                        row.conflicts = [];
+                        
+                        if (data.has_conflict) {
+                            Object.values(data.conflicts).forEach(conflict => {
+                                conflict.messages.forEach(msg => {
+                                    row.conflicts.push(`${conflict.name} - ${msg}`);
+                                });
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error checking conflict:', error);
+                    }
+                },
+                recheckAll() {
+                    this.rows.forEach((row, index) => {
+                        this.checkConflict(index);
+                    });
                 }
             }
         }

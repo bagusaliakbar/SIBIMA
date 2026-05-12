@@ -189,6 +189,11 @@
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.defense-scores') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a.75.75 0 00-1.061 0l-1.061 1.06a.75.75 0 101.06 1.061l1.061-1.06a.75.75 0 000-1.061zM6 8a2 2 0 11-4 0 2 2 0 014 0zM22 12a10 10 0 11-20 0 10 10 0 0120 0z"></path></svg>
                             Nilai Sidang
                         </a>
+                        <a href="{{ route('monitoring.critical') }}" 
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.critical') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.critical') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Monitoring Masa Studi
+                        </a>
                     </nav>
 
                     <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
@@ -252,18 +257,6 @@
                     </nav>
                     @endif
                 </div>
-
-                <div class="mt-auto p-6 border-t border-white/[0.05] dark:border-white/[0.02] bg-black/10">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="group flex items-center px-4 py-3 w-full text-left rounded-xl text-sm text-slate-400 font-bold hover:text-white hover:bg-red-600/90 transition-all duration-300 shadow-sm">
-                            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mr-3 group-hover:bg-white/20 transition-colors shadow-inner">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                            </div>
-                            Keluar
-                        </button>
-                    </form>
-                </div>
             </aside>
 
             <!-- Main Content Area -->
@@ -276,11 +269,10 @@
                         </div>
                         <h1 class="text-lg font-black text-slate-800 tracking-tighter">SIBIMA</h1>
                     </div>
-                    
-                    <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-700/50 rounded-xl px-4 py-2.5 w-80 border border-slate-100 dark:border-slate-600 focus-within:border-orange-200 focus-within:bg-white dark:focus-within:bg-slate-700 focus-within:ring-4 focus-within:ring-orange-50 dark:focus-within:ring-orange-900/20 transition-all duration-300">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" placeholder="Cari data, mahasiswa, atau berkas..." class="bg-transparent border-none focus:ring-0 text-xs ml-3 w-full placeholder-slate-400 font-medium p-0 text-slate-600 dark:text-slate-200">
-                    </div>
+
+                    <!-- Desktop Spacer to keep right elements aligned -->
+                    <div class="hidden md:block"></div>
+
 
                     <div class="flex items-center space-x-5">
                         <div class="hidden md:flex items-center space-x-2">
@@ -360,6 +352,17 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Cool Divider -->
+                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+                            <!-- Logout Button -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group" title="Keluar">
+                                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                </button>
+                            </form>
                         </div>
 
                         <audio id="notif-sound" preload="auto">

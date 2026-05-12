@@ -17,12 +17,18 @@ class ThesisController extends Controller
 {
     public function exportExcel(Request $request)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
         $search = $request->input('search');
         return Excel::download(new ThesesExport($search), 'data-skripsi-' . now()->format('Y-m-d') . '.xlsx');
     }
 
     public function exportPdf(Request $request)
     {
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'dosen') {
+            abort(403);
+        }
         $search = $request->input('search');
         $user = Auth::user();
         

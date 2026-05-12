@@ -30,6 +30,20 @@
                     </select>
                 </form>
 
+                <!-- Export Buttons -->
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('monitoring.defense-scores.export-excel', ['wave_id' => $selectedWaveId]) }}" 
+                       class="flex items-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-emerald-900/20 group">
+                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Excel
+                    </a>
+                    <a href="{{ route('monitoring.defense-scores.export-pdf', ['wave_id' => $selectedWaveId]) }}" 
+                       class="flex items-center gap-2 px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-rose-900/20 group">
+                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        PDF
+                    </a>
+                </div>
+
                 <form action="{{ route('monitoring.defense-scores') }}" method="GET" class="relative group min-w-[320px]">
                     @if($selectedWaveId) <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}"> @endif
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-transform group-focus-within:scale-110">

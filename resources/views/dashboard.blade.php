@@ -76,6 +76,21 @@
                     </div>
                 </div>
             @endif
+
+            @if(Auth::user()->is_critical_semester)
+                <div class="bg-gradient-to-r from-red-600 to-rose-700 p-4 rounded-xl mb-6 flex items-center gap-4 shadow-lg shadow-red-200 dark:shadow-none">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md text-white rounded-xl flex items-center justify-center flex-shrink-0 border border-white/30">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-black text-white uppercase tracking-wider">Peringatan Masa Studi Kritikal!</h4>
+                        <p class="text-xs text-red-50 font-medium leading-relaxed">Saat ini Anda berada di <b>Semester {{ Auth::user()->current_semester }}</b>. Harap segera menyelesaikan skripsi Anda untuk menghindari potensi Drop Out (DO). Hubungi Koordinator Prodi jika memerlukan bantuan khusus.</p>
+                    </div>
+                    <div class="hidden md:block">
+                        <span class="px-3 py-1 bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-full border border-white/20">Urgent</span>
+                    </div>
+                </div>
+            @endif
             <!-- Timeline Progres Mahasiswa -->
             <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mb-6 relative overflow-hidden transition-all duration-300">
                 <!-- Background Pattern -->

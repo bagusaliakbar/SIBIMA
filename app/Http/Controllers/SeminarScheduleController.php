@@ -22,7 +22,7 @@ class SeminarScheduleController extends Controller
         }
 
         $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
-        $selectedWaveId = $request->get('wave_id', $activeWave?->id);
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
         $schedules = SeminarSchedule::with(['chairman', 'moderator', 'creator'])
             ->when($selectedWaveId, function($query) use ($selectedWaveId) {
@@ -209,6 +209,18 @@ class SeminarScheduleController extends Controller
 
     public function exportPdf(SeminarSchedule $seminarSchedule)
     {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->id !== $seminarSchedule->chairman_id && $user->id !== $seminarSchedule->moderator_id) {
+            // Check if user is one of the examiners in the details
+            $isExaminer = $seminarSchedule->details()->where(function($q) use ($user) {
+                $q->where('examiner1_id', $user->id)
+                  ->orWhere('examiner2_id', $user->id);
+            })->exists();
+
+            if (!$isExaminer) {
+                abort(403);
+            }
+        }
         $seminarSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
         $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule'))

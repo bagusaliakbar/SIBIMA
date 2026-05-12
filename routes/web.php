@@ -368,7 +368,10 @@ Route::middleware('auth')->group(function () {
     // Monitoring (Admin Only)
     Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
     Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
+    Route::get('/monitoring/defense-scores/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresExcel'])->name('monitoring.defense-scores.export-excel');
+    Route::get('/monitoring/defense-scores/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresPdf'])->name('monitoring.defense-scores.export-pdf');
     Route::get('/monitoring/defense-scores', [App\Http\Controllers\MonitoringController::class, 'defenseScores'])->name('monitoring.defense-scores');
+    Route::get('/monitoring/critical', [App\Http\Controllers\MonitoringController::class, 'criticalStudents'])->name('monitoring.critical');
     Route::get('/monitoring/export', [App\Http\Controllers\MonitoringController::class, 'export'])->name('monitoring.export');
     Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
 
@@ -394,6 +397,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
+    // Conflict Check
+    Route::post('/check-dosen-availability', [App\Http\Controllers\ScheduleConflictController::class, 'checkDosenAvailability'])->name('check-dosen-availability');
 });
 
 require __DIR__ . '/auth.php';

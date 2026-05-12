@@ -80,6 +80,15 @@
                             <x-input-error :messages="$errors->get('identifier')" class="mt-2" />
                         </div>
 
+                        <!-- Tahun Angkatan (Khusus Mahasiswa) -->
+                        <div>
+                            <label for="entry_year" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tahun Angkatan <span class="text-[10px] text-slate-400 font-normal italic">(Khusus Mahasiswa)</span></label>
+                            <input id="entry_year" type="number" name="entry_year" value="{{ old('entry_year', $user->entry_year) }}" 
+                                class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors" placeholder="Cth: 2020">
+                            <p class="mt-1 text-[10px] text-slate-500">Digunakan untuk monitoring masa studi kritikal.</p>
+                            <x-input-error :messages="$errors->get('entry_year')" class="mt-2" />
+                        </div>
+
                         <!-- Email Address -->
                         <div class="md:col-span-2">
                             <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Alamat Email</label>

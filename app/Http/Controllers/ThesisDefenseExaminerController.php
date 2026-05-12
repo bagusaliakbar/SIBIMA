@@ -21,7 +21,7 @@ class ThesisDefenseExaminerController extends Controller
         }
 
         $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
-        $selectedWaveId = $request->get('wave_id', $activeWave?->id);
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
         $examinations = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'revisions' => function($q) use ($user) {
                 $q->where('examiner_id', $user->id);

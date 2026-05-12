@@ -23,7 +23,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Student Info -->
         <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden sticky top-6">
+            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden sticky top-6">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/10 rounded-full -mr-12 -mt-12"></div>
                 <div class="relative">
                     <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-6 text-2xl font-black shadow-lg shadow-indigo-200 dark:shadow-none">
