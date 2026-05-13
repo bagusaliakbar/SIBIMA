@@ -40,9 +40,10 @@ class DefenseScoresExport implements FromCollection, WithHeadings, WithMapping, 
             'JUDUL SKRIPSI',
             'TIM PENELAAH',
             'PRESENTASI (25%)',
-            'NASKAH TA (40%)',
-            'PENULISAN (35%)',
-            'TOTAL NILAI',
+            'PENJELASAN NASKAH (40%)',
+            'PENULISAN NASKAH (35%)',
+            'JML NILAI',
+            'TOTAL',
             'NILAI AKHIR',
             'NILAI HURUF'
         ];
@@ -73,18 +74,16 @@ class DefenseScoresExport implements FromCollection, WithHeadings, WithMapping, 
 
         $getGrade = function($s) {
             if ($s >= 80) return 'A';
-            if ($s >= 75) return 'B+';
             if ($s >= 70) return 'B';
-            if ($s >= 65) return 'C+';
             if ($s >= 60) return 'C';
             if ($s >= 50) return 'D';
             return 'E';
         };
         $finalGrade = $scores->count() > 0 ? $getGrade($finalScore) : '-';
 
-        $examiners = "P1: " . ($detail->thesis->pembimbing1->name ?? '-') . "\n" .
-                     "U1: " . ($detail->examiner1->name ?? '-') . "\n" .
-                     "U2: " . ($detail->examiner2->name ?? '-');
+        $examiners = "1.: " . ($detail->thesis->pembimbing1->name ?? '-') . "\n" .
+                     "2.: " . ($detail->examiner1->name ?? '-') . "\n" .
+                     "3.: " . ($detail->examiner2->name ?? '-');
 
         return [
             $this->rowNumber,
@@ -95,6 +94,7 @@ class DefenseScoresExport implements FromCollection, WithHeadings, WithMapping, 
             ($revP1->score_presentation ?? '-') . " | " . ($revE1->score_presentation ?? '-') . " | " . ($revE2->score_presentation ?? '-'),
             ($revP1->score_explanation ?? '-') . " | " . ($revE1->score_explanation ?? '-') . " | " . ($revE2->score_explanation ?? '-'),
             ($revP1->score_writing ?? '-') . " | " . ($revE1->score_writing ?? '-') . " | " . ($revE2->score_writing ?? '-'),
+            ($scoreP1 ? number_format($scoreP1, 1) : '-') . " | " . ($scoreE1 ? number_format($scoreE1, 1) : '-') . " | " . ($scoreE2 ? number_format($scoreE2, 1) : '-'),
             number_format($totalScore, 1),
             number_format($finalScore, 1),
             $finalGrade

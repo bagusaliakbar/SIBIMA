@@ -60,7 +60,7 @@
                         @forelse($logs as $log)
                             <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group">
                                 <td class="py-4 px-6 whitespace-nowrap">
-                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ $log->created_at->format('d M Y') }}</p>
+                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ $log->created_at->locale('id')->translatedFormat('d M Y') }}</p>
                                     <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{{ $log->created_at->format('H:i:s') }}</p>
                                 </td>
                                 <td class="py-4 px-6 whitespace-nowrap">

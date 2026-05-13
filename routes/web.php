@@ -7,6 +7,8 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/verify-signature/{token}', [App\Http\Controllers\SignatureController::class, 'verify'])->name('signature.verify');
+
 Route::get('/dashboard', function () {
     $thesis = null;
     $upcomingSessions = collect();
@@ -38,6 +40,9 @@ Route::get('/dashboard', function () {
     $myDefenseSchedule = null;
     $examinerSeminarSchedules = collect();
     $examinerDefenseSchedules = collect();
+
+    $onTimeStats = null;
+    $studentHealthStats = null;
 
     if (Auth::user()->role === 'mahasiswa') {
         $thesis = \App\Models\Thesis::with(['pembimbing1', 'pembimbing2'])
@@ -250,6 +255,58 @@ Route::get('/dashboard', function () {
         }
         arsort($dosenWorkload);
         $dosenWorkload = array_slice($dosenWorkload, 0, 10, true);
+
+        // On-time Graduation Statistics
+        $onTimeGraduates = 0;
+        $lateGraduates = 0;
+        $completedTheses = \App\Models\Thesis::where('status', 'completed')->with('student')->get();
+        foreach ($completedTheses as $t) {
+            if ($t->student && $t->student->entry_year) {
+                $graduationYear = $t->updated_at->year;
+                if ($graduationYear - $t->student->entry_year <= 4) {
+                    $onTimeGraduates++;
+                } else {
+                    $lateGraduates++;
+                }
+            }
+        }
+        $onTimeStats = [
+            'Tepat Waktu' => $onTimeGraduates,
+            'Terlambat' => $lateGraduates,
+        ];
+
+        // Critical Students (Semester 13-14 or more)
+        // Semester 1 is entry_year. Year 7 is Semester 13-14.
+        $criticalThresholdYear = now()->year - 6;
+        $criticalStudentsCount = \App\Models\User::where('role', 'mahasiswa')
+            ->where('entry_year', '<=', $criticalThresholdYear)
+            ->whereHas('thesis', function($q) {
+                $q->where('status', '!=', 'completed');
+            })->count();
+
+        $studentHealthStats = [
+            'Normal' => \App\Models\User::where('role', 'mahasiswa')->where('entry_year', '>', $criticalThresholdYear)->count(),
+            'Kritis' => $criticalStudentsCount,
+        ];
+
+        // Completion Time per Cohort
+        $cohortCompletionData = [];
+        $completedTheses = \App\Models\Thesis::where('status', 'completed')->with('student')->get();
+        $cohortYears = $completedTheses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort();
+        
+        foreach ($cohortYears as $year) {
+            $thesesInCohort = $completedTheses->filter(fn($t) => $t->student?->entry_year == $year);
+            $totalDuration = 0;
+            $count = 0;
+            foreach ($thesesInCohort as $t) {
+                $graduationDuration = $t->updated_at->year - $year;
+                $totalDuration += $graduationDuration;
+                $count++;
+            }
+            if ($count > 0) {
+                $cohortCompletionData["Angkatan " . $year] = round($totalDuration / $count, 1);
+            }
+        }
     }
     $announcements = \App\Models\Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get();
 
@@ -280,7 +337,10 @@ Route::get('/dashboard', function () {
         'mySeminarSchedule',
         'myDefenseSchedule',
         'examinerSeminarSchedules',
-        'examinerDefenseSchedules'
+        'examinerDefenseSchedules',
+        'onTimeStats',
+        'studentHealthStats',
+        'cohortCompletionData'
     ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -288,6 +348,7 @@ Route::middleware('auth')->group(function () {
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/signature', [ProfileController::class, 'updateSignature'])->name('profile.signature.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Chat Routes
@@ -370,6 +431,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
     Route::get('/monitoring/defense-scores/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresExcel'])->name('monitoring.defense-scores.export-excel');
     Route::get('/monitoring/defense-scores/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresPdf'])->name('monitoring.defense-scores.export-pdf');
+    Route::get('/monitoring/defense-scores/{detail}/berita-acara', [App\Http\Controllers\MonitoringController::class, 'exportBeritaAcara'])->name('monitoring.defense-scores.berita-acara');
     Route::get('/monitoring/defense-scores', [App\Http\Controllers\MonitoringController::class, 'defenseScores'])->name('monitoring.defense-scores');
     Route::get('/monitoring/critical', [App\Http\Controllers\MonitoringController::class, 'criticalStudents'])->name('monitoring.critical');
     Route::get('/monitoring/export', [App\Http\Controllers\MonitoringController::class, 'export'])->name('monitoring.export');

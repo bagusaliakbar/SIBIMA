@@ -223,7 +223,8 @@ class SeminarScheduleController extends Controller
         }
         $seminarSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
-        $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule'))
+        $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule', 'kaprodi'))
             ->setPaper('a4', 'landscape');
 
         $safeTitle = str_replace([' ', '/', '\\'], '_', $seminarSchedule->title);

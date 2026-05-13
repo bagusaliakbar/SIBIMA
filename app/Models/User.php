@@ -27,7 +27,18 @@ class User extends Authenticatable
         'is_active',
         'avatar',
         'entry_year',
+        'phone_number',
+        'signature',
+        'signature_token',
     ];
+
+    /**
+     * Get signature URL
+     */
+    public function getSignatureUrlAttribute()
+    {
+        return $this->signature ? asset('storage/' . $this->signature) : null;
+    }
 
     /**
      * Get current semester based on entry year

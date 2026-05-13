@@ -105,7 +105,7 @@
 
     <div class="footer">
         <div class="footer-content">
-            <p>Subang, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+            <p>Subang, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</p>
             <p>Penguji</p>
             <div class="signature-space"></div>
             <p><strong>{{ $revision->examiner->name }}</strong></p>

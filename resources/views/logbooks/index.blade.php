@@ -67,7 +67,7 @@
                             <!-- Date & Time Column -->
                             <div class="md:w-48 shrink-0">
                                 <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Waktu Bimbingan</div>
-                                <div class="font-semibold text-slate-800 dark:text-slate-100">{{ $session->scheduled_at->format('d M Y') }}</div>
+                                <div class="font-semibold text-slate-800 dark:text-slate-100">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</div>
                                 <div class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $session->scheduled_at->format('H:i') }} WIB</div>
                                 
                             </div>

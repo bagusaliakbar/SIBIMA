@@ -223,7 +223,8 @@ class ThesisDefenseScheduleController extends Controller
         }
         $thesisDefenseSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
-        $pdf = Pdf::loadView('thesis_defense_schedules.pdf', compact('thesisDefenseSchedule'))
+        $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $pdf = Pdf::loadView('thesis_defense_schedules.pdf', compact('thesisDefenseSchedule', 'kaprodi'))
             ->setPaper('a4', 'landscape');
 
         $safeTitle = str_replace([' ', '/', '\\'], '_', $thesisDefenseSchedule->title);

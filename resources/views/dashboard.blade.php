@@ -204,7 +204,7 @@
 
                     <div class="text-center md:text-right">
                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Tanggal Yudisium</p>
-                        <p class="text-xl font-black text-white tracking-tighter">{{ now()->format('d F Y') }}</p>
+                        <p class="text-xl font-black text-white tracking-tighter">{{ now()->locale('id')->translatedFormat('d F Y') }}</p>
                     </div>
                 </div>
             </div>
@@ -419,12 +419,12 @@
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
                                     <div class="flex-shrink-0 w-12 h-12 bg-slate-50 dark:bg-slate-900/50 rounded-xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->translatedFormat('M') }}</span>
+                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->locale('id')->translatedFormat('M') }}</span>
                                         <span class="text-lg font-black text-slate-800 dark:text-slate-100 leading-none mt-1">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->format('d') }}</span>
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Hari & Tanggal</p>
-                                        <p class="text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->translatedFormat('l, d F Y') }}</p>
+                                        <p class="text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->locale('id')->translatedFormat('l, d F Y') }}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
@@ -464,12 +464,12 @@
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
                                     <div class="flex-shrink-0 w-12 h-12 bg-slate-50 dark:bg-slate-900/50 rounded-xl flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->translatedFormat('M') }}</span>
+                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->locale('id')->translatedFormat('M') }}</span>
                                         <span class="text-lg font-black text-slate-800 dark:text-slate-100 leading-none mt-1">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->format('d') }}</span>
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Hari & Tanggal</p>
-                                        <p class="text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->translatedFormat('l, d F Y') }}</p>
+                                        <p class="text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->locale('id')->translatedFormat('l, d F Y') }}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
@@ -540,7 +540,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="text-[11px]">
-                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->translatedFormat('d M Y') }}</p>
+                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
                                             <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
                                             @if($detail->schedule->meeting_link)
                                                 <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
@@ -577,7 +577,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="text-[11px]">
-                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->translatedFormat('d M Y') }}</p>
+                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
                                             <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
                                             @if($detail->schedule->meeting_link)
                                                 <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
@@ -596,6 +596,72 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+        @endif
+        
+        @if(Auth::user()->role === 'admin')
+            <!-- Admin Graduation & Health Analytics Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Graduation Speed -->
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-all duration-300 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900/20">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Ketepatan Waktu Lulus</h3>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded border border-emerald-200 uppercase tracking-widest">Target 4 Thn</span>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="onTimeGraduationChart"></canvas>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tepat Waktu</p>
+                            <p class="text-lg font-black text-emerald-600">{{ $onTimeStats['Tepat Waktu'] }}</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Terlambat</p>
+                            <p class="text-lg font-black text-rose-600">{{ $onTimeStats['Terlambat'] }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Health (Critical Status) -->
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-all duration-300 hover:shadow-lg hover:border-rose-200 dark:hover:border-rose-900/20">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Kesehatan Masa Studi</h3>
+                        <span class="px-2 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-black rounded border border-rose-200 uppercase tracking-widest">Siaga D.O.</span>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="studentHealthChart"></canvas>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Normal</p>
+                            <p class="text-lg font-black text-slate-800 dark:text-slate-100">{{ $studentHealthStats['Normal'] }}</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Kritis</p>
+                            <p class="text-lg font-black text-red-600">{{ $studentHealthStats['Kritis'] }}</p>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <a href="{{ route('monitoring.critical') }}" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-rose-900/20 group">
+                            Lihat Daftar Mahasiswa Kritis
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Average Completion Time (Full Width) -->
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 md:col-span-2 transition-all duration-300 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-900/20">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Rata-rata Masa Studi per Angkatan</h3>
+                            <p class="text-[10px] text-slate-500 font-medium mt-1 uppercase tracking-widest">Durasi kelulusan dihitung dalam satuan Tahun.</p>
+                        </div>
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-black rounded-full border border-blue-200 dark:border-blue-800 uppercase tracking-widest">Statistik Angkatan</span>
+                    </div>
+                    <div class="h-80">
+                        <canvas id="cohortCompletionChart"></canvas>
+                    </div>
                 </div>
             </div>
         @endif
@@ -644,7 +710,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-bold text-slate-600">{{ $session->scheduled_at->format('d M Y') }}</span>
+                                            <span class="text-xs font-bold text-slate-600">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
                                             <span class="text-[10px] text-slate-400">{{ $session->scheduled_at->format('H:i') }} WIB</span>
                                         </div>
                                     </td>
@@ -684,7 +750,7 @@
                                 <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-2 border-orange-500 ring-4 ring-orange-50 dark:ring-slate-900 transition-all group-hover:scale-125"></div>
                                 <div class="flex justify-between items-start mb-1">
                                     <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $logbook->topic }}</h4>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $logbook->scheduled_at->format('d M Y') }}</span>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $logbook->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">{{ $logbook->notes }}</p>
                                 @if(Auth::user()->role !== 'mahasiswa')
@@ -887,6 +953,117 @@
                                     borderWidth: 1,
                                     padding: 12,
                                     displayColors: false
+                                }
+                            }
+                        }
+                    });
+
+                    // On-time Graduation Chart
+                    const onTimeCtx = document.getElementById('onTimeGraduationChart').getContext('2d');
+                    new Chart(onTimeCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Tepat Waktu', 'Terlambat'],
+                            datasets: [{
+                                data: [{{ $onTimeStats['Tepat Waktu'] }}, {{ $onTimeStats['Terlambat'] }}],
+                                backgroundColor: ['#10b981', '#ef4444'],
+                                borderWidth: 0,
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { 
+                                legend: { 
+                                    position: 'bottom', 
+                                    labels: { 
+                                        usePointStyle: true, 
+                                        padding: 20, 
+                                        font: { weight: 'bold', size: 10 },
+                                        color: darkMode ? '#94a3b8' : '#64748b'
+                                    } 
+                                } 
+                            },
+                            cutout: '75%'
+                        }
+                    });
+
+                    // Student Health Chart
+                    const healthCtx = document.getElementById('studentHealthChart').getContext('2d');
+                    new Chart(healthCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Normal', 'Kritis (Sem 13+)'],
+                            datasets: [{
+                                data: [{{ $studentHealthStats['Normal'] }}, {{ $studentHealthStats['Kritis'] }}],
+                                backgroundColor: ['#3b82f6', '#f43f5e'],
+                                borderWidth: 0,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { 
+                                legend: { 
+                                    position: 'bottom', 
+                                    labels: { 
+                                        usePointStyle: true, 
+                                        padding: 20, 
+                                        font: { weight: 'bold', size: 10 },
+                                        color: darkMode ? '#94a3b8' : '#64748b'
+                                    } 
+                                } 
+                            }
+                        }
+                    });
+
+                    // Cohort Completion Chart
+                    const cohortCtx = document.getElementById('cohortCompletionChart').getContext('2d');
+                    new Chart(cohortCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: {!! json_encode(array_keys($cohortCompletionData)) !!},
+                            datasets: [{
+                                label: 'Rata-rata Masa Studi (Tahun)',
+                                data: {!! json_encode(array_values($cohortCompletionData)) !!},
+                                backgroundColor: '#3b82f6',
+                                borderRadius: 8,
+                                barThickness: 40
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: { 
+                                y: { 
+                                    beginAtZero: true, 
+                                    suggestedMax: 7,
+                                    grid: { color: darkMode ? '#334155' : '#f1f5f9' }, 
+                                    ticks: { color: darkMode ? '#94a3b8' : '#64748b' } 
+                                }, 
+                                x: { 
+                                    grid: { display: false },
+                                    ticks: { 
+                                        color: darkMode ? '#f1f5f9' : '#1e293b',
+                                        font: { weight: 'bold', size: 10 }
+                                    }
+                                } 
+                            },
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: darkMode ? '#1e293b' : '#fff',
+                                    titleColor: darkMode ? '#fff' : '#1e293b',
+                                    bodyColor: darkMode ? '#cbd5e1' : '#64748b',
+                                    borderColor: darkMode ? '#334155' : '#e2e8f0',
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.parsed.y + ' Tahun';
+                                        }
+                                    }
                                 }
                             }
                         }

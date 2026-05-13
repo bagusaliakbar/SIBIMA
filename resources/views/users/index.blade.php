@@ -31,7 +31,7 @@
                             </h3>
                             <div class="mt-2 text-xs text-slate-500 dark:text-slate-400 space-y-1">
                                 <p>Pastikan file Excel memiliki kolom (header) berikut pada baris pertama:</p>
-                                <code class="bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded text-slate-700 dark:text-slate-300 font-mono">Nama, Email, Peran, NPM/NIDN</code>
+                                <code class="bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded text-slate-700 dark:text-slate-300 font-mono">Nama, Email, Peran, NPM/NIDN, No_WhatsApp(Opsional)</code>
                                 <p class="text-[10px] italic mt-1">*Peran diisi dengan <span class="font-semibold text-slate-700 dark:text-slate-300">dosen</span> atau <span class="font-semibold text-slate-700 dark:text-slate-300">mahasiswa</span>.</p>
                                 <p class="text-[10px] italic">*Password akun yang baru akan di-set sama dengan <span class="font-semibold text-slate-700 dark:text-slate-300">NPM/NIDN</span>.</p>
                             </div>

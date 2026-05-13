@@ -69,13 +69,13 @@
                                     </div>
                                     <div class="max-w-xs md:max-w-md">
                                         <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm group-hover:text-indigo-600 transition-colors">{{ $exam->thesis->student->name }}</h4>
-                                        <p class="text-[11px] text-slate-400 mt-1 line-clamp-1 italic">"{{ $exam->thesis->title }}"</p>
+                                        <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">"{{ $exam->thesis->title }}"</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-5">
                                 <div class="flex flex-col">
-                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ \Carbon\Carbon::parse($exam->schedule->date)->format('d M Y') }}</span>
+                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ \Carbon\Carbon::parse($exam->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
                                     <span class="text-[10px] text-slate-400 mt-1 flex items-center">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         {{ \Carbon\Carbon::parse($exam->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($exam->end_time)->format('H:i') }} WIB

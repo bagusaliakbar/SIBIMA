@@ -40,7 +40,7 @@
                         <div class="pt-4 border-t border-slate-50 dark:border-slate-700">
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Sidang Tugas Akhir Anda</span>
                             <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                                <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2 italic">"{{ $revision->detail->thesis->title }}"</p>
+                                <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2">"{{ $revision->detail->thesis->title }}"</p>
                                 <div class="flex items-center text-[10px] font-bold text-slate-500">
                                     <svg class="w-3 h-3 mr-1.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     {{ \Carbon\Carbon::parse($revision->detail->schedule->date)->format('d F Y') }}
@@ -55,7 +55,7 @@
                             @endphp
                             @if($firstExaminerMessage)
                                 <div class="bg-rose-50/50 dark:bg-rose-500/5 p-4 rounded-xl border border-rose-100 dark:border-rose-500/20 shadow-sm">
-                                    <p class="text-[11px] font-medium text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                    <p class="text-[11px] font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
                                         "{!! nl2br(e($firstExaminerMessage->message)) !!}"
                                     </p>
                                     <div class="mt-3 flex items-center gap-3">

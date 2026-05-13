@@ -10,19 +10,67 @@
             color: #333;
             line-height: 1.5;
         }
-        .header {
+        .kop-surat {
+            width: 100%;
+            border-bottom: 3px double #000;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        .kop-surat table {
+            width: 100%;
+            border: none;
+        }
+        .kop-surat td {
+            border: none !important;
+            padding: 0 !important;
+            vertical-align: middle;
+        }
+        .kop-surat .logo-cell {
+            width: 100px;
+            text-align: left;
+        }
+        .kop-surat .logo-img {
+            width: 90px;
+            height: auto;
+        }
+        .kop-surat .info-cell {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            padding-right: 90px !important; /* Balance the logo width */
         }
-        .header h2 {
+        .kop-surat .univ-name {
+            font-size: 18px;
             margin: 0;
-            text-transform: uppercase;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
         }
-        .header p {
-            margin: 5px 0 0;
+        .kop-surat .faculty-name {
+            font-size: 22px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+        }
+        .kop-surat .accreditation {
+            font-size: 12px;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+        .kop-surat .address {
+            font-size: 10px;
+            margin: 1px 0;
+        }
+        .kop-surat .email {
+            font-size: 10px;
+            margin: 1px 0;
+        }
+        
+        .report-title {
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
             font-size: 14px;
+            margin-bottom: 20px;
+            text-decoration: underline;
         }
         .student-info {
             margin-bottom: 25px;
@@ -81,9 +129,25 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h2>Sistem Informasi Bimbingan Mahasiswa (SIBIMA)</h2>
-        <p>Laporan Logbook Bimbingan Skripsi</p>
+    <div class="kop-surat">
+        <table>
+            <tr>
+                <td class="logo-cell">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
+                </td>
+                <td class="info-cell">
+                    <div class="univ-name">UNIVERSITAS SUBANG</div>
+                    <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
+                    <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
+                    <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                    <div class="email">E-Mail : <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="report-title">
+        LOGBOOK BIMBINGAN SKRIPSI
     </div>
 
     <div class="student-info">
@@ -144,7 +208,16 @@
                             <strong>Dosen:</strong> {{ $session->dosen->name ?? '-' }}
                         </div>
                     </td>
-                    <td></td>
+                    <td class="text-center" style="vertical-align: middle;">
+                        @if($session->dosen && $session->dosen->signature)
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $session->dosen->signature))) }}" style="height: 100px; width: auto;">
+                        @elseif($session->dosen && $session->dosen->signature_token)
+                            {{-- Fallback to QR if no image but has token --}}
+                            <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(40)->generate(url('/verify-signature/' . $session->dosen->signature_token))) !!} ">
+                        @else
+                            <span style="font-size: 8px; color: #999;">ACC Digital</span>
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -154,25 +227,6 @@
         </tbody>
     </table>
 
-    <div class="footer-sign">
-        <table>
-            <tr>
-                <td>
-                    Mengetahui,<br>
-                    Dosen Pembimbing 1
-                    <div class="sign-space"></div>
-                    ( {{ $thesis->pembimbing1->name ?? '........................................' }} )<br>
-                    NIDN: {{ $thesis->pembimbing1->identifier ?? '....................' }}
-                </td>
-                <td>
-                    Dicetak pada: {{ now()->format('d M Y') }}<br>
-                    Mahasiswa
-                    <div class="sign-space"></div>
-                    ( {{ $thesis->student->name }} )<br>
-                    NPM: {{ $thesis->student->identifier }}
-                </td>
-            </tr>
-        </table>
-    </div>
+    {{-- Footer removed --}}
 </body>
 </html>

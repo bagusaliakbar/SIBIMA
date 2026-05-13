@@ -71,4 +71,36 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Update the user's signature.
+     */
+    public function updateSignature(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'signature' => ['required', 'image', 'mimes:png,jpg,jpeg', 'max:1024'],
+        ]);
+
+        $user = $request->user();
+
+        if ($request->hasFile('signature')) {
+            // Delete old signature
+            if ($user->signature) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->signature);
+            }
+
+            $path = $request->file('signature')->store('signatures', 'public');
+            $user->signature = $path;
+            
+            if (!$user->signature_token) {
+                $user->signature_token = \Illuminate\Support\Str::uuid();
+            }
+            
+            $user->save();
+        }
+
+        \App\Models\ActivityLog::log('Update Tanda Tangan', 'User memperbarui tanda tangan digital mereka.', 'Profil');
+
+        return Redirect::route('profile.edit')->with('status', 'signature-updated');
+    }
 }

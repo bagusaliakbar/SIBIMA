@@ -31,7 +31,7 @@
                             @forelse($announcements as $announcement)
                                 <tr class="bg-white dark:bg-slate-800 hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
                                     <td class="py-4 px-6 text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                                        {{ $announcement->created_at->format('d M Y') }}
+                                        {{ $announcement->created_at->locale('id')->translatedFormat('d M Y') }}
                                     </td>
                                     <td class="py-4 px-6">
                                         <div class="font-bold text-slate-800 dark:text-slate-100">{{ $announcement->title }}</div>

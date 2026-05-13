@@ -79,8 +79,8 @@
                     </tr>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 dark:text-slate-500 border-b border-slate-200 dark:border-slate-700">
                         <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PRESENTASI (25%)</th>
-                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">NASKAH TA (40%)</th>
-                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENULISAN (35%)</th>
+                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENJELASAN NASKAH (40%)</th>
+                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENULISAN NASKAH (35%)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -105,9 +105,7 @@
 
                             $getGrade = function($s) {
                                 if ($s >= 80) return 'A';
-                                if ($s >= 75) return 'B+';
                                 if ($s >= 70) return 'B';
-                                if ($s >= 65) return 'C+';
                                 if ($s >= 60) return 'C';
                                 if ($s >= 50) return 'D';
                                 return 'E';
@@ -115,8 +113,8 @@
                             $finalGrade = $scores->count() > 0 ? $getGrade($finalScore) : '-';
                             $gradeColor = match($finalGrade) {
                                 'A' => 'emerald',
-                                'B+', 'B' => 'blue',
-                                'C+', 'C' => 'amber',
+                                'B' => 'blue',
+                                'C' => 'amber',
                                 default => 'slate'
                             };
                         @endphp
@@ -130,12 +128,21 @@
                                 {{ $detail->thesis->student->identifier }}
                             </td>
                             <td rowspan="3" class="py-4 px-6 border-r border-slate-100 dark:border-slate-700 align-middle">
-                                <div class="font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-tight group-hover:text-emerald-600 transition-colors">{{ $detail->thesis->student->name }}</div>
-                                <div class="text-[10px] text-slate-400 mt-1 line-clamp-2 italic font-medium leading-relaxed">"{{ $detail->thesis->title }}"</div>
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <div class="font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-tight group-hover:text-emerald-600 transition-colors">{{ $detail->thesis->student->name }}</div>
+                                        <div class="text-[10px] text-slate-400 mt-1 line-clamp-2 font-medium leading-relaxed">"{{ $detail->thesis->title }}"</div>
+                                    </div>
+                                    <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
+                                       class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white text-slate-400 rounded-lg transition-all shadow-sm group/btn"
+                                       title="Cetak Berita Acara">
+                                        <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    </a>
+                                </div>
                             </td>
                             <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-indigo-50/20 dark:bg-indigo-900/10">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black uppercase">P1</span>
+                                    <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black uppercase">1.</span>
                                     <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->thesis->pembimbing1->name }}">{{ $detail->thesis->pembimbing1->name }}</span>
                                 </div>
                             </td>
@@ -160,7 +167,7 @@
                         <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
                             <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase">U1</span>
+                                    <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase">2.</span>
                                     <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner1->name }}">{{ $detail->examiner1->name }}</span>
                                 </div>
                             </td>
@@ -176,7 +183,7 @@
                         <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors border-b-2 border-slate-100 dark:border-slate-700">
                             <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase">U2</span>
+                                    <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase">3.</span>
                                     <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner2->name }}">{{ $detail->examiner2->name }}</span>
                                 </div>
                             </td>

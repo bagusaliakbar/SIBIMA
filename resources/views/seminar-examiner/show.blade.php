@@ -139,7 +139,7 @@
                                             Setujui (Final)
                                         </button>
                                     @endif
-                                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">
+                                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all">
                                         Kirim Feedback
                                     </button>
                                 </div>

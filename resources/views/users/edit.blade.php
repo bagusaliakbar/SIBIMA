@@ -90,11 +90,20 @@
                         </div>
 
                         <!-- Email Address -->
-                        <div class="md:col-span-2">
+                        <div>
                             <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Alamat Email</label>
                             <input id="email" type="email" name="email" value="{{ old('email', $user->email) }}" required 
                                 class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors">
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div>
+                            <label for="phone_number" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nomor WhatsApp</label>
+                            <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}" 
+                                class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors" placeholder="Cth: 08123456789">
+                            <p class="mt-1 text-[10px] text-slate-500 italic">Digunakan untuk pengiriman pengingat jadwal otomatis.</p>
+                            <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
                         </div>
 
                         <!-- Password -->

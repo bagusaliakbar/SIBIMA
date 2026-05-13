@@ -77,9 +77,9 @@
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col">
                                         <span
-                                            class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ \Carbon\Carbon::parse($schedule->date)->translatedFormat('d F Y') }}</span>
+                                            class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('d F Y') }}</span>
                                         <span
-                                            class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-medium">{{ \Carbon\Carbon::parse($schedule->date)->translatedFormat('l') }}</span>
+                                            class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-medium">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l') }}</span>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
@@ -99,10 +99,19 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
-                                        {{ $schedule->location ?: '-' }}
-                                    </span>
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                            {{ $schedule->location ?: '-' }}
+                                        </span>
+                                        @if($schedule->meeting_link)
+                                            <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center text-[9px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all gap-1 mt-1">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                                Buka Tautan
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="flex justify-end space-x-2">

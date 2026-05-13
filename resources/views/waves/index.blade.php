@@ -51,13 +51,13 @@
                             <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
                                 <td class="py-5 px-6">
                                     <div class="font-black text-sm text-slate-800 dark:text-slate-100 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{{ $wave->name }}</div>
-                                    <div class="text-[10px] text-slate-400 mt-0.5 font-medium italic">Dibuat pada {{ $wave->created_at->format('d M Y') }}</div>
+                                    <div class="text-[10px] text-slate-400 mt-0.5 font-medium italic">Dibuat pada {{ $wave->created_at->locale('id')->translatedFormat('d M Y') }}</div>
                                 </td>
                                 <td class="py-5 px-6">
                                     <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600 dark:text-slate-400">
-                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">{{ $wave->start_date ? $wave->start_date->format('d M Y') : '-' }}</span>
+                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">{{ $wave->start_date ? $wave->start_date->locale('id')->translatedFormat('d M Y') : '-' }}</span>
                                         <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">{{ $wave->end_date ? $wave->end_date->format('d M Y') : '-' }}</span>
+                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">{{ $wave->end_date ? $wave->end_date->locale('id')->translatedFormat('d M Y') : '-' }}</span>
                                     </div>
                                 </td>
                                 <td class="py-5 px-6">

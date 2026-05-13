@@ -53,8 +53,9 @@ class ThesisController extends Controller
         }
 
         $theses = $query->get();
+        $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
         
-        $pdf = Pdf::loadView('theses.pdf', compact('theses'));
+        $pdf = Pdf::loadView('theses.pdf', compact('theses', 'kaprodi'));
         return $pdf->download('data-skripsi-' . now()->format('Y-m-d') . '.pdf');
     }
     public function create()

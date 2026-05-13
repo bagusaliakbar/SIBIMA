@@ -10,17 +10,72 @@
             color: #333;
             line-height: 1.4;
         }
-        .header {
+        .kop-surat {
+            width: 100%;
+            border-bottom: 3px double #000;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        .kop-surat table {
+            width: 100%;
+            border: none;
+        }
+        .kop-surat td {
+            border: none !important;
+            padding: 0 !important;
+            vertical-align: middle;
+        }
+        .kop-surat .logo-cell {
+            width: 100px;
+            text-align: left;
+        }
+        .kop-surat .logo-img {
+            width: 90px;
+            height: auto;
+        }
+        .kop-surat .info-cell {
+            text-align: center;
+            padding-right: 90px !important; /* Balance the logo width */
+        }
+        .kop-surat .univ-name {
+            font-size: 18px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .kop-surat .faculty-name {
+            font-size: 22px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+        }
+        .kop-surat .accreditation {
+            font-size: 12px;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+        .kop-surat .address {
+            font-size: 10px;
+            margin: 1px 0;
+        }
+        .kop-surat .email {
+            font-size: 10px;
+            margin: 1px 0;
+        }
+        
+        .report-title {
             text-align: center;
             margin-bottom: 20px;
         }
-        .header h1 {
+        .report-title h1 {
             font-size: 18px;
             margin: 0;
             padding: 0;
             letter-spacing: 2px;
+            text-decoration: underline;
         }
-        .header h2 {
+        .report-title h2 {
             font-size: 13px;
             margin: 5px 0 0 0;
             padding: 0;
@@ -47,22 +102,22 @@
         }
         table.schedule th {
             background-color: #f8f9fa;
-            border: 1px solid #333;
-            padding: 8px;
-            font-size: 10px;
+            border: 0.5pt solid #000;
+            padding: 6px 4px;
+            font-size: 9px;
             font-weight: bold;
             text-transform: uppercase;
         }
         table.schedule td {
-            border: 1px solid #333;
-            padding: 8px;
+            border: 0.5pt solid #000;
+            padding: 6px 4px;
             vertical-align: top;
+            font-size: 10px;
         }
         .text-center { text-align: center; }
         .font-bold { font-weight: bold; }
         .activity-row {
             background-color: #fcfcfc;
-            font-style: italic;
         }
         .student-name {
             font-weight: bold;
@@ -72,17 +127,60 @@
         }
         .thesis-title {
             font-size: 10px;
-            font-style: italic;
             color: #555;
         }
         .list-item {
             margin-bottom: 4px;
         }
         .no-wrap { white-space: nowrap; }
+
+        /* Footer & Signature */
+        .footer {
+            margin-top: 30px;
+            width: 100%;
+        }
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .signature-container {
+            width: 250px;
+            text-align: left;
+        }
+        .signature-box {
+            display: inline-block;
+            text-align: left;
+        }
+        .signature-img {
+            max-height: 80px;
+            margin: 10px 0;
+        }
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="kop-surat">
+        <table>
+            <tr>
+                <td class="logo-cell">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
+                </td>
+                <td class="info-cell">
+                    <div class="univ-name">UNIVERSITAS SUBANG</div>
+                    <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
+                    <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
+                    <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                    <div class="email">E-Mail : <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="report-title">
         <h1>JADWAL SIDANG SKRIPSI</h1>
         <h2>{{ strtoupper($thesisDefenseSchedule->title) }}</h2>
     </div>
@@ -90,7 +188,7 @@
     <table class="meta-info">
         <tr>
             <td class="label">Hari / Tanggal</td>
-            <td>: {{ \Carbon\Carbon::parse($thesisDefenseSchedule->date)->translatedFormat('l, d F Y') }}</td>
+            <td>: {{ \Carbon\Carbon::parse($thesisDefenseSchedule->date)->locale('id')->translatedFormat('l, d F Y') }}</td>
             <td class="location-box">{{ $thesisDefenseSchedule->location ?: '-' }}</td>
         </tr>
         <tr>
@@ -105,8 +203,8 @@
         </tr>
         @if($thesisDefenseSchedule->meeting_link)
         <tr>
-            <td class="label">Link Meeting</td>
-            <td colspan="2">: {{ $thesisDefenseSchedule->meeting_link }}</td>
+            <td class="label">Link / URL</td>
+            <td colspan="2">: <span style="color: #0066cc;">{{ $thesisDefenseSchedule->meeting_link }}</span></td>
         </tr>
         @endif
     </table>
@@ -114,8 +212,8 @@
     <table class="schedule">
         <thead>
             <tr>
-                <th style="width: 30px;">NO</th>
-                <th style="width: 70px;">WAKTU</th>
+                <th style="width: 15px;">NO</th>
+                <th style="width: 45px;">WAKTU</th>
                 <th style="width: 80px;">NPM</th>
                 <th style="width: 120px;">NAMA</th>
                 <th>JUDUL SKRIPSI</th>
@@ -158,5 +256,35 @@
             @endforeach
         </tbody>
     </table>
+
+    <div class="footer">
+        <table class="footer-table">
+            <tr>
+                <td style="font-size: 8pt; color: #999; vertical-align: bottom;">
+                    Dicetak pada: {{ now()->locale('id')->translatedFormat('d F Y H:i') }}<br>
+                    URL: {{ url('/') }}
+                </td>
+                <td class="signature-container">
+                    <div class="signature-box">
+                        <p style="margin-bottom: 5px;">Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}</p>
+                        <p style="margin-bottom: 10px;">Mengetahui,<br>Ketua Program Studi</p>
+                        
+                        <div style="min-height: 80px;">
+                            @if(isset($kaprodi) && $kaprodi && $kaprodi->signature)
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $kaprodi->signature))) }}" class="signature-img">
+                            @elseif(isset($kaprodi) && $kaprodi && $kaprodi->signature_token)
+                                <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(250)->generate(url('/verify-signature/' . $kaprodi->signature_token))) !!} " class="qr-code">
+                            @else
+                                <br><br><br><br>
+                            @endif
+                        </div>
+                        
+                        <p style="margin-top: 5px;"><strong>({{ (isset($kaprodi) && $kaprodi) ? $kaprodi->name : '..................................................' }})</strong></p>
+                        <p style="font-size: 8pt; color: #666; margin-top: -5px;">NIDN: {{ (isset($kaprodi) && $kaprodi) ? $kaprodi->identifier : '........................' }}</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>

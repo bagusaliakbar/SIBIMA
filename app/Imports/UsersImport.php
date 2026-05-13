@@ -31,6 +31,7 @@ class UsersImport implements ToCollection
             $email = trim($row[1]);
             $role = strtolower(trim($row[2]));
             $identifier = trim($row[3]);
+            $phoneNumber = isset($row[4]) ? trim($row[4]) : null;
 
             if (!in_array($role, ['dosen', 'mahasiswa']) || empty($name) || empty($email) || empty($identifier)) {
                 $this->skippedCount++;
@@ -51,6 +52,7 @@ class UsersImport implements ToCollection
                 'password' => Hash::make($identifier), // Default password is the NPM/NIDN
                 'role' => $role,
                 'identifier' => $identifier,
+                'phone_number' => $phoneNumber,
             ]);
 
             $this->importedCount++;

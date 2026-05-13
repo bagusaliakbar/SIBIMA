@@ -14,6 +14,12 @@
             </div>
 
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 sm:rounded-lg">
+                <div class="max-w-2xl">
+                    @include('profile.partials.update-signature-form')
+                </div>
+            </div>
+
+            <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>

@@ -45,13 +45,13 @@
                                 </div>
                             </td>
                             <td class="px-6 py-5">
-                                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ \Carbon\Carbon::parse($revision->detail->schedule->date)->format('d M Y') }}</span>
+                                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ \Carbon\Carbon::parse($revision->detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
                             </td>
                             <td class="px-6 py-5">
                                 @if($revision->messages->count() > 0)
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 italic">"{{ Str::limit($revision->messages->first()->message, 50) }}"</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">"{{ Str::limit($revision->messages->first()->message, 50) }}"</p>
                                 @else
-                                    <p class="text-[11px] text-slate-400 italic">Belum ada catatan</p>
+                                    <p class="text-[11px] text-slate-400">Belum ada catatan</p>
                                 @endif
                             </td>
                             <td class="px-6 py-5">

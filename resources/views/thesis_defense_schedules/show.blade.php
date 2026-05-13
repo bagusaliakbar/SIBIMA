@@ -28,7 +28,7 @@
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Hari / Tanggal</span>
-                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ \Carbon\Carbon::parse($thesisDefenseSchedule->date)->translatedFormat('l, d F Y') }}</span>
+                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ \Carbon\Carbon::parse($thesisDefenseSchedule->date)->locale('id')->translatedFormat('l, d F Y') }}</span>
                         </div>
                         <div class="flex items-center">
                             <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Ketua Sidang</span>
@@ -60,8 +60,8 @@
                                 <th class="py-4 px-3 w-12 border-b border-r border-slate-200 dark:border-slate-700">NO</th>
                                 <th class="py-4 px-3 w-32 border-b border-r border-slate-200 dark:border-slate-700">WAKTU</th>
                                 <th class="py-4 px-3 border-b border-r border-slate-200 dark:border-slate-700">DETAIL KEGIATAN / PESERTA</th>
-                                <th class="py-4 px-3 w-48 border-b border-r border-slate-200 dark:border-slate-700">PEMBIMBING</th>
-                                <th class="py-4 px-3 w-48 border-b border-slate-200 dark:border-slate-700">PENGUJI</th>
+                                <th class="py-4 px-3 w-50 border-b border-r border-slate-200 dark:border-slate-700">PEMBIMBING</th>
+                                <th class="py-4 px-3 w-50 border-b border-slate-200 dark:border-slate-700">PENGUJI</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
@@ -78,12 +78,12 @@
                                         <td class="py-5 px-6 border-r border-slate-100 dark:border-slate-700/50">
                                             <div class="space-y-2">
                                                 <div class="flex items-center flex-wrap gap-2">
-                                                    <span class="inline-flex items-center px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[10px] font-black rounded uppercase tracking-tighter border border-orange-200 dark:border-orange-800/50">
+                                                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider">
                                                         {{ $detail->thesis->student->identifier }}
-                                                    </span>
+                                                    </span> 
                                                     <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $detail->thesis->student->name }}</span>
                                                 </div>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic max-w-lg">{{ $detail->thesis->title }}</p>
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-lg">{{ $detail->thesis->title }}</p>
                                             </div>
                                         </td>
                                         <td class="py-5 px-5 border-r border-slate-100 dark:border-slate-700/50">
@@ -121,10 +121,10 @@
                                     <tr class="bg-slate-50/50 dark:bg-slate-900/30">
                                         <td class="py-3 px-3 text-center border-r border-slate-100 dark:border-slate-700/50 font-bold text-slate-400">#</td>
                                         <td class="py-3 px-3 text-center border-r border-slate-100 dark:border-slate-700/50">
-                                            <span class="text-xs font-bold text-slate-500 italic">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
+                                            <span class="text-xs font-bold text-slate-500">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
                                         </td>
                                         <td colspan="3" class="py-3 px-8">
-                                            <span class="text-[11px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-[0.1em] italic">{{ $detail->activity_name }}</span>
+                                            <span class="text-[11px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-[0.1em]">{{ $detail->activity_name }}</span>
                                         </td>
                                     </tr>
                                 @endif
