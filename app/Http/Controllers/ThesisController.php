@@ -91,7 +91,18 @@ class ThesisController extends Controller
             ->appends(['search' => $search]);
 
         if ($user->role === 'admin') {
-            $dosens = User::where('role', 'dosen')->get();
+            $dosens = User::where('role', 'dosen')
+                ->withCount(['thesesAsP1 as p1_count' => function($query) {
+                    $query->where('status', 'active');
+                }])
+                ->withCount(['thesesAsP2 as p2_count' => function($query) {
+                    $query->where('status', 'active');
+                }])
+                ->get()
+                ->map(function($dosen) {
+                    $dosen->total_workload = $dosen->p1_count + $dosen->p2_count;
+                    return $dosen;
+                });
             return view('theses.index', compact('theses', 'dosens', 'search'));
         }
 

@@ -99,6 +99,31 @@ class Thesis extends Model
         return $this->hasOne(ThesisDefenseApplication::class);
     }
 
+    /**
+     * Calculate match score between thesis topic and lecturer research interests.
+     */
+    public function getMatchScore(User $dosen)
+    {
+        if (!$dosen->research_interests || !$this->title) {
+            return 0;
+        }
+
+        $interests = explode(',', strtolower($dosen->research_interests));
+        $content = strtolower($this->title . ' ' . ($this->abstract ?? ''));
+        
+        $score = 0;
+        foreach ($interests as $interest) {
+            $interest = trim($interest);
+            if (empty($interest)) continue;
+            
+            if (str_contains($content, $interest)) {
+                $score++;
+            }
+        }
+
+        return $score;
+    }
+
     public function scopeWithMentoringCounts($query)
     {
         return $query->withCount(['mentoringSessions as total_sessions' => function ($q) {

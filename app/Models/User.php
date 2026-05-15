@@ -30,6 +30,8 @@ class User extends Authenticatable
         'phone_number',
         'signature',
         'signature_token',
+        'research_interests',
+        'max_quota',
     ];
 
     /**

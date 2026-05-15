@@ -80,6 +80,15 @@
             @endif
         </div>
 
+        @if($user->role === 'dosen')
+            <div>
+                <x-input-label for="research_interests" :value="__('Bidang Keahlian / Research Interest')" />
+                <textarea id="research_interests" name="research_interests" class="mt-1 block w-full bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all leading-relaxed p-4" rows="3" placeholder="Contoh: AI, Web Development, Mobile Apps, Cybersecurity (Pisahkan dengan koma)">{{ old('research_interests', $user->research_interests) }}</textarea>
+                <p class="mt-2 text-[10px] text-slate-500 italic">Gunakan kata kunci singkat dipisahkan koma untuk memudahkan sistem mencocokkan dengan topik mahasiswa.</p>
+                <x-input-error class="mt-2" :messages="$errors->get('research_interests')" />
+            </div>
+        @endif
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
