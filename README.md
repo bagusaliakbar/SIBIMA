@@ -8,45 +8,43 @@
 
 ## 🌟 Fitur Utama
 
-### 1. Dashboard Interaktif (Admin, Dosen, Mahasiswa)
-- Visualisasi statistik progres skripsi.
-- Timeline bimbingan untuk mahasiswa.
-- Notifikasi real-time untuk aktivitas terbaru.
+### 1. Dashboard Interaktif & Analytics (Admin, Dosen, Mahasiswa)
+- **Real-Time Analytics**: Visualisasi statistik kelulusan, beban kerja dosen, dan durasi pengerjaan skripsi menggunakan Chart.js.
+- **Dosen Workload**: Pemantauan rasio bimbingan mahasiswa per dosen untuk pemerataan kuota.
+- **Student Health Indicator**: Identifikasi otomatis mahasiswa "kritis" (semester akhir) untuk intervensi akademik.
+- **Timeline Progres**: Pelacakan visual tahapan skripsi bagi mahasiswa.
 
-### 2. Manajemen Skripsi & Pembimbing
-- Pengajuan judul skripsi oleh mahasiswa.
-- Penugasan dosen pembimbing oleh Admin.
-*   **Smart Scheduling**: Pengecekan bentrok jadwal otomatis saat menyusun jadwal seminar/sidang.
+### 2. Monitoring & Pelaporan (Reporting Center)
+- **Advanced Reporting**: Laporan komprehensif dalam berbagai kategori (Akademik, Mahasiswa, Dosen, Kelulusan, Waktu).
+- **Batch Export Berita Acara**: Fitur ekspor massal dokumen resmi (Berita Acara) ke dalam format **ZIP** untuk efisiensi admin.
+- **Multi-Format Export**: Dukungan ekspor data ke format **Excel** dan **PDF** yang rapi dan profesional.
 
-### 3. Monitoring Bimbingan (Logbook)
-- Pencatatan sesi bimbingan (online/offline).
-- Unggah dokumen revisi dan feedback dosen.
-- Sistem ACC bimbingan untuk syarat maju seminar/sidang.
+### 3. Validasi & Integritas Data
+- **QR Code Verification**: Verifikasi keaslian dokumen Berita Acara melalui QR Code terintegrasi.
+- **Audit Trail (Activity Logs)**: Pencatatan setiap perubahan data penting (nilai, status) untuk transparansi dan keamanan data.
+- **Digital Signature Token**: Penggunaan token unik untuk validasi tanda tangan elektronik pada dokumen resmi.
 
-### 4. Sistem Revisi Terintegrasi
-- Antarmuka diskusi mirip chat antara mahasiswa dan penguji.
-- Pelacakan riwayat perbaikan pasca seminar atau sidang.
-- Finalisasi revisi dengan status yang jelas.
+### 4. Manajemen Skripsi & Bimbingan
+- **Smart Scheduling**: Deteksi bentrok jadwal otomatis untuk seminar dan sidang.
+- **Integrated Logbook**: Pencatatan sesi bimbingan dengan dukungan unggah dokumen revisi.
+- **Revision Workflow**: Antarmuka diskusi interaktif antara mahasiswa dan penguji pasca seminar/sidang.
 
-### 5. Monitoring & Pelaporan
-- **Mahasiswa Kritis**: Identifikasi otomatis mahasiswa semester akhir (semester 13-14) untuk pengawasan khusus.
-- Ekspor data skripsi, nilai sidang, dan monitoring bimbingan ke format **PDF** dan **Excel**.
-- Cetak lembar pernyataan revisi otomatis.
-
-### 6. UI/UX Modern & Responsif
-- Menggunakan tema premium dengan dukungan **Dark Mode**.
-- Desain responsif yang optimal di berbagai perangkat.
+### 5. UI/UX Modern & Responsif
+- **Premium Design**: Menggunakan UI Kit Metronic 9 dengan kustomisasi mendalam.
+- **Full Dark Mode**: Dukungan mode gelap yang nyaman untuk penggunaan jangka panjang.
+- **High Performance**: Optimasi query dan penggunaan Alpine.js untuk interaksi yang responsif.
 
 ---
 
 ## 🚀 Teknologi yang Digunakan
 
-- **Framework:** [Laravel 11](https://laravel.com)
+- **Framework:** [Laravel 12](https://laravel.com)
+- **Real-time:** [Laravel Reverb](https://reverb.laravel.com) (WebSocket)
 - **Frontend:** [Tailwind CSS](https://tailwindcss.com), [Alpine.js](https://alpinejs.dev)
 - **Database:** MySQL
-- **UI Kit:** Metronic 8/9 (Customized)
-- **Export Tools:** [Laravel Excel](https://laravel-excel.com), [DomPDF](https://github.com/barryvdh/laravel-dompdf)
-- **Icons:** Heroicons & FontAwesome
+- **Visualization:** [Chart.js](https://www.chartjs.org/)
+- **Document Engine:** [Laravel Excel](https://laravel-excel.com), [DomPDF](https://github.com/barryvdh/laravel-dompdf)
+- **QR Engine:** [Simple Software IO QrCode](https://www.simplesoftware.io/docs/simple-qrcode)
 
 ---
 
@@ -60,47 +58,39 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan proyek secara lokal:
     cd sibima
     ```
 
-2.  **Instal dependensi PHP:**
+2.  **Instal dependensi:**
     ```bash
     composer install
-    ```
-
-3.  **Instal dependensi Node.js:**
-    ```bash
     npm install
     ```
 
-4.  **Konfigurasi Environment:**
-    Salin file `.env.example` menjadi `.env` dan sesuaikan pengaturan database Anda.
+3.  **Konfigurasi Environment:**
+    Salin file `.env.example` menjadi `.env` dan sesuaikan pengaturan database serta Reverb.
     ```bash
     cp .env.example .env
     php artisan key:generate
     ```
 
-5.  **Migrasi Database & Seeding:**
+4.  **Setup Database:**
     ```bash
     php artisan migrate --seed
     ```
 
-6.  **Jalankan Server:**
+5.  **Jalankan Server & Assets:**
     ```bash
     php artisan serve
     npm run dev
+    # Untuk Real-time Notifications:
+    php artisan reverb:start
     ```
 
 ---
 
-## 🔒 Keamanan
+## 🔒 Keamanan & Integritas
 
-- Proteksi Middleware pada setiap role (Admin, Dosen, Mahasiswa).
-- Validasi kepemilikan data (IDOR Protection) pada semua modul bimbingan dan revisi.
-- Proteksi CSRF dan XSS secara menyeluruh.
-
----
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+- **IDOR Protection**: Validasi ketat kepemilikan data pada setiap request.
+- **Role-Based Access Control (RBAC)**: Pemisahan hak akses antara Admin, Dosen, dan Mahasiswa.
+- **Secure Document**: Enkripsi token verifikasi pada QR Code untuk mencegah manipulasi dokumen.
 
 ---
 
@@ -109,4 +99,4 @@ Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 - **Bagus Ali Akbar** - [@BagzAlz](https://github.com/BagzAlz)
 
 ---
-*Dibuat dengan ❤️ untuk kemajuan akademik.*
+*Dibuat dengan ❤️ untuk sistem akademik yang lebih baik.*
