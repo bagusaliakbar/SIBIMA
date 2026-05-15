@@ -108,7 +108,7 @@
                                     <!-- Content -->
                                     <div class="md:col-span-8" x-show="row.type === 'activity'">
                                         <x-input-label value="Nama Kegiatan" class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1" />
-                                        <input type="text" :name="`details[${index}][activity_name]`" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500" placeholder="Contoh: Persiapan dan Pembukaan Seminar Sidang">
+                                        <input type="text" :name="`details[${index}][activity_name]`" x-model="row.activity_name" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500" placeholder="Contoh: Persiapan dan Pembukaan Seminar Sidang">
                                     </div>
 
                                     <div class="md:col-span-4" x-show="row.type === 'student'">

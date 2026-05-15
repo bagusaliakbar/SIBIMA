@@ -289,34 +289,89 @@
                 Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}
             </div>
 
-            <div style="text-align: center; margin-bottom: 40px;">
-                Mengetahui,
-            </div>
-
             <table class="signature-table">
                 <tr>
                     <td>
-                        Ketua Program Studi,<br>
-                        <div style="margin-top: 60px;"></div>
-                        <strong>( Bagus Ali Akbar, S.SI., M.Kom )</strong>
-                    </td>
-                    <td>
-                        Dosen Pembimbing,<br>
-                        <div style="margin-top: 20px;">
-                            @if($detail->thesis->pembimbing1 && $detail->thesis->pembimbing1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->thesis->pembimbing1->signature))) }}"
+                        Penguji I,<br>
+                        <div style="margin-top: 10px;">
+                            @if($detail->examiner1 && $detail->examiner1->signature)
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->examiner1->signature))) }}"
                                     style="height: 50px; width: auto;">
-                            @elseif($detail->thesis->pembimbing1 && $detail->thesis->pembimbing1->signature_token)
+                            @elseif($detail->examiner1 && $detail->examiner1->signature_token)
                                 <img
-                                    src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(50)->generate(url('/verify-signature/' . $detail->thesis->pembimbing1->signature_token))) !!} ">
+                                    src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner1->signature_token))) }}">
                             @else
                                 <div style="height: 50px;"></div>
                             @endif
                         </div>
-                        <strong>( {{ $detail->thesis->pembimbing1->name }} )</strong>
+                        <strong>( {{ $detail->examiner1->name }} )</strong>
+                    </td>
+                    <td>
+                        Penguji II,<br>
+                        <div style="margin-top: 10px;">
+                            @if($detail->examiner2 && $detail->examiner2->signature)
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->examiner2->signature))) }}"
+                                    style="height: 50px; width: auto;">
+                            @elseif($detail->examiner2 && $detail->examiner2->signature_token)
+                                <img
+                                    src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner2->signature_token))) }}">
+                            @else
+                                <div style="height: 50px;"></div>
+                            @endif
+                        </div>
+                        <strong>( {{ $detail->examiner2->name }} )</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 40px;">
+                        Mengetahui,<br>
+                        Ketua Program Studi,<br>
+                        <div style="margin-top: 60px;"></div>
+                        <strong>( Bagus Ali Akbar, S.SI., M.Kom )</strong>
+                    </td>
+                    <td style="padding-top: 40px;">
+                        <br>
+                        Dosen Pembimbing,<br>
+                        <div style="margin-top: 10px;">
+                            @php
+                                $p1 = $detail->thesis->pembimbing1;
+                            @endphp
+                            @if($p1 && $p1->signature)
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $p1->signature))) }}"
+                                    style="height: 50px; width: auto;">
+                            @elseif($p1 && $p1->signature_token)
+                                <img
+                                    src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $p1->signature_token))) }}">
+                            @else
+                                <div style="height: 50px;"></div>
+                            @endif
+                        </div>
+                        <strong>( {{ $p1 ? $p1->name : '-' }} )</strong>
                     </td>
                 </tr>
             </table>
+
+            <!-- Document Verification QR -->
+            <div style="margin-top: 40px; border-top: 1px solid #eee; pt-10px;">
+                <table style="width: 100%; border: none;">
+                    <tr>
+                        <td style="border: none; width: 65px; padding: 0;">
+                            @if($detail->verification_token)
+                                <img src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(60)->margin(0)->generate(route('document.verify', $detail->verification_token))) }}">
+                            @else
+                                <div style="width: 60px; height: 60px; background: #eee;"></div>
+                            @endif
+                        </td>
+                        <td style="border: none; vertical-align: middle; text-align: left; padding-left: 10px;">
+                            <div style="font-size: 8px; color: #666; line-height: 1.2;">
+                                Dokumen ini diterbitkan secara elektronik oleh SIBIMA Fasilkom Unsub.<br>
+                                Keaslian dokumen dapat diverifikasi dengan memindai QR Code di samping atau mengunjungi:<br>
+                                <span style="color: #4f46e5;">{{ $detail->verification_token ? route('document.verify', $detail->verification_token) : 'Link Verifikasi Tidak Tersedia' }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </body>

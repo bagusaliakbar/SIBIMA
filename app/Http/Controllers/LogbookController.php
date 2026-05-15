@@ -6,17 +6,16 @@ use App\Models\Thesis;
 use App\Models\MentoringSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LogbookController extends Controller
 {
-    /**
-     * Display logbook index for Mahasiswa and Dosen.
-     */
     public function index(Request $request)
     {
+        $user = Auth::user();
         $search = $request->input('search');
 
-        if (Auth::user()->role === 'mahasiswa') {
+        if ($user->role === 'mahasiswa') {
             $sessions = MentoringSession::whereHas('thesis', function ($q) {
                     $q->where('student_id', Auth::id());
                 })
@@ -24,8 +23,7 @@ class LogbookController extends Controller
                 ->where('is_absent', false)
                 ->when($search, function ($query, $search) {
                     $query->where(function ($q) use ($search) {
-                        $q->where('topic', 'like', "%{$search}%")
-                          ->orWhere('notes', 'like', "%{$search}%");
+                        $q->where('topic', 'like', "%{$search}%")->orWhere('notes', 'like', "%{$search}%");
                     });
                 })
                 ->with('thesis.pembimbing1', 'thesis.pembimbing2', 'dosen')
@@ -34,19 +32,17 @@ class LogbookController extends Controller
                 ->appends(['search' => $search]);
 
             return view('logbooks.index', compact('sessions', 'search'));
+        }
 
-        } elseif (Auth::user()->role === 'dosen') {
+        if ($user->role === 'dosen') {
             $theses = Thesis::where(function($q) {
-                    $q->where('pembimbing1_id', Auth::id())
-                      ->orWhere('pembimbing2_id', Auth::id());
+                    $q->where('pembimbing1_id', Auth::id())->orWhere('pembimbing2_id', Auth::id());
                 })
                 ->with('student')
                 ->when($search, function ($query, $search) {
                     $query->whereHas('student', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
-                          ->orWhere('identifier', 'like', "%{$search}%");
-                    })
-                    ->orWhere('title', 'like', "%{$search}%");
+                        $q->where('name', 'like', "%{$search}%")->orWhere('identifier', 'like', "%{$search}%");
+                    })->orWhere('title', 'like', "%{$search}%");
                 })
                 ->withCount(['mentoringSessions as completed_sessions_count' => function ($q) {
                     $q->where('dosen_id', Auth::id())->where('status', 'completed')->where('is_absent', false);
@@ -60,80 +56,63 @@ class LogbookController extends Controller
         abort(403);
     }
 
-    /**
-     * Display mentoring activities (monitoring) for a specific thesis.
-     * Accessible by Admin and Dosen Pembimbing.
-     */
     public function show(Thesis $thesis)
     {
-        if (Auth::user()->role === 'admin' || 
-           (Auth::user()->role === 'dosen' && ($thesis->pembimbing1_id === Auth::id() || $thesis->pembimbing2_id === Auth::id()))) {
+        $user = Auth::user();
+        $isAuthorized = $user->role === 'admin' || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
+
+        if (!$isAuthorized) abort(403);
             
-            $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
+        $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
-            $activeSessions = MentoringSession::where('thesis_id', $thesis->id)
-                ->when(Auth::user()->role === 'dosen', function($q) {
-                    $q->where('dosen_id', Auth::id());
-                })
-                ->whereIn('status', ['pending', 'approved'])
-                ->orderBy('scheduled_at', 'asc')
-                ->get();
+        $activeSessions = MentoringSession::where('thesis_id', $thesis->id)
+            ->when($user->role === 'dosen', function($q) use ($user) {
+                $q->where('dosen_id', $user->id);
+            })
+            ->whereIn('status', ['pending', 'approved'])
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
 
-            $completedSessions = MentoringSession::where('thesis_id', $thesis->id)
-                ->when(Auth::user()->role === 'dosen', function($q) {
-                    $q->where('dosen_id', Auth::id());
-                })
-                ->where('status', 'completed')
-                ->where('is_absent', false)
-                ->orderBy('scheduled_at', 'desc')
-                ->get();
+        $completedSessions = MentoringSession::where('thesis_id', $thesis->id)
+            ->when($user->role === 'dosen', function($q) use ($user) {
+                $q->where('dosen_id', $user->id);
+            })
+            ->where('status', 'completed')
+            ->where('is_absent', false)
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
 
-            return view('logbooks.show', compact('thesis', 'activeSessions', 'completedSessions'));
-        }
-        
-        abort(403);
+        return view('logbooks.show', compact('thesis', 'activeSessions', 'completedSessions'));
     }
 
-    /**
-     * Export logbook to PDF.
-     */
     public function exportPdf(Request $request, Thesis $thesis = null)
     {
-        // If $thesis is null, it means a student is accessing their own logbook
+        $user = Auth::user();
         if (!$thesis) {
-            $thesis = Thesis::where('student_id', Auth::id())->first();
+            $thesis = Thesis::where('student_id', $user->id)->first();
         }
 
-        if (!$thesis) {
-            return back()->with('error', 'Data skripsi tidak ditemukan.');
-        }
+        if (!$thesis) return back()->with('error', 'Data skripsi tidak ditemukan.');
 
-        // Authorization check
-        $isAuthorized = Auth::user()->role === 'admin' || 
-                        (Auth::user()->role === 'mahasiswa' && $thesis->student_id === Auth::id()) ||
-                        (Auth::user()->role === 'dosen' && ($thesis->pembimbing1_id === Auth::id() || $thesis->pembimbing2_id === Auth::id()));
+        $isAuthorized = $user->role === 'admin' || ($user->role === 'mahasiswa' && $thesis->student_id === $user->id) || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
 
-        if (!$isAuthorized) {
-            abort(403);
-        }
+        if (!$isAuthorized) abort(403);
 
         $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
         $sessions = MentoringSession::where('thesis_id', $thesis->id)
-            ->when(Auth::user()->role === 'dosen', function($q) {
-                $q->where('dosen_id', Auth::id());
+            ->when($user->role === 'dosen', function($q) use ($user) {
+                $q->where('dosen_id', $user->id);
             })
             ->where('status', 'completed')
             ->where('is_absent', false)
             ->orderBy('scheduled_at', 'asc')
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('logbooks.pdf', compact('thesis', 'sessions'));
-        
-        $filename = 'Logbook_' . str_replace(' ', '_', $thesis->student->name) . '_' . date('Ymd') . '.pdf';
+        $pdf = Pdf::loadView('logbooks.pdf', compact('thesis', 'sessions'));
         
         \App\Models\ActivityLog::log('Export Logbook', "User mengekspor logbook mahasiswa {$thesis->student->name} ke PDF.", 'Logbook');
 
-        return $pdf->download($filename);
+        return $pdf->download('Logbook_' . str_replace(' ', '_', $thesis->student->name) . '_' . date('Ymd') . '.pdf');
     }
 }

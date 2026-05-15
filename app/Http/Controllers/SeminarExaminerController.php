@@ -2,34 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\SeminarScheduleDetail;
 use App\Models\SeminarRevision;
 use App\Models\SeminarRevisionMessage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-
 use App\Models\Wave;
+use App\Services\ExaminerService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class SeminarExaminerController extends Controller
+class SeminarExaminerController extends Controller implements HasMiddleware
 {
+    protected $examinerService;
+
+    public function __construct(ExaminerService $examinerService)
+    {
+        $this->examinerService = $examinerService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (Auth::user()->role !== 'dosen') {
+                    abort(403);
+                }
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index(Request $request)
     {
         $user = Auth::user();
-        if ($user->role !== 'dosen') {
-            abort(403);
-        }
-
-        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
+        $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
         $examinations = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'revisions' => function($q) use ($user) {
                 $q->where('examiner_id', $user->id);
             }])
             ->where(function ($q) use ($user) {
-                $q->where('examiner1_id', $user->id)
-                  ->orWhere('examiner2_id', $user->id);
+                $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
             })
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('schedule', function($query) use ($selectedWaveId) {
@@ -54,8 +68,6 @@ class SeminarExaminerController extends Controller
         }
 
         $detail->load(['thesis.student', 'schedule', 'revisions.messages.sender']);
-        
-        // Get existing revision by this examiner if any
         $myRevision = $detail->revisions->where('examiner_id', $user->id)->first();
 
         return view('seminar-examiner.show', compact('detail', 'myRevision'));
@@ -73,39 +85,70 @@ class SeminarExaminerController extends Controller
             'revision_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
-        $revision = SeminarRevision::firstOrCreate(
-            [
-                'seminar_schedule_detail_id' => $detail->id,
-                'examiner_id' => $user->id,
-            ],
-            ['status' => 'completed']
+        $this->examinerService->storeRevision(
+            SeminarRevision::class, SeminarRevisionMessage::class, $detail, 
+            $request->only('revision_notes'), $request->file('revision_file')
         );
-
-        $revision->update(['status' => 'completed']);
-
-        $message = SeminarRevisionMessage::create([
-            'seminar_revision_id' => $revision->id,
-            'sender_id' => $user->id,
-            'message' => $request->revision_notes,
-        ]);
-
-        if ($request->hasFile('revision_file')) {
-            $path = $request->file('revision_file')->store('seminar-revisions', 'public');
-            $message->update(['file_path' => $path]);
-        }
 
         return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
     }
 
     public function approveRevision(SeminarRevision $revision)
     {
+        try {
+            $this->examinerService->approveRevision($revision);
+            return redirect()->back()->with('success', 'Revisi mahasiswa telah disetujui (FINAL).');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function grading(SeminarScheduleDetail $detail)
+    {
         $user = Auth::user();
-        if ($revision->examiner_id !== $user->id) {
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
             abort(403);
         }
 
-        $revision->update(['status' => 'approved']);
+        $detail->load(['thesis.student', 'schedule']);
+        $myRevision = SeminarRevision::where('seminar_schedule_detail_id', $detail->id)
+            ->where('examiner_id', $user->id)
+            ->first();
 
-        return redirect()->back()->with('success', 'Revisi mahasiswa telah disetujui (FINAL).');
+        return view('seminar-examiner.grade', compact('detail', 'myRevision'));
+    }
+
+    public function storeGrading(Request $request, SeminarScheduleDetail $detail)
+    {
+        $user = Auth::user();
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'score_presentation' => 'required|integer|min:0|max:100',
+            'score_explanation' => 'required|integer|min:0|max:100',
+            'score_writing' => 'required|integer|min:0|max:100',
+        ]);
+
+        $this->examinerService->storeGrading(SeminarRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $user);
+
+        return redirect()->route('seminar-examiner.index')->with('success', 'Nilai seminar berhasil disimpan.');
+    }
+
+    public function exportBeritaAcara(SeminarScheduleDetail $detail)
+    {
+        $user = Auth::user();
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+            abort(403);
+        }
+
+        $monitoringService = app(\App\Services\MonitoringService::class);
+        $scoresData = $monitoringService->calculateSeminarScores($detail);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.berita_acara_seminar_pdf', array_merge(['detail' => $detail], $scoresData));
+
+        $fileName = 'Berita_Acara_Seminar_' . str_replace(' ', '_', $detail->thesis->student->name) . '.pdf';
+        return $pdf->download($fileName);
     }
 }
+

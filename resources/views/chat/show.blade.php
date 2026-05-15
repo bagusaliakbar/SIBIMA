@@ -130,10 +130,14 @@
         </div>
     </div>
 
-    <!-- Script for Auto-scroll and Polling -->
+    <!-- Script for Real-time Chat and AJAX Submission -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const chatForm = document.getElementById('chat-form');
+            const userId = {{ Auth::id() }};
+            const partnerId = {{ $user->id }};
             
             // Auto scroll to bottom
             function scrollToBottom() {
@@ -141,25 +145,84 @@
             }
             scrollToBottom();
 
+            // Listen for new messages
+            window.Echo.private(`chat.${userId}`)
+                .listen('MessageSent', (e) => {
+                    if (e.message.sender_id === partnerId) {
+                        appendMessage(e.message, 'left');
+                    }
+                });
+
+            // Function to append message to UI
+            function appendMessage(message, side) {
+                const time = new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                let html = '';
+                
+                if (side === 'right') {
+                    html = `
+                        <div class="flex justify-end">
+                            <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
+                                <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${message.message}</p>
+                                <div class="absolute bottom-1 right-2 flex items-center space-x-1">
+                                    <span class="text-[9px] text-slate-500 dark:text-slate-400">${time}</span>
+                                    <svg class="w-3 h-3 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="flex justify-start">
+                            <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tl-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-slate-100 dark:border-slate-700">
+                                <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${message.message}</p>
+                                <span class="absolute bottom-1 right-2 text-[9px] text-slate-400 dark:text-slate-500">${time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+            }
+
+            // Handle AJAX form submission
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const text = messageInput.value.trim();
+                if (!text) return;
+
+                const formData = new FormData(this);
+                
+                // Clear input early for better UX
+                messageInput.value = '';
+                messageInput.style.height = '';
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        appendMessage(data.message, 'right');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error sending message:', err);
+                    alert('Gagal mengirim pesan. Silakan coba lagi.');
+                });
+            });
+
             // Handle Enter key to submit
-            const messageInput = document.getElementById('message-input');
             messageInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    if (this.value.trim() !== '') {
-                        document.getElementById('chat-form').submit();
-                    }
+                    chatForm.dispatchEvent(new Event('submit'));
                 }
             });
-
-            // Simple Polling every 10 seconds to check for new messages
-            // In a production app, we would use WebSockets (Laravel Echo + Reverb)
-            setInterval(() => {
-                // To avoid disrupting the user typing, we only reload if the input is empty
-                if (messageInput.value.trim() === '') {
-                    window.location.reload();
-                }
-            }, 10000);
 
             // Contact Search Filter
             const searchInput = document.getElementById('contact-search-show');

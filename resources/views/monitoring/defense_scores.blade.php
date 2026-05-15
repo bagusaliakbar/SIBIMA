@@ -1,63 +1,98 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Monitoring', 'url' => '#'],
-                    ['name' => 'Nilai Sidang', 'url' => route('monitoring.defense-scores')]
-                ]" />
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
-                    Rekapitulasi Nilai Sidang
-                </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2"></span>
-                    Data nilai mahasiswa yang telah diinput oleh pembimbing dan penguji
-                </p>
-            </div>
-            
-            <div class="flex flex-col md:flex-row items-center gap-3">
-                <!-- Wave Filter -->
-                <form action="{{ route('monitoring.defense-scores') }}" method="GET" class="flex items-center gap-2">
-                    @if($search) <input type="hidden" name="search" value="{{ $search }}"> @endif
-                    <select name="wave_id" onchange="this.form.submit()" 
-                            class="pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-[12px] font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm min-w-[180px] text-slate-700 dark:text-slate-300">
-                        <option value="">Semua Gelombang</option>
-                        @foreach($waves as $wave)
-                            <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
-                                {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                </form>
-
-                <!-- Export Buttons -->
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('monitoring.defense-scores.export-excel', ['wave_id' => $selectedWaveId]) }}" 
-                       class="flex items-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-emerald-900/20 group">
-                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Excel
-                    </a>
-                    <a href="{{ route('monitoring.defense-scores.export-pdf', ['wave_id' => $selectedWaveId]) }}" 
-                       class="flex items-center gap-2 px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-rose-900/20 group">
-                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        PDF
-                    </a>
+        <div x-data="{ 
+            selectedIds: [], 
+            allIds: {{ json_encode($defenseDetails->pluck('id')->toArray()) }},
+            toggleAll() {
+                if (this.selectedIds.length === this.allIds.length) {
+                    this.selectedIds = [];
+                } else {
+                    this.selectedIds = [...this.allIds];
+                }
+            },
+            downloadSelected() {
+                if (this.selectedIds.length === 0) {
+                    alert('Pilih minimal satu mahasiswa.');
+                    return;
+                }
+                window.location.href = '{{ route('monitoring.batch-export-berita-acara') }}?category=defense&ids=' + this.selectedIds.join(',');
+            }
+        }">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+                <div>
+                    <x-breadcrumb :links="[
+                        ['name' => 'Monitoring', 'url' => '#'],
+                        ['name' => 'Nilai Sidang', 'url' => route('monitoring.defense-scores')]
+                    ]" />
+                    <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
+                        Rekapitulasi Nilai Sidang
+                    </h2>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2"></span>
+                        Data nilai mahasiswa yang telah diinput oleh pembimbing dan penguji
+                    </p>
                 </div>
+                
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Wave Filter -->
+                    <form action="{{ route('monitoring.defense-scores') }}" method="GET">
+                        @if($search) <input type="hidden" name="search" value="{{ $search }}"> @endif
+                        <select name="wave_id" onchange="this.form.submit()" 
+                                class="pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-[12px] font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm min-w-[200px] text-slate-700 dark:text-slate-300">
+                            <option value="">Semua Gelombang</option>
+                            @foreach($waves as $wave)
+                                <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
+                                    {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
 
-                <form action="{{ route('monitoring.defense-scores') }}" method="GET" class="relative group min-w-[320px]">
-                    @if($selectedWaveId) <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}"> @endif
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-transform group-focus-within:scale-110">
-                        <svg class="w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                    <input type="text" name="search" value="{{ $search }}" 
-                           placeholder="Cari Mahasiswa atau NPM..." 
-                           class="w-full pl-12 pr-10 py-3 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-[13px] font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm placeholder:text-slate-400/80">
-                    @if($search)
-                        <a href="{{ route('monitoring.defense-scores', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-500 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <!-- Batch Actions -->
+                    <div class="flex items-center gap-2">
+                        <button @click="downloadSelected()" 
+                                x-show="selectedIds.length > 0"
+                                class="flex items-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-indigo-900/20 animate-in fade-in zoom-in duration-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            ZIP (<span x-text="selectedIds.length"></span>)
+                        </button>
+
+                        <a href="{{ route('monitoring.batch-export-berita-acara', ['category' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
+                           class="flex items-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-slate-900/20 group">
+                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                            ZIP Semua
                         </a>
-                    @endif
-                </form>
+                    </div>
+
+                    <!-- Export Buttons -->
+                    <div class="flex items-center gap-2 border-l border-slate-200 dark:border-slate-700 pl-4">
+                        <a href="{{ route('monitoring.defense-scores.export-excel', ['wave_id' => $selectedWaveId]) }}" 
+                           class="flex items-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-emerald-900/20 group">
+                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Excel
+                        </a>
+                        <a href="{{ route('monitoring.defense-scores.export-pdf', ['wave_id' => $selectedWaveId]) }}" 
+                           class="flex items-center gap-2 px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[12px] font-bold transition-all shadow-lg shadow-rose-900/20 group">
+                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            PDF
+                        </a>
+                    </div>
+
+                    <form action="{{ route('monitoring.defense-scores') }}" method="GET" class="relative group min-w-[280px]">
+                        @if($selectedWaveId) <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}"> @endif
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-transform group-focus-within:scale-110">
+                            <svg class="w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" name="search" value="{{ $search }}" 
+                               placeholder="Cari..." 
+                               class="w-full pl-11 pr-10 py-3 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-[13px] font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm placeholder:text-slate-400/80">
+                        @if($search)
+                            <a href="{{ route('monitoring.defense-scores', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </a>
+                        @endif
+                    </form>
+                </div>
             </div>
         </div>
     </x-slot>
@@ -67,6 +102,9 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                        <th rowspan="2" class="py-5 px-3 text-center border-r border-slate-200/60 dark:border-slate-700 w-10">
+                            <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 transition-all cursor-pointer">
+                        </th>
                         <th rowspan="2" class="py-5 px-3 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-12">NO</th>
                         <th rowspan="2" class="py-5 px-4 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-32">NPM</th>
                         <th rowspan="2" class="py-5 px-6 text-left font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em]">NAMA MAHASISWA & JUDUL</th>
@@ -120,7 +158,10 @@
                         @endphp
                         
                         <!-- Row Pembimbing 1 -->
-                        <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
+                        <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors" :class="selectedIds.includes({{ $detail->id }}) ? 'bg-indigo-50/30 dark:bg-indigo-900/10' : ''">
+                            <td rowspan="3" class="py-4 px-3 text-center border-r border-slate-100 dark:border-slate-700 align-middle">
+                                <input type="checkbox" x-model="selectedIds" value="{{ $detail->id }}" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 cursor-pointer transition-all">
+                            </td>
                             <td rowspan="3" class="py-4 px-3 text-center font-bold text-xs border-r border-slate-100 dark:border-slate-700 align-middle bg-slate-50/30 dark:bg-slate-900/20">
                                 {{ ($defenseDetails->currentPage() - 1) * $defenseDetails->perPage() + $index + 1 }}
                             </td>

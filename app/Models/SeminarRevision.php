@@ -18,7 +18,20 @@ class SeminarRevision extends Model
         'student_file',
         'resubmitted_at',
         'status',
+        'score_presentation',
+        'score_explanation',
+        'score_writing',
     ];
+
+    public function getTotalScoreAttribute()
+    {
+        return ($this->score_presentation * 0.25) + ($this->score_explanation * 0.40) + ($this->score_writing * 0.35);
+    }
+
+    public function isGraded(): bool
+    {
+        return $this->score_presentation !== null;
+    }
 
     public function detail(): BelongsTo
     {
@@ -33,5 +46,15 @@ class SeminarRevision extends Model
     public function examiner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'examiner_id');
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isResubmitted(): bool
+    {
+        return $this->status === 'resubmitted';
     }
 }

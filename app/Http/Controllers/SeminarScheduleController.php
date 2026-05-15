@@ -2,26 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreScheduleRequest;
+use App\Http\Requests\UpdateScheduleRequest;
 use App\Models\SeminarSchedule;
 use App\Models\SeminarScheduleDetail;
 use App\Models\Thesis;
 use App\Models\User;
+use App\Models\Wave;
+use App\Services\ScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-use App\Models\Wave;
-
-class SeminarScheduleController extends Controller
+class SeminarScheduleController extends Controller implements HasMiddleware
 {
+    protected $scheduleService;
+
+    public function __construct(ScheduleService $scheduleService)
+    {
+        $this->scheduleService = $scheduleService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (Auth::user()->role !== 'admin' && !in_array($request->route()->getName(), ['seminar-schedules.export-pdf', 'seminar-schedules.show'])) {
+                    abort(403);
+                }
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
-        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
+        $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
         $schedules = SeminarSchedule::with(['chairman', 'moderator', 'creator'])
@@ -39,17 +57,14 @@ class SeminarScheduleController extends Controller
 
     public function create()
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
-        $activeWave = Wave::active();
+        $activeWave = Wave::getCurrentActive();
         if (!$activeWave) {
-            return redirect()->route('waves.index')->with('error', 'Silakan aktifkan gelombang terlebih dahulu sebelum membuat jadwal.');
+            return redirect()->route('waves.index')->with('error', 'Silakan aktifkan gelombang terlebih dahulu.');
         }
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+            ->where('status', '!=', 'completed')
             ->where('acc_up_p1', true)
             ->where('acc_up_p2', true)
             ->whereHas('seminarApplication', function($q) use ($activeWave) {
@@ -60,64 +75,18 @@ class SeminarScheduleController extends Controller
         return view('seminar_schedules.create', compact('dosens', 'theses'));
     }
 
-    public function store(Request $request)
+    public function store(StoreScheduleRequest $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        $activeWave = Wave::getCurrentActive();
+        if (!$activeWave) return back()->with('error', 'Tidak ada gelombang aktif.');
 
-        $activeWave = Wave::active();
-        if (!$activeWave) {
-            return redirect()->route('waves.index')->with('error', 'Tidak ada gelombang aktif.');
-        }
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'date' => 'required|date',
-            'chairman_id' => 'required|exists:users,id',
-            'moderator_id' => 'required|exists:users,id',
-            'location' => 'nullable|string|max:255',
-            'meeting_link' => 'nullable|url',
-            'details' => 'required|array|min:1',
-            'details.*.start_time' => 'required',
-            'details.*.end_time' => 'required',
-        ]);
-
-        DB::transaction(function () use ($request, $activeWave) {
-            $schedule = SeminarSchedule::create([
-                'title' => $request->title,
-                'date' => $request->date,
-                'chairman_id' => $request->chairman_id,
-                'moderator_id' => $request->moderator_id,
-                'location' => $request->location,
-                'meeting_link' => $request->meeting_link,
-                'created_by' => Auth::id(),
-                'wave_id' => $activeWave->id,
-            ]);
-
-            foreach ($request->details as $index => $detail) {
-                SeminarScheduleDetail::create([
-                    'seminar_schedule_id' => $schedule->id,
-                    'thesis_id' => $detail['thesis_id'] ?? null,
-                    'activity_name' => $detail['activity_name'] ?? null,
-                    'start_time' => $detail['start_time'],
-                    'end_time' => $detail['end_time'],
-                    'examiner1_id' => $detail['examiner1_id'] ?? null,
-                    'examiner2_id' => $detail['examiner2_id'] ?? null,
-                    'order' => $index,
-                ]);
-            }
-        });
+        $this->scheduleService->storeSchedule(SeminarSchedule::class, SeminarScheduleDetail::class, $request->validated(), $activeWave->id);
 
         return redirect()->route('seminar-schedules.index')->with('success', 'Jadwal seminar berhasil dibuat.');
     }
 
     public function show(SeminarSchedule $seminarSchedule)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $seminarSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
         return view('seminar_schedules.show', compact('seminarSchedule'));
@@ -125,13 +94,10 @@ class SeminarScheduleController extends Controller
 
     public function edit(SeminarSchedule $seminarSchedule)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $seminarSchedule->load('details');
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+            ->where('status', '!=', 'completed')
             ->where('acc_up_p1', true)
             ->where('acc_up_p2', true)
             ->get();
@@ -151,57 +117,15 @@ class SeminarScheduleController extends Controller
         return view('seminar_schedules.edit', compact('seminarSchedule', 'dosens', 'theses', 'mappedDetails'));
     }
 
-    public function update(Request $request, SeminarSchedule $seminarSchedule)
+    public function update(UpdateScheduleRequest $request, SeminarSchedule $seminarSchedule)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'date' => 'required|date',
-            'chairman_id' => 'required|exists:users,id',
-            'moderator_id' => 'required|exists:users,id',
-            'location' => 'nullable|string|max:255',
-            'meeting_link' => 'nullable|url',
-            'details' => 'required|array|min:1',
-        ]);
-
-        DB::transaction(function () use ($request, $seminarSchedule) {
-            $seminarSchedule->update([
-                'title' => $request->title,
-                'date' => $request->date,
-                'chairman_id' => $request->chairman_id,
-                'moderator_id' => $request->moderator_id,
-                'location' => $request->location,
-                'meeting_link' => $request->meeting_link,
-            ]);
-
-            $seminarSchedule->details()->delete();
-
-            foreach ($request->details as $index => $detail) {
-                SeminarScheduleDetail::create([
-                    'seminar_schedule_id' => $seminarSchedule->id,
-                    'thesis_id' => $detail['thesis_id'] ?? null,
-                    'activity_name' => $detail['activity_name'] ?? null,
-                    'start_time' => $detail['start_time'],
-                    'end_time' => $detail['end_time'],
-                    'examiner1_id' => $detail['examiner1_id'] ?? null,
-                    'examiner2_id' => $detail['examiner2_id'] ?? null,
-                    'order' => $index,
-                ]);
-            }
-        });
+        $this->scheduleService->updateSchedule($seminarSchedule, SeminarScheduleDetail::class, $request->validated());
 
         return redirect()->route('seminar-schedules.index')->with('success', 'Jadwal seminar berhasil diperbarui.');
     }
 
     public function destroy(SeminarSchedule $seminarSchedule)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $seminarSchedule->delete();
 
         return redirect()->route('seminar-schedules.index')->with('success', 'Jadwal seminar berhasil dihapus.');
@@ -210,24 +134,20 @@ class SeminarScheduleController extends Controller
     public function exportPdf(SeminarSchedule $seminarSchedule)
     {
         $user = Auth::user();
-        if ($user->role !== 'admin' && $user->id !== $seminarSchedule->chairman_id && $user->id !== $seminarSchedule->moderator_id) {
-            // Check if user is one of the examiners in the details
-            $isExaminer = $seminarSchedule->details()->where(function($q) use ($user) {
-                $q->where('examiner1_id', $user->id)
-                  ->orWhere('examiner2_id', $user->id);
+        $isAuthorized = $user->role === 'admin' 
+            || $user->id === $seminarSchedule->chairman_id 
+            || $user->id === $seminarSchedule->moderator_id
+            || $seminarSchedule->details()->where(function($q) use ($user) {
+                $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
             })->exists();
 
-            if (!$isExaminer) {
-                abort(403);
-            }
-        }
+        if (!$isAuthorized) abort(403);
+
         $seminarSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
         $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
-        $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule', 'kaprodi'))
-            ->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule', 'kaprodi'))->setPaper('a4', 'landscape');
 
-        $safeTitle = str_replace([' ', '/', '\\'], '_', $seminarSchedule->title);
-        return $pdf->download('Jadwal_Seminar_' . $safeTitle . '.pdf');
+        return $pdf->download('Jadwal_Seminar_' . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.pdf');
     }
 }

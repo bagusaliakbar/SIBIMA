@@ -6,28 +6,30 @@
     </x-slot>
 
     <div class="w-full">
-        <!-- Physical Documents Notice -->
-        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md p-6 mb-6">
-            <div class="flex items-start">
-                <div class="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg mr-4 shadow-sm">
-                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold text-blue-800 dark:text-blue-200 uppercase tracking-widest mb-3">Penting: Berkas Fisik (Penyerahan ke BAAK)</h3>
-                    <p class="text-xs text-blue-700 dark:text-blue-300 mb-4 font-medium">Selain mengunggah berkas digital di bawah ini, Anda wajib mengumpulkan berkas fisik berikut langsung ke kantor BAAK:</p>
-                    <ul class="space-y-3">
-                        <li class="flex items-start text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 mt-1 mr-3 flex-shrink-0"></span>
-                            <span><strong>Dokumen Skripsi:</strong> Cetak rangkap 3 (Khusus jika pelaksanaan Seminar dilakukan secara Offline).</span>
-                        </li>
-                        <li class="flex items-start text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 mt-1 mr-3 flex-shrink-0"></span>
-                            <span><strong>Formulir Pendaftaran Seminar:</strong> Wajib sudah ditandatangani Dosen Pembimbing dan dibubuhi materai.</span>
-                        </li>
-                    </ul>
+        @if($isEligible)
+            <!-- Physical Documents Notice -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md p-6 mb-6">
+                <div class="flex items-start">
+                    <div class="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg mr-4 shadow-sm">
+                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-blue-800 dark:text-blue-200 uppercase tracking-widest mb-3">Penting: Berkas Fisik (Penyerahan ke BAAK)</h3>
+                        <p class="text-xs text-blue-700 dark:text-blue-300 mb-4 font-medium">Selain mengunggah berkas digital di bawah ini, Anda wajib mengumpulkan berkas fisik berikut langsung ke kantor BAAK:</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 mt-1 mr-3 flex-shrink-0"></span>
+                                <span><strong>Dokumen Skripsi:</strong> Cetak rangkap 3 (Khusus jika pelaksanaan Seminar dilakukan secara Offline).</span>
+                            </li>
+                            <li class="flex items-start text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 mt-1 mr-3 flex-shrink-0"></span>
+                                <span><strong>Formulir Pendaftaran Seminar:</strong> Wajib sudah ditandatangani Dosen Pembimbing dan dibubuhi materai.</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
         @if(!$isEligible)
             <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 p-8 text-center">
                 <div class="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-100 dark:border-amber-800/50">
@@ -153,7 +155,12 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Form Pengajuan Seminar</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pastikan semua dokumen dalam format PDF atau Gambar (maks 2MB per file), kecuali Soft File Skripsi (maks 10MB).</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black rounded uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
+                                    {{ $activeWave->name ?? 'Gelombang Aktif' }}
+                                </span>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Pastikan semua dokumen dalam format PDF atau Gambar (maks 2MB per file), kecuali Soft File Skripsi (maks 10MB).</p>
+                            </div>
                         </div>
                         
                         @if($template)
@@ -211,7 +218,7 @@
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">5. Formulir Pendaftaran Seminar (Terisi) <span class="text-red-500">*</span></label>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unduh templat di atas, isi lengkap, lalu unggah kembali di sini.</p>
-                            <input type="file" name="file_formulir" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-900/20 file:text-pink-700 dark:file:text-pink-400 hover:file:bg-pink-100 dark:hover:file:bg-pink-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            <input type="file" name="file_formulir" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
                             @error('file_formulir') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>

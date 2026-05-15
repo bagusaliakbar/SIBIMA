@@ -2,25 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ThesisDefenseScheduleDetail;
 use App\Models\ThesisDefenseRevision;
 use App\Models\ThesisDefenseRevisionMessage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-
 use App\Models\Wave;
+use App\Services\ExaminerService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ThesisDefenseExaminerController extends Controller
+class ThesisDefenseExaminerController extends Controller implements HasMiddleware
 {
+    protected $examinerService;
+
+    public function __construct(ExaminerService $examinerService)
+    {
+        $this->examinerService = $examinerService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (Auth::user()->role !== 'dosen') {
+                    abort(403);
+                }
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index(Request $request)
     {
         $user = Auth::user();
-        if ($user->role !== 'dosen') {
-            abort(403);
-        }
-
-        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
+        $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
         $examinations = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'revisions' => function($q) use ($user) {
@@ -53,13 +69,10 @@ class ThesisDefenseExaminerController extends Controller
         $user = Auth::user();
         $detail->load(['thesis.student', 'schedule', 'revisions.messages.sender']);
 
-        if ($detail->examiner1_id !== $user->id && 
-            $detail->examiner2_id !== $user->id && 
-            $detail->thesis->pembimbing1_id !== $user->id) {
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
             abort(403);
         }
         
-        // Get existing revision by this user (could be examiner or supervisor)
         $myRevision = $detail->revisions->where('examiner_id', $user->id)->first();
 
         return view('defense-examiner.show', compact('detail', 'myRevision'));
@@ -70,13 +83,10 @@ class ThesisDefenseExaminerController extends Controller
         $user = Auth::user();
         $detail->load(['thesis.student', 'schedule']);
 
-        if ($detail->examiner1_id !== $user->id && 
-            $detail->examiner2_id !== $user->id && 
-            $detail->thesis->pembimbing1_id !== $user->id) {
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
             abort(403);
         }
         
-        // Get existing revision (where scores are stored)
         $myRevision = ThesisDefenseRevision::where('thesis_defense_schedule_detail_id', $detail->id)
             ->where('examiner_id', $user->id)
             ->first();
@@ -89,9 +99,7 @@ class ThesisDefenseExaminerController extends Controller
         $user = Auth::user();
         $detail->load('thesis');
 
-        if ($detail->examiner1_id !== $user->id && 
-            $detail->examiner2_id !== $user->id && 
-            $detail->thesis->pembimbing1_id !== $user->id) {
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
             abort(403);
         }
 
@@ -101,36 +109,7 @@ class ThesisDefenseExaminerController extends Controller
             'score_writing' => 'required|integer|min:0|max:100',
         ]);
 
-        $isSupervisorOnly = ($detail->thesis->pembimbing1_id === $user->id && 
-                             $detail->examiner1_id !== $user->id && 
-                             $detail->examiner2_id !== $user->id);
-
-        $revision = ThesisDefenseRevision::updateOrCreate(
-            [
-                'thesis_defense_schedule_detail_id' => $detail->id,
-                'examiner_id' => $user->id,
-            ],
-            [
-                'score_presentation' => $request->score_presentation,
-                'score_explanation' => $request->score_explanation,
-                'score_writing' => $request->score_writing,
-                'status' => ($detail->thesis->pembimbing1_id === $user->id) ? 'approved' : 'completed'
-            ]
-        );
-
-        // Check if all revisions are now approved (e.g. if this was the last approval needed)
-        if ($detail->isRevisionAllApproved()) {
-            $thesis = $detail->thesis;
-            $thesis->update(['status' => 'completed']);
-            
-            // Notify Student
-            $thesis->student->notify(new \App\Notifications\GeneralNotification(
-                'Selamat! Anda Lulus',
-                "Seluruh revisi sidang Anda telah disetujui. Anda dinyatakan LULUS.",
-                route('dashboard'),
-                'success'
-            ));
-        }
+        $this->examinerService->storeGrading(ThesisDefenseRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $user);
 
         return redirect()->route('defense-examiner.index')->with('success', 'Nilai sidang berhasil disimpan.');
     }
@@ -140,9 +119,7 @@ class ThesisDefenseExaminerController extends Controller
         $user = Auth::user();
         $detail->load('thesis');
 
-        if ($detail->examiner1_id !== $user->id && 
-            $detail->examiner2_id !== $user->id && 
-            $detail->thesis->pembimbing1_id !== $user->id) {
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
             abort(403);
         }
 
@@ -151,57 +128,22 @@ class ThesisDefenseExaminerController extends Controller
             'revision_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
-        $revision = ThesisDefenseRevision::firstOrCreate(
-            [
-                'thesis_defense_schedule_detail_id' => $detail->id,
-                'examiner_id' => $user->id,
-            ],
-            ['status' => 'completed']
+        $this->examinerService->storeRevision(
+            ThesisDefenseRevision::class, ThesisDefenseRevisionMessage::class, $detail, 
+            $request->only('revision_notes'), $request->file('revision_file')
         );
-
-        $revision->update([
-            'status' => 'completed',
-        ]);
-
-        $message = ThesisDefenseRevisionMessage::create([
-            'thesis_defense_revision_id' => $revision->id,
-            'sender_id' => $user->id,
-            'message' => $request->revision_notes,
-        ]);
-
-        if ($request->hasFile('revision_file')) {
-            $path = $request->file('revision_file')->store('defense-revisions', 'public');
-            $message->update(['file_path' => $path]);
-        }
 
         return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
     }
 
     public function approveRevision(ThesisDefenseRevision $revision)
     {
-        $user = Auth::user();
-        if ($revision->examiner_id !== $user->id) {
-            abort(403);
+        try {
+            $this->examinerService->approveRevision($revision);
+            return redirect()->back()->with('success', 'Revisi mahasiswa telah disetujui (FINAL).');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        $revision->update(['status' => 'approved']);
-
-        // Check if all revisions are now approved
-        $detail = $revision->detail;
-        if ($detail->isRevisionAllApproved()) {
-            $thesis = $detail->thesis;
-            $thesis->update(['status' => 'completed']);
-            
-            // Notify Student
-            $thesis->student->notify(new \App\Notifications\GeneralNotification(
-                'Selamat! Anda Lulus',
-                "Seluruh revisi sidang Anda telah disetujui. Anda dinyatakan LULUS.",
-                route('dashboard'),
-                'success'
-            ));
-        }
-
-        return redirect()->back()->with('success', 'Revisi mahasiswa telah disetujui (FINAL).');
     }
 
     public function approveRevisionDirect(Request $request, ThesisDefenseScheduleDetail $detail)
@@ -209,37 +151,33 @@ class ThesisDefenseExaminerController extends Controller
         $user = Auth::user();
         $detail->load('thesis');
 
-        if ($detail->examiner1_id !== $user->id && 
-            $detail->examiner2_id !== $user->id && 
-            $detail->thesis->pembimbing1_id !== $user->id) {
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
             abort(403);
         }
 
-        $revision = ThesisDefenseRevision::updateOrCreate(
-            [
-                'thesis_defense_schedule_detail_id' => $detail->id,
-                'examiner_id' => $user->id,
-            ],
-            [
-                'status' => 'approved',
-                'revision_notes' => 'Disetujui tanpa catatan revisi.'
-            ]
+        ThesisDefenseRevision::updateOrCreate(
+            ['thesis_defense_schedule_detail_id' => $detail->id, 'examiner_id' => $user->id],
+            ['status' => 'approved', 'revision_notes' => 'Disetujui tanpa catatan revisi.']
         );
 
-        // Check if all revisions are now approved
-        if ($detail->isRevisionAllApproved()) {
-            $thesis = $detail->thesis;
-            $thesis->update(['status' => 'completed']);
-            
-            // Notify Student
-            $thesis->student->notify(new \App\Notifications\GeneralNotification(
-                'Selamat! Anda Lulus',
-                "Seluruh revisi sidang Anda telah disetujui. Anda dinyatakan LULUS.",
-                route('dashboard'),
-                'success'
-            ));
-        }
+        $this->examinerService->checkGraduation($detail);
 
         return redirect()->back()->with('success', 'Revisi mahasiswa telah disetujui tanpa catatan.');
+    }
+
+    public function exportBeritaAcara(ThesisDefenseScheduleDetail $detail)
+    {
+        $user = Auth::user();
+        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+            abort(403);
+        }
+
+        $monitoringService = app(\App\Services\MonitoringService::class);
+        $scoresData = $monitoringService->calculateDefenseScores($detail);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.berita_acara_pdf', array_merge(['detail' => $detail], $scoresData));
+
+        $fileName = 'Berita_Acara_Sidang_' . str_replace(' ', '_', $detail->thesis->student->name) . '.pdf';
+        return $pdf->download($fileName);
     }
 }

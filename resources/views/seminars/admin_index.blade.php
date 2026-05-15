@@ -6,98 +6,86 @@
     </x-slot>
 
     <div class="w-full space-y-6">
-        {{-- Wave Filter Section --}}
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
+        {{-- Wave Filter & Template Management Section --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {{-- Wave Filter --}}
+            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-100 dark:border-slate-700/50 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Gelombang Pelaksanaan</h3>
-                    <div class="flex items-center gap-2 mt-0.5 text-[10px] font-bold">
-                        <span class="text-slate-400 uppercase tracking-widest">Gelombang Aktif :</span>
+                    <h3 class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em]">Gelombang Pelaksanaan</h3>
+                    <div class="flex items-center gap-2 mt-2 font-black text-sm text-slate-800 dark:text-slate-100 uppercase tracking-tight">
                         @if($activeWave)
-                            <span class="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 rounded">{{ $activeWave->name }}</span>
+                            <span class="bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 rounded-lg border border-indigo-100 dark:border-indigo-500/20 shadow-sm">{{ $activeWave->name }}</span>
                         @else
-                            <span class="text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 px-1.5 rounded uppercase tracking-tighter">Tidak Ada Gelombang Aktif</span>
+                            <span class="bg-rose-50 dark:bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-100 dark:border-rose-500/20 text-rose-600 uppercase tracking-tighter">Tidak Ada Gelombang Aktif</span>
                         @endif
                     </div>
                 </div>
+
+                <form action="{{ route('seminar-applications.index') }}" method="GET" class="relative group w-full md:w-auto">
+                    <select name="wave_id" onchange="this.form.submit()" 
+                            class="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[220px]">
+                        <option value="">SEMUA GELOMBANG</option>
+                        @foreach($waves as $wave)
+                            <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
+                                {{ strtoupper($wave->name) }} {{ $wave->is_active ? '(AKTIF)' : '(ARSIP)' }} — [{{ $wave->app_count }} Mhs]
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
 
-            <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2">
-                <select name="wave_id" onchange="this.form.submit()" 
-                        class="pl-4 pr-10 py-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[200px]">
-                    <option value="">Semua Gelombang</option>
-                    @foreach($waves as $wave)
-                        <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
-                            {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '(Arsip)' }}
-                        </option>
-                    @endforeach
-                </select>
-                @if($selectedWaveId)
-                    <a href="{{ route('seminar-applications.index') }}" class="p-2 text-slate-400 hover:text-rose-600 transition-colors" title="Clear Filter">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </a>
-                @endif
-            </form>
-        </div>
-        {{-- Template Management Section --}}
-        <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 p-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            {{-- Template Management --}}
+            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-100 dark:border-slate-700/50 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
-                        <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Manajemen Formulir Pendaftaran
-                    </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Upload templat formulir seminar terbaru untuk diunduh mahasiswa.</p>
+                    <h3 class="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-[0.2em]">Templat Formulir</h3>
+                    @if($template)
+                        <div class="flex items-center gap-3 mt-2">
+                            <div class="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase truncate max-w-[150px] tracking-tighter">{{ $template->title }}</div>
+                                <a href="{{ Storage::url($template->file_path) }}" target="_blank" class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:underline">Download File</a>
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-[11px] font-black text-slate-400 uppercase mt-2 italic tracking-widest">Belum Ada Templat</div>
+                    @endif
                 </div>
-                
-                @if($template)
-                    <div class="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-lg">
-                        <div class="p-2 bg-white dark:bg-slate-700 rounded shadow-sm">
-                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-[11px] font-bold text-emerald-800 dark:text-emerald-200 truncate max-w-[200px]">{{ $template->title }}</div>
-                            <div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-medium truncate max-w-[200px]">{{ $template->original_name }}</div>
-                        </div>
-                        <a href="{{ Storage::url($template->file_path) }}" target="_blank" class="ml-2 p-1.5 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors shadow-sm">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        </a>
-                    </div>
-                @endif
 
                 <div x-data="{ open: false }">
-                    <button @click="open = true" class="px-4 py-2 bg-orange-600 text-white text-xs font-bold rounded hover:bg-orange-700 transition-all shadow-sm flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        Upload Templat Seminar
+                    <button @click="open = true" class="w-full md:w-auto px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Update Templat
                     </button>
 
                     <!-- Upload Template Modal -->
-                    <div x-show="open" x-cloak class="fixed inset-0 z-[110] overflow-y-auto">
-                        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                            <div class="fixed inset-0 bg-slate-900 bg-opacity-50 dark:bg-opacity-80 transition-opacity" @click="open = false"></div>
+                    <div x-show="open" class="fixed inset-0 z-[110] overflow-y-auto" x-cloak x-transition>
+                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                            <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="open = false">
+                                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+                            </div>
                             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-100 dark:border-slate-700">
-                                <div class="bg-white dark:bg-slate-800 px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Upload Templat Formulir</h3>
-                                    <button @click="open = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </button>
+                            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-100 dark:border-slate-700">
+                                <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700">
+                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Update Templat Formulir</h3>
+                                    <p class="text-[10px] text-slate-500 uppercase font-black mt-1 tracking-widest">File ini akan diunduh oleh mahasiswa</p>
                                 </div>
                                 <form action="{{ route('seminar-applications.upload-template') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    <div class="p-6 space-y-4">
+                                    <div class="px-8 py-8 space-y-6">
                                         <div>
-                                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Judul Formulir</label>
-                                            <input type="text" name="title" required class="block w-full rounded-md border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-orange-500 focus:border-orange-500 shadow-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Formulir Pendaftaran Seminar UP 2024">
+                                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Judul Formulir</label>
+                                            <input type="text" name="title" required class="block w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3" placeholder="Contoh: Formulir Pendaftaran Seminar 2024">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">File Templat (PDF/DOC/DOCX)</label>
-                                            <input type="file" name="template_file" required accept=".pdf,.doc,.docx" class="block w-full text-xs text-slate-600 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-500 hover:file:bg-orange-100 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md">
+                                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Pilih File (PDF/DOCX)</label>
+                                            <input type="file" name="template_file" required accept=".pdf,.doc,.docx" class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-orange-600 file:text-white hover:file:bg-orange-700 transition-all cursor-pointer bg-slate-50 dark:bg-slate-900 rounded-xl p-2 border border-dashed border-slate-200 dark:border-slate-700">
                                         </div>
                                     </div>
-                                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                        <button type="button" @click="open = false" class="px-4 py-2 text-slate-600 dark:text-slate-400 text-xs font-bold rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Batal</button>
-                                        <button type="submit" class="px-6 py-2 bg-orange-600 text-white text-xs font-bold rounded hover:bg-orange-700 transition-colors shadow-sm">Simpan Templat</button>
+                                    <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                                        <button type="button" @click="open = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
+                                        <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Upload Templat</button>
                                     </div>
                                 </form>
                             </div>
@@ -107,204 +95,153 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap w-[35%]">MAHASISWA</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap w-[35%]">BERKAS PERSYARATAN</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap text-center w-[15%]">STATUS</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap text-right w-[15%]">AKSI</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                        @forelse($applications as $app)
-                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors align-top">
-                                <td class="py-4 px-6">
-                                    <div class="font-bold text-slate-800 dark:text-slate-100">{{ $app->thesis->student->name }}</div>
-                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 tracking-tight uppercase">{{ $app->thesis->student->identifier }}</div>
-                                    <div class="mt-2 space-y-1">
-                                        <div class="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
-                                            <span class="w-3 h-3 rounded-full bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-500 flex items-center justify-center font-bold">1</span>
-                                            {{ $app->thesis->pembimbing1->name }}
-                                        </div>
-                                        <div class="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
-                                            <span class="w-3 h-3 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold">2</span>
-                                            {{ $app->thesis->pembimbing2->name }}
-                                        </div>
+        <x-table-card 
+            title="Antrean Pengajuan Seminar"
+            :footer="$applications->links()">
+            
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                        <th class="py-4 px-6">Mahasiswa</th>
+                        <th class="py-4 px-6">Berkas Persyaratan</th>
+                        <th class="py-4 px-6 text-center">Status</th>
+                        <th class="py-4 px-6 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    @forelse($applications as $app)
+                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group">
+                            <td class="py-4 px-6">
+                                <div class="font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $app->thesis->student->name }}</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-black tracking-widest uppercase">{{ $app->thesis->student->identifier }}</div>
+                                <div class="mt-3 flex flex-col gap-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-4 h-4 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">1</span>
+                                        <span class="font-black text-slate-500 dark:text-slate-400 text-[9px] uppercase tracking-tighter">{{ $app->thesis->pembimbing1->name }}</span>
                                     </div>
-                                </td>
-                                <td class="py-4 px-6">
-                                    <div class="grid grid-cols-2 gap-2 max-w-xs">
-                                        <a href="{{ Storage::url($app->file_acc_pembimbing) }}" target="_blank" class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
-                                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                            Bukti ACC
-                                        </a>
-                                        <a href="{{ Storage::url($app->file_pembayaran) }}" target="_blank" class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                            Bukti Bayar
-                                        </a>
-                                        <a href="{{ Storage::url($app->file_kartu_bimbingan) }}" target="_blank" class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                            Kartu Bimbingan
-                                        </a>
-                                        <a href="{{ Storage::url($app->file_skripsi) }}" target="_blank" class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                            Soft Copy
-                                        </a>
-                                        <a href="{{ Storage::url($app->file_formulir) }}" target="_blank" class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded text-[10px] font-bold text-slate-600 dark:text-slate-400 hover:bg-pink-50 dark:hover:bg-pink-900/20 hover:text-pink-600 dark:hover:text-pink-400 transition-colors">
-                                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                            Form Seminar
-                                        </a>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-4 h-4 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">2</span>
+                                        <span class="font-black text-slate-500 dark:text-slate-400 text-[9px] uppercase tracking-tighter">{{ $app->thesis->pembimbing2->name }}</span>
                                     </div>
-                                </td>
-                                <td class="py-4 px-6 text-center">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
-                                        {{ $app->status === 'approved' ? 'bg-emerald-600 text-white' : '' }}
-                                        {{ $app->status === 'rejected' ? 'bg-red-50 text-red-700 border border-red-200' : '' }}
-                                        {{ $app->status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : '' }}
-                                    ">
-                                        {{ $app->status }}
-                                    </span>
-                                    @if($app->admin_feedback)
-                                        <div class="mt-1 text-[9px] text-slate-400 italic max-w-[150px] mx-auto truncate" title="{{ $app->admin_feedback }}">"{{ $app->admin_feedback }}"</div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="grid grid-cols-2 gap-2 max-w-xs">
+                                    @php
+                                        $files = [
+                                            ['label' => 'Bukti ACC', 'path' => $app->file_acc_pembimbing, 'color' => 'orange'],
+                                            ['label' => 'Bukti Bayar', 'path' => $app->file_pembayaran, 'color' => 'emerald'],
+                                            ['label' => 'Logbook', 'path' => $app->file_kartu_bimbingan, 'color' => 'blue'],
+                                            ['label' => 'Draf Skripsi', 'path' => $app->file_skripsi, 'color' => 'indigo'],
+                                            ['label' => 'Formulir', 'path' => $app->file_formulir, 'color' => 'pink'],
+                                        ];
+                                    @endphp
+                                    @foreach($files as $file)
+                                        <a href="{{ Storage::url($file['path']) }}" target="_blank" 
+                                           class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-lg text-[9px] font-black uppercase tracking-tighter text-slate-600 dark:text-slate-400 hover:bg-{{ $file['color'] }}-50 dark:hover:bg-{{ $file['color'] }}-500/10 hover:text-{{ $file['color'] }}-600 transition-all group/file">
+                                            <svg class="w-3 h-3 mr-1.5 text-slate-400 group-hover/file:text-{{ $file['color'] }}-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            {{ $file['label'] }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                <div class="flex flex-col items-center gap-1">
+                                    @if($app->status === 'approved')
+                                        <x-status-badge type="emerald" label="DISETUJUI" />
+                                    @elseif($app->status === 'rejected')
+                                        <x-status-badge type="rose" label="DITOLAK" />
+                                    @else
+                                        <x-status-badge type="amber" label="MENUNGGU" />
                                     @endif
-                                </td>
-                                <td class="py-4 px-6 text-right">
-                                    <div class="flex justify-end items-center gap-2" x-data="{ open: false }">
-                                        <a href="{{ route('seminar-applications.download-zip', $app->id) }}" class="inline-flex items-center px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-all">
-                                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                            ZIP
-                                        </a>
-                                        <button @click="open = true" type="button" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 hover:border-orange-300 transition-all shadow-sm">
-                                            Validasi
-                                            <svg class="w-3.5 h-3.5 ml-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                        </button>
-                                        
-                                        <!-- Validation Modal -->
-                                        <div x-show="open" 
-                                             x-cloak 
-                                             class="fixed inset-0 z-[100] overflow-y-auto" 
-                                             aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                                                <div x-show="open" 
-                                                     x-transition:enter="ease-out duration-300"
-                                                     x-transition:enter-start="opacity-0"
-                                                     x-transition:enter-end="opacity-100"
-                                                     x-transition:leave="ease-in duration-200"
-                                                     x-transition:leave-start="opacity-100"
-                                                     x-transition:leave-end="opacity-0"
-                                                     class="fixed inset-0 bg-slate-900 bg-opacity-50 dark:bg-opacity-80 transition-opacity" @click="open = false"></div>
-
-                                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                                                <div x-show="open"
-                                                     x-transition:enter="ease-out duration-300"
-                                                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                                     x-transition:leave="ease-in duration-200"
-                                                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                                     class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700">
-                                                    
-                                                    <div class="bg-white dark:bg-slate-800 px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                                                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Validasi Berkas: {{ $app->thesis->student->name }}</h3>
-                                                        <button @click="open = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                        </button>
-                                                    </div>
-
-                                                    <form action="{{ route('seminar-applications.validate', $app->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <div class="p-6 bg-slate-50/50 dark:bg-slate-900/50 space-y-6">
-                                                            <div>
-                                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">Validasi Per Berkas</label>
-                                                                <div class="space-y-3">
-                                                                    @php
-                                                                        $fileFields = [
-                                                                            'file_acc_pembimbing' => 'ACC Pembimbing',
-                                                                            'file_pembayaran' => 'Bukti Pembayaran',
-                                                                            'file_kartu_bimbingan' => 'Kartu Bimbingan',
-                                                                            'file_skripsi' => 'Soft Copy Skripsi',
-                                                                            'file_formulir' => 'Formulir Seminar'
-                                                                        ];
-                                                                    @endphp
-                                                                    @foreach($fileFields as $field => $label)
-                                                                        <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                                                                            <div class="flex items-center justify-between mb-2">
-                                                                                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">{{ $label }}</span>
-                                                                                <div class="flex items-center gap-2">
-                                                                                    <label class="inline-flex items-center">
-                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
-                                                                                               {{ !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved' ? 'checked' : '' }}
-                                                                                               class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900">
-                                                                                        <span class="ml-1.5 text-[10px] font-bold text-emerald-600 uppercase">OK</span>
-                                                                                    </label>
-                                                                                    <label class="inline-flex items-center ml-2">
-                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected"
-                                                                                               {{ isset($app->file_reviews[$field]['status']) && $app->file_reviews[$field]['status'] === 'rejected' ? 'checked' : '' }}
-                                                                                               class="w-3 h-3 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900">
-                                                                                        <span class="ml-1.5 text-[10px] font-bold text-rose-600 uppercase">REJECT</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>
-                                                                            <input type="text" name="file_reviews[{{ $field }}][note]" 
-                                                                                   value="{{ $app->file_reviews[$field]['note'] ?? '' }}"
-                                                                                   placeholder="Catatan jika ditolak..."
-                                                                                   class="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-[10px] focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
-                                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Status Akhir Pengajuan</label>
-                                                                <select name="status" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 shadow-sm text-slate-800 dark:text-slate-100 py-3">
-                                                                    <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>SETUJUI SEMUA (BERKAS OK)</option>
-                                                                    <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>TOLAK / PERLU REVISI BERKAS</option>
-                                                                </select>
-                                                            </div>
-                                                            
-                                                            <div>
-                                                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Catatan Admin (Global)</label>
-                                                                <textarea name="admin_feedback" rows="3" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 shadow-sm placeholder:text-slate-400 text-slate-800 dark:text-slate-100 py-3 italic" placeholder="Contoh: Silakan upload ulang berkas yang ditolak...">{{ $app->admin_feedback }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="px-6 py-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                                            <button type="button" @click="open = false" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Batal</button>
-                                                            <button type="submit" class="px-6 py-2 bg-orange-600 text-white text-xs font-bold rounded hover:bg-orange-700 transition-colors shadow-sm">Simpan Keputusan</button>
-                                                        </div>
-                                                    </form>
+                                    
+                                    @if($app->admin_feedback)
+                                        <p class="text-[8px] text-slate-400 font-black uppercase tracking-tighter mt-1 max-w-[120px] truncate" title="{{ $app->admin_feedback }}">"{{ $app->admin_feedback }}"</p>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div class="flex justify-end items-center gap-2" x-data="{ openValidation: false }">
+                                    <a href="{{ route('seminar-applications.download-zip', $app->id) }}" class="p-2 text-slate-400 hover:text-indigo-600 transition-all group/zip" title="Download ZIP">
+                                        <svg class="w-5 h-5 group-hover/zip:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    </a>
+                                    <button @click="openValidation = true" class="px-4 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">
+                                        Validasi
+                                    </button>
+                                    
+                                    <!-- Validation Modal -->
+                                    <div x-show="openValidation" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
+                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                            <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openValidation = false">
+                                                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+                                            </div>
+                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100 dark:border-slate-700">
+                                                <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Validasi Berkas</h3>
+                                                    <button @click="openValidation = false" class="text-slate-400 hover:text-slate-600">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                    </button>
                                                 </div>
+
+                                                <form action="{{ route('seminar-applications.validate', $app->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <div class="px-8 py-8 space-y-6">
+                                                        <div>
+                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Verifikasi Setiap Berkas:</label>
+                                                            <div class="space-y-3">
+                                                                @foreach(['file_acc_pembimbing' => 'ACC Pembimbing', 'file_pembayaran' => 'Bukti Bayar', 'file_kartu_bimbingan' => 'Logbook', 'file_skripsi' => 'Draf Skripsi', 'file_formulir' => 'Formulir'] as $field => $label)
+                                                                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                                                        <div class="flex items-center justify-between mb-3">
+                                                                            <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">{{ $label }}</span>
+                                                                            <div class="flex items-center gap-3">
+                                                                                <label class="inline-flex items-center cursor-pointer group/radio">
+                                                                                    <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" {{ !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved' ? 'checked' : '' }} class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600">
+                                                                                    <span class="ml-2 text-[9px] font-black text-emerald-600 uppercase">OK</span>
+                                                                                </label>
+                                                                                <label class="inline-flex items-center cursor-pointer group/radio">
+                                                                                    <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected" {{ isset($app->file_reviews[$field]['status']) && $app->file_reviews[$field]['status'] === 'rejected' ? 'checked' : '' }} class="w-3 h-3 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600">
+                                                                                    <span class="ml-2 text-[9px] font-black text-rose-600 uppercase">TOLAK</span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <input type="text" name="file_reviews[{{ $field }}][note]" value="{{ $app->file_reviews[$field]['note'] ?? '' }}" placeholder="Catatan revisi jika ditolak..." class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold p-2 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500">
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="pt-6 border-t border-slate-100 dark:border-slate-700">
+                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Status Akhir Pengajuan:</label>
+                                                            <select name="status" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black uppercase tracking-widest p-3 focus:ring-4 focus:ring-indigo-500/10">
+                                                                <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>SETUJUI (BERKAS VALID)</option>
+                                                                <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>TOLAK (PERLU REVISI)</option>
+                                                                <option value="pending" {{ $app->status === 'pending' ? 'selected' : '' }}>TETAP MENUNGGU</option>
+                                                            </select>
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Catatan Admin (Global):</label>
+                                                            <textarea name="admin_feedback" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold p-4 focus:ring-4 focus:ring-indigo-500/10 italic" placeholder="Silakan upload ulang berkas yang ditolak...">{{ $app->admin_feedback }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                                                        <button type="button" @click="openValidation = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
+                                                        <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Simpan Keputusan</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="py-20 text-center">
-                                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100 dark:border-slate-700">
-                                        <svg class="h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Tidak ada pengajuan masuk</h3>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest font-black">Sistem akan menampilkan pengajuan seminar di sini</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @if($applications->hasPages())
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
-                    {{ $applications->links() }}
-                </div>
-            @endif
-        </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <x-empty-state colspan="4" description="Sistem akan menampilkan pengajuan seminar di sini setelah mahasiswa mendaftar." icon="book" />
+                    @endforelse
+                </tbody>
+            </table>
+        </x-table-card>
     </div>
 </x-app-layout>

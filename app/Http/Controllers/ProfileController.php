@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,13 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Display the user's profile form.
      */
@@ -26,25 +34,8 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        if ($request->hasFile('avatar')) {
-            // Delete old avatar if exists
-            if ($request->user()->avatar) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($request->user()->avatar);
-            }
-
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $request->user()->avatar = $path;
-        }
-
-        $request->user()->save();
-
-        \App\Models\ActivityLog::log('Update Profil', 'User memperbarui informasi profil mereka.', 'Profil');
+        $user = $request->user();
+        $this->userService->updateUser($user, $request->validated(), $request->file('avatar'));
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -59,15 +50,12 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
-
         Auth::logout();
-
-        $user->delete();
+        
+        $this->userService->deleteUser($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        \App\Models\ActivityLog::log('Hapus Akun Mandiri', "User {$user->name} menghapus akun mereka sendiri.", 'Profil');
 
         return Redirect::to('/');
     }
@@ -81,25 +69,9 @@ class ProfileController extends Controller
             'signature' => ['required', 'image', 'mimes:png,jpg,jpeg', 'max:1024'],
         ]);
 
-        $user = $request->user();
-
         if ($request->hasFile('signature')) {
-            // Delete old signature
-            if ($user->signature) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->signature);
-            }
-
-            $path = $request->file('signature')->store('signatures', 'public');
-            $user->signature = $path;
-            
-            if (!$user->signature_token) {
-                $user->signature_token = \Illuminate\Support\Str::uuid();
-            }
-            
-            $user->save();
+            $this->userService->updateSignature($request->user(), $request->file('signature'));
         }
-
-        \App\Models\ActivityLog::log('Update Tanda Tangan', 'User memperbarui tanda tangan digital mereka.', 'Profil');
 
         return Redirect::route('profile.edit')->with('status', 'signature-updated');
     }

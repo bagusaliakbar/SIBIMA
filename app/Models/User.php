@@ -116,6 +116,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the theses where this user is Pembimbing 1.
+     */
+    public function thesesAsP1()
+    {
+        return $this->hasMany(Thesis::class, 'pembimbing1_id');
+    }
+
+    /**
+     * Get the theses where this user is Pembimbing 2.
+     */
+    public function thesesAsP2()
+    {
+        return $this->hasMany(Thesis::class, 'pembimbing2_id');
+    }
+
+    /**
      * Get the URL for the user's avatar.
      */
     public function getAvatarUrlAttribute()
@@ -127,5 +143,16 @@ class User extends Authenticatable
         // Fallback to initials-based SVG if no avatar is uploaded
         $name = urlencode($this->name);
         return "https://ui-avatars.com/api/?name={$name}&color=FFFFFF&background=f97316&bold=true";
+    }
+
+    public function scopeCriticalSemester($query)
+    {
+        $currentYear = now()->year;
+        $isSecondHalf = now()->month >= 7;
+        $thresholdYear = $isSecondHalf ? ($currentYear - 6) : ($currentYear - 7);
+
+        return $query->where('role', 'mahasiswa')
+            ->whereNotNull('entry_year')
+            ->where('entry_year', '<=', $thresholdYear);
     }
 }

@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\HasActivityLog;
+
 class Thesis extends Model
 {
+    use HasActivityLog;
+
     protected $fillable = [
         'student_id',
         'pembimbing1_id',
@@ -93,5 +97,49 @@ class Thesis extends Model
     public function defenseApplication()
     {
         return $this->hasOne(ThesisDefenseApplication::class);
+    }
+
+    public function scopeWithMentoringCounts($query)
+    {
+        return $query->withCount(['mentoringSessions as total_sessions' => function ($q) {
+            $q->where('status', 'completed')->where('is_absent', false);
+        }])
+        ->withCount(['mentoringSessions as sessions_p1' => function ($q) {
+            $q->where('status', 'completed')
+              ->where('is_absent', false)
+              ->whereColumn('dosen_id', 'pembimbing1_id');
+        }])
+        ->withCount(['mentoringSessions as sessions_p2' => function ($q) {
+            $q->where('status', 'completed')
+              ->where('is_absent', false)
+              ->whereColumn('dosen_id', 'pembimbing2_id');
+        }]);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sq) use ($search) {
+                $sq->whereHas('student', function ($ssq) use ($search) {
+                    $ssq->where('name', 'like', "%{$search}%")
+                      ->orWhere('identifier', 'like', "%{$search}%");
+                })
+                ->orWhere('title', 'like', "%{$search}%")
+                ->orWhere('final_title', 'like', "%{$search}%");
+            });
+        });
+    }
+
+    public function scopeForUser($query, $user)
+    {
+        if ($user->role === 'dosen') {
+            return $query->where(function ($q) use ($user) {
+                $q->where('pembimbing1_id', $user->id)
+                  ->orWhere('pembimbing2_id', $user->id);
+            });
+        } elseif ($user->role === 'mahasiswa') {
+            return $query->where('student_id', $user->id);
+        }
+        return $query;
     }
 }

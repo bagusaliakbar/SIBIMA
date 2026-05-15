@@ -3,50 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thesis;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-use App\Exports\MonitoringExport;
-use App\Exports\DefenseScoresExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
-
 use App\Models\Wave;
 use App\Models\User;
 use App\Models\SeminarScheduleDetail;
 use App\Models\ThesisDefenseScheduleDetail;
+use App\Services\MonitoringService;
+use App\Exports\MonitoringExport;
+use App\Exports\DefenseScoresExport;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class MonitoringController extends Controller
+class MonitoringController extends Controller implements HasMiddleware
 {
+    protected $monitoringService;
+
+    public function __construct(MonitoringService $monitoringService)
+    {
+        $this->monitoringService = $monitoringService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (Auth::user()->role !== 'admin') {
+                    abort(403);
+                }
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
         
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
-            ->withCount(['mentoringSessions as total_sessions' => function ($q) {
-                $q->where('status', 'completed')->where('is_absent', false);
-            }])
-            ->withCount(['mentoringSessions as sessions_p1' => function ($q) {
-                $q->where('status', 'completed')
-                  ->where('is_absent', false)
-                  ->whereColumn('dosen_id', 'pembimbing1_id');
-            }])
-            ->withCount(['mentoringSessions as sessions_p2' => function ($q) {
-                $q->where('status', 'completed')
-                  ->where('is_absent', false)
-                  ->whereColumn('dosen_id', 'pembimbing2_id');
-            }])
-            ->when($search, function ($query, $search) {
-                $query->whereHas('student', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('identifier', 'like', "%{$search}%");
-                })
-                ->orWhere('title', 'like', "%{$search}%");
-            })
+            ->withMentoringCounts()
+            ->search($search)
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             ->appends(['search' => $search]);
@@ -54,27 +52,57 @@ class MonitoringController extends Controller
         return view('monitoring.index', compact('theses', 'search'));
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
+        $type = $request->input('type', 'akademik');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $format = $request->input('format', 'excel');
+
+        $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2']);
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        return Excel::download(new MonitoringExport, 'monitoring-acc-lulus-' . now()->format('Y-m-d') . '.xlsx');
+        switch ($type) {
+            case 'mahasiswa':
+                $data = $query->get();
+                break;
+            case 'kelulusan':
+                $data = $query->where('status', 'completed')->get();
+                break;
+            case 'dosen':
+                $data = User::where('role', 'dosen')->withCount(['thesesAsP1', 'thesesAsP2'])->get();
+                break;
+            case 'logs':
+                $data = \App\Models\ActivityLog::with('user')
+                    ->when($startDate && $endDate, function($q) use ($startDate, $endDate) {
+                        $q->whereBetween('created_at', [$startDate, $endDate]);
+                    })->latest()->get();
+                break;
+            default:
+                $data = $query->get();
+                break;
+        }
+
+        if ($format === 'pdf') {
+            $pdf = Pdf::loadView('monitoring.reports.' . $type . '_pdf', compact('data', 'startDate', 'endDate'))
+                ->setPaper('a4', 'landscape');
+            return $pdf->download('Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.pdf');
+        }
+
+        // Default to Excel using the existing MonitoringExport (or specialized one)
+        return Excel::download(new MonitoringExport($type, $startDate, $endDate), 'Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.xlsx');
     }
 
     public function revisions(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
-        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
-        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        [$activeWave, $selectedWaveId] = $this->monitoringService->getActiveWave($request->input('wave_id'));
 
         $seminarDetails = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions'])
-            ->whereHas('thesis') // Ensure there is a thesis
+            ->whereHas('thesis')
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('thesis.seminarApplication', function($query) use ($selectedWaveId) {
                     $query->where('wave_id', $selectedWaveId);
@@ -99,13 +127,8 @@ class MonitoringController extends Controller
 
     public function defenseRevisions(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
-        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
-        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        [$activeWave, $selectedWaveId] = $this->monitoringService->getActiveWave($request->input('wave_id'));
 
         $defenseDetails = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions'])
             ->whereHas('thesis')
@@ -133,13 +156,8 @@ class MonitoringController extends Controller
 
     public function defenseScores(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
-        $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
-        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        [$activeWave, $selectedWaveId] = $this->monitoringService->getActiveWave($request->input('wave_id'));
 
         $defenseDetails = ThesisDefenseScheduleDetail::with(['thesis.student', 'thesis.pembimbing1', 'schedule', 'examiner1', 'examiner2', 'revisions'])
             ->whereHas('thesis')
@@ -167,10 +185,6 @@ class MonitoringController extends Controller
 
     public function exportDefenseScoresExcel(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $waveId = $request->input('wave_id');
         $wave = $waveId ? Wave::find($waveId) : null;
         $waveName = $wave ? str_replace([' ', '/', '\\'], '_', $wave->name) : 'Semua_Gelombang';
@@ -181,10 +195,6 @@ class MonitoringController extends Controller
 
     public function exportDefenseScoresPdf(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $waveId = $request->input('wave_id');
         $wave = $waveId ? Wave::find($waveId) : null;
 
@@ -206,90 +216,92 @@ class MonitoringController extends Controller
 
     public function exportBeritaAcara(ThesisDefenseScheduleDetail $detail)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        $scoresData = $this->monitoringService->calculateDefenseScores($detail);
 
-        $detail->load(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'schedule', 'examiner1', 'examiner2', 'revisions']);
-        
-        $revP1 = $detail->revisions->where('examiner_id', $detail->thesis->pembimbing1_id)->first();
-        $revE1 = $detail->revisions->where('examiner_id', $detail->examiner1_id)->first();
-        $revE2 = $detail->revisions->where('examiner_id', $detail->examiner2_id)->first();
-
-        $calc = function($rev) {
-            if (!$rev || $rev->score_presentation === null) return null;
-            return ($rev->score_presentation * 0.25) + ($rev->score_explanation * 0.40) + ($rev->score_writing * 0.35);
-        };
-
-        $scoreP1 = $calc($revP1);
-        $scoreE1 = $calc($revE1);
-        $scoreE2 = $calc($revE2);
-
-        $scores = collect([$scoreP1, $scoreE1, $scoreE2])->filter(fn($s) => $s !== null);
-        $totalScore = $scores->sum();
-        $finalScore = $scores->count() > 0 ? $totalScore / $scores->count() : 0;
-
-        $getGrade = function($s) {
-            if ($s >= 80) return 'A';
-            if ($s >= 70) return 'B';
-            if ($s >= 60) return 'C';
-            if ($s >= 50) return 'D';
-            return 'E';
-        };
-        $finalGrade = $scores->count() > 0 ? $getGrade($finalScore) : '-';
-
-        $pres_scores = collect([$revP1->score_presentation ?? null, $revE1->score_presentation ?? null, $revE2->score_presentation ?? null])->filter(fn($s) => $s !== null);
-        $avgPres = $pres_scores->count() > 0 ? $pres_scores->avg() : 0;
-        
-        $expl_scores = collect([$revP1->score_explanation ?? null, $revE1->score_explanation ?? null, $revE2->score_explanation ?? null])->filter(fn($s) => $s !== null);
-        $avgExpl = $expl_scores->count() > 0 ? $expl_scores->avg() : 0;
-        
-        $writ_scores = collect([$revP1->score_writing ?? null, $revE1->score_writing ?? null, $revE2->score_writing ?? null])->filter(fn($s) => $s !== null);
-        $avgWrit = $writ_scores->count() > 0 ? $writ_scores->avg() : 0;
-
-        $pdf = Pdf::loadView('monitoring.berita_acara_pdf', compact(
-            'detail', 'revP1', 'revE1', 'revE2', 'scoreP1', 'scoreE1', 'scoreE2', 
-            'avgPres', 'avgExpl', 'avgWrit', 'finalScore', 'finalGrade'
-        ));
+        $pdf = Pdf::loadView('monitoring.berita_acara_pdf', array_merge(['detail' => $detail], $scoresData));
 
         $fileName = 'Berita_Acara_Sidang_' . str_replace(' ', '_', $detail->thesis->student->name) . '.pdf';
         return $pdf->download($fileName);
     }
+
+    public function exportBeritaAcaraSeminar(SeminarScheduleDetail $detail)
+    {
+        $scoresData = $this->monitoringService->calculateSeminarScores($detail);
+
+        $pdf = Pdf::loadView('monitoring.berita_acara_seminar_pdf', array_merge(['detail' => $detail], $scoresData));
+
+        $fileName = 'Berita_Acara_Seminar_' . str_replace(' ', '_', $detail->thesis->student->name) . '.pdf';
+        return $pdf->download($fileName);
+    }
+
+
     public function criticalStudents(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
-        
-        // Critical semester is 13 and 14
-        // Logic: (CurrentYear - EntryYear) * 2 (+ 1 if July+) >= 13
-        $currentYear = now()->year;
-        $isSecondHalf = now()->month >= 7;
-        
-        // Threshold year:
-        // If second half: (2026 - 2020) * 2 + 1 = 13. So EntryYear <= 2020.
-        // If first half: (2026 - 2019) * 2 = 14. So EntryYear <= 2019.
-        $thresholdYear = $isSecondHalf ? ($currentYear - 6) : ($currentYear - 7);
-
-        $students = User::where('role', 'mahasiswa')
-            ->whereNotNull('entry_year')
-            ->where('entry_year', '<=', $thresholdYear)
-            ->whereHas('thesis', function($q) {
-                $q->where('status', '!=', 'completed');
-            })
-            ->when($search, function ($query, $search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('identifier', 'like', "%{$search}%");
-                });
-            })
-            ->with(['thesis.pembimbing1'])
-            ->orderBy('entry_year', 'asc')
+        $students = $this->monitoringService->getCriticalStudentsQuery($search)
             ->paginate(15)
             ->appends(['search' => $search]);
 
         return view('monitoring.critical', compact('students', 'search'));
+    }
+
+    public function batchExportBeritaAcara(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
+        }
+        $waveId = $request->input('wave_id');
+        $category = $request->input('category', 'defense'); // seminar or defense
+
+        if ($waveId && (!$ids || count($ids) === 0)) {
+            // Fetch all IDs in wave
+            if ($category === 'defense') {
+                $ids = ThesisDefenseScheduleDetail::whereHas('thesis.defenseApplication', function($q) use ($waveId) {
+                    $q->where('wave_id', $waveId);
+                })->pluck('id')->toArray();
+            } else {
+                $ids = SeminarScheduleDetail::whereHas('thesis.seminarApplication', function($q) use ($waveId) {
+                    $q->where('wave_id', $waveId);
+                })->pluck('id')->toArray();
+            }
+        }
+
+        if (empty($ids)) {
+            return back()->with('error', 'Pilih minimal satu data mahasiswa untuk diekspor.');
+        }
+
+        $zipName = 'Berita_Acara_' . ucfirst($category) . '_' . now()->format('YmdHis') . '.zip';
+        $zipPath = storage_path('app/public/' . $zipName);
+        $zip = new \ZipArchive;
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
+            foreach ($ids as $id) {
+                if ($category === 'defense') {
+                    $detail = ThesisDefenseScheduleDetail::with(['thesis.student', 'thesis.pembimbing1', 'schedule', 'examiner1', 'examiner2'])->find($id);
+                    if ($detail) {
+                        $scoresData = $this->monitoringService->calculateDefenseScores($detail);
+                        $pdf = Pdf::loadView('monitoring.berita_acara_pdf', array_merge(['detail' => $detail], $scoresData));
+                        $fileName = 'Berita_Acara_Sidang_' . str_replace([' ', '/', '\\'], '_', $detail->thesis->student->name) . '_' . $detail->id . '.pdf';
+                        $zip->addFromString($fileName, $pdf->output());
+                    }
+                } else {
+                    $detail = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2'])->find($id);
+                    if ($detail) {
+                        $scoresData = $this->monitoringService->calculateSeminarScores($detail);
+                        $pdf = Pdf::loadView('monitoring.berita_acara_seminar_pdf', array_merge(['detail' => $detail], $scoresData));
+                        $fileName = 'Berita_Acara_Seminar_' . str_replace([' ', '/', '\\'], '_', $detail->thesis->student->name) . '_' . $detail->id . '.pdf';
+                        $zip->addFromString($fileName, $pdf->output());
+                    }
+                }
+            }
+            $zip->close();
+        }
+
+        if (!file_exists($zipPath)) {
+            return back()->with('error', 'Gagal membuat file ZIP.');
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }

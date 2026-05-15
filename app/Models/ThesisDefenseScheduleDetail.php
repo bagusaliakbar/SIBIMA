@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\HasActivityLog;
+
 class ThesisDefenseScheduleDetail extends Model
 {
+    use HasActivityLog;
+
     protected $fillable = [
         'thesis_defense_schedule_id',
         'thesis_id',
@@ -14,7 +18,22 @@ class ThesisDefenseScheduleDetail extends Model
         'end_time',
         'examiner1_id',
         'examiner2_id',
-        'order'
+        'order',
+        'verification_token'
+    ];
+
+    protected static function booted()
+    {
+        static::creating(function ($detail) {
+            if (!$detail->verification_token) {
+                $detail->verification_token = \Illuminate\Support\Str::random(32);
+            }
+        });
+    }
+
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     public function schedule()
@@ -42,28 +61,55 @@ class ThesisDefenseScheduleDetail extends Model
         return $this->hasMany(ThesisDefenseRevision::class, 'thesis_defense_schedule_detail_id');
     }
 
+    public function getRevisionFor($examinerId)
+    {
+        return $this->revisions->where('examiner_id', $examinerId)->first();
+    }
+
     public function isRevisionAllApproved()
     {
-        $this->load(['revisions', 'thesis']);
-        
         if (!$this->thesis) return false;
 
-        $requiredIds = array_unique([
+        $requiredIds = array_unique(array_filter([
             $this->examiner1_id,
             $this->examiner2_id,
             $this->thesis->pembimbing1_id
-        ]);
+        ]));
 
-        // Remove nulls just in case
-        $requiredIds = array_filter($requiredIds);
+        if (count($requiredIds) === 0) return false;
 
         foreach ($requiredIds as $id) {
-            $rev = $this->revisions->where('examiner_id', $id)->first();
+            $rev = $this->getRevisionFor($id);
             if (!$rev || $rev->status !== 'approved') {
                 return false;
             }
         }
 
-        return count($requiredIds) > 0;
+        return true;
+    }
+
+    public function isRevisionStarted()
+    {
+        return $this->revisions->count() > 0;
+    }
+
+    public function isGradingComplete()
+    {
+        $rev1 = $this->getRevisionFor($this->examiner1_id);
+        $rev2 = $this->getRevisionFor($this->examiner2_id);
+        $revP1 = $this->thesis ? $this->getRevisionFor($this->thesis->pembimbing1_id) : null;
+
+        return ($rev1 && $rev1->isGraded()) &&
+               ($rev2 && $rev2->isGraded()) &&
+               ($revP1 && $revP1->isGraded());
+    }
+
+    public function isRevisionComplete()
+    {
+        $rev1 = $this->getRevisionFor($this->examiner1_id);
+        $rev2 = $this->getRevisionFor($this->examiner2_id);
+
+        return ($rev1 && $rev1->isApproved()) &&
+               ($rev2 && $rev2->isApproved());
     }
 }

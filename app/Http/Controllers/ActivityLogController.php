@@ -3,20 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Exports\ActivityLogsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ActivityLogController extends Controller
+class ActivityLogController extends Controller implements HasMiddleware
 {
-    /**
-     * Display a listing of the logs.
-     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (Auth::user()->role !== 'admin') abort(403);
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
         $module = $request->input('module');
 
@@ -42,23 +49,14 @@ class ActivityLogController extends Controller
         return view('logs.index', compact('logs', 'search', 'module', 'modules'));
     }
 
-    /**
-     * Export logs to Excel.
-     */
     public function export(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
         $search = $request->input('search');
         $module = $request->input('module');
 
-        $filename = "log_aktivitas_" . date('Y-m-d_H-i-s') . ".xlsx";
-        
-        return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\ActivityLogsExport($search, $module), 
-            $filename
+        return Excel::download(
+            new ActivityLogsExport($search, $module), 
+            "log_aktivitas_" . date('Y-m-d_H-i-s') . ".xlsx"
         );
     }
 }

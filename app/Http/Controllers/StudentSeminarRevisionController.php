@@ -2,24 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\SeminarRevision;
 use App\Models\SeminarRevisionMessage;
 use App\Models\Thesis;
+use App\Services\RevisionService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class StudentSeminarRevisionController extends Controller
+class StudentSeminarRevisionController extends Controller implements HasMiddleware
 {
+    protected $revisionService;
+
+    public function __construct(RevisionService $revisionService)
+    {
+        $this->revisionService = $revisionService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (Auth::user()->role !== 'mahasiswa' && !in_array($request->route()->getName(), ['student-seminar-revisions.print-pdf'])) {
+                    abort(403);
+                }
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index()
     {
         $user = Auth::user();
-        if ($user->role !== 'mahasiswa') {
-            abort(403);
-        }
-
         $thesis = Thesis::where('student_id', $user->id)->first();
         if (!$thesis) {
             return view('student-seminar-revisions.index', ['revisions' => collect()]);
@@ -39,9 +55,7 @@ class StudentSeminarRevisionController extends Controller
         $user = Auth::user();
         $revision->load(['examiner', 'detail.thesis', 'detail.schedule', 'messages.sender']);
 
-        if ($revision->detail->thesis->student_id !== $user->id) {
-            abort(403);
-        }
+        if ($revision->detail->thesis->student_id !== $user->id) abort(403);
 
         return view('student-seminar-revisions.show', compact('revision'));
     }
@@ -49,30 +63,14 @@ class StudentSeminarRevisionController extends Controller
     public function storeReply(Request $request, SeminarRevision $revision)
     {
         $user = Auth::user();
-        if ($revision->detail->thesis->student_id !== $user->id) {
-            abort(403);
-        }
+        if ($revision->detail->thesis->student_id !== $user->id) abort(403);
 
         $request->validate([
             'student_notes' => 'required|string',
             'student_file' => 'nullable|file|mimes:pdf,doc,docx,zip,rar|max:10240',
         ]);
 
-        $revision->update([
-            'resubmitted_at' => now(),
-            'status' => 'resubmitted',
-        ]);
-
-        $message = SeminarRevisionMessage::create([
-            'seminar_revision_id' => $revision->id,
-            'sender_id' => $user->id,
-            'message' => $request->student_notes,
-        ]);
-
-        if ($request->hasFile('student_file')) {
-            $path = $request->file('student_file')->store('seminar-revisions/replies', 'public');
-            $message->update(['file_path' => $path]);
-        }
+        $this->revisionService->storeReply($revision, SeminarRevisionMessage::class, $request->only('student_notes'), $request->file('student_file'));
 
         return redirect()->back()->with('success', 'Follow-up revisi berhasil dikirim.');
     }
@@ -82,19 +80,12 @@ class StudentSeminarRevisionController extends Controller
         $user = Auth::user();
         $revision->load(['examiner', 'detail.thesis.student', 'detail.schedule', 'messages']);
 
-        // Only student or examiner can print
-        if ($revision->detail->thesis->student_id !== $user->id && $revision->examiner_id !== $user->id) {
-            abort(403);
-        }
+        if ($revision->detail->thesis->student_id !== $user->id && $revision->examiner_id !== $user->id) abort(403);
 
         $firstMessage = $revision->messages->where('sender_id', $revision->examiner_id)->first();
-        
-        if (!$firstMessage) {
-            return redirect()->back()->with('error', 'Belum ada catatan revisi dari penguji.');
-        }
+        if (!$firstMessage) return back()->with('error', 'Belum ada catatan revisi dari penguji.');
 
         $pdf = Pdf::loadView('student-seminar-revisions.print', compact('revision', 'firstMessage'));
-        
         return $pdf->stream('Pernyataan_Revisi_' . $revision->detail->thesis->student->identifier . '.pdf');
     }
 }

@@ -2,25 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications()->latest()->take(20)->get();
-        $unreadCount = Auth::user()->unreadNotifications->count();
-        
+        $user = Auth::user();
         return response()->json([
-            'notifications' => $notifications,
-            'unread_count' => $unreadCount
+            'notifications' => $user->notifications()->latest()->take(20)->get(),
+            'unread_count' => $user->unreadNotifications->count()
         ]);
     }
 
     public function markAsRead($id)
     {
-        $notification = Auth::user()->notifications()->where('id', $id)->first();
+        $notification = Auth::user()->notifications()->find($id);
         if ($notification) {
             $notification->markAsRead();
         }

@@ -18,51 +18,12 @@
     <div class="space-y-6">
         @if(Auth::user()->role === 'mahasiswa')
             @php
-                $isGraduated = $thesis && $thesis->status === 'completed';
-                $progressPercent = 0;
-                $steps = 0;
-                $seminarDone = false;
-                $defenseDone = false;
-
-                // Step 1: Judul (0% -> 20%)
-                if ($thesis) { 
-                    $progressPercent = 20; 
-                    $steps++; 
-                    
-                    // Step 2: Bab 1-3 (20% -> 40%)
-                    $mentoring1 = min(4, $pastSessionsCount);
-                    $progressPercent += ($mentoring1 / 4) * 20;
-                    if ($mentoring1 >= 4) $steps++;
-                    
-                    // Step 3: Seminar (40% -> 60%)
-                    $seminarDone = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']));
-                    if ($seminarDone) { 
-                        $progressPercent = 60; 
-                        $steps++; 
-                        
-                        // Step 4: Bab 4-5 (60% -> 80%)
-                        $mentoring2 = max(0, min(4, $pastSessionsCount - 4));
-                        $progressPercent += ($mentoring2 / 4) * 20;
-                        if ($mentoring2 >= 4) $steps++;
-                        
-                        // Step 5: Sidang (80% -> 100%)
-                        $hasDefenseRevisions = \App\Models\ThesisDefenseRevision::whereHas('detail', function($q) use ($thesis) {
-                            $q->where('thesis_id', $thesis?->id);
-                        })->exists();
-                        
-                        $defenseDone = ($defense && in_array($defense->status, ['approved', 'completed', 'finished'])) || $hasDefenseRevisions;
-                        if ($defenseDone) { 
-                            $progressPercent = 90; // Almost there
-                            $steps++; 
-                        }
-
-                        // Step 6: Kelulusan (100%)
-                        if ($isGraduated) { 
-                            $progressPercent = 100; 
-                            $steps++; 
-                        }
-                    }
-                }
+                $isGraduated = $progress['isGraduated'];
+                $progressPercent = $progress['percent'];
+                $seminarDone = $progress['seminarDone'];
+                $defenseDone = $progress['defenseDone'];
+                $currentStage = $progress['currentStage'];
+                $stages = $progress['stages'];
             @endphp
 
             @if($isStale)
@@ -91,95 +52,136 @@
                     </div>
                 </div>
             @endif
-            <!-- Timeline Progres Mahasiswa -->
-            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mb-6 relative overflow-hidden transition-all duration-300">
-                <!-- Background Pattern -->
-                <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50 dark:bg-orange-500/5 rounded-full -mr-16 -mt-16 opacity-50 transition-colors"></div>
-                
-                <div class="flex items-center justify-between mb-10 relative z-10">
+            <!-- Road to Graduation (Premium Roadmap) -->
+            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:border-slate-700/50 mb-8 relative overflow-hidden group">
+                <!-- Decorative Elements -->
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-colors duration-700"></div>
+                <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl group-hover:bg-indigo-500/10 transition-colors duration-700"></div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
                     <div>
-                        <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight">Timeline Perjalanan Skripsi</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Langkah Anda menuju gelar sarjana.</p>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-900/20">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight uppercase italic">Road to Graduation</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Langkah strategis menuju sarjana</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex flex-col items-end">
-                        <span class="text-2xl font-black text-orange-600">{{ round($progressPercent) }}%</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Progres</span>
+                    <div class="flex items-center gap-5">
+                        <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1 group/btn">
+                            <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm group-hover/btn:bg-indigo-600 group-hover/btn:text-white transition-all duration-300">
+                                <svg class="w-5 h-5 text-indigo-600 group-hover/btn:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover/btn:text-indigo-600 transition-colors">Lihat Histori</span>
+                        </a>
+                        <div class="flex items-center gap-5 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                            <div class="text-right">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Capaian Saat Ini</p>
+                                <p class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{{ round($progressPercent) }}%</p>
+                            </div>
+                            <div class="w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
+                            <div class="relative w-14 h-14">
+                                <svg class="w-14 h-14 transform -rotate-90">
+                                    <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-200 dark:text-slate-800" />
+                                    <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="150.7" stroke-dashoffset="{{ 150.7 - (150.7 * $progressPercent / 100) }}" class="text-orange-600 transition-all duration-1000 ease-out" />
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="relative px-4">
+                <div class="relative pt-4 pb-8">
                     <!-- Progress Line (Background) -->
-                    <div class="absolute top-5 left-4 right-4 h-1 bg-slate-100 dark:bg-slate-700 rounded-full"></div>
+                    <div class="absolute top-[42px] left-0 right-0 h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full"></div>
                     <!-- Progress Line (Active) -->
-                    <div class="absolute top-5 left-4 h-1 bg-gradient-to-r from-orange-500 to-orange-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.3)] dark:shadow-[0_0_12px_rgba(249,115,22,0.15)]" style="width: calc({{ $progressPercent }}% - 2rem)"></div>
+                    <div class="absolute top-[42px] left-0 h-1.5 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" style="width: {{ max(0, min(100, (($currentStage - 1) / (count($stages) - 1)) * 100)) }}%"></div>
 
-                    <div class="relative flex justify-between">
-                        <!-- Step 1: Judul -->
-                        <div class="flex flex-col items-center group">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $thesis ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500' }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            </div>
-                            <div class="mt-3 text-center">
-                                <span class="block text-[10px] font-black {{ $thesis ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Judul</span>
-                                <span class="text-[8px] font-bold {{ $thesis ? 'text-emerald-500' : 'text-slate-400' }}">{{ $thesis ? 'Selesai' : 'Belum' }}</span>
-                            </div>
-                        </div>
+                    <div class="relative flex justify-between gap-2">
+                        @foreach($stages as $index => $stage)
+                            @php 
+                                $stageNum = $index + 1;
+                                $isActive = $currentStage >= $stageNum;
+                                $isCurrent = $currentStage == $stageNum;
+                                
+                                // Final stage logic: if currentStage is 6, then stage 6 is completed
+                                $statusLabel = 'Pending';
+                                if ($isActive) {
+                                    if ($isCurrent) {
+                                        $statusLabel = ($stageNum == 6 && $isGraduated) ? 'Completed' : 'In Progress';
+                                    } else {
+                                        $statusLabel = 'Completed';
+                                    }
+                                }
+                            @endphp
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="relative group/step">
+                                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center z-10 transition-all duration-500 relative
+                                        {{ $isActive ? 'bg-orange-600 text-white shadow-2xl shadow-orange-900/30' : 'bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-300 dark:text-slate-600' }}
+                                        {{ $isCurrent ? 'ring-4 ring-orange-500/20 scale-110' : '' }}">
+                                        
+                                        @if($stageNum == 1)
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        @elseif($stageNum == 2)
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                        @elseif($stageNum == 3)
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 4v4h4"></path></svg>
+                                        @elseif($stageNum == 4)
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                        @elseif($stageNum == 5)
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"></path></svg>
+                                        @else
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
+                                        @endif
 
-                        <!-- Step 2: Bab 1-3 -->
-                        <div class="flex flex-col items-center group">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $pastSessionsCount >= 4 ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($pastSessionsCount > 0 ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                        @if($isActive && !($isCurrent && $statusLabel != 'Completed'))
+                                            <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-sm">
+                                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Tooltip / Label -->
+                                    <div class="mt-4 text-center">
+                                        <h4 class="text-[11px] font-black uppercase tracking-tight {{ $isActive ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }}">{{ $stage['name'] }}</h4>
+                                        <p class="text-[8px] font-bold {{ $isActive ? 'text-orange-500' : 'text-slate-400' }} leading-none mt-1 opacity-70">{{ $statusLabel }}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mt-3 text-center">
-                                <span class="block text-[10px] font-black {{ $pastSessionsCount >= 4 ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Bab 1-3</span>
-                                <span class="text-[8px] font-bold {{ $pastSessionsCount >= 4 ? 'text-emerald-500' : 'text-slate-400' }}">{{ min(4, $pastSessionsCount) }}/4 Sesi</span>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: Seminar -->
-                        <div class="flex flex-col items-center group">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $seminarDone ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($seminar ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                            </div>
-                            <div class="mt-3 text-center">
-                                <span class="block text-[10px] font-black {{ $seminarDone ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Seminar</span>
-                                <span class="text-[8px] font-bold {{ $seminarDone ? 'text-emerald-500' : 'text-slate-400' }}">{{ $seminarDone ? 'Selesai' : ($seminar ? ucfirst($seminar->status) : 'Belum') }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Step 4: Penelitian -->
-                        <div class="flex flex-col items-center group">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $pastSessionsCount >= 8 ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($pastSessionsCount >= 4 ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                            </div>
-                            <div class="mt-3 text-center">
-                                <span class="block text-[10px] font-black {{ $pastSessionsCount >= 8 ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Bab 4-5</span>
-                                <span class="text-[8px] font-bold {{ $pastSessionsCount >= 8 ? 'text-emerald-500' : 'text-slate-400' }}">{{ min(4, max(0, $pastSessionsCount - 4)) }}/4 Sesi</span>
-                            </div>
-                        </div>
-
-                        <!-- Step 5: Sidang -->
-                        <div class="flex flex-col items-center group">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $defenseDone ? 'bg-orange-600 text-white shadow-xl shadow-orange-200 dark:shadow-orange-900/20' : ($defense ? 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500') }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
-                            </div>
-                            <div class="mt-3 text-center">
-                                <span class="block text-[10px] font-black {{ $defenseDone ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Sidang</span>
-                                <span class="text-[8px] font-bold {{ $defenseDone ? 'text-emerald-500' : 'text-slate-400' }}">{{ $defenseDone ? 'Selesai' : ($defense ? ucfirst($defense->status) : 'Belum') }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Step 6: Lulus -->
-                        <div class="flex flex-col items-center group">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center z-10 transition-all duration-500 {{ $isGraduated ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-200 dark:shadow-emerald-900/20' : 'bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-300 dark:text-slate-500' }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            </div>
-                            <div class="mt-3 text-center">
-                                <span class="block text-[10px] font-black {{ $isGraduated ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }} uppercase tracking-tighter leading-none">Lulus</span>
-                                <span class="text-[8px] font-bold {{ $isGraduated ? 'text-emerald-500' : 'text-slate-400' }}">{{ $isGraduated ? 'Selamat!' : 'Belum' }}</span>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
+                </div>
+
+                <!-- Footer Insight -->
+                <div class="mt-6 pt-6 border-t border-slate-50 dark:border-slate-700/50 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 italic">
+                        @if($currentStage == 1)
+                            Judul telah diterima! Sekarang saatnya fokus pada penyusunan <span class="text-orange-600 font-bold">Proposal (Bab 1-3)</span> dan lakukan bimbingan secara rutin.
+                        @elseif($currentStage == 2)
+                            Anda sedang dalam tahap bimbingan. Terus perbaiki draf Anda hingga mendapatkan <span class="text-orange-600 font-bold">ACC Seminar</span> dari para pembimbing.
+                        @elseif($currentStage == 3)
+                            Selamat atas seminarnya! Segera revisi dan lanjutkan ke tahap <span class="text-orange-600 font-bold">Penelitian</span> untuk pengumpulan data.
+                        @elseif($currentStage == 4)
+                            Fokus pada pengolahan data dan penyusunan <span class="text-orange-600 font-bold">Bab 4-5</span>. Anda sudah semakin dekat dengan sidang akhir!
+                        @elseif($currentStage == 5)
+                            Tahap krusial! Persiapkan materi presentasi Anda sebaik mungkin untuk menghadapi <span class="text-orange-600 font-bold">Sidang Akhir</span>.
+                        @elseif($currentStage == 6)
+                            Luar biasa! Anda telah menyelesaikan seluruh rintangan. Selamat atas status <span class="text-emerald-600 font-bold">LULUS</span> Anda!
+                        @else
+                            Silakan ajukan judul skripsi untuk memulai perjalanan akademik Anda di SIBIMA.
+                        @endif
+                    </p>
                 </div>
             </div>
 
@@ -214,143 +216,100 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             @if(Auth::user()->role === 'mahasiswa')
                 <!-- Stats Mahasiswa -->
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-emerald-50 dark:bg-emerald-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status Skripsi</h3>
-                        @if($thesis)
-                            <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1 uppercase">{{ $thesis->status === 'active' ? 'Aktif' : 'Menunggu' }}</h2>
-                        @else
-                            <h2 class="text-lg font-extrabold text-slate-400 mt-1">Belum Ada</h2>
-                        @endif
-                    </div>
-                </div>
+                <x-stat-card title="Status Skripsi" :value="$thesis ? ($thesis->status === 'active' ? 'Aktif' : 'Menunggu') : 'Belum Ada'" color="emerald">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </x-slot>
+                </x-stat-card>
 
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-orange-50 dark:bg-orange-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-orange-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pembimbing</h3>
-                        @if($thesis && $thesis->pembimbing1_id)
-                            <div class="mt-1 space-y-0.5">
-                                <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title="{{ $thesis->pembimbing1->name }}">1. {{ $thesis->pembimbing1->name }}</p>
-                                <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title="{{ $thesis->pembimbing2->name }}">2. {{ $thesis->pembimbing2->name }}</p>
-                            </div>
-                        @else
-                            <h2 class="text-lg font-extrabold text-slate-400 mt-1">Belum Ada</h2>
-                        @endif
-                    </div>
-                </div>
+                <x-stat-card title="Pembimbing" :value="$thesis && $thesis->pembimbing1_id ? '' : 'Belum Ada'" color="orange">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </x-slot>
+                    @if($thesis && $thesis->pembimbing1_id)
+                        <x-slot name="subtitle">
+                            <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title="{{ $thesis->pembimbing1->name }}">1. {{ $thesis->pembimbing1->name }}</p>
+                            <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title="{{ $thesis->pembimbing2->name }}">2. {{ $thesis->pembimbing2->name }}</p>
+                        </x-slot>
+                    @endif
+                </x-stat-card>
 
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-blue-50 dark:bg-blue-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sesi Selesai</h3>
-                        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $pastSessionsCount ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
-                        @if($thesis)
-                            <div class="mt-2 space-y-0.5 border-t border-slate-100 dark:border-slate-700/50 pt-2">
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
-                                    <span>P1: {{ Str::limit($thesis->pembimbing1->name, 50) }}</span>
-                                    <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP1 }} Sesi</span>
-                                </p>
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
-                                    <span>P2: {{ Str::limit($thesis->pembimbing2->name, 50) }}</span>
-                                    <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP2 }} Sesi</span>
-                                </p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                <x-stat-card title="Sesi Selesai" color="blue">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </x-slot>
+                    <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $pastSessionsCount ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
+                    @if($thesis)
+                        <x-slot name="subtitle">
+                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>P1: {{ Str::limit($thesis->pembimbing1->name, 50) }}</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP1 }} Sesi</span>
+                            </p>
+                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>P2: {{ Str::limit($thesis->pembimbing2->name, 50) }}</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP2 }} Sesi</span>
+                            </p>
+                        </x-slot>
+                    @endif
+                </x-stat-card>
 
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-indigo-50 dark:bg-indigo-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Progres Keseluruhan</h3>
-                        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ round($progressPercent) }}%</h2>
-                    </div>
-                </div>
+                <x-stat-card title="Progres Keseluruhan" :value="round($progressPercent) . '%'" color="indigo">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </x-slot>
+                </x-stat-card>
             @else
                 <!-- Stats Admin/Dosen -->
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-orange-50 dark:bg-orange-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-orange-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ Auth::user()->role === 'admin' ? 'Total Skripsi' : 'Mhs Bimbingan' }}</h3>
-                        <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $activeThesesCount ?? 0 }}</h2>
-                        @if(Auth::user()->role === 'dosen')
-                            <div class="mt-2 space-y-0.5 border-t border-slate-100 dark:border-slate-700/50 pt-2">
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
-                                    <span>Pembimbing 1</span>
-                                    <span class="font-bold text-slate-700 dark:text-slate-300">{{ $totalActiveStudentsP1 ?? 0 }} Mahasiswa</span>
-                                </p>
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
-                                    <span>Pembimbing 2</span>
-                                    <span class="font-bold text-slate-700 dark:text-slate-300">{{ $totalActiveStudentsP2 ?? 0 }} Mahasiswa</span>
-                                </p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                <x-stat-card :title="Auth::user()->role === 'admin' ? 'Total Skripsi' : 'Mhs Bimbingan'" :value="$activeThesesCount ?? 0" color="orange">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </x-slot>
+                    @if(Auth::user()->role === 'dosen')
+                        <x-slot name="subtitle">
+                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>Pembimbing 1</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ $totalActiveStudentsP1 ?? 0 }} Mahasiswa</span>
+                            </p>
+                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>Pembimbing 2</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ $totalActiveStudentsP2 ?? 0 }} Mahasiswa</span>
+                            </p>
+                        </x-slot>
+                    @endif
+                </x-stat-card>
 
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-blue-50 dark:bg-blue-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Jadwal Minggu Ini</h3>
-                        <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $sessionsThisWeek ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
-                        @if(Auth::user()->role === 'dosen')
-                            <div class="mt-2 space-y-0.5 border-t border-slate-100 dark:border-slate-700/50 pt-2">
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
-                                    <span>Menunggu</span>
-                                    <span class="font-bold text-amber-600 dark:text-amber-400">{{ $pendingSessionsThisWeek ?? 0 }}</span>
-                                </p>
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
-                                    <span>Disetujui</span>
-                                    <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ $approvedSessionsThisWeek ?? 0 }}</span>
-                                </p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                <x-stat-card title="Jadwal Minggu Ini" color="blue">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </x-slot>
+                    <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $sessionsThisWeek ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
+                    @if(Auth::user()->role === 'dosen')
+                        <x-slot name="subtitle">
+                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>Menunggu</span>
+                                <span class="font-bold text-amber-600 dark:text-amber-400">{{ $pendingSessionsThisWeek ?? 0 }}</span>
+                            </p>
+                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>Disetujui</span>
+                                <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ $approvedSessionsThisWeek ?? 0 }}</span>
+                            </p>
+                        </x-slot>
+                    @endif
+                </x-stat-card>
 
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-emerald-50 dark:bg-emerald-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sesi Selesai</h3>
-                        <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ Auth::user()->role === 'dosen' ? ($totalCompletedSessions ?? 0) : (($activeThesesCount ?? 0) * 4) }}</h2>
-                        <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
-                    </div>
-                </div>
+                <x-stat-card title="Sesi Selesai" :value="Auth::user()->role === 'dosen' ? ($totalCompletedSessions ?? 0) : (($activeThesesCount ?? 0) * 4)" color="emerald">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </x-slot>
+                    <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
+                </x-stat-card>
 
-                <div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all hover:shadow-md hover:border-pink-200 dark:hover:border-pink-900/30">
-                    <div class="absolute right-0 top-0 -mr-4 -mt-4 w-24 h-24 bg-pink-50 dark:bg-pink-500/5 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400 rounded-lg flex items-center justify-center mb-4 transition-colors group-hover:bg-pink-600 group-hover:text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Progres Rata-rata</h3>
-                        <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ Auth::user()->role === 'dosen' ? ($averageStudentProgress ?? 0) : '68' }}%</h2>
-                        <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Performa bimbingan global</p>
-                    </div>
-                </div>
+                <x-stat-card title="Progres Rata-rata" :value="(Auth::user()->role === 'dosen' ? ($averageStudentProgress ?? 0) : '68') . '%'" color="pink">
+                    <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </x-slot>
+                    <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Performa bimbingan global</p>
+                </x-stat-card>
             @endif
         </div>
 
@@ -386,16 +345,101 @@
                 </div>
             </div>
         @if(Auth::user()->role === 'admin')
-            <!-- Chart 3: Dosen Workload (Full Width) -->
-            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
-                <div class="relative z-10">
-                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center">
-                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        Distribusi Beban Kerja Dosen (Top 10)
-                    </h3>
-                    <div class="h-80">
-                        <canvas id="workloadChart"></canvas>
+            <!-- Advanced Analytics Section -->
+            <div class="mb-10 mt-4">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-none">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight uppercase">Pusat Analisis Strategis</h2>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Wawasan real-time untuk pengambilan keputusan</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Score Distribution -->
+                    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                Distribusi Nilai Akhir (Grade)
+                            </h3>
+                            <div class="h-64">
+                                <canvas id="scoreDistributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wave Duration -->
+                    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Lama Pengerjaan per Gelombang (Bulan)
+                            </h3>
+                            <div class="h-64">
+                                <canvas id="waveDurationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- On-time Graduation -->
+                    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Ketepatan Waktu Lulus
+                            </h3>
+                            <div class="h-64">
+                                <canvas id="onTimeGraduationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Health -->
+                    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-rose-50 dark:bg-rose-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                Kesehatan Masa Studi Mahasiswa
+                            </h3>
+                            <div class="h-64">
+                                <canvas id="studentHealthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cohort Completion (Full Width) -->
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-8 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            Rata-rata Masa Studi per Angkatan (Tahun)
+                        </h3>
+                        <div class="h-80">
+                            <canvas id="cohortCompletionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dosen Workload (Full Width) -->
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-8 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            Dosen dengan Beban Bimbingan Terbanyak (Top 10)
+                        </h3>
+                        <div class="h-80">
+                            <canvas id="workloadChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -498,169 +542,116 @@
         @endif
 
         @if(Auth::user()->role === 'dosen' && ($examinerSeminarSchedules->count() > 0 || $examinerDefenseSchedules->count() > 0))
-            <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden mb-6 transition-all duration-300">
-                <div class="px-6 py-4 border-b border-slate-50 dark:border-slate-700 bg-slate-900 text-white flex justify-between items-center">
-                    <div>
-                        <h3 class="text-sm font-bold uppercase tracking-tight flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                            Jadwal Menguji Seminar & Sidang
-                        </h3>
-                        <p class="text-[10px] text-slate-400 font-medium mt-0.5 uppercase tracking-widest">Daftar Mahasiswa yang akan Anda uji.</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead>
-                            <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
-                                <th class="px-6 py-3">Mahasiswa</th>
-                                <th class="px-6 py-3">Posisi</th>
-                                <th class="px-6 py-3">Jenis Ujian</th>
-                                <th class="px-6 py-3">Waktu & Tempat</th>
-                                <th class="px-6 py-3 text-right">Aksi</th>
+            <x-table-card 
+                title="Jadwal Menguji Seminar & Sidang"
+                subtitle="Daftar Mahasiswa yang akan Anda uji."
+                class="mb-6">
+                
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
+                            <th class="px-6 py-3">Mahasiswa</th>
+                            <th class="px-6 py-3">Posisi</th>
+                            <th class="px-6 py-3">Jenis Ujian</th>
+                            <th class="px-6 py-3">Waktu & Tempat</th>
+                            <th class="px-6 py-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                        @foreach($examinerSeminarSchedules as $detail)
+                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
+                                        <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1">{{ $detail->thesis->title }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
+                                        <x-status-badge type="blue" label="Pembimbing" size="sm" />
+                                    @else
+                                        <x-status-badge type="indigo" label="Penguji" size="sm" />
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <x-status-badge type="orange" label="Seminar" size="sm" />
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-[11px]">
+                                        <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
+                                        <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
+                                        @if($detail->schedule->meeting_link)
+                                            <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
+                                                <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                Link Google Meet
+                                            </a>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-orange-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
+                                        Buka Lembar Revisi
+                                    </a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
-                            @foreach($examinerSeminarSchedules as $detail)
-                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
-                                            <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1">{{ $detail->thesis->title }}</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
-                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200">Pembimbing</span>
-                                        @else
-                                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Penguji</span>
+                        @endforeach
+                        @foreach($examinerDefenseSchedules as $detail)
+                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
+                                        <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1">{{ $detail->thesis->title }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
+                                        <x-status-badge type="blue" label="Pembimbing" size="sm" />
+                                    @else
+                                        <x-status-badge type="indigo" label="Penguji" size="sm" />
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <x-status-badge type="emerald" label="Sidang" size="sm" />
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-[11px]">
+                                        <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
+                                        <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
+                                        @if($detail->schedule->meeting_link)
+                                            <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
+                                                <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                Link Google Meet
+                                            </a>
                                         @endif
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Seminar</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-[11px]">
-                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
-                                            <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                            @if($detail->schedule->meeting_link)
-                                                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
-                                                    <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                    Link Google Meet
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-orange-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
-                                            Buka Lembar Revisi
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            @foreach($examinerDefenseSchedules as $detail)
-                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
-                                            <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1">{{ $detail->thesis->title }}</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
-                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200">Pembimbing</span>
-                                        @else
-                                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Penguji</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Sidang</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-[11px]">
-                                            <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
-                                            <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                            @if($detail->schedule->meeting_link)
-                                                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
-                                                    <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                    Link Google Meet
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
-                                            Buka Lembar Penilaian
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
+                                        Buka Lembar Penilaian
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </x-table-card>
         @endif
         
         @if(Auth::user()->role === 'admin')
-            <!-- Admin Graduation & Health Analytics Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Graduation Speed -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-all duration-300 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900/20">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Ketepatan Waktu Lulus</h3>
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded border border-emerald-200 uppercase tracking-widest">Target 4 Thn</span>
-                    </div>
-                    <div class="h-64">
-                        <canvas id="onTimeGraduationChart"></canvas>
-                    </div>
-                    <div class="mt-4 grid grid-cols-2 gap-4 text-center">
-                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tepat Waktu</p>
-                            <p class="text-lg font-black text-emerald-600">{{ $onTimeStats['Tepat Waktu'] }}</p>
-                        </div>
-                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Terlambat</p>
-                            <p class="text-lg font-black text-rose-600">{{ $onTimeStats['Terlambat'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Student Health (Critical Status) -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-all duration-300 hover:shadow-lg hover:border-rose-200 dark:hover:border-rose-900/20">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Kesehatan Masa Studi</h3>
-                        <span class="px-2 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-black rounded border border-rose-200 uppercase tracking-widest">Siaga D.O.</span>
-                    </div>
-                    <div class="h-64">
-                        <canvas id="studentHealthChart"></canvas>
-                    </div>
-                    <div class="mt-4 grid grid-cols-2 gap-4 text-center">
-                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Normal</p>
-                            <p class="text-lg font-black text-slate-800 dark:text-slate-100">{{ $studentHealthStats['Normal'] }}</p>
-                        </div>
-                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Kritis</p>
-                            <p class="text-lg font-black text-red-600">{{ $studentHealthStats['Kritis'] }}</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <a href="{{ route('monitoring.critical') }}" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-rose-900/20 group">
-                            Lihat Daftar Mahasiswa Kritis
-                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Average Completion Time (Full Width) -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 md:col-span-2 transition-all duration-300 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-900/20">
-                    <div class="flex justify-between items-center mb-8">
+            <!-- Admin Operations Center -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Quick Access Analytics Summary -->
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden lg:col-span-3 border border-white/10">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                         <div>
-                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Rata-rata Masa Studi per Angkatan</h3>
-                            <p class="text-[10px] text-slate-500 font-medium mt-1 uppercase tracking-widest">Durasi kelulusan dihitung dalam satuan Tahun.</p>
+                            <h3 class="text-2xl font-black tracking-tight mb-2">Pusat Analisis & Pelaporan</h3>
+                            <p class="text-indigo-200 text-sm font-medium max-w-xl">Pantau tren kelulusan, kesehatan masa studi mahasiswa, dan beban kerja dosen secara mendalam melalui modul statistik khusus.</p>
                         </div>
-                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-black rounded-full border border-blue-200 dark:border-blue-800 uppercase tracking-widest">Statistik Angkatan</span>
-                    </div>
-                    <div class="h-80">
-                        <canvas id="cohortCompletionChart"></canvas>
+                        <a href="{{ route('monitoring.advanced-reporting') }}" class="flex items-center gap-3 px-6 py-4 bg-white text-indigo-900 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-indigo-50 transition-all shadow-lg group">
+                            Buka Statistik Lengkap
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -670,73 +661,61 @@
             <!-- Left Column: Main Feed -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Upcoming Sessions Table -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
-                    <div class="px-6 py-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/30">
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Jadwal Bimbingan Terdekat</h3>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Pantau jadwal yang telah disetujui atau menunggu konfirmasi.</p>
-                        </div>
+                <x-table-card 
+                    title="Jadwal Bimbingan Terdekat"
+                    subtitle="Pantau jadwal yang telah disetujui atau menunggu konfirmasi.">
+                    
+                    <x-slot name="headerActions">
                         <a href="{{ route('mentoring-sessions.index') }}" class="text-xs font-bold text-orange-600 hover:underline flex items-center">
                             Lihat Semua
                             <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
-                                    <th class="px-6 py-3">Topik & Mahasiswa</th>
-                                    <th class="px-6 py-3">Waktu Pelaksanaan</th>
-                                    <th class="px-6 py-3 text-right">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
-                                @forelse(isset($upcomingSessions) ? $upcomingSessions : [] as $session)
-                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer group">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 flex items-center justify-center mr-3 font-bold text-xs">
-                                                {{ substr($session->topic, 0, 1) }}
-                                            </div>
-                                            <div>
-                                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xs">{{ $session->topic }}</h4>
-                                                @if(Auth::user()->role !== 'mahasiswa')
-                                                    <p class="text-[10px] text-slate-400 mt-0.5">{{ $session->thesis->student->name }}</p>
-                                                @else
-                                                    <p class="text-[10px] text-slate-400 mt-0.5">Dosen: {{ $session->dosen->name }}</p>
-                                                @endif
-                                            </div>
+                    </x-slot>
+
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
+                                <th class="px-6 py-3">Topik & Mahasiswa</th>
+                                <th class="px-6 py-3">Waktu Pelaksanaan</th>
+                                <th class="px-6 py-3 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                            @forelse(isset($upcomingSessions) ? $upcomingSessions : [] as $session)
+                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer group">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 flex items-center justify-center mr-3 font-bold text-xs">
+                                            {{ substr($session->topic, 0, 1) }}
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex flex-col">
-                                            <span class="text-xs font-bold text-slate-600">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
-                                            <span class="text-[10px] text-slate-400">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                        <div>
+                                            <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xs">{{ $session->topic }}</h4>
+                                            @if(Auth::user()->role !== 'mahasiswa')
+                                                <p class="text-[10px] text-slate-400 mt-0.5">{{ $session->thesis->student->name }}</p>
+                                            @else
+                                                <p class="text-[10px] text-slate-400 mt-0.5">Dosen: {{ $session->dosen->name }}</p>
+                                            @endif
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest
-                                            {{ $session->status === 'approved' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-amber-100 text-amber-700 border border-amber-200' }}">
-                                            {{ $session->status === 'approved' ? 'Disetujui' : 'Menunggu' }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="3" class="px-6 py-12 text-center">
-                                        <div class="flex flex-col items-center">
-                                            <div class="w-12 h-12 bg-slate-50 dark:bg-slate-700/50 rounded-full flex items-center justify-center mb-3">
-                                                <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            </div>
-                                            <p class="text-xs text-slate-400 font-medium italic">Belum ada jadwal bimbingan terdekat.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-slate-600">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <x-status-badge 
+                                        :type="$session->status === 'approved' ? 'emerald' : 'orange'" 
+                                        :label="$session->status === 'approved' ? 'Disetujui' : 'Menunggu'" />
+                                </td>
+                            </tr>
+                            @empty
+                                <x-empty-state colspan="3" description="Belum ada jadwal bimbingan terdekat." icon="clock" />
+                            @endforelse
+                        </tbody>
+                    </table>
+                </x-table-card>
 
                 <!-- Recent Activity / Logbook -->
                 <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
@@ -953,6 +932,83 @@
                                     borderWidth: 1,
                                     padding: 12,
                                     displayColors: false
+                                }
+                            }
+                        }
+                    });
+
+                    // Score Distribution Chart
+                    const scoreDistCtx = document.getElementById('scoreDistributionChart').getContext('2d');
+                    new Chart(scoreDistCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: {!! json_encode(array_keys($scoreDistribution)) !!},
+                            datasets: [{
+                                data: {!! json_encode(array_values($scoreDistribution)) !!},
+                                backgroundColor: ['#10b981', '#3b82f6', '#6366f1', '#8b5cf6', '#f59e0b', '#f97316', '#ef4444'],
+                                borderWidth: 0,
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { 
+                                legend: { 
+                                    position: 'right', 
+                                    labels: { 
+                                        usePointStyle: true, 
+                                        padding: 20, 
+                                        font: { weight: 'bold', size: 10 },
+                                        color: darkMode ? '#94a3b8' : '#64748b'
+                                    } 
+                                } 
+                            },
+                            cutout: '70%'
+                        }
+                    });
+
+                    // Wave Duration Chart
+                    const waveDurCtx = document.getElementById('waveDurationChart').getContext('2d');
+                    new Chart(waveDurCtx, {
+                        type: 'line',
+                        data: {
+                            labels: {!! json_encode(array_keys($waveDurationStats)) !!},
+                            datasets: [{
+                                label: 'Rata-rata (Bulan)',
+                                data: {!! json_encode(array_values($waveDurationStats)) !!},
+                                borderColor: '#f97316',
+                                backgroundColor: 'rgba(249, 115, 22, 0.05)',
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#f97316',
+                                pointBorderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: { 
+                                y: { 
+                                    beginAtZero: true, 
+                                    grid: { color: darkMode ? '#334155' : '#f1f5f9' }, 
+                                    ticks: { color: darkMode ? '#94a3b8' : '#64748b' } 
+                                }, 
+                                x: { 
+                                    grid: { display: false },
+                                    ticks: { color: darkMode ? '#94a3b8' : '#64748b' }
+                                } 
+                            },
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.parsed.y + ' Bulan';
+                                        }
+                                    }
                                 }
                             }
                         }

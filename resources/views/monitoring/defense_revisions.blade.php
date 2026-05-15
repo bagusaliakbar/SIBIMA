@@ -1,80 +1,108 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-breadcrumb :items="[
-            ['label' => 'Monitoring', 'route' => route('monitoring.index')],
-            ['label' => 'Revisi Sidang', 'route' => null]
-        ]" />
+        <div x-data="{ 
+            selectedIds: [], 
+            allIds: {{ json_encode($defenseDetails->pluck('id')->toArray()) }},
+            toggleAll() {
+                if (this.selectedIds.length === this.allIds.length) {
+                    this.selectedIds = [];
+                } else {
+                    this.selectedIds = [...this.allIds];
+                }
+            },
+            downloadSelected() {
+                if (this.selectedIds.length === 0) {
+                    alert('Pilih minimal satu mahasiswa.');
+                    return;
+                }
+                window.location.href = '{{ route('monitoring.batch-export-berita-acara') }}?category=defense&ids=' + this.selectedIds.join(',');
+            }
+        }">
+            <x-breadcrumb :items="[
+                ['label' => 'Monitoring', 'route' => route('monitoring.index')],
+                ['label' => 'Revisi Sidang', 'route' => null]
+            ]" />
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4">
+                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight">
+                    Monitoring Progres Revisi Sidang
+                </h2>
+                
+                <div class="flex flex-wrap items-center gap-3">
+                    <button @click="downloadSelected()" 
+                            x-show="selectedIds.length > 0"
+                            class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-bold transition-all shadow-lg shadow-indigo-900/20">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        ZIP (<span x-text="selectedIds.length"></span>)
+                    </button>
+
+                    <a href="{{ route('monitoring.batch-export-berita-acara', ['category' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
+                       class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-[11px] font-bold transition-all shadow-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                        ZIP Semua
+                    </a>
+                </div>
+            </div>
+        </div>
     </x-slot>
 
     <div class="w-full">
-        <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Monitoring Progres Revisi Sidang</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pantau status perbaikan skripsi mahasiswa setelah sidang tugas akhir.</p>
-                </div>
-                
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    <!-- Wave Filter -->
-                    <form action="{{ route('monitoring.defense-revisions') }}" method="GET" class="flex items-center gap-2">
-                        @if($search) <input type="hidden" name="search" value="{{ $search }}"> @endif
-                        <select name="wave_id" onchange="this.form.submit()" 
-                                class="pl-4 pr-10 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-sm min-w-[180px] text-slate-700 dark:text-slate-300">
-                            <option value="">Semua Gelombang</option>
-                            @foreach($waves as $wave)
-                                <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
-                                    {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
+        <x-table-card 
+            title="Monitoring Progres Revisi Sidang"
+            subtitle="Pantau status perbaikan skripsi mahasiswa setelah sidang tugas akhir.">
+            
+            <x-slot name="headerActions">
+                <!-- Wave Filter -->
+                <form action="{{ route('monitoring.defense-revisions') }}" method="GET" class="flex items-center gap-2">
+                    @if($search) <input type="hidden" name="search" value="{{ $search }}"> @endif
+                    <select name="wave_id" onchange="this.form.submit()" 
+                            class="pl-4 pr-10 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-sm min-w-[180px] text-slate-700 dark:text-slate-300">
+                        <option value="">Semua Gelombang</option>
+                        @foreach($waves as $wave)
+                            <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
+                                {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
 
-                    <!-- Search Input -->
-                    <form action="{{ route('monitoring.defense-revisions') }}" method="GET" class="relative w-full sm:w-auto">
-                        @if($selectedWaveId) <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}"> @endif
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari mahasiswa..." class="block w-full sm:w-64 pl-10 pr-10 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 text-xs transition-colors font-medium">
-                        @if(isset($search) && $search !== '')
-                            <a href="{{ route('monitoring.defense-revisions', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </a>
-                        @endif
-                    </form>
-                </div>
-            </div>
+                <x-search-input 
+                    name="search" 
+                    :value="$search" 
+                    placeholder="Cari mahasiswa..." 
+                    :route="route('monitoring.defense-revisions')"
+                    :params="['wave_id' => $selectedWaveId]" />
+            </x-slot>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
+            <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                            <th class="py-3 px-4 w-10 text-center">
+                                <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 transition-all cursor-pointer">
+                            </th>
                             <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">MAHASISWA & SIDANG</th>
                             <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">PENGUJI 1</th>
                             <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">PENGUJI 2</th>
                             <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">PEMBIMBING 1</th>
                             <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap text-center">SUMMARY STATUS</th>
+                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($defenseDetails as $detail)
                             @php
-                                $rev1 = $detail->revisions->where('examiner_id', $detail->examiner1_id)->first();
-                                $rev2 = $detail->revisions->where('examiner_id', $detail->examiner2_id)->first();
-                                $revP1 = $detail->revisions->where('examiner_id', $detail->thesis->pembimbing1_id)->first();
+                                $rev1 = $detail->getRevisionFor($detail->examiner1_id);
+                                $rev2 = $detail->getRevisionFor($detail->examiner2_id);
+                                $revP1 = $detail->thesis ? $detail->getRevisionFor($detail->thesis->pembimbing1_id) : null;
                                 
-                                // Grading Status
                                 $grade1 = ($rev1 && $rev1->score_presentation !== null);
                                 $grade2 = ($rev2 && $rev2->score_presentation !== null);
                                 $gradeP1 = ($revP1 && $revP1->score_presentation !== null);
-                                $isGradingComplete = $grade1 && $grade2 && $gradeP1;
-
-                                // Revision Status
-                                $revStatus1 = $rev1 ? $rev1->status : 'none';
-                                $revStatus2 = $rev2 ? $rev2->status : 'none';
-                                $isRevisionComplete = ($revStatus1 === 'approved') && ($revStatus2 === 'approved');
                             @endphp
-                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-top">
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-top" :class="selectedIds.includes({{ $detail->id }}) ? 'bg-indigo-50/30 dark:bg-indigo-900/10' : ''">
+                                <td class="py-4 px-4 text-center">
+                                    <input type="checkbox" x-model="selectedIds" value="{{ $detail->id }}" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 cursor-pointer">
+                                </td>
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="font-bold text-slate-800 dark:text-slate-100 truncate max-w-[150px]" title="{{ $detail->thesis->student->name }}">{{ $detail->thesis->student->name ?? 'N/A' }}</div>
                                     <div class="text-[10px] text-slate-400 mt-0.5 tracking-tight uppercase">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
@@ -95,30 +123,21 @@
                                             <div>
                                                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Penilaian</span>
                                                 @if($grade1)
-                                                    @php $total1 = ($rev1->score_presentation * 0.25) + ($rev1->score_explanation * 0.40) + ($rev1->score_writing * 0.35); @endphp
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-black border border-emerald-100">{{ $total1 }}</span>
+                                                    <x-status-badge type="emerald" :label="$rev1->total_score" />
                                                 @else
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 text-[9px] font-black border border-rose-100 animate-pulse">BELUM ADA</span>
+                                                    <x-status-badge type="rose" label="BELUM ADA" pulse />
                                                 @endif
                                             </div>
                                             <div>
                                                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Revisi</span>
-                                                @if($revStatus1 === 'approved')
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[9px] font-black border border-emerald-200 uppercase">
-                                                        Selesai
-                                                    </span>
-                                                @elseif($revStatus1 === 'resubmitted')
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[9px] font-black border border-blue-200 uppercase animate-pulse">
-                                                        Terkirim
-                                                    </span>
+                                                @if($rev1 && $rev1->isApproved())
+                                                    <x-status-badge type="emerald" label="Selesai" />
+                                                @elseif($rev1 && $rev1->isResubmitted())
+                                                    <x-status-badge type="blue" label="Terkirim" pulse />
                                                 @elseif($rev1)
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 text-[9px] font-black border border-orange-200 uppercase">
-                                                        Dikirim
-                                                    </span>
+                                                    <x-status-badge type="orange" label="Dikirim" />
                                                 @else
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-400 text-[9px] font-black border border-slate-200 uppercase">
-                                                        None
-                                                    </span>
+                                                    <x-status-badge type="slate" label="None" />
                                                 @endif
                                             </div>
                                         </div>
@@ -133,30 +152,21 @@
                                             <div>
                                                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Penilaian</span>
                                                 @if($grade2)
-                                                    @php $total2 = ($rev2->score_presentation * 0.25) + ($rev2->score_explanation * 0.40) + ($rev2->score_writing * 0.35); @endphp
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-black border border-emerald-100">{{ $total2 }}</span>
+                                                    <x-status-badge type="emerald" :label="$rev2->total_score" />
                                                 @else
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 text-[9px] font-black border border-rose-100 animate-pulse">BELUM ADA</span>
+                                                    <x-status-badge type="rose" label="BELUM ADA" pulse />
                                                 @endif
                                             </div>
                                             <div>
                                                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Revisi</span>
-                                                @if($revStatus2 === 'approved')
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[9px] font-black border border-emerald-200 uppercase">
-                                                        Selesai
-                                                    </span>
-                                                @elseif($revStatus2 === 'resubmitted')
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[9px] font-black border border-blue-200 uppercase animate-pulse">
-                                                        Terkirim
-                                                    </span>
+                                                @if($rev2 && $rev2->isApproved())
+                                                    <x-status-badge type="emerald" label="Selesai" />
+                                                @elseif($rev2 && $rev2->isResubmitted())
+                                                    <x-status-badge type="blue" label="Terkirim" pulse />
                                                 @elseif($rev2)
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 text-[9px] font-black border border-orange-200 uppercase">
-                                                        Dikirim
-                                                    </span>
+                                                    <x-status-badge type="orange" label="Dikirim" />
                                                 @else
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-400 text-[9px] font-black border border-slate-200 uppercase">
-                                                        None
-                                                    </span>
+                                                    <x-status-badge type="slate" label="None" />
                                                 @endif
                                             </div>
                                         </div>
@@ -171,10 +181,9 @@
                                             <div>
                                                 <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Penilaian</span>
                                                 @if($gradeP1)
-                                                    @php $totalP1 = ($revP1->score_presentation * 0.25) + ($revP1->score_explanation * 0.40) + ($revP1->score_writing * 0.35); @endphp
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-black border border-emerald-100">{{ $totalP1 }}</span>
+                                                    <x-status-badge type="emerald" :label="$revP1->total_score" />
                                                 @else
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 text-[9px] font-black border border-rose-100 animate-pulse">BELUM ADA</span>
+                                                    <x-status-badge type="rose" label="BELUM ADA" pulse />
                                                 @endif
                                             </div>
                                             <div>
@@ -189,51 +198,50 @@
                                     <div class="flex flex-col items-center gap-4">
                                         <!-- Grading Summary -->
                                         <div class="flex flex-col items-center gap-1">
-                                            <div class="w-7 h-7 rounded-full {{ $isGradingComplete ? 'bg-emerald-600' : 'bg-slate-200' }} flex items-center justify-center text-white shadow-sm transition-all duration-300">
-                                                @if($isGradingComplete)
+                                            <div class="w-7 h-7 rounded-full {{ $detail->isGradingComplete() ? 'bg-emerald-600' : 'bg-slate-200' }} flex items-center justify-center text-white shadow-sm transition-all duration-300">
+                                                @if($detail->isGradingComplete())
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 @else
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"></path></svg>
                                                 @endif
                                             </div>
-                                            <span class="text-[8px] font-black {{ $isGradingComplete ? 'text-emerald-600' : 'text-slate-400' }} uppercase tracking-tighter">Penilaian</span>
+                                            <span class="text-[8px] font-black {{ $detail->isGradingComplete() ? 'text-emerald-600' : 'text-slate-400' }} uppercase tracking-tighter">Penilaian</span>
                                         </div>
                                         <!-- Revision Summary -->
                                         <div class="flex flex-col items-center gap-1">
-                                            <div class="w-7 h-7 rounded-full {{ $isRevisionComplete ? 'bg-blue-600' : 'bg-slate-200' }} flex items-center justify-center text-white shadow-sm transition-all duration-300">
-                                                @if($isRevisionComplete)
+                                            <div class="w-7 h-7 rounded-full {{ $detail->isRevisionComplete() ? 'bg-blue-600' : 'bg-slate-200' }} flex items-center justify-center text-white shadow-sm transition-all duration-300">
+                                                @if($detail->isRevisionComplete())
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 @else
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                                 @endif
                                             </div>
-                                            <span class="text-[8px] font-black {{ $isRevisionComplete ? 'text-blue-600' : 'text-slate-400' }} uppercase tracking-tighter">Revisi</span>
+                                            <span class="text-[8px] font-black {{ $detail->isRevisionComplete() ? 'text-blue-600' : 'text-slate-400' }} uppercase tracking-tighter">Revisi</span>
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="py-16 text-center">
-                                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100 dark:border-slate-700">
-                                        <svg class="h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+                                <td class="py-4 px-6 text-center">
+                                    <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
+                                       class="inline-flex items-center gap-2.5 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all border border-indigo-100 shadow-sm whitespace-nowrap">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                         </svg>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Tidak ada data ditemukan</h3>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest font-black">Belum ada mahasiswa yang dijadwalkan sidang</p>
+                                        Cetak Berita Acara
+                                    </a>
                                 </td>
                             </tr>
+                        @empty
+                            <x-empty-state colspan="6" description="Belum ada mahasiswa yang dijadwalkan sidang" />
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            @if($defenseDetails->hasPages())
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+            
+            <x-slot name="footer">
+                @if($defenseDetails->hasPages())
                     {{ $defenseDetails->links() }}
-                </div>
-            @endif
-        </div>
+                @endif
+            </x-slot>
+        </x-table-card>
     </div>
 </x-app-layout>

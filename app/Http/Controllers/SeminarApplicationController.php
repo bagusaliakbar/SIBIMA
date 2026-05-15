@@ -2,37 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSeminarApplicationRequest;
+use App\Http\Requests\ValidateApplicationRequest;
 use App\Models\SeminarApplication;
+use App\Models\SeminarTemplate;
 use App\Models\Thesis;
+use App\Models\Wave;
+use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Notifications\GeneralNotification;
-use Illuminate\Support\Facades\Notification;
-
-use App\Models\Wave;
 
 class SeminarApplicationController extends Controller
 {
+    protected $applicationService;
+
+    public function __construct(ApplicationService $applicationService)
+    {
+        $this->applicationService = $applicationService;
+    }
+
     public function index(Request $request)
     {
         $user = Auth::user();
         
         if ($user->role === 'mahasiswa') {
             $thesis = Thesis::where('student_id', $user->id)->first();
-            $application = $thesis ? SeminarApplication::where('thesis_id', $thesis->id)->first() : null;
-            
-            // Check if both supervisors have ACC'd
+            $activeWave = Wave::getCurrentActive();
+            $application = $thesis ? SeminarApplication::where('thesis_id', $thesis->id)
+                ->where('wave_id', $activeWave?->id)
+                ->first() : null;
             $isEligible = $thesis && $thesis->isAccUpFinal();
+            $template = SeminarTemplate::where('is_active', true)->latest()->first();
             
-            // Get active template
-            $template = \App\Models\SeminarTemplate::where('is_active', true)->latest()->first();
-            
-            return view('seminars.student_index', compact('thesis', 'application', 'isEligible', 'template'));
+            return view('seminars.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave'));
         }
 
         if ($user->role === 'admin') {
-            $activeWave = Wave::active() ?: Wave::where('is_active', true)->latest()->first() ?: Wave::latest()->first();
+            $activeWave = Wave::getCurrentActive();
             $selectedWaveId = $request->get('wave_id', $activeWave?->id);
 
             $applications = SeminarApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave'])
@@ -43,206 +49,97 @@ class SeminarApplicationController extends Controller
                 ->paginate(10)
                 ->appends(['wave_id' => $selectedWaveId]);
             
-            $waves = Wave::orderBy('created_at', 'desc')->get();
-            $template = \App\Models\SeminarTemplate::where('is_active', true)->latest()->first();
+            $waves = Wave::orderBy('created_at', 'desc')->get()->map(function($w) {
+                $w->app_count = SeminarApplication::where('wave_id', $w->id)->count();
+                return $w;
+            });
+            $template = SeminarTemplate::where('is_active', true)->latest()->first();
             
             return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave'));
         }
 
-        return redirect()->route('dashboard');
+        abort(403);
     }
 
-    public function store(Request $request)
+    public function store(StoreSeminarApplicationRequest $request)
     {
-        if (Auth::user()->role !== 'mahasiswa') {
-            abort(403);
-        }
-
-        $activeWave = Wave::active();
+        $activeWave = Wave::getCurrentActive();
         if (!$activeWave) {
             return redirect()->back()->with('error', 'Pendaftaran seminar belum dibuka (tidak ada gelombang aktif).');
         }
 
         $thesis = Thesis::where('student_id', Auth::id())->first();
-        
         if (!$thesis || !$thesis->isAccUpFinal()) {
             return redirect()->back()->with('error', 'Anda belum memenuhi syarat untuk mengajukan seminar.');
         }
 
-        $existingApplication = SeminarApplication::where('thesis_id', $thesis->id)
-            ->where('wave_id', $activeWave->id)
-            ->first();
-
         $files = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
-        
-        $rules = [];
-        foreach ($files as $file) {
-            $isRejected = isset($existingApplication->file_reviews[$file]['status']) && $existingApplication->file_reviews[$file]['status'] === 'rejected';
-            $isMissing = !$existingApplication || !$existingApplication->$file;
-            
-            if ($isMissing || $isRejected) {
-                if ($file === 'file_skripsi') {
-                    $rules[$file] = 'required|file|mimes:pdf,doc,docx|max:10240';
-                } else {
-                    $rules[$file] = 'required|file|mimes:pdf,jpg,jpeg,png|max:2048';
-                }
-            } else {
-                $rules[$file] = 'nullable|file';
-            }
-        }
 
-        $request->validate($rules);
-
-        $data = [
-            'thesis_id' => $thesis->id,
-            'wave_id' => $activeWave->id,
-            'status' => 'pending',
-        ];
-
-        foreach ($files as $file) {
-            if ($request->hasFile($file)) {
-                $path = $request->file($file)->store('seminar_applications', 'public');
-                $data[$file] = $path;
-                
-                // Clear rejection status for this file
-                if ($existingApplication) {
-                    $reviews = $existingApplication->file_reviews;
-                    unset($reviews[$file]);
-                    $existingApplication->file_reviews = $reviews;
-                    $existingApplication->save();
-                }
-            }
-        }
-
-        if ($existingApplication) {
-            $existingApplication->update($data);
-        } else {
-            SeminarApplication::create($data);
-        }
-
-        \App\Models\ActivityLog::log('Pengajuan Seminar', "Mahasiswa mengajukan seminar UP.", 'Seminar');
-
-        // Notify Admins
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        Notification::send($admins, new GeneralNotification(
-            'Pengajuan Seminar Baru',
-            "Mahasiswa " . Auth::user()->name . " mengajukan seminar UP.",
-            route('seminar-applications.index'),
-            'info'
-        ));
+        $this->applicationService->submitApplication(
+            SeminarApplication::class, $thesis, $activeWave, $request, $files,
+            'Pengajuan Seminar', 'Pengajuan Seminar Baru', 'seminar-applications.index'
+        );
 
         return redirect()->route('seminar-applications.index')->with('success', 'Pengajuan seminar berhasil dikirim. Menunggu validasi admin.');
     }
 
     public function uploadTemplate(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        if (Auth::user()->role !== 'admin') abort(403);
 
         $request->validate([
             'title' => 'required|string|max:255',
             'template_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
-        // Deactivate old templates
-        \App\Models\SeminarTemplate::query()->update(['is_active' => false]);
-
-        $path = $request->file('template_file')->store('seminar_templates', 'public');
-
-        \App\Models\SeminarTemplate::create([
-            'title' => $request->title,
-            'file_path' => $path,
-            'original_name' => $request->file('template_file')->getClientOriginalName(),
-            'is_active' => true,
-        ]);
+        $this->applicationService->uploadTemplate(
+            SeminarTemplate::class, $request->only('title'), $request->file('template_file'), 'seminar_templates'
+        );
 
         return redirect()->back()->with('success', 'Templat formulir seminar berhasil diunggah.');
     }
 
-    public function validateApplication(Request $request, SeminarApplication $application)
+    public function validateApplication(ValidateApplicationRequest $request, SeminarApplication $application)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
-
-        $request->validate([
-            'status' => 'required|in:approved,rejected',
-            'admin_feedback' => 'nullable|string',
-            'file_reviews' => 'nullable|array',
-        ]);
-
-        $application->update([
-            'status' => $request->status,
-            'admin_feedback' => $request->admin_feedback,
-            'file_reviews' => $request->file_reviews,
-        ]);
-
-        \App\Models\ActivityLog::log('Validasi Seminar', "Admin memperbarui status seminar mahasiswa " . $application->thesis->student->name . " menjadi: " . strtoupper($request->status), 'Seminar');
-
-        // Notify Student
-        $application->thesis->student->notify(new GeneralNotification(
-            'Status Seminar Diperbarui',
-            "Pengajuan seminar Anda telah " . strtoupper($request->status),
-            route('seminar-applications.index'),
-            $request->status === 'approved' ? 'success' : 'danger'
-        ));
+        $this->applicationService->validateApplication(
+            $application, $request->validated(),
+            'Validasi Seminar', 'Status Seminar Diperbarui', 'seminar-applications.index'
+        );
 
         return redirect()->back()->with('success', 'Status pengajuan seminar berhasil diperbarui.');
     }
 
     public function destroy(SeminarApplication $application)
     {
-        // Only student owner can delete their rejected application
-        if (Auth::user()->role === 'mahasiswa' && $application->thesis->student_id === Auth::id()) {
-            if ($application->status === 'rejected') {
-                // Delete files from storage
-                $files = [$application->file_acc_pembimbing, $application->file_pembayaran, $application->file_kartu_bimbingan, $application->file_skripsi];
-                foreach ($files as $file) {
-                    if ($file) {
-                        Storage::disk('public')->delete($file);
-                    }
-                }
-                
-                $application->delete();
-                return redirect()->back()->with('success', 'Pengajuan sebelumnya telah dihapus. Silakan ajukan ulang dengan berkas yang benar.');
-            }
+        if (Auth::user()->role !== 'mahasiswa' || $application->thesis->student_id !== Auth::id()) {
+            abort(403);
         }
 
-        abort(403);
+        try {
+            $files = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
+            $this->applicationService->deleteRejectedApplication($application, $files);
+            return redirect()->back()->with('success', 'Pengajuan sebelumnya telah dihapus. Silakan ajukan ulang dengan berkas yang benar.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function downloadZip(SeminarApplication $application)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        if (Auth::user()->role !== 'admin') abort(403);
 
-        $studentName = str_replace(' ', '_', $application->thesis->student->name);
-        $studentId = $application->thesis->student->identifier;
-        $fileName = "Seminar_{$studentId}_{$studentName}.zip";
+        $fileMap = [
+            'file_acc_pembimbing' => '1_ACC_Pembimbing',
+            'file_pembayaran' => '2_Bukti_Pembayaran',
+            'file_kartu_bimbingan' => '3_Kartu_Bimbingan',
+            'file_skripsi' => '4_Naskah_Skripsi',
+            'file_formulir' => '5_Formulir_Seminar',
+        ];
 
-        $zip = new \ZipArchive();
-        $tempFile = tempnam(sys_get_temp_dir(), 'zip');
+        $tempFile = $this->applicationService->downloadZip($application, 'Seminar', $fileMap);
 
-        if ($zip->open($tempFile, \ZipArchive::CREATE) === TRUE) {
-            $files = [
-                'file_acc_pembimbing' => '1_ACC_Pembimbing',
-                'file_pembayaran' => '2_Bukti_Pembayaran',
-                'file_kartu_bimbingan' => '3_Kartu_Bimbingan',
-                'file_skripsi' => '4_Naskah_Skripsi',
-                'file_formulir' => '5_Formulir_Seminar',
-            ];
-
-            foreach ($files as $field => $label) {
-                if ($application->$field && Storage::disk('public')->exists($application->$field)) {
-                    $extension = pathinfo($application->$field, PATHINFO_EXTENSION);
-                    $zip->addFromString($label . '.' . $extension, Storage::disk('public')->get($application->$field));
-                }
-            }
-
-            $zip->close();
-
+        if ($tempFile) {
+            $fileName = "Seminar_{$application->thesis->student->identifier}_" . str_replace(' ', '_', $application->thesis->student->name) . ".zip";
             return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
         }
 
