@@ -49,7 +49,7 @@
         <table>
             <tr>
                 <td class="logo-cell">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('img/logo.png'))) }}" class="logo-img">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
                 </td>
                 <td class="info-cell">
                     <div class="univ-name">YAYASAN PENDIDIKAN SANG ADIPATI SUTAJAYA</div>
