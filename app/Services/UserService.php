@@ -27,6 +27,7 @@ class UserService
             'identifier' => $data['identifier'],
             'entry_year' => $data['entry_year'] ?? null,
             'phone_number' => $data['phone_number'] ?? null,
+            'research_interests' => $data['research_interests'] ?? null,
             'avatar' => $avatarPath,
             'is_active' => true,
         ]);
@@ -42,12 +43,13 @@ class UserService
     public function updateUser(User $user, array $data, $avatarFile = null)
     {
         $updateData = [
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name' => $data['name'] ?? $user->name,
+            'email' => $data['email'] ?? $user->email,
             'role' => $data['role'] ?? $user->role,
-            'identifier' => $data['identifier'],
-            'entry_year' => $data['entry_year'] ?? null,
-            'phone_number' => $data['phone_number'] ?? null,
+            'identifier' => $data['identifier'] ?? $user->identifier,
+            'entry_year' => $data['entry_year'] ?? $user->entry_year,
+            'phone_number' => $data['phone_number'] ?? $user->phone_number,
+            'research_interests' => $data['research_interests'] ?? $user->research_interests,
         ];
 
         if ($avatarFile) {
