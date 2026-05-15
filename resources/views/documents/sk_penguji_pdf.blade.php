@@ -15,16 +15,66 @@
             width: 100%;
             border-bottom: 3px double #000;
             padding-bottom: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-        .kop-surat table { width: 100%; border: none; }
-        .kop-surat td { border: none !important; padding: 0 !important; vertical-align: middle; }
-        .kop-surat .logo-cell { width: 80px; text-align: left; }
-        .kop-surat .logo-img { width: 65px; height: auto; }
-        .kop-surat .info-cell { text-align: center; padding-right: 80px !important; }
-        .kop-surat .univ-name { font-size: 14px; margin: 0; }
-        .kop-surat .faculty-name { font-size: 16px; margin: 0; font-weight: bold; }
-        .kop-surat .address { font-size: 8px; margin: 1px 0; }
+
+        .kop-surat table {
+            width: 100%;
+            border: none;
+            margin-bottom: 0;
+        }
+
+        .kop-surat td {
+            border: none !important;
+            padding: 0 !important;
+            vertical-align: middle;
+        }
+
+        .kop-surat .logo-cell {
+            width: 80px;
+            text-align: left;
+        }
+
+        .kop-surat .logo-img {
+            width: 70px;
+            height: auto;
+        }
+
+        .kop-surat .info-cell {
+            text-align: center;
+            padding-right: 80px !important;
+        }
+
+        .kop-surat .univ-name {
+            font-size: 16px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .kop-surat .faculty-name {
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+        }
+
+        .kop-surat .accreditation {
+            font-size: 10px;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+
+        .kop-surat .address {
+            font-size: 9px;
+            margin: 1px 0;
+        }
+
+        .kop-surat .email {
+            font-size: 9px;
+            margin: 1px 0;
+        }
         
         .content { padding: 0 30px; }
         .title-block { text-align: center; margin-bottom: 20px; }
@@ -46,13 +96,16 @@
         <table>
             <tr>
                 <td class="logo-cell">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}"
+                        class="logo-img">
                 </td>
                 <td class="info-cell">
-                    <div class="univ-name">YAYASAN PENDIDIKAN SANG ADIPATI SUTAJAYA</div>
-                    <div class="faculty-name">UNIVERSITAS SUBANG</div>
+                    <div class="univ-name">UNIVERSITAS SUBANG</div>
                     <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
-                    <div class="address">Jl. R.A. Kartini No. 37 Telp. (0260) 414571 Fax. (0260) 414571 Subang 41211</div>
+                    <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
+                    <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                    <div class="email">E-Mail : <span
+                            style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
                 </td>
             </tr>
         </table>
