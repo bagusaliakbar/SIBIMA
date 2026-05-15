@@ -10,7 +10,7 @@ class LetterSettingController extends Controller
     public function index()
     {
         $settings = LetterSetting::all();
-        return view('admin.letter_settings.index', compact('settings'));
+        return view('letter_settings.index', compact('settings'));
     }
 
     public function update(Request $request, LetterSetting $letterSetting)
