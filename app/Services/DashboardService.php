@@ -324,7 +324,7 @@ class DashboardService
         $data['waveDurationStats'] = $waveDurationStats;
 
         // 2. Score Distribution
-        $data['scoreDistribution'] = ['A' => 0, 'B+' => 0, 'B' => 0, 'C+' => 0, 'C' => 0, 'D' => 0, 'E' => 0];
+        $data['scoreDistribution'] = ['A' => 0, 'B' => 0, 'C' => 0, 'D' => 0, 'E' => 0];
         $defenseDetails = ThesisDefenseScheduleDetail::whereHas('thesis', fn($q) => $q->where('status', 'completed'))->get();
         
         foreach ($defenseDetails as $detail) {
@@ -333,9 +333,7 @@ class DashboardService
             $finalScore = $scores['finalScore'] ?? 0;
 
             if ($finalScore >= 80) $data['scoreDistribution']['A']++;
-            elseif ($finalScore >= 75) $data['scoreDistribution']['B+']++;
             elseif ($finalScore >= 70) $data['scoreDistribution']['B']++;
-            elseif ($finalScore >= 65) $data['scoreDistribution']['C+']++;
             elseif ($finalScore >= 60) $data['scoreDistribution']['C']++;
             elseif ($finalScore >= 50) $data['scoreDistribution']['D']++;
             else $data['scoreDistribution']['E']++;

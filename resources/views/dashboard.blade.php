@@ -945,7 +945,7 @@
                             labels: {!! json_encode(array_keys($scoreDistribution)) !!},
                             datasets: [{
                                 data: {!! json_encode(array_values($scoreDistribution)) !!},
-                                backgroundColor: ['#10b981', '#3b82f6', '#6366f1', '#8b5cf6', '#f59e0b', '#f97316', '#ef4444'],
+                                backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#f97316', '#ef4444'],
                                 borderWidth: 0,
                                 hoverOffset: 10
                             }]
