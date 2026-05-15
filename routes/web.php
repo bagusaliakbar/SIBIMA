@@ -115,9 +115,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/monitoring/export', [App\Http\Controllers\MonitoringController::class, 'export'])->name('monitoring.export');
     Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
 
-    // Document Generation (Admin Only)
+    // Document Generation & Settings (Admin Only)
     Route::get('/documents/surat-tugas-seminar/{detail}', [App\Http\Controllers\DocumentController::class, 'generateSuratTugasSeminar'])->name('documents.surat-tugas-seminar');
     Route::get('/documents/sk-penguji-sidang/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSidang'])->name('documents.sk-penguji-sidang');
+    Route::get('/admin/letter-settings', [App\Http\Controllers\LetterSettingController::class, 'index'])->name('admin.letter-settings.index');
+    Route::put('/admin/letter-settings/{letterSetting}', [App\Http\Controllers\LetterSettingController::class, 'update'])->name('admin.letter-settings.update');
 
     // Seminar Schedule (Admin Only)
     Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
