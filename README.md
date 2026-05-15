@@ -44,7 +44,8 @@
 ## 🚀 Teknologi yang Digunakan
 
 - **Framework:** [Laravel 12](https://laravel.com)
-- **Real-time:** [Laravel Reverb](https://reverb.laravel.com) 
+- **Real-time:** [Laravel Reverb](https://reverb.laravel.com)
+- **Authentication:** [Laravel Breeze](https://laravel.com/docs/11.x/starter-kits#laravel-breeze) 
 - **Frontend:** [Tailwind CSS](https://tailwindcss.com), [Alpine.js](https://alpinejs.dev)
 - **Database:** MySQL
 - **Visualization:** [Chart.js](https://www.chartjs.org/)
