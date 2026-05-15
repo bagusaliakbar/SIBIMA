@@ -51,6 +51,7 @@
 - **Visualization:** [Chart.js](https://www.chartjs.org/)
 - **Document Engine:** [Laravel Excel](https://laravel-excel.com), [DomPDF](https://github.com/barryvdh/laravel-dompdf)
 - **QR Engine:** [Simple Software IO QrCode](https://www.simplesoftware.io/docs/simple-qrcode)
+- **Dev Tools:** [Laravel Sail](https://laravel.com/docs/12.x/sail), [Laravel Pint](https://laravel.com/docs/12.x/pint), [Laravel Tinker](https://github.com/laravel/tinker), [Laravel Pail](https://github.com/laravel/pail)
 
 ---
 
