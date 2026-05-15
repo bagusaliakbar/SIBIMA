@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @foreach($settings as $setting)
+                @forelse($settings as $setting)
                     <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 rounded-xl">
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-6">
@@ -60,7 +60,14 @@
                             </form>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-span-full">
+                        <x-empty-state 
+                            icon="documents" 
+                            title="Belum Ada Pengaturan" 
+                            description="Jalankan seeder LetterSettingSeeder untuk memunculkan data default." />
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
