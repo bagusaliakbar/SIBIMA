@@ -219,7 +219,7 @@
                                     style="height: 50px; width: auto;">
                             @elseif($detail->examiner1 && $detail->examiner1->signature_token)
                                 <img
-                                    src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner1->signature_token))) }}">
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner1->signature_token))) }}">
                             @else
                                 <div style="height: 50px;"></div>
                             @endif
@@ -234,7 +234,7 @@
                                     style="height: 50px; width: auto;">
                             @elseif($detail->examiner2 && $detail->examiner2->signature_token)
                                 <img
-                                    src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner2->signature_token))) }}">
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner2->signature_token))) }}">
                             @else
                                 <div style="height: 50px;"></div>
                             @endif
@@ -261,7 +261,7 @@
                                     style="height: 50px; width: auto;">
                             @elseif($p1 && $p1->signature_token)
                                 <img
-                                    src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $p1->signature_token))) }}">
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $p1->signature_token))) }}">
                             @else
                                 <div style="height: 50px;"></div>
                             @endif
@@ -277,7 +277,7 @@
                     <tr>
                         <td style="border: none; width: 65px; padding: 0;">
                             @if($detail->verification_token)
-                                <img src="data:image/svg+xml;base64,{{ base64_encode(QrCode::format('svg')->size(60)->margin(0)->generate(route('document.verify', $detail->verification_token))) }}">
+                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(60)->margin(0)->generate(route('document.verify', $detail->verification_token))) }}">
                             @else
                                 <div style="width: 60px; height: 60px; background: #eee;"></div>
                             @endif

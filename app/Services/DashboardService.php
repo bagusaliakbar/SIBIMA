@@ -162,6 +162,7 @@ class DashboardService
     public function getDosenData($user)
     {
         $dosenId = $user->id;
+        /** @var array<string, mixed> $data */
         $data = [];
 
         $data['examinerSeminarSchedules'] = SeminarScheduleDetail::with(['schedule', 'thesis.student'])
@@ -226,18 +227,20 @@ class DashboardService
             'ACC Sidang' => Thesis::whereIn('id', $dosenThesisIds)->where('acc_sidang_p1', true)->where('acc_sidang_p2', true)->count(),
         ];
 
-        $data['monthlyMentoringCounts'] = [];
+        $monthlyMentoringCounts = [];
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
-            $data['monthlyMentoringCounts'][$month->format('M')] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
+            $monthlyMentoringCounts[$month->format('M')] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
                 ->where('status', 'completed')->whereYear('scheduled_at', $month->year)->whereMonth('scheduled_at', $month->month)->count();
         }
+        $data['monthlyMentoringCounts'] = $monthlyMentoringCounts;
 
         return $data;
     }
 
     public function getAdminData()
     {
+        /** @var array<string, mixed> $data */
         $data = [];
         $data['activeThesesCount'] = Thesis::where('status', 'active')->count();
         $data['sessionsThisWeek'] = MentoringSession::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
@@ -252,12 +255,13 @@ class DashboardService
             'pending' => Thesis::where('status', 'pending')->count(),
         ];
 
-        $data['monthlyMentoringCounts'] = [];
+        $monthlyMentoringCounts = [];
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
-            $data['monthlyMentoringCounts'][$month->format('M')] = MentoringSession::where('status', 'completed')
+            $monthlyMentoringCounts[$month->format('M')] = MentoringSession::where('status', 'completed')
                 ->whereYear('scheduled_at', $month->year)->whereMonth('scheduled_at', $month->month)->count();
         }
+        $data['monthlyMentoringCounts'] = $monthlyMentoringCounts;
 
         $p1Counts = Thesis::where('status', 'active')->groupBy('pembimbing1_id')->selectRaw('pembimbing1_id, count(*) as total')->pluck('total', 'pembimbing1_id');
         $p2Counts = Thesis::where('status', 'active')->groupBy('pembimbing2_id')->selectRaw('pembimbing2_id, count(*) as total')->pluck('total', 'pembimbing2_id');
@@ -290,23 +294,23 @@ class DashboardService
             'Kritis' => User::where('role', 'mahasiswa')->where('entry_year', '<=', $criticalThresholdYear)->whereHas('thesis', fn($q) => $q->where('status', '!=', 'completed'))->count(),
         ];
 
-        $data['cohortCompletionData'] = [];
+        $cohortCompletionData = [];
         $cohortYears = $completed->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort();
         foreach ($cohortYears as $year) {
             $thesesInCohort = $completed->filter(fn($t) => $t->student?->entry_year == $year);
             $count = $thesesInCohort->count();
             if ($count > 0) {
                 $avg = $thesesInCohort->sum(fn($t) => $t->updated_at->year - $year) / $count;
-                $data['cohortCompletionData']["Angkatan " . $year] = round($avg, 1);
+                $cohortCompletionData["Angkatan " . $year] = round($avg, 1);
             }
         }
+        $data['cohortCompletionData'] = $cohortCompletionData;
 
         // 1. Average Thesis Duration per Wave
-        $data['waveDurationStats'] = [];
+        $waveDurationStats = [];
         $waves = Wave::with(['defenseApplications.thesis' => function($q) {
             $q->where('status', 'completed');
         }])->get();
-
         foreach ($waves as $wave) {
             $completedTheses = $wave->defenseApplications->map(fn($app) => $app->thesis)->filter(fn($t) => $t && $t->status === 'completed');
             if ($completedTheses->count() > 0) {
@@ -314,9 +318,10 @@ class DashboardService
                     return $t->created_at->diffInDays($t->updated_at);
                 });
                 $avgMonths = round(($totalDays / $completedTheses->count()) / 30, 1);
-                $data['waveDurationStats'][$wave->name] = $avgMonths;
+                $waveDurationStats[$wave->name] = $avgMonths;
             }
         }
+        $data['waveDurationStats'] = $waveDurationStats;
 
         // 2. Score Distribution
         $data['scoreDistribution'] = ['A' => 0, 'B+' => 0, 'B' => 0, 'C+' => 0, 'C' => 0, 'D' => 0, 'E' => 0];

@@ -39,7 +39,7 @@ class SeminarApplicationController extends Controller
 
         if ($user->role === 'admin') {
             $activeWave = Wave::getCurrentActive();
-            $selectedWaveId = $request->get('wave_id', $activeWave?->id);
+            $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
             $applications = SeminarApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave'])
                 ->when($selectedWaveId, function($q) use ($selectedWaveId) {
