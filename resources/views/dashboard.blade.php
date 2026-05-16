@@ -60,18 +60,7 @@
 
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
                     <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-900/20">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight uppercase italic">Road to Graduation</h3>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Langkah strategis menuju sarjana</p>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                     <div class="flex items-center gap-5">
                         <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1 group/btn">
@@ -411,6 +400,27 @@
                             <div class="h-64">
                                 <canvas id="studentHealthChart"></canvas>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+
+                <!-- Topic Trend Analysis (AI Insights) -->
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50 dark:bg-orange-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"></path></svg>
+                                Analisa Tren Topik (AI Insights)
+                            </h3>
+                            <div class="px-3 py-1 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-lg border border-orange-200 dark:border-orange-500/20">
+                                Berbasis Data Tren
+                            </div>
+                        </div>
+                        <div class="h-96">
+                            <canvas id="topicTrendChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -1120,6 +1130,45 @@
                                             return context.parsed.y + ' Tahun';
                                         }
                                     }
+                                }
+                            }
+                        }
+                    });
+
+                    // Topic Trend Chart (Stacked Bar)
+                    const topicTrendCtx = document.getElementById('topicTrendChart').getContext('2d');
+                    const topicTrendData = {!! json_encode($topicTrends) !!};
+                    const topicCohorts = Object.keys(topicTrendData);
+                    
+                    const allTopics = [...new Set(topicCohorts.flatMap(c => Object.keys(topicTrendData[c])))];
+                    const topicColors = {
+                        'Web Development': '#f59e0b', 'Mobile Development': '#10b981', 'Data Science': '#3b82f6',
+                        'Security': '#f43f5e', 'Networking': '#8b5cf6', 'Lainnya': '#94a3b8'
+                    };
+
+                    new Chart(topicTrendCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: topicCohorts,
+                            datasets: allTopics.map(topic => ({
+                                label: topic,
+                                data: topicCohorts.map(cohort => topicTrendData[cohort][topic] || 0),
+                                backgroundColor: topicColors[topic] || '#cbd5e1',
+                                borderRadius: 4
+                            }))
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            scales: {
+                                x: { stacked: true, grid: { display: false }, ticks: { color: darkMode ? '#94a3b8' : '#64748b', font: { weight: 'bold', size: 10 } } },
+                                y: { stacked: true, beginAtZero: true, max: 100, grid: { color: darkMode ? '#334155' : '#f1f5f9' }, ticks: { color: darkMode ? '#94a3b8' : '#64748b', callback: v => v + '%' } }
+                            },
+                            plugins: {
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { weight: 'bold', size: 10 }, color: darkMode ? '#94a3b8' : '#64748b' } },
+                                tooltip: {
+                                    backgroundColor: darkMode ? '#1e293b' : '#fff', titleColor: darkMode ? '#fff' : '#1e293b', bodyColor: darkMode ? '#cbd5e1' : '#64748b',
+                                    borderColor: darkMode ? '#334155' : '#e2e8f0', borderWidth: 1, padding: 12,
+                                    callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' }
                                 }
                             }
                         }

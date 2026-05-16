@@ -64,6 +64,7 @@ class DashboardController extends Controller
             'onTimeStats' => null,
             'studentHealthStats' => null,
             'cohortCompletionData' => [],
+            'topicTrends' => [],
             'progress' => [
                 'percent' => 0, 
                 'isGraduated' => false, 

@@ -11,7 +11,7 @@ use App\Models\ThesisDefenseScheduleDetail;
 use App\Models\ThesisDefenseRevision;
 use App\Models\Announcement;
 use App\Models\User;
-use App\Models\Wave;
+use App\Models\Wave; use App\Services\ThesisAnalyticsService;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardService
@@ -84,7 +84,7 @@ class DashboardService
             }
         }
 
-        return $data;
+        $data['topicTrends'] = []; $theses = \App\Models\Thesis::whereNotNull('topic')->with('student')->get(); $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values(); foreach ($cohorts as $year) { $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year); $total = $cohortTheses->count(); if ($total > 0) { $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round(($g->count() / $total) * 100, 1)); $data['topicTrends']['Angkatan ' . $year] = $topicTrends; } } return $data;
     }
 
     public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense)
@@ -235,7 +235,7 @@ class DashboardService
         }
         $data['monthlyMentoringCounts'] = $monthlyMentoringCounts;
 
-        return $data;
+        $data['topicTrends'] = []; $theses = \App\Models\Thesis::whereNotNull('topic')->with('student')->get(); $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values(); foreach ($cohorts as $year) { $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year); $total = $cohortTheses->count(); if ($total > 0) { $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round(($g->count() / $total) * 100, 1)); $data['topicTrends']['Angkatan ' . $year] = $topicTrends; } } return $data;
     }
 
     public function getAdminData()
@@ -339,7 +339,7 @@ class DashboardService
             else $data['scoreDistribution']['E']++;
         }
 
-        return $data;
+        $data['topicTrends'] = []; $theses = \App\Models\Thesis::whereNotNull('topic')->with('student')->get(); $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values(); foreach ($cohorts as $year) { $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year); $total = $cohortTheses->count(); if ($total > 0) { $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round(($g->count() / $total) * 100, 1)); $data['topicTrends']['Angkatan ' . $year] = $topicTrends; } } return $data;
     }
 
     public function getCommonData()

@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Traits\HasActivityLog;
+use App\Traits\Auditable;
 
 class Thesis extends Model
 {
-    use HasActivityLog;
+    use HasActivityLog, Auditable;
 
     protected $fillable = [
         'student_id',
@@ -24,6 +25,7 @@ class Thesis extends Model
         'acc_up_p2',
         'acc_sidang_p1',
         'acc_sidang_p2',
+        'topic',
     ];
 
     public function getCompletedMentoringCountAttribute()

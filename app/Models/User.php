@@ -7,11 +7,14 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Crypt;
+use App\Traits\Auditable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -39,7 +42,28 @@ class User extends Authenticatable
      */
     public function getSignatureUrlAttribute()
     {
-        return $this->signature ? asset('storage/' . $this->signature) : null;
+        if ($this->signature) {
+            // For encrypted signatures, we might need a dedicated route to serve them securely if we want to display them via img src directly.
+            // However, inline base64 is safer for PDFs and profile views.
+            return null; // Deprecated: use decrypted_signature for inline base64 instead
+        }
+        return null;
+    }
+
+    /**
+     * Get decrypted signature content
+     */
+    public function getDecryptedSignatureAttribute()
+    {
+        if ($this->signature && Storage::disk('local')->exists($this->signature)) {
+            try {
+                return Crypt::decrypt(Storage::disk('local')->get($this->signature));
+            } catch (\Exception $e) {
+                // If it's not encrypted (e.g., during migration or legacy files)
+                return Storage::disk('local')->get($this->signature);
+            }
+        }
+        return null;
     }
 
     /**
@@ -90,6 +114,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'phone_number' => 'encrypted',
         ];
     }
 

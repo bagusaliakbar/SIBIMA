@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\ActivityLog;
 
 class LoginRequest extends FormRequest
 {
@@ -72,6 +73,15 @@ class LoginRequest extends FormRequest
         }
 
         event(new Lockout($this));
+
+        ActivityLog::create([
+            'user_id' => null,
+            'activity' => 'Login Diblokir (Rate Limit)',
+            'description' => "Terdeteksi percobaan login berulang untuk email: {$this->input('email')}",
+            'module' => 'Auth',
+            'ip_address' => $this->ip(),
+            'user_agent' => $this->userAgent(),
+        ]);
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 

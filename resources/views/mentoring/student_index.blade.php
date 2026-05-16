@@ -250,7 +250,7 @@
                                                 {{-- Dokumen sudah ada --}}
                                                 <div class="flex items-center gap-2 mb-2 p-2 bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 rounded-md">
                                                     <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                    <a href="{{ Storage::url($session->document_path) }}" target="_blank" class="text-xs text-orange-700 dark:text-orange-400 font-semibold hover:underline truncate max-w-[120px]" title="{{ $session->document_original_name }}">
+                                                    <a href="{{ route('download.private', ['path' => $session->document_path]) }}" target="_blank" class="text-xs text-orange-700 dark:text-orange-400 font-semibold hover:underline truncate max-w-[120px]" title="{{ $session->document_original_name }}">
                                                         {{ $session->document_original_name }}
                                                     </a>
                                                 </div>
@@ -296,7 +296,7 @@
                                         </div>
                                     @elseif($session->document_path)
                                         {{-- Sesi selesai/ditolak tapi ada dokumen: tampilkan read-only --}}
-                                        <a href="{{ Storage::url($session->document_path) }}" target="_blank" class="flex items-center gap-1.5 text-xs text-slate-600 hover:text-orange-700 transition-colors">
+                                        <a href="{{ route('download.private', ['path' => $session->document_path]) }}" target="_blank" class="flex items-center gap-1.5 text-xs text-slate-600 hover:text-orange-700 transition-colors">
                                             <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                             <span class="truncate max-w-[150px]">{{ $session->document_original_name }}</span>
                                         </a>

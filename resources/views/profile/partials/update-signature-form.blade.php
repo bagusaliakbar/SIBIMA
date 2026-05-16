@@ -16,7 +16,7 @@
             <div class="shrink-0">
                 @if($user->signature)
                     <div class="p-2 bg-white rounded-lg border-2 border-slate-200 dark:border-slate-700 shadow-sm inline-block">
-                        <img src="{{ $user->signature_url }}" alt="Signature" class="h-24 w-auto object-contain">
+                        <img src="data:image/png;base64,{{ base64_encode($user->decrypted_signature) }}" alt="Signature" class="h-24 w-auto object-contain">
                     </div>
                 @else
                     <div class="h-24 w-48 bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-400 italic text-xs">
@@ -52,7 +52,7 @@
         @if($user->signature_token)
         <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-4">
             <div class="p-2 bg-white rounded-lg">
-                {!! QrCode::size(80)->generate(url('/verify-signature/' . $user->signature_token)) !!}
+                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(80)->generate(url('/verify-signature/' . $user->signature_token)) !!}
             </div>
             <div>
                 <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Verifikasi QR Code</h4>

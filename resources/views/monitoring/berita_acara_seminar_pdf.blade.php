@@ -166,7 +166,8 @@
             <strong>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('l') }}</strong>
             tanggal
             <strong>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d F Y') }}</strong>,
-            telah dilaksanakan Seminar Proposal/Hasil bagi mahasiswa:</p>
+            telah dilaksanakan Seminar Proposal/Hasil bagi mahasiswa:
+        </p>
 
         <table class="info-table">
             <tr>
@@ -191,11 +192,13 @@
             </tr>
         </table>
 
-        <p>Berdasarkan hasil seminar tersebut, dosen penguji memberikan catatan revisi yang harus diselesaikan oleh mahasiswa sebagai syarat untuk melanjutkan ke tahapan berikutnya.</p>
+        <p>Berdasarkan hasil seminar tersebut, dosen penguji memberikan catatan revisi yang harus diselesaikan oleh
+            mahasiswa sebagai syarat untuk melanjutkan ke tahapan berikutnya.</p>
 
         <div style="margin-top: 20px;">
             <p><strong>Status Kelulusan Seminar:</strong></p>
-            <div style="border: 2px solid #000; padding: 15px; text-align: center; font-weight: bold; font-size: 18px; margin: 10px 0;">
+            <div
+                style="border: 2px solid #000; padding: 15px; text-align: center; font-weight: bold; font-size: 18px; margin: 10px 0;">
                 @if($detail->isAllRevisionsApproved())
                     LULUS (REVISI TELAH DISETUJUI)
                 @else
@@ -277,7 +280,8 @@
                     <tr>
                         <td style="border: none; width: 65px; padding: 0;">
                             @if($detail->verification_token)
-                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(60)->margin(0)->generate(route('document.verify', $detail->verification_token))) }}">
+                                <img
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(60)->margin(0)->generate(route('document.verify', $detail->verification_token))) }}">
                             @else
                                 <div style="width: 60px; height: 60px; background: #eee;"></div>
                             @endif
@@ -285,8 +289,10 @@
                         <td style="border: none; vertical-align: middle; text-align: left; padding-left: 10px;">
                             <div style="font-size: 8px; color: #666; line-height: 1.2;">
                                 Dokumen ini diterbitkan secara elektronik oleh SIBIMA Fasilkom Unsub.<br>
-                                Keaslian dokumen dapat diverifikasi dengan memindai QR Code di samping atau mengunjungi:<br>
-                                <span style="color: #4f46e5;">{{ $detail->verification_token ? route('document.verify', $detail->verification_token) : 'Link Verifikasi Tidak Tersedia' }}</span>
+                                Keaslian dokumen dapat diverifikasi dengan memindai QR Code di samping atau
+                                mengunjungi:<br>
+                                <span
+                                    style="color: #4f46e5;">{{ $detail->verification_token ? route('document.verify', $detail->verification_token) : 'Link Verifikasi Tidak Tersedia' }}</span>
                             </div>
                         </td>
                     </tr>

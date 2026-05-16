@@ -8,6 +8,10 @@ class ThesisDefenseSchedule extends Model
 {
     protected $fillable = ['title', 'date', 'chairman_id', 'moderator_id', 'location', 'created_by', 'wave_id', 'meeting_link'];
 
+    protected $casts = [
+        'date' => 'date',
+    ];
+
     public function wave()
     {
         return $this->belongsTo(Wave::class);

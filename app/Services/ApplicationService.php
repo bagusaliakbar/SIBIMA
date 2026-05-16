@@ -29,7 +29,7 @@ class ApplicationService
 
         foreach ($files as $file) {
             if ($request->hasFile($file)) {
-                $path = $request->file($file)->store(str_replace('App\\Models\\', '', $applicationModel) . '_files', 'public');
+                $path = $request->file($file)->store(str_replace('App\\Models\\', '', $applicationModel) . '_files', 'local');
                 $data[$file] = $path;
                 
                 // Clear rejection status for this file
@@ -99,7 +99,7 @@ class ApplicationService
         // Deactivate old templates
         $templateModel::query()->update(['is_active' => false]);
 
-        $path = $file->store($storageDir, 'public');
+        $path = $file->store($storageDir, 'local');
 
         return $templateModel::create([
             'title' => $data['title'],
@@ -123,9 +123,9 @@ class ApplicationService
 
         if ($zip->open($tempFile, ZipArchive::CREATE) === TRUE) {
             foreach ($fileMap as $field => $label) {
-                if ($application->$field && Storage::disk('public')->exists($application->$field)) {
+                if ($application->$field && Storage::disk('local')->exists($application->$field)) {
                     $extension = pathinfo($application->$field, PATHINFO_EXTENSION);
-                    $zip->addFromString($label . '.' . $extension, Storage::disk('public')->get($application->$field));
+                    $zip->addFromString($label . '.' . $extension, Storage::disk('local')->get($application->$field));
                 }
             }
 
@@ -147,7 +147,7 @@ class ApplicationService
 
         foreach ($files as $file) {
             if ($application->$file) {
-                Storage::disk('public')->delete($application->$file);
+                Storage::disk('local')->delete($application->$file);
             }
         }
         

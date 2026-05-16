@@ -20,19 +20,23 @@
 
                     <!-- Filter Module -->
                     <form action="{{ route('admin.logs') }}" method="GET" class="flex gap-2 w-full sm:w-auto">
+                        @if($search)
+                            <input type="hidden" name="search" value="{{ $search }}">
+                        @endif
                         <select name="module" onchange="this.form.submit()" class="text-xs border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500 min-w-[120px]">
                             <option value="">Semua Modul</option>
                             @foreach($modules as $m)
                                 <option value="{{ $m }}" {{ $module == $m ? 'selected' : '' }}>{{ $m }}</option>
                             @endforeach
                         </select>
-                        
-                        <x-search-input 
-                            name="search" 
-                            :value="$search ?? ''" 
-                            placeholder="Cari aktivitas..." 
-                            route="admin.logs" />
                     </form>
+                    
+                    <x-search-input 
+                        name="search" 
+                        :value="$search ?? ''" 
+                        placeholder="Cari aktivitas..." 
+                        route="admin.logs"
+                        :params="['module' => $module]" />
                 </div>
             </x-slot>
 
@@ -86,12 +90,34 @@
                                                         @php $oldValue = $log->properties['before'][$key] ?? 'N/A'; @endphp
                                                         @if($oldValue != $newValue)
                                                             <div class="flex flex-col gap-1">
-                                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}</span>
-                                                                <div class="flex items-center gap-2">
-                                                                    <span class="px-2 py-0.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-[9px] font-bold rounded border border-rose-100 dark:border-rose-800/30 line-through decoration-rose-300">{{ is_scalar($oldValue) ? $oldValue : '...' }}</span>
-                                                                    <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                                                                    <span class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold rounded border border-emerald-100 dark:border-emerald-800/30">{{ is_scalar($newValue) ? $newValue : '...' }}</span>
-                                                                </div>
+                                                                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}</span>
+                                                                  <div class="flex items-center gap-2">
+                                                                      <span class="px-2 py-0.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-[9px] font-bold rounded border border-rose-100 dark:border-rose-800/30 line-through decoration-rose-300">{{ is_scalar($oldValue) ? $oldValue : '...' }}</span>
+                                                                      <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                                                      <span class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold rounded border border-emerald-100 dark:border-emerald-800/30">{{ is_scalar($newValue) ? $newValue : '...' }}</span>
+                                                                  </div>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            @elseif(isset($log->properties['after']))
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                    @foreach($log->properties['after'] as $key => $value)
+                                                        @if(is_scalar($value))
+                                                            <div class="flex items-center gap-2 text-[9px]">
+                                                                <span class="font-bold text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="font-black text-slate-700 dark:text-slate-300 uppercase">{{ $value }}</span>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            @elseif(isset($log->properties['before']))
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                    @foreach($log->properties['before'] as $key => $value)
+                                                        @if(is_scalar($value))
+                                                            <div class="flex items-center gap-2 text-[9px]">
+                                                                <span class="font-bold text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="font-black text-slate-400 dark:text-slate-500 line-through">{{ $value }}</span>
                                                             </div>
                                                         @endif
                                                     @endforeach
@@ -114,7 +140,7 @@
                                             @else
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                     @foreach($log->properties as $key => $value)
-                                                        @if(!is_array($value))
+                                                        @if(is_scalar($value))
                                                             <div class="flex items-center gap-2 text-[9px]">
                                                                 <span class="font-bold text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
                                                                 <span class="font-black text-slate-700 dark:text-slate-300 uppercase">{{ $value }}</span>

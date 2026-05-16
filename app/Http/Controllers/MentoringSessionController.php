@@ -95,9 +95,7 @@ class MentoringSessionController extends Controller
     public function updateStatus(UpdateMentoringSessionStatusRequest $request, MentoringSession $session)
     {
         // Verify that this dosen owns the thesis
-        if ($session->thesis->pembimbing1_id !== Auth::id() && $session->thesis->pembimbing2_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('updateStatus', $session);
 
         $message = $this->mentoringService->updateStatus($session, $request->validated());
 
@@ -107,9 +105,7 @@ class MentoringSessionController extends Controller
     public function uploadDocument(UploadMentoringDocumentRequest $request, MentoringSession $session)
     {
         // Only the session's student can upload
-        if ($session->thesis->student_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('uploadDocument', $session);
 
         $originalName = $this->mentoringService->uploadDocument($session, $request->file('document'));
 
@@ -119,9 +115,7 @@ class MentoringSessionController extends Controller
     public function deleteDocument(MentoringSession $session)
     {
         // Only the session's student can delete
-        if (Auth::user()->role !== 'mahasiswa' || $session->thesis->student_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('deleteDocument', $session);
 
         $this->mentoringService->deleteDocument($session);
 

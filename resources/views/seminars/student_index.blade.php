@@ -102,7 +102,7 @@
                                             @endif
                                         </div>
                                         <div class="mt-1 flex items-center gap-2">
-                                            <a href="{{ Storage::url($application->$field) }}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline">Lihat Berkas</a>
+                                            <a href="{{ route('download.private', ['path' => $application->$field]) }}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline">Lihat Berkas</a>
                                         </div>
                                         @if(isset($application->file_reviews[$field]['note']) && $application->file_reviews[$field]['note'])
                                             <div class="mt-2 p-2 bg-rose-100/50 dark:bg-rose-900/30 rounded border border-rose-200/50 dark:border-rose-800/50">
@@ -170,7 +170,7 @@
                                 </div>
                                 <div>
                                     <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Unduh Formulir</div>
-                                    <a href="{{ Storage::url($template->file_path) }}" target="_blank" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 hover:underline">
+                                    <a href="{{ route('download.private', ['path' => $template->file_path]) }}" target="_blank" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 hover:underline">
                                         {{ $template->title }}
                                     </a>
                                 </div>

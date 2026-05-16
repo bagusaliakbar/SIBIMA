@@ -24,7 +24,7 @@
 ### 3. Validasi & Integritas Data
 
 - **QR Code Verification**: Verifikasi keaslian dokumen Berita Acara melalui QR Code terintegrasi.
-- **Audit Trail (Activity Logs)**: Pencatatan setiap perubahan data penting (nilai, status) untuk transparansi dan keamanan data.
+- **Advanced Audit Trail (Activity Logs)**: Pencatatan mendalam setiap perubahan data dengan perbandingan **Data Lama vs Data Baru** untuk transparansi total.
 - **Digital Signature Token**: Penggunaan token unik untuk validasi tanda tangan elektronik pada dokumen resmi.
 
 ### 4. Manajemen Skripsi & Bimbingan
@@ -99,9 +99,12 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan proyek secara lokal:
 
 ## 🔒 Keamanan & Integritas
 
-- **IDOR Protection**: Validasi ketat kepemilikan data pada setiap request.
-- **Role-Based Access Control (RBAC)**: Pemisahan hak akses antara Admin, Dosen, dan Mahasiswa.
-- **Secure Document**: Enkripsi token verifikasi pada QR Code untuk mencegah manipulasi dokumen.
+- **Private Storage Isolation**: Semua dokumen sensitif (logbook, revisi) disimpan di penyimpanan privat yang hanya dapat diakses melalui jalur autentikasi.
+- **Content Security Policy (CSP)**: Implementasi header keamanan untuk mencegah serangan XSS dan injeksi skrip berbahaya.
+- **Strict MIME-Type Validation**: Validasi biner pada setiap unggahan berkas untuk memastikan integritas file dan mencegah malware.
+- **Role-Based Access Control (RBAC)**: Penggunaan *Laravel Policies* untuk validasi kepemilikan data (Dosen hanya bisa melihat mahasiswa bimbingannya sendiri).
+- **Data Encryption**: Enkripsi pada level database untuk informasi sensitif seperti nomor telepon dan token tanda tangan.
+- **IDOR Protection**: Validasi ketat kepemilikan data pada setiap request file maupun modul.
 
 ---
 

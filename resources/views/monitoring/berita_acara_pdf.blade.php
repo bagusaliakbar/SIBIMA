@@ -295,7 +295,7 @@
                         Penguji I,<br>
                         <div style="margin-top: 10px;">
                             @if($detail->examiner1 && $detail->examiner1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->examiner1->signature))) }}"
+                                <img src="data:image/png;base64,{{ base64_encode($detail->examiner1->decrypted_signature) }}"
                                     style="height: 50px; width: auto;">
                             @elseif($detail->examiner1 && $detail->examiner1->signature_token)
                                 <img
@@ -310,7 +310,7 @@
                         Penguji II,<br>
                         <div style="margin-top: 10px;">
                             @if($detail->examiner2 && $detail->examiner2->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->examiner2->signature))) }}"
+                                <img src="data:image/png;base64,{{ base64_encode($detail->examiner2->decrypted_signature) }}"
                                     style="height: 50px; width: auto;">
                             @elseif($detail->examiner2 && $detail->examiner2->signature_token)
                                 <img
@@ -337,7 +337,7 @@
                                 $p1 = $detail->thesis->pembimbing1;
                             @endphp
                             @if($p1 && $p1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $p1->signature))) }}"
+                                <img src="data:image/png;base64,{{ base64_encode($p1->decrypted_signature) }}"
                                     style="height: 50px; width: auto;">
                             @elseif($p1 && $p1->signature_token)
                                 <img

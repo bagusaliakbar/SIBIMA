@@ -118,6 +118,8 @@ class ThesisController extends Controller
 
     public function update(UpdateThesisRequest $request, Thesis $thesis)
     {
+        $this->authorize('update', $thesis);
+        
         $this->thesisService->updateThesis($thesis, $request->validated());
 
         return redirect()->back()->with('success', 'Data skripsi berhasil diperbarui.');
@@ -125,6 +127,8 @@ class ThesisController extends Controller
 
     public function toggleAcc(Thesis $thesis, $type)
     {
+        $this->authorize('toggleAcc', $thesis);
+
         try {
             $statusText = $this->thesisService->toggleAcc($thesis, $type);
             $typeName = $type === 'up' ? 'Seminar UP' : 'Sidang Akhir';

@@ -156,12 +156,12 @@ class MentoringService
      */
     public function uploadDocument(MentoringSession $session, $file)
     {
-        if ($session->document_path && Storage::disk('public')->exists($session->document_path)) {
-            Storage::disk('public')->delete($session->document_path);
+        if ($session->document_path && Storage::disk('local')->exists($session->document_path)) {
+            Storage::disk('local')->delete($session->document_path);
         }
 
         $originalName = $file->getClientOriginalName();
-        $path = $file->store('session-documents', 'public');
+        $path = $file->store('session-documents', 'local');
 
         $session->update([
             'document_path'          => $path,
@@ -178,8 +178,8 @@ class MentoringService
      */
     public function deleteDocument(MentoringSession $session)
     {
-        if ($session->document_path && Storage::disk('public')->exists($session->document_path)) {
-            Storage::disk('public')->delete($session->document_path);
+        if ($session->document_path && Storage::disk('local')->exists($session->document_path)) {
+            Storage::disk('local')->delete($session->document_path);
         }
 
         $session->update([

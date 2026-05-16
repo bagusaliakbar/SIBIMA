@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Crypt;
 
 class UserService
 {
@@ -98,10 +99,14 @@ class UserService
     public function updateSignature(User $user, $signatureFile)
     {
         if ($user->signature) {
-            Storage::disk('public')->delete($user->signature);
+            Storage::disk('local')->delete($user->signature);
         }
 
-        $path = $signatureFile->store('signatures', 'public');
+        $encryptedContent = Crypt::encrypt(file_get_contents($signatureFile->getRealPath()));
+        $filename = \Illuminate\Support\Str::random(40) . '.enc';
+        $path = 'signatures/' . $filename;
+        
+        Storage::disk('local')->put($path, $encryptedContent);
         $user->signature = $path;
         
         if (!$user->signature_token) {

@@ -45,7 +45,7 @@
                             </div>
                             <div class="min-w-0">
                                 <div class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase truncate max-w-[150px] tracking-tighter">{{ $template->title }}</div>
-                                <a href="{{ Storage::url($template->file_path) }}" target="_blank" class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:underline">Download File</a>
+                                <a href="{{ route('download.private', ['path' => $template->file_path]) }}" target="_blank" class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:underline">Download File</a>
                             </div>
                         </div>
                     @else
@@ -191,7 +191,7 @@
                                                         ];
                                                     @endphp
                                                     @foreach($fileLabels as $field => $label)
-                                                        <a href="{{ Storage::url($app->$field) }}" target="_blank" class="flex items-center p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-900 transition-all group/file shadow-sm">
+                                                        <a href="{{ route('download.private', ['path' => $app->$field]) }}" target="_blank" class="flex items-center p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-900 transition-all group/file shadow-sm">
                                                             <div class="p-2 bg-white dark:bg-slate-800 rounded-lg mr-4 border border-slate-100 dark:border-slate-700 group-hover/file:bg-indigo-50 transition-colors">
                                                                 <svg class="w-5 h-5 text-slate-400 group-hover/file:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                             </div>
@@ -230,7 +230,7 @@
                                                                         <div class="flex items-center justify-between mb-3">
                                                                             <div class="flex flex-col">
                                                                                 <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">{{ $label }}</span>
-                                                                                <a href="{{ Storage::url($app->$field) }}" target="_blank" class="text-[9px] text-indigo-600 font-black uppercase tracking-widest hover:underline mt-1">Buka File</a>
+                                                                                <a href="{{ route('download.private', ['path' => $app->$field]) }}" target="_blank" class="text-[9px] text-indigo-600 font-black uppercase tracking-widest hover:underline mt-1">Buka File</a>
                                                                             </div>
                                                                             <div class="flex items-center gap-3">
                                                                                 <label class="inline-flex items-center cursor-pointer">

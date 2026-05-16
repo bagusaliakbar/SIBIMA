@@ -15,6 +15,10 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Secure File Download Route
+    Route::get('/download-private-file', [\App\Http\Controllers\DownloadController::class, 'downloadPrivateFile'])
+        ->name('download.private');
+
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -90,59 +94,66 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/{thesis}/logbooks', [App\Http\Controllers\LogbookController::class, 'show'])->name('theses.logbooks');
     Route::get('/theses/{thesis}/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('theses.logbooks.export-pdf');
 
-    // Announcements (Admin Only)
-    Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
-    Route::post('/announcements', [App\Http\Controllers\AnnouncementController::class, 'store'])->name('announcements.store');
-    Route::patch('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'update'])->name('announcements.update');
-    Route::delete('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
-    Route::post('/announcements/{announcement}/toggle', [App\Http\Controllers\AnnouncementController::class, 'toggleStatus'])->name('announcements.toggle');
+    // Admin Only Routes
+    Route::middleware(['role:admin'])->group(function () {
+        // Announcements
+        Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::post('/announcements', [App\Http\Controllers\AnnouncementController::class, 'store'])->name('announcements.store');
+        Route::patch('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'update'])->name('announcements.update');
+        Route::delete('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+        Route::post('/announcements/{announcement}/toggle', [App\Http\Controllers\AnnouncementController::class, 'toggleStatus'])->name('announcements.toggle');
 
-    // System Logs (Admin Only)
-    Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
-    Route::get('/admin/logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.logs');
+        // System Logs
+        Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
+        Route::get('/admin/logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.logs');
 
-    // Monitoring (Admin Only)
-    Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
-    Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
-    Route::get('/monitoring/defense-scores/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresExcel'])->name('monitoring.defense-scores.export-excel');
-    Route::get('/monitoring/defense-scores/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresPdf'])->name('monitoring.defense-scores.export-pdf');
-    Route::get('/monitoring/advanced-reporting', [App\Http\Controllers\AdvancedReportingController::class, 'index'])->name('monitoring.advanced-reporting');
-    Route::get('/monitoring/defense-scores/{detail}/berita-acara', [App\Http\Controllers\MonitoringController::class, 'exportBeritaAcara'])->name('monitoring.defense-scores.berita-acara');
-    Route::get('/monitoring/seminar-scores/{detail}/berita-acara', [App\Http\Controllers\MonitoringController::class, 'exportBeritaAcaraSeminar'])->name('monitoring.seminar-scores.berita-acara');
-    Route::get('/monitoring/defense-scores', [App\Http\Controllers\MonitoringController::class, 'defenseScores'])->name('monitoring.defense-scores');
-    Route::get('/monitoring/critical', [App\Http\Controllers\MonitoringController::class, 'criticalStudents'])->name('monitoring.critical');
-    Route::get('/monitoring/batch-export-berita-acara', [App\Http\Controllers\MonitoringController::class, 'batchExportBeritaAcara'])->name('monitoring.batch-export-berita-acara');
-    Route::get('/monitoring/export', [App\Http\Controllers\MonitoringController::class, 'export'])->name('monitoring.export');
-    Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
+        // Monitoring
+        Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
+        Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
+        Route::get('/monitoring/defense-scores/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresExcel'])->name('monitoring.defense-scores.export-excel');
+        Route::get('/monitoring/defense-scores/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresPdf'])->name('monitoring.defense-scores.export-pdf');
+        Route::get('/monitoring/advanced-reporting', [App\Http\Controllers\AdvancedReportingController::class, 'index'])->name('monitoring.advanced-reporting');
+        Route::get('/monitoring/defense-scores/{detail}/berita-acara', [App\Http\Controllers\MonitoringController::class, 'exportBeritaAcara'])->name('monitoring.defense-scores.berita-acara');
+        Route::get('/monitoring/seminar-scores/{detail}/berita-acara', [App\Http\Controllers\MonitoringController::class, 'exportBeritaAcaraSeminar'])->name('monitoring.seminar-scores.berita-acara');
+        Route::get('/monitoring/defense-scores', [App\Http\Controllers\MonitoringController::class, 'defenseScores'])->name('monitoring.defense-scores');
+        Route::get('/monitoring/critical', [App\Http\Controllers\MonitoringController::class, 'criticalStudents'])->name('monitoring.critical');
+        Route::get('/monitoring/batch-export-berita-acara', [App\Http\Controllers\MonitoringController::class, 'batchExportBeritaAcara'])->name('monitoring.batch-export-berita-acara');
+        Route::get('/monitoring/export', [App\Http\Controllers\MonitoringController::class, 'export'])->name('monitoring.export');
+        Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
 
-    // Document Generation & Settings (Admin Only)
-    Route::get('/documents/surat-tugas-seminar/{detail}', [App\Http\Controllers\DocumentController::class, 'generateSuratTugasSeminar'])->name('documents.surat-tugas-seminar');
-    Route::get('/documents/sk-penguji-sidang/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSidang'])->name('documents.sk-penguji-sidang');
-    Route::get('/admin/letter-settings', [App\Http\Controllers\LetterSettingController::class, 'index'])->name('admin.letter-settings.index');
-    Route::put('/admin/letter-settings/{letterSetting}', [App\Http\Controllers\LetterSettingController::class, 'update'])->name('admin.letter-settings.update');
+        // Document Generation & Settings
+        Route::get('/documents/surat-tugas-seminar/{detail}', [App\Http\Controllers\DocumentController::class, 'generateSuratTugasSeminar'])->name('documents.surat-tugas-seminar');
+        Route::get('/documents/sk-penguji-sidang/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSidang'])->name('documents.sk-penguji-sidang');
+        Route::get('/admin/letter-settings', [App\Http\Controllers\LetterSettingController::class, 'index'])->name('admin.letter-settings.index');
+        Route::put('/admin/letter-settings/{letterSetting}', [App\Http\Controllers\LetterSettingController::class, 'update'])->name('admin.letter-settings.update');
 
-    // Seminar Schedule (Admin Only)
-    Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
-    Route::get('/seminar-schedules/{seminar_schedule}/export-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportPdf'])->name('seminar-schedules.export-pdf');
+        // Seminar Schedule
+        Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
+        Route::get('/seminar-schedules/{seminar_schedule}/export-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportPdf'])->name('seminar-schedules.export-pdf');
 
-    // Thesis Defense Schedule (Sidang) (Admin Only)
-    Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
-    Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
+        // Thesis Defense Schedule (Sidang)
+        Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
+        Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
 
-    // User Management (Admin Only)
-    Route::get('/users/export', [App\Http\Controllers\UserController::class, 'export'])->name('users.export');
-    Route::post('/users/import', [App\Http\Controllers\UserController::class, 'import'])->name('users.import');
-    Route::post('/users/{user}/toggle', [App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle');
-    Route::resource('users', App\Http\Controllers\UserController::class)->except(['show']);
+        // User Management
+        Route::get('/users/export', [App\Http\Controllers\UserController::class, 'export'])->name('users.export');
+        Route::post('/users/import', [App\Http\Controllers\UserController::class, 'import'])->name('users.import');
+        Route::post('/users/{user}/toggle', [App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle');
+        Route::resource('users', App\Http\Controllers\UserController::class)->except(['show']);
 
-    // Wave Management (Admin Only)
-    Route::post('/waves/{wave}/toggle', [App\Http\Controllers\WaveController::class, 'toggle'])->name('waves.toggle');
-    Route::resource('waves', App\Http\Controllers\WaveController::class)->except(['show', 'create', 'edit']);
+        // Wave Management
+        Route::post('/waves/{wave}/toggle', [App\Http\Controllers\WaveController::class, 'toggle'])->name('waves.toggle');
+        Route::resource('waves', App\Http\Controllers\WaveController::class)->except(['show', 'create', 'edit']);
+    });
 
     // Notifications
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
+    // Calendar
+    Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/calendar/events', [App\Http\Controllers\CalendarController::class, 'events'])->name('calendar.events');
 
     // Conflict Check
     Route::post('/check-dosen-availability', [App\Http\Controllers\ScheduleConflictController::class, 'checkDosenAvailability'])->name('check-dosen-availability');
