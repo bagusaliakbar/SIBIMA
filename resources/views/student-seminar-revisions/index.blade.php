@@ -2,17 +2,12 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Revisi Seminar', 'url' => route('student-seminar-revisions.index')]
+                <x-breadcrumb :items="[
+                    ['label' => 'Revisi Hasil Seminar', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Revisi Hasil Seminar
-                    <span class="ml-3 px-2 py-0.5 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-orange-200 dark:border-orange-500/20 shadow-sm">Mahasiswa</span>
                 </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-orange-500 rounded-full mr-2"></span>
-                    Pantau dan tindak lanjuti masukan dari dewan penguji
-                </p>
             </div>
         </div>
     </x-slot>

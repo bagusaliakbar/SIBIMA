@@ -9,7 +9,7 @@ class UpdateThesisRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Auth::user()->role === 'admin';
+        return Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi';
     }
 
     public function rules(): array

@@ -35,7 +35,7 @@
                     <div>
                         @php
                             $studentThesis = $studentSessions->first()->thesis;
-                            $mentoringCount = Auth::user()->role === 'admin' 
+                            $mentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
                                 ? $studentThesis->completed_mentoring_count 
                                 : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
                         @endphp
@@ -46,7 +46,7 @@
                                 </div>
                                 <span>{{ $studentName }}</span>
                                 <span class="ml-4 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider">
-                                    {{ $mentoringCount }} Bimbingan {{ Auth::user()->role === 'admin' ? 'Total' : 'dengan Anda' }}
+                                    {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
                                 </span>
                             </h4>
 
@@ -118,7 +118,7 @@
                                         </div>
                                     @endif
                                 </div>
-                            @elseif(Auth::user()->role === 'admin')
+                            @elseif(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                                 <div class="text-[10px] text-slate-400 font-black uppercase tracking-widest">
                                     Dosen Pembimbing: <span class="text-slate-700 dark:text-slate-300">{{ $studentSessions->first()->dosen->name }}</span>
                                 </div>

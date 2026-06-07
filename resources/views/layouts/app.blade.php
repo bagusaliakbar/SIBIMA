@@ -39,16 +39,36 @@
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 overflow-hidden selection:bg-orange-100 selection:text-orange-900 transition-colors duration-300">
         <div class="flex h-screen w-full overflow-hidden">
+            <!-- Sidebar Backdrop for Mobile -->
+            <div 
+                x-show="sidebarOpen" 
+                @click="sidebarOpen = false" 
+                x-transition:enter="transition ease-in-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in-out duration-300"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 md:hidden"
+                style="display: none;">
+            </div>
+
             <!-- Sidebar (Dark & Premium) -->
-            <aside class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 hidden md:flex flex-col z-30 shrink-0 shadow-2xl relative transition-colors duration-300">
+            <aside 
+                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+                class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-50 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:inset-auto md:h-full md:flex">
                 <!-- Sidebar Pattern Overlay -->
                 <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                 
-                <div class="h-20 flex items-center px-8 border-b border-white/5 dark:border-white/[0.02] relative z-10">
+                <div class="h-20 flex items-center justify-between px-8 border-b border-white/5 dark:border-white/[0.02] relative z-10">
                     <div class="flex items-center gap-3">
                         <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain">
                         <h1 class="text-xl font-black text-white tracking-tighter">SIBIMA</h1>
                     </div>
+                    <!-- Close Button for Mobile -->
+                    <button @click="sidebarOpen = false" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar relative z-10">
@@ -145,8 +165,8 @@
                         </nav>
                         @endif
 
-                    <!-- Admin Specific -->
-                    @if(Auth::user()->role === 'admin')
+                    <!-- Admin & Kaprodi Specific -->
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pelaksanaan Skripsi</p>
                     </div>
@@ -286,19 +306,25 @@
             <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300">
                 <!-- Top Header (Clean & Modern) -->
                 <header class="h-20 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-6 lg:px-10 z-40 shrink-0 transition-colors duration-300">
-                    <div class="flex items-center md:hidden">
-                        <div class="w-9 h-9 bg-orange-600 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <div class="flex items-center md:hidden gap-2">
+                        <!-- Hamburger toggle for mobile sidebar -->
+                        <button @click="sidebarOpen = !sidebarOpen" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700/50 transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-8 h-8 object-contain">
+                            <h1 class="text-lg font-black text-slate-800 dark:text-white tracking-tighter">SIBIMA</h1>
                         </div>
-                        <h1 class="text-lg font-black text-slate-800 tracking-tighter">SIBIMA</h1>
                     </div>
 
                     <!-- Desktop Spacer to keep right elements aligned -->
                     <div class="hidden md:block"></div>
 
 
-                    <div class="flex items-center space-x-5">
-                        <div class="hidden md:flex items-center space-x-2">
+                    <div class="flex items-center space-x-3 sm:space-x-5">
+                        <div class="flex items-center space-x-1 sm:space-x-2">
                             <!-- Dark Mode Toggle -->
                             <button @click="darkMode = !darkMode" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative">
                                 <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -377,10 +403,10 @@
                             </div>
 
                             <!-- Cool Divider -->
-                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                            <div class="hidden md:block h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
                             <!-- Logout Button -->
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" class="hidden md:block">
                                 @csrf
                                 <button type="submit" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group" title="Keluar">
                                     <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>

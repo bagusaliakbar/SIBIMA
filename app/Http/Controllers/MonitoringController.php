@@ -30,7 +30,7 @@ class MonitoringController extends Controller implements HasMiddleware
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'admin') {
+                if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') {
                     abort(403);
                 }
                 return $next($request);

@@ -56,8 +56,8 @@ class ApplicationService
             'status' => 'pending'
         ]);
 
-        // Notify Admins
-        $admins = User::where('role', 'admin')->get();
+        // Notify Admins & Kaprodi
+        $admins = User::whereIn('role', ['admin', 'kaprodi'])->get();
         Notification::send($admins, new GeneralNotification(
             $notifTitle,
             "Mahasiswa " . Auth::user()->name . " melakukan pengajuan baru.",

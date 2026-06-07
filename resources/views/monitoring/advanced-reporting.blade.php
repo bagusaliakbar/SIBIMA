@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Monitoring', 'url' => '#'],
-                    ['name' => 'Pusat Laporan & Analisa', 'url' => route('monitoring.advanced-reporting')]
+                <x-breadcrumb :items="[
+                    ['label' => 'Monitoring', 'route' => null],
+                    ['label' => 'Pusat Laporan & Analisa', 'route' => route('monitoring.advanced-reporting')]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Pusat Laporan & Analisa

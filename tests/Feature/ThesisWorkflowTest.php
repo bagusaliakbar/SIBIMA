@@ -52,9 +52,11 @@ class ThesisWorkflowTest extends TestCase
         $response = $this->actingAs($student)
             ->post(route('mentoring-sessions.store'), [
                 'thesis_id' => $thesis->id,
-                'title' => 'Diskusi Bab 1: Pendahuluan',
+                'topic' => 'Diskusi Bab 1: Pendahuluan',
                 'notes' => 'Menyiapkan latar belakang masalah.',
                 'scheduled_at' => now()->addDays(2)->format('Y-m-d H:i'),
+                'type' => 'offline',
+                'dosen_id' => $p1->id,
             ]);
 
         $response->assertRedirect();

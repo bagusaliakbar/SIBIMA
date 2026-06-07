@@ -81,7 +81,7 @@ class MentoringSessionController extends Controller
         } elseif ($user->role === 'mahasiswa') {
             $sessions = $query->with('thesis.pembimbing1', 'thesis.pembimbing2')->paginate(10);
             return view('mentoring.student_index', compact('sessions', 'search'));
-        } elseif ($user->role === 'admin') {
+        } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
             $sessions = MentoringSession::search($search)
                 ->with(['thesis.student', 'dosen'])
                 ->orderBy('scheduled_at', 'desc')

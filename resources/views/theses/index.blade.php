@@ -38,7 +38,7 @@
                         <th class="py-4 px-6">Rencana Judul Skripsi</th>
                         <th class="py-4 px-6">Deskripsi</th>
                         <th class="py-4 px-6 text-center">Status</th>
-                        @if(Auth::user()->role === 'admin')
+                        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                             <th class="py-4 px-6">Pembimbing</th>
                             <th class="py-4 px-6 text-right">Aksi</th>
                         @endif
@@ -89,8 +89,8 @@
                                                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight uppercase">{{ $thesis->title }}</h4>
                                                     </div>
                                                     <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                                        <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Abstrak</p>
-                                                        <div class="text-xs text-slate-600 dark:text-slate-400 leading-loose text-justify font-medium">
+                                                        <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Rencana</p>
+                                                        <div class="text-xs text-slate-600 dark:text-slate-400 leading-loose text-justify font-medium whitespace-pre-line">
                                                             {{ $thesis->abstract }}
                                                         </div>
                                                     </div>
@@ -113,7 +113,7 @@
                                     :label="$thesis->status === 'active' ? 'AKTIF' : ($thesis->status === 'completed' ? 'LULUS' : 'MENUNGGU')" />
                             </td>
                             
-                            @if(Auth::user()->role === 'admin')
+                            @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                                 <td class="py-4 px-6">
                                     @if($thesis->pembimbing1 && $thesis->pembimbing2)
                                         <div class="flex flex-col gap-1.5">
@@ -290,7 +290,7 @@
                             @endif
                         </tr>
                     @empty
-                        <x-empty-state colspan="{{ Auth::user()->role === 'admin' ? '6' : '4' }}" description="Belum ada data skripsi yang ditemukan." />
+                        <x-empty-state colspan="{{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? '6' : '4' }}" description="Belum ada data skripsi yang ditemukan." />
                     @endforelse
                 </tbody>
             </table>

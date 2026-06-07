@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Penguji Seminar', 'url' => route('seminar-examiner.index')],
-                    ['name' => 'Riwayat Revisi', 'url' => '#']
+                <x-breadcrumb :items="[
+                    ['label' => 'Tugas Penguji Seminar', 'route' => route('seminar-examiner.index')],
+                    ['label' => 'Riwayat Revisi', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Detail Mahasiswa & Riwayat Revisi

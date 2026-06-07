@@ -21,7 +21,7 @@ class MentoringSessionPolicy
      */
     public function before(User $user, $ability)
     {
-        if ($user->role === 'admin') {
+        if ($user->role === 'admin' || $user->role === 'kaprodi') {
             return true;
         }
     }

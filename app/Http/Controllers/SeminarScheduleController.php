@@ -29,7 +29,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'admin' && !in_array($request->route()->getName(), ['seminar-schedules.export-pdf', 'seminar-schedules.show'])) {
+                if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi' && !in_array($request->route()->getName(), ['seminar-schedules.export-pdf', 'seminar-schedules.show'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -135,6 +135,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
     {
         $user = Auth::user();
         $isAuthorized = $user->role === 'admin' 
+            || $user->role === 'kaprodi'
             || $user->id === $seminarSchedule->chairman_id 
             || $user->id === $seminarSchedule->moderator_id
             || $seminarSchedule->details()->where(function($q) use ($user) {
@@ -145,7 +146,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
 
         $seminarSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
-        $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule', 'kaprodi'))->setPaper('a4', 'landscape');
 
         return $pdf->download('Jadwal_Seminar_' . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.pdf');

@@ -2,17 +2,12 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Revisi Sidang', 'url' => route('student-defense-revisions.index')]
+                <x-breadcrumb :items="[
+                    ['label' => 'Revisi Hasil Sidang', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Revisi Hasil Sidang
-                    <span class="ml-3 px-2 py-0.5 bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-rose-200 dark:border-rose-500/20 shadow-sm">Mahasiswa</span>
                 </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full mr-2"></span>
-                    Pantau dan tindak lanjuti masukan dari dewan penguji hasil sidang tugas akhir
-                </p>
             </div>
         </div>
     </x-slot>

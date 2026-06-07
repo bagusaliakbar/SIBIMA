@@ -2,11 +2,15 @@
     'title' => 'Tidak ada data ditemukan',
     'description' => 'Coba ubah kata kunci pencarian atau filter Anda.',
     'icon' => 'folder-open',
-    'colspan' => 1
+    'colspan' => null
 ])
 
+@if($colspan)
 <tr>
     <td colspan="{{ $colspan }}" class="py-16 text-center">
+@else
+<div class="py-16 text-center w-full">
+@endif
         <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100 dark:border-slate-700">
             @if($icon === 'folder-open')
                 <svg class="h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,5 +32,9 @@
         </div>
         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $title }}</h3>
         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest font-black">{{ $description }}</p>
+@if($colspan)
     </td>
 </tr>
+@else
+</div>
+@endif

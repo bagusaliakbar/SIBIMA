@@ -37,7 +37,7 @@ class ThesisDefenseApplicationController extends Controller
             return view('thesis_defenses.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave'));
         }
 
-        if ($user->role === 'admin') {
+        if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $activeWave = Wave::getCurrentActive();
             $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
@@ -90,7 +90,7 @@ class ThesisDefenseApplicationController extends Controller
 
     public function uploadTemplate(Request $request)
     {
-        if (Auth::user()->role !== 'admin') abort(403);
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -136,7 +136,7 @@ class ThesisDefenseApplicationController extends Controller
 
     public function downloadZip(ThesisDefenseApplication $application)
     {
-        if (Auth::user()->role !== 'admin') abort(403);
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
 
         $fileMap = [
             'file_formulir' => '1_Formulir_Pendaftaran',

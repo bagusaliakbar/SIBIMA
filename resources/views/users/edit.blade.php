@@ -68,6 +68,7 @@
                                 <option value="">Pilih peran...</option>
                                 <option value="dosen" {{ old('role', $user->role) == 'dosen' ? 'selected' : '' }}>Dosen Pembimbing</option>
                                 <option value="mahasiswa" {{ old('role', $user->role) == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+                                <option value="kaprodi" {{ old('role', $user->role) == 'kaprodi' ? 'selected' : '' }}>Kaprodi</option>
                             </select>
                             <x-input-error :messages="$errors->get('role')" class="mt-2" />
                         </div>

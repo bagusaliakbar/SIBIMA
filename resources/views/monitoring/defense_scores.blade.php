@@ -20,9 +20,9 @@
         }">
             <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                 <div>
-                    <x-breadcrumb :links="[
-                        ['name' => 'Monitoring', 'url' => '#'],
-                        ['name' => 'Nilai Sidang', 'url' => route('monitoring.defense-scores')]
+                    <x-breadcrumb :items="[
+                        ['label' => 'Monitoring', 'route' => null],
+                        ['label' => 'Nilai Sidang', 'route' => route('monitoring.defense-scores')]
                     ]" />
                     <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                         Rekapitulasi Nilai Sidang

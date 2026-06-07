@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Pengaturan', 'url' => '#'],
-                    ['name' => 'Gelombang Pelaksanaan', 'url' => route('waves.index')]
+                <x-breadcrumb :items="[
+                    ['label' => 'Pengaturan', 'route' => null],
+                    ['label' => 'Gelombang Pelaksanaan', 'route' => route('waves.index')]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Gelombang Pelaksanaan

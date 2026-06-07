@@ -3,9 +3,6 @@
         <h2 class="text-[1.1rem] font-bold text-slate-800 dark:text-slate-100 tracking-tight">
             Pesan
         </h2>
-        <div class="hidden md:block mt-3 sm:mt-0 text-sm text-slate-500 dark:text-slate-400">
-            Kirim dan terima pesan dari Mahasiswa, Dosen, atau Kaprodi.
-        </div>
     </x-slot>
 
     <div class="w-full h-[calc(100vh-14rem)] min-h-[600px]">

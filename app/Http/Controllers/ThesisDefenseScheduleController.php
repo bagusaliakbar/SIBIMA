@@ -29,7 +29,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'admin' && !in_array($request->route()->getName(), ['thesis-defense-schedules.export-pdf', 'thesis-defense-schedules.show'])) {
+                if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi' && !in_array($request->route()->getName(), ['thesis-defense-schedules.export-pdf', 'thesis-defense-schedules.show'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -135,6 +135,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     {
         $user = Auth::user();
         $isAuthorized = $user->role === 'admin' 
+            || $user->role === 'kaprodi'
             || $user->id === $thesisDefenseSchedule->chairman_id 
             || $user->id === $thesisDefenseSchedule->moderator_id
             || $thesisDefenseSchedule->details()->where(function($q) use ($user) {
@@ -145,7 +146,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
 
         $thesisDefenseSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 
-        $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         $pdf = Pdf::loadView('thesis_defense_schedules.pdf', compact('thesisDefenseSchedule', 'kaprodi'))->setPaper('a4', 'landscape');
 
         return $pdf->download('Jadwal_Sidang_' . str_replace([' ', '/', '\\'], '_', $thesisDefenseSchedule->title) . '.pdf');

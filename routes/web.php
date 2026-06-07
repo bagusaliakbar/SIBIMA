@@ -94,8 +94,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/{thesis}/logbooks', [App\Http\Controllers\LogbookController::class, 'show'])->name('theses.logbooks');
     Route::get('/theses/{thesis}/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('theses.logbooks.export-pdf');
 
-    // Admin Only Routes
-    Route::middleware(['role:admin'])->group(function () {
+    // Admin & Kaprodi Routes
+    Route::middleware(['role:admin,kaprodi'])->group(function () {
         // Announcements
         Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
         Route::post('/announcements', [App\Http\Controllers\AnnouncementController::class, 'store'])->name('announcements.store');

@@ -37,7 +37,7 @@ class SeminarApplicationController extends Controller
             return view('seminars.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave'));
         }
 
-        if ($user->role === 'admin') {
+        if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $activeWave = Wave::getCurrentActive();
             $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
@@ -85,7 +85,7 @@ class SeminarApplicationController extends Controller
 
     public function uploadTemplate(Request $request)
     {
-        if (Auth::user()->role !== 'admin') abort(403);
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -126,7 +126,7 @@ class SeminarApplicationController extends Controller
 
     public function downloadZip(SeminarApplication $application)
     {
-        if (Auth::user()->role !== 'admin') abort(403);
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
 
         $fileMap = [
             'file_acc_pembimbing' => '1_ACC_Pembimbing',

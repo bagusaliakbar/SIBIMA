@@ -2,16 +2,12 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Kalender Akademik', 'url' => route('calendar.index')]
+                <x-breadcrumb :items="[
+                    ['label' => 'Kalender Akademik', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Kalender Akademik Skripsi
                 </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-2"></span>
-                    Jadwal Seminar, Sidang, dan Gelombang Terintegrasi
-                </p>
             </div>
             
             <div class="flex items-center gap-3">

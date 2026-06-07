@@ -177,7 +177,7 @@
                         @endif
                     </td>
                     <td>
-                        <div style="font-size: 8pt; line-height: 1.2;">
+                        <div style="font-size: 8pt; line-height: 1.2; white-space: pre-line;">
                             {{ $thesis->abstract ?? '-' }}
                         </div>
                     </td>

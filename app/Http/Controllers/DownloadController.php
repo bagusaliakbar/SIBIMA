@@ -28,8 +28,8 @@ class DownloadController extends Controller
         // we will check if the user is an admin or if they are involved in the file.
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return Storage::disk('local')->download($path);
+        if ($user->role === 'admin' || $user->role === 'kaprodi') {
+            return response()->download(Storage::disk('local')->path($path));
         }
 
         // If it's a mentoring session document
@@ -37,10 +37,10 @@ class DownloadController extends Controller
             $session = MentoringSession::where('document_path', $path)->first();
             if ($session) {
                 if ($user->role === 'mahasiswa' && $session->thesis->student_id === $user->id) {
-                    return Storage::disk('local')->download($path);
+                    return response()->download(Storage::disk('local')->path($path));
                 }
                 if ($user->role === 'dosen' && ($session->dosen_id === $user->id || $session->thesis->pembimbing1_id === $user->id || $session->thesis->pembimbing2_id === $user->id)) {
-                    return Storage::disk('local')->download($path);
+                    return response()->download(Storage::disk('local')->path($path));
                 }
             }
         }
@@ -57,10 +57,10 @@ class DownloadController extends Controller
 
             if ($application) {
                 if ($user->role === 'mahasiswa' && $application->thesis->student_id === $user->id) {
-                    return Storage::disk('local')->download($path);
+                    return response()->download(Storage::disk('local')->path($path));
                 }
                 if ($user->role === 'dosen' && ($application->thesis->pembimbing1_id === $user->id || $application->thesis->pembimbing2_id === $user->id)) {
-                    return Storage::disk('local')->download($path);
+                    return response()->download(Storage::disk('local')->path($path));
                 }
             }
         }
@@ -82,17 +82,17 @@ class DownloadController extends Controller
 
             if ($application) {
                 if ($user->role === 'mahasiswa' && $application->thesis->student_id === $user->id) {
-                    return Storage::disk('local')->download($path);
+                    return response()->download(Storage::disk('local')->path($path));
                 }
                 if ($user->role === 'dosen' && ($application->thesis->pembimbing1_id === $user->id || $application->thesis->pembimbing2_id === $user->id)) {
-                    return Storage::disk('local')->download($path);
+                    return response()->download(Storage::disk('local')->path($path));
                 }
             }
         }
 
         // Fallback for generic templates that anyone authenticated can download
         if (str_starts_with($path, 'seminar_templates/')) {
-            return Storage::disk('local')->download($path);
+            return response()->download(Storage::disk('local')->path($path));
         }
 
         abort(403, 'Anda tidak memiliki izin untuk mengunduh file ini.');

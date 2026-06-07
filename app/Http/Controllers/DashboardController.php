@@ -23,7 +23,7 @@ class DashboardController extends Controller
             $data = $this->dashboardService->getStudentData($user);
         } elseif ($user->role === 'dosen') {
             $data = $this->dashboardService->getDosenData($user);
-        } elseif ($user->role === 'admin') {
+        } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
             $data = $this->dashboardService->getAdminData();
         }
 

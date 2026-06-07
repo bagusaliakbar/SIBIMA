@@ -21,6 +21,9 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
             'Email',
             'Peran (dosen/mahasiswa)',
             'NPM/NIDN',
+            'Tahun Angkatan',
+            'No. Telepon',
+            'Status Aktif (1=Aktif, 0=Pending)',
         ];
     }
 
@@ -31,6 +34,9 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
             $user->email,
             $user->role,
             $user->identifier,
+            $user->entry_year,
+            $user->phone_number,
+            $user->is_active ? 1 : 0,
         ];
     }
 }

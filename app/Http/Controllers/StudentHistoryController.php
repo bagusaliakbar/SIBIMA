@@ -50,6 +50,11 @@ class StudentHistoryController extends Controller
                 // Logs performed by the student themselves
                 ->orWhere('user_id', $user->id);
             })
+            ->whereNotIn('activity', [
+                'Created', 'Updated', 'Deleted', 
+                'Data Dibuat', 'Data Diperbarui', 'Data Dihapus',
+                'Login', 'Logout', 'Kirim Pesan'
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
 

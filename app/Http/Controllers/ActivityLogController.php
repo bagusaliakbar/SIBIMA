@@ -16,7 +16,7 @@ class ActivityLogController extends Controller implements HasMiddleware
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'admin') abort(403);
+                if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
                 return $next($request);
             }),
         ];

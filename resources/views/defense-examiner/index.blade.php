@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <x-breadcrumb :links="[
-                    ['name' => 'Penguji Sidang', 'url' => route('defense-examiner.index')]
+                <x-breadcrumb :items="[
+                    ['label' => 'Tugas Penguji Sidang', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Tugas Penguji Sidang

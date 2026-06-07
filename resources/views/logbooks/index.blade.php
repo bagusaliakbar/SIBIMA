@@ -10,7 +10,6 @@
             <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/30 dark:bg-slate-900/30">
                 <div>
                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Riwayat Catatan Logbook</h3>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-1 uppercase">Manajemen riwayat bimbingan Anda</p>
                 </div>
                 
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -41,14 +40,14 @@
                                 <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mr-3 text-xs font-black border border-indigo-200 dark:border-indigo-500/20">1</div>
                                 <div>
                                     <span class="text-sm font-bold text-slate-800 dark:text-slate-200 block">{{ $thesis->pembimbing1->name ?? '-' }}</span>
-                                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Pembimbing Utama</span>
+                                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Pembimbing 1</span>
                                 </div>
                             </div>
                             <div class="flex items-center border-l border-slate-200 dark:border-slate-700 pl-6">
                                 <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mr-3 text-xs font-black border border-slate-200 dark:border-slate-700">2</div>
                                 <div>
                                     <span class="text-sm font-bold text-slate-800 dark:text-slate-200 block">{{ $thesis->pembimbing2->name ?? '-' }}</span>
-                                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Pembimbing Pendamping</span>
+                                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Pembimbing 2</span>
                                 </div>
                             </div>
                         </div>

@@ -60,6 +60,10 @@ class UserService
             $updateData['avatar'] = $avatarFile->store('avatars', 'public');
         }
 
+        if (!empty($data['email']) && $data['email'] !== $user->email) {
+            $user->email_verified_at = null;
+        }
+
         if (!empty($data['password'])) {
             $updateData['password'] = Hash::make($data['password']);
         }

@@ -26,7 +26,7 @@ class UserController extends Controller implements HasMiddleware
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'admin') abort(403);
+                if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
                 return $next($request);
             }),
         ];
@@ -34,9 +34,9 @@ class UserController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $search = $request->get('search');
+        $search = $request->input('search');
 
-        $users = User::whereIn('role', ['dosen', 'mahasiswa'])
+        $users = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
             ->when($search, function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -62,7 +62,7 @@ class UserController extends Controller implements HasMiddleware
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', Password::defaults()],
-            'role' => ['required', 'in:dosen,mahasiswa'],
+            'role' => ['required', 'in:dosen,mahasiswa,kaprodi'],
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class],
             'entry_year' => ['nullable', 'integer', 'min:2000', 'max:'.(date('Y') + 1)],
             'phone_number' => ['nullable', 'string', 'max:20'],
@@ -92,7 +92,7 @@ class UserController extends Controller implements HasMiddleware
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$user->id],
-            'role' => ['required', 'in:dosen,mahasiswa'],
+            'role' => ['required', 'in:dosen,mahasiswa,kaprodi'],
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class.',identifier,'.$user->id],
             'entry_year' => ['nullable', 'integer', 'min:2000', 'max:'.(date('Y') + 1)],
             'phone_number' => ['nullable', 'string', 'max:20'],
@@ -133,6 +133,12 @@ class UserController extends Controller implements HasMiddleware
         $message = "Berhasil mengimpor {$import->importedCount} pengguna.";
         if ($import->skippedCount > 0) {
             $message .= " ({$import->skippedCount} baris dilewati).";
+        }
+
+        if (count($import->skippedDetails) > 0) {
+            return redirect()->route('users.index')
+                ->with('success', $message)
+                ->with('skippedDetails', $import->skippedDetails);
         }
 
         return redirect()->route('users.index')->with('success', $message);

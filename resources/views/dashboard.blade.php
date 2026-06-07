@@ -211,11 +211,11 @@
                     </x-slot>
                 </x-stat-card>
 
-                <x-stat-card title="Pembimbing" :value="$thesis && $thesis->pembimbing1_id ? '' : 'Belum Ada'" color="orange">
+                <x-stat-card title="Pembimbing" :value="$thesis && $thesis->pembimbing1 && $thesis->pembimbing2 ? '' : 'Belum Ada'" color="orange">
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </x-slot>
-                    @if($thesis && $thesis->pembimbing1_id)
+                    @if($thesis && $thesis->pembimbing1 && $thesis->pembimbing2)
                         <x-slot name="subtitle">
                             <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title="{{ $thesis->pembimbing1->name }}">1. {{ $thesis->pembimbing1->name }}</p>
                             <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title="{{ $thesis->pembimbing2->name }}">2. {{ $thesis->pembimbing2->name }}</p>
@@ -228,7 +228,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </x-slot>
                     <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $pastSessionsCount ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
-                    @if($thesis)
+                    @if($thesis && $thesis->pembimbing1 && $thesis->pembimbing2)
                         <x-slot name="subtitle">
                             <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                                 <span>P1: {{ Str::limit($thesis->pembimbing1->name, 50) }}</span>
@@ -238,6 +238,10 @@
                                 <span>P2: {{ Str::limit($thesis->pembimbing2->name, 50) }}</span>
                                 <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP2 }} Sesi</span>
                             </p>
+                        </x-slot>
+                    @else
+                        <x-slot name="subtitle">
+                            <p class="text-[10px] font-medium text-slate-400 dark:text-slate-500 italic mt-1">Belum ada pembimbing</p>
                         </x-slot>
                     @endif
                 </x-stat-card>
@@ -249,7 +253,7 @@
                 </x-stat-card>
             @else
                 <!-- Stats Admin/Dosen -->
-                <x-stat-card :title="Auth::user()->role === 'admin' ? 'Total Skripsi' : 'Mhs Bimbingan'" :value="$activeThesesCount ?? 0" color="orange">
+                <x-stat-card :title="(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total Skripsi' : 'Mhs Bimbingan'" :value="$activeThesesCount ?? 0" color="orange">
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </x-slot>
@@ -311,7 +315,7 @@
                     <div class="relative z-10">
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center">
                             <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                            {{ Auth::user()->role === 'admin' ? 'Status Skripsi Global' : 'Distribusi Progres Bimbingan' }}
+                            {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Status Skripsi Global' : 'Distribusi Progres Bimbingan' }}
                         </h3>
                         <div class="h-64">
                             <canvas id="distributionChart"></canvas>
@@ -333,7 +337,7 @@
                     </div>
                 </div>
             </div>
-        @if(Auth::user()->role === 'admin')
+        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
             <!-- Advanced Analytics Section -->
             <div class="mb-10 mt-4">
                 <div class="flex items-center gap-3 mb-6">
@@ -647,27 +651,7 @@
             </x-table-card>
         @endif
         
-        @if(Auth::user()->role === 'admin')
-            <!-- Admin Operations Center -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <!-- Quick Access Analytics Summary -->
-                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden lg:col-span-3 border border-white/10">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div>
-                            <h3 class="text-2xl font-black tracking-tight mb-2">Pusat Analisis & Pelaporan</h3>
-                            <p class="text-indigo-200 text-sm font-medium max-w-xl">Pantau tren kelulusan, kesehatan masa studi mahasiswa, dan beban kerja dosen secara mendalam melalui modul statistik khusus.</p>
-                        </div>
-                        <a href="{{ route('monitoring.advanced-reporting') }}" class="flex items-center gap-3 px-6 py-4 bg-white text-indigo-900 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-indigo-50 transition-all shadow-lg group">
-                            Buka Statistik Lengkap
-                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <!-- Left Column: Main Feed -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Upcoming Sessions Table -->
@@ -802,7 +786,7 @@
             @if(Auth::user()->role !== 'mahasiswa')
                 // Distribution Chart
                 const distCtx = document.getElementById('distributionChart').getContext('2d');
-                @if(Auth::user()->role === 'admin')
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     new Chart(distCtx, {
                         type: 'doughnut',
                         data: {
@@ -899,7 +883,7 @@
                     }
                 });
 
-                @if(Auth::user()->role === 'admin')
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     // Workload Chart
                     const workCtx = document.getElementById('workloadChart').getContext('2d');
                     new Chart(workCtx, {

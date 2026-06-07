@@ -25,7 +25,7 @@ class ChatService
             $thesis = Thesis::where('student_id', $user->id)->first();
             $dosenIds = $thesis ? array_filter([$thesis->pembimbing1_id, $thesis->pembimbing2_id]) : [];
             $query->where(function($q) use ($dosenIds) {
-                $q->whereIn('id', $dosenIds)->orWhere('role', 'admin');
+                $q->whereIn('id', $dosenIds)->orWhereIn('role', ['admin', 'kaprodi']);
             });
         } elseif ($user->role === 'dosen') {
             $studentIds = Thesis::where(function($q) use ($user) {
@@ -35,7 +35,7 @@ class ChatService
                 ->where('status', '!=', 'completed')
                 ->pluck('student_id');
             $query->where(function($q) use ($studentIds) {
-                $q->whereIn('id', $studentIds)->orWhere('role', 'admin');
+                $q->whereIn('id', $studentIds)->orWhereIn('role', ['admin', 'kaprodi']);
             });
         }
         

@@ -6,6 +6,32 @@
     </x-slot>
 
     <div class="w-full mx-auto" x-data="{ openImportModal: false }">
+        @if(session('skippedDetails'))
+            <div class="mb-6 p-6 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 rounded-2xl shadow-sm relative overflow-hidden transition-all duration-300">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-12 -mt-12 opacity-50"></div>
+                <div class="flex items-center gap-4 mb-4 z-10 relative">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-slate-100">Detail Baris yang Dilewati ({{ count(session('skippedDetails')) }} Baris)</h4>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase mt-0.5 tracking-tight">Data berikut diabaikan demi menjaga validitas data di database:</p>
+                    </div>
+                </div>
+                <div class="max-h-60 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900/30 z-10 relative">
+                    @foreach(session('skippedDetails') as $detail)
+                        <div class="px-4 py-3.5 flex flex-wrap justify-between items-center gap-2 text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">
+                            <span class="flex items-center gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                Baris {{ $detail['row'] }} (ID/NPM: <span class="font-mono text-slate-700 dark:text-slate-300">{{ $detail['identifier'] }}</span>)
+                            </span>
+                            <span class="text-[9px] px-2.5 py-1 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-lg border border-rose-100 dark:border-rose-900/20 font-black tracking-widest">{{ $detail['reason'] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <x-table-card 
             title="Manajemen Pengguna"
             :footer="$users->links()">
@@ -61,7 +87,7 @@
                             </td>
                             <td class="py-4 px-6 text-center">
                                 <x-status-badge 
-                                    :type="$user->role === 'dosen' ? 'blue' : 'slate'" 
+                                    :type="$user->role === 'dosen' ? 'blue' : ($user->role === 'kaprodi' ? 'orange' : 'slate')" 
                                     :label="strtoupper($user->role)" />
                             </td>
                             <td class="py-4 px-6 text-center">
@@ -119,8 +145,12 @@
                         
                         <div class="mt-6 p-4 bg-orange-50 dark:bg-orange-500/5 rounded-xl border border-orange-100 dark:border-orange-500/10">
                             <h4 class="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest mb-2">Format Kolom:</h4>
-                            <p class="font-mono text-[9px] text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-orange-100 dark:border-orange-500/10">Nama, Email, Peran, NPM/NIDN, No_WhatsApp</p>
-                            <p class="text-[9px] text-orange-600/70 dark:text-orange-400/70 mt-2 font-bold uppercase">* Peran: dosen atau mahasiswa</p>
+                            <p class="font-mono text-[9px] text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-orange-100 dark:border-orange-500/10">Nama, Email, Peran, NPM/NIDN, Tahun Angkatan, No_WhatsApp, Status Aktif (1/0)</p>
+                            <div class="mt-2 space-y-1 text-[9px] text-orange-600/70 dark:text-orange-400/70 font-bold uppercase">
+                                <p>* Peran: dosen atau mahasiswa</p>
+                                <p>* Tahun Angkatan: Khusus mahasiswa (cth: 2020)</p>
+                                <p>* Status Aktif: 1 untuk Aktif, 0 untuk Pending</p>
+                            </div>
                         </div>
                     </div>
                     <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data">

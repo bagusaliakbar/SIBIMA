@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('role', ['admin', 'dosen', 'mahasiswa'])->default('mahasiswa');
+            $table->enum('role', ['admin', 'kaprodi', 'dosen', 'mahasiswa'])->default('mahasiswa');
             $table->string('identifier')->nullable()->comment('NPM or NIDN');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

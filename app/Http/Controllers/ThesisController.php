@@ -25,7 +25,7 @@ class ThesisController extends Controller
 
     public function exportExcel(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') {
             abort(403);
         }
         $search = $request->input('search');
@@ -35,7 +35,7 @@ class ThesisController extends Controller
     public function exportPdf(Request $request)
     {
         $user = Auth::user();
-        if ($user->role !== 'admin' && $user->role !== 'dosen') {
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi' && $user->role !== 'dosen') {
             abort(403);
         }
 
@@ -45,7 +45,7 @@ class ThesisController extends Controller
             ->search($search)
             ->get();
 
-        $kaprodi = User::where('name', 'Kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         
         $pdf = Pdf::loadView('theses.pdf', compact('theses', 'kaprodi'));
         return $pdf->download('data-skripsi-' . now()->format('Y-m-d') . '.pdf');
@@ -90,7 +90,7 @@ class ThesisController extends Controller
             ->paginate(10)
             ->appends(['search' => $search]);
 
-        if ($user->role === 'admin') {
+        if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosens = User::where('role', 'dosen')
                 ->withCount(['thesesAsP1 as p1_count' => function($query) {
                     $query->where('status', 'active');

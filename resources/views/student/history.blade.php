@@ -3,22 +3,12 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <x-breadcrumb :items="[
-                    ['label' => 'Dashboard', 'url' => route('dashboard')],
-                    ['label' => 'Histori Status', 'url' => null]
+                    ['label' => 'Histori Status', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Histori Perjalanan Skripsi
-                    <span class="ml-3 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-indigo-200 dark:border-indigo-500/20 shadow-sm">Timeline</span>
                 </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-2 animate-pulse"></span>
-                    Audit Trail & Rekam Jejak Aktivitas Akademik
-                </p>
             </div>
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-black uppercase tracking-widest rounded-xl transition-all border border-slate-200 dark:border-slate-700">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Kembali
-            </a>
         </div>
     </x-slot>
 

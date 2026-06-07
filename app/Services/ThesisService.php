@@ -30,8 +30,8 @@ class ThesisService
             'status' => 'pending'
         ]);
 
-        // Notify Admins
-        $admins = User::where('role', 'admin')->get();
+        // Notify Admins & Kaprodi
+        $admins = User::whereIn('role', ['admin', 'kaprodi'])->get();
         Notification::send($admins, new GeneralNotification(
             'Pengajuan Judul Baru',
             "Mahasiswa " . Auth::user()->name . " mengajukan judul skripsi baru.",
@@ -53,16 +53,18 @@ class ThesisService
             'status' => 'active',
         ]);
 
-        ActivityLog::log('Penugasan Pembimbing', "Admin menetapkan pembimbing dan mengaktifkan status skripsi untuk mahasiswa {$thesis->student->name}.", 'Skripsi', $thesis, [
+        // Define relations first so they are available for logging and notifications
+        $student = $thesis->student;
+        $p1 = $thesis->pembimbing1;
+        $p2 = $thesis->pembimbing2;
+
+        ActivityLog::log('Penugasan Pembimbing', "Admin menetapkan pembimbing dan mengaktifkan status skripsi untuk mahasiswa {$student->name}.", 'Skripsi', $thesis, [
             'pembimbing1' => $p1->name,
             'pembimbing2' => $p2->name,
             'status' => 'active'
         ]);
 
         // Notify Student & Dosens
-        $student = $thesis->student;
-        $p1 = $thesis->pembimbing1;
-        $p2 = $thesis->pembimbing2;
 
         if ($student) {
             $student->notify(new GeneralNotification(
