@@ -31,15 +31,15 @@
                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="px-6 py-5">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-600 flex items-center justify-center mr-4 font-black text-sm border border-rose-100 dark:border-rose-500/20 shadow-sm group-hover:scale-110 transition-transform">
-                                        {{ substr($revision->examiner->name, 0, 1) }}
+                                    <div class="w-10 h-10 rounded-xl overflow-hidden mr-4 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-110 transition-transform flex items-center justify-center bg-slate-50 dark:bg-slate-800">
+                                        <img src="{{ $revision->examiner->avatar_url }}" alt="{{ $revision->examiner->name }}" class="w-full h-full object-cover">
                                     </div>
                                     <div>
                                         <h4 class="font-black text-slate-800 dark:text-slate-100 text-sm group-hover:text-rose-600 transition-colors uppercase tracking-tight">{{ $revision->examiner->name }}</h4>
                                         @if($revision->detail->thesis->pembimbing1_id === $revision->examiner_id)
-                                            <p class="text-[10px] text-rose-500 mt-1 font-black uppercase tracking-tighter">Pembimbing 1</p>
+                                            <p class="text-[10px] text-slate-400 mt-1 font-black uppercase tracking-tighter">Pembimbing 1</p>
                                         @elseif($revision->detail->thesis->pembimbing2_id === $revision->examiner_id)
-                                            <p class="text-[10px] text-rose-500 mt-1 font-black uppercase tracking-tighter">Pembimbing 2</p>
+                                            <p class="text-[10px] text-slate-400 mt-1 font-black uppercase tracking-tighter">Pembimbing 2</p>
                                         @elseif($revision->detail->examiner1_id === $revision->examiner_id)
                                             <p class="text-[10px] text-slate-400 mt-1 uppercase font-black tracking-tighter">Penguji 1</p>
                                         @elseif($revision->detail->examiner2_id === $revision->examiner_id)

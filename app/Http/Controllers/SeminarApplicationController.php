@@ -27,10 +27,29 @@ class SeminarApplicationController extends Controller
         
         if ($user->role === 'mahasiswa') {
             $thesis = Thesis::where('student_id', $user->id)->first();
+            
+            $hasSeminar = $thesis ? SeminarApplication::where('thesis_id', $thesis->id)
+                ->whereIn('status', ['approved', 'completed', 'finished'])
+                ->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists() : false;
+
+            if ($hasSeminar) {
+                return redirect()->route('dashboard')->with('warning', 'Pendaftaran seminar sudah ditutup karena Anda sudah mendaftar atau melaksanakan seminar.');
+            }
+
             $activeWave = Wave::getCurrentActive();
-            $application = $thesis ? SeminarApplication::where('thesis_id', $thesis->id)
-                ->where('wave_id', $activeWave?->id)
-                ->first() : null;
+            $application = null;
+            if ($thesis) {
+                $application = SeminarApplication::where('thesis_id', $thesis->id)
+                    ->where('wave_id', $activeWave?->id)
+                    ->first();
+                
+                if (!$application) {
+                    $application = SeminarApplication::where('thesis_id', $thesis->id)
+                        ->latest()
+                        ->first();
+                }
+            }
+            
             $isEligible = $thesis && $thesis->isAccUpFinal();
             $template = SeminarTemplate::where('is_active', true)->latest()->first();
             
@@ -61,7 +80,7 @@ class SeminarApplicationController extends Controller
         abort(403);
     }
 
-    public function store(StoreSeminarApplicationRequest $request)
+    public function store(Request $request)
     {
         $activeWave = Wave::getCurrentActive();
         if (!$activeWave) {
@@ -73,7 +92,37 @@ class SeminarApplicationController extends Controller
             return redirect()->back()->with('error', 'Anda belum memenuhi syarat untuk mengajukan seminar.');
         }
 
+        $hasApprovedSeminar = SeminarApplication::where('thesis_id', $thesis->id)
+            ->whereIn('status', ['approved', 'completed', 'finished'])
+            ->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists();
+        if ($hasApprovedSeminar) {
+            return redirect()->back()->with('error', 'Anda sudah melakukan pendaftaran seminar dan telah disetujui atau dijadwalkan.');
+        }
+
         $files = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
+
+        $formRequest = new StoreSeminarApplicationRequest();
+        $rules = $formRequest->rules();
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(), 
+            $rules, 
+            $formRequest->messages(), 
+            $formRequest->attributes()
+        );
+
+        // Store any valid files in the session before returning validation errors
+        foreach ($files as $file) {
+            if ($request->hasFile($file) && !$validator->errors()->has($file)) {
+                $path = $request->file($file)->store('seminar_temp_uploads', 'local');
+                session()->put('seminar_uploads.path.' . $file, $path);
+                session()->put('seminar_uploads.name.' . $file, $request->file($file)->getClientOriginalName());
+            }
+        }
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $this->applicationService->submitApplication(
             SeminarApplication::class, $thesis, $activeWave, $request, $files,

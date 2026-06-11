@@ -1,27 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <x-breadcrumb :items="[
-                    ['label' => 'Pengaturan', 'route' => null],
-                    ['label' => 'Gelombang Pelaksanaan', 'route' => route('waves.index')]
-                ]" />
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
-                    Gelombang Pelaksanaan
-                    <span class="ml-3 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-indigo-200 dark:border-indigo-500/20 shadow-sm">Period</span>
-                </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-2"></span>
-                    Kelola gelombang seminar dan sidang mahasiswa
-                </p>
-            </div>
-            
-            <button onclick="document.getElementById('modal-add-wave').classList.remove('hidden')" 
-                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white text-xs font-bold rounded-xl transition-all duration-300 shadow-lg shadow-indigo-200 dark:shadow-none hover:scale-[1.02] active:scale-95 group">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                Tambah Gelombang Baru
-            </button>
-        </div>
+        <x-breadcrumb :items="[
+            ['label' => 'Pengaturan', 'route' => null],
+            ['label' => 'Gelombang Pelaksanaan', 'route' => route('waves.index')]
+        ]" />
     </x-slot>
 
     <div class="space-y-6">
@@ -37,6 +19,14 @@
         <x-table-card 
             title="Daftar Gelombang Pelaksanaan"
             :footer="$waves->links()">
+            
+            <x-slot name="headerActions">
+                <button onclick="document.getElementById('modal-add-wave').classList.remove('hidden')" 
+                        class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95 group">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    Tambah Gelombang Baru
+                </button>
+            </x-slot>
             
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -95,7 +85,7 @@
                                     </form>
                                     
                                     <button onclick='editWave(@json($wave))' 
-                                            class="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl transition-all"
+                                            class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-xl transition-all"
                                             title="Edit Gelombang">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"></path></svg>
                                     </button>
@@ -162,11 +152,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3">
+                    <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 items-center">
                         <button type="button" onclick="document.getElementById('modal-add-wave').classList.add('hidden')" 
-                                class="px-6 py-2.5 text-xs font-black text-slate-500 hover:text-slate-700 transition-colors">Batal</button>
+                                class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</button>
                         <button type="submit" 
-                                class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-indigo-200 dark:shadow-none active:scale-95">
+                                class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95">
                             Simpan Gelombang
                         </button>
                     </div>
@@ -220,11 +210,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3">
+                    <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 items-center">
                         <button type="button" onclick="document.getElementById('modal-edit-wave').classList.add('hidden')" 
-                                class="px-6 py-2.5 text-xs font-black text-slate-500 hover:text-slate-700 transition-colors">Batal</button>
+                                class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</button>
                         <button type="submit" 
-                                class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-indigo-200 dark:shadow-none active:scale-95">
+                                class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95">
                             Update Gelombang
                         </button>
                     </div>

@@ -27,8 +27,8 @@
                 <div class="absolute top-0 right-0 w-24 h-24 bg-rose-50 dark:bg-rose-900/10 rounded-full -mr-12 -mt-12"></div>
                 <div class="relative">
                     <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center text-xl font-black shadow-lg shadow-rose-200 dark:shadow-none mr-4">
-                            {{ substr($revision->examiner->name, 0, 1) }}
+                        <div class="w-12 h-12 rounded-xl overflow-hidden mr-4 border border-slate-200 dark:border-slate-700 shadow-md">
+                            <img src="{{ $revision->examiner->avatar_url }}" alt="{{ $revision->examiner->name }}" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">{{ $revision->examiner->name }}</h3>

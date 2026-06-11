@@ -165,18 +165,17 @@
                                     <a href="{{ route('seminar-applications.download-zip', $app->id) }}" class="p-2 text-slate-400 hover:text-indigo-600 transition-all group/zip" title="Download ZIP">
                                         <svg class="w-5 h-5 group-hover/zip:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                     </a>
-                                    <button @click="openValidation = true" class="px-4 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">
+                                    <button @click="openValidation = true" class="px-4 py-2 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95">
                                         Validasi
                                     </button>
                                     
                                     <!-- Validation Modal -->
                                     <div x-show="openValidation" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
-                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                        <div class="flex items-start justify-center min-h-screen px-4 text-center">
                                             <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openValidation = false">
                                                 <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
                                             </div>
-                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100 dark:border-slate-700">
+                                            <div class="relative w-full my-8 sm:my-16 bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg border border-slate-100 dark:border-slate-700">
                                                 <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Validasi Berkas</h3>
                                                     <button @click="openValidation = false" class="text-slate-400 hover:text-slate-600">
@@ -187,7 +186,7 @@
                                                 <form action="{{ route('seminar-applications.validate', $app->id) }}" method="POST">
                                                     @csrf
                                                     @method('PATCH')
-                                                    <div class="px-8 py-8 space-y-6">
+                                                    <div class="px-8 py-8 space-y-6 max-h-[60vh] overflow-y-auto">
                                                         <div>
                                                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Verifikasi Setiap Berkas:</label>
                                                             <div class="space-y-3">

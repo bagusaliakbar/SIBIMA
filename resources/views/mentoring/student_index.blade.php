@@ -224,8 +224,12 @@
                                 
                                 <td class="py-4 px-6">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 text-[10px] font-bold border border-slate-200 dark:border-slate-600 transition-colors">
-                                            {{ substr($session->dosen->name ?? 'D', 0, 1) }}
+                                        <div class="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-600 shadow-sm bg-slate-50 dark:bg-slate-800">
+                                            @if($session->dosen)
+                                                <img src="{{ $session->dosen->avatar_url }}" alt="{{ $session->dosen->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%23f1f5f9'/><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' fill='%2394a3b8'/></svg>" class="w-full h-full object-cover">
+                                            @endif
                                         </div>
                                         <div class="min-w-0">
                                             <div class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate max-w-[150px]">{{ $session->dosen->name ?? '-' }}</div>
@@ -261,10 +265,10 @@
                                                         Ganti
                                                     </button>
                                                     {{-- Hapus dokumen --}}
-                                                    <form action="{{ route('mentoring-sessions.delete-document', $session->id) }}" method="POST" onsubmit="return confirm('Hapus dokumen ini?')">
+                                                    <form action="{{ route('mentoring-sessions.delete-document', $session->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-slate-700 border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
+                                                        <button type="submit" onclick="return confirm('Yakin ingin menghapus dokumen ini?');" class="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-slate-700 border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors relative z-10">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                             Hapus
                                                         </button>
@@ -327,9 +331,9 @@
                                             {{ $session->status === 'pending' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800' : '' }}
                                             {{ $session->status === 'approved' ? 'bg-orange-600 text-white' : '' }}
                                             {{ $session->status === 'rejected' ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800' : '' }}
-                                            {{ $session->status === 'completed' ? 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-600' : '' }}
+                                            {{ $session->status === 'completed' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900' : '' }}
                                         ">
-                                            {{ $session->status }}
+                                            {{ $session->status === 'completed' ? 'Hadir' : $session->status }}
                                         </span>
                                     @endif
                                 </td>

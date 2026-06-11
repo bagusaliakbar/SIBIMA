@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LetterSetting;
+use App\Models\SeminarSchedule;
 use App\Models\SeminarScheduleDetail;
 use App\Models\ThesisDefenseSchedule;
 use App\Models\ThesisDefenseScheduleDetail;
@@ -34,18 +35,18 @@ class DocumentController extends Controller
         });
     }
 
-    public function generateSuratTugasSeminar(SeminarScheduleDetail $detail)
+    public function generateSKTimPengujiSeminar(SeminarSchedule $schedule)
     {
-        $detail->load(['schedule.chairman', 'thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'examiner1', 'examiner2']);
-        $letterNumber = $this->getNextLetterNumber('surat_tugas_seminar');
+        $schedule->load(['details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2', 'chairman', 'moderator']);
+        $letterNumber = $this->getNextLetterNumber('sk_penguji_seminar');
         
-        $pdf = Pdf::loadView('documents.surat_tugas_pdf', [
-            'detail' => $detail,
+        $pdf = Pdf::loadView('documents.sk_penguji_seminar_pdf', [
+            'schedule' => $schedule,
             'letterNumber' => $letterNumber,
-            'title' => 'Surat Tugas Penguji Seminar'
+            'title' => 'SK Tim Penguji Seminar'
         ]);
 
-        return $pdf->stream("Surat_Tugas_Seminar_{$detail->thesis->student->identifier}.pdf");
+        return $pdf->stream("SK_Tim_Penguji_Seminar_{$schedule->id}.pdf");
     }
 
     public function generateSKTimPengujiSidang(ThesisDefenseSchedule $schedule)

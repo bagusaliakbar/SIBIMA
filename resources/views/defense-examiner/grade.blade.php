@@ -25,8 +25,8 @@
         <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16"></div>
             <div class="relative flex flex-col md:flex-row items-start md:items-center gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-emerald-200 dark:shadow-none">
-                    {{ substr($detail->thesis->student->name, 0, 1) }}
+                <div class="w-16 h-16 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md">
+                    <img src="{{ $detail->thesis->student->avatar_url }}" alt="{{ $detail->thesis->student->name }}" class="w-full h-full object-cover">
                 </div>
                 <div class="flex-1">
                     <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">{{ $detail->thesis->student->name }}</h3>

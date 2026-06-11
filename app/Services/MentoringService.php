@@ -41,9 +41,9 @@ class MentoringService
             }
             
             foreach ($theses as $thesis) {
-                $this->createSessionForThesis($thesis, $data, 'approved');
+                $session = $this->createSessionForThesis($thesis, $data, 'approved');
                 
-                ActivityLog::log('Jadwal Bimbingan Massal', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan');
+                ActivityLog::log('Jadwal Bimbingan Massal', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
 
                 $thesis->student->notify(new GeneralNotification(
                     'Jadwal Bimbingan Baru',
@@ -61,9 +61,9 @@ class MentoringService
                 throw new \Exception('Unauthorized access to thesis.', 403);
             }
             
-            $this->createSessionForThesis($thesis, $data, 'approved');
+            $session = $this->createSessionForThesis($thesis, $data, 'approved');
 
-            ActivityLog::log('Jadwal Bimbingan', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan');
+            ActivityLog::log('Jadwal Bimbingan', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
 
             $thesis->student->notify(new GeneralNotification(
                 'Jadwal Bimbingan Baru',
@@ -91,7 +91,7 @@ class MentoringService
             'status' => 'pending',
         ]);
 
-        ActivityLog::log('Pengajuan Bimbingan', "Mahasiswa mengajukan bimbingan: {$data['topic']}", 'Bimbingan');
+        ActivityLog::log('Pengajuan Bimbingan', "Mahasiswa mengajukan bimbingan: {$data['topic']}", 'Bimbingan', $session);
 
         $dosen = User::find($data['dosen_id']);
         $dosen->notify(new GeneralNotification(
@@ -146,7 +146,7 @@ class MentoringService
             $message = 'Status sesi bimbingan diperbarui menjadi: ' . ucfirst($data['status']);
         }
 
-        ActivityLog::log('Update Status Bimbingan', "Dosen memperbarui status bimbingan ({$session->topic}) menjadi: " . strtoupper($data['status']), 'Bimbingan');
+        ActivityLog::log('Update Status Bimbingan', "Dosen memperbarui status bimbingan ({$session->topic}) menjadi: " . strtoupper($data['status']), 'Bimbingan', $session);
 
         return $message;
     }
@@ -168,7 +168,7 @@ class MentoringService
             'document_original_name' => $originalName,
         ]);
 
-        ActivityLog::log('Upload Dokumen Bimbingan', "Mahasiswa mengunggah dokumen bimbingan: {$originalName}", 'Bimbingan');
+        ActivityLog::log('Upload Dokumen Bimbingan', "Mahasiswa mengunggah dokumen bimbingan: {$originalName}", 'Bimbingan', $session);
 
         return $originalName;
     }

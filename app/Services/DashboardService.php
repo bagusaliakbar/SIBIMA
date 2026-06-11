@@ -58,7 +58,7 @@ class DashboardService
 
             $data['recentLogbooks'] = MentoringSession::where('thesis_id', $thesis->id)
                 ->whereNotNull('notes')->where('status', 'completed')
-                ->orderBy('scheduled_at', 'desc')->take(5)->get();
+                ->orderBy('scheduled_at', 'desc')->paginate(5, ['*'], 'logbook_page');
 
             $data['seminar'] = SeminarApplication::where('thesis_id', $thesis->id)->first();
             $data['defense'] = ThesisDefenseApplication::where('thesis_id', $thesis->id)->first();
@@ -84,7 +84,23 @@ class DashboardService
             }
         }
 
-        $data['topicTrends'] = []; $theses = \App\Models\Thesis::whereNotNull('topic')->with('student')->get(); $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values(); foreach ($cohorts as $year) { $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year); $total = $cohortTheses->count(); if ($total > 0) { $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round(($g->count() / $total) * 100, 1)); $data['topicTrends']['Angkatan ' . $year] = $topicTrends; } } return $data;
+        /** @var array<string, mixed> $topicTrendsResult */
+        $topicTrendsResult = [];
+        $theses = Thesis::whereNotNull('topic')->with('student')->get();
+        $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values();
+        
+        foreach ($cohorts as $year) {
+            $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year);
+            $total = count($cohortTheses);
+            if ($total > 0) {
+                $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round((count($g) / $total) * 100, 1));
+                $topicTrendsResult['Angkatan ' . $year] = $topicTrends;
+            }
+        }
+        
+        $data['topicTrends'] = $topicTrendsResult;
+        
+        return $data;
     }
 
     public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense)
@@ -165,21 +181,45 @@ class DashboardService
         /** @var array<string, mixed> $data */
         $data = [];
 
-        $data['examinerSeminarSchedules'] = SeminarScheduleDetail::with(['schedule', 'thesis.student'])
-            ->where(function($q) use ($dosenId) {
-                $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId)
-                ->orWhereHas('thesis', fn($sq) => $sq->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
-            })
-            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()))
-            ->orderBy('start_time', 'asc')->get();
+        $activeWave = Wave::getCurrentActive();
 
-        $data['examinerDefenseSchedules'] = ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student'])
+        $seminarQuery = SeminarScheduleDetail::with(['schedule', 'thesis.student'])
             ->where(function($q) use ($dosenId) {
                 $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId)
                 ->orWhereHas('thesis', fn($sq) => $sq->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
             })
-            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()))
-            ->orderBy('start_time', 'asc')->get();
+            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()));
+
+        if ($activeWave) {
+            $seminarQuery->whereHas('schedule', fn($q) => $q->where('wave_id', $activeWave->id));
+        }
+
+        $data['examinerSeminarSchedules'] = $seminarQuery->orderBy('start_time', 'asc')->get()
+            ->reject(function ($detail) {
+                return ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
+                    || $detail->isGraded()
+                    || $detail->isAllRevisionsApproved()
+                    || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+            });
+
+        $defenseQuery = ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student'])
+            ->where(function($q) use ($dosenId) {
+                $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId)
+                ->orWhereHas('thesis', fn($sq) => $sq->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            })
+            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()));
+
+        if ($activeWave) {
+            $defenseQuery->whereHas('schedule', fn($q) => $q->where('wave_id', $activeWave->id));
+        }
+
+        $data['examinerDefenseSchedules'] = $defenseQuery->orderBy('start_time', 'asc')->get()
+            ->reject(function ($detail) {
+                return ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
+                    || $detail->isGradingComplete()
+                    || $detail->isRevisionAllApproved()
+                    || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+            });
 
         $activeTheses = Thesis::where('status', 'active')
             ->where(fn($q) => $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId))->get();
@@ -190,6 +230,7 @@ class DashboardService
 
         $dosenThesisIds = $activeTheses->pluck('id');
         $sessionsThisWeekQuery = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
+            ->where('dosen_id', $dosenId)
             ->whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()]);
 
         $data['sessionsThisWeek'] = (clone $sessionsThisWeekQuery)->count();
@@ -197,45 +238,81 @@ class DashboardService
         $data['approvedSessionsThisWeek'] = (clone $sessionsThisWeekQuery)->where('status', 'approved')->count();
 
         $data['totalCompletedSessions'] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
+            ->where('dosen_id', $dosenId)
             ->where('status', 'completed')->count();
 
         $data['upcomingSessions'] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
+            ->where('dosen_id', $dosenId)
             ->where('scheduled_at', '>=', now())->whereIn('status', ['pending', 'approved'])
             ->orderBy('scheduled_at', 'asc')->take(5)->get();
 
         $data['recentLogbooks'] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
+            ->where('dosen_id', $dosenId)
             ->whereNotNull('notes')->where('status', 'completed')
-            ->orderBy('scheduled_at', 'desc')->take(5)->get();
+            ->orderBy('scheduled_at', 'desc')->paginate(5, ['*'], 'logbook_page');
 
         // Average Progress
         $totalProgressSum = 0;
         foreach ($activeTheses as $t) {
-            $p = 25; // Judul
             $comp = MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->count();
-            $p += min(25, ($comp / 8) * 25);
             $sem = SeminarApplication::where('thesis_id', $t->id)->first();
-            if ($sem && $sem->status === 'approved') $p += 25;
-            if ($t->acc_sidang_p1 && $t->acc_sidang_p2) $p += 25;
-            $totalProgressSum += $p;
+            $def = ThesisDefenseApplication::where('thesis_id', $t->id)->first();
+            
+            $prog = $this->calculateStudentProgress($t, $comp, $sem, $def);
+            $totalProgressSum += $prog['percent'];
         }
         $data['averageStudentProgress'] = $data['activeThesesCount'] > 0 ? round($totalProgressSum / $data['activeThesesCount']) : 0;
 
+        $judulCount = 0;
+        $bimbinganCount = 0;
+        $accSeminarCount = 0;
+        $accSidangCount = 0;
+
+        foreach ($activeTheses as $t) {
+            if ($t->acc_sidang_p1 && $t->acc_sidang_p2) {
+                $accSidangCount++;
+            } elseif ($t->acc_up_p1 && $t->acc_up_p2) {
+                $accSeminarCount++;
+            } elseif (MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->exists()) {
+                $bimbinganCount++;
+            } else {
+                $judulCount++;
+            }
+        }
+
         $data['studentProgressDistribution'] = [
-            'Judul' => $data['activeThesesCount'],
-            'Bimbingan' => MentoringSession::whereIn('thesis_id', $dosenThesisIds)->where('status', 'completed')->distinct('thesis_id')->count(),
-            'ACC Seminar' => Thesis::whereIn('id', $dosenThesisIds)->where('acc_up_p1', true)->where('acc_up_p2', true)->count(),
-            'ACC Sidang' => Thesis::whereIn('id', $dosenThesisIds)->where('acc_sidang_p1', true)->where('acc_sidang_p2', true)->count(),
+            'Judul' => $judulCount,
+            'Bimbingan' => $bimbinganCount,
+            'ACC Seminar' => $accSeminarCount,
+            'ACC Sidang' => $accSidangCount,
         ];
 
         $monthlyMentoringCounts = [];
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
             $monthlyMentoringCounts[$month->format('M')] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
+                ->where('dosen_id', $dosenId)
                 ->where('status', 'completed')->whereYear('scheduled_at', $month->year)->whereMonth('scheduled_at', $month->month)->count();
         }
         $data['monthlyMentoringCounts'] = $monthlyMentoringCounts;
 
-        $data['topicTrends'] = []; $theses = \App\Models\Thesis::whereNotNull('topic')->with('student')->get(); $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values(); foreach ($cohorts as $year) { $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year); $total = $cohortTheses->count(); if ($total > 0) { $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round(($g->count() / $total) * 100, 1)); $data['topicTrends']['Angkatan ' . $year] = $topicTrends; } } return $data;
+        /** @var array<string, mixed> $topicTrendsResult */
+        $topicTrendsResult = [];
+        $theses = Thesis::whereNotNull('topic')->with('student')->get();
+        $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values();
+        
+        foreach ($cohorts as $year) {
+            $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year);
+            $total = count($cohortTheses);
+            if ($total > 0) {
+                $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round((count($g) / $total) * 100, 1));
+                $topicTrendsResult['Angkatan ' . $year] = $topicTrends;
+            }
+        }
+        
+        $data['topicTrends'] = $topicTrendsResult;
+        
+        return $data;
     }
 
     public function getAdminData()
@@ -247,7 +324,21 @@ class DashboardService
         $data['upcomingSessions'] = MentoringSession::where('scheduled_at', '>=', now())
             ->whereIn('status', ['pending', 'approved'])->orderBy('scheduled_at', 'asc')->take(5)->get();
         $data['recentLogbooks'] = MentoringSession::whereNotNull('notes')->where('status', 'completed')
-            ->orderBy('scheduled_at', 'desc')->take(5)->get();
+            ->orderBy('scheduled_at', 'desc')->paginate(5, ['*'], 'logbook_page');
+
+        $data['totalCompletedSessions'] = MentoringSession::where('status', 'completed')->count();
+
+        $activeTheses = Thesis::where('status', 'active')->get();
+        $totalProgressSum = 0;
+        foreach ($activeTheses as $t) {
+            $comp = MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->count();
+            $sem = SeminarApplication::where('thesis_id', $t->id)->first();
+            $def = ThesisDefenseApplication::where('thesis_id', $t->id)->first();
+            
+            $prog = $this->calculateStudentProgress($t, $comp, $sem, $def);
+            $totalProgressSum += $prog['percent'];
+        }
+        $data['averageStudentProgress'] = $data['activeThesesCount'] > 0 ? round($totalProgressSum / $data['activeThesesCount']) : 0;
 
         $data['thesisStatusCounts'] = [
             'active' => Thesis::where('status', 'active')->count(),
@@ -339,7 +430,23 @@ class DashboardService
             else $data['scoreDistribution']['E']++;
         }
 
-        $data['topicTrends'] = []; $theses = \App\Models\Thesis::whereNotNull('topic')->with('student')->get(); $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values(); foreach ($cohorts as $year) { $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year); $total = $cohortTheses->count(); if ($total > 0) { $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round(($g->count() / $total) * 100, 1)); $data['topicTrends']['Angkatan ' . $year] = $topicTrends; } } return $data;
+        /** @var array<string, mixed> $topicTrendsResult */
+        $topicTrendsResult = [];
+        $theses = Thesis::whereNotNull('topic')->with('student')->get();
+        $cohorts = $theses->map(fn($t) => $t->student?->entry_year)->filter()->unique()->sort()->values();
+        
+        foreach ($cohorts as $year) {
+            $cohortTheses = $theses->filter(fn($t) => $t->student?->entry_year == $year);
+            $total = count($cohortTheses);
+            if ($total > 0) {
+                $topicTrends = $cohortTheses->groupBy('topic')->map(fn($g) => round((count($g) / $total) * 100, 1));
+                $topicTrendsResult['Angkatan ' . $year] = $topicTrends;
+            }
+        }
+        
+        $data['topicTrends'] = $topicTrendsResult;
+        
+        return $data;
     }
 
     public function getCommonData()

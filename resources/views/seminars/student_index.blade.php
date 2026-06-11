@@ -131,7 +131,22 @@
                                         @if(isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected')
                                             <div class="space-y-2">
                                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">{{ $info['label'] }} <span class="text-red-500">*</span></label>
-                                                <input type="file" name="{{ $field }}" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold tracking-wide">
+                                                    @if($field === 'file_skripsi')
+                                                        Format: PDF, DOC, DOCX • Maks 10MB
+                                                    @elseif($field === 'file_formulir')
+                                                        Format: PDF, DOC, DOCX • Maks 2MB
+                                                    @else
+                                                        Format: PDF, JPG, JPEG, PNG • Maks 2MB
+                                                    @endif
+                                                </p>
+                                                <input type="file" name="{{ $field }}" {{ session()->has('seminar_uploads.path.' . $field) ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                                                @if(session()->has('seminar_uploads.name.' . $field))
+                                                    <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
+                                                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                                                        <span class="truncate">Terunggah: {{ session('seminar_uploads.name.' . $field) }}</span>
+                                                    </p>
+                                                @endif
                                                 @error($field) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                                             </div>
                                         @endif
@@ -185,24 +200,42 @@
                         <!-- Requirement 1 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">1. Scan Bukti ACC Pembimbing 1 & 2 <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah tangkapan layar atau scan bukti persetujuan dari kedua dosen pembimbing.</p>
-                            <input type="file" name="file_acc_pembimbing" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah tangkapan layar atau scan bukti persetujuan dari kedua dosen pembimbing (Format: PDF, JPG, JPEG, PNG • Maks 2MB).</p>
+                            <input type="file" name="file_acc_pembimbing" {{ session()->has('seminar_uploads.path.file_acc_pembimbing') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            @if(session()->has('seminar_uploads.name.file_acc_pembimbing'))
+                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_acc_pembimbing') }}</span>
+                                </p>
+                            @endif
                             @error('file_acc_pembimbing') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 2 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">2. Scan Bukti Pembayaran Seminar <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah bukti transfer atau kwitansi pembayaran biaya pendaftaran seminar.</p>
-                            <input type="file" name="file_pembayaran" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah bukti transfer atau kwitansi pembayaran biaya pendaftaran seminar (Format: PDF, JPG, JPEG, PNG • Maks 2MB).</p>
+                            <input type="file" name="file_pembayaran" {{ session()->has('seminar_uploads.path.file_pembayaran') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            @if(session()->has('seminar_uploads.name.file_pembayaran'))
+                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_pembayaran') }}</span>
+                                </p>
+                            @endif
                             @error('file_pembayaran') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 3 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">3. Scan Kartu Bimbingan / Logbook <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah scan kartu bimbingan yang sudah divalidasi atau logbook bimbingan P1 & P2.</p>
-                            <input type="file" name="file_kartu_bimbingan" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah scan kartu bimbingan yang sudah divalidasi atau logbook bimbingan P1 & P2 (Format: PDF, JPG, JPEG, PNG • Maks 2MB).</p>
+                            <input type="file" name="file_kartu_bimbingan" {{ session()->has('seminar_uploads.path.file_kartu_bimbingan') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            @if(session()->has('seminar_uploads.name.file_kartu_bimbingan'))
+                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_kartu_bimbingan') }}</span>
+                                </p>
+                            @endif
                             @error('file_kartu_bimbingan') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
@@ -210,15 +243,27 @@
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">4. Dokumen Soft File Skripsi <span class="text-red-500">*</span></label>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah naskah skripsi lengkap dalam format PDF atau Word (Maks 10MB).</p>
-                            <input type="file" name="file_skripsi" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            <input type="file" name="file_skripsi" {{ session()->has('seminar_uploads.path.file_skripsi') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            @if(session()->has('seminar_uploads.name.file_skripsi'))
+                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_skripsi') }}</span>
+                                </p>
+                            @endif
                             @error('file_skripsi') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 5 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">5. Formulir Pendaftaran Seminar (Terisi) <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unduh templat di atas, isi lengkap, lalu unggah kembali di sini.</p>
-                            <input type="file" name="file_formulir" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unduh templat di atas, isi lengkap, lalu unggah kembali di sini (Format: PDF, DOC, DOCX • Maks 2MB).</p>
+                            <input type="file" name="file_formulir" {{ session()->has('seminar_uploads.path.file_formulir') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
+                            @if(session()->has('seminar_uploads.name.file_formulir'))
+                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_formulir') }}</span>
+                                </p>
+                            @endif
                             @error('file_formulir') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>

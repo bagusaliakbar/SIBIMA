@@ -16,7 +16,7 @@
             width: 100%;
             border-bottom: 3px double #000;
             padding-bottom: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .kop-surat table {
@@ -85,7 +85,7 @@
             text-align: center;
             text-decoration: underline;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         table {
@@ -106,8 +106,9 @@
         .score-table th,
         .score-table td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 5px 4px;
             text-align: center;
+            font-size: 11px;
         }
 
         .score-table th {
@@ -115,7 +116,7 @@
         }
 
         .footer {
-            margin-top: 50px;
+            margin-top: 20px;
         }
 
         .signature-table {
@@ -125,7 +126,7 @@
         .signature-table td {
             width: 50%;
             text-align: center;
-            padding-top: 40px;
+            padding-top: 10px;
         }
 
         .signature-line {
@@ -186,7 +187,7 @@
             <tr>
                 <td>Program Studi</td>
                 <td>:</td>
-                <td>Informatika</td>
+                <td>Sistem Informasi</td>
             </tr>
             <tr>
                 <td>Judul Skripsi</td>
@@ -200,11 +201,14 @@
         <table class="score-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;">NO</th>
-                    <th>KOMPONEN PENILAIAN TUGAS AKHIR</th>
-                    <th style="width: 80px;">Bobot (%)</th>
-                    <th style="width: 100px;">Nilai (0-100)</th>
-                    <th style="width: 100px;">Jumlah</th>
+                    <th style="width: 4%;">NO</th>
+                    <th style="width: 42%;">KOMPONEN PENILAIAN TUGAS AKHIR</th>
+                    <th style="width: 8%;">Bobot (%)</th>
+                    <th style="width: 9%;">Penguji I</th>
+                    <th style="width: 9%;">Penguji II</th>
+                    <th style="width: 10%;">Pembimbing</th>
+                    <th style="width: 9%;">Rata-rata</th>
+                    <th style="width: 9%;">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
@@ -216,6 +220,9 @@
                         b. Penggunaan bahasa saat presentasi
                     </td>
                     <td>25</td>
+                    <td>{{ $revE1 ? number_format($revE1->score_presentation, 1) : '-' }}</td>
+                    <td>{{ $revE2 ? number_format($revE2->score_presentation, 1) : '-' }}</td>
+                    <td>{{ $revP1 ? number_format($revP1->score_presentation, 1) : '-' }}</td>
                     <td>{{ number_format($avgPres, 1) }}</td>
                     <td>{{ number_format($avgPres * 0.25, 2) }}</td>
                 </tr>
@@ -230,6 +237,9 @@
                         e. Pembahasan hasil penelitian, penarikan kesimpulan dan pengajuan saran
                     </td>
                     <td>40</td>
+                    <td>{{ $revE1 ? number_format($revE1->score_explanation, 1) : '-' }}</td>
+                    <td>{{ $revE2 ? number_format($revE2->score_explanation, 1) : '-' }}</td>
+                    <td>{{ $revP1 ? number_format($revP1->score_explanation, 1) : '-' }}</td>
                     <td>{{ number_format($avgExpl, 1) }}</td>
                     <td>{{ number_format($avgExpl * 0.40, 2) }}</td>
                 </tr>
@@ -241,19 +251,34 @@
                         b. Orisinalitas
                     </td>
                     <td>35</td>
+                    <td>{{ $revE1 ? number_format($revE1->score_writing, 1) : '-' }}</td>
+                    <td>{{ $revE2 ? number_format($revE2->score_writing, 1) : '-' }}</td>
+                    <td>{{ $revP1 ? number_format($revP1->score_writing, 1) : '-' }}</td>
                     <td>{{ number_format($avgWrit, 1) }}</td>
                     <td>{{ number_format($avgWrit * 0.35, 2) }}</td>
                 </tr>
                 <tr style="font-weight: bold;">
-                    <td colspan="4" style="text-align: left;">Jumlah Skor</td>
+                    <td colspan="3" style="text-align: left;">Jumlah Skor</td>
+                    <td>{{ $revE1 ? number_format($revE1->score_presentation + $revE1->score_explanation + $revE1->score_writing, 1) : '-' }}</td>
+                    <td>{{ $revE2 ? number_format($revE2->score_presentation + $revE2->score_explanation + $revE2->score_writing, 1) : '-' }}</td>
+                    <td>{{ $revP1 ? number_format($revP1->score_presentation + $revP1->score_explanation + $revP1->score_writing, 1) : '-' }}</td>
+                    <td>{{ number_format($avgPres + $avgExpl + $avgWrit, 1) }}</td>
                     <td>{{ number_format($avgPres + $avgExpl + $avgWrit, 1) }}</td>
                 </tr>
                 <tr style="font-weight: bold;">
-                    <td colspan="4" style="text-align: left;">Rata-rata Skor</td>
+                    <td colspan="3" style="text-align: left;">Rata-rata Skor</td>
+                    <td>{{ $revE1 ? number_format(($revE1->score_presentation + $revE1->score_explanation + $revE1->score_writing) / 3, 1) : '-' }}</td>
+                    <td>{{ $revE2 ? number_format(($revE2->score_presentation + $revE2->score_explanation + $revE2->score_writing) / 3, 1) : '-' }}</td>
+                    <td>{{ $revP1 ? number_format(($revP1->score_presentation + $revP1->score_explanation + $revP1->score_writing) / 3, 1) : '-' }}</td>
+                    <td>{{ number_format(($avgPres + $avgExpl + $avgWrit) / 3, 1) }}</td>
                     <td>{{ number_format(($avgPres + $avgExpl + $avgWrit) / 3, 1) }}</td>
                 </tr>
                 <tr style="font-weight: bold; background-color: #f2f2f2;">
-                    <td colspan="4" style="text-align: left;">Nilai Akhir</td>
+                    <td colspan="3" style="text-align: left;">Nilai Akhir</td>
+                    <td>{{ $scoreE1 ? number_format($scoreE1, 1) : '-' }}</td>
+                    <td>{{ $scoreE2 ? number_format($scoreE2, 1) : '-' }}</td>
+                    <td>{{ $scoreP1 ? number_format($scoreP1, 1) : '-' }}</td>
+                    <td>{{ number_format($finalScore, 1) }}</td>
                     <td>{{ number_format($finalScore, 1) }}</td>
                 </tr>
             </tbody>
@@ -285,7 +310,7 @@
         </div>
 
         <div class="footer" style="margin-top: 20px;">
-            <div style="text-align: right; margin-bottom: 20px;">
+            <div style="text-align: right; margin-bottom: 10px;">
                 Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}
             </div>
 
@@ -293,57 +318,70 @@
                 <tr>
                     <td>
                         Penguji I,<br>
-                        <div style="margin-top: 10px;">
+                        <div style="margin-top: 5px;">
                             @if($detail->examiner1 && $detail->examiner1->signature)
                                 <img src="data:image/png;base64,{{ base64_encode($detail->examiner1->decrypted_signature) }}"
-                                    style="height: 50px; width: auto;">
+                                    style="height: 70px; width: auto;">
                             @elseif($detail->examiner1 && $detail->examiner1->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner1->signature_token))) }}">
                             @else
-                                <div style="height: 50px;"></div>
+                                <div style="height: 40px;"></div>
                             @endif
                         </div>
                         <strong>( {{ $detail->examiner1->name }} )</strong>
                     </td>
                     <td>
                         Penguji II,<br>
-                        <div style="margin-top: 10px;">
+                        <div style="margin-top: 5px;">
                             @if($detail->examiner2 && $detail->examiner2->signature)
                                 <img src="data:image/png;base64,{{ base64_encode($detail->examiner2->decrypted_signature) }}"
-                                    style="height: 50px; width: auto;">
+                                    style="height: 70px; width: auto;">
                             @elseif($detail->examiner2 && $detail->examiner2->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner2->signature_token))) }}">
                             @else
-                                <div style="height: 50px;"></div>
+                                <div style="height: 40px;"></div>
                             @endif
                         </div>
                         <strong>( {{ $detail->examiner2->name }} )</strong>
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding-top: 40px;">
+                    <td style="padding-top: 10px;">
                         Mengetahui,<br>
                         Ketua Program Studi,<br>
-                        <div style="margin-top: 60px;"></div>
-                        <strong>( Bagus Ali Akbar, S.SI., M.Kom )</strong>
+                        <div style="margin-top: 5px;">
+                            @php
+                                $kaprodi = \App\Models\User::where('role', 'kaprodi')->first();
+                            @endphp
+                            @if($kaprodi && $kaprodi->signature)
+                                <img src="data:image/png;base64,{{ base64_encode($kaprodi->decrypted_signature) }}"
+                                    style="height: 70px; width: auto;">
+                            @elseif($kaprodi && $kaprodi->signature_token)
+                                <img
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(40)->generate(url('/verify-signature/' . $kaprodi->signature_token))) }}">
+                            @else
+                                <div style="height: 40px;"></div>
+                            @endif
+                        </div>
+                        <strong>( {{ $kaprodi ? $kaprodi->name : 'Bagus Ali Akbar, S.SI., M.Kom' }} )</strong>
                     </td>
-                    <td style="padding-top: 40px;">
+                    <td style="padding-top: 10px;">
                         <br>
                         Dosen Pembimbing,<br>
-                        <div style="margin-top: 10px;">
+                        <div style="margin-top: 5px;">
                             @php
                                 $p1 = $detail->thesis->pembimbing1;
                             @endphp
                             @if($p1 && $p1->signature)
                                 <img src="data:image/png;base64,{{ base64_encode($p1->decrypted_signature) }}"
-                                    style="height: 50px; width: auto;">
+                                    style="height: 70px; width: auto;">
                             @elseif($p1 && $p1->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $p1->signature_token))) }}">
                             @else
-                                <div style="height: 50px;"></div>
+                                <div style="height: 40px;"></div>
                             @endif
                         </div>
                         <strong>( {{ $p1 ? $p1->name : '-' }} )</strong>
@@ -352,7 +390,7 @@
             </table>
 
             <!-- Document Verification QR -->
-            <div style="margin-top: 40px; border-top: 1px solid #eee; pt-10px;">
+            <div style="margin-top: 15px; border-top: 1px solid #eee; pt-10px;">
                 <table style="width: 100%; border: none;">
                     <tr>
                         <td style="border: none; width: 65px; padding: 0;">

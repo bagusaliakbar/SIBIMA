@@ -86,9 +86,7 @@
                                             <svg class="w-3.5 h-3.5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             Hasil & Catatan Pembimbing
                                         </h5>
-                                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/50 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed font-medium italic">
-                                            {{ $session->feedback ?: 'Tidak ada catatan pembimbing untuk sesi ini.' }}
-                                        </div>
+                                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/50 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed font-medium italic">{{ $session->feedback ?: 'Tidak ada catatan pembimbing untuk sesi ini.' }}</div>
                                     </div>
                                     
                                     @if($session->notes)

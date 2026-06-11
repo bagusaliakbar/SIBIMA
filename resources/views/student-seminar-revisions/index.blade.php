@@ -31,8 +31,8 @@
                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="px-6 py-5">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600 flex items-center justify-center mr-4 font-black text-sm border border-orange-100 dark:border-orange-500/20 shadow-sm group-hover:scale-110 transition-transform">
-                                        {{ substr($revision->examiner->name, 0, 1) }}
+                                    <div class="w-10 h-10 rounded-xl overflow-hidden mr-4 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-110 transition-transform flex items-center justify-center bg-slate-50 dark:bg-slate-800">
+                                        <img src="{{ $revision->examiner->avatar_url }}" alt="{{ $revision->examiner->name }}" class="w-full h-full object-cover">
                                     </div>
                                     <div>
                                         <h4 class="font-black text-slate-800 dark:text-slate-100 text-sm group-hover:text-orange-600 transition-colors uppercase tracking-tight">{{ $revision->examiner->name }}</h4>

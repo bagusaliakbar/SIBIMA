@@ -16,7 +16,7 @@
             width: 100%;
             border-bottom: 3px double #000;
             padding-bottom: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .kop-surat table {
@@ -85,7 +85,7 @@
             text-align: center;
             text-decoration: underline;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         table {
@@ -115,7 +115,7 @@
         }
 
         .footer {
-            margin-top: 50px;
+            margin-top: 20px;
         }
 
         .signature-table {
@@ -125,7 +125,7 @@
         .signature-table td {
             width: 50%;
             text-align: center;
-            padding-top: 40px;
+            padding-top: 10px;
         }
 
         .signature-line {
@@ -159,14 +159,14 @@
 
     <div class="content">
         <div class="title">
-            BERITA ACARA SEMINAR PROPOSAL/HASIL
+            BERITA ACARA SEMINAR PROPOSAL
         </div>
 
         <p>Pada hari ini,
             <strong>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('l') }}</strong>
             tanggal
             <strong>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d F Y') }}</strong>,
-            telah dilaksanakan Seminar Proposal/Hasil bagi mahasiswa:
+            telah dilaksanakan Seminar Proposal bagi mahasiswa:
         </p>
 
         <table class="info-table">
@@ -183,7 +183,7 @@
             <tr>
                 <td>Program Studi</td>
                 <td>:</td>
-                <td>Informatika</td>
+                <td>Sistem Informasi</td>
             </tr>
             <tr>
                 <td>Judul Skripsi</td>
@@ -195,20 +195,8 @@
         <p>Berdasarkan hasil seminar tersebut, dosen penguji memberikan catatan revisi yang harus diselesaikan oleh
             mahasiswa sebagai syarat untuk melanjutkan ke tahapan berikutnya.</p>
 
-        <div style="margin-top: 20px;">
-            <p><strong>Status Kelulusan Seminar:</strong></p>
-            <div
-                style="border: 2px solid #000; padding: 15px; text-align: center; font-weight: bold; font-size: 18px; margin: 10px 0;">
-                @if($detail->isAllRevisionsApproved())
-                    LULUS (REVISI TELAH DISETUJUI)
-                @else
-                    LULUS BERSYARAT (MENUNGGU PENYELESAIAN REVISI)
-                @endif
-            </div>
-        </div>
-
         <div class="footer" style="margin-top: 20px;">
-            <div style="text-align: right; margin-bottom: 20px;">
+            <div style="text-align: right; margin-bottom: 10px;">
                 Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}
             </div>
 
@@ -218,8 +206,8 @@
                         Penguji I,<br>
                         <div style="margin-top: 10px;">
                             @if($detail->examiner1 && $detail->examiner1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->examiner1->signature))) }}"
-                                    style="height: 50px; width: auto;">
+                                <img src="data:image/png;base64,{{ base64_encode($detail->examiner1->decrypted_signature) }}"
+                                    style="height: 70px; width: auto;">
                             @elseif($detail->examiner1 && $detail->examiner1->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner1->signature_token))) }}">
@@ -233,8 +221,8 @@
                         Penguji II,<br>
                         <div style="margin-top: 10px;">
                             @if($detail->examiner2 && $detail->examiner2->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $detail->examiner2->signature))) }}"
-                                    style="height: 50px; width: auto;">
+                                <img src="data:image/png;base64,{{ base64_encode($detail->examiner2->decrypted_signature) }}"
+                                    style="height: 70px; width: auto;">
                             @elseif($detail->examiner2 && $detail->examiner2->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner2->signature_token))) }}">
@@ -246,13 +234,26 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding-top: 40px;">
+                    <td style="padding-top: 15px;">
                         Mengetahui,<br>
                         Ketua Program Studi,<br>
-                        <div style="margin-top: 60px;"></div>
-                        <strong>( Bagus Ali Akbar, S.SI., M.Kom )</strong>
+                        <div style="margin-top: 10px;">
+                            @php
+                                $kaprodi = \App\Models\User::where('role', 'kaprodi')->first();
+                            @endphp
+                            @if($kaprodi && $kaprodi->signature)
+                                <img src="data:image/png;base64,{{ base64_encode($kaprodi->decrypted_signature) }}"
+                                    style="height: 70px; width: auto;">
+                            @elseif($kaprodi && $kaprodi->signature_token)
+                                <img
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(40)->generate(url('/verify-signature/' . $kaprodi->signature_token))) }}">
+                            @else
+                                <div style="height: 50px;"></div>
+                            @endif
+                        </div>
+                        <strong>( {{ $kaprodi ? $kaprodi->name : 'Bagus Ali Akbar, S.SI., M.Kom' }} )</strong>
                     </td>
-                    <td style="padding-top: 40px;">
+                    <td style="padding-top: 15px;">
                         <br>
                         Dosen Pembimbing,<br>
                         <div style="margin-top: 10px;">
@@ -260,11 +261,11 @@
                                 $p1 = $detail->thesis->pembimbing1;
                             @endphp
                             @if($p1 && $p1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/' . $p1->signature))) }}"
-                                    style="height: 50px; width: auto;">
+                                <img src="data:image/png;base64,{{ base64_encode($p1->decrypted_signature) }}"
+                                    style="height: 70px; width: auto;">
                             @elseif($p1 && $p1->signature_token)
                                 <img
-                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $p1->signature_token))) }}">
+                                    src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(40)->generate(url('/verify-signature/' . $p1->signature_token))) }}">
                             @else
                                 <div style="height: 50px;"></div>
                             @endif
@@ -275,7 +276,7 @@
             </table>
 
             <!-- Document Verification QR -->
-            <div style="margin-top: 40px; border-top: 1px solid #eee; pt-10px;">
+            <div style="margin-top: 15px; border-top: 1px solid #eee; pt-10px;">
                 <table style="width: 100%; border: none;">
                     <tr>
                         <td style="border: none; width: 65px; padding: 0;">

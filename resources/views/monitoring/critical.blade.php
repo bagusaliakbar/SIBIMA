@@ -97,8 +97,12 @@
                                 </td>
                                 <td class="py-5 px-6">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px] font-black text-slate-500">
-                                            {{ substr($student->thesis->pembimbing1->name ?? '?', 0, 1) }}
+                                        <div class="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10">
+                                            @if($student->thesis && $student->thesis->pembimbing1)
+                                                <img src="{{ $student->thesis->pembimbing1->avatar_url }}" alt="{{ $student->thesis->pembimbing1->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%23f1f5f9'/><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' fill='%2394a3b8'/></svg>" class="w-full h-full object-cover">
+                                            @endif
                                         </div>
                                         <span class="text-xs text-slate-600 dark:text-slate-300 font-bold tracking-tight">{{ $student->thesis->pembimbing1->name ?? 'Belum Ada' }}</span>
                                     </div>

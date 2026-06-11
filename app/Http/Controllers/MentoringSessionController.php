@@ -70,23 +70,45 @@ class MentoringSessionController extends Controller
     {
         $user = Auth::user();
         $search = $request->input('search');
-
-        $query = MentoringSession::forUser($user)
-            ->search($search)
-            ->orderBy('scheduled_at', 'desc');
+        $activeTab = $request->input('tab', 'active');
 
         if ($user->role === 'dosen') {
-            $sessions = $query->with('thesis.student')->paginate(12);
-            return view('mentoring.index', compact('sessions', 'search'));
+            $sessions = MentoringSession::forUser($user)
+                ->search($search)
+                ->whereHas('thesis', function($q) use ($activeTab) {
+                    if ($activeTab === 'history') {
+                        $q->where('status', 'completed');
+                    } else {
+                        $q->where('status', '!=', 'completed');
+                    }
+                })
+                ->orderBy('scheduled_at', 'desc')
+                ->with('thesis.student')
+                ->paginate(12)
+                ->appends(['search' => $search, 'tab' => $activeTab]);
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab'));
         } elseif ($user->role === 'mahasiswa') {
-            $sessions = $query->with('thesis.pembimbing1', 'thesis.pembimbing2')->paginate(10);
+            $sessions = MentoringSession::forUser($user)
+                ->search($search)
+                ->orderBy('scheduled_at', 'desc')
+                ->with('thesis.pembimbing1', 'thesis.pembimbing2')
+                ->paginate(10)
+                ->appends(['search' => $search]);
             return view('mentoring.student_index', compact('sessions', 'search'));
         } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
             $sessions = MentoringSession::search($search)
+                ->whereHas('thesis', function($q) use ($activeTab) {
+                    if ($activeTab === 'history') {
+                        $q->where('status', 'completed');
+                    } else {
+                        $q->where('status', '!=', 'completed');
+                    }
+                })
                 ->with(['thesis.student', 'dosen'])
                 ->orderBy('scheduled_at', 'desc')
-                ->paginate(15);
-            return view('mentoring.index', compact('sessions', 'search'));
+                ->paginate(15)
+                ->appends(['search' => $search, 'tab' => $activeTab]);
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab'));
         }
 
         abort(403);

@@ -153,9 +153,7 @@
                                     <div class="bg-slate-50 dark:bg-slate-900 rounded-md p-4 border border-slate-100 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2 space-y-3">
                                         <div>
                                             <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Hasil & Catatan Pembimbing</div>
-                                            <div class="font-medium text-slate-700 dark:text-slate-300">
-                                                {{ $session->feedback ?: 'Tidak ada catatan pembimbing untuk sesi ini.' }}
-                                            </div>
+                                            <div class="font-medium text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ $session->feedback ?: 'Tidak ada catatan pembimbing untuk sesi ini.' }}</div>
                                         </div>
                                         
                                         @if($session->notes)

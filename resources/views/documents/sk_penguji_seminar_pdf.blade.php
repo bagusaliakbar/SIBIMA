@@ -116,89 +116,72 @@
 
     <div class="content">
         <div class="title-block">
-            <h2>SURAT TUGAS</h2>
+            <h2>SURAT KEPUTUSAN DEKAN FAKULTAS ILMU KOMPUTER</h2>
             <p>Nomor: {{ $letterNumber }}</p>
+            <p style="margin-top: 10px;">Tentang:<br>PENETAPAN TIM PENGUJI SEMINAR SKRIPSI MAHASISWA<br>FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</p>
         </div>
 
-        <div class="section-text">
-            Dekan Fakultas Ilmu Komputer Universitas Subang, dengan ini menugaskan kepada Dosen yang namanya tercantum di bawah ini untuk menjadi <strong>Tim Penguji Seminar Skripsi</strong> mahasiswa:
+        <div class="decree-text">
+            Dekan Fakultas Ilmu Komputer Universitas Subang, setelah memperhatikan usulan Koordinator Skripsi, dengan ini menetapkan Tim Penguji Seminar Skripsi yang akan dilaksanakan pada:
         </div>
 
-        <table class="data-table">
+        <table style="width: 100%; margin-bottom: 10px;">
             <tr>
-                <td>Nama</td>
-                <td>:</td>
-                <td><strong>{{ $detail->thesis->student->name }}</strong></td>
-            </tr>
-            <tr>
-                <td>NPM</td>
-                <td>:</td>
-                <td>{{ $detail->thesis->student->identifier }}</td>
-            </tr>
-            <tr>
-                <td>Judul Skripsi</td>
-                <td>:</td>
-                <td><em>{{ $detail->thesis->title }}</em></td>
-            </tr>
-        </table>
-
-        <div class="section-text">Pelaksanaan seminar akan dilaksanakan pada:</div>
-        <table class="data-table">
-            <tr>
-                <td>Hari / Tanggal</td>
-                <td>:</td>
-                <td>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('l, d F Y') }}</td>
-            </tr>
-            <tr>
-                <td>Waktu</td>
-                <td>:</td>
-                <td>{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H:i') }} WIB</td>
+                <td style="width: 120px;">Hari / Tanggal</td>
+                <td style="width: 10px;">:</td>
+                <td>{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l, d F Y') }}</td>
             </tr>
             <tr>
                 <td>Tempat</td>
                 <td>:</td>
-                <td>{{ $detail->schedule->location ?: '-' }}</td>
+                <td>{{ $schedule->location ?: '-' }}</td>
             </tr>
         </table>
 
-        <div class="section-text">Adapun Tim Penguji adalah sebagai berikut:</div>
-        <table class="examiner-table">
+        <table class="main-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;">No</th>
-                    <th>Nama Dosen</th>
-                    <th>Jabatan dalam Tim</th>
+                    <th style="width: 25px;">No</th>
+                    <th style="width: 150px;">Mahasiswa (NPM)</th>
+                    <th>Judul Skripsi</th>
+                    <th style="width: 150px;">Tim Penguji</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td style="text-align: center;">1</td>
-                    <td>{{ $detail->schedule->chairman->name }}</td>
-                    <td>Ketua Penguji</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">2</td>
-                    <td>{{ $detail->examiner1->name }}</td>
-                    <td>Anggota Penguji I</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">3</td>
-                    <td>{{ $detail->examiner2->name }}</td>
-                    <td>Anggota Penguji II</td>
-                </tr>
+                @php $no = 1; @endphp
+                @foreach($schedule->details as $detail)
+                    @if($detail->thesis_id)
+                    <tr>
+                        <td style="text-align: center;">{{ $no++ }}</td>
+                        <td><strong>{{ $detail->thesis->student->name }}</strong><br>({{ $detail->thesis->student->identifier }})</td>
+                        <td style="font-style: italic;">{{ $detail->thesis->title }}</td>
+                        <td>
+                            1. {{ $schedule->chairman->name }} (Ketua)<br>
+                            2. {{ $detail->examiner1->name }} (Anggota I)<br>
+                            3. {{ $detail->examiner2->name }} (Anggota II)
+                        </td>
+                    </tr>
+                    @endif
+                @endforeach
             </tbody>
         </table>
 
-        <div class="section-text" style="margin-top: 15px;">
-            Demikian surat tugas ini diberikan agar dapat dilaksanakan dengan penuh tanggung jawab.
+        <div class="decree-text" style="margin-top: 15px;">
+            Keputusan ini mulai berlaku sejak tanggal ditetapkan dengan ketentuan apabila di kemudian hari terdapat kekeliruan dalam keputusan ini akan diadakan perbaikan sebagaimana mestinya.
         </div>
 
-        <div class="footer">
-            Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}<br>
-            Dekan,<br><br><br><br><br>
-            <strong><u>( Nama Dekan )</u></strong><br>
-            NIP/NIK. .........................
-        </div>
+        <table class="footer-table">
+            <tr>
+                <td style="width: 60%;"></td>
+                <td>
+                    Ditetapkan di : Subang<br>
+                    Pada Tanggal : {{ now()->locale('id')->translatedFormat('d F Y') }}<br>
+                    Dekan,<br><br><br><br><br>
+                    <strong><u>( Nama Dekan )</u></strong><br>
+                    NIP/NIK. .........................
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <x-breadcrumb :items="[
-            ['label' => 'Daftar Pengajuan Skripsi', 'route' => null]
+            ['label' => Auth::user()->role === 'dosen' ? 'Daftar Mahasiswa Bimbingan' : 'Daftar Pengajuan Skripsi', 'route' => null]
         ]" />
     </x-slot>
 
     <div class="w-full">
         <x-table-card 
-            title="Daftar Pengajuan Skripsi"
+            title="{{ Auth::user()->role === 'dosen' ? 'Daftar Mahasiswa Bimbingan' : 'Daftar Pengajuan Skripsi' }}"
             :footer="$theses->links()">
             
             <x-slot name="headerActions">
@@ -18,16 +18,18 @@
                         placeholder="Cari nama, NPM, atau judul..." 
                         route="theses.index" />
                     
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('theses.export-excel', ['search' => request('search')]) }}" class="inline-flex items-center px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Excel
-                        </a>
-                        <a href="{{ route('theses.export-pdf', ['search' => request('search')]) }}" class="inline-flex items-center px-4 py-2 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-rose-100 dark:border-rose-500/20 hover:bg-rose-600 hover:text-white transition-all shadow-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                            PDF
-                        </a>
-                    </div>
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('theses.export-excel', ['search' => request('search')]) }}" class="inline-flex items-center px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Excel
+                            </a>
+                            <a href="{{ route('theses.export-pdf', ['search' => request('search')]) }}" class="inline-flex items-center px-4 py-2 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-rose-100 dark:border-rose-500/20 hover:bg-rose-600 hover:text-white transition-all shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                PDF
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </x-slot>
 
@@ -108,9 +110,34 @@
                                 @endif
                             </td>
                             <td class="py-4 px-6 text-center">
-                                <x-status-badge 
-                                    :type="$thesis->status === 'active' ? 'orange' : ($thesis->status === 'completed' ? 'emerald' : 'slate')" 
-                                    :label="$thesis->status === 'active' ? 'AKTIF' : ($thesis->status === 'completed' ? 'LULUS' : 'MENUNGGU')" />
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <x-status-badge 
+                                        :type="$thesis->status === 'active' ? 'orange' : ($thesis->status === 'completed' ? 'emerald' : 'slate')" 
+                                        :label="$thesis->status === 'active' ? 'AKTIF' : ($thesis->status === 'completed' ? 'LULUS' : 'MENUNGGU')" />
+                                    
+                                    @php
+                                        $hasSeminar = ($thesis->status === 'completed')
+                                            || \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists()
+                                            || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists();
+                                            
+                                        $hasDefense = ($thesis->status === 'completed')
+                                            || \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists()
+                                            || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists();
+                                    @endphp
+                                    <div class="flex flex-col gap-1 mt-1 w-full max-w-[110px]">
+                                        @if($hasSeminar)
+                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-500/20 shadow-sm">SEMINAR: SUDAH</span>
+                                        @else
+                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-slate-50 dark:bg-slate-900/30 text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-800 shadow-sm">SEMINAR: BELUM</span>
+                                        @endif
+
+                                        @if($hasDefense)
+                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 shadow-sm">SIDANG: SUDAH</span>
+                                        @else
+                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-slate-50 dark:bg-slate-900/30 text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-800 shadow-sm">SIDANG: BELUM</span>
+                                        @endif
+                                    </div>
+                                </div>
                             </td>
                             
                             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')

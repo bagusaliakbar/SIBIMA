@@ -27,6 +27,8 @@ class ApplicationService
             'status' => 'pending',
         ];
 
+        $sessionKey = str_replace('App\\Models\\', '', $applicationModel) === 'SeminarApplication' ? 'seminar_uploads' : 'defense_uploads';
+
         foreach ($files as $file) {
             if ($request->hasFile($file)) {
                 $path = $request->file($file)->store(str_replace('App\\Models\\', '', $applicationModel) . '_files', 'local');
@@ -41,8 +43,18 @@ class ApplicationService
                         $existingApplication->save();
                     }
                 }
+            } elseif (session()->has($sessionKey . '.path.' . $file)) {
+                $tempPath = session()->get($sessionKey . '.path.' . $file);
+                if (\Illuminate\Support\Facades\Storage::disk('local')->exists($tempPath)) {
+                    $permanentPath = str_replace('App\\Models\\', '', $applicationModel) . '_files/' . basename($tempPath);
+                    \Illuminate\Support\Facades\Storage::disk('local')->move($tempPath, $permanentPath);
+                    $data[$file] = $permanentPath;
+                }
             }
         }
+
+        // Clear session files after complete submission
+        session()->forget($sessionKey);
 
         if ($existingApplication) {
             $existingApplication->update($data);

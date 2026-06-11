@@ -5,14 +5,6 @@
                 <x-breadcrumb :items="[
                     ['label' => 'Tugas Penguji Seminar', 'route' => null]
                 ]" />
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
-                    Tugas Penguji Seminar
-                    <span class="ml-3 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-indigo-200 dark:border-indigo-500/20 shadow-sm">Penguji</span>
-                </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-2"></span>
-                    Daftar mahasiswa yang dijadwalkan untuk Anda uji
-                </p>
             </div>
         </div>
     </x-slot>
@@ -52,8 +44,8 @@
                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="px-6 py-5">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center mr-4 font-black text-sm border border-indigo-100 dark:border-indigo-500/20 shadow-sm group-hover:scale-110 transition-transform">
-                                        {{ substr($exam->thesis->student->name, 0, 1) }}
+                                    <div class="w-10 h-10 rounded-xl overflow-hidden mr-4 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-110 transition-transform flex items-center justify-center bg-slate-50 dark:bg-slate-800">
+                                        <img src="{{ $exam->thesis->student->avatar_url }}" alt="{{ $exam->thesis->student->name }}" class="w-full h-full object-cover">
                                     </div>
                                     <div class="max-w-xs md:max-w-md">
                                         <h4 class="font-black text-slate-800 dark:text-slate-100 text-sm group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{{ $exam->thesis->student->name }}</h4>
@@ -62,16 +54,25 @@
                                 </div>
                             </td>
                             <td class="px-6 py-5 text-center">
-                                <div class="flex flex-col items-center">
+                                @php
+                                    $isFinished = ($exam->thesis && $exam->thesis->seminarApplication && $exam->thesis->seminarApplication->status === 'completed')
+                                        || $exam->isGraded()
+                                        || $exam->isAllRevisionsApproved()
+                                        || \Carbon\Carbon::parse($exam->schedule->date)->isPast();
+                                @endphp
+                                <div class="flex flex-col items-center gap-1.5">
                                     <span class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase">{{ \Carbon\Carbon::parse($exam->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
-                                    <span class="text-[10px] text-slate-400 mt-1 flex items-center font-bold uppercase">
+                                    <span class="text-[10px] text-slate-400 flex items-center font-bold uppercase">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         {{ \Carbon\Carbon::parse($exam->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($exam->end_time)->format('H:i') }}
                                     </span>
+                                    @if($isFinished)
+                                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200 mt-1">Selesai</span>
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-6 py-5 text-center">
-                                @if($exam->schedule->meeting_link)
+                                @if($exam->schedule->meeting_link && !$isFinished)
                                     <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="group/link inline-block">
                                         <x-status-badge type="indigo" :label="$exam->schedule->location" />
                                         <div class="text-[9px] text-indigo-500 font-black mt-1 uppercase tracking-tighter opacity-0 group-hover/link:opacity-100 transition-opacity">Klik Buka Link</div>
@@ -82,19 +83,30 @@
                             </td>
                             <td class="px-6 py-5 text-center">
                                 @php
+                                    $isExaminer1 = ($exam->examiner1_id === Auth::id());
+                                    $isExaminer2 = ($exam->examiner2_id === Auth::id());
                                     $revision = $exam->revisions()->where('examiner_id', Auth::id())->first();
                                 @endphp
-                                @if($revision)
-                                    @if($revision->status === 'approved')
-                                        <x-status-badge type="emerald" label="REVISI SELESAI" />
-                                    @elseif($revision->status === 'resubmitted')
-                                        <x-status-badge type="blue" label="REVISI TERKIRIM" />
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="flex gap-1">
+                                        @if($isExaminer1)
+                                            <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100 dark:border-indigo-500/20">Penguji 1</span>
+                                        @elseif($isExaminer2)
+                                            <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100 dark:border-indigo-500/20">Penguji 2</span>
+                                        @endif
+                                    </div>
+                                    @if($revision)
+                                        @if($revision->status === 'approved')
+                                            <x-status-badge type="emerald" label="REVISI SELESAI" />
+                                        @elseif($revision->status === 'resubmitted')
+                                            <x-status-badge type="blue" label="REVISI TERKIRIM" />
+                                        @else
+                                            <x-status-badge type="orange" label="REVISI DIKIRIM" />
+                                        @endif
                                     @else
-                                        <x-status-badge type="orange" label="REVISI DIKIRIM" />
+                                        <x-status-badge type="amber" label="BELUM ADA REVISI" />
                                     @endif
-                                @else
-                                    <x-status-badge type="amber" label="BELUM ADA REVISI" />
-                                @endif
+                                </div>
                             </td>
                             <td class="px-6 py-5 text-right">
                                 <div class="flex justify-end gap-2">
@@ -105,7 +117,7 @@
                             </td>
                         </tr>
                     @empty
-                        <x-empty-state colspan="5" description="Anda belum diplot sebagai penguji seminar pada jadwal manapun." icon="book" />
+                        <x-empty-state colspan="5" description="Anda belum diplot sebagai penguji seminar." icon="book" />
                     @endforelse
                 </tbody>
             </table>

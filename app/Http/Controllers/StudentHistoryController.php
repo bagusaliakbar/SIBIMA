@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\Thesis;
 use App\Models\ThesisDefenseRevision;
 use App\Models\SeminarRevision;
+use App\Models\MentoringSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,10 +26,11 @@ class StudentHistoryController extends Controller
         }
 
         $thesisId = $thesis->id;
+        $sessionIds = MentoringSession::where('thesis_id', $thesisId)->pluck('id');
 
         // Fetch all logs related to this student's thesis
         $logs = ActivityLog::with('user')
-            ->where(function($query) use ($thesisId, $user) {
+            ->where(function($query) use ($thesisId, $sessionIds, $user) {
                 // Logs where the thesis is the subject
                 $query->where(function($q) use ($thesisId) {
                     $q->where('subject_type', Thesis::class)
@@ -46,6 +48,11 @@ class StudentHistoryController extends Controller
                       ->whereIn('subject_id', SeminarRevision::whereHas('detail', function($d) use ($thesisId) {
                           $d->where('thesis_id', $thesisId);
                       })->pluck('id'));
+                })
+                // Logs where mentoring sessions for this thesis are the subject
+                ->orWhere(function($q) use ($sessionIds) {
+                    $q->where('subject_type', MentoringSession::class)
+                      ->whereIn('subject_id', $sessionIds);
                 })
                 // Logs performed by the student themselves
                 ->orWhere('user_id', $user->id);

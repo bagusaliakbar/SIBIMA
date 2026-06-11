@@ -122,7 +122,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring.index');
 
         // Document Generation & Settings
-        Route::get('/documents/surat-tugas-seminar/{detail}', [App\Http\Controllers\DocumentController::class, 'generateSuratTugasSeminar'])->name('documents.surat-tugas-seminar');
+        Route::get('/documents/sk-penguji-seminar/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSeminar'])->name('documents.sk-penguji-seminar');
         Route::get('/documents/sk-penguji-sidang/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSidang'])->name('documents.sk-penguji-sidang');
         Route::get('/admin/letter-settings', [App\Http\Controllers\LetterSettingController::class, 'index'])->name('admin.letter-settings.index');
         Route::put('/admin/letter-settings/{letterSetting}', [App\Http\Controllers\LetterSettingController::class, 'update'])->name('admin.letter-settings.update');

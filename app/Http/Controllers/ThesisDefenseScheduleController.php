@@ -63,10 +63,13 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
         }
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+        $scheduledThesisIds = ThesisDefenseScheduleDetail::whereNotNull('thesis_id')->pluck('thesis_id');
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->where('status', '!=', 'completed')
             ->where('acc_sidang_p1', true)
             ->where('acc_sidang_p2', true)
+            ->whereNotIn('id', $scheduledThesisIds)
             ->whereHas('defenseApplication', function($q) use ($activeWave) {
                 $q->where('wave_id', $activeWave->id);
             })
@@ -96,10 +99,15 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     {
         $thesisDefenseSchedule->load('details');
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+        $scheduledOtherThesisIds = ThesisDefenseScheduleDetail::whereNotNull('thesis_id')
+            ->where('thesis_defense_schedule_id', '!=', $thesisDefenseSchedule->id)
+            ->pluck('thesis_id');
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->where('status', '!=', 'completed')
             ->where('acc_sidang_p1', true)
             ->where('acc_sidang_p2', true)
+            ->whereNotIn('id', $scheduledOtherThesisIds)
             ->get();
 
         $mappedDetails = $thesisDefenseSchedule->details->map(function($d) {

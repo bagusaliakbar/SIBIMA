@@ -27,10 +27,29 @@ class ThesisDefenseApplicationController extends Controller
         
         if ($user->role === 'mahasiswa') {
             $thesis = Thesis::where('student_id', $user->id)->first();
+            
+            $hasDefense = $thesis ? ThesisDefenseApplication::where('thesis_id', $thesis->id)
+                ->whereIn('status', ['approved', 'completed', 'finished'])
+                ->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists() : false;
+
+            if ($hasDefense) {
+                return redirect()->route('dashboard')->with('warning', 'Pendaftaran sidang skripsi sudah ditutup karena Anda sudah mendaftar atau melaksanakan sidang.');
+            }
+
             $activeWave = Wave::getCurrentActive();
-            $application = $thesis ? ThesisDefenseApplication::where('thesis_id', $thesis->id)
-                ->where('wave_id', $activeWave?->id)
-                ->first() : null;
+            $application = null;
+            if ($thesis) {
+                $application = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+                    ->where('wave_id', $activeWave?->id)
+                    ->first();
+                
+                if (!$application) {
+                    $application = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+                        ->latest()
+                        ->first();
+                }
+            }
+            
             $isEligible = $thesis && $thesis->isAccSidangFinal();
             $template = ThesisDefenseTemplate::where('is_active', true)->latest()->first();
             
@@ -61,7 +80,7 @@ class ThesisDefenseApplicationController extends Controller
         abort(403);
     }
 
-    public function store(StoreThesisDefenseApplicationRequest $request)
+    public function store(Request $request)
     {
         $activeWave = Wave::getCurrentActive();
         if (!$activeWave) {
@@ -73,12 +92,42 @@ class ThesisDefenseApplicationController extends Controller
             return redirect()->back()->with('error', 'Anda belum memenuhi syarat untuk mengajukan sidang skripsi.');
         }
 
+        $hasApprovedDefense = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+            ->whereIn('status', ['approved', 'completed', 'finished'])
+            ->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists();
+        if ($hasApprovedDefense) {
+            return redirect()->back()->with('error', 'Anda sudah melakukan pendaftaran sidang skripsi dan telah disetujui atau dijadwalkan.');
+        }
+
         $files = [
             'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
             'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',
             'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
             'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
         ];
+
+        $formRequest = new StoreThesisDefenseApplicationRequest();
+        $rules = $formRequest->rules();
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(), 
+            $rules, 
+            $formRequest->messages(), 
+            $formRequest->attributes()
+        );
+
+        // Store any valid files in the session before returning validation errors
+        foreach ($files as $file) {
+            if ($request->hasFile($file) && !$validator->errors()->has($file)) {
+                $path = $request->file($file)->store('defense_temp_uploads', 'local');
+                session()->put('defense_uploads.path.' . $file, $path);
+                session()->put('defense_uploads.name.' . $file, $request->file($file)->getClientOriginalName());
+            }
+        }
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $this->applicationService->submitApplication(
             ThesisDefenseApplication::class, $thesis, $activeWave, $request, $files,

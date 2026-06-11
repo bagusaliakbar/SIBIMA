@@ -1,62 +1,44 @@
 <x-app-layout>
     <x-slot name="header">
-        <div x-data="{ 
-            selectedIds: [], 
-            allIds: {{ json_encode($defenseDetails->pluck('id')->toArray()) }},
-            toggleAll() {
-                if (this.selectedIds.length === this.allIds.length) {
-                    this.selectedIds = [];
-                } else {
-                    this.selectedIds = [...this.allIds];
-                }
-            },
-            downloadSelected() {
-                if (this.selectedIds.length === 0) {
-                    alert('Pilih minimal satu mahasiswa.');
-                    return;
-                }
-                window.location.href = '{{ route('monitoring.batch-export-berita-acara') }}?category=defense&ids=' + this.selectedIds.join(',');
-            }
-        }">
+        <div>
             <x-breadcrumb :items="[
                 ['label' => 'Monitoring', 'route' => route('monitoring.index')],
                 ['label' => 'Revisi Sidang', 'route' => null]
             ]" />
-            
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4">
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight">
-                    Monitoring Progres Revisi Sidang
-                </h2>
-                
-                <div class="flex flex-wrap items-center gap-3">
-                    <button @click="downloadSelected()" 
-                            x-show="selectedIds.length > 0"
-                            class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-bold transition-all shadow-lg shadow-indigo-900/20">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        ZIP (<span x-text="selectedIds.length"></span>)
-                    </button>
-
-                    <a href="{{ route('monitoring.batch-export-berita-acara', ['category' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
-                       class="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-[11px] font-bold transition-all shadow-lg">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                        ZIP Semua
-                    </a>
-                </div>
-            </div>
+            <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight mt-1">
+                Monitoring Progres Revisi Sidang
+            </h2>
         </div>
     </x-slot>
 
-    <div class="w-full">
-        <x-table-card 
-            title="Monitoring Progres Revisi Sidang"
-            subtitle="Pantau status perbaikan skripsi mahasiswa setelah sidang tugas akhir.">
-            
-            <x-slot name="headerActions">
+    <div x-data="{ 
+        selectedIds: [], 
+        allIds: {{ json_encode($defenseDetails->pluck('id')->toArray()) }},
+        toggleAll() {
+            if (this.selectedIds.length === this.allIds.length) {
+                this.selectedIds = [];
+            } else {
+                this.selectedIds = [...this.allIds];
+            }
+        },
+        downloadSelected() {
+            if (this.selectedIds.length === 0) {
+                alert('Pilih minimal satu mahasiswa.');
+                return;
+            }
+            window.location.href = '{{ route('monitoring.batch-export-berita-acara') }}?category=defense&ids=' + this.selectedIds.join(',');
+        }
+    }" class="space-y-6">
+
+        <!-- Premium Toolbar Row -->
+        <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-5 rounded-3xl border border-slate-100 dark:border-slate-700/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
+            <!-- Left: Wave Filter and Search Input -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 max-w-4xl w-full">
                 <!-- Wave Filter -->
-                <form action="{{ route('monitoring.defense-revisions') }}" method="GET" class="flex items-center gap-2">
+                <form action="{{ route('monitoring.defense-revisions') }}" method="GET" class="shrink-0 w-full sm:w-auto">
                     @if($search) <input type="hidden" name="search" value="{{ $search }}"> @endif
                     <select name="wave_id" onchange="this.form.submit()" 
-                            class="pl-4 pr-10 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-sm min-w-[180px] text-slate-700 dark:text-slate-300">
+                            class="w-full sm:w-auto pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm min-w-[200px] text-slate-700 dark:text-slate-350">
                         <option value="">Semua Gelombang</option>
                         @foreach($waves as $wave)
                             <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -66,26 +48,56 @@
                     </select>
                 </form>
 
-                <x-search-input 
-                    name="search" 
-                    :value="$search" 
-                    placeholder="Cari mahasiswa..." 
-                    :route="route('monitoring.defense-revisions')"
-                    :params="['wave_id' => $selectedWaveId]" />
-            </x-slot>
+                <!-- Search Input -->
+                <form action="{{ route('monitoring.defense-revisions') }}" method="GET" class="relative group flex-1 w-full">
+                    @if($selectedWaveId) <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}"> @endif
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-transform group-focus-within:scale-105">
+                        <svg class="w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" name="search" value="{{ $search }}" 
+                           placeholder="Cari mahasiswa atau judul..." 
+                           class="w-full pl-10 pr-9 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm placeholder:text-slate-400/85">
+                    @if($search)
+                        <a href="{{ route('monitoring.defense-revisions', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-rose-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </a>
+                    @endif
+                </form>
+            </div>
 
-            <table class="w-full text-left text-sm">
+            <!-- Right: ZIP Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                <!-- Batch Actions (ZIP Selected) -->
+                <button @click="downloadSelected()" 
+                        x-show="selectedIds.length > 0"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md animate-in fade-in zoom-in duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    ZIP Terpilih (<span x-text="selectedIds.length"></span>)
+                </button>
+
+                <a href="{{ route('monitoring.batch-export-berita-acara', ['category' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-bold transition-all shadow-md group w-full sm:w-auto justify-center">
+                    <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                    ZIP Semua
+                </a>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                            <th class="py-3 px-4 w-10 text-center">
+                        <tr class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                            <th class="py-5 px-4 w-10 text-center border-r border-slate-200/60 dark:border-slate-700">
                                 <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 transition-all cursor-pointer">
                             </th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">MAHASISWA & SIDANG</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">PENGUJI 1</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">PENGUJI 2</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap">PEMBIMBING 1</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap text-center">SUMMARY STATUS</th>
-                            <th class="py-3 px-6 font-semibold text-xs tracking-wider whitespace-nowrap text-center">AKSI</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">MAHASISWA & SIDANG</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">PENGUJI 1</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">PENGUJI 2</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">PEMBIMBING 1</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap text-center">SUMMARY STATUS</th>
+                            <th class="py-5 px-6 font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -104,11 +116,16 @@
                                     <input type="checkbox" x-model="selectedIds" value="{{ $detail->id }}" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 cursor-pointer">
                                 </td>
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
-                                    <div class="font-bold text-slate-800 dark:text-slate-100 truncate max-w-[150px]" title="{{ $detail->thesis->student->name }}">{{ $detail->thesis->student->name ?? 'N/A' }}</div>
-                                    <div class="text-[10px] text-slate-400 mt-0.5 tracking-tight uppercase">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
+                                    <div class="font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $detail->thesis->student->name ?? 'N/A' }}</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight font-bold uppercase">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
+                                    @if($detail->thesis && $detail->thesis->title)
+                                        <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 font-medium leading-relaxed italic">
+                                            "{{ $detail->thesis->title }}"
+                                        </div>
+                                    @endif
                                     <div class="mt-3">
-                                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Tanggal Sidang</span>
-                                        <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                                        <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">Tanggal Sidang</span>
+                                        <div class="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded shadow-sm">
                                             <svg class="w-3 h-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                             <span>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
                                         </div>
@@ -116,28 +133,30 @@
                                 </td>
                                 
                                 <!-- Penguji 1 -->
-                                <td class="py-4 px-6">
-                                    <div class="flex flex-col gap-3">
-                                        <span class="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase truncate" title="{{ $detail->examiner1->name }}">{{ $detail->examiner1->name }}</span>
-                                        <div class="space-y-2">
-                                            <div>
-                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Penilaian</span>
+                                <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
+                                    <div class="flex flex-col gap-3.5">
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner1->name }}">
+                                            {{ $detail->examiner1->name }}
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Penilaian</span>
                                                 @if($grade1)
-                                                    <x-status-badge type="emerald" :label="$rev1->total_score" />
+                                                    <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">{{ number_format($rev1->total_score, 1) }}</span>
                                                 @else
-                                                    <x-status-badge type="rose" label="BELUM ADA" pulse />
+                                                    <span class="text-[9px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-tighter block animate-pulse">Belum</span>
                                                 @endif
                                             </div>
-                                            <div>
-                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Revisi</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
                                                 @if($rev1 && $rev1->isApproved())
-                                                    <x-status-badge type="emerald" label="Selesai" />
+                                                    <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
                                                 @elseif($rev1 && $rev1->isResubmitted())
-                                                    <x-status-badge type="blue" label="Terkirim" pulse />
+                                                    <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block animate-pulse">Terkirim</span>
                                                 @elseif($rev1)
-                                                    <x-status-badge type="orange" label="Dikirim" />
+                                                    <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block">Dikirim</span>
                                                 @else
-                                                    <x-status-badge type="slate" label="None" />
+                                                    <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block">-</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -145,28 +164,30 @@
                                 </td>
 
                                 <!-- Penguji 2 -->
-                                <td class="py-4 px-6">
-                                    <div class="flex flex-col gap-3">
-                                        <span class="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase truncate" title="{{ $detail->examiner2->name }}">{{ $detail->examiner2->name }}</span>
-                                        <div class="space-y-2">
-                                            <div>
-                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Penilaian</span>
+                                <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
+                                    <div class="flex flex-col gap-3.5">
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner2->name }}">
+                                            {{ $detail->examiner2->name }}
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Penilaian</span>
                                                 @if($grade2)
-                                                    <x-status-badge type="emerald" :label="$rev2->total_score" />
+                                                    <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">{{ number_format($rev2->total_score, 1) }}</span>
                                                 @else
-                                                    <x-status-badge type="rose" label="BELUM ADA" pulse />
+                                                    <span class="text-[9px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-tighter block animate-pulse">Belum</span>
                                                 @endif
                                             </div>
-                                            <div>
-                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Revisi</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
                                                 @if($rev2 && $rev2->isApproved())
-                                                    <x-status-badge type="emerald" label="Selesai" />
+                                                    <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
                                                 @elseif($rev2 && $rev2->isResubmitted())
-                                                    <x-status-badge type="blue" label="Terkirim" pulse />
+                                                    <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block animate-pulse">Terkirim</span>
                                                 @elseif($rev2)
-                                                    <x-status-badge type="orange" label="Dikirim" />
+                                                    <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block">Dikirim</span>
                                                 @else
-                                                    <x-status-badge type="slate" label="None" />
+                                                    <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block">-</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -174,25 +195,28 @@
                                 </td>
 
                                 <!-- Pembimbing 1 -->
-                                <td class="py-4 px-6">
-                                    <div class="flex flex-col gap-3">
-                                        <span class="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase truncate" title="{{ $detail->thesis->pembimbing1->name }}">{{ $detail->thesis->pembimbing1->name }}</span>
-                                        <div class="space-y-2">
-                                            <div>
-                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Penilaian</span>
+                                <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
+                                    <div class="flex flex-col gap-3.5">
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->thesis->pembimbing1->name }}">
+                                            {{ $detail->thesis->pembimbing1->name }}
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Penilaian</span>
                                                 @if($gradeP1)
-                                                    <x-status-badge type="emerald" :label="$revP1->total_score" />
+                                                    <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">{{ number_format($revP1->total_score, 1) }}</span>
                                                 @else
-                                                    <x-status-badge type="rose" label="BELUM ADA" pulse />
+                                                    <span class="text-[9px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-tighter block animate-pulse">Belum</span>
                                                 @endif
                                             </div>
-                                            <div>
-                                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter block mb-1">Revisi</span>
-                                                <span class="text-[8px] font-bold text-slate-300 uppercase italic">Tidak Ada Revisi</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-center">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
+                                                <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase italic block">N/A</span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
+
 
                                 <td class="py-4 px-6 text-center">
                                     <div class="flex flex-col items-center gap-4">
@@ -236,12 +260,13 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
             
-            <x-slot name="footer">
-                @if($defenseDetails->hasPages())
+            @if($defenseDetails->hasPages())
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700">
                     {{ $defenseDetails->links() }}
-                @endif
-            </x-slot>
-        </x-table-card>
+                </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>

@@ -26,8 +26,8 @@
             <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden sticky top-6">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/10 rounded-full -mr-12 -mt-12"></div>
                 <div class="relative">
-                    <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-6 text-2xl font-black shadow-lg shadow-indigo-200 dark:shadow-none">
-                        {{ substr($detail->thesis->student->name, 0, 1) }}
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden mb-6 border border-slate-200 dark:border-slate-700 shadow-md">
+                        <img src="{{ $detail->thesis->student->avatar_url }}" alt="{{ $detail->thesis->student->name }}" class="w-full h-full object-cover">
                     </div>
                     <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">{{ $detail->thesis->student->name }}</h3>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $detail->thesis->student->identifier }}</p>

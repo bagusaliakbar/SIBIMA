@@ -63,10 +63,13 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         }
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+        $scheduledThesisIds = SeminarScheduleDetail::whereNotNull('thesis_id')->pluck('thesis_id');
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->where('status', '!=', 'completed')
             ->where('acc_up_p1', true)
             ->where('acc_up_p2', true)
+            ->whereNotIn('id', $scheduledThesisIds)
             ->whereHas('seminarApplication', function($q) use ($activeWave) {
                 $q->where('wave_id', $activeWave->id);
             })
@@ -96,10 +99,15 @@ class SeminarScheduleController extends Controller implements HasMiddleware
     {
         $seminarSchedule->load('details');
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+        $scheduledOtherThesisIds = SeminarScheduleDetail::whereNotNull('thesis_id')
+            ->where('seminar_schedule_id', '!=', $seminarSchedule->id)
+            ->pluck('thesis_id');
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->where('status', '!=', 'completed')
             ->where('acc_up_p1', true)
             ->where('acc_up_p2', true)
+            ->whereNotIn('id', $scheduledOtherThesisIds)
             ->get();
 
         $mappedDetails = $seminarSchedule->details->map(function($d) {

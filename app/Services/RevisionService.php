@@ -18,8 +18,10 @@ class RevisionService
             'status' => 'resubmitted',
         ]);
 
+        $foreignKey = \Illuminate\Support\Str::snake(class_basename($revision)) . '_id';
+
         $message = $messageModel::create([
-            strtolower(str_replace(['App\\Models\\', 'Revision'], '', get_class($revision))) . '_revision_id' => $revision->id,
+            $foreignKey => $revision->id,
             'sender_id' => $user->id,
             'message' => $data['student_notes'],
         ]);

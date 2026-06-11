@@ -60,8 +60,8 @@
                             <td class="py-4 px-6 whitespace-nowrap">
                                 @if($log->user)
                                     <div class="flex items-center">
-                                        <div class="w-7 h-7 rounded-lg bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-500 flex items-center justify-center font-black text-[10px] mr-3">
-                                            {{ substr($log->user->name, 0, 1) }}
+                                        <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10 mr-3">
+                                            <img src="{{ $log->user->avatar_url }}" alt="{{ $log->user->name }}" class="w-full h-full object-cover">
                                         </div>
                                         <div>
                                             <p class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ $log->user->name }}</p>

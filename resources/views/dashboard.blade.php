@@ -290,14 +290,14 @@
                     @endif
                 </x-stat-card>
 
-                <x-stat-card title="Sesi Selesai" :value="Auth::user()->role === 'dosen' ? ($totalCompletedSessions ?? 0) : (($activeThesesCount ?? 0) * 4)" color="emerald">
+                <x-stat-card title="Sesi Selesai" :value="$totalCompletedSessions ?? 0" color="emerald">
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </x-slot>
                     <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
                 </x-stat-card>
 
-                <x-stat-card title="Progres Rata-rata" :value="(Auth::user()->role === 'dosen' ? ($averageStudentProgress ?? 0) : '68') . '%'" color="pink">
+                <x-stat-card title="Progres Rata-rata" :value="($averageStudentProgress ?? 0) . '%'" color="pink">
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </x-slot>
@@ -320,6 +320,29 @@
                         <div class="h-64">
                             <canvas id="distributionChart"></canvas>
                         </div>
+                        @if(Auth::user()->role === 'dosen')
+                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/50 space-y-2">
+                            <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Keterangan Progres:</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                <div class="flex items-start gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 mt-0.5 flex-shrink-0"></span>
+                                    <span><strong>Judul:</strong> Mahasiswa aktif yang belum memulai bimbingan.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 mt-0.5 flex-shrink-0"></span>
+                                    <span><strong>Bimbingan:</strong> Mahasiswa aktif yang sedang dalam proses bimbingan reguler.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-0.5 flex-shrink-0"></span>
+                                    <span><strong>ACC Seminar:</strong> Sudah di-ACC Seminar UP oleh kedua pembimbing.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-0.5 flex-shrink-0"></span>
+                                    <span><strong>ACC Sidang:</strong> Sudah di-ACC Sidang Akhir oleh kedua pembimbing.</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -464,15 +487,24 @@
             {{-- Student Schedule Section (already here) --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 @if($mySeminarSchedule)
+                    @php
+                        $isSeminarFinished = ($progress['currentStage'] >= 4)
+                            || $mySeminarSchedule->isGraded()
+                            || \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->isPast();
+                    @endphp
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden transition-all duration-300">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-full -mr-12 -mt-12 opacity-50"></div>
+                        <div class="absolute top-0 right-0 w-24 h-24 {{ $isSeminarFinished ? 'bg-emerald-50 dark:bg-emerald-950/10' : 'bg-orange-50 dark:bg-orange-900/10' }} rounded-full -mr-12 -mt-12 opacity-50"></div>
                         <div class="relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
-                                    <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <svg class="w-4 h-4 mr-2 {{ $isSeminarFinished ? 'text-emerald-600' : 'text-orange-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     Jadwal Seminar Skripsi
                                 </h3>
-                                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Terjadwal</span>
+                                @if($isSeminarFinished)
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                @else
+                                    <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Terjadwal</span>
+                                @endif
                             </div>
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
@@ -495,7 +527,7 @@
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $mySeminarSchedule->schedule->location ?: '-' }}</p>
                                     </div>
                                 </div>
-                                @if($mySeminarSchedule->schedule->meeting_link)
+                                @if($mySeminarSchedule->schedule->meeting_link && !$isSeminarFinished)
                                     <div class="pt-2">
                                         <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -509,15 +541,24 @@
                 @endif
 
                 @if($myDefenseSchedule)
+                    @php
+                        $isDefenseFinished = ($progress['currentStage'] >= 6)
+                            || $myDefenseSchedule->isGraded()
+                            || \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->isPast();
+                    @endphp
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden transition-all duration-300">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-12 -mt-12 opacity-50"></div>
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-950/10 rounded-full -mr-12 -mt-12 opacity-50"></div>
                         <div class="relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
                                     <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Jadwal Sidang Skripsi
                                 </h3>
-                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Terjadwal</span>
+                                @if($isDefenseFinished)
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                @else
+                                    <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Terjadwal</span>
+                                @endif
                             </div>
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
@@ -540,7 +581,7 @@
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $myDefenseSchedule->schedule->location ?: '-' }}</p>
                                     </div>
                                 </div>
-                                @if($myDefenseSchedule->schedule->meeting_link)
+                                @if($myDefenseSchedule->schedule->meeting_link && !$isDefenseFinished)
                                     <div class="pt-2">
                                         <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -581,20 +622,37 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
-                                        <x-status-badge type="blue" label="Pembimbing" size="sm" />
+                                    @if($detail->thesis->pembimbing1_id == Auth::id())
+                                        <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
+                                    @elseif($detail->thesis->pembimbing2_id == Auth::id())
+                                        <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
+                                    @elseif($detail->examiner1_id == Auth::id())
+                                        <x-status-badge type="indigo" label="Penguji 1" size="sm" />
+                                    @elseif($detail->examiner2_id == Auth::id())
+                                        <x-status-badge type="indigo" label="Penguji 2" size="sm" />
                                     @else
                                         <x-status-badge type="indigo" label="Penguji" size="sm" />
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    <x-status-badge type="orange" label="Seminar" size="sm" />
+                                    <div class="flex items-center gap-2">
+                                        <x-status-badge type="orange" label="Seminar" size="sm" />
+                                        @php
+                                            $isFinished = ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
+                                                || $detail->isGraded()
+                                                || $detail->isAllRevisionsApproved()
+                                                || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+                                        @endphp
+                                        @if($isFinished)
+                                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-[11px]">
                                         <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
                                         <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                        @if($detail->schedule->meeting_link)
+                                        @if($detail->schedule->meeting_link && !$isFinished)
                                             <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
                                                 <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                                 Link Google Meet
@@ -618,20 +676,37 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($detail->thesis->pembimbing1_id == Auth::id() || $detail->thesis->pembimbing2_id == Auth::id())
-                                        <x-status-badge type="blue" label="Pembimbing" size="sm" />
+                                    @if($detail->thesis->pembimbing1_id == Auth::id())
+                                        <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
+                                    @elseif($detail->thesis->pembimbing2_id == Auth::id())
+                                        <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
+                                    @elseif($detail->examiner1_id == Auth::id())
+                                        <x-status-badge type="indigo" label="Penguji 1" size="sm" />
+                                    @elseif($detail->examiner2_id == Auth::id())
+                                        <x-status-badge type="indigo" label="Penguji 2" size="sm" />
                                     @else
                                         <x-status-badge type="indigo" label="Penguji" size="sm" />
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    <x-status-badge type="emerald" label="Sidang" size="sm" />
+                                    <div class="flex items-center gap-2">
+                                        <x-status-badge type="emerald" label="Sidang" size="sm" />
+                                        @php
+                                            $isFinished = ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
+                                                || $detail->isGradingComplete()
+                                                || $detail->isRevisionAllApproved()
+                                                || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+                                        @endphp
+                                        @if($isFinished)
+                                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-[11px]">
                                         <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
                                         <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                        @if($detail->schedule->meeting_link)
+                                        @if($detail->schedule->meeting_link && !$isFinished)
                                             <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
                                                 <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                                 Link Google Meet
@@ -717,29 +792,78 @@
                         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">Logbook Terbaru</h3>
                     </div>
                     <div class="p-6">
-                        <div class="relative border-l-2 border-slate-100 dark:border-slate-700 ml-3 space-y-8">
+                        <div class="relative border-l border-slate-100 dark:border-slate-700 ml-3 space-y-8">
                             @forelse(isset($recentLogbooks) ? $recentLogbooks : [] as $logbook)
                             <div class="relative pl-7 group">
-                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-2 border-orange-500 ring-4 ring-orange-50 dark:ring-slate-900 transition-all group-hover:scale-125"></div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $logbook->topic }}</h4>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $logbook->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
+                                <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-orange-500 ring-4 ring-orange-50 dark:ring-slate-900 transition-all group-hover:scale-125"></div>
+                                
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+                                    <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $logbook->topic }}</h4>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $logbook->scheduled_at->locale('id')->translatedFormat('d M Y • H:i') }} WIB</span>
                                 </div>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">{{ $logbook->notes }}</p>
-                                @if(Auth::user()->role !== 'mahasiswa')
-                                    <div class="mt-2 flex items-center">
-                                        <div class="w-4 h-4 rounded-full bg-slate-200 mr-2"></div>
-                                        <span class="text-[10px] text-slate-400 font-medium italic">Oleh: {{ $logbook->thesis->student->name }}</span>
+                                
+                                <div class="space-y-2.5 text-[11px]">
+                                    <!-- Logbook Details Box -->
+                                    <div class="bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/80 rounded-xl p-3 space-y-2">
+                                        @if($logbook->notes)
+                                            <div class="flex items-start gap-1.5">
+                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider select-none shrink-0 w-16">Catatan:</span>
+                                                <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed italic">"{{ $logbook->notes }}"</p>
+                                            </div>
+                                        @endif
+
+                                        @if($logbook->feedback)
+                                            <div class="flex items-start gap-1.5 pt-2 {{ $logbook->notes ? 'border-t border-slate-100 dark:border-slate-800/50' : '' }}">
+                                                <span class="text-[9px] font-black text-orange-500 uppercase tracking-wider select-none shrink-0 w-16">Feedback:</span>
+                                                <p class="text-slate-800 dark:text-slate-200 font-bold leading-relaxed">{{ $logbook->feedback }}</p>
+                                            </div>
+                                        @endif
                                     </div>
-                                @endif
+                                    
+                                    <!-- Metadata footer -->
+                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-tight">
+                                        @if(Auth::user()->role === 'mahasiswa')
+                                            <div class="flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                                                <span>Dosen: <span class="text-slate-600 dark:text-slate-400 font-black">{{ $logbook->dosen->name ?? '-' }}</span> ({{ $logbook->dosen_id === $logbook->thesis->pembimbing1_id ? 'Pembimbing 1' : ($logbook->dosen_id === $logbook->thesis->pembimbing2_id ? 'Pembimbing 2' : 'Dosen') }})</span>
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                                                <span>Mahasiswa: <span class="text-slate-600 dark:text-slate-400 font-black">{{ $logbook->thesis->student->name }}</span></span>
+                                            </div>
+                                            @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
+                                                <div class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-4">
+                                                    <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                                                    <span>Dosen: <span class="text-slate-600 dark:text-slate-400 font-black">{{ $logbook->dosen->name ?? '-' }}</span> ({{ $logbook->dosen_id === $logbook->thesis->pembimbing1_id ? 'Pembimbing 1' : ($logbook->dosen_id === $logbook->thesis->pembimbing2_id ? 'Pembimbing 2' : 'Dosen') }})</span>
+                                                </div>
+                                            @endif
+                                        @endif
+                                        
+                                        @if($logbook->document_path)
+                                            <div class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-4">
+                                                <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                                <a href="{{ route('download.private', ['path' => $logbook->document_path]) }}" target="_blank" class="text-orange-600 hover:text-orange-700 transition-colors font-black hover:underline" title="{{ $logbook->document_original_name }}">Unduh Berkas</a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             @empty
-                            <div class="text-center py-6">
-                                <p class="text-xs text-slate-400 italic">Belum ada catatan logbook terbaru.</p>
+                            <div class="text-center py-8">
+                                <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-slate-100 dark:border-slate-800">
+                                    <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Belum ada catatan logbook terbaru.</p>
                             </div>
                             @endforelse
                         </div>
                     </div>
+                    @if(method_exists($recentLogbooks, 'links') && $recentLogbooks->hasPages())
+                        <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-700/50">
+                            {{ $recentLogbooks->appends(request()->query())->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -823,7 +947,7 @@
                             datasets: [{
                                 label: 'Mahasiswa',
                                 data: {!! json_encode(array_values($studentProgressDistribution)) !!},
-                                backgroundColor: '#f97316',
+                                backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#6366f1'],
                                 borderRadius: 6
                             }]
                         },

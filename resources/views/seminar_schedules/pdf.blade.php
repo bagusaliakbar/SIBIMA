@@ -267,20 +267,19 @@
                 <td class="signature-container">
                     <div class="signature-box">
                         <p style="margin-bottom: 5px;">Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}</p>
-                        <p style="margin-bottom: 10px;">Mengetahui,<br>Ketua Program Studi</p>
+                        <p style="margin-bottom: 8px;">Mengetahui,<br>Ketua Program Studi</p>
                         
                         <div style="min-height: 80px;">
                             @if(isset($kaprodi) && $kaprodi && $kaprodi->signature)
                                 <img src="data:image/png;base64,{{ base64_encode($kaprodi->decrypted_signature) }}" class="signature-img">
                             @elseif(isset($kaprodi) && $kaprodi && $kaprodi->signature_token)
-                                <img src="data:image/png;base64, {!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(250)->generate(url('/verify-signature/' . $kaprodi->signature_token))) !!} " class="qr-code">
+                                <img src="data:image/png;base64, {!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(300)->generate(url('/verify-signature/' . $kaprodi->signature_token))) !!} " class="qr-code">
                             @else
-                                <br><br><br><br>
+                                <br><br><br>
                             @endif
                         </div>
                         
                         <p style="margin-top: 5px;"><strong>({{ (isset($kaprodi) && $kaprodi) ? $kaprodi->name : '..................................................' }})</strong></p>
-                        <p style="font-size: 8pt; color: #666; margin-top: -5px;">NIDN: {{ (isset($kaprodi) && $kaprodi) ? $kaprodi->identifier : '........................' }}</p>
                     </div>
                 </td>
             </tr>

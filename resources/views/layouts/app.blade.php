@@ -119,16 +119,37 @@
                             </a>
                             @endif
 
+                            @php
+                                $hasSeminar = $thesis ? \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists() : false;
+                            @endphp
+                            @if($hasSeminar)
+                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar seminar proposal/hasil.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
+                                <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                2. Pendaftaran Seminar
+                            </a>
+                            @else
                             <a href="{{ route('seminar-applications.index') }}" 
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 2. Pendaftaran Seminar
                             </a>
+                            @endif
+
+                            @php
+                                $hasDefense = $thesis ? \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists() : false;
+                            @endphp
+                            @if($hasDefense)
+                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar sidang skripsi.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
+                                <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                3. Pendaftaran Sidang
+                            </a>
+                            @else
                             <a href="{{ route('thesis-defense-applications.index') }}" 
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                 3. Pendaftaran Sidang
                             </a>
+                            @endif
                         </nav>
 
                         <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
@@ -305,7 +326,7 @@
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300">
                 <!-- Top Header (Clean & Modern) -->
-                <header class="h-20 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-6 lg:px-10 z-40 shrink-0 transition-colors duration-300">
+                <header class="h-20 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-6 lg:px-10 shrink-0 transition-colors duration-300">
                     <div class="flex items-center md:hidden gap-2">
                         <!-- Hamburger toggle for mobile sidebar -->
                         <button @click="sidebarOpen = !sidebarOpen" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700/50 transition-all">
@@ -438,7 +459,12 @@
                                     },
 
                                     fetchNotifications() {
-                                        fetch('{{ route("notifications.index") }}')
+                                        fetch('{{ route("notifications.index") }}', {
+                                            headers: {
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'Accept': 'application/json'
+                                            }
+                                        })
                                             .then(res => res.json())
                                             .then(data => {
                                                 this.notifications = data.notifications;
@@ -464,7 +490,9 @@
                                             method: 'POST',
                                             headers: {
                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                'Content-Type': 'application/json'
+                                                'Content-Type': 'application/json',
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'Accept': 'application/json'
                                             }
                                         }).then(() => {
                                             if (url && url !== '#') {
@@ -480,7 +508,9 @@
                                             method: 'POST',
                                             headers: {
                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                'Content-Type': 'application/json'
+                                                'Content-Type': 'application/json',
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'Accept': 'application/json'
                                             }
                                         }).then(() => this.fetchNotifications());
                                     },
@@ -530,28 +560,28 @@
             document.addEventListener('DOMContentLoaded', () => {
                 @if(session('success'))
                     window.dispatchEvent(new CustomEvent('notify', { 
-                        detail: { title: 'Berhasil', message: "{{ session('success') }}", type: 'success' } 
+                        detail: { title: 'Berhasil', message: {!! json_encode(session('success')) !!}, type: 'success' } 
                     }));
                 @endif
 
                 @if(session('error'))
                     window.dispatchEvent(new CustomEvent('notify', { 
-                        detail: { title: 'Kesalahan', message: "{{ session('error') }}", type: 'error' } 
+                        detail: { title: 'Kesalahan', message: {!! json_encode(session('error')) !!}, type: 'error' } 
                     }));
                 @endif
 
                 @if(session('warning'))
                     window.dispatchEvent(new CustomEvent('notify', { 
-                        detail: { title: 'Peringatan', message: "{{ session('warning') }}", type: 'warning' } 
+                        detail: { title: 'Peringatan', message: {!! json_encode(session('warning')) !!}, type: 'warning' } 
                     }));
                 @endif
 
                 @if($errors->any())
                     window.dispatchEvent(new CustomEvent('notify', { 
-                        detail: { title: 'Validasi Gagal', message: "Silakan periksa kembali isian formulir Anda.", type: 'error' } 
+                        detail: { title: 'Validasi Gagal', message: 'Terdapat kesalahan pada input Anda. Silakan periksa kembali.', type: 'error' } 
                     }));
                 @endif
-
+            
                 const userId = {{ Auth::id() }};
                 
                 // Generic Notifications

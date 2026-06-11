@@ -17,6 +17,10 @@
                         <span class="text-slate-500">Gelombang</span>
                     </div>
                     <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
+                        <span class="text-slate-500">Bimbingan</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                         <span class="text-slate-500">Seminar</span>
                     </div>
@@ -138,6 +142,11 @@
                     right: 'dayGridMonth,timeGridWeek,listMonth'
                 },
                 locale: 'id',
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
                 events: '{{ route("calendar.events") }}',
                 eventDidMount: function(info) {
                     const props = info.event.extendedProps;

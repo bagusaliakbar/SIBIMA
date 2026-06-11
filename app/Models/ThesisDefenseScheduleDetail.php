@@ -79,7 +79,7 @@ class ThesisDefenseScheduleDetail extends Model
         if (count($requiredIds) === 0) return false;
 
         foreach ($requiredIds as $id) {
-            $rev = $this->getRevisionFor($id);
+            $rev = $this->revisions()->where('examiner_id', $id)->first();
             if (!$rev || $rev->status !== 'approved') {
                 return false;
             }
@@ -90,14 +90,19 @@ class ThesisDefenseScheduleDetail extends Model
 
     public function isRevisionStarted()
     {
-        return $this->revisions->count() > 0;
+        return $this->revisions()->exists();
     }
 
     public function isGradingComplete()
     {
-        $rev1 = $this->getRevisionFor($this->examiner1_id);
-        $rev2 = $this->getRevisionFor($this->examiner2_id);
-        $revP1 = $this->thesis ? $this->getRevisionFor($this->thesis->pembimbing1_id) : null;
+        return $this->isGraded();
+    }
+
+    public function isGraded()
+    {
+        $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
+        $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
+        $revP1 = $this->thesis ? $this->revisions()->where('examiner_id', $this->thesis->pembimbing1_id)->first() : null;
 
         return ($rev1 && $rev1->isGraded()) &&
                ($rev2 && $rev2->isGraded()) &&
@@ -106,8 +111,8 @@ class ThesisDefenseScheduleDetail extends Model
 
     public function isRevisionComplete()
     {
-        $rev1 = $this->getRevisionFor($this->examiner1_id);
-        $rev2 = $this->getRevisionFor($this->examiner2_id);
+        $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
+        $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
 
         return ($rev1 && $rev1->isApproved()) &&
                ($rev2 && $rev2->isApproved());

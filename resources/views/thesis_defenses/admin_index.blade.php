@@ -153,12 +153,11 @@
                                     
                                     <!-- Files List Modal -->
                                     <div x-show="showFiles" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
-                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                        <div class="flex items-start justify-center min-h-screen px-4 text-center">
                                             <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showFiles = false">
                                                 <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
                                             </div>
-                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                            <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full border border-slate-100 dark:border-slate-700">
+                                            <div class="relative w-full my-8 sm:my-16 bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-4xl border border-slate-100 dark:border-slate-700">
                                                 <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Berkas Persyaratan Sidang</h3>
                                                     <button @click="showFiles = false" class="text-slate-400 hover:text-slate-600">
@@ -205,12 +204,11 @@
 
                                     <!-- Validation Modal -->
                                     <div x-show="openValidation" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
-                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                        <div class="flex items-start justify-center min-h-screen px-4 text-center">
                                             <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openValidation = false">
                                                 <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
                                             </div>
-                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100 dark:border-slate-700">
+                                            <div class="relative w-full my-8 sm:my-16 bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg border border-slate-100 dark:border-slate-700">
                                                 <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Validasi Berkas</h3>
                                                     <button @click="openValidation = false" class="text-slate-400 hover:text-slate-600">

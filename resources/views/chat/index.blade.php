@@ -27,8 +27,8 @@
                                 <a href="{{ route('chat.show', $u->id) }}" class="flex items-center px-6 py-4 hover:bg-white dark:hover:bg-slate-800 transition-all group relative">
                                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-600 scale-y-0 group-hover:scale-y-100 transition-transform"></div>
                                     <div class="relative">
-                                        <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-sm border border-orange-200 dark:border-orange-500/20 group-hover:scale-110 transition-transform">
-                                            {{ strtoupper(substr($u->name, 0, 1)) }}
+                                        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-500/20 shadow-sm bg-orange-50 dark:bg-orange-900/10 group-hover:scale-110 transition-transform">
+                                            <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
                                         </div>
                                         @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0)
                                             <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white dark:border-slate-800 rounded-lg flex items-center justify-center text-[8px] font-black text-white">

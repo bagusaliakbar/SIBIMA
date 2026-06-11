@@ -5,6 +5,10 @@
             ['label' => 'Detail Jadwal', 'route' => null]
         ]" />
         <div class="flex justify-end items-center w-full">
+            <a href="{{ route('documents.sk-penguji-seminar', $seminarSchedule) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm mr-2">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                SK Tim Penguji
+            </a>
             <a href="{{ route('seminar-schedules.export-pdf', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm mr-2">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Export PDF
@@ -61,8 +65,7 @@
                                 <th class="py-4 px-3 w-32 border-b border-r border-slate-200 dark:border-slate-700">WAKTU</th>
                                 <th class="py-4 px-3 border-b border-r border-slate-200 dark:border-slate-700">DETAIL KEGIATAN / PESERTA</th>
                                 <th class="py-4 px-3 w-50 border-b border-r border-slate-200 dark:border-slate-700">PEMBIMBING</th>
-                                <th class="py-4 px-3 w-50 border-b border-r border-slate-200 dark:border-slate-700">PENGUJI</th>
-                                <th class="py-4 px-3 w-40 border-b border-slate-200 dark:border-slate-700">AKSI</th>
+                                <th class="py-4 px-3 w-50 border-b border-slate-200 dark:border-slate-700">PENGUJI</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
@@ -101,7 +104,7 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="py-5 px-5 border-r border-slate-100 dark:border-slate-700/50">
+                                        <td class="py-5 px-5 border-slate-100 dark:border-slate-700/50">
                                             <div class="space-y-2">
                                                 @if($detail->examiner1)
                                                 <div class="flex items-start">
@@ -116,12 +119,6 @@
                                                 </div>
                                                 @endif
                                             </div>
-                                        </td>
-                                        <td class="py-5 px-5 text-center">
-                                            <a href="{{ route('documents.surat-tugas-seminar', $detail) }}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 transition-colors group/btn">
-                                                <svg class="w-3.5 h-3.5 mr-2 text-blue-500 group-hover/btn:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                <span class="text-[10px] font-black uppercase tracking-widest">Surat Tugas</span>
-                                            </a>
                                         </td>
                                     </tr>
                                 @else

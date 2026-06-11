@@ -46,6 +46,7 @@
             <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.avatar.click()">
                 {{ __('Pilih Foto Baru') }}
             </x-secondary-button>
+            <p class="mt-2 text-[10px] text-slate-500 italic">Maksimal ukuran file foto adalah 2 MB.</p>
 
             <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
         </div>

@@ -45,7 +45,7 @@
                                                 };
                                                 reader.readAsDataURL($refs.avatar.files[0]);
                                            " />
-                                    <button type="button" x-on:click.prevent="$refs.avatar.click()" class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md font-semibold text-xs text-slate-700 dark:text-slate-300 uppercase tracking-widest shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 disabled:opacity-25 transition-all">
+                                    <button type="button" x-on:click.prevent="$refs.avatar.click()" class="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-[10px] text-slate-600 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-100 transition-all shadow-sm">
                                         Ganti Foto
                                     </button>
                                     <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Format: JPG, PNG, JPEG. Max 2MB.</p>
@@ -117,9 +117,9 @@
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end">
-                        <a href="{{ route('users.index') }}" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 mr-4 transition-colors">Batal</a>
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors">
+                    <div class="mt-8 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
+                        <a href="{{ route('users.index') }}" class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</a>
+                        <button type="submit" class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20">
                             Perbarui Data Pengguna
                         </button>
                     </div>

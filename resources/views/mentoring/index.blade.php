@@ -55,8 +55,8 @@
                         @endphp
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 dark:border-slate-700/50 pb-4">
                             <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 flex items-center mb-4 md:mb-0 uppercase tracking-tight">
-                                <div class="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center mr-3 font-black text-xs">
-                                    {{ substr($studentName, 0, 1) }}
+                                <div class="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10 mr-3 shrink-0">
+                                    <img src="{{ $studentThesis->student->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
                                 </div>
                                 <span>{{ $studentName }}</span>
                                 @if($studentThesis->status === 'completed')
@@ -268,7 +268,7 @@
                     @if($activeTab === 'history')
                         <x-empty-state description="Belum ada riwayat bimbingan untuk mahasiswa yang sudah lulus." icon="mentoring" />
                     @else
-                        <x-empty-state description="Belum ada pengajuan jadwal bimbingan aktif dari mahasiswa." icon="mentoring" />
+                        <x-empty-state description="Belum ada jadwal bimbingan aktif." icon="mentoring" />
                     @endif
                 @endforelse
                 </div>

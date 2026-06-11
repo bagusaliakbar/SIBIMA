@@ -25,8 +25,8 @@
                             <li class="contact-item-show" data-name="{{ strtolower($u->name) }}" data-role="{{ strtolower($u->role) }}">
                                 <a href="{{ route('chat.show', $u->id) }}" class="flex items-center px-4 py-3 transition-colors group {{ $u->id === $user->id ? 'bg-orange-50/50 dark:bg-orange-900/20 border-r-2 border-orange-500' : 'hover:bg-white dark:hover:bg-slate-800' }}">
                                     <div class="relative">
-                                        <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-sm border border-orange-200 dark:border-orange-800">
-                                            {{ strtoupper(substr($u->name, 0, 1)) }}
+                                        <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-800 shadow-sm bg-orange-50 dark:bg-orange-900/10">
+                                            <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
                                         </div>
                                         @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0 && $u->id !== $user->id)
                                             <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white dark:border-slate-800 rounded-full"></span>
@@ -60,8 +60,8 @@
                     <a href="{{ route('chat.index') }}" class="md:hidden mr-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </a>
-                    <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-sm shrink-0 border border-orange-200 dark:border-orange-800">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-800 shadow-sm bg-orange-50 dark:bg-orange-900/10 shrink-0">
+                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                     </div>
                     <div class="ml-3">
                         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $user->name }}</h3>
