@@ -20,15 +20,18 @@
 - **Advanced Reporting**: Laporan komprehensif dalam berbagai kategori (Akademik, Mahasiswa, Dosen, Kelulusan, Waktu).
 - **Batch Export Berita Acara**: Fitur ekspor massal dokumen resmi (Berita Acara) ke dalam format **ZIP** untuk efisiensi admin.
 - **Multi-Format Export**: Dukungan ekspor data ke format **Excel** dan **PDF** yang rapi dan profesional.
+- **Transparan & Komprehensif**: Berita Acara Sidang Skripsi menampilkan rekapitulasi nilai dari ketiga dosen penguji secara rinci (Penguji I, Penguji II, Pembimbing) dalam tata letak satu halaman presisi.
 
 ### 3. Validasi & Integritas Data
 
 - **QR Code Verification**: Verifikasi keaslian dokumen Berita Acara melalui QR Code terintegrasi.
 - **Advanced Audit Trail (Activity Logs)**: Pencatatan mendalam setiap perubahan data dengan perbandingan **Data Lama vs Data Baru** untuk transparansi total.
 - **Digital Signature Token**: Penggunaan token unik untuk validasi tanda tangan elektronik pada dokumen resmi.
+- **Dynamic Letter Settings**: Sistem penomoran surat dinamis (SK Tim Penguji, dsb.) dengan format kustom (`LetterSetting`) dan fitur auto-increment counter otomatis untuk menjamin akurasi nomor surat.
 
 ### 4. Manajemen Skripsi & Bimbingan
 
+- **Collective SK Generator**: Pembuatan SK Tim Penguji secara kolektif per jadwal pelaksanaan (Seminar UP & Sidang Akhir) yang mencakup seluruh mahasiswa dalam jadwal tersebut guna meminimalkan pembuatan dokumen ganda.
 - **Smart Scheduling**: Deteksi bentrok jadwal otomatis untuk seminar dan sidang.
 - **Integrated Logbook**: Pencatatan sesi bimbingan dengan dukungan unggah dokumen revisi.
 - **Revision Workflow**: Antarmuka diskusi interaktif antara mahasiswa dan penguji pasca seminar/sidang.
