@@ -7,7 +7,7 @@
 
     <div class="w-full">
         <x-table-card 
-            title="Daftar Pengajuan Jadwal"
+            title="{{ $activeTab === 'history' ? 'Riwayat Bimbingan' : 'Jadwal Bimbingan' }}"
             :footer="$sessions->links()">
             
             <x-slot name="headerActions">
@@ -16,7 +16,8 @@
                         name="search" 
                         :value="$search ?? ''" 
                         placeholder="Cari nama atau topik..." 
-                        route="mentoring-sessions.index" />
+                        route="mentoring-sessions.index"
+                        :params="['tab' => $activeTab]" />
 
                     @if(Auth::user()->role === 'dosen')
                         <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm whitespace-nowrap">+ Tambah Jadwal</a>
@@ -24,7 +25,20 @@
                 </div>
             </x-slot>
 
-            <div class="p-6 space-y-12">
+            <div class="p-6">
+                <!-- Tabs for Active vs History -->
+                <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/50 pb-4 mb-6">
+                    <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search]) }}" 
+                       class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'active' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                        Bimbingan Aktif
+                    </a>
+                    <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search]) }}" 
+                       class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'history' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                        Riwayat Bimbingan
+                    </a>
+                </div>
+
+                <div class="space-y-12">
                 @php
                     $groupedSessions = $sessions->groupBy(function($session) {
                         return $session->thesis->student->name;
@@ -45,6 +59,11 @@
                                     {{ substr($studentName, 0, 1) }}
                                 </div>
                                 <span>{{ $studentName }}</span>
+                                @if($studentThesis->status === 'completed')
+                                    <span class="ml-2 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                                        Lulus
+                                    </span>
+                                @endif
                                 <span class="ml-4 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider">
                                     {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
                                 </span>
@@ -60,7 +79,8 @@
                                     @endphp
                                     {{-- ACC UP Group --}}
                                     <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                        <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline">
+                                        <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?{{ $mentoringCount < 4 && !$hasAccUp ? ' Catatan: Jumlah bimbingan mahasiswa belum mencapai 4 kali.' : '' }}')">
                                             @csrf
                                             <button type="submit" 
                                                 title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
@@ -85,7 +105,8 @@
                                         $hasAccSidang = $isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false);
                                     @endphp
                                     <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                        <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline">
+                                        <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?{{ $mentoringCount < 8 && !$hasAccSidang ? ' Catatan: Jumlah bimbingan mahasiswa belum mencapai 8 kali.' : '' }}')">
                                             @csrf
                                             <button type="submit" 
                                                 title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
@@ -144,8 +165,8 @@
                                             <x-status-badge type="red" label="TIDAK HADIR" />
                                         @else
                                             <x-status-badge 
-                                                :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : 'slate'))" 
-                                                :label="strtoupper($session->status)" />
+                                                :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : ($session->status === 'completed' ? 'emerald' : 'slate')))" 
+                                                :label="$session->status === 'completed' ? 'HADIR' : strtoupper($session->status)" />
                                         @endif
                                     </div>
                                     
@@ -244,8 +265,13 @@
                         </div>
                     </div>
                 @empty
-                    <x-empty-state description="Belum ada pengajuan jadwal bimbingan dari mahasiswa." icon="mentoring" />
+                    @if($activeTab === 'history')
+                        <x-empty-state description="Belum ada riwayat bimbingan untuk mahasiswa yang sudah lulus." icon="mentoring" />
+                    @else
+                        <x-empty-state description="Belum ada pengajuan jadwal bimbingan aktif dari mahasiswa." icon="mentoring" />
+                    @endif
                 @endforelse
+                </div>
             </div>
         </x-table-card>
     </div>
