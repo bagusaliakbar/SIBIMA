@@ -32,15 +32,14 @@
             class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 p-4 pointer-events-auto flex gap-4 overflow-hidden relative"
         >
             <!-- Progress Bar -->
-            <div class="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-[5000ms] w-0" x-init="$el.style.width = '100%'"></div>
+            <div class="absolute bottom-0 left-0 h-1 bg-orange-500 transition-all duration-[5000ms] w-0" x-init="$el.style.width = '100%'"></div>
 
             <div class="shrink-0">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center"
                     :class="{
                         'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600': n.type === 'success',
                         'bg-red-50 dark:bg-red-500/10 text-red-600': n.type === 'error',
-                        'bg-orange-50 dark:bg-orange-500/10 text-orange-600': n.type === 'warning',
-                        'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600': n.type === 'info' || n.type === 'message',
+                        'bg-orange-50 dark:bg-orange-500/10 text-orange-600': n.type === 'warning' || n.type === 'info' || n.type === 'message',
                     }"
                 >
                     <template x-if="n.type === 'success'">

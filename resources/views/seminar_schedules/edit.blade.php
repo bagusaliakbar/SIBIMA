@@ -25,7 +25,7 @@
 
                     <div>
                         <x-input-label for="date" value="Tanggal Pelaksanaan" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <x-text-input id="date" name="date" type="date" @change="recheckAll()" class="mt-1 block w-full text-sm" value="{{ $seminarSchedule->date }}" required />
+                        <x-text-input id="date" name="date" type="date" @change="recheckAll()" class="mt-1 block w-full text-sm" value="{{ \Carbon\Carbon::parse($seminarSchedule->date)->format('Y-m-d') }}" required />
                         <x-input-error :messages="$errors->get('date')" class="mt-2" />
                     </div>
 

@@ -108,7 +108,7 @@
 
                 <!-- Chat Input -->
                 <div class="p-3 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shrink-0">
-                    <form action="{{ route('chat.store', $user->id) }}" method="POST" id="chat-form" class="flex items-end space-x-2">
+                    <form action="{{ route('chat.store', $user->id) }}" method="POST" id="chat-form" onsubmit="return false;" class="flex items-end space-x-2">
                         @csrf
                         <div class="flex-1 bg-white dark:bg-slate-900 rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden">
                             <textarea 
@@ -146,12 +146,16 @@
             scrollToBottom();
 
             // Listen for new messages
-            window.Echo.private(`chat.${userId}`)
-                .listen('MessageSent', (e) => {
-                    if (e.message.sender_id === partnerId) {
-                        appendMessage(e.message, 'left');
-                    }
-                });
+            if (window.Echo) {
+                window.Echo.private(`chat.${userId}`)
+                    .listen('MessageSent', (e) => {
+                        if (e.message.sender_id === partnerId) {
+                            appendMessage(e.message, 'left');
+                        }
+                    });
+            } else {
+                console.warn('Echo is not defined. Real-time chat updates are disabled.');
+            }
 
             // Function to append message to UI
             function appendMessage(message, side) {
@@ -185,42 +189,73 @@
                 scrollToBottom();
             }
 
-            // Handle AJAX form submission
-            chatForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+            function sendMessageAjax() {
                 const text = messageInput.value.trim();
                 if (!text) return;
 
-                const formData = new FormData(this);
-                
                 // Clear input early for better UX
                 messageInput.value = '';
                 messageInput.style.height = '';
 
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        appendMessage(data.message, 'right');
-                    }
-                })
-                .catch(err => {
-                    console.error('Error sending message:', err);
-                    alert('Gagal mengirim pesan. Silakan coba lagi.');
-                });
+                const tokenElement = chatForm.querySelector('input[name="_token"]');
+                const token = tokenElement ? tokenElement.value : '';
+
+                if (window.axios) {
+                    window.axios.post(chatForm.action, {
+                        message: text
+                    }, {
+                        headers: {
+                            'X-CSRF-TOKEN': token
+                        }
+                    })
+                    .then(response => {
+                        if (response.data.success) {
+                            appendMessage(response.data.message, 'right');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error sending message:', error);
+                        // Restore text if it failed
+                        messageInput.value = text;
+                        alert('Gagal mengirim pesan. Silakan coba lagi.');
+                    });
+                } else {
+                    const formData = new FormData();
+                    formData.append('message', text);
+                    formData.append('_token', token);
+
+                    fetch(chatForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            appendMessage(data.message, 'right');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error sending message:', err);
+                        messageInput.value = text;
+                        alert('Gagal mengirim pesan. Silakan coba lagi.');
+                    });
+                }
+            }
+
+            // Handle AJAX form submission
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendMessageAjax();
             });
 
             // Handle Enter key to submit
             messageInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    chatForm.dispatchEvent(new Event('submit'));
+                    sendMessageAjax();
                 }
             });
 

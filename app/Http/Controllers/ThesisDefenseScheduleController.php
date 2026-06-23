@@ -103,10 +103,16 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
             ->where('thesis_defense_schedule_id', '!=', $thesisDefenseSchedule->id)
             ->pluck('thesis_id');
 
+        $currentScheduleThesisIds = $thesisDefenseSchedule->details()->whereNotNull('thesis_id')->pluck('thesis_id');
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
-            ->where('status', '!=', 'completed')
-            ->where('acc_sidang_p1', true)
-            ->where('acc_sidang_p2', true)
+            ->where(function($query) use ($currentScheduleThesisIds) {
+                $query->where(function($q) {
+                    $q->where('status', '!=', 'completed')
+                      ->where('acc_sidang_p1', true)
+                      ->where('acc_sidang_p2', true);
+                })->orWhereIn('id', $currentScheduleThesisIds);
+            })
             ->whereNotIn('id', $scheduledOtherThesisIds)
             ->get();
 

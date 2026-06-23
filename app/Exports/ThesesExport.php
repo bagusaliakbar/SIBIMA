@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Auth;
 class ThesesExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $search;
+    protected $status;
 
-    public function __construct($search = null)
+    public function __construct($search = null, $status = 'all')
     {
         $this->search = $search;
+        $this->status = $status;
     }
 
     public function collection()
@@ -27,6 +29,10 @@ class ThesesExport implements FromCollection, WithHeadings, WithMapping
                 $q->where('pembimbing1_id', $user->id)
                   ->orWhere('pembimbing2_id', $user->id);
             });
+        }
+
+        if ($this->status && $this->status !== 'all') {
+            $query->where('status', $this->status);
         }
 
         if ($this->search) {

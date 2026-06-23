@@ -156,6 +156,14 @@ class DashboardService
                     }
                 }
             }
+
+            // Fallback: If thesis is already completed, force 100% progress
+            if ($isGraduated) {
+                $currentStage = 6;
+                $progressPercent = 100;
+                $seminarDone = true;
+                $defenseDone = true;
+            }
         }
 
         return [

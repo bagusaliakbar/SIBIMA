@@ -103,10 +103,16 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             ->where('seminar_schedule_id', '!=', $seminarSchedule->id)
             ->pluck('thesis_id');
 
+        $currentScheduleThesisIds = $seminarSchedule->details()->whereNotNull('thesis_id')->pluck('thesis_id');
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
-            ->where('status', '!=', 'completed')
-            ->where('acc_up_p1', true)
-            ->where('acc_up_p2', true)
+            ->where(function($query) use ($currentScheduleThesisIds) {
+                $query->where(function($q) {
+                    $q->where('status', '!=', 'completed')
+                      ->where('acc_up_p1', true)
+                      ->where('acc_up_p2', true);
+                })->orWhereIn('id', $currentScheduleThesisIds);
+            })
             ->whereNotIn('id', $scheduledOtherThesisIds)
             ->get();
 

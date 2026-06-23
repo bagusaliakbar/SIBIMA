@@ -205,7 +205,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             @if(Auth::user()->role === 'mahasiswa')
                 <!-- Stats Mahasiswa -->
-                <x-stat-card title="Status Skripsi" :value="$thesis ? ($thesis->status === 'active' ? 'Aktif' : 'Menunggu') : 'Belum Ada'" color="emerald">
+                <x-stat-card title="Status Skripsi" :value="$thesis ? ($thesis->status === 'completed' ? 'Lulus' : ($thesis->status === 'active' ? 'Aktif' : 'Menunggu')) : 'Belum Ada'" color="emerald">
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </x-slot>

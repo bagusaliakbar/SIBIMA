@@ -45,7 +45,21 @@ class ChatController extends Controller
 
     public function store(Request $request, User $user)
     {
-        $request->validate(['message' => 'required|string|max:1000']);
+        \Illuminate\Support\Facades\Log::info('Chat store request', [
+            'inputs' => $request->all(),
+            'ajax' => $request->ajax(),
+            'user' => Auth::id(),
+            'receiver' => $user->id
+        ]);
+
+        try {
+            $request->validate(['message' => 'required|string|max:1000']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Illuminate\Support\Facades\Log::error('Chat validation failed', [
+                'errors' => $e->errors()
+            ]);
+            throw $e;
+        }
 
         $message = $this->chatService->sendMessage($user, $request->only('message'));
 

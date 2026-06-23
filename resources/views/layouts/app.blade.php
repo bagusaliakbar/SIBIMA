@@ -226,7 +226,7 @@
                         <a href="{{ route('monitoring.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
-                            Monitoring Judul
+                            Monitoring Bimbingan
                         </a>
                         <a href="{{ route('monitoring.revisions') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.revisions') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
@@ -585,52 +585,56 @@
                 const userId = {{ Auth::id() }};
                 
                 // Generic Notifications
-                window.Echo.private(`notifications.${userId}`)
-                    .listen('NewNotification', (e) => {
-                        window.dispatchEvent(new CustomEvent('notify', { 
-                            detail: { 
-                                title: e.title, 
-                                message: e.message, 
-                                type: e.type 
-                            } 
-                        }));
-                        
-                        // Play sound
-                        const audio = document.getElementById('notif-sound');
-                        if (audio) {
-                            audio.currentTime = 0;
-                            audio.play().catch(err => console.log('Audio play failed:', err));
-                        }
-
-                        // Refresh dropdown count if the function exists
-                        if (window.refreshNotifications) {
-                            window.refreshNotifications();
-                        }
-                    });
-
-                // Chat Notifications (when not on chat page)
-                window.Echo.private(`chat.${userId}`)
-                    .listen('MessageSent', (e) => {
-                        // Only show toast if we're not on the chat page with that specific user
-                        const isChatPage = window.location.pathname.includes('/chat/');
-                        const chatPartnerId = window.location.pathname.split('/').pop();
-                        
-                        if (!isChatPage || chatPartnerId != e.message.sender_id) {
+                if (window.Echo) {
+                    window.Echo.private(`notifications.${userId}`)
+                        .listen('NewNotification', (e) => {
                             window.dispatchEvent(new CustomEvent('notify', { 
                                 detail: { 
-                                    title: 'Pesan Baru', 
-                                    message: `${e.message.sender.name}: ${e.message.message.substring(0, 50)}...`, 
-                                    type: 'message' 
+                                    title: e.title, 
+                                    message: e.message, 
+                                    type: e.type 
                                 } 
                             }));
                             
+                            // Play sound
                             const audio = document.getElementById('notif-sound');
                             if (audio) {
                                 audio.currentTime = 0;
                                 audio.play().catch(err => console.log('Audio play failed:', err));
                             }
-                        }
-                    });
+
+                            // Refresh dropdown count if the function exists
+                            if (window.refreshNotifications) {
+                                window.refreshNotifications();
+                            }
+                        });
+
+                    // Chat Notifications (when not on chat page)
+                    window.Echo.private(`chat.${userId}`)
+                        .listen('MessageSent', (e) => {
+                            // Only show toast if we're not on the chat page with that specific user
+                            const isChatPage = window.location.pathname.includes('/chat/');
+                            const chatPartnerId = window.location.pathname.split('/').pop();
+                            
+                            if (!isChatPage || chatPartnerId != e.message.sender_id) {
+                                window.dispatchEvent(new CustomEvent('notify', { 
+                                    detail: { 
+                                        title: 'Pesan Baru', 
+                                        message: `${e.message.sender.name}: ${e.message.message.substring(0, 50)}...`, 
+                                        type: 'message' 
+                                    } 
+                                }));
+                                
+                                const audio = document.getElementById('notif-sound');
+                                if (audio) {
+                                    audio.currentTime = 0;
+                                    audio.play().catch(err => console.log('Audio play failed:', err));
+                                }
+                            }
+                        });
+                } else {
+                    console.warn('Echo is not defined. Real-time notifications are disabled.');
+                }
             });
         </script>
         @stack('scripts')

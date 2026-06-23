@@ -29,7 +29,8 @@ class ThesisController extends Controller
             abort(403);
         }
         $search = $request->input('search');
-        return Excel::download(new ThesesExport($search), 'data-skripsi-' . now()->format('Y-m-d') . '.xlsx');
+        $status = $request->input('status', 'all');
+        return Excel::download(new ThesesExport($search, $status), 'data-skripsi-' . now()->format('Y-m-d') . '.xlsx');
     }
 
     public function exportPdf(Request $request)
@@ -40,10 +41,18 @@ class ThesisController extends Controller
         }
 
         $search = $request->input('search');
-        $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+        $defaultStatus = $user->role === 'dosen' ? 'active' : 'all';
+        $status = $request->input('status', $defaultStatus);
+
+        $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->forUser($user)
-            ->search($search)
-            ->get();
+            ->search($search);
+
+        if ($status !== 'all') {
+            $thesesQuery->where('status', $status);
+        }
+
+        $theses = $thesesQuery->get();
 
         $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         
@@ -84,11 +93,20 @@ class ThesisController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'requestedPembimbing1', 'requestedPembimbing2'])
+        $defaultStatus = $user->role === 'dosen' ? 'active' : 'all';
+        $status = $request->input('status', $defaultStatus);
+
+        $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'requestedPembimbing1', 'requestedPembimbing2'])
             ->forUser($user)
-            ->search($search)
+            ->search($search);
+
+        if ($status !== 'all') {
+            $thesesQuery->where('status', $status);
+        }
+
+        $theses = $thesesQuery->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->appends(['search' => $search]);
+            ->appends(['search' => $search, 'status' => $status]);
 
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosens = User::where('role', 'dosen')
@@ -103,10 +121,10 @@ class ThesisController extends Controller
                     $dosen->total_workload = $dosen->p1_count + $dosen->p2_count;
                     return $dosen;
                 });
-            return view('theses.index', compact('theses', 'dosens', 'search'));
+            return view('theses.index', compact('theses', 'dosens', 'search', 'status'));
         }
 
-        return view('theses.index', compact('theses', 'search'));
+        return view('theses.index', compact('theses', 'search', 'status'));
     }
 
     public function assignPembimbing(AssignPembimbingRequest $request, Thesis $thesis)
