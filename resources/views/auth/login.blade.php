@@ -1,9 +1,7 @@
 <x-guest-layout>
     <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded bg-orange-100 text-orange-600 mb-4">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-        </div>
-        <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Selamat Datang di SIBIMA</h2>
+        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-16 h-16 object-contain mx-auto mb-4">
+        <h2 class="text-2xl font-bold text-slate-800 tracking-tight">SIBIMA-FASILKOM</h2>
         <p class="text-sm text-slate-500 mt-2">Masuk ke akun Anda untuk melanjutkan</p>
     </div>
 
@@ -44,7 +42,7 @@
 
         <div>
             <button type="submit" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 shadow-sm transition-colors">
-                Masuk ke Dasbor
+                Masuk ke Dasboard
             </button>
         </div>
 
@@ -65,6 +63,6 @@
     </form>
     
     <div class="mt-6 text-center text-xs text-slate-500">
-        <p>&copy; {{ date('Y') }} SIBIMA. Hak cipta dilindungi undang-undang.</p>
+        <p>&copy; {{ date('Y') }} SIBIMA-FASILKOM</p>
     </div>
 </x-guest-layout>
