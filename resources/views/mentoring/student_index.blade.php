@@ -87,13 +87,17 @@
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
                                         <span class="text-[10px] font-bold {{ $countP1 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/4</span>
                                     </div>
-                                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 flex items-center gap-3">
-                                        <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $upProgressP1 }}%"></div>
-                                        @if($thesis->acc_up_p1)
-                                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                        @else
-                                            <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 shrink-0"></div>
-                                        @endif
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $upProgressP1 }}%"></div>
+                                        </div>
+                                        <div class="shrink-0">
+                                            @if($thesis->acc_up_p1)
+                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            @else
+                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
 
@@ -103,13 +107,17 @@
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
                                         <span class="text-[10px] font-bold {{ $countP2 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/4</span>
                                     </div>
-                                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 flex items-center gap-3">
-                                        <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $upProgressP2 }}%"></div>
-                                        @if($thesis->acc_up_p2)
-                                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                        @else
-                                            <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 shrink-0"></div>
-                                        @endif
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $upProgressP2 }}%"></div>
+                                        </div>
+                                        <div class="shrink-0">
+                                            @if($thesis->acc_up_p2)
+                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            @else
+                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -131,13 +139,17 @@
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
                                         <span class="text-[10px] font-bold {{ $countP1 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/8</span>
                                     </div>
-                                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 flex items-center gap-3">
-                                        <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $sidangProgressP1 }}%"></div>
-                                        @if($thesis->acc_sidang_p1)
-                                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                        @else
-                                            <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 shrink-0"></div>
-                                        @endif
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $sidangProgressP1 }}%"></div>
+                                        </div>
+                                        <div class="shrink-0">
+                                            @if($thesis->acc_sidang_p1)
+                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            @else
+                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
 
@@ -147,13 +159,17 @@
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
                                         <span class="text-[10px] font-bold {{ $countP2 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/8</span>
                                     </div>
-                                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 flex items-center gap-3">
-                                        <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $sidangProgressP2 }}%"></div>
-                                        @if($thesis->acc_sidang_p2)
-                                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                        @else
-                                            <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 shrink-0"></div>
-                                        @endif
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $sidangProgressP2 }}%"></div>
+                                        </div>
+                                        <div class="shrink-0">
+                                            @if($thesis->acc_sidang_p2)
+                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            @else
+                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>

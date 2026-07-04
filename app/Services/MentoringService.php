@@ -156,19 +156,31 @@ class MentoringService
      */
     public function uploadDocument(MentoringSession $session, $file)
     {
-        if ($session->document_path && Storage::disk('local')->exists($session->document_path)) {
-            Storage::disk('local')->delete($session->document_path);
+        if (!$file) {
+            throw new \Exception('File dokumen tidak ditemukan.');
+        }
+
+        if ($session->document_path && Storage::disk(config('filesystems.default'))->exists($session->document_path)) {
+            Storage::disk(config('filesystems.default'))->delete($session->document_path);
         }
 
         $originalName = $file->getClientOriginalName();
-        $path = $file->store('session-documents', 'local');
+        $path = $file->store('session-documents', config('filesystems.default'));
+
+        if (!$path) {
+            throw new \Exception('Gagal menyimpan file. Pastikan direktori memiliki izin tulis (write permissions).');
+        }
 
         $session->update([
             'document_path'          => $path,
             'document_original_name' => $originalName,
         ]);
 
-        ActivityLog::log('Upload Dokumen Bimbingan', "Mahasiswa mengunggah dokumen bimbingan: {$originalName}", 'Bimbingan', $session);
+        try {
+            ActivityLog::log('Upload Dokumen Bimbingan', "Mahasiswa mengunggah dokumen bimbingan: {$originalName}", 'Bimbingan', $session);
+        } catch (\Exception $e) {
+            // Abaikan error log aktivitas jika terjadi masalah (misal database atau koneksi)
+        }
 
         return $originalName;
     }

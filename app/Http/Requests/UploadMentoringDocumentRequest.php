@@ -15,7 +15,7 @@ class UploadMentoringDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar|max:10240',
+            'document' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,jpg,jpeg,png|max:10240',
         ];
     }
 

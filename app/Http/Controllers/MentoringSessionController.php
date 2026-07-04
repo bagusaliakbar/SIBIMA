@@ -129,9 +129,12 @@ class MentoringSessionController extends Controller
         // Only the session's student can upload
         $this->authorize('uploadDocument', $session);
 
-        $originalName = $this->mentoringService->uploadDocument($session, $request->file('document'));
-
-        return redirect()->back()->with('success', "Dokumen \"{$originalName}\" berhasil diunggah.");
+        try {
+            $originalName = $this->mentoringService->uploadDocument($session, $request->file('document'));
+            return redirect()->back()->with('success', "Dokumen \"{$originalName}\" berhasil diunggah.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', "Gagal mengunggah dokumen: " . $e->getMessage());
+        }
     }
 
     public function deleteDocument(MentoringSession $session)
