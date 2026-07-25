@@ -137,7 +137,7 @@
                                         ];
                                     @endphp
                                     @foreach($files as $file)
-                                        <a href="{{ route('download.private', ['path' => $file['path']]) }}" target="_blank" 
+                                        <a href="{{ $file['path'] }}" target="_blank" 
                                            class="flex items-center px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-lg text-[9px] font-black uppercase tracking-tighter text-slate-600 dark:text-slate-400 hover:bg-{{ $file['color'] }}-50 dark:hover:bg-{{ $file['color'] }}-500/10 hover:text-{{ $file['color'] }}-600 transition-all group/file">
                                             <svg class="w-3 h-3 mr-1.5 text-slate-400 group-hover/file:text-{{ $file['color'] }}-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                             {{ $file['label'] }}
@@ -162,9 +162,6 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex justify-end items-center gap-2" x-data="{ openValidation: false }">
-                                    <a href="{{ route('seminar-applications.download-zip', $app->id) }}" class="p-2 text-slate-400 hover:text-indigo-600 transition-all group/zip" title="Download ZIP">
-                                        <svg class="w-5 h-5 group-hover/zip:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    </a>
                                     <button @click="openValidation = true" class="px-4 py-2 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95">
                                         Validasi
                                     </button>

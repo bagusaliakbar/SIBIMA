@@ -34,7 +34,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->student->name }}</td>
                     <td>{{ $item->student->identifier }}</td>
-                    <td>{{ \App\Models\MentoringSession::where('thesis_id', $item->id)->where('status', 'completed')->count() }}</td>
+                    <td>{{ \App\Models\MentoringSession::where('thesis_id', $item->id)->where('status', 'completed')->where('is_absent', false)->count() }}</td>
                     <td>{{ \App\Models\Logbook::where('thesis_id', $item->id)->count() }}</td>
                     <td>{{ strtoupper($item->status) }}</td>
                 </tr>

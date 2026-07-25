@@ -87,9 +87,9 @@
         .data-table td:first-child { width: 150px; }
         .data-table td:nth-child(2) { width: 15px; text-align: center; }
 
-        .examiner-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .examiner-table th, .examiner-table td { border: 1px solid black; padding: 5px; text-align: left; }
-        .examiner-table th { background-color: #f2f2f2; text-align: center; }
+        .main-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10pt; }
+        .main-table th, .main-table td { border: 1px solid black; padding: 6px; vertical-align: top; }
+        .main-table th { background-color: #f2f2f2; text-align: center; font-weight: bold; }
 
         .footer { margin-top: 40px; float: right; width: 250px; }
     </style>

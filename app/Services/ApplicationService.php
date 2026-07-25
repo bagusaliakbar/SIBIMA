@@ -30,8 +30,20 @@ class ApplicationService
         $sessionKey = str_replace('App\\Models\\', '', $applicationModel) === 'SeminarApplication' ? 'seminar_uploads' : 'defense_uploads';
 
         foreach ($files as $file) {
-            if ($request->hasFile($file)) {
-                $path = $request->file($file)->store(str_replace('App\\Models\\', '', $applicationModel) . '_files', 'local');
+            if ($request->filled($file)) {
+                $data[$file] = $request->input($file);
+                
+                // Clear rejection status for this file
+                if ($existingApplication) {
+                    $reviews = $existingApplication->file_reviews;
+                    if (isset($reviews[$file])) {
+                        unset($reviews[$file]);
+                        $existingApplication->file_reviews = $reviews;
+                        $existingApplication->save();
+                    }
+                }
+            } elseif ($request->hasFile($file)) {
+                $path = $request->file($file)->store(str_replace('App\\Models\\', '', $applicationModel) . '_files', config('filesystems.default'));
                 $data[$file] = $path;
                 
                 // Clear rejection status for this file
@@ -47,7 +59,8 @@ class ApplicationService
                 $tempPath = session()->get($sessionKey . '.path.' . $file);
                 if (\Illuminate\Support\Facades\Storage::disk('local')->exists($tempPath)) {
                     $permanentPath = str_replace('App\\Models\\', '', $applicationModel) . '_files/' . basename($tempPath);
-                    \Illuminate\Support\Facades\Storage::disk('local')->move($tempPath, $permanentPath);
+                    \Illuminate\Support\Facades\Storage::disk(config('filesystems.default'))->put($permanentPath, \Illuminate\Support\Facades\Storage::disk('local')->get($tempPath));
+                    \Illuminate\Support\Facades\Storage::disk('local')->delete($tempPath);
                     $data[$file] = $permanentPath;
                 }
             }
@@ -111,7 +124,7 @@ class ApplicationService
         // Deactivate old templates
         $templateModel::query()->update(['is_active' => false]);
 
-        $path = $file->store($storageDir, 'local');
+        $path = $file->store($storageDir, config('filesystems.default'));
 
         return $templateModel::create([
             'title' => $data['title'],
@@ -135,9 +148,13 @@ class ApplicationService
 
         if ($zip->open($tempFile, ZipArchive::CREATE) === TRUE) {
             foreach ($fileMap as $field => $label) {
-                if ($application->$field && Storage::disk('local')->exists($application->$field)) {
-                    $extension = pathinfo($application->$field, PATHINFO_EXTENSION);
-                    $zip->addFromString($label . '.' . $extension, Storage::disk('local')->get($application->$field));
+                if ($application->$field) {
+                    if (filter_var($application->$field, FILTER_VALIDATE_URL)) {
+                        $zip->addFromString($label . '.url', "[InternetShortcut]\r\nURL=" . $application->$field);
+                    } elseif (Storage::disk(config('filesystems.default'))->exists($application->$field)) {
+                        $extension = pathinfo($application->$field, PATHINFO_EXTENSION);
+                        $zip->addFromString($label . '.' . ($extension ?: 'file'), Storage::disk(config('filesystems.default'))->get($application->$field));
+                    }
                 }
             }
 
@@ -159,7 +176,7 @@ class ApplicationService
 
         foreach ($files as $file) {
             if ($application->$file) {
-                Storage::disk('local')->delete($application->$file);
+                Storage::disk(config('filesystems.default'))->delete($application->$file);
             }
         }
         

@@ -10,6 +10,23 @@ class LetterSettingController extends Controller
     public function index()
     {
         $settings = LetterSetting::all();
+        if ($settings->isEmpty()) {
+            LetterSetting::create([
+                'type' => 'sk_penguji_seminar',
+                'title' => 'SK Tim Penguji Seminar',
+                'format' => '[NUMBER]/SK/UNSUB/FIK/[MONTH]/[YEAR]',
+                'last_number' => 0,
+            ]);
+
+            LetterSetting::create([
+                'type' => 'sk_penguji_sidang',
+                'title' => 'SK Tim Penguji Sidang',
+                'format' => '[NUMBER]/SK/UNSUB/FIK/[MONTH]/[YEAR]',
+                'last_number' => 0,
+            ]);
+
+            $settings = LetterSetting::all();
+        }
         return view('letter_settings.index', compact('settings'));
     }
 

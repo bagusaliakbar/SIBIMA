@@ -66,7 +66,7 @@
                         <x-empty-state 
                             icon="documents" 
                             title="Belum Ada Pengaturan" 
-                            description="Jalankan seeder LetterSettingSeeder untuk memunculkan data default." />
+                            description="Pengaturan nomor surat tidak ditemukan." />
                     </div>
                 @endforelse
             </div>

@@ -124,12 +124,15 @@ class SeminarApplicationController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $this->applicationService->submitApplication(
-            SeminarApplication::class, $thesis, $activeWave, $request, $files,
-            'Pengajuan Seminar', 'Pengajuan Seminar Baru', 'seminar-applications.index'
-        );
-
-        return redirect()->route('seminar-applications.index')->with('success', 'Pengajuan seminar berhasil dikirim. Menunggu validasi admin.');
+        try {
+            $this->applicationService->submitApplication(
+                SeminarApplication::class, $thesis, $activeWave, $request, $files,
+                'Pengajuan Seminar', 'Pengajuan Seminar Baru', 'seminar-applications.index'
+            );
+            return redirect()->route('seminar-applications.index')->with('success', 'Pengajuan seminar berhasil dikirim. Menunggu validasi admin.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal mengajukan seminar: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function uploadTemplate(Request $request)
@@ -141,11 +144,14 @@ class SeminarApplicationController extends Controller
             'template_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
-        $this->applicationService->uploadTemplate(
-            SeminarTemplate::class, $request->only('title'), $request->file('template_file'), 'seminar_templates'
-        );
-
-        return redirect()->back()->with('success', 'Templat formulir seminar berhasil diunggah.');
+        try {
+            $this->applicationService->uploadTemplate(
+                SeminarTemplate::class, $request->only('title'), $request->file('template_file'), 'seminar_templates'
+            );
+            return redirect()->back()->with('success', 'Templat formulir seminar berhasil diunggah.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal mengunggah templat: ' . $e->getMessage());
+        }
     }
 
     public function validateApplication(ValidateApplicationRequest $request, SeminarApplication $application)

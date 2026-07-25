@@ -27,8 +27,12 @@ class RevisionService
         ]);
 
         if ($file) {
-            $path = $file->store(strtolower(str_replace('App\\Models\\', '', $messageModel)) . 's/replies', 'public');
-            $message->update(['file_path' => $path]);
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->store(strtolower(str_replace('App\\Models\\', '', $messageModel)) . 's/replies', config('filesystems.default'));
+                $message->update(['file_path' => $path]);
+            } else {
+                $message->update(['file_path' => $file]);
+            }
         }
 
         return $message;

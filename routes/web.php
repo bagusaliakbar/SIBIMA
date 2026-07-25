@@ -94,6 +94,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/{thesis}/logbooks', [App\Http\Controllers\LogbookController::class, 'show'])->name('theses.logbooks');
     Route::get('/theses/{thesis}/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('theses.logbooks.export-pdf');
 
+    // Seminar & Defense Schedules (Accessible by Admin, Kaprodi, and Dosen)
+    Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
+    Route::get('/seminar-schedules/{seminar_schedule}/export-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportPdf'])->name('seminar-schedules.export-pdf');
+
+    Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
+    Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
+
     // Admin & Kaprodi Routes
     Route::middleware(['role:admin,kaprodi'])->group(function () {
         // Announcements
@@ -126,14 +133,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/documents/sk-penguji-sidang/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSidang'])->name('documents.sk-penguji-sidang');
         Route::get('/admin/letter-settings', [App\Http\Controllers\LetterSettingController::class, 'index'])->name('admin.letter-settings.index');
         Route::put('/admin/letter-settings/{letterSetting}', [App\Http\Controllers\LetterSettingController::class, 'update'])->name('admin.letter-settings.update');
-
-        // Seminar Schedule
-        Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
-        Route::get('/seminar-schedules/{seminar_schedule}/export-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportPdf'])->name('seminar-schedules.export-pdf');
-
-        // Thesis Defense Schedule (Sidang)
-        Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
-        Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
 
         // User Management
         Route::get('/users/export', [App\Http\Controllers\UserController::class, 'export'])->name('users.export');

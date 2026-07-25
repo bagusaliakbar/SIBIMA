@@ -29,7 +29,11 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi' && !in_array($request->route()->getName(), ['thesis-defense-schedules.export-pdf', 'thesis-defense-schedules.show'])) {
+                $userRole = Auth::user()->role;
+                if (!in_array($userRole, ['admin', 'kaprodi', 'dosen'])) {
+                    abort(403);
+                }
+                if ($userRole === 'dosen' && !in_array($request->route()->getName(), ['thesis-defense-schedules.index', 'thesis-defense-schedules.show', 'thesis-defense-schedules.export-pdf'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -42,7 +46,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
         $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
-        $schedules = ThesisDefenseSchedule::with(['chairman', 'moderator', 'creator'])
+        $schedules = ThesisDefenseSchedule::with(['chairman', 'moderator', 'creator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2'])
             ->when($selectedWaveId, function($query) use ($selectedWaveId) {
                 $query->where('wave_id', $selectedWaveId);
             })

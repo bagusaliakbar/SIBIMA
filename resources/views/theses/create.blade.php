@@ -3,9 +3,6 @@
         <x-breadcrumb :items="[
             ['label' => 'Pengajuan Judul', 'route' => null]
         ]" />
-        <h2 class="text-[1.1rem] font-bold text-slate-800 dark:text-slate-100 tracking-tight">
-            Pengajuan Rencana Judul Skripsi
-        </h2>
     </x-slot>
 
     <div class="w-full">

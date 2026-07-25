@@ -75,4 +75,45 @@ class ThesisWorkflowTest extends TestCase
         $session->refresh();
         $this->assertEquals('approved', $session->status);
     }
+
+    public function test_student_cannot_schedule_conflicting_mentoring_session()
+    {
+        $p1 = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen P1']);
+        $p2 = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen P2']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'pembimbing1_id' => $p1->id,
+            'pembimbing2_id' => $p2->id,
+            'title' => 'Judul Test Skripsi',
+            'abstract' => 'Abstrak Test Skripsi',
+            'status' => 'active',
+        ]);
+
+        $scheduledAt = now()->addDays(2)->format('Y-m-d H:i');
+
+        // Create first session with P1
+        $this->actingAs($student)
+            ->post(route('mentoring-sessions.store'), [
+                'thesis_id' => $thesis->id,
+                'topic' => 'Bimbingan Pertama dengan P1',
+                'scheduled_at' => $scheduledAt,
+                'type' => 'online',
+                'dosen_id' => $p1->id,
+            ])
+            ->assertRedirect();
+
+        // Try creating second session at same time with P2
+        $response = $this->actingAs($student)
+            ->post(route('mentoring-sessions.store'), [
+                'thesis_id' => $thesis->id,
+                'topic' => 'Bimbingan Kedua dengan P2 di waktu sama',
+                'scheduled_at' => $scheduledAt,
+                'type' => 'online',
+                'dosen_id' => $p2->id,
+            ]);
+
+        $response->assertSessionHasErrors('scheduled_at');
+    }
 }

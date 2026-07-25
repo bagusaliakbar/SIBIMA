@@ -61,6 +61,8 @@ class MentoringSessionController extends Controller
                 return redirect()->route('dashboard')
                     ->with('success', 'Jadwal bimbingan berhasil diajukan dan menunggu persetujuan dosen.');
             }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -130,8 +132,8 @@ class MentoringSessionController extends Controller
         $this->authorize('uploadDocument', $session);
 
         try {
-            $originalName = $this->mentoringService->uploadDocument($session, $request->file('document'));
-            return redirect()->back()->with('success', "Dokumen \"{$originalName}\" berhasil diunggah.");
+            $this->mentoringService->uploadDocument($session, $request->input('document'));
+            return redirect()->back()->with('success', "Link dokumen berhasil ditambahkan.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', "Gagal mengunggah dokumen: " . $e->getMessage());
         }

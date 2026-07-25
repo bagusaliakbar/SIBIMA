@@ -6,17 +6,7 @@
                     ['label' => 'Revisi Hasil Seminar', 'route' => route('student-seminar-revisions.index')],
                     ['label' => 'Diskusi Revisi', 'route' => null]
                 ]" />
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
-                    Diskusi & Tindak Lanjut Revisi
-                </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    Pantau riwayat revisi dan tindak lanjuti masukan penguji
-                </p>
             </div>
-            <a href="{{ route('student-seminar-revisions.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Kembali
-            </a>
         </div>
     </x-slot>
 
@@ -38,17 +28,6 @@
                     
                     <div class="space-y-4">
                         <div class="pt-4 border-t border-slate-50 dark:border-slate-700">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Seminar Anda</span>
-                            <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                                <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2">"{{ $revision->detail->thesis->title }}"</p>
-                                <div class="flex items-center text-[10px] font-bold text-slate-500">
-                                    <svg class="w-3 h-3 mr-1.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    {{ \Carbon\Carbon::parse($revision->detail->schedule->date)->format('d F Y') }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-50 dark:border-slate-700">
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Daftar Revisi Awal</span>
                             @php
                                 $firstExaminerMessage = $revision->messages->where('sender_id', $revision->examiner_id)->first();
@@ -60,10 +39,6 @@
                                     </p>
                                     <div class="mt-3 flex items-center gap-3">
                                         @if($firstExaminerMessage->file_path)
-                                            <a href="{{ route('download.private', ['path' => $firstExaminerMessage->file_path]) }}" target="_blank" class="inline-flex items-center text-[9px] font-black text-indigo-600 uppercase tracking-widest hover:underline">
-                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                File Pendukung
-                                            </a>
                                         @endif
                                         <a href="{{ route('student-seminar-revisions.print-pdf', $revision->id) }}" target="_blank" class="inline-flex items-center px-2 py-1 bg-indigo-600 text-white rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-sm">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -87,7 +62,7 @@
                 <div class="p-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between">
                     <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center">
                         <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                        History Perbaikan
+                        History Perbaikan Seminar
                     </h3>
                     <div class="flex items-center gap-2">
                         @if($revision->status === 'approved')
@@ -114,9 +89,9 @@
                                     
                                     @if($msg->file_path)
                                         <div class="mt-3 pt-3 border-t {{ $isMe ? 'border-white/10' : 'border-slate-50 dark:border-slate-700' }}">
-                                            <a href="{{ route('download.private', ['path' => $msg->file_path]) }}" target="_blank" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest {{ $isMe ? 'text-orange-100 hover:text-white' : 'text-orange-600 hover:text-orange-700' }}">
-                                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                Unduh Berkas
+                                            <a href="{{ $msg->file_path }}" target="_blank" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest {{ $isMe ? 'text-orange-100 hover:text-white' : 'text-orange-600 hover:text-orange-700' }}">
+                                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                                Buka Tautan
                                             </a>
                                         </div>
                                     @endif
@@ -136,18 +111,14 @@
                             </p>
                         </div>
                     @else
-                        <form action="{{ route('student-seminar-revisions.store-reply', $revision->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <form action="{{ route('student-seminar-revisions.store-reply', $revision->id) }}" method="POST" class="space-y-4">
                             @csrf
                             <div class="relative">
                                 <textarea name="student_notes" rows="3" class="block w-full rounded-2xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-orange-500 focus:ring-orange-500 text-sm font-medium transition-all pr-12" placeholder="Tuliskan penjelasan perbaikan atau progres Anda..." required></textarea>
                             </div>
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                <div x-data="{ fileName: '' }" class="relative">
-                                    <input type="file" id="student_file" name="student_file" class="hidden" @change="fileName = $event.target.files[0].name">
-                                    <label for="student_file" class="inline-flex items-center text-[10px] font-black text-slate-500 hover:text-orange-600 cursor-pointer uppercase tracking-widest transition-colors">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                                        <span x-text="fileName || 'Lampirkan File Perbaikan (Opsional)'"></span>
-                                    </label>
+                                <div class="relative w-full md:w-64">
+                                    <input type="url" name="student_link" id="student_link" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-orange-500 focus:ring-orange-500 text-xs font-medium transition-all" placeholder="Link File / Google Drive (Opsional)">
                                 </div>
                                 <button type="submit" class="px-8 py-2.5 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-100 transition-all">
                                     Kirim Tindak Lanjut

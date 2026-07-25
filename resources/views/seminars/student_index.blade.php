@@ -102,7 +102,7 @@
                                             @endif
                                         </div>
                                         <div class="mt-1 flex items-center gap-2">
-                                            <a href="{{ route('download.private', ['path' => $application->$field]) }}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline">Lihat Berkas</a>
+                                            <a href="{{ $application->$field }}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline">Buka Link Dokumen</a>
                                         </div>
                                         @if(isset($application->file_reviews[$field]['note']) && $application->file_reviews[$field]['note'])
                                             <div class="mt-2 p-2 bg-rose-100/50 dark:bg-rose-900/30 rounded border border-rose-200/50 dark:border-rose-800/50">
@@ -131,22 +131,10 @@
                                         @if(isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected')
                                             <div class="space-y-2">
                                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">{{ $info['label'] }} <span class="text-red-500">*</span></label>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold tracking-wide">
-                                                    @if($field === 'file_skripsi')
-                                                        Format: PDF, DOC, DOCX • Maks 10MB
-                                                    @elseif($field === 'file_formulir')
-                                                        Format: PDF, DOC, DOCX • Maks 2MB
-                                                    @else
-                                                        Format: PDF, JPG, JPEG, PNG • Maks 2MB
-                                                    @endif
+                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold tracking-wide mb-2">
+                                                    Masukkan link dari Google Drive.
                                                 </p>
-                                                <input type="file" name="{{ $field }}" {{ session()->has('seminar_uploads.path.' . $field) ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
-                                                @if(session()->has('seminar_uploads.name.' . $field))
-                                                    <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
-                                                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
-                                                        <span class="truncate">Terunggah: {{ session('seminar_uploads.name.' . $field) }}</span>
-                                                    </p>
-                                                @endif
+                                                <input type="url" name="{{ $field }}" value="{{ old($field, $application->$field ?? '') }}" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
                                                 @error($field) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                                             </div>
                                         @endif
@@ -174,7 +162,7 @@
                                 <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black rounded uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
                                     {{ $activeWave->name ?? 'Gelombang Aktif' }}
                                 </span>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Pastikan semua dokumen dalam format PDF atau Gambar (maks 2MB per file), kecuali Soft File Skripsi (maks 10MB).</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Lampirkan link Google Drive untuk setiap dokumen persyaratan yang diminta.</p>
                             </div>
                         </div>
                         
@@ -194,76 +182,46 @@
                     </div>
                 </div>
 
-                <form action="{{ route('seminar-applications.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                <form action="{{ route('seminar-applications.store') }}" method="POST" class="p-6">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Requirement 1 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">1. Scan Bukti ACC Pembimbing 1 & 2 <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah tangkapan layar atau scan bukti persetujuan dari kedua dosen pembimbing (Format: PDF, JPG, JPEG, PNG • Maks 2MB).</p>
-                            <input type="file" name="file_acc_pembimbing" {{ session()->has('seminar_uploads.path.file_acc_pembimbing') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
-                            @if(session()->has('seminar_uploads.name.file_acc_pembimbing'))
-                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
-                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_acc_pembimbing') }}</span>
-                                </p>
-                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah tangkapan layar atau scan bukti persetujuan dari kedua dosen pembimbing ke Google Drive.</p>
+                            <input type="url" name="file_acc_pembimbing" value="{{ old('file_acc_pembimbing', $application->file_acc_pembimbing ?? '') }}" placeholder="https://drive.google.com/..." {{ isset($application->file_acc_pembimbing) ? '' : 'required' }} class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
                             @error('file_acc_pembimbing') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 2 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">2. Scan Bukti Pembayaran Seminar <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah bukti transfer atau kwitansi pembayaran biaya pendaftaran seminar (Format: PDF, JPG, JPEG, PNG • Maks 2MB).</p>
-                            <input type="file" name="file_pembayaran" {{ session()->has('seminar_uploads.path.file_pembayaran') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
-                            @if(session()->has('seminar_uploads.name.file_pembayaran'))
-                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
-                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_pembayaran') }}</span>
-                                </p>
-                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah bukti transfer atau kwitansi pembayaran biaya pendaftaran seminar ke Google Drive.</p>
+                            <input type="url" name="file_pembayaran" value="{{ old('file_pembayaran', $application->file_pembayaran ?? '') }}" placeholder="https://drive.google.com/..." {{ isset($application->file_pembayaran) ? '' : 'required' }} class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
                             @error('file_pembayaran') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 3 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">3. Scan Kartu Bimbingan / Logbook <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah scan kartu bimbingan yang sudah divalidasi atau logbook bimbingan P1 & P2 (Format: PDF, JPG, JPEG, PNG • Maks 2MB).</p>
-                            <input type="file" name="file_kartu_bimbingan" {{ session()->has('seminar_uploads.path.file_kartu_bimbingan') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
-                            @if(session()->has('seminar_uploads.name.file_kartu_bimbingan'))
-                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
-                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_kartu_bimbingan') }}</span>
-                                </p>
-                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah scan kartu bimbingan yang sudah divalidasi atau logbook bimbingan P1 & P2 ke Google Drive.</p>
+                            <input type="url" name="file_kartu_bimbingan" value="{{ old('file_kartu_bimbingan', $application->file_kartu_bimbingan ?? '') }}" placeholder="https://drive.google.com/..." {{ isset($application->file_kartu_bimbingan) ? '' : 'required' }} class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
                             @error('file_kartu_bimbingan') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 4 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">4. Dokumen Soft File Skripsi <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah naskah skripsi lengkap dalam format PDF atau Word (Maks 10MB).</p>
-                            <input type="file" name="file_skripsi" {{ session()->has('seminar_uploads.path.file_skripsi') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
-                            @if(session()->has('seminar_uploads.name.file_skripsi'))
-                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
-                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_skripsi') }}</span>
-                                </p>
-                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unggah naskah skripsi lengkap ke Google Drive.</p>
+                            <input type="url" name="file_skripsi" value="{{ old('file_skripsi', $application->file_skripsi ?? '') }}" placeholder="https://drive.google.com/..." {{ isset($application->file_skripsi) ? '' : 'required' }} class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
                             @error('file_skripsi') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Requirement 5 -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">5. Formulir Pendaftaran Seminar (Terisi) <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unduh templat di atas, isi lengkap, lalu unggah kembali di sini (Format: PDF, DOC, DOCX • Maks 2MB).</p>
-                            <input type="file" name="file_formulir" {{ session()->has('seminar_uploads.path.file_formulir') ? '' : 'required' }} class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-900/30 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-md p-1">
-                            @if(session()->has('seminar_uploads.name.file_formulir'))
-                                <p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold mt-1 flex items-center gap-1">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
-                                    <span class="truncate">Terunggah: {{ session('seminar_uploads.name.file_formulir') }}</span>
-                                </p>
-                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Unduh templat di atas, isi lengkap, lalu unggah ke Google Drive.</p>
+                            <input type="url" name="file_formulir" value="{{ old('file_formulir', $application->file_formulir ?? '') }}" placeholder="https://drive.google.com/..." {{ isset($application->file_formulir) ? '' : 'required' }} class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
                             @error('file_formulir') <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>

@@ -108,6 +108,7 @@ class UsersImport implements ToCollection
             User::create([
                 'name' => $name,
                 'email' => $email,
+                'username' => $identifier,
                 'password' => Hash::make($identifier), // Default password is the NPM/NIDN
                 'role' => $role,
                 'identifier' => $identifier,

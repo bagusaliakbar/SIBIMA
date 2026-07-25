@@ -129,12 +129,15 @@ class ThesisDefenseApplicationController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $this->applicationService->submitApplication(
-            ThesisDefenseApplication::class, $thesis, $activeWave, $request, $files,
-            'Pengajuan Sidang', 'Pengajuan Sidang Baru', 'thesis-defense-applications.index'
-        );
-
-        return redirect()->route('thesis-defense-applications.index')->with('success', 'Pengajuan sidang skripsi berhasil dikirim. Menunggu validasi admin.');
+        try {
+            $this->applicationService->submitApplication(
+                ThesisDefenseApplication::class, $thesis, $activeWave, $request, $files,
+                'Pengajuan Sidang', 'Pengajuan Sidang Baru', 'thesis-defense-applications.index'
+            );
+            return redirect()->route('thesis-defense-applications.index')->with('success', 'Pengajuan sidang skripsi berhasil dikirim. Menunggu validasi admin.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal mengajukan sidang skripsi: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function uploadTemplate(Request $request)
@@ -146,11 +149,14 @@ class ThesisDefenseApplicationController extends Controller
             'template_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
-        $this->applicationService->uploadTemplate(
-            ThesisDefenseTemplate::class, $request->only('title'), $request->file('template_file'), 'thesis_defense_templates'
-        );
-
-        return redirect()->back()->with('success', 'Templat formulir sidang skripsi berhasil diunggah.');
+        try {
+            $this->applicationService->uploadTemplate(
+                ThesisDefenseTemplate::class, $request->only('title'), $request->file('template_file'), 'thesis_defense_templates'
+            );
+            return redirect()->back()->with('success', 'Templat formulir sidang skripsi berhasil diunggah.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal mengunggah templat: ' . $e->getMessage());
+        }
     }
 
     public function validateApplication(ValidateApplicationRequest $request, ThesisDefenseApplication $application)

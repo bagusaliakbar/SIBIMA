@@ -18,7 +18,28 @@ class DocumentController extends Controller
     {
         return DB::transaction(function () use ($type) {
             $setting = LetterSetting::where('type', $type)->first();
-            if (!$setting) return "000/SURAT-TIDAK-DITEMUKAN";
+            if (!$setting) {
+                $defaults = [
+                    'sk_penguji_seminar' => [
+                        'title' => 'SK Tim Penguji Seminar',
+                        'format' => '[NUMBER]/SK/UNSUB/FIK/[MONTH]/[YEAR]',
+                    ],
+                    'sk_penguji_sidang' => [
+                        'title' => 'SK Tim Penguji Sidang',
+                        'format' => '[NUMBER]/SK/UNSUB/FIK/[MONTH]/[YEAR]',
+                    ]
+                ];
+                if (isset($defaults[$type])) {
+                    $setting = LetterSetting::create([
+                        'type' => $type,
+                        'title' => $defaults[$type]['title'],
+                        'format' => $defaults[$type]['format'],
+                        'last_number' => 0,
+                    ]);
+                } else {
+                    return "000/SURAT-TIDAK-DITEMUKAN";
+                }
+            }
 
             $setting->increment('last_number');
             $number = str_pad($setting->last_number, 3, '0', STR_PAD_LEFT);

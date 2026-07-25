@@ -79,7 +79,7 @@ class MonitoringExport implements FromCollection, WithHeadings, WithMapping, Sho
                     $this->rowNumber,
                     $item->student->name,
                     $item->student->identifier,
-                    $item->mentoring_sessions_count ?? \App\Models\MentoringSession::where('thesis_id', $item->id)->where('status', 'completed')->count(),
+                    $item->mentoring_sessions_count ?? \App\Models\MentoringSession::where('thesis_id', $item->id)->where('status', 'completed')->where('is_absent', false)->count(),
                     $item->logbooks_count ?? \App\Models\Logbook::where('thesis_id', $item->id)->count(),
                     strtoupper($item->status)
                 ];

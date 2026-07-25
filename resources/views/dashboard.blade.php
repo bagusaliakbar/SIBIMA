@@ -5,7 +5,6 @@
                 <x-breadcrumb />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Dashboard
-                    <span class="ml-3 px-2 py-0.5 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-orange-200 dark:border-orange-500/20 shadow-sm">v2.0</span>
                 </h2>
                 <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
                     <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
@@ -182,9 +181,6 @@
                 
                 <div class="relative z-10 flex flex-col md:flex-row items-center gap-10">
                     <div class="flex-1 text-center md:text-left">
-                        <div class="inline-flex items-center px-3 py-1 bg-orange-500/10 text-orange-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-full mb-4 border border-orange-500/20">
-                            Status: LULUS
-                        </div>
                         <h2 class="text-3xl font-black tracking-tight mb-3 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Selamat, {{ Auth::user()->name }}!</h2>
                         <p class="text-slate-400 font-medium text-base leading-relaxed max-w-2xl">
                             Seluruh tahapan skripsi telah Anda selesaikan dengan baik. Anda kini dinyatakan <span class="text-amber-400 font-bold">LULUS</span>. Terima kasih atas dedikasi dan kerja keras Anda selama ini.
@@ -363,16 +359,6 @@
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
             <!-- Advanced Analytics Section -->
             <div class="mb-10 mt-4">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-none">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight uppercase">Pusat Analisis Strategis</h2>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Wawasan real-time untuk pengambilan keputusan</p>
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <!-- Score Distribution -->
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
@@ -527,11 +513,31 @@
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $mySeminarSchedule->schedule->location ?: '-' }}</p>
                                     </div>
                                 </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Pembimbing</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
+                                            <p><span class="text-[10px] text-slate-400">P1:</span> {{ $mySeminarSchedule->thesis->pembimbing1->name ?? $thesis->pembimbing1->name ?? '-' }}</p>
+                                            @if(($mySeminarSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name ?? false))
+                                                <p><span class="text-[10px] text-slate-400">P2:</span> {{ $mySeminarSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Penguji</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
+                                            <p><span class="text-[10px] text-slate-400">U1:</span> {{ $mySeminarSchedule->examiner1->name ?? '-' }}</p>
+                                            @if($mySeminarSchedule->examiner2)
+                                                <p><span class="text-[10px] text-slate-400">U2:</span> {{ $mySeminarSchedule->examiner2->name }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
                                 @if($mySeminarSchedule->schedule->meeting_link && !$isSeminarFinished)
                                     <div class="pt-2">
                                         <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                            Join Online Meeting
+                                            Gabung Sekarang
                                         </a>
                                     </div>
                                 @endif
@@ -579,6 +585,26 @@
                                     <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ruangan/Tempat</p>
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $myDefenseSchedule->schedule->location ?: '-' }}</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Pembimbing</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
+                                            <p><span class="text-[10px] text-slate-400">P1:</span> {{ $myDefenseSchedule->thesis->pembimbing1->name ?? $thesis->pembimbing1->name ?? '-' }}</p>
+                                            @if(($myDefenseSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name ?? false))
+                                                <p><span class="text-[10px] text-slate-400">P2:</span> {{ $myDefenseSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Penguji</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
+                                            <p><span class="text-[10px] text-slate-400">U1:</span> {{ $myDefenseSchedule->examiner1->name ?? '-' }}</p>
+                                            @if($myDefenseSchedule->examiner2)
+                                                <p><span class="text-[10px] text-slate-400">U2:</span> {{ $myDefenseSchedule->examiner2->name }}</p>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 @if($myDefenseSchedule->schedule->meeting_link && !$isDefenseFinished)

@@ -67,10 +67,10 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
 
         $request->validate([
             'student_notes' => 'required|string',
-            'student_file' => 'nullable|file|mimes:pdf,doc,docx,zip,rar|max:10240',
+            'student_link' => 'nullable|url',
         ]);
 
-        $this->revisionService->storeReply($revision, SeminarRevisionMessage::class, $request->only('student_notes'), $request->file('student_file'));
+        $this->revisionService->storeReply($revision, SeminarRevisionMessage::class, $request->only('student_notes'), $request->input('student_link'));
 
         return redirect()->back()->with('success', 'Follow-up revisi berhasil dikirim.');
     }

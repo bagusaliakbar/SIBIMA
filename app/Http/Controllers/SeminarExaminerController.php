@@ -82,15 +82,18 @@ class SeminarExaminerController extends Controller implements HasMiddleware
 
         $request->validate([
             'revision_notes' => 'required|string',
-            'revision_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            'revision_link' => 'nullable|url',
         ]);
 
-        $this->examinerService->storeRevision(
-            SeminarRevision::class, SeminarRevisionMessage::class, $detail, 
-            $request->only('revision_notes'), $request->file('revision_file')
-        );
-
-        return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
+        try {
+            $this->examinerService->storeRevision(
+                SeminarRevision::class, SeminarRevisionMessage::class, $detail, 
+                $request->only('revision_notes'), $request->input('revision_link')
+            );
+            return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal mengirim catatan revisi: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function approveRevision(SeminarRevision $revision)

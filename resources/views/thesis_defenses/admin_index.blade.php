@@ -141,9 +141,6 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex justify-end items-center gap-2" x-data="{ openValidation: false, showFiles: false }">
-                                    <a href="{{ route('thesis-defense-applications.download-zip', $app->id) }}" class="p-2 text-slate-400 hover:text-indigo-600 transition-all group/zip" title="Download ZIP">
-                                        <svg class="w-5 h-5 group-hover/zip:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    </a>
                                     <button @click="showFiles = true" class="px-4 py-2 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
                                         Berkas (20)
                                     </button>
@@ -190,7 +187,7 @@
                                                         ];
                                                     @endphp
                                                     @foreach($fileLabels as $field => $label)
-                                                        <a href="{{ route('download.private', ['path' => $app->$field]) }}" target="_blank" class="flex items-center p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-900 transition-all group/file shadow-sm">
+                                                        <a href="{{ $app->$field }}" target="_blank" class="flex items-center p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-900 transition-all group/file shadow-sm">
                                                             <div class="p-2 bg-white dark:bg-slate-800 rounded-lg mr-4 border border-slate-100 dark:border-slate-700 group-hover/file:bg-indigo-50 transition-colors">
                                                                 <svg class="w-5 h-5 text-slate-400 group-hover/file:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                             </div>
@@ -226,10 +223,7 @@
                                                                 @foreach($fileLabels as $field => $label)
                                                                     <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-700">
                                                                         <div class="flex items-center justify-between mb-3">
-                                                                            <div class="flex flex-col">
-                                                                                <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">{{ $label }}</span>
-                                                                                <a href="{{ route('download.private', ['path' => $app->$field]) }}" target="_blank" class="text-[9px] text-indigo-600 font-black uppercase tracking-widest hover:underline mt-1">Buka File</a>
-                                                                            </div>
+                                                                            <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">{{ $label }}</span>
                                                                             <div class="flex items-center gap-3">
                                                                                 <label class="inline-flex items-center cursor-pointer">
                                                                                     <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" {{ !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved' ? 'checked' : '' }} class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600">

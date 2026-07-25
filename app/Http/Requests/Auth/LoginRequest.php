@@ -6,10 +6,12 @@ use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\ActivityLog;
+use App\Models\User;
 
 class LoginRequest extends FormRequest
 {
@@ -29,7 +31,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -43,20 +45,30 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $loginInput = $this->input('username');
+        $password = $this->input('password');
+
+        $user = User::where('username', $loginInput)
+            ->orWhere('identifier', $loginInput)
+            ->orWhere('email', $loginInput)
+            ->first();
+
+        if (! $user || ! Hash::check($password, $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'username' => trans('auth.failed'),
             ]);
         }
 
-        if (! Auth::user()->is_active) {
+        if (! $user->is_active) {
             Auth::logout();
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda belum aktif. Silakan hubungi admin untuk validasi.',
+                'username' => 'Akun Anda belum aktif. Silakan hubungi admin untuk validasi.',
             ]);
         }
+
+        Auth::login($user, $this->boolean('remember'));
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -77,7 +89,7 @@ class LoginRequest extends FormRequest
         ActivityLog::create([
             'user_id' => null,
             'activity' => 'Login Diblokir (Rate Limit)',
-            'description' => "Terdeteksi percobaan login berulang untuk email: {$this->input('email')}",
+            'description' => "Terdeteksi percobaan login berulang untuk username: {$this->input('username')}",
             'module' => 'Auth',
             'ip_address' => $this->ip(),
             'user_agent' => $this->userAgent(),
@@ -86,7 +98,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'username' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -98,6 +110,7 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
     }
 }
+

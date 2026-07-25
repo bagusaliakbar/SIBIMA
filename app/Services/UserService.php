@@ -23,6 +23,7 @@ class UserService
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'username' => $data['username'] ?? $data['identifier'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'],
             'identifier' => $data['identifier'],

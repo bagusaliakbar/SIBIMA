@@ -76,7 +76,7 @@
                             <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Seminar Usulan Penelitian (UP)</span>
                                 @if($thesis->isAccUpFinal())
-                                    <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-100 dark:border-emerald-500/20">SIAP SEMINAR</span>
+                                    <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-100 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
                                 @endif
                             </div>
                             
@@ -226,7 +226,7 @@
                                             @if($session->location)
                                                 <a href="{{ Str::startsWith($session->location, 'http') ? $session->location : 'https://' . $session->location }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline font-medium" title="{{ $session->location }}">
                                                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                    Gabung Rapat
+                                                    Link
                                                 </a>
                                             @endif
                                         @else
@@ -269,8 +269,8 @@
                                             @if($session->document_path)
                                                 {{-- Dokumen sudah ada --}}
                                                 <div class="flex items-center gap-2 mb-2 p-2 bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 rounded-md">
-                                                    <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                    <a href="{{ route('download.private', ['path' => $session->document_path]) }}" target="_blank" class="text-xs text-orange-700 dark:text-orange-400 font-semibold hover:underline truncate max-w-[120px]" title="{{ $session->document_original_name }}">
+                                                    <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                                    <a href="{{ $session->document_path }}" target="_blank" class="text-xs text-orange-700 dark:text-orange-400 font-semibold hover:underline truncate max-w-[120px]" title="{{ $session->document_original_name }}">
                                                         {{ $session->document_original_name }}
                                                     </a>
                                                 </div>
@@ -293,22 +293,22 @@
                                             @else
                                                 {{-- Belum ada dokumen --}}
                                                 <button type="button" @click="uploading = !uploading" class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 rounded-md hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                                    Upload Dokumen
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                                    Lampirkan Dokumen
                                                 </button>
                                             @endif
 
                                             {{-- Upload form (collapsible) --}}
                                             <div x-show="uploading" x-cloak x-transition class="mt-2">
-                                                <form action="{{ route('mentoring-sessions.upload-document', $session->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-1.5">
+                                                <form action="{{ route('mentoring-sessions.upload-document', $session->id) }}" method="POST" class="flex flex-col gap-1.5">
                                                     @csrf
                                                     <label class="block">
-                                                        <input type="file" name="document" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar"
-                                                            class="block w-full text-xs text-slate-600 dark:text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-orange-50 dark:file:bg-orange-500/10 file:text-orange-700 dark:file:text-orange-400 hover:file:bg-orange-100 dark:hover:file:bg-orange-500/20 cursor-pointer">
+                                                        <input type="url" name="document" placeholder="https://drive.google.com/..." required
+                                                            class="block w-full text-xs text-slate-600 dark:text-slate-400 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-1.5 px-2">
                                                     </label>
-                                                    <p class="text-[10px] text-slate-400">PDF, DOC, DOCX, PPT, ZIP. Maks 10MB.</p>
+                                                    <p class="text-[10px] text-slate-400">Masukkan Dokumen dari Google Drive.</p>
                                                     <div class="flex gap-1">
-                                                        <button type="submit" class="px-2.5 py-1 bg-orange-600 text-white text-[10px] font-bold rounded hover:bg-orange-700 transition-colors">Unggah</button>
+                                                        <button type="submit" class="px-2.5 py-1 bg-orange-600 text-white text-[10px] font-bold rounded hover:bg-orange-700 transition-colors">Simpan</button>
                                                         <button type="button" @click="uploading = false" class="px-2.5 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 text-[10px] font-semibold rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">Batal</button>
                                                     </div>
                                                 </form>
@@ -316,8 +316,8 @@
                                         </div>
                                     @elseif($session->document_path)
                                         {{-- Sesi selesai/ditolak tapi ada dokumen: tampilkan read-only --}}
-                                        <a href="{{ route('download.private', ['path' => $session->document_path]) }}" target="_blank" class="flex items-center gap-1.5 text-xs text-slate-600 hover:text-orange-700 transition-colors">
-                                            <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <a href="{{ $session->document_path }}" target="_blank" class="flex items-center gap-1.5 text-xs text-slate-600 hover:text-orange-700 transition-colors">
+                                            <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                             <span class="truncate max-w-[150px]">{{ $session->document_original_name }}</span>
                                         </a>
                                     @else

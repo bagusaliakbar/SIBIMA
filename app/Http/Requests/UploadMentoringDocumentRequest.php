@@ -15,16 +15,15 @@ class UploadMentoringDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,jpg,jpeg,png|max:10240',
+            'document' => 'required|url',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'document.required'  => 'Pilih file dokumen terlebih dahulu.',
-            'document.mimes'     => 'Format file harus: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP, atau RAR.',
-            'document.max'       => 'Ukuran file maksimal 10 MB.',
+            'document.required'  => 'Masukkan link Google Drive terlebih dahulu.',
+            'document.url'       => 'Format link tidak valid.',
         ];
     }
 }

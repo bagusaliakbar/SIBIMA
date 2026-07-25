@@ -30,7 +30,10 @@ class Thesis extends Model
 
     public function getCompletedMentoringCountAttribute()
     {
-        return $this->mentoringSessions()->where('status', 'completed')->count();
+        return $this->mentoringSessions()
+            ->where('status', 'completed')
+            ->where('is_absent', false)
+            ->count();
     }
 
     public function getCompletedMentoringCountForDosen($dosenId)
@@ -38,6 +41,7 @@ class Thesis extends Model
         return $this->mentoringSessions()
             ->where('dosen_id', $dosenId)
             ->where('status', 'completed')
+            ->where('is_absent', false)
             ->count();
     }
 

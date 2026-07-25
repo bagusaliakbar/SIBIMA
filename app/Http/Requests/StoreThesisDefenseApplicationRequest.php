@@ -35,15 +35,9 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
             $hasSession = session()->has('defense_uploads.path.' . $file);
 
             if (($isMissing || $isRejected) && !$hasSession) {
-                if ($file === 'file_skripsi') {
-                    $rules[$file] = 'required|file|mimes:pdf,doc,docx|max:10240';
-                } elseif ($file === 'file_formulir') {
-                    $rules[$file] = 'required|file|mimes:pdf,doc,docx|max:2048';
-                } else {
-                    $rules[$file] = 'required|file|mimes:pdf,jpg,jpeg,png|max:2048';
-                }
+                $rules[$file] = 'required|url';
             } else {
-                $rules[$file] = 'nullable|file';
+                $rules[$file] = 'nullable|url';
             }
         }
 
@@ -53,36 +47,34 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'file_formulir' => 'formulir pendaftaran sidang',
-            'file_transkrip' => 'transkrip nilai',
-            'file_acc_pembimbing' => 'dokumen ACC pembimbing',
-            'file_logbook' => 'logbook bimbingan',
-            'file_pembayaran' => 'bukti pembayaran',
-            'file_skripsi' => 'draf skripsi final',
-            'file_ktm' => 'KTM',
-            'file_pkkmb_univ' => 'sertifikat PKKMB Universitas',
-            'file_pkkmb_fak' => 'sertifikat PKKMB Fakultas',
-            'file_makrab' => 'sertifikat Makrab',
-            'file_cisco' => 'sertifikat Cisco',
-            'file_workshop' => 'sertifikat Workshop/Seminar',
-            'file_organisasi' => 'sertifikat Organisasi',
-            'file_toefl' => 'sertifikat TOEFL',
-            'file_kewirausahaan' => 'sertifikat Kewirausahaan',
-            'file_tahsin' => 'sertifikat Tahsin',
-            'file_komputer' => 'sertifikat Komputer',
-            'file_perpus_pinjam' => 'surat bebas pinjam perpustakaan',
-            'file_perpus_sumbang' => 'surat bebas sumbang perpustakaan',
-            'file_ijazah' => 'ijazah terakhir',
+            'file_formulir' => 'link formulir pendaftaran sidang',
+            'file_transkrip' => 'link transkrip nilai',
+            'file_acc_pembimbing' => 'link dokumen ACC pembimbing',
+            'file_logbook' => 'link logbook bimbingan',
+            'file_pembayaran' => 'link bukti pembayaran',
+            'file_skripsi' => 'link draf skripsi final',
+            'file_ktm' => 'link KTM',
+            'file_pkkmb_univ' => 'link sertifikat PKKMB Universitas',
+            'file_pkkmb_fak' => 'link sertifikat PKKMB Fakultas',
+            'file_makrab' => 'link sertifikat Makrab',
+            'file_cisco' => 'link sertifikat Cisco',
+            'file_workshop' => 'link sertifikat Workshop/Seminar',
+            'file_organisasi' => 'link sertifikat Organisasi',
+            'file_toefl' => 'link sertifikat TOEFL',
+            'file_kewirausahaan' => 'link sertifikat Kewirausahaan',
+            'file_tahsin' => 'link sertifikat Tahsin',
+            'file_komputer' => 'link sertifikat Komputer',
+            'file_perpus_pinjam' => 'link surat bebas pinjam perpustakaan',
+            'file_perpus_sumbang' => 'link surat bebas sumbang perpustakaan',
+            'file_ijazah' => 'link ijazah terakhir',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'required' => 'Dokumen :attribute wajib diunggah.',
-            'file' => 'Dokumen :attribute harus berupa file.',
-            'mimes' => 'Dokumen :attribute harus berformat: :values.',
-            'max' => 'Ukuran dokumen :attribute maksimal adalah :max kilobita.',
+            'required' => ':attribute wajib diisi.',
+            'url' => ':attribute harus berupa URL/link Google Drive yang valid.',
         ];
     }
 }

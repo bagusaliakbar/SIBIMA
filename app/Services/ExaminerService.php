@@ -37,8 +37,12 @@ class ExaminerService
         ]);
 
         if ($file) {
-            $path = $file->store(str_replace('_id', '', $revisionKey) . 's', 'public');
-            $message->update(['file_path' => $path]);
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->store(str_replace('_id', '', $revisionKey) . 's', config('filesystems.default'));
+                $message->update(['file_path' => $path]);
+            } else {
+                $message->update(['file_path' => $file]);
+            }
         }
 
         return $message;

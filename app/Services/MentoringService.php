@@ -61,6 +61,33 @@ class MentoringService
                 throw new \Exception('Unauthorized access to thesis.', 403);
             }
             
+            $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+            $data['scheduled_at'] = $scheduledAt;
+
+            $existingDosenSession = MentoringSession::where('dosen_id', Auth::id())
+                ->where('scheduled_at', $scheduledAt)
+                ->where('status', '!=', 'rejected')
+                ->first();
+
+            if ($existingDosenSession) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'scheduled_at' => 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.',
+                ]);
+            }
+
+            $existingStudentSession = MentoringSession::whereHas('thesis', function($q) use ($thesis) {
+                    $q->where('student_id', $thesis->student_id);
+                })
+                ->where('scheduled_at', $scheduledAt)
+                ->where('status', '!=', 'rejected')
+                ->first();
+
+            if ($existingStudentSession) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'scheduled_at' => "Mahasiswa {$thesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                ]);
+            }
+
             $session = $this->createSessionForThesis($thesis, $data, 'approved');
 
             ActivityLog::log('Jadwal Bimbingan', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
@@ -80,10 +107,36 @@ class MentoringService
     {
         $thesis = Thesis::where('student_id', Auth::id())->firstOrFail();
         
+        $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+
+        $existingStudentSession = MentoringSession::whereHas('thesis', function($q) {
+                $q->where('student_id', Auth::id());
+            })
+            ->where('scheduled_at', $scheduledAt)
+            ->where('status', '!=', 'rejected')
+            ->first();
+
+        if ($existingStudentSession) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'scheduled_at' => 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam yang sama.',
+            ]);
+        }
+
+        $existingDosenSession = MentoringSession::where('dosen_id', $data['dosen_id'])
+            ->where('scheduled_at', $scheduledAt)
+            ->where('status', '!=', 'rejected')
+            ->first();
+
+        if ($existingDosenSession) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'scheduled_at' => 'Dosen pembimbing yang Anda pilih sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.',
+            ]);
+        }
+
         $session = MentoringSession::create([
             'thesis_id' => $thesis->id,
             'dosen_id' => $data['dosen_id'],
-            'scheduled_at' => $data['scheduled_at'],
+            'scheduled_at' => $scheduledAt,
             'topic' => $data['topic'],
             'type' => $data['type'],
             'location' => $data['location'] ?? null,
@@ -154,35 +207,28 @@ class MentoringService
     /**
      * Upload document for a mentoring session.
      */
-    public function uploadDocument(MentoringSession $session, $file)
+    public function uploadDocument(MentoringSession $session, $url)
     {
-        if (!$file) {
-            throw new \Exception('File dokumen tidak ditemukan.');
+        if (!$url) {
+            throw new \Exception('Link Google Drive tidak ditemukan.');
         }
 
-        if ($session->document_path && Storage::disk(config('filesystems.default'))->exists($session->document_path)) {
+        if ($session->document_path && !filter_var($session->document_path, FILTER_VALIDATE_URL) && Storage::disk(config('filesystems.default'))->exists($session->document_path)) {
             Storage::disk(config('filesystems.default'))->delete($session->document_path);
         }
 
-        $originalName = $file->getClientOriginalName();
-        $path = $file->store('session-documents', config('filesystems.default'));
-
-        if (!$path) {
-            throw new \Exception('Gagal menyimpan file. Pastikan direktori memiliki izin tulis (write permissions).');
-        }
-
         $session->update([
-            'document_path'          => $path,
-            'document_original_name' => $originalName,
+            'document_path'          => $url,
+            'document_original_name' => 'Link Google Drive',
         ]);
 
         try {
-            ActivityLog::log('Upload Dokumen Bimbingan', "Mahasiswa mengunggah dokumen bimbingan: {$originalName}", 'Bimbingan', $session);
+            ActivityLog::log('Upload Dokumen Bimbingan', "Mahasiswa melampirkan link dokumen bimbingan", 'Bimbingan', $session);
         } catch (\Exception $e) {
             // Abaikan error log aktivitas jika terjadi masalah (misal database atau koneksi)
         }
 
-        return $originalName;
+        return 'Link Google Drive';
     }
 
     /**
@@ -190,7 +236,7 @@ class MentoringService
      */
     public function deleteDocument(MentoringSession $session)
     {
-        if ($session->document_path && Storage::disk('local')->exists($session->document_path)) {
+        if ($session->document_path && !filter_var($session->document_path, FILTER_VALIDATE_URL) && Storage::disk('local')->exists($session->document_path)) {
             Storage::disk('local')->delete($session->document_path);
         }
 

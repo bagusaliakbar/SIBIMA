@@ -46,15 +46,15 @@ class DashboardService
                 ->take(5)->get();
 
             $data['pastSessionsCount'] = MentoringSession::where('thesis_id', $thesis->id)
-                ->where('status', 'completed')->count();
+                ->where('status', 'completed')->where('is_absent', false)->count();
 
             $data['pastSessionsCountP1'] = MentoringSession::where('thesis_id', $thesis->id)
                 ->where('dosen_id', $thesis->pembimbing1_id)
-                ->where('status', 'completed')->count();
+                ->where('status', 'completed')->where('is_absent', false)->count();
 
             $data['pastSessionsCountP2'] = MentoringSession::where('thesis_id', $thesis->id)
                 ->where('dosen_id', $thesis->pembimbing2_id)
-                ->where('status', 'completed')->count();
+                ->where('status', 'completed')->where('is_absent', false)->count();
 
             $data['recentLogbooks'] = MentoringSession::where('thesis_id', $thesis->id)
                 ->whereNotNull('notes')->where('status', 'completed')
@@ -63,10 +63,10 @@ class DashboardService
             $data['seminar'] = SeminarApplication::where('thesis_id', $thesis->id)->first();
             $data['defense'] = ThesisDefenseApplication::where('thesis_id', $thesis->id)->first();
 
-            $data['mySeminarSchedule'] = SeminarScheduleDetail::with(['schedule', 'examiner1', 'examiner2'])
+            $data['mySeminarSchedule'] = SeminarScheduleDetail::with(['schedule', 'examiner1', 'examiner2', 'thesis.pembimbing1', 'thesis.pembimbing2'])
                 ->where('thesis_id', $thesis->id)->first();
             
-            $data['myDefenseSchedule'] = ThesisDefenseScheduleDetail::with(['schedule', 'examiner1', 'examiner2'])
+            $data['myDefenseSchedule'] = ThesisDefenseScheduleDetail::with(['schedule', 'examiner1', 'examiner2', 'thesis.pembimbing1', 'thesis.pembimbing2'])
                 ->where('thesis_id', $thesis->id)->first();
 
             $lastSession = MentoringSession::where('thesis_id', $thesis->id)
@@ -247,7 +247,7 @@ class DashboardService
 
         $data['totalCompletedSessions'] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
             ->where('dosen_id', $dosenId)
-            ->where('status', 'completed')->count();
+            ->where('status', 'completed')->where('is_absent', false)->count();
 
         $data['upcomingSessions'] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
             ->where('dosen_id', $dosenId)
@@ -262,7 +262,7 @@ class DashboardService
         // Average Progress
         $totalProgressSum = 0;
         foreach ($activeTheses as $t) {
-            $comp = MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->count();
+            $comp = MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->where('is_absent', false)->count();
             $sem = SeminarApplication::where('thesis_id', $t->id)->first();
             $def = ThesisDefenseApplication::where('thesis_id', $t->id)->first();
             
@@ -281,7 +281,7 @@ class DashboardService
                 $accSidangCount++;
             } elseif ($t->acc_up_p1 && $t->acc_up_p2) {
                 $accSeminarCount++;
-            } elseif (MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->exists()) {
+            } elseif (MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->where('is_absent', false)->exists()) {
                 $bimbinganCount++;
             } else {
                 $judulCount++;
@@ -300,7 +300,7 @@ class DashboardService
             $month = now()->subMonths($i);
             $monthlyMentoringCounts[$month->format('M')] = MentoringSession::whereIn('thesis_id', $dosenThesisIds)
                 ->where('dosen_id', $dosenId)
-                ->where('status', 'completed')->whereYear('scheduled_at', $month->year)->whereMonth('scheduled_at', $month->month)->count();
+                ->where('status', 'completed')->where('is_absent', false)->whereYear('scheduled_at', $month->year)->whereMonth('scheduled_at', $month->month)->count();
         }
         $data['monthlyMentoringCounts'] = $monthlyMentoringCounts;
 
@@ -334,12 +334,12 @@ class DashboardService
         $data['recentLogbooks'] = MentoringSession::whereNotNull('notes')->where('status', 'completed')
             ->orderBy('scheduled_at', 'desc')->paginate(5, ['*'], 'logbook_page');
 
-        $data['totalCompletedSessions'] = MentoringSession::where('status', 'completed')->count();
+        $data['totalCompletedSessions'] = MentoringSession::where('status', 'completed')->where('is_absent', false)->count();
 
         $activeTheses = Thesis::where('status', 'active')->get();
         $totalProgressSum = 0;
         foreach ($activeTheses as $t) {
-            $comp = MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->count();
+            $comp = MentoringSession::where('thesis_id', $t->id)->where('status', 'completed')->where('is_absent', false)->count();
             $sem = SeminarApplication::where('thesis_id', $t->id)->first();
             $def = ThesisDefenseApplication::where('thesis_id', $t->id)->first();
             
@@ -358,6 +358,7 @@ class DashboardService
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
             $monthlyMentoringCounts[$month->format('M')] = MentoringSession::where('status', 'completed')
+                ->where('is_absent', false)
                 ->whereYear('scheduled_at', $month->year)->whereMonth('scheduled_at', $month->month)->count();
         }
         $data['monthlyMentoringCounts'] = $monthlyMentoringCounts;
