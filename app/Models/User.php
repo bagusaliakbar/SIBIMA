@@ -165,7 +165,7 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar) {
-            return asset('storage/' . $this->avatar);
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->avatar);
         }
 
         // Fallback to a default user silhouette SVG
