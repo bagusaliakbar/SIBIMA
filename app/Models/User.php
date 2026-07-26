@@ -56,12 +56,12 @@ class User extends Authenticatable
      */
     public function getDecryptedSignatureAttribute()
     {
-        if ($this->signature && Storage::disk('local')->exists($this->signature)) {
+        if ($this->signature && Storage::disk('public')->exists($this->signature)) {
             try {
-                return Crypt::decrypt(Storage::disk('local')->get($this->signature));
+                return Crypt::decrypt(Storage::disk('public')->get($this->signature));
             } catch (\Exception $e) {
                 // If it's not encrypted (e.g., during migration or legacy files)
-                return Storage::disk('local')->get($this->signature);
+                return Storage::disk('public')->get($this->signature);
             }
         }
         return null;

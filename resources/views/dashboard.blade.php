@@ -61,14 +61,14 @@
                     <div>
                         
                     </div>
-                    <div class="flex items-center gap-5">
-                        <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1 group/btn">
+                    <div class="flex flex-col sm:flex-row items-center gap-5 w-full md:w-auto justify-between md:justify-end">
+                        <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1 group/btn w-full sm:w-auto p-4 sm:p-0 bg-slate-50 dark:bg-slate-900/50 sm:bg-transparent rounded-2xl border border-slate-100 sm:border-transparent dark:border-slate-700/50">
                             <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm group-hover/btn:bg-indigo-600 group-hover/btn:text-white transition-all duration-300">
                                 <svg class="w-5 h-5 text-indigo-600 group-hover/btn:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover/btn:text-indigo-600 transition-colors">Lihat Histori</span>
+                            <span class="text-[10px] font-black text-slate-500 sm:text-slate-400 uppercase tracking-widest group-hover/btn:text-indigo-600 transition-colors mt-1">Lihat Histori</span>
                         </a>
-                        <div class="flex items-center gap-5 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                        <div class="flex items-center justify-between w-full sm:w-auto gap-5 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                             <div class="text-right">
                                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Capaian Saat Ini</p>
                                 <p class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{{ round($progressPercent) }}%</p>
@@ -87,13 +87,14 @@
                     </div>
                 </div>
 
-                <div class="relative pt-4 pb-8">
-                    <!-- Progress Line (Background) -->
-                    <div class="absolute top-[42px] left-0 right-0 h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full"></div>
-                    <!-- Progress Line (Active) -->
-                    <div class="absolute top-[42px] left-0 h-1.5 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" style="width: {{ max(0, min(100, (($currentStage - 1) / (count($stages) - 1)) * 100)) }}%"></div>
+                <div class="overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
+                    <div class="relative pt-4 pb-4 min-w-[500px] sm:min-w-0">
+                        <!-- Progress Line (Background) -->
+                        <div class="absolute top-[42px] left-0 right-0 h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full"></div>
+                        <!-- Progress Line (Active) -->
+                        <div class="absolute top-[42px] left-0 h-1.5 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" style="width: {{ max(0, min(100, (($currentStage - 1) / (count($stages) - 1)) * 100)) }}%"></div>
 
-                    <div class="relative flex justify-between gap-2">
+                        <div class="relative flex justify-between gap-2">
                         @foreach($stages as $index => $stage)
                             @php 
                                 $stageNum = $index + 1;
@@ -147,6 +148,7 @@
                         @endforeach
                     </div>
                 </div>
+            </div>
 
                 <!-- Footer Insight -->
                 <div class="mt-6 pt-6 border-t border-slate-50 dark:border-slate-700/50 flex items-center gap-3">
