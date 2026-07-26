@@ -57,12 +57,33 @@ class User extends Authenticatable
     public function getDecryptedSignatureAttribute()
     {
         if ($this->signature) {
+            // Check if it's an old file path
+            if (str_starts_with($this->signature, 'signatures/')) {
+                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->signature)) {
+                    try {
+                        $rawBytes = Crypt::decrypt(\Illuminate\Support\Facades\Storage::disk('public')->get($this->signature));
+                        return 'data:image/png;base64,' . base64_encode($rawBytes);
+                    } catch (\Exception $e) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+
+            // Otherwise, it's a direct DB string
             try {
-                // Return decrypted base64 string directly from DB
-                return Crypt::decrypt($this->signature);
+                $decrypted = Crypt::decrypt($this->signature);
+                // If for some reason it's raw bytes (legacy migration), wrap it
+                if (!str_starts_with($decrypted, 'data:image')) {
+                    return 'data:image/png;base64,' . base64_encode($decrypted);
+                }
+                return $decrypted;
             } catch (\Exception $e) {
-                // If it's not encrypted (e.g., legacy raw base64)
-                return $this->signature;
+                // If not encrypted (raw base64 string)
+                if (str_starts_with($this->signature, 'data:image')) {
+                    return $this->signature;
+                }
+                return null;
             }
         }
         return null;

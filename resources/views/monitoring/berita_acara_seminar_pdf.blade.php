@@ -206,8 +206,7 @@
                         Penguji I,<br>
                         <div style="margin-top: 10px;">
                             @if($detail->examiner1 && $detail->examiner1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode($detail->examiner1->decrypted_signature) }}"
-                                    style="height: 70px; width: auto;">
+                                <img src="{{ $detail->examiner1->decrypted_signature }}" class="signature-img">
                             @elseif($detail->examiner1 && $detail->examiner1->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner1->signature_token))) }}">
@@ -221,8 +220,7 @@
                         Penguji II,<br>
                         <div style="margin-top: 10px;">
                             @if($detail->examiner2 && $detail->examiner2->signature)
-                                <img src="data:image/png;base64,{{ base64_encode($detail->examiner2->decrypted_signature) }}"
-                                    style="height: 70px; width: auto;">
+                                <img src="{{ $detail->examiner2->decrypted_signature }}" class="signature-img">
                             @elseif($detail->examiner2 && $detail->examiner2->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->generate(url('/verify-signature/' . $detail->examiner2->signature_token))) }}">
@@ -242,8 +240,7 @@
                                 $kaprodi = \App\Models\User::where('role', 'kaprodi')->first();
                             @endphp
                             @if($kaprodi && $kaprodi->signature)
-                                <img src="data:image/png;base64,{{ base64_encode($kaprodi->decrypted_signature) }}"
-                                    style="height: 70px; width: auto;">
+                                <img src="{{ $kaprodi->decrypted_signature }}" class="signature-img">
                             @elseif($kaprodi && $kaprodi->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(40)->generate(url('/verify-signature/' . $kaprodi->signature_token))) }}">
@@ -261,8 +258,7 @@
                                 $p1 = $detail->thesis->pembimbing1;
                             @endphp
                             @if($p1 && $p1->signature)
-                                <img src="data:image/png;base64,{{ base64_encode($p1->decrypted_signature) }}"
-                                    style="height: 70px; width: auto;">
+                                <img src="{{ $p1->decrypted_signature }}" class="signature-img">
                             @elseif($p1 && $p1->signature_token)
                                 <img
                                     src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(40)->generate(url('/verify-signature/' . $p1->signature_token))) }}">

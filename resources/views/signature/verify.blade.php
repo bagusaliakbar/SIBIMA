@@ -61,7 +61,7 @@
                     <div class="mb-8">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3 text-center">Spesimen Tanda Tangan</label>
                         <div class="p-4 bg-white rounded-xl border border-slate-200 inline-block shadow-inner">
-                            <img src="data:image/png;base64,{{ base64_encode($user->decrypted_signature) }}" alt="Specimen" class="h-16 w-auto">
+                            <img src="{{ $user->decrypted_signature }}" alt="Specimen" class="h-16 w-auto">
                         </div>
                     </div>
                 @endif

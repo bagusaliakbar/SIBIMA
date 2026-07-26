@@ -17,7 +17,7 @@
                 @if($user->signature)
                     @if($user->decrypted_signature)
                         <div class="p-2 bg-white rounded-lg border-2 border-slate-200 dark:border-slate-700 shadow-sm inline-block">
-                            <img src="data:image/png;base64,{{ base64_encode($user->decrypted_signature) }}" alt="Signature" class="h-24 w-auto object-contain">
+                            <img src="{{ $user->decrypted_signature }}" alt="Signature" class="h-24 w-auto object-contain">
                         </div>
                     @else
                         <div class="w-48 p-3 bg-red-50 text-red-600 text-xs text-center rounded-lg border border-red-100 flex items-center justify-center min-h-[6rem]">

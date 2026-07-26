@@ -271,7 +271,7 @@
                         
                         <div style="min-height: 80px;">
                             @if(isset($kaprodi) && $kaprodi && $kaprodi->signature)
-                                <img src="data:image/png;base64,{{ base64_encode($kaprodi->decrypted_signature) }}" class="signature-img">
+                                <img src="{{ $kaprodi->decrypted_signature }}" class="signature-img">
                             @elseif(isset($kaprodi) && $kaprodi && $kaprodi->signature_token)
                                 <img src="data:image/png;base64, {!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(300)->generate(url('/verify-signature/' . $kaprodi->signature_token))) !!} " class="qr-code">
                             @else

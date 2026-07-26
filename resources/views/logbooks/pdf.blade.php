@@ -210,7 +210,7 @@
                     </td>
                     <td class="text-center" style="vertical-align: middle;">
                         @if($session->dosen && $session->dosen->signature)
-                            <img src="data:image/png;base64,{{ base64_encode($session->dosen->decrypted_signature) }}" style="height: 100px; width: auto;">
+                            <img src="{{ $session->dosen->decrypted_signature }}" style="height: 100px; width: auto;">
                         @elseif($session->dosen && $session->dosen->signature_token)
                             {{-- Fallback to QR if no image but has token --}}
                             <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(40)->generate(url('/verify-signature/' . $session->dosen->signature_token))) !!} ">
