@@ -1,4 +1,5 @@
 <x-guest-layout>
+    @section('title', 'Lupa Password')
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {{ __('Lupa kata sandi Anda? Tidak masalah. Cukup beri tahu kami alamat email Anda dan kami akan mengirimkan tautan pengaturan ulang kata sandi melalui email yang memungkinkan Anda memilih kata sandi baru.') }}
     </div>
