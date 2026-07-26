@@ -55,10 +55,10 @@ class UserService
         ];
 
         if ($avatarFile) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-            $updateData['avatar'] = $avatarFile->store('avatars', 'public');
+            $imageData = file_get_contents($avatarFile->getRealPath());
+            $base64 = base64_encode($imageData);
+            $mime = $avatarFile->getMimeType();
+            $updateData['avatar'] = 'data:' . $mime . ';base64,' . $base64;
         }
 
         if (!empty($data['email']) && $data['email'] !== $user->email) {
@@ -81,9 +81,8 @@ class UserService
      */
     public function deleteUser(User $user)
     {
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
+        // Avatar is now in database, no need to delete file
+
         $user->delete();
         ActivityLog::log('Hapus Pengguna', "Pengguna dihapus: {$user->name}.", 'User');
     }
@@ -103,16 +102,14 @@ class UserService
      */
     public function updateSignature(User $user, $signatureFile)
     {
-        if ($user->signature) {
-            Storage::disk('public')->delete($user->signature);
-        }
-
-        $encryptedContent = Crypt::encrypt(file_get_contents($signatureFile->getRealPath()));
-        $filename = \Illuminate\Support\Str::random(40) . '.enc';
-        $path = 'signatures/' . $filename;
+        $signatureData = file_get_contents($signatureFile->getRealPath());
+        $base64 = base64_encode($signatureData);
+        $mime = $signatureFile->getMimeType();
+        $base64String = 'data:' . $mime . ';base64,' . $base64;
         
-        Storage::disk('public')->put($path, $encryptedContent);
-        $user->signature = $path;
+        $encryptedContent = Crypt::encrypt($base64String);
+
+        $user->signature = $encryptedContent;
         
         if (!$user->signature_token) {
             $user->signature_token = \Illuminate\Support\Str::uuid();

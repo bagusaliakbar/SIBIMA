@@ -56,12 +56,13 @@ class User extends Authenticatable
      */
     public function getDecryptedSignatureAttribute()
     {
-        if ($this->signature && Storage::disk('public')->exists($this->signature)) {
+        if ($this->signature) {
             try {
-                return Crypt::decrypt(Storage::disk('public')->get($this->signature));
+                // Return decrypted base64 string directly from DB
+                return Crypt::decrypt($this->signature);
             } catch (\Exception $e) {
-                // If it's not encrypted (e.g., during migration or legacy files)
-                return Storage::disk('public')->get($this->signature);
+                // If it's not encrypted (e.g., legacy raw base64)
+                return $this->signature;
             }
         }
         return null;
@@ -165,6 +166,11 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar) {
+            // Check if it's already a base64 string
+            if (str_starts_with($this->avatar, 'data:image')) {
+                return $this->avatar;
+            }
+            // Fallback for legacy files (just in case they weren't wiped yet)
             return \Illuminate\Support\Facades\Storage::disk('public')->url($this->avatar);
         }
 
