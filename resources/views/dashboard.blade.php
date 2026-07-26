@@ -62,11 +62,11 @@
                         
                     </div>
                     <div class="flex flex-col sm:flex-row items-center gap-5 w-full md:w-auto justify-between md:justify-end">
-                        <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1 group/btn w-full sm:w-auto p-4 sm:p-0 bg-slate-50 dark:bg-slate-900/50 sm:bg-transparent rounded-2xl border border-slate-100 sm:border-transparent dark:border-slate-700/50">
+                        <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1.5 group/btn">
                             <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm group-hover/btn:bg-indigo-600 group-hover/btn:text-white transition-all duration-300">
                                 <svg class="w-5 h-5 text-indigo-600 group-hover/btn:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <span class="text-[10px] font-black text-slate-500 sm:text-slate-400 uppercase tracking-widest group-hover/btn:text-indigo-600 transition-colors mt-1">Lihat Histori</span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover/btn:text-indigo-600 transition-colors">Lihat Histori</span>
                         </a>
                         <div class="flex items-center justify-between w-full sm:w-auto gap-5 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                             <div class="text-right">
