@@ -15,9 +15,15 @@
         <div class="flex items-start space-x-6">
             <div class="shrink-0">
                 @if($user->signature)
-                    <div class="p-2 bg-white rounded-lg border-2 border-slate-200 dark:border-slate-700 shadow-sm inline-block">
-                        <img src="data:image/png;base64,{{ base64_encode($user->decrypted_signature) }}" alt="Signature" class="h-24 w-auto object-contain">
-                    </div>
+                    @if($user->decrypted_signature)
+                        <div class="p-2 bg-white rounded-lg border-2 border-slate-200 dark:border-slate-700 shadow-sm inline-block">
+                            <img src="data:image/png;base64,{{ base64_encode($user->decrypted_signature) }}" alt="Signature" class="h-24 w-auto object-contain">
+                        </div>
+                    @else
+                        <div class="p-4 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+                            File gambar tanda tangan tidak ditemukan di server. Silakan unggah ulang.
+                        </div>
+                    @endif
                 @else
                     <div class="h-24 w-48 bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-400 italic text-xs">
                         Belum ada tanda tangan
