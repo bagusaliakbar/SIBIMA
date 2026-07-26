@@ -647,6 +647,52 @@
                 }
             });
         </script>
+        
+        <!-- Script to translate HTML5 validation messages to Indonesian -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const overrideValidationMessages = () => {
+                    const elements = document.querySelectorAll('input, select, textarea');
+                    elements.forEach(el => {
+                        // Prevent attaching multiple listeners
+                        if (el.dataset.validationBound) return;
+                        el.dataset.validationBound = "true";
+                        
+                        el.addEventListener('invalid', function(e) {
+                            e.target.setCustomValidity("");
+                            if (!e.target.validity.valid) {
+                                if (e.target.validity.valueMissing) {
+                                    e.target.setCustomValidity("Bagian ini wajib diisi.");
+                                } else if (e.target.validity.typeMismatch) {
+                                    if (e.target.type === 'email') {
+                                        e.target.setCustomValidity("Harap masukkan alamat email yang valid.");
+                                    } else if (e.target.type === 'url') {
+                                        e.target.setCustomValidity("Harap masukkan URL yang valid.");
+                                    } else {
+                                        e.target.setCustomValidity("Format masukan tidak sesuai.");
+                                    }
+                                } else {
+                                    e.target.setCustomValidity("Masukan tidak valid.");
+                                }
+                            }
+                        });
+                        
+                        el.addEventListener('input', function(e) {
+                            e.target.setCustomValidity("");
+                        });
+                    });
+                };
+                
+                // Run on load
+                overrideValidationMessages();
+                
+                // Also observe DOM changes in case of dynamic forms (Livewire/Alpine)
+                const observer = new MutationObserver((mutations) => {
+                    overrideValidationMessages();
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        </script>
         @stack('scripts')
     </body>
 </html>
