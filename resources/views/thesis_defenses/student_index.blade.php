@@ -187,7 +187,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Form Pengajuan Sidang Skripsi</h3>
-                            <div class="flex items-center gap-2 mt-1">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2">
                                 <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black rounded uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
                                     {{ $activeWave->name ?? 'Gelombang Aktif' }}
                                 </span>
