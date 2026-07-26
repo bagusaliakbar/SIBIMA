@@ -1,8 +1,7 @@
 <x-guest-layout>
     <div class="text-center mb-8">
-        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-16 h-16 object-contain mx-auto mb-4">
+        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-24 h-24 object-contain mx-auto mb-4">
         <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Sistem Informasi Bimbingan Mahasiswa</h2>
-        <p class="text-sm text-slate-500 mt-2">Masuk ke akun Anda untuk melanjutkan</p>
     </div>
 
     <!-- Session Status -->
@@ -23,9 +22,6 @@
         <div>
             <div class="flex justify-between items-center">
                 <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
-                @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="text-xs font-medium text-orange-600 hover:text-orange-500">Lupa password?</a>
-                @endif
             </div>
             <input id="password" type="password" name="password" required autocomplete="current-password" 
                 class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2.5 transition-colors placeholder-slate-400" placeholder="••••••••">
