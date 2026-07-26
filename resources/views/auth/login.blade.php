@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="text-center mb-8">
-        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-24 h-24 object-contain mx-auto mb-4">
+        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-20 h-20 object-contain mx-auto mb-4">
         <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Sistem Informasi Bimbingan Mahasiswa</h2>
     </div>
 
