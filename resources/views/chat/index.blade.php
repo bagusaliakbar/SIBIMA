@@ -16,7 +16,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
                             <svg class="w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </span>
-                        <input type="text" id="contact-search" class="w-full pl-11 pr-4 py-2.5 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-bold rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all placeholder:text-slate-400" placeholder="Cari teman chat...">
+                        <input type="text" id="contact-search" class="w-full pl-11 pr-4 py-2.5 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-bold rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all placeholder:text-slate-400" placeholder="Cari kontak">
                     </div>
                 </div>
                 
@@ -61,7 +61,6 @@
                     <div class="w-24 h-24 bg-orange-100 dark:bg-orange-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-orange-200 dark:border-orange-500/20 rotate-12 group-hover:rotate-0 transition-transform duration-500">
                         <svg class="w-12 h-12 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tighter">Pesan SIBIMA</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-xs mx-auto font-bold uppercase tracking-widest leading-loose">Silakan pilih salah satu kontak di samping untuk mulai berdiskusi secara privat.</p>
                 </div>
             </div>
