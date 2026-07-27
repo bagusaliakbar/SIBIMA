@@ -20,13 +20,16 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
+            'role' => 'mahasiswa',
+            'identifier' => '211010999',
             'email' => 'test@example.com',
+            'entry_year' => 2022,
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
         $this->assertGuest();
         $response->assertRedirect(route('login'));
-        $response->assertSessionHas('status', 'Registrasi berhasil! Akun Anda sedang menunggu validasi dari admin.');
+        $response->assertSessionHas('status', 'Registrasi berhasil! Akun Anda sedang menunggu validasi dari Admin.');
     }
 }

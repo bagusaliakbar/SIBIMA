@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
@@ -30,30 +30,48 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'role' => ['required', 'string', 'in:mahasiswa,dosen'],
+            'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class.',identifier'],
+            'username' => ['nullable', 'string', 'max:50', 'unique:'.User::class.',username'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email'],
+            'phone_number' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ];
+
+        if ($request->role === 'mahasiswa') {
+            $rules['entry_year'] = ['required', 'integer', 'min:2000', 'max:' . (date('Y') + 1)];
+        }
+
+        $validated = $request->validate($rules);
+
+        $username = !empty($validated['username']) ? $validated['username'] : $validated['identifier'];
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'is_active' => false, // explicitly set to false
+            'name' => $validated['name'],
+            'role' => $validated['role'],
+            'identifier' => $validated['identifier'],
+            'username' => $username,
+            'email' => $validated['email'],
+            'entry_year' => $validated['entry_year'] ?? null,
+            'phone_number' => $validated['phone_number'] ?? null,
+            'password' => Hash::make($validated['password']),
+            'is_active' => false,
         ]);
 
         event(new Registered($user));
-        
-        \App\Models\ActivityLog::create([
+
+        ActivityLog::create([
             'user_id'     => $user->id,
             'activity'    => 'Registrasi Akun',
-            'description' => "User {$user->name} mendaftar akun baru (Email: {$user->email}).",
+            'description' => "Pengguna baru {$user->name} ({$user->role}) mendaftar akun baru dengan Identitas {$user->identifier}.",
             'module'      => 'Auth',
             'ip_address'  => request()->ip(),
             'user_agent'  => request()->userAgent(),
         ]);
 
-        return redirect()->route('login')->with('status', 'Registrasi berhasil! Akun Anda sedang menunggu validasi dari admin.');
+        return redirect()->route('login')->with('status', 'Registrasi berhasil! Akun Anda sedang menunggu validasi dari Admin.');
     }
 }
+

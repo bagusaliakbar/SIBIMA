@@ -35,7 +35,14 @@
             </button>
         </div>
 
-
+        <div class="text-center pt-2">
+            <p class="text-xs text-slate-600">
+                Belum memiliki akun? 
+                <a href="{{ route('register') }}" class="font-semibold text-orange-600 hover:text-orange-700 hover:underline">
+                    Daftar Sekarang
+                </a>
+            </p>
+        </div>
     </form>
     
     <div class="mt-6 text-center text-xs text-slate-500">
