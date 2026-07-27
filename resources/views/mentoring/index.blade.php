@@ -11,16 +11,31 @@
             :footer="$sessions->links()">
             
             <x-slot name="headerActions">
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    @if(in_array(Auth::user()->role, ['admin', 'kaprodi']) && isset($dosens))
+                        <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="inline-block">
+                            <input type="hidden" name="tab" value="{{ $activeTab }}">
+                            <input type="hidden" name="search" value="{{ $search }}">
+                            <select name="dosen_id" onchange="this.form.submit()" class="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 py-2.5 px-3 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                <option value="">Filter Dosen Pembimbing...</option>
+                                @foreach($dosens as $d)
+                                    <option value="{{ $d->id }}" {{ ($dosenId ?? '') == $d->id ? 'selected' : '' }}>
+                                        {{ $d->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+                    @endif
+
                     <x-search-input 
                         name="search" 
                         :value="$search ?? ''" 
                         placeholder="Cari nama atau topik..." 
                         route="mentoring-sessions.index"
-                        :params="['tab' => $activeTab]" />
+                        :params="['tab' => $activeTab, 'dosen_id' => $dosenId ?? '']" />
 
                     @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                        <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm whitespace-nowrap">+ Tambah Jadwal</a>
+                        <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center px-4 py-2.5 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm whitespace-nowrap">+ Tambah Jadwal</a>
                     @endif
                 </div>
             </x-slot>
@@ -28,11 +43,11 @@
             <div class="p-6">
                 <!-- Tabs for Active vs History -->
                 <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/50 pb-4 mb-6">
-                    <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search]) }}" 
+                    <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
                        class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'active' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Bimbingan Aktif
                     </a>
-                    <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search]) }}" 
+                    <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
                        class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'history' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Riwayat Bimbingan
                     </a>
@@ -53,21 +68,33 @@
                                 ? $studentThesis->completed_mentoring_count 
                                 : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
                         @endphp
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 dark:border-slate-700/50 pb-4">
-                            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 flex items-center mb-4 md:mb-0 uppercase tracking-tight">
-                                <div class="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10 mr-3 shrink-0">
-                                    <img src="{{ $studentThesis->student->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 dark:border-slate-700/50 pb-4 gap-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10 mr-3 shrink-0">
+                                    <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
                                 </div>
-                                <span>{{ $studentName }}</span>
-                                @if($studentThesis->status === 'completed')
-                                    <span class="ml-2 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">
-                                        Lulus
-                                    </span>
-                                @endif
-                                <span class="ml-4 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider">
-                                    {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
-                                </span>
-                            </h4>
+                                <div>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $studentName }}</h4>
+                                        @if($studentThesis->status === 'completed')
+                                            <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                                                Lulus
+                                            </span>
+                                        @endif
+                                        <span class="px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider">
+                                            {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
+                                        </span>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-2.5 mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                                        <span class="inline-flex items-center gap-1 bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-700/50 text-[10px]">
+                                            <span class="font-bold text-slate-400">P1:</span> <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $studentThesis->pembimbing1->name ?? '-' }}</span>
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-700/50 text-[10px]">
+                                            <span class="font-bold text-slate-400">P2:</span> <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $studentThesis->pembimbing2->name ?? '-' }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
                             @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                                 <div class="flex flex-wrap gap-2">

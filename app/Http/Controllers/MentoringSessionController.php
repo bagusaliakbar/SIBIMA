@@ -104,19 +104,36 @@ class MentoringSessionController extends Controller
                 ->appends(['search' => $search]);
             return view('mentoring.student_index', compact('sessions', 'search'));
         } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
-            $sessions = MentoringSession::search($search)
+            $dosenId = $request->input('dosen_id');
+
+            $query = MentoringSession::search($search)
                 ->whereHas('thesis', function($q) use ($activeTab) {
                     if ($activeTab === 'history') {
                         $q->where('status', 'completed');
                     } else {
                         $q->where('status', '!=', 'completed');
                     }
-                })
-                ->with(['thesis.student', 'dosen'])
+                });
+
+            if ($dosenId) {
+                $query->where(function($q) use ($dosenId) {
+                    $q->where('dosen_id', $dosenId)
+                      ->orWhereHas('thesis', function($t) use ($dosenId) {
+                          $t->where('pembimbing1_id', $dosenId)
+                            ->orWhere('pembimbing2_id', $dosenId);
+                      });
+                });
+            }
+
+            $sessions = $query
+                ->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
                 ->orderBy('scheduled_at', 'desc')
                 ->paginate(15)
-                ->appends(['search' => $search, 'tab' => $activeTab]);
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab'));
+                ->appends(['search' => $search, 'tab' => $activeTab, 'dosen_id' => $dosenId]);
+
+            $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
+
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'dosens', 'dosenId'));
         }
 
         abort(403);
