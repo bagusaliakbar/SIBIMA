@@ -39,7 +39,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
-        $query = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'revisions']);
+        $query = ThesisDefenseScheduleDetail::has('thesis.student')->with(['thesis.student', 'schedule', 'revisions']);
 
         if ($user->role === 'dosen') {
             $query->where(function ($q) use ($user) {

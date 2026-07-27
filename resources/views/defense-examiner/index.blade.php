@@ -45,11 +45,11 @@
                             <td class="px-6 py-5">
                                 <div class="flex items-center">
                                     <div class="w-10 h-10 rounded-xl overflow-hidden mr-4 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-110 transition-transform flex items-center justify-center bg-slate-50 dark:bg-slate-800">
-                                        <img src="{{ $exam->thesis->student->avatar_url }}" alt="{{ $exam->thesis->student->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ $exam->thesis?->student?->avatar_url }}" alt="{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}" class="w-full h-full object-cover">
                                     </div>
                                     <div class="max-w-xs md:max-w-md">
-                                        <h4 class="font-black text-slate-800 dark:text-slate-100 text-sm group-hover:text-rose-600 transition-colors uppercase tracking-tight">{{ $exam->thesis->student->name }}</h4>
-                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 uppercase font-bold tracking-tighter">"{{ $exam->thesis->title }}"</p>
+                                        <h4 class="font-black text-slate-800 dark:text-slate-100 text-sm group-hover:text-rose-600 transition-colors uppercase tracking-tight">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
+                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 uppercase font-bold tracking-tighter">"{{ $exam->thesis?->title ?? '-' }}"</p>
                                     </div>
                                 </div>
                             </td>

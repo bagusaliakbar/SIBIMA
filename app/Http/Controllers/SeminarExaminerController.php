@@ -39,7 +39,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
-        $query = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'revisions']);
+        $query = SeminarScheduleDetail::has('thesis.student')->with(['thesis.student', 'schedule', 'revisions']);
 
         if ($user->role === 'dosen') {
             $query->where(function ($q) use ($user) {
