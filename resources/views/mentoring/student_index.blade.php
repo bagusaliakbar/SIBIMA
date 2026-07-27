@@ -128,7 +128,7 @@
                             <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Sidang Akhir Skripsi</span>
                                 @if($thesis->isAccSidangFinal())
-                                    <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-100 dark:border-emerald-500/20">SIAP SIDANG</span>
+                                    <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-100 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
                                 @endif
                             </div>
 
