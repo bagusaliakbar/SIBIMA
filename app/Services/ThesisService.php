@@ -16,8 +16,11 @@ class ThesisService
      */
     public function createThesis(array $data)
     {
+        $studentId = $data['student_id'] ?? Auth::id();
+        $student = User::find($studentId);
+
         $thesis = Thesis::create([
-            'student_id'               => Auth::id(),
+            'student_id'               => $studentId,
             'title'                    => $data['title'],
             'abstract'                 => $data['abstract'],
             'requested_pembimbing1_id' => $data['requested_pembimbing1_id'] ?? null,
@@ -25,7 +28,8 @@ class ThesisService
             'status'                   => 'pending',
         ]);
 
-        ActivityLog::log('Pengajuan Judul', "Mahasiswa mengajukan judul skripsi baru: {$data['title']}", 'Skripsi', $thesis, [
+        $submitterName = Auth::user()->name;
+        ActivityLog::log('Pengajuan Judul', "Pengajuan judul skripsi baru untuk {$student->name}: {$data['title']} (Diajukan oleh {$submitterName})", 'Skripsi', $thesis, [
             'title' => $data['title'],
             'status' => 'pending'
         ]);
@@ -34,7 +38,7 @@ class ThesisService
         $admins = User::whereIn('role', ['admin', 'kaprodi'])->get();
         Notification::send($admins, new GeneralNotification(
             'Pengajuan Judul Baru',
-            "Mahasiswa " . Auth::user()->name . " mengajukan judul skripsi baru.",
+            "Pengajuan judul skripsi baru untuk mahasiswa " . $student->name . ".",
             route('theses.index'),
             'info'
         ));
@@ -98,10 +102,32 @@ class ThesisService
     /**
      * Toggle ACC status for a thesis.
      */
-    public function toggleAcc(Thesis $thesis, string $type)
+    public function toggleAcc(Thesis $thesis, string $type, ?string $slot = null)
     {
         $user = Auth::user();
-        $column = $this->getAccColumn($thesis, $user->id, $type);
+        
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            $targetSlot = $slot ?? request('slot', 'p1');
+            if ($targetSlot === 'p2') {
+                $column = $type === 'up' ? 'acc_up_p2' : 'acc_sidang_p2';
+            } elseif ($targetSlot === 'all') {
+                $col1 = $type === 'up' ? 'acc_up_p1' : 'acc_sidang_p1';
+                $col2 = $type === 'up' ? 'acc_up_p2' : 'acc_sidang_p2';
+                $newVal = !($thesis->$col1 && $thesis->$col2);
+                $thesis->$col1 = $newVal;
+                $thesis->$col2 = $newVal;
+                $thesis->save();
+
+                $typeName = $type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
+                $statusText = $newVal ? 'memberikan' : 'membatalkan';
+                ActivityLog::log('ACC Bimbingan', "{$user->role} ({$user->name}) {$statusText} ACC {$typeName} (P1 & P2) untuk mahasiswa {$thesis->student->name}.", 'Skripsi', $thesis);
+                return $newVal ? 'diberikan' : 'dibatalkan';
+            } else {
+                $column = $type === 'up' ? 'acc_up_p1' : 'acc_sidang_p1';
+            }
+        } else {
+            $column = $this->getAccColumn($thesis, $user->id, $type);
+        }
 
         if (!$column) {
             throw new \Exception('Anda tidak memiliki otoritas untuk memberikan ACC pada mahasiswa ini.');
@@ -113,16 +139,16 @@ class ThesisService
         $typeName = $type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
         $statusText = $thesis->$column ? 'memberikan' : 'membatalkan';
 
-        ActivityLog::log('ACC Bimbingan', "Dosen {$user->name} {$statusText} ACC {$typeName} untuk mahasiswa {$thesis->student->name}.", 'Skripsi', $thesis, [
+        ActivityLog::log('ACC Bimbingan', "{$user->name} ({$user->role}) {$statusText} ACC {$typeName} untuk mahasiswa {$thesis->student->name}.", 'Skripsi', $thesis, [
             'type' => $type,
             'action' => $statusText,
-            'dosen' => $user->name
+            'user' => $user->name
         ]);
         
         if ($thesis->$column) {
             $thesis->student->notify(new GeneralNotification(
                 'ACC Pembimbing',
-                "Pembimbing " . $user->name . " telah memberikan ACC untuk {$typeName}.",
+                "ACC untuk {$typeName} telah diberikan.",
                 route('mentoring-sessions.index'),
                 'success'
             ));

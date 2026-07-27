@@ -25,6 +25,21 @@
             <form action="{{ route('theses.store') }}" method="POST" class="space-y-6">
                 @csrf
                 
+                @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-md">
+                    <label for="student_id" class="block text-sm font-semibold text-amber-900 dark:text-amber-300">Pilih Mahasiswa <span class="text-red-600">*</span></label>
+                    <p class="text-xs text-amber-700 dark:text-amber-400 mb-2">Pilih mahasiswa yang diajukan judul skripsinya.</p>
+                    <select name="student_id" id="student_id" required class="block w-full rounded-md bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm">
+                        <option value="">-- Pilih Mahasiswa --</option>
+                        @foreach($students as $mhs)
+                            <option value="{{ $mhs->id }}" {{ old('student_id') == $mhs->id ? 'selected' : '' }}>
+                                {{ $mhs->name }} ({{ $mhs->identifier ?? 'NPM -' }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+                
                 <div>
                     <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Rencana Judul Skripsi <span class="text-orange-600">*</span></label>
                     <input type="text" name="title" id="title" required value="{{ old('title') }}" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors" placeholder="Masukkan usulan rencana judul skripsi">

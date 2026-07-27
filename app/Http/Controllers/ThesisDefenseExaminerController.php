@@ -25,7 +25,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'dosen') {
+                if (!in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -39,16 +39,19 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
-        $examinations = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'revisions' => function($q) use ($user) {
-                $q->where('examiner_id', $user->id);
-            }])
-            ->where(function ($q) use ($user) {
+        $query = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'revisions']);
+
+        if ($user->role === 'dosen') {
+            $query->where(function ($q) use ($user) {
                 $q->where('examiner1_id', $user->id)
                   ->orWhere('examiner2_id', $user->id)
                   ->orWhereHas('thesis', function($t) use ($user) {
                       $t->where('pembimbing1_id', $user->id);
                   });
-            })
+            });
+        }
+
+        $examinations = $query
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('schedule', function($query) use ($selectedWaveId) {
                     $query->where('wave_id', $selectedWaveId);
@@ -69,11 +72,16 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $user = Auth::user();
         $detail->load(['thesis.student', 'schedule', 'revisions.messages.sender']);
 
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id
+            || ($detail->thesis && $detail->thesis->pembimbing1_id === $user->id);
+
+        if (!$isAuthorized) {
             abort(403);
         }
         
-        $myRevision = $detail->revisions->where('examiner_id', $user->id)->first();
+        $myRevision = $detail->revisions->first();
 
         return view('defense-examiner.show', compact('detail', 'myRevision'));
     }
@@ -83,12 +91,16 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $user = Auth::user();
         $detail->load(['thesis.student', 'schedule']);
 
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id
+            || ($detail->thesis && $detail->thesis->pembimbing1_id === $user->id);
+
+        if (!$isAuthorized) {
             abort(403);
         }
         
         $myRevision = ThesisDefenseRevision::where('thesis_defense_schedule_detail_id', $detail->id)
-            ->where('examiner_id', $user->id)
             ->first();
 
         return view('defense-examiner.grade', compact('detail', 'myRevision'));
@@ -99,7 +111,12 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $user = Auth::user();
         $detail->load('thesis');
 
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id
+            || ($detail->thesis && $detail->thesis->pembimbing1_id === $user->id);
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
@@ -109,7 +126,15 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             'score_writing' => 'required|integer|min:0|max:100',
         ]);
 
-        $this->examinerService->storeGrading(ThesisDefenseRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $user);
+        $actingUser = $user;
+        if (in_array($user->role, ['admin', 'kaprodi']) && $request->has('target_examiner_id')) {
+            $target = \App\Models\User::find($request->input('target_examiner_id'));
+            if ($target) $actingUser = $target;
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingUser = $detail->examiner1 ?? $user;
+        }
+
+        $this->examinerService->storeGrading(ThesisDefenseRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $actingUser);
 
         return redirect()->route('defense-examiner.index')->with('success', 'Nilai sidang berhasil disimpan.');
     }
@@ -119,7 +144,12 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $user = Auth::user();
         $detail->load('thesis');
 
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id
+            || ($detail->thesis && $detail->thesis->pembimbing1_id === $user->id);
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
@@ -128,10 +158,19 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             'revision_link' => 'nullable|url',
         ]);
 
+        $actingUser = $user;
+        if (in_array($user->role, ['admin', 'kaprodi']) && $request->has('target_examiner_id')) {
+            $target = \App\Models\User::find($request->input('target_examiner_id'));
+            if ($target) $actingUser = $target;
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingUser = $detail->examiner1 ?? $user;
+        }
+
         try {
             $this->examinerService->storeRevision(
                 ThesisDefenseRevision::class, ThesisDefenseRevisionMessage::class, $detail, 
-                $request->only('revision_notes'), $request->input('revision_link')
+                $request->only('revision_notes'), $request->input('revision_link'),
+                $actingUser
             );
             return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
         } catch (\Throwable $e) {
@@ -154,12 +193,22 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $user = Auth::user();
         $detail->load('thesis');
 
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id
+            || ($detail->thesis && $detail->thesis->pembimbing1_id === $user->id);
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
+        $actingId = $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingId = $request->input('target_examiner_id', $detail->examiner1_id ?? $user->id);
+        }
+
         ThesisDefenseRevision::updateOrCreate(
-            ['thesis_defense_schedule_detail_id' => $detail->id, 'examiner_id' => $user->id],
+            ['thesis_defense_schedule_detail_id' => $detail->id, 'examiner_id' => $actingId],
             ['status' => 'approved', 'revision_notes' => 'Disetujui tanpa catatan revisi.']
         );
 
@@ -171,7 +220,12 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
     public function exportBeritaAcara(ThesisDefenseScheduleDetail $detail)
     {
         $user = Auth::user();
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id && $detail->thesis->pembimbing1_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id
+            || ($detail->thesis && $detail->thesis->pembimbing1_id === $user->id);
+
+        if (!$isAuthorized) {
             abort(403);
         }
 

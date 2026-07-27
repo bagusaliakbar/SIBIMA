@@ -10,9 +10,9 @@ class ExaminerService
     /**
      * Store a revision and message.
      */
-    public function storeRevision($revisionModel, $messageModel, $detail, array $data, $file = null)
+    public function storeRevision($revisionModel, $messageModel, $detail, array $data, $file = null, $actingUser = null)
     {
-        $user = Auth::user();
+        $user = $actingUser ?? Auth::user();
         
         $foreignKey = str_replace('App\\Models\\', '', get_class($detail));
         $foreignKey = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $foreignKey)) . '_id';

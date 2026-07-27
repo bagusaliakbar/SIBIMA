@@ -19,7 +19,7 @@ class MentoringService
     {
         $user = Auth::user();
 
-        if ($user->role === 'dosen') {
+        if (in_array($user->role, ['dosen', 'admin', 'kaprodi'])) {
             return $this->handleDosenStore($data);
         } else {
             return $this->handleStudentStore($data);
@@ -28,26 +28,30 @@ class MentoringService
 
     private function handleDosenStore(array $data)
     {
+        $user = Auth::user();
+
         if ($data['thesis_id'] === 'all') {
-            $theses = Thesis::where(function($q) {
+            $thesesQuery = Thesis::where('status', 'active');
+            if ($user->role === 'dosen') {
+                $thesesQuery->where(function($q) {
                     $q->where('pembimbing1_id', Auth::id())
                       ->orWhere('pembimbing2_id', Auth::id());
-                })
-                ->where('status', 'active')
-                ->get();
+                });
+            }
+            $theses = $thesesQuery->get();
             
             if ($theses->isEmpty()) {
-                throw new \Exception('Anda tidak memiliki mahasiswa bimbingan yang aktif.');
+                throw new \Exception('Tidak ada mahasiswa bimbingan yang aktif.');
             }
             
             foreach ($theses as $thesis) {
                 $session = $this->createSessionForThesis($thesis, $data, 'approved');
                 
-                ActivityLog::log('Jadwal Bimbingan Massal', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
+                ActivityLog::log('Jadwal Bimbingan Massal', "{$user->name} menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
 
                 $thesis->student->notify(new GeneralNotification(
                     'Jadwal Bimbingan Baru',
-                    "Dosen " . Auth::user()->name . " menjadwalkan bimbingan baru: {$data['topic']}",
+                    "Jadwal bimbingan baru dibuat: {$data['topic']}",
                     route('mentoring-sessions.index'),
                     'info'
                 ));
@@ -57,7 +61,7 @@ class MentoringService
         } else {
             $thesis = Thesis::findOrFail($data['thesis_id']);
             
-            if ($thesis->pembimbing1_id !== Auth::id() && $thesis->pembimbing2_id !== Auth::id()) {
+            if ($user->role === 'dosen' && $thesis->pembimbing1_id !== Auth::id() && $thesis->pembimbing2_id !== Auth::id()) {
                 throw new \Exception('Unauthorized access to thesis.', 403);
             }
             
@@ -159,9 +163,13 @@ class MentoringService
 
     private function createSessionForThesis(Thesis $thesis, array $data, string $status)
     {
+        $dosenId = in_array(Auth::user()->role, ['admin', 'kaprodi'])
+            ? ($thesis->pembimbing1_id ?? $thesis->pembimbing2_id ?? Auth::id())
+            : Auth::id();
+
         return MentoringSession::create([
             'thesis_id' => $thesis->id,
-            'dosen_id' => Auth::id(),
+            'dosen_id' => $dosenId,
             'scheduled_at' => $data['scheduled_at'],
             'topic' => $data['topic'],
             'type' => $data['type'],

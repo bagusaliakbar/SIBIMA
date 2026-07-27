@@ -63,6 +63,10 @@ class ThesisPolicy
      */
     public function toggleAcc(User $user, Thesis $thesis): bool
     {
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            return true;
+        }
+
         if ($user->role === 'dosen') {
             return $user->id === $thesis->pembimbing1_id || $user->id === $thesis->pembimbing2_id;
         }

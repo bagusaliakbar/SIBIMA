@@ -35,7 +35,7 @@ class StoreMentoringSessionRequest extends FormRequest
             'type' => 'required|in:offline,online',
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'thesis_id' => Auth::user()->role === 'dosen' ? 'required' : 'nullable',
+            'thesis_id' => in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'required' : 'nullable',
             'dosen_id' => Auth::user()->role === 'mahasiswa' ? 'required|exists:users,id' : 'nullable',
         ];
     }

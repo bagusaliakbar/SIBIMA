@@ -41,6 +41,11 @@ class MentoringSessionController extends Controller
                 ->where('status', 'active')
                 ->get();
             return view('mentoring.create', compact('theses'));
+        } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
+            $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+                ->where('status', 'active')
+                ->get();
+            return view('mentoring.create', compact('theses'));
         }
 
         abort(403);

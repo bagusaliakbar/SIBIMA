@@ -25,7 +25,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
     {
         return [
             new Middleware(function ($request, $next) {
-                if (Auth::user()->role !== 'dosen') {
+                if (!in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -39,12 +39,15 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
-        $examinations = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'revisions' => function($q) use ($user) {
-                $q->where('examiner_id', $user->id);
-            }])
-            ->where(function ($q) use ($user) {
+        $query = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'revisions']);
+
+        if ($user->role === 'dosen') {
+            $query->where(function ($q) use ($user) {
                 $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
-            })
+            });
+        }
+
+        $examinations = $query
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('schedule', function($query) use ($selectedWaveId) {
                     $query->where('wave_id', $selectedWaveId);
@@ -63,12 +66,16 @@ class SeminarExaminerController extends Controller implements HasMiddleware
     public function show(SeminarScheduleDetail $detail)
     {
         $user = Auth::user();
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id;
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
         $detail->load(['thesis.student', 'schedule', 'revisions.messages.sender']);
-        $myRevision = $detail->revisions->where('examiner_id', $user->id)->first();
+        $myRevision = $detail->revisions->first();
 
         return view('seminar-examiner.show', compact('detail', 'myRevision'));
     }
@@ -76,7 +83,11 @@ class SeminarExaminerController extends Controller implements HasMiddleware
     public function storeRevision(Request $request, SeminarScheduleDetail $detail)
     {
         $user = Auth::user();
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id;
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
@@ -85,10 +96,19 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             'revision_link' => 'nullable|url',
         ]);
 
+        $actingUser = $user;
+        if (in_array($user->role, ['admin', 'kaprodi']) && $request->has('target_examiner_id')) {
+            $target = \App\Models\User::find($request->input('target_examiner_id'));
+            if ($target) $actingUser = $target;
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingUser = $detail->examiner1 ?? $user;
+        }
+
         try {
             $this->examinerService->storeRevision(
                 SeminarRevision::class, SeminarRevisionMessage::class, $detail, 
-                $request->only('revision_notes'), $request->input('revision_link')
+                $request->only('revision_notes'), $request->input('revision_link'),
+                $actingUser
             );
             return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
         } catch (\Throwable $e) {
@@ -105,16 +125,20 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
     public function grading(SeminarScheduleDetail $detail)
     {
         $user = Auth::user();
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id;
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
         $detail->load(['thesis.student', 'schedule']);
         $myRevision = SeminarRevision::where('seminar_schedule_detail_id', $detail->id)
-            ->where('examiner_id', $user->id)
             ->first();
 
         return view('seminar-examiner.grade', compact('detail', 'myRevision'));
@@ -123,7 +147,11 @@ class SeminarExaminerController extends Controller implements HasMiddleware
     public function storeGrading(Request $request, SeminarScheduleDetail $detail)
     {
         $user = Auth::user();
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id;
+
+        if (!$isAuthorized) {
             abort(403);
         }
 
@@ -133,7 +161,15 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             'score_writing' => 'required|integer|min:0|max:100',
         ]);
 
-        $this->examinerService->storeGrading(SeminarRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $user);
+        $actingUser = $user;
+        if (in_array($user->role, ['admin', 'kaprodi']) && $request->has('target_examiner_id')) {
+            $target = \App\Models\User::find($request->input('target_examiner_id'));
+            if ($target) $actingUser = $target;
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingUser = $detail->examiner1 ?? $user;
+        }
+
+        $this->examinerService->storeGrading(SeminarRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $actingUser);
 
         return redirect()->route('seminar-examiner.index')->with('success', 'Nilai seminar berhasil disimpan.');
     }
@@ -141,7 +177,11 @@ class SeminarExaminerController extends Controller implements HasMiddleware
     public function exportBeritaAcara(SeminarScheduleDetail $detail)
     {
         $user = Auth::user();
-        if ($detail->examiner1_id !== $user->id && $detail->examiner2_id !== $user->id) {
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || $detail->examiner1_id === $user->id
+            || $detail->examiner2_id === $user->id;
+
+        if (!$isAuthorized) {
             abort(403);
         }
 

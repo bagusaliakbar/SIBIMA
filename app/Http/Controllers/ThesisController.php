@@ -62,26 +62,34 @@ class ThesisController extends Controller
 
     public function create()
     {
-        if (Auth::user()->role !== 'mahasiswa') {
-            return redirect()->route('dashboard')->with('error', 'Hanya mahasiswa yang dapat mengajukan skripsi.');
-        }
+        $user = Auth::user();
 
-        // Check if student already has a thesis
-        $existingThesis = Thesis::where('student_id', Auth::id())->first();
-        if ($existingThesis) {
-            return redirect()->route('dashboard')->with('error', 'Anda sudah mengajukan skripsi.');
+        if ($user->role === 'mahasiswa') {
+            // Check if student already has a thesis
+            $existingThesis = Thesis::where('student_id', $user->id)->first();
+            if ($existingThesis) {
+                return redirect()->route('dashboard')->with('error', 'Anda sudah mengajukan skripsi.');
+            }
+            $students = collect();
+        } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
+            $students = User::where('role', 'mahasiswa')
+                ->whereDoesntHave('thesis')
+                ->orderBy('name')
+                ->get();
+        } else {
+            return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki hak akses untuk mengajukan skripsi.');
         }
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
 
-        return view('theses.create', compact('dosens'));
+        return view('theses.create', compact('dosens', 'students'));
     }
 
     public function store(StoreThesisRequest $request)
     {
         $this->thesisService->createThesis($request->validated());
 
-        return redirect()->route('dashboard')->with('success', 'Pengajuan skripsi berhasil dikirim. Admin akan segera meninjau usulan pembimbing Anda.');
+        return redirect()->route('theses.index')->with('success', 'Pengajuan skripsi berhasil dikirim.');
     }
 
     public function index(Request $request)
@@ -143,15 +151,16 @@ class ThesisController extends Controller
         return redirect()->back()->with('success', 'Data skripsi berhasil diperbarui.');
     }
 
-    public function toggleAcc(Thesis $thesis, $type)
+    public function toggleAcc(Request $request, Thesis $thesis, $type)
     {
         $this->authorize('toggleAcc', $thesis);
 
         try {
-            $statusText = $this->thesisService->toggleAcc($thesis, $type);
+            $slot = $request->input('slot');
+            $statusText = $this->thesisService->toggleAcc($thesis, $type, $slot);
             $typeName = $type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
-            
-            return redirect()->back()->with('success', "ACC $typeName berhasil $statusText.");
+
+            return redirect()->back()->with('success', "ACC {$typeName} berhasil {$statusText}.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

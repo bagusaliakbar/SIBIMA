@@ -9,12 +9,13 @@ class StoreThesisRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Auth::user()->role === 'mahasiswa';
+        return in_array(Auth::user()->role, ['mahasiswa', 'admin', 'kaprodi']);
     }
 
     public function rules(): array
     {
         return [
+            'student_id' => in_array(Auth::user()->role, ['admin', 'kaprodi']) ? 'required|exists:users,id' : 'nullable',
             'title'    => 'required|string|max:255',
             'abstract' => 'required|string',
             'requested_pembimbing1_id' => 'nullable|exists:users,id',
