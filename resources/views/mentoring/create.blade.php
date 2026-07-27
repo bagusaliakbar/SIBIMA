@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-[1.1rem] font-bold text-slate-800 dark:text-slate-100 tracking-tight">
-            {{ Auth::user()->role === 'dosen' ? 'Buat Jadwal Bimbingan' : 'Pengajuan Jadwal Bimbingan' }}
+            {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Buat Jadwal Bimbingan' : 'Pengajuan Jadwal Bimbingan' }}
         </h2>
     </x-slot>
 
     <div class="w-full">
         <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
             <div class="mb-6 border-b border-slate-100 dark:border-slate-700 pb-4">
-                <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Form {{ Auth::user()->role === 'dosen' ? 'Penjadwalan' : 'Pengajuan' }}</h3>
-                <p class="text-slate-500 dark:text-slate-400 mt-1 text-xs">{{ Auth::user()->role === 'dosen' ? 'Pilih mahasiswa dan tentukan waktu bimbingan.' : 'Pilih jadwal dan topik untuk sesi bimbingan Anda berikutnya.' }}</p>
+                <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Form {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Penjadwalan' : 'Pengajuan' }}</h3>
+                <p class="text-slate-500 dark:text-slate-400 mt-1 text-xs">{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Pilih mahasiswa dan tentukan waktu bimbingan.' : 'Pilih jadwal dan topik untuk sesi bimbingan Anda berikutnya.' }}</p>
             </div>
 
             @if ($errors->any())
@@ -38,14 +38,14 @@
                 @csrf
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @if(Auth::user()->role === 'dosen')
+                    @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                     <div class="md:col-span-2">
                         <label for="thesis_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Mahasiswa Bimbingan <span class="text-orange-600">*</span></label>
                         <select name="thesis_id" id="thesis_id" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
                             <option value="">Pilih Mahasiswa...</option>
                             <option value="all" class="font-bold text-orange-600">-- Pilih Semua Mahasiswa Bimbingan --</option>
                             @foreach($theses as $t)
-                                <option value="{{ $t->id }}">{{ $t->student->name }} - {{ \Illuminate\Support\Str::limit($t->title, 50) }}</option>
+                                <option value="{{ $t->id }}">{{ $t->student?->name ?? 'Mahasiswa' }} - {{ \Illuminate\Support\Str::limit($t->title, 50) }}</option>
                             @endforeach
                         </select>
                     </div>

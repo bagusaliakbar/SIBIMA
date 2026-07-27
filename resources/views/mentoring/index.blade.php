@@ -19,7 +19,7 @@
                         route="mentoring-sessions.index"
                         :params="['tab' => $activeTab]" />
 
-                    @if(Auth::user()->role === 'dosen')
+                    @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                         <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm whitespace-nowrap">+ Tambah Jadwal</a>
                     @endif
                 </div>
