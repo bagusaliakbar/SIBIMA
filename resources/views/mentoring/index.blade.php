@@ -69,19 +69,23 @@
                                 </span>
                             </h4>
 
-                            @if(Auth::user()->role === 'dosen')
+                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                                 <div class="flex flex-wrap gap-2">
                                     {{-- ACC UP Button --}}
                                     @php
+                                        $isAdminOrKaprodi = in_array(Auth::user()->role, ['admin', 'kaprodi']);
                                         $isP1 = Auth::id() === $studentThesis->pembimbing1_id;
                                         $isP2 = Auth::id() === $studentThesis->pembimbing2_id;
-                                        $hasAccUp = $isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false);
+                                        $hasAccUp = $isAdminOrKaprodi ? ($studentThesis->acc_up_p1 && $studentThesis->acc_up_p2) : ($isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false));
                                     @endphp
                                     {{-- ACC UP Group --}}
                                     <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                                         <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
                                             onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?{{ $mentoringCount < 4 && !$hasAccUp ? ' Catatan: Jumlah bimbingan mahasiswa belum mencapai 4 kali.' : '' }}')">
                                             @csrf
+                                            @if($isAdminOrKaprodi)
+                                                <input type="hidden" name="slot" value="all">
+                                            @endif
                                             <button type="submit" 
                                                 title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
                                                 class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
@@ -102,12 +106,15 @@
 
                                     {{-- ACC Sidang Group --}}
                                     @php
-                                        $hasAccSidang = $isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false);
+                                        $hasAccSidang = $isAdminOrKaprodi ? ($studentThesis->acc_sidang_p1 && $studentThesis->acc_sidang_p2) : ($isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false));
                                     @endphp
                                     <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                                         <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
                                             onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?{{ $mentoringCount < 8 && !$hasAccSidang ? ' Catatan: Jumlah bimbingan mahasiswa belum mencapai 8 kali.' : '' }}')">
                                             @csrf
+                                            @if($isAdminOrKaprodi)
+                                                <input type="hidden" name="slot" value="all">
+                                            @endif
                                             <button type="submit" 
                                                 title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
                                                 class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm

@@ -71,9 +71,18 @@
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col items-center gap-2">
-                                        <div class="flex gap-1">
+                                        <div class="flex items-center gap-1">
                                             <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_up_p1 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P1</span>
                                             <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_up_p2 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P2</span>
+                                            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline" onsubmit="return confirm('Toggle ACC Seminar UP untuk {{ $thesis->student->name ?? '' }}?')">
+                                                    @csrf
+                                                    <input type="hidden" name="slot" value="all">
+                                                    <button type="submit" title="Toggle ACC UP" class="ml-1 text-[10px] text-slate-400 hover:text-emerald-600">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                         @if($thesis->isAccUpFinal())
                                             <x-status-badge type="emerald" label="SIAP SEMINAR" />
@@ -84,9 +93,18 @@
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col items-center gap-2">
-                                        <div class="flex gap-1">
+                                        <div class="flex items-center gap-1">
                                             <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_sidang_p1 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P1</span>
                                             <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_sidang_p2 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P2</span>
+                                            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline" onsubmit="return confirm('Toggle ACC Sidang untuk {{ $thesis->student->name ?? '' }}?')">
+                                                    @csrf
+                                                    <input type="hidden" name="slot" value="all">
+                                                    <button type="submit" title="Toggle ACC Sidang" class="ml-1 text-[10px] text-slate-400 hover:text-emerald-600">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                         @if($thesis->isAccSidangFinal())
                                             <x-status-badge type="emerald" label="SIAP SIDANG" />
