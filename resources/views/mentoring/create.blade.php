@@ -39,15 +39,31 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                    <div class="md:col-span-2">
-                        <label for="thesis_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Mahasiswa Bimbingan <span class="text-orange-600">*</span></label>
-                        <select name="thesis_id" id="thesis_id" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                            <option value="">Pilih Mahasiswa...</option>
-                            <option value="all" class="font-bold text-orange-600">-- Pilih Semua Mahasiswa Bimbingan --</option>
-                            @foreach($theses as $t)
-                                <option value="{{ $t->id }}">{{ $t->student?->name ?? 'Mahasiswa' }} - {{ \Illuminate\Support\Str::limit($t->title, 50) }}</option>
-                            @endforeach
-                        </select>
+                    <div class="md:col-span-2 space-y-4">
+                        <div>
+                            <label for="thesis_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Mahasiswa Bimbingan <span class="text-orange-600">*</span></label>
+                            <select name="thesis_id" id="thesis_id" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                                <option value="">Pilih Mahasiswa...</option>
+                                <option value="all" class="font-bold text-orange-600">-- Pilih Semua Mahasiswa Bimbingan --</option>
+                                @foreach($theses as $t)
+                                    <option value="{{ $t->id }}">{{ $t->student?->name ?? 'Mahasiswa' }} - {{ \Illuminate\Support\Str::limit($t->title, 50) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        @if(in_array(Auth::user()->role, ['admin', 'kaprodi']) && isset($dosens))
+                        <div>
+                            <label for="dosen_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Dosen Pembimbing / Pelaksana (Opsional)</label>
+                            <select name="dosen_id" id="dosen_id" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                                <option value="">Pembimbing 1 Mahasiswa (Otomatis)</option>
+                                <option value="p2">Pembimbing 2 Mahasiswa (Otomatis)</option>
+                                @foreach($dosens as $dosen)
+                                    <option value="{{ $dosen->id }}">{{ $dosen->name }}</option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-slate-400 dark:text-slate-500 italic">Pilih dosen spesifik yang memimpin sesi bimbingan ini. Jika dikosongkan, sistem akan otomatis menetapkannya ke Pembimbing 1 mahasiswa.</p>
+                        </div>
+                        @endif
                     </div>
                     @else
                     <div class="md:col-span-2">

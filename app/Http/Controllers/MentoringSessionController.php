@@ -45,7 +45,8 @@ class MentoringSessionController extends Controller
             $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
                 ->where('status', 'active')
                 ->get();
-            return view('mentoring.create', compact('theses'));
+            $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
+            return view('mentoring.create', compact('theses', 'dosens'));
         }
 
         abort(403);

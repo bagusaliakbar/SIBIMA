@@ -163,9 +163,19 @@ class MentoringService
 
     private function createSessionForThesis(Thesis $thesis, array $data, string $status)
     {
-        $dosenId = in_array(Auth::user()->role, ['admin', 'kaprodi'])
-            ? ($thesis->pembimbing1_id ?? $thesis->pembimbing2_id ?? Auth::id())
-            : Auth::id();
+        if (in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            if (!empty($data['dosen_id'])) {
+                if ($data['dosen_id'] === 'p2') {
+                    $dosenId = $thesis->pembimbing2_id ?? $thesis->pembimbing1_id ?? Auth::id();
+                } else {
+                    $dosenId = $data['dosen_id'];
+                }
+            } else {
+                $dosenId = $thesis->pembimbing1_id ?? $thesis->pembimbing2_id ?? Auth::id();
+            }
+        } else {
+            $dosenId = Auth::id();
+        }
 
         return MentoringSession::create([
             'thesis_id' => $thesis->id,
