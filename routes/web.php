@@ -143,6 +143,12 @@ Route::middleware('auth')->group(function () {
         // Wave Management
         Route::post('/waves/{wave}/toggle', [App\Http\Controllers\WaveController::class, 'toggle'])->name('waves.toggle');
         Route::resource('waves', App\Http\Controllers\WaveController::class)->except(['show', 'create', 'edit']);
+
+        // Data Migrasi Skripsi (Bypass)
+        Route::get('/theses/migration/template', [App\Http\Controllers\ThesisController::class, 'downloadTemplate'])->name('theses.migration.template');
+        Route::post('/theses/migration/import', [App\Http\Controllers\ThesisController::class, 'importExcel'])->name('theses.migration.import');
+        Route::get('/theses/migration', [App\Http\Controllers\ThesisController::class, 'createMigration'])->name('theses.migration.create');
+        Route::post('/theses/migration', [App\Http\Controllers\ThesisController::class, 'storeMigration'])->name('theses.migration.store');
     });
 
     // Notifications

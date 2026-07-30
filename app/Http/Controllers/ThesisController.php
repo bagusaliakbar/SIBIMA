@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Imports\ThesesImport;
 
 class ThesisController extends Controller
 {
@@ -164,5 +165,84 @@ class ThesisController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    public function createMigration()
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $students = User::where('role', 'mahasiswa')
+            ->whereDoesntHave('thesis')
+            ->orderBy('name')
+            ->get();
+        $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+
+        return view('theses.create-migration', compact('dosens', 'students'));
+    }
+
+    public function storeMigration(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'student_id' => 'required|exists:users,id',
+            'title' => 'required|string|max:255',
+            'abstract' => 'nullable|string',
+            'pembimbing1_id' => 'required|exists:users,id',
+            'pembimbing2_id' => 'required|exists:users,id|different:pembimbing1_id',
+            'current_stage' => 'required|string|in:Bimbingan Skripsi,Selesai Seminar UP,Siap Sidang',
+        ]);
+
+        $this->thesisService->createMigrationThesis($validated);
+
+        return redirect()->route('theses.index')->with('success', 'Data migrasi skripsi berhasil ditambahkan.');
+    }
+
+    public function importExcel(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new ThesesImport($this->thesisService), $request->file('file'));
+            return redirect()->route('theses.index')->with('success', 'Data migrasi skripsi berhasil diimpor.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+        
+        // Return a basic CSV template directly or generate using Excel
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="Template_Migrasi_Skripsi.csv"',
+        ];
+        
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['NIM', 'Judul', 'Abstrak', 'NIDN_Pembimbing_1', 'NIDN_Pembimbing_2', 'Tahapan_Saat_Ini']);
+            fputcsv($file, ['1012345', 'Contoh Judul Skripsi', 'Deskripsi singkat...', '0011223344', '0022334455', 'Bimbingan Skripsi']);
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
     }
 }

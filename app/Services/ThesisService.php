@@ -166,4 +166,33 @@ class ThesisService
         }
         return null;
     }
+
+    /**
+     * Create a new migrated thesis bypass
+     */
+    public function createMigrationThesis(array $data)
+    {
+        $student = User::find($data['student_id']);
+        
+        $thesis = Thesis::create([
+            'student_id'               => $data['student_id'],
+            'title'                    => $data['title'],
+            'abstract'                 => $data['abstract'],
+            'pembimbing1_id'           => $data['pembimbing1_id'],
+            'pembimbing2_id'           => $data['pembimbing2_id'],
+            'status'                   => 'active',
+            'is_migrated'              => true,
+            'acc_up_p1'                => in_array($data['current_stage'], ['Selesai Seminar UP', 'Siap Sidang']),
+            'acc_up_p2'                => in_array($data['current_stage'], ['Selesai Seminar UP', 'Siap Sidang']),
+        ]);
+
+        $submitterName = Auth::user()->name;
+        ActivityLog::log('Input Data Migrasi Skripsi', "Admin menginput data skripsi berjalan (migrasi) untuk {$student->name} pada tahap {$data['current_stage']}.", 'Skripsi', $thesis, [
+            'title' => $data['title'],
+            'status' => 'active',
+            'stage' => $data['current_stage']
+        ]);
+
+        return $thesis;
+    }
 }
