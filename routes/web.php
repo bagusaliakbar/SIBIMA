@@ -33,6 +33,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/export-excel', [App\Http\Controllers\ThesisController::class, 'exportExcel'])->name('theses.export-excel');
     Route::get('/theses/export-pdf', [App\Http\Controllers\ThesisController::class, 'exportPdf'])->name('theses.export-pdf');
     Route::post('/theses/{thesis}/toggle-acc/{type}', [App\Http\Controllers\ThesisController::class, 'toggleAcc'])->name('theses.toggle-acc');
+    
+    // Data Migrasi Skripsi (Bypass)
+    Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/theses/migration/template', [App\Http\Controllers\ThesisController::class, 'downloadTemplate'])->name('theses.migration.template');
+        Route::post('/theses/migration/import', [App\Http\Controllers\ThesisController::class, 'importExcel'])->name('theses.migration.import');
+        Route::get('/theses/migration', [App\Http\Controllers\ThesisController::class, 'createMigration'])->name('theses.migration.create');
+        Route::post('/theses/migration', [App\Http\Controllers\ThesisController::class, 'storeMigration'])->name('theses.migration.store');
+    });
     Route::resource('theses', App\Http\Controllers\ThesisController::class);
     Route::post('/theses/{thesis}/assign', [App\Http\Controllers\ThesisController::class, 'assignPembimbing'])->name('theses.assign');
     // Seminar Applications
@@ -144,11 +152,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/waves/{wave}/toggle', [App\Http\Controllers\WaveController::class, 'toggle'])->name('waves.toggle');
         Route::resource('waves', App\Http\Controllers\WaveController::class)->except(['show', 'create', 'edit']);
 
-        // Data Migrasi Skripsi (Bypass)
-        Route::get('/theses/migration/template', [App\Http\Controllers\ThesisController::class, 'downloadTemplate'])->name('theses.migration.template');
-        Route::post('/theses/migration/import', [App\Http\Controllers\ThesisController::class, 'importExcel'])->name('theses.migration.import');
-        Route::get('/theses/migration', [App\Http\Controllers\ThesisController::class, 'createMigration'])->name('theses.migration.create');
-        Route::post('/theses/migration', [App\Http\Controllers\ThesisController::class, 'storeMigration'])->name('theses.migration.store');
+
     });
 
     // Notifications
