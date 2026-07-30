@@ -230,19 +230,6 @@ class ThesisController extends Controller
             abort(403);
         }
         
-        // Return a basic CSV template directly or generate using Excel
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="Template_Migrasi_Skripsi.csv"',
-        ];
-        
-        $callback = function() {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['NIM', 'Judul', 'Abstrak', 'NIDN_Pembimbing_1', 'NIDN_Pembimbing_2', 'Tahapan_Saat_Ini']);
-            fputcsv($file, ['1012345', 'Contoh Judul Skripsi', 'Deskripsi singkat...', '0011223344', '0022334455', 'Bimbingan Skripsi']);
-            fclose($file);
-        };
-        
-        return response()->stream($callback, 200, $headers);
+        return Excel::download(new \App\Exports\MigrationTemplateExport, 'Template_Migrasi_Skripsi.xlsx');
     }
 }
