@@ -35,8 +35,13 @@ class UserController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $status = $request->input('status', 'all');
 
         $users = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->when($status !== 'all', function ($query) use ($status) {
+                if ($status === 'active') return $query->where('is_active', true);
+                if ($status === 'pending') return $query->where('is_active', false);
+            })
             ->when($search, function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -46,9 +51,9 @@ class UserController extends Controller implements HasMiddleware
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->appends(['search' => $search]);
+            ->appends(['search' => $search, 'status' => $status]);
 
-        return view('users.index', compact('users', 'search'));
+        return view('users.index', compact('users', 'search', 'status'));
     }
 
     public function create()

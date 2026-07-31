@@ -32,6 +32,22 @@
             </div>
         @endif
 
+        <!-- Status Tabs Navigation -->
+        <div class="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800 overflow-x-auto pb-px custom-scrollbar mb-6">
+            <a href="{{ route('users.index', ['status' => 'all', 'search' => $search]) }}" 
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'all' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                Semua Pengguna
+            </a>
+            <a href="{{ route('users.index', ['status' => 'active', 'search' => $search]) }}" 
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'active' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                Aktif
+            </a>
+            <a href="{{ route('users.index', ['status' => 'pending', 'search' => $search]) }}" 
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'pending' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                Pending (Perlu Approve)
+            </a>
+        </div>
+
         <x-table-card 
             title="Manajemen Pengguna"
             :footer="$users->links()">
@@ -42,7 +58,8 @@
                         name="search" 
                         :value="$search ?? ''" 
                         placeholder="Cari nama, NPM..." 
-                        route="users.index" />
+                        route="users.index"
+                        :params="['status' => $status ?? 'all']" />
                     
                     <div class="flex items-center gap-2">
                         <a href="{{ route('users.export') }}" class="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-[10px] text-slate-600 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-100 transition-all shadow-sm">
