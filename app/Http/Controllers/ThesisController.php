@@ -93,6 +93,45 @@ class ThesisController extends Controller
         return redirect()->route('theses.index')->with('success', 'Pengajuan skripsi berhasil dikirim.');
     }
 
+    public function kanban()
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi') {
+            abort(403);
+        }
+
+        // Fetch all theses with relationships to group them
+        $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'seminarApplication', 'defenseApplication'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $pengajuanBaru = collect();
+        $bimbinganUp = collect();
+        $prosesSeminar = collect();
+        $siapSidang = collect();
+        $lulus = collect();
+
+        foreach ($theses as $thesis) {
+            if ($thesis->status === 'completed') {
+                $lulus->push($thesis);
+            } elseif ($thesis->status === 'pending') {
+                $pengajuanBaru->push($thesis);
+            } elseif ($thesis->status === 'active') {
+                if ($thesis->isAccSidangFinal() || $thesis->defenseApplication) {
+                    $siapSidang->push($thesis);
+                } elseif ($thesis->isAccUpFinal() || $thesis->seminarApplication) {
+                    $prosesSeminar->push($thesis);
+                } else {
+                    $bimbinganUp->push($thesis);
+                }
+            }
+        }
+
+        return view('theses.kanban', compact(
+            'pengajuanBaru', 'bimbinganUp', 'prosesSeminar', 'siapSidang', 'lulus'
+        ));
+    }
+
     public function index(Request $request)
     {
         $user = Auth::user();
