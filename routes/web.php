@@ -54,7 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
 
     // Digital Repository
-    Route::get('/repositories', [App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
+    Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
+    Route::get('/repositories', [\App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
     Route::middleware(['role:admin,kaprodi'])->group(function () {
         Route::get('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'createImport'])->name('repositories.import.create');
         Route::post('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'storeImport'])->name('repositories.import.store');

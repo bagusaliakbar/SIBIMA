@@ -5,10 +5,16 @@
                 ['label' => 'Katalog Pustaka Skripsi', 'route' => null]
             ]" />
             @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                <a href="{{ route('repositories.import.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] shadow-sm shadow-emerald-500/30">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="startSync()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-900/20 transition-all duration-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Migrasi Portal
+                </button>
+                <a href="{{ route('repositories.import.create') }}" class="bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 transition-all duration-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     Import Arsip
                 </a>
+            </div>
             @endif
         </div>
     </x-slot>
@@ -94,4 +100,105 @@
             {{ $repositories->links() }}
         </div>
     </div>
+</div>
+
+<!-- Modal Sync Portal -->
+<div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all">
+        <div class="p-6">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Migrasi Data Portal</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Sistem sedang menarik data dari website portal FASILKOM (41 Halaman). Mohon jangan tutup jendela ini hingga proses selesai.</p>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-4 mb-2 overflow-hidden border border-slate-200 dark:border-slate-600">
+                <div id="syncProgress" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span id="syncStatus">Menunggu...</span>
+                <span id="syncPercentage">0% (0/41)</span>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <button id="closeSyncModalBtn" onclick="closeSyncModal()" class="hidden bg-slate-800 dark:bg-white text-white dark:text-slate-800 px-4 py-2 rounded-lg font-bold text-sm">Tutup & Muat Ulang</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isSyncing = false;
+    const totalPages = 41;
+    let currentPage = 1;
+    let totalImported = 0;
+
+    async function startSync() {
+        if (isSyncing) return;
+        
+        if (!confirm('Anda yakin ingin memulai migrasi 41 halaman dari portal FASILKOM? Proses ini mungkin memakan waktu beberapa menit.')) {
+            return;
+        }
+
+        isSyncing = true;
+        currentPage = 1;
+        totalImported = 0;
+        
+        document.getElementById('syncModal').classList.remove('hidden');
+        document.getElementById('closeSyncModalBtn').classList.add('hidden');
+        
+        await processNextPage();
+    }
+
+    async function processNextPage() {
+        if (currentPage > totalPages) {
+            finishSync();
+            return;
+        }
+
+        updateProgressUI(currentPage, totalPages, `Menarik data halaman ${currentPage}...`);
+
+        try {
+            const response = await fetch(`/repositories/sync-page/${currentPage}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                totalImported += result.count;
+                currentPage++;
+                // Lanjut halaman berikutnya
+                setTimeout(processNextPage, 500); // jeda 0.5 detik biar ga diban server portal
+            } else {
+                handleSyncError(`Gagal di halaman ${currentPage}: ${result.message}`);
+            }
+        } catch (error) {
+            handleSyncError(`Terjadi kesalahan jaringan di halaman ${currentPage}`);
+        }
+    }
+
+    function updateProgressUI(current, total, statusText) {
+        const percentage = Math.round((current / total) * 100);
+        document.getElementById('syncProgress').style.width = `${percentage}%`;
+        document.getElementById('syncPercentage').innerText = `${percentage}% (${current}/${total})`;
+        document.getElementById('syncStatus').innerText = statusText;
+    }
+
+    function handleSyncError(message) {
+        document.getElementById('syncStatus').innerText = message;
+        document.getElementById('syncStatus').classList.add('text-red-500');
+        document.getElementById('closeSyncModalBtn').classList.remove('hidden');
+        isSyncing = false;
+    }
+
+    function finishSync() {
+        document.getElementById('syncProgress').style.width = `100%`;
+        document.getElementById('syncPercentage').innerText = `Selesai!`;
+        document.getElementById('syncStatus').innerText = `Berhasil menyinkronkan ${totalImported} skripsi.`;
+        document.getElementById('syncStatus').classList.add('text-emerald-500');
+        document.getElementById('closeSyncModalBtn').classList.remove('hidden');
+        isSyncing = false;
+    }
+
+    function closeSyncModal() {
+        window.location.reload();
+    }
+</script>
 </x-app-layout>

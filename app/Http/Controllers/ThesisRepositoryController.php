@@ -73,4 +73,82 @@ class ThesisRepositoryController extends Controller
         }
         return Excel::download(new RepositoryTemplateExport, 'Template_Repositori_Skripsi.xlsx');
     }
+
+    public function syncPage($page)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $html = @file_get_contents("https://fasilkom.unsub.ac.id/penelitian-mahasiswa?page={$page}");
+            if (!$html) {
+                return response()->json(['success' => false, 'message' => 'Gagal mengakses portal'], 500);
+            }
+            
+            $dom = new \DOMDocument();
+            @$dom->loadHTML($html);
+            
+            $xpath = new \DOMXPath($dom);
+            
+            // Find all table rows inside .sr-table tbody
+            $rows = $xpath->query("//table[contains(@class, 'sr-table')]//tbody//tr");
+            
+            $count = 0;
+            
+            foreach ($rows as $row) {
+                // Name: .student-info-main
+                $nameNode = $xpath->query(".//*[contains(@class, 'student-info-main')]", $row);
+                $name = $nameNode->length > 0 ? trim($nameNode->item(0)->textContent) : null;
+                
+                // Meta: .student-meta
+                $metaNode = $xpath->query(".//*[contains(@class, 'student-meta')]", $row);
+                $npm = null;
+                $year = date('Y');
+                if ($metaNode->length > 0) {
+                    $metaText = $metaNode->item(0)->textContent;
+                    if (preg_match('/NPM:\s*([A-Za-z0-9]+)/i', $metaText, $matches)) {
+                        $npm = $matches[1];
+                    }
+                    if (preg_match('/Angkatan\s*(\d{4})/i', $metaText, $matches)) {
+                        $year = $matches[1];
+                    }
+                }
+                
+                // Title: .thesis-title-premium
+                $titleNode = $xpath->query(".//*[contains(@class, 'thesis-title-premium')]", $row);
+                $title = $titleNode->length > 0 ? trim($titleNode->item(0)->textContent) : null;
+                
+                // Supervisor: .supervisor-tag
+                $supervisorNodes = $xpath->query(".//*[contains(@class, 'supervisor-tag')]", $row);
+                $pembimbing1 = $supervisorNodes->length > 0 ? trim($supervisorNodes->item(0)->textContent) : null;
+                $pembimbing2 = $supervisorNodes->length > 1 ? trim($supervisorNodes->item(1)->textContent) : null;
+                
+                if ($name && $title) {
+                    ThesisRepository::updateOrCreate(
+                        ['title' => $title, 'name' => $name],
+                        [
+                            'identifier' => $npm,
+                            'year' => $year,
+                            'pembimbing1' => $pembimbing1,
+                            'pembimbing2' => $pembimbing2
+                        ]
+                    );
+                    $count++;
+                }
+            }
+            
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+                'message' => "Halaman {$page} berhasil disinkronisasi."
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
