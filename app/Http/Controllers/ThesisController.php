@@ -99,7 +99,7 @@ class ThesisController extends Controller
             'title' => 'required|string|min:10'
         ]);
 
-        $inputTitle = strtolower(trim($request->title));
+        $inputTitle = $request->title;
         
         $theses = Thesis::with('student')->get();
         $repositories = \App\Models\ThesisRepository::all();
@@ -107,11 +107,9 @@ class ThesisController extends Controller
         $similarTitles = [];
         
         foreach($theses as $thesis) {
-            $existingTitle = strtolower(trim($thesis->title));
-            // Calculate similarity percentage using Levenshtein distance implicitly in similar_text
-            similar_text($inputTitle, $existingTitle, $percent);
+            $percent = $this->calculateSimilarity($inputTitle, $thesis->title);
             
-            if ($percent >= 60) {
+            if ($percent >= 50) { // Turunkan threshold sedikit karena stop word dihilangkan
                 $similarTitles[] = [
                     'title' => $thesis->title,
                     'student_name' => $thesis->student->name ?? 'Unknown',
@@ -123,10 +121,9 @@ class ThesisController extends Controller
         }
 
         foreach($repositories as $repo) {
-            $existingTitle = strtolower(trim($repo->title));
-            similar_text($inputTitle, $existingTitle, $percent);
+            $percent = $this->calculateSimilarity($inputTitle, $repo->title);
             
-            if ($percent >= 60) {
+            if ($percent >= 50) {
                 $similarTitles[] = [
                     'title' => $repo->title,
                     'student_name' => $repo->name,
@@ -145,6 +142,48 @@ class ThesisController extends Controller
         return response()->json([
             'similar' => array_slice($similarTitles, 0, 3)
         ]);
+    }
+
+    private function calculateSimilarity($input, $existing)
+    {
+        $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
+        
+        // Bersihkan string (huruf kecil, hilangkan tanda baca)
+        $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($input));
+        $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($existing));
+        
+        // Tokenisasi
+        $inputTokens = array_filter(explode(' ', $cleanInput));
+        $existingTokens = array_filter(explode(' ', $cleanExisting));
+        
+        // Hilangkan stop words
+        $inputTokensFiltered = array_diff($inputTokens, $stopwords);
+        $existingTokensFiltered = array_diff($existingTokens, $stopwords);
+        
+        // Jika setelah di filter kosong (misal cuma ngetik "sistem informasi"), pakai token asli
+        if (empty($inputTokensFiltered)) $inputTokensFiltered = $inputTokens;
+        if (empty($existingTokensFiltered)) $existingTokensFiltered = $existingTokens;
+        
+        // 1. Jaccard Similarity (Pencocokan Kata)
+        $intersection = array_intersect($inputTokensFiltered, $existingTokensFiltered);
+        $union = array_unique(array_merge($inputTokensFiltered, $existingTokensFiltered));
+        
+        $jaccardScore = 0;
+        if (count($union) > 0) {
+            $jaccardScore = (count($intersection) / count($union)) * 100;
+        }
+        
+        // 2. Levenshtein Similarity (Pencocokan Karakter setelah stopword dibuang)
+        $reconstructedInput = implode(' ', $inputTokensFiltered);
+        $reconstructedExisting = implode(' ', $existingTokensFiltered);
+        
+        $levenshteinScore = 0;
+        similar_text($reconstructedInput, $reconstructedExisting, $levenshteinScore);
+        
+        // Kombinasi: 70% Jaccard (Kata yang sama lebih penting) + 30% Levenshtein (Menoleransi salah ketik)
+        $finalScore = ($jaccardScore * 0.7) + ($levenshteinScore * 0.3);
+        
+        return $finalScore;
     }
 
     public function kanban()
