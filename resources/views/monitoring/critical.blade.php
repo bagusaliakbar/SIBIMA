@@ -76,7 +76,7 @@
                             <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase text-center">Angkatan</th>
                             <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase text-center">Semester</th>
                             <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase">Tahapan Terakhir</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase">Pembimbing 1</th>
+                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase">Dosen Pembimbing</th>
                             <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase text-center">Tingkat Risiko</th>
                         </tr>
                     </thead>
@@ -115,15 +115,15 @@
                                     @endif
                                 </td>
                                 <td class="py-5 px-6">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10">
-                                            @if($student->thesis && $student->thesis->pembimbing1)
-                                                <img src="{{ $student->thesis->pembimbing1->avatar_url }}" alt="{{ $student->thesis->pembimbing1->name }}" class="w-full h-full object-cover">
-                                            @else
-                                                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%23f1f5f9'/><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' fill='%2394a3b8'/></svg>" class="w-full h-full object-cover">
-                                            @endif
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20">P1</span>
+                                            <span class="text-xs text-slate-700 dark:text-slate-300 font-bold tracking-tight">{{ $student->thesis->pembimbing1->name ?? '-' }}</span>
                                         </div>
-                                        <span class="text-xs text-slate-600 dark:text-slate-300 font-bold tracking-tight">{{ $student->thesis->pembimbing1->name ?? 'Belum Ada' }}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">P2</span>
+                                            <span class="text-xs text-slate-600 dark:text-slate-400 font-medium tracking-tight">{{ $student->thesis->pembimbing2->name ?? '-' }}</span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="py-5 px-6 text-center">
