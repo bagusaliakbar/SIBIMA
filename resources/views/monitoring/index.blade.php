@@ -46,10 +46,69 @@
             </div>
 
             <!-- Canvas Container -->
-            <div class="h-64 sm:h-80 w-full">
-                <canvas id="monitoringSupervisorChart"></canvas>
+            <div class="h-64 sm:h-80 w-full relative">
+                @if(count($chartData['labels']) > 0)
+                    <canvas id="monitoringSupervisorChart"></canvas>
+                @else
+                    <div class="h-full w-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 py-12">
+                        <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <p class="text-xs font-semibold">Tidak ada data bimbingan aktif yang sesuai dengan filter.</p>
+                    </div>
+                @endif
             </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        @if(count($chartData['labels']) > 0)
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const ctx = document.getElementById('monitoringSupervisorChart');
+                if (!ctx) return;
+
+                const rawData = @json($chartData);
+
+                new Chart(ctx.getContext('2d'), {
+                    type: 'bar',
+                    data: rawData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    boxWidth: 12,
+                                    usePointStyle: true,
+                                    font: { family: 'Inter', size: 11, weight: '600' }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#0f172a',
+                                titleFont: { family: 'Inter', size: 12, weight: '700' },
+                                bodyFont: { family: 'Inter', size: 11 },
+                                padding: 10,
+                                cornerRadius: 8
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: true,
+                                grid: { display: false },
+                                ticks: { font: { family: 'Inter', size: 10, weight: '600' } }
+                            },
+                            y: {
+                                stacked: true,
+                                beginAtZero: true,
+                                grid: { color: 'rgba(226, 232, 240, 0.5)' },
+                                ticks: { stepSize: 1, font: { family: 'Inter', size: 10 } }
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+        @endif
 
         <x-table-card 
             title="Status Progres Mahasiswa"
@@ -174,55 +233,3 @@
         </x-table-card>
     </div>
 </x-app-layout>
-
-@push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('monitoringSupervisorChart');
-            if (!ctx) return;
-
-            const rawData = @json($chartData);
-
-            new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: rawData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                boxWidth: 12,
-                                usePointStyle: true,
-                                font: { family: 'Inter', size: 11, weight: '600' }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a',
-                            titleFont: { family: 'Inter', size: 12, weight: '700' },
-                            bodyFont: { family: 'Inter', size: 11 },
-                            padding: 10,
-                            cornerRadius: 8
-                        }
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: { display: false },
-                            ticks: { font: { family: 'Inter', size: 10, weight: '600' } }
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(226, 232, 240, 0.5)' },
-                            ticks: { stepSize: 1, font: { family: 'Inter', size: 10 } }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-@endpush
