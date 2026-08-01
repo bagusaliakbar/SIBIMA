@@ -126,9 +126,9 @@ class MonitoringController extends Controller implements HasMiddleware
         $chartData = [
             'labels' => $chartLabels,
             'datasets' => [
-                ['label' => 'Proposal / UP', 'data' => $dataProposal, 'backgroundColor' => '#3b82f6', 'borderRadius' => 4],
-                ['label' => 'Penelitian / Skripsi', 'data' => $dataPenelitian, 'backgroundColor' => '#f97316', 'borderRadius' => 4],
-                ['label' => 'Siap Sidang Akhir', 'data' => $dataSiapSidang, 'backgroundColor' => '#10b981', 'borderRadius' => 4],
+                ['label' => 'Pengajuan Judul', 'data' => $dataProposal, 'backgroundColor' => '#3b82f6', 'borderRadius' => 4],
+                ['label' => 'Seminar', 'data' => $dataPenelitian, 'backgroundColor' => '#f97316', 'borderRadius' => 4],
+                ['label' => 'Sidang Akhir', 'data' => $dataSiapSidang, 'backgroundColor' => '#10b981', 'borderRadius' => 4],
                 ['label' => 'Kritikal (Sem >= 13)', 'data' => $dataKritikal, 'backgroundColor' => '#ef4444', 'borderRadius' => 4],
             ]
         ];
