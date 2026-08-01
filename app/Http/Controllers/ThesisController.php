@@ -164,13 +164,13 @@ class ThesisController extends Controller
         if (empty($inputTokensFiltered)) $inputTokensFiltered = $inputTokens;
         if (empty($existingTokensFiltered)) $existingTokensFiltered = $existingTokens;
         
-        // 1. Jaccard Similarity (Pencocokan Kata)
+        // 1. Overlap Coefficient (Pencocokan Sub-himpunan Kata)
         $intersection = array_intersect($inputTokensFiltered, $existingTokensFiltered);
-        $union = array_unique(array_merge($inputTokensFiltered, $existingTokensFiltered));
+        $minTokens = min(count($inputTokensFiltered), count($existingTokensFiltered));
         
-        $jaccardScore = 0;
-        if (count($union) > 0) {
-            $jaccardScore = (count($intersection) / count($union)) * 100;
+        $overlapScore = 0;
+        if ($minTokens > 0) {
+            $overlapScore = (count($intersection) / $minTokens) * 100;
         }
         
         // 2. Levenshtein Similarity (Pencocokan Karakter setelah stopword dibuang)
@@ -179,11 +179,19 @@ class ThesisController extends Controller
         
         $levenshteinScore = 0;
         similar_text($reconstructedInput, $reconstructedExisting, $levenshteinScore);
+
+        // 3. Substring Bonus
+        $bonus = 0;
+        if (!empty($reconstructedInput) && !empty($reconstructedExisting)) {
+            if (str_contains($reconstructedExisting, $reconstructedInput) || str_contains($reconstructedInput, $reconstructedExisting)) {
+                $bonus = 20; // Bonus 20% jika string satu adalah bagian utuh dari string lain
+            }
+        }
         
-        // Kombinasi: 70% Jaccard (Kata yang sama lebih penting) + 30% Levenshtein (Menoleransi salah ketik)
-        $finalScore = ($jaccardScore * 0.7) + ($levenshteinScore * 0.3);
+        // Kombinasi: 60% Overlap + 40% Levenshtein + Bonus
+        $finalScore = ($overlapScore * 0.6) + ($levenshteinScore * 0.4) + $bonus;
         
-        return $finalScore;
+        return min(100, $finalScore);
     }
 
     public function kanban()
