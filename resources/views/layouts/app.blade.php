@@ -27,6 +27,26 @@
                 filter: invert(1) brightness(0.9);
                 cursor: pointer;
             }
+
+            /* Custom Sleek Dark Scrollbar */
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 9999px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.35);
+            }
+            .custom-scrollbar {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+            }
         </style>
         <script>
             if (localStorage.getItem('darkMode') === 'true') {
