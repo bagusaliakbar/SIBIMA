@@ -99,9 +99,12 @@
                                         <li class="bg-white/60 dark:bg-slate-900/50 p-2.5 rounded border border-red-100 dark:border-red-900/30">
                                             <div class="flex justify-between items-start gap-2 mb-1">
                                                 <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200" x-text="item.title"></p>
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-black" :class="item.percentage >= 80 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'" x-text="item.percentage + '% Mirip'"></span>
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-black shrink-0" :class="item.percentage >= 80 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'" x-text="item.percentage + '% Mirip'"></span>
                                             </div>
-                                            <p class="text-[9px] text-slate-500 uppercase font-semibold">Milik: <span x-text="item.student_name"></span> (Angkatan <span x-text="item.year"></span>)</p>
+                                            <div class="flex items-center gap-2">
+                                                <p class="text-[9px] text-slate-500 uppercase font-semibold">Milik: <span x-text="item.student_name"></span> (Angkatan <span x-text="item.year"></span>)</p>
+                                                <span class="px-1.5 py-[2px] rounded text-[8px] font-bold uppercase tracking-widest bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300" x-text="item.source || 'Skripsi Aktif'"></span>
+                                            </div>
                                         </li>
                                     </template>
                                 </ul>

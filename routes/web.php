@@ -53,6 +53,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/seminar-applications/{application}/download-zip', [App\Http\Controllers\SeminarApplicationController::class, 'downloadZip'])->name('seminar-applications.download-zip');
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
 
+    // Digital Repository
+    Route::get('/repositories', [App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
+    Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'createImport'])->name('repositories.import.create');
+        Route::post('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'storeImport'])->name('repositories.import.store');
+        Route::get('/repositories/template', [App\Http\Controllers\ThesisRepositoryController::class, 'downloadTemplate'])->name('repositories.template');
+    });
+
     // Seminar Examiner Routes
     Route::get('/seminar-examiner', [App\Http\Controllers\SeminarExaminerController::class, 'index'])->name('seminar-examiner.index');
     Route::get('/seminar-examiner/{detail}', [App\Http\Controllers\SeminarExaminerController::class, 'show'])->name('seminar-examiner.show');

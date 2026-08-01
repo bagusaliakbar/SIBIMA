@@ -102,6 +102,7 @@ class ThesisController extends Controller
         $inputTitle = strtolower(trim($request->title));
         
         $theses = Thesis::with('student')->get();
+        $repositories = \App\Models\ThesisRepository::all();
         
         $similarTitles = [];
         
@@ -115,7 +116,23 @@ class ThesisController extends Controller
                     'title' => $thesis->title,
                     'student_name' => $thesis->student->name ?? 'Unknown',
                     'year' => $thesis->created_at ? $thesis->created_at->format('Y') : date('Y'),
-                    'percentage' => round($percent, 1)
+                    'percentage' => round($percent, 1),
+                    'source' => 'Skripsi Aktif'
+                ];
+            }
+        }
+
+        foreach($repositories as $repo) {
+            $existingTitle = strtolower(trim($repo->title));
+            similar_text($inputTitle, $existingTitle, $percent);
+            
+            if ($percent >= 60) {
+                $similarTitles[] = [
+                    'title' => $repo->title,
+                    'student_name' => $repo->name,
+                    'year' => $repo->year,
+                    'percentage' => round($percent, 1),
+                    'source' => 'Arsip Alumni'
                 ];
             }
         }

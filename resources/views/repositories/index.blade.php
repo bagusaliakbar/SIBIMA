@@ -1,0 +1,97 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center w-full">
+            <x-breadcrumb :items="[
+                ['label' => 'Katalog Pustaka Skripsi', 'route' => null]
+            ]" />
+            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                <a href="{{ route('repositories.import.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] shadow-sm shadow-emerald-500/30">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Import Arsip
+                </a>
+            @endif
+        </div>
+    </x-slot>
+
+    <div class="w-full">
+        <!-- Filter and Search -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
+            <form action="{{ route('repositories.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="search" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cari Kata Kunci</label>
+                    <input type="text" name="search" id="search" value="{{ $search }}" placeholder="Judul, Abstrak, Nama Mahasiswa, atau Pembimbing..." class="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 px-3 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                </div>
+                <div class="w-full md:w-48">
+                    <label for="year" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tahun Lulus</label>
+                    <select name="year" id="year" class="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 px-3 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        <option value="">Semua Tahun</option>
+                        @foreach($years as $y)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm">
+                        Cari Arsip
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Repository List -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($repositories as $repo)
+                <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden hover:shadow-lg transition-all hover:scale-[1.01] flex flex-col">
+                    <div class="p-5 flex-1 flex flex-col">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest rounded">
+                                Lulus {{ $repo->year }}
+                            </span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">{{ $repo->identifier ?? '-' }}</span>
+                        </div>
+                        
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-2 leading-relaxed">
+                            {{ $repo->title }}
+                        </h3>
+                        
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 flex-1 line-clamp-3">
+                            {{ $repo->abstract ?? 'Tidak ada abstrak yang tersedia.' }}
+                        </p>
+                        
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700 mt-auto">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                    {{ substr($repo->name, 0, 1) }}
+                                </div>
+                                <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">{{ $repo->name }}</span>
+                            </div>
+                            
+                            @if($repo->pembimbing1 || $repo->pembimbing2)
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 space-y-1">
+                                @if($repo->pembimbing1)
+                                    <div><span class="font-semibold">Pembimbing 1:</span> {{ $repo->pembimbing1 }}</div>
+                                @endif
+                                @if($repo->pembimbing2)
+                                    <div><span class="font-semibold">Pembimbing 2:</span> {{ $repo->pembimbing2 }}</div>
+                                @endif
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full py-12 text-center bg-white dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
+                    <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">Belum Ada Pustaka</h3>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Tidak ada arsip skripsi yang ditemukan atau belum ada data yang diimpor.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="mt-6">
+            {{ $repositories->links() }}
+        </div>
+    </div>
+</x-app-layout>
