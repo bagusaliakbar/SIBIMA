@@ -93,6 +93,43 @@ class ThesisController extends Controller
         return redirect()->route('theses.index')->with('success', 'Pengajuan skripsi berhasil dikirim.');
     }
 
+    public function checkTitle(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|min:10'
+        ]);
+
+        $inputTitle = strtolower(trim($request->title));
+        
+        $theses = Thesis::with('student')->get();
+        
+        $similarTitles = [];
+        
+        foreach($theses as $thesis) {
+            $existingTitle = strtolower(trim($thesis->title));
+            // Calculate similarity percentage using Levenshtein distance implicitly in similar_text
+            similar_text($inputTitle, $existingTitle, $percent);
+            
+            if ($percent >= 60) {
+                $similarTitles[] = [
+                    'title' => $thesis->title,
+                    'student_name' => $thesis->student->name ?? 'Unknown',
+                    'year' => $thesis->created_at ? $thesis->created_at->format('Y') : date('Y'),
+                    'percentage' => round($percent, 1)
+                ];
+            }
+        }
+        
+        // Sort by highest percentage
+        usort($similarTitles, function($a, $b) {
+            return $b['percentage'] <=> $a['percentage'];
+        });
+        
+        return response()->json([
+            'similar' => array_slice($similarTitles, 0, 3)
+        ]);
+    }
+
     public function kanban()
     {
         $user = Auth::user();

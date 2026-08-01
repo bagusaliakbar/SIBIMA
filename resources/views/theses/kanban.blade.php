@@ -37,12 +37,12 @@
                 </div>
             </div>
 
-            <!-- Column 2: Sedang Bimbingan -->
+            <!-- Column 2: Belum Seminar -->
             <div class="flex-shrink-0 w-80 bg-blue-50/30 dark:bg-blue-900/10 rounded-2xl flex flex-col max-h-full border border-blue-100 dark:border-blue-900/30">
                 <div class="p-4 border-b border-blue-100 dark:border-blue-900/30 flex justify-between items-center bg-blue-50/50 dark:bg-blue-900/20 rounded-t-2xl">
                     <h3 class="text-xs font-black uppercase tracking-widest text-blue-700 dark:text-blue-400 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                        Sedang Bimbingan
+                        Belum Seminar
                     </h3>
                     <span class="bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $bimbinganUp->count() }}</span>
                 </div>
@@ -53,12 +53,12 @@
                 </div>
             </div>
 
-            <!-- Column 3: Seminar UP -->
+            <!-- Column 3: Sudah Seminar -->
             <div class="flex-shrink-0 w-80 bg-amber-50/30 dark:bg-amber-900/10 rounded-2xl flex flex-col max-h-full border border-amber-100 dark:border-amber-900/30">
                 <div class="p-4 border-b border-amber-100 dark:border-amber-900/30 flex justify-between items-center bg-amber-50/50 dark:bg-amber-900/20 rounded-t-2xl">
                     <h3 class="text-xs font-black uppercase tracking-widest text-amber-700 dark:text-amber-400 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                        Proses Seminar
+                        Sudah Seminar
                     </h3>
                     <span class="bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $prosesSeminar->count() }}</span>
                 </div>

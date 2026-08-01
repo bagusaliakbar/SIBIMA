@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/theses/migration', [App\Http\Controllers\ThesisController::class, 'storeMigration'])->name('theses.migration.store');
     });
     Route::get('/theses/kanban', [App\Http\Controllers\ThesisController::class, 'kanban'])->name('theses.kanban');
+    Route::post('/theses/check-title', [App\Http\Controllers\ThesisController::class, 'checkTitle'])->name('theses.check-title');
     Route::resource('theses', App\Http\Controllers\ThesisController::class);
     Route::post('/theses/{thesis}/assign', [App\Http\Controllers\ThesisController::class, 'assignPembimbing'])->name('theses.assign');
     // Seminar Applications
