@@ -14,7 +14,7 @@ class ThesisRepositoriesImport implements ToCollection, WithHeadingRow
     {
         foreach ($rows as $row) {
             // Check if essential fields are present
-            if (!isset($row['nama_mahasiswa']) || !isset($row['judul_skripsi']) || !isset($row['tahun_lulus'])) {
+            if (!isset($row['nama_mahasiswa']) || !isset($row['judul_skripsi']) || !isset($row['angkatan'])) {
                 continue; // Skip invalid rows
             }
 
@@ -22,7 +22,7 @@ class ThesisRepositoriesImport implements ToCollection, WithHeadingRow
                 ThesisRepository::create([
                     'identifier' => $row['npm'] ?? null,
                     'name' => $row['nama_mahasiswa'],
-                    'year' => $row['tahun_lulus'],
+                    'year' => $row['angkatan'],
                     'title' => $row['judul_skripsi'],
                     'abstract' => $row['abstrak'] ?? null,
                     'pembimbing1' => $row['pembimbing_1'] ?? null,

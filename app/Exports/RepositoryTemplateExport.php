@@ -12,7 +12,7 @@ class RepositoryTemplateExport implements FromArray, WithHeadings
         return [
             'NPM',
             'Nama Mahasiswa',
-            'Tahun Lulus',
+            'Angkatan',
             'Judul Skripsi',
             'Abstrak',
             'Pembimbing 1',

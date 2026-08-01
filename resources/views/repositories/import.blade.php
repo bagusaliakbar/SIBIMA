@@ -24,7 +24,7 @@
                     </h4>
                     <ol class="list-decimal list-inside text-xs text-slate-600 dark:text-slate-400 space-y-2 mb-4">
                         <li>Unduh template Excel yang telah disediakan.</li>
-                        <li>Isi data skripsi alumni sesuai kolom (NPM, Nama, Tahun Lulus, Judul, dll).</li>
+                        <li>Isi data skripsi alumni sesuai kolom (NPM, Nama, Angkatan, Judul, dll).</li>
                         <li>Pastikan tidak merubah nama kolom (baris pertama) pada template.</li>
                         <li>Unggah file Excel (format .xlsx atau .xls) ke form di samping.</li>
                     </ol>
