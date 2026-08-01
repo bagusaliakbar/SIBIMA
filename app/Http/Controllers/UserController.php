@@ -159,4 +159,17 @@ class UserController extends Controller implements HasMiddleware
         
         return redirect()->route('users.index')->with('success', "Akun pengguna berhasil {$status}.");
     }
+
+    public function resetPassword(User $user)
+    {
+        if ($user->role === 'admin') {
+            return redirect()->route('users.index')->with('error', 'Tidak dapat mereset password administrator.');
+        }
+
+        $newPassword = $user->identifier;
+        $user->password = bcrypt($newPassword);
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', "Password untuk pengguna {$user->name} berhasil di-reset menjadi: {$newPassword}");
+    }
 }

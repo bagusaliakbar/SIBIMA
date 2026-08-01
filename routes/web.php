@@ -157,6 +157,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/export', [App\Http\Controllers\UserController::class, 'export'])->name('users.export');
         Route::post('/users/import', [App\Http\Controllers\UserController::class, 'import'])->name('users.import');
         Route::post('/users/{user}/toggle', [App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle');
+        Route::post('/users/{user}/reset-password', [App\Http\Controllers\UserController::class, 'resetPassword'])->name('users.reset-password');
         Route::resource('users', App\Http\Controllers\UserController::class)->except(['show']);
 
         // Wave Management
