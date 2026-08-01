@@ -89,9 +89,6 @@ class User extends Authenticatable
         return null;
     }
 
-    /**
-     * Get current semester based on entry year
-     */
     public function getCurrentSemesterAttribute()
     {
         if (!$this->entry_year) return null;
@@ -99,14 +96,14 @@ class User extends Authenticatable
         $now = now();
         $yearDiff = $now->year - $this->entry_year;
         
-        // In Indonesia, odd semester (ganjil) starts around July/August
-        // even semester (genap) starts around January/February
+        // Di banyak kampus Indonesia, tahun ajaran baru (Ganjil) dimulai bulan September
+        // sehingga Agustus masih masuk hitungan semester Genap sebelumnya.
         $month = $now->month;
         
-        if ($month >= 7) {
+        if ($month >= 9) {
             return ($yearDiff * 2) + 1;
         } else {
-            return $yearDiff * 2;
+            return max(1, $yearDiff * 2);
         }
     }
 
@@ -202,7 +199,8 @@ class User extends Authenticatable
     public function scopeCriticalSemester($query)
     {
         $currentYear = now()->year;
-        $isSecondHalf = now()->month >= 7;
+        // Penentuan transisi semester kritis mengikuti bulan September (9)
+        $isSecondHalf = now()->month >= 9;
         $thresholdYear = $isSecondHalf ? ($currentYear - 6) : ($currentYear - 7);
 
         return $query->where('role', 'mahasiswa')
