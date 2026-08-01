@@ -11,7 +11,21 @@
             :footer="$theses->links()">
             
             <x-slot name="headerActions">
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <form action="{{ route('monitoring.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        @if(request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        <select name="pembimbing_id" onchange="this.form.submit()" class="block w-full sm:w-56 py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-xs transition-all shadow-sm">
+                            <option value="">-- Semua Dosen Pembimbing --</option>
+                            @foreach($dosens as $dosen)
+                                <option value="{{ $dosen->id }}" {{ ($pembimbingId ?? '') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+
                     <x-search-input 
                         name="search" 
                         :value="$search ?? ''" 

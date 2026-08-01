@@ -41,12 +41,31 @@
                     Daftar Mahasiswa Berisiko DO
                 </h3>
                 
-                <form action="{{ route('monitoring.critical') }}" method="GET" class="relative w-full sm:w-auto">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                    <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari nama atau NPM..." class="block w-full sm:w-72 pl-10 pr-10 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 sm:text-sm transition-all shadow-sm">
-                </form>
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <form action="{{ route('monitoring.critical') }}" method="GET" class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        @if(request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        <select name="pembimbing_id" onchange="this.form.submit()" class="block w-full sm:w-56 py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 sm:text-xs transition-all shadow-sm">
+                            <option value="">-- Semua Dosen Pembimbing --</option>
+                            @foreach($dosens as $dosen)
+                                <option value="{{ $dosen->id }}" {{ ($pembimbingId ?? '') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+
+                    <form action="{{ route('monitoring.critical') }}" method="GET" class="relative w-full sm:w-auto">
+                        @if(request('pembimbing_id'))
+                            <input type="hidden" name="pembimbing_id" value="{{ request('pembimbing_id') }}">
+                        @endif
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari nama atau NPM..." class="block w-full sm:w-64 pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 sm:text-sm transition-all shadow-sm">
+                    </form>
+                </div>
             </div>
 
             <div class="overflow-x-auto">

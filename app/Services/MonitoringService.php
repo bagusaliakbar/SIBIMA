@@ -117,11 +117,17 @@ class MonitoringService
     /**
      * Get critical students query.
      */
-    public function getCriticalStudentsQuery($search = null)
+    public function getCriticalStudentsQuery($search = null, $pembimbingId = null)
     {
         return User::criticalSemester()
-            ->whereHas('thesis', function($q) {
+            ->whereHas('thesis', function($q) use ($pembimbingId) {
                 $q->where('status', '!=', 'completed');
+                if ($pembimbingId) {
+                    $q->where(function($sub) use ($pembimbingId) {
+                        $sub->where('pembimbing1_id', $pembimbingId)
+                            ->orWhere('pembimbing2_id', $pembimbingId);
+                    });
+                }
             })
             ->when($search, function ($query, $search) {
                 $query->where(function($q) use ($search) {
@@ -129,7 +135,7 @@ class MonitoringService
                       ->orWhere('identifier', 'like', "%{$search}%");
                 });
             })
-            ->with(['thesis.pembimbing1'])
+            ->with(['thesis.pembimbing1', 'thesis.pembimbing2'])
             ->orderBy('entry_year', 'asc');
     }
 }

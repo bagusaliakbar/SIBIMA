@@ -41,15 +41,24 @@ class MonitoringController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $pembimbingId = $request->input('pembimbing_id');
         
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->withMentoringCounts()
             ->search($search)
+            ->when($pembimbingId, function($query, $pembimbingId) {
+                return $query->where(function($q) use ($pembimbingId) {
+                    $q->where('pembimbing1_id', $pembimbingId)
+                      ->orWhere('pembimbing2_id', $pembimbingId);
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(15)
-            ->appends(['search' => $search]);
+            ->appends(['search' => $search, 'pembimbing_id' => $pembimbingId]);
 
-        return view('monitoring.index', compact('theses', 'search'));
+        $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+
+        return view('monitoring.index', compact('theses', 'search', 'dosens', 'pembimbingId'));
     }
 
     public function export(Request $request)
@@ -238,11 +247,15 @@ class MonitoringController extends Controller implements HasMiddleware
     public function criticalStudents(Request $request)
     {
         $search = $request->input('search');
-        $students = $this->monitoringService->getCriticalStudentsQuery($search)
-            ->paginate(15)
-            ->appends(['search' => $search]);
+        $pembimbingId = $request->input('pembimbing_id');
 
-        return view('monitoring.critical', compact('students', 'search'));
+        $students = $this->monitoringService->getCriticalStudentsQuery($search, $pembimbingId)
+            ->paginate(15)
+            ->appends(['search' => $search, 'pembimbing_id' => $pembimbingId]);
+
+        $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+
+        return view('monitoring.critical', compact('students', 'search', 'dosens', 'pembimbingId'));
     }
 
     public function batchExportBeritaAcara(Request $request)
