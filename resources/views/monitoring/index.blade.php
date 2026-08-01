@@ -6,26 +6,57 @@
     </x-slot>
 
     <div class="w-full">
+        <!-- Chart Section -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
+                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Grafik Distribusi Bimbingan per Dosen
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pemetaan tahapan mahasiswa yang belum lulus disaring berdasarkan Dosen & Angkatan.</p>
+                </div>
+
+                <!-- Combined Filters for Chart & Table -->
+                <form action="{{ route('monitoring.index') }}" method="GET" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+
+                    <!-- Filter Angkatan -->
+                    <select name="entry_year" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-sm">
+                        <option value="">-- Semua Angkatan --</option>
+                        @foreach($entryYears as $year)
+                            <option value="{{ $year }}" {{ ($entryYear ?? '') == $year ? 'selected' : '' }}>Angkatan {{ $year }}</option>
+                        @endforeach
+                    </select>
+
+                    <!-- Filter Dosen Pembimbing -->
+                    <select name="pembimbing_id" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-sm">
+                        <option value="">-- Semua Dosen Pembimbing --</option>
+                        @foreach($dosens as $dosen)
+                            <option value="{{ $dosen->id }}" {{ ($pembimbingId ?? '') == $dosen->id ? 'selected' : '' }}>{{ $dosen->name }}</option>
+                        @endforeach
+                    </select>
+
+                    @if(request('entry_year') || request('pembimbing_id'))
+                        <a href="{{ route('monitoring.index') }}" class="px-3 py-2 text-xs font-bold text-red-500 hover:text-red-700 transition-colors">Reset Filter</a>
+                    @endif
+                </form>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="h-64 sm:h-80 w-full">
+                <canvas id="monitoringSupervisorChart"></canvas>
+            </div>
+        </div>
+
         <x-table-card 
             title="Status Progres Mahasiswa"
             :footer="$theses->links()">
             
             <x-slot name="headerActions">
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    <form action="{{ route('monitoring.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                        @if(request('search'))
-                            <input type="hidden" name="search" value="{{ request('search') }}">
-                        @endif
-                        <select name="pembimbing_id" onchange="this.form.submit()" class="block w-full sm:w-56 py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 sm:text-xs transition-all shadow-sm">
-                            <option value="">-- Semua Dosen Pembimbing --</option>
-                            @foreach($dosens as $dosen)
-                                <option value="{{ $dosen->id }}" {{ ($pembimbingId ?? '') == $dosen->id ? 'selected' : '' }}>
-                                    {{ $dosen->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
-
                     <x-search-input 
                         name="search" 
                         :value="$search ?? ''" 
@@ -143,3 +174,55 @@
         </x-table-card>
     </div>
 </x-app-layout>
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('monitoringSupervisorChart');
+            if (!ctx) return;
+
+            const rawData = @json($chartData);
+
+            new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: rawData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                usePointStyle: true,
+                                font: { family: 'Inter', size: 11, weight: '600' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { family: 'Inter', size: 12, weight: '700' },
+                            bodyFont: { family: 'Inter', size: 11 },
+                            padding: 10,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 10, weight: '600' } }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: 'rgba(226, 232, 240, 0.5)' },
+                            ticks: { stepSize: 1, font: { family: 'Inter', size: 10 } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+@endpush

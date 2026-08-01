@@ -42,6 +42,7 @@ class MonitoringController extends Controller implements HasMiddleware
     {
         $search = $request->input('search');
         $pembimbingId = $request->input('pembimbing_id');
+        $entryYear = $request->input('entry_year');
         
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->withMentoringCounts()
@@ -52,13 +53,87 @@ class MonitoringController extends Controller implements HasMiddleware
                       ->orWhere('pembimbing2_id', $pembimbingId);
                 });
             })
+            ->when($entryYear, function($query, $entryYear) {
+                return $query->whereHas('student', function($q) use ($entryYear) {
+                    $q->where('entry_year', $entryYear);
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(15)
-            ->appends(['search' => $search, 'pembimbing_id' => $pembimbingId]);
+            ->appends(['search' => $search, 'pembimbing_id' => $pembimbingId, 'entry_year' => $entryYear]);
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+        $entryYears = User::where('role', 'mahasiswa')->whereNotNull('entry_year')->distinct()->orderBy('entry_year', 'desc')->pluck('entry_year');
 
-        return view('monitoring.index', compact('theses', 'search', 'dosens', 'pembimbingId'));
+        // Chart Data Calculation
+        $chartDosens = User::where('role', 'dosen')
+            ->when($pembimbingId, function($q) use ($pembimbingId) {
+                return $q->where('id', $pembimbingId);
+            })
+            ->orderBy('name')
+            ->get();
+
+        $chartLabels = [];
+        $dataProposal = [];
+        $dataPenelitian = [];
+        $dataSiapSidang = [];
+        $dataKritikal = [];
+
+        foreach ($chartDosens as $dosen) {
+            $thesesQuery = Thesis::where('status', '!=', 'completed')
+                ->where(function($q) use ($dosen) {
+                    $q->where('pembimbing1_id', $dosen->id)
+                      ->orWhere('pembimbing2_id', $dosen->id);
+                })
+                ->whereHas('student', function($q) use ($entryYear) {
+                    if ($entryYear) {
+                        $q->where('entry_year', $entryYear);
+                    }
+                })
+                ->with('student')
+                ->get();
+
+            if ($thesesQuery->count() > 0 || $pembimbingId) {
+                // Shorten name for chart label
+                $nameParts = explode(' ', $dosen->name);
+                $shortName = count($nameParts) > 2 ? $nameParts[0] . ' ' . $nameParts[1] . '...' : $dosen->name;
+                $chartLabels[] = $shortName;
+
+                $proposal = 0;
+                $penelitian = 0;
+                $siapSidang = 0;
+                $kritikal = 0;
+
+                foreach ($thesesQuery as $thesis) {
+                    if ($thesis->student && $thesis->student->current_semester >= 13) {
+                        $kritikal++;
+                    } elseif ($thesis->isAccSidangFinal()) {
+                        $siapSidang++;
+                    } elseif ($thesis->isAccUpFinal()) {
+                        $penelitian++;
+                    } else {
+                        $proposal++;
+                    }
+                }
+
+                $dataProposal[] = $proposal;
+                $dataPenelitian[] = $penelitian;
+                $dataSiapSidang[] = $siapSidang;
+                $dataKritikal[] = $kritikal;
+            }
+        }
+
+        $chartData = [
+            'labels' => $chartLabels,
+            'datasets' => [
+                ['label' => 'Proposal / UP', 'data' => $dataProposal, 'backgroundColor' => '#3b82f6', 'borderRadius' => 4],
+                ['label' => 'Penelitian / Skripsi', 'data' => $dataPenelitian, 'backgroundColor' => '#f97316', 'borderRadius' => 4],
+                ['label' => 'Siap Sidang Akhir', 'data' => $dataSiapSidang, 'backgroundColor' => '#10b981', 'borderRadius' => 4],
+                ['label' => 'Kritikal (Sem >= 13)', 'data' => $dataKritikal, 'backgroundColor' => '#ef4444', 'borderRadius' => 4],
+            ]
+        ];
+
+        return view('monitoring.index', compact('theses', 'search', 'dosens', 'pembimbingId', 'entryYears', 'entryYear', 'chartData'));
     }
 
     public function export(Request $request)
