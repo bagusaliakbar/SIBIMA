@@ -157,11 +157,11 @@
                     </div>
                     <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 italic">
                         @if($currentStage == 1)
-                            Judul telah diterima! Sekarang saatnya fokus pada penyusunan <span class="text-orange-600 font-bold">Proposal (Bab 1-3)</span> dan lakukan bimbingan secara rutin.
+                            Judul sudah diajukan! mohon untuk menunggu <span class="text-orange-600 font-bold">Persetujuan</span> dan matangkan konsep penelitiannya untuk didiskusikan dengan dosen pembimbing.
                         @elseif($currentStage == 2)
-                            Anda sedang dalam tahap bimbingan. Terus perbaiki draf Anda hingga mendapatkan <span class="text-orange-600 font-bold">ACC Seminar</span> dari para pembimbing.
+                            Anda sedang dalam tahap bimbingan. Terus perbaiki draf proposal (Bab 1-3) Anda hingga mendapatkan <span class="text-orange-600 font-bold">ACC Seminar</span> dari dosen pembimbing.
                         @elseif($currentStage == 3)
-                            Selamat atas seminarnya! Segera revisi dan lanjutkan ke tahap <span class="text-orange-600 font-bold">Penelitian</span> untuk pengumpulan data.
+                            Selamat atas seminarnya! Segera revisi dan lanjutkan ke tahap <span class="text-orange-600 font-bold">Penelitian</span> untuk melengkapi bab 4 dan 5.
                         @elseif($currentStage == 4)
                             Fokus pada pengolahan data dan penyusunan <span class="text-orange-600 font-bold">Bab 4-5</span>. Anda sudah semakin dekat dengan sidang akhir!
                         @elseif($currentStage == 5)
