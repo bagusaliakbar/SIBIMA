@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->text('research_interests')->nullable()->after('identifier');
-            $table->integer('max_quota')->default(8)->after('research_interests');
+            $table->integer('max_quota')->default(10)->after('research_interests');
         });
     }
 
