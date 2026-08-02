@@ -92,11 +92,22 @@ class ThesisService
      */
     public function updateThesis(Thesis $thesis, array $data)
     {
-        $thesis->update([
-            'final_title' => $data['final_title'],
-            'pembimbing1_id' => $data['pembimbing1_id'],
-            'pembimbing2_id' => $data['pembimbing2_id'],
-        ]);
+        if (Auth::user()->role === 'mahasiswa') {
+            $thesis->update([
+                'title' => $data['title'],
+                'abstract' => $data['abstract'] ?? $thesis->abstract,
+            ]);
+            
+            ActivityLog::log('Revisi Judul', "Mahasiswa merevisi judul atau deskripsi skripsi.", 'Skripsi', $thesis, [
+                'title' => $data['title']
+            ]);
+        } else {
+            $thesis->update([
+                'final_title' => $data['final_title'],
+                'pembimbing1_id' => $data['pembimbing1_id'],
+                'pembimbing2_id' => $data['pembimbing2_id'],
+            ]);
+        }
     }
 
     /**

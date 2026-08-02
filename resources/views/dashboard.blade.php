@@ -59,7 +59,16 @@
 
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
                     <div>
-                        
+                        @if($thesis)
+                            <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-1 max-w-2xl">{{ $thesis->title }}</h3>
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Pembimbing: {{ $thesis->pembimbing1->name ?? 'Belum Ditentukan' }} & {{ $thesis->pembimbing2->name ?? 'Belum Ditentukan' }}</p>
+                            @if(!$thesis->isAccSidangFinal())
+                                <button onclick="document.getElementById('edit-thesis-modal').classList.remove('hidden')" class="inline-flex items-center px-3 py-1.5 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-200 dark:hover:bg-orange-500/20 transition-colors border border-orange-200 dark:border-orange-500/20 shadow-sm">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Revisi Judul / Deskripsi
+                                </button>
+                            @endif
+                        @endif
                     </div>
                     <div class="flex flex-col sm:flex-row items-center gap-5 w-full md:w-auto justify-between md:justify-end">
                         <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1.5 group/btn">
@@ -1315,4 +1324,42 @@
             @endif
         });
     </script>
+
+    @if(Auth::user()->role === 'mahasiswa' && $thesis && !$thesis->isAccSidangFinal())
+    <div id="edit-thesis-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="document.getElementById('edit-thesis-modal').classList.add('hidden')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100 dark:border-slate-700">
+                <form action="{{ route('theses.update', $thesis->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                        <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight" id="modal-title">Revisi Judul / Deskripsi Skripsi</h3>
+                    </div>
+                    <div class="px-6 py-6 space-y-6">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Judul Skripsi <span class="text-orange-600">*</span></label>
+                            <textarea name="title" id="title" rows="3" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors">{{ old('title', $thesis->title) }}</textarea>
+                            @error('title')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="abstract" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Abstrak / Deskripsi</label>
+                            <textarea name="abstract" id="abstract" rows="6" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors">{{ old('abstract', $thesis->abstract) }}</textarea>
+                            @error('abstract')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('edit-thesis-modal').classList.add('hidden')" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-bold hover:bg-orange-700 transition-colors shadow-sm">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 </x-app-layout>

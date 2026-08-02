@@ -9,11 +9,28 @@ class UpdateThesisRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi';
+        $user = Auth::user();
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            return true;
+        }
+
+        if ($user->role === 'mahasiswa') {
+            $thesis = $this->route('thesis');
+            return $user->id === $thesis->student_id && !$thesis->isAccSidangFinal();
+        }
+
+        return false;
     }
 
     public function rules(): array
     {
+        if (Auth::user()->role === 'mahasiswa') {
+            return [
+                'title' => 'required|string|max:255',
+                'abstract' => 'nullable|string',
+            ];
+        }
+
         return [
             'final_title' => 'required|string|max:255',
             'pembimbing1_id' => 'required|exists:users,id',
