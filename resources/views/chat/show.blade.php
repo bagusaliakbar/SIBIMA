@@ -70,9 +70,9 @@
                             <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                         </div>
                         @if($user->is_online)
-                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
+                            <span id="header-online-indicator" class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
                         @else
-                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
+                            <span id="header-online-indicator" class="absolute bottom-0 right-0 w-3 h-3 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
                         @endif
                     </div>
                     <div class="ml-3">
@@ -82,14 +82,16 @@
                         <div class="flex items-center gap-1.5 text-[11px]">
                             <span class="text-slate-500 dark:text-slate-400 capitalize font-medium">{{ $user->role }}</span>
                             <span class="text-slate-300 dark:text-slate-600">•</span>
-                            @if($user->is_online)
-                                <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    Online
-                                </span>
-                            @else
-                                <span class="text-slate-400 dark:text-slate-500">Offline</span>
-                            @endif
+                            <div id="header-online-text">
+                                @if($user->is_online)
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Online
+                                    </span>
+                                @else
+                                    <span class="text-slate-400 dark:text-slate-500">Offline</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,20 +108,20 @@
                     @forelse($messages as $message)
                         @if($message->sender_id === Auth::id())
                             <!-- Sent Message (Right) -->
-                            <div class="flex justify-end">
+                            <div class="flex justify-end" id="msg-box-{{ $message->id }}">
                                 <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
                                     <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">{{ $message->message }}</p>
                                     <div class="absolute bottom-1 right-2 flex items-center space-x-1">
                                         <span class="text-[9px] text-slate-500 dark:text-slate-400">{{ $message->created_at->format('H:i') }}</span>
                                         @if($message->is_read)
                                             <!-- Double Blue Checkmark -->
-                                            <span class="inline-flex text-blue-500 font-bold" title="Dibaca">
+                                            <span id="check-msg-{{ $message->id }}" class="inline-flex text-blue-500 font-bold" title="Dibaca">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                 <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                             </span>
                                         @else
                                             <!-- Double Grey Checkmark -->
-                                            <span class="inline-flex text-slate-400 dark:text-slate-500" title="Terkirim">
+                                            <span id="check-msg-{{ $message->id }}" class="inline-flex text-slate-400 dark:text-slate-500" title="Terkirim">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                 <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                             </span>
@@ -435,7 +437,51 @@
 
                     noContactsMsg.classList.toggle('hidden', visibleCount > 0);
                 });
+            // Real-time Polling for Online Status & Read Receipts (Every 3s)
+            const statusUrl = "{{ route('chat.status', $user->id) }}";
+            function pollChatStatus() {
+                fetch(statusUrl, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    // 1. Update Header Online Badge & Text
+                    const headerBadge = document.getElementById('header-online-indicator');
+                    const headerText = document.getElementById('header-online-text');
+                    if (data.is_online) {
+                        if (headerBadge) headerBadge.className = "absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs";
+                        if (headerText) headerText.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online</span>';
+                    } else {
+                        if (headerBadge) headerBadge.className = "absolute bottom-0 right-0 w-3 h-3 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs";
+                        if (headerText) headerText.innerHTML = '<span class="text-slate-400 dark:text-slate-500">Offline</span>';
+                    }
+
+                    // 2. Update Sent Message Checkmarks to Double Blue
+                    if (data.read_message_ids && data.read_message_ids.length > 0) {
+                        data.read_message_ids.forEach(id => {
+                            const checkSpan = document.getElementById('check-msg-' + id);
+                            if (checkSpan && !checkSpan.classList.contains('text-blue-500')) {
+                                checkSpan.className = "inline-flex text-blue-500 font-bold";
+                                checkSpan.title = "Dibaca";
+                            }
+                        });
+                    }
+
+                    // 3. Append New Incoming Messages (if any)
+                    if (data.new_incoming_messages && data.new_incoming_messages.length > 0) {
+                        data.new_incoming_messages.forEach(msg => {
+                            if (!document.getElementById('msg-box-' + msg.id)) {
+                                appendMessage(msg, 'left');
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Status poll error:', err));
             }
+
+            // Start polling every 3 seconds
+            setInterval(pollChatStatus, 3000);
+            pollChatStatus(); // Call once on load
         });
     </script>
 </x-app-layout>

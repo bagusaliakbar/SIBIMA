@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     // Chat Routes
     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
     Route::get('/chat/{user}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::get('/chat/{user}/status', [App\Http\Controllers\ChatController::class, 'status'])->name('chat.status');
     Route::post('/chat/{user}', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
 
     Route::get('/theses/export-excel', [App\Http\Controllers\ThesisController::class, 'exportExcel'])->name('theses.export-excel');

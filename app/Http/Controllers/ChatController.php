@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller
 {
@@ -17,8 +18,16 @@ class ChatController extends Controller
         $this->chatService = $chatService;
     }
 
+    private function touchOnlineStatus()
+    {
+        if (Auth::check()) {
+            Cache::put('user-is-online-' . Auth::id(), true, now()->addMinutes(5));
+        }
+    }
+
     public function index()
     {
+        $this->touchOnlineStatus();
         $users = $this->chatService->getAllowedUsers();
         $unreadCounts = $this->chatService->getUnreadCounts();
 
@@ -27,6 +36,7 @@ class ChatController extends Controller
 
     public function show(User $user)
     {
+        $this->touchOnlineStatus();
         $this->chatService->markAsRead($user);
 
         $messages = Message::where(function ($query) use ($user) {
@@ -43,14 +53,34 @@ class ChatController extends Controller
         return view('chat.show', compact('messages', 'user', 'users', 'unreadCounts'));
     }
 
+    public function status(User $user)
+    {
+        $this->touchOnlineStatus();
+        $this->chatService->markAsRead($user);
+
+        // Fetch IDs of messages sent by Auth::user() to $user that have been read
+        $readMessageIds = Message::where('sender_id', Auth::id())
+            ->where('receiver_id', $user->id)
+            ->where('is_read', true)
+            ->pluck('id');
+
+        // Fetch new unread incoming messages from $user (if any)
+        $newIncomingMessages = Message::where('sender_id', $user->id)
+            ->where('receiver_id', Auth::id())
+            ->where('created_at', '>=', now()->subSeconds(10))
+            ->get();
+
+        return response()->json([
+            'is_online' => $user->is_online,
+            'read_message_ids' => $readMessageIds,
+            'new_incoming_messages' => $newIncomingMessages,
+            'unread_counts' => $this->chatService->getUnreadCounts(),
+        ]);
+    }
+
     public function store(Request $request, User $user)
     {
-        \Illuminate\Support\Facades\Log::info('Chat store request', [
-            'inputs' => $request->all(),
-            'ajax' => $request->ajax(),
-            'user' => Auth::id(),
-            'receiver' => $user->id
-        ]);
+        $this->touchOnlineStatus();
 
         try {
             $request->validate(['message' => 'required|string|max:1000']);
