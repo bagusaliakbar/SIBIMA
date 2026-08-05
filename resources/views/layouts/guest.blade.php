@@ -1,3 +1,4 @@
+@props(['fullWidth' => false])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -15,7 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-slate-900 antialiased bg-slate-50 dark:bg-slate-900 selection:bg-orange-500 selection:text-white">
-        @if(isset($fullWidth) && $fullWidth)
+        @if($fullWidth)
             {{ $slot }}
         @else
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">

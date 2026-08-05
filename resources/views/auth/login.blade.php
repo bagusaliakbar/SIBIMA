@@ -1,13 +1,13 @@
 <x-guest-layout :fullWidth="true">
     @section('title', 'Login')
 
-    <div class="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-white dark:bg-slate-950 overflow-hidden">
+    <div class="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-white dark:bg-slate-900">
         
         <!-- Left Side: Branding & Artwork (Visible on LG screens) -->
-        <div class="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white p-12 xl:p-16 flex-col justify-between overflow-hidden border-r border-slate-800/60">
+        <div class="hidden lg:flex lg:col-span-6 xl:col-span-7 bg-slate-900 text-white p-12 xl:p-16 flex-col justify-between overflow-hidden relative border-r border-slate-800">
             <!-- Glowing Blur Background Orbs -->
-            <div class="absolute -top-24 -left-24 w-[30rem] h-[30rem] bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-10 right-10 w-[26rem] h-[26rem] bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <!-- Top Header Logo & Campus Name -->
             <div class="relative z-10 flex items-center gap-4">
@@ -22,7 +22,7 @@
 
             <!-- Hero Branding Content -->
             <div class="relative z-10 space-y-6 my-auto py-12 max-w-xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-xs font-bold text-orange-400">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-orange-500/10 border border-orange-500/30 rounded-full text-xs font-bold text-orange-400">
                     <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
                     Sistem Informasi Bimbingan Mahasiswa
                 </div>
@@ -31,7 +31,7 @@
                     Kelola Bimbingan & Sidang Skripsi dalam Satu Portal.
                 </h1>
 
-                <p class="text-slate-400 text-sm xl:text-base leading-relaxed">
+                <p class="text-slate-300 text-sm xl:text-base leading-relaxed">
                     SIBIMA mempermudah alur pengajuan judul, bimbingan rutin, validasi dokumen, hingga penerbitan jadwal & Berita Acara Sidang secara digital dan terintegrasi.
                 </p>
 
@@ -39,28 +39,28 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
                     <div class="p-3.5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 space-y-1">
                         <div class="text-orange-400 font-black text-sm">⚡ Real-time</div>
-                        <div class="text-[11px] text-slate-400">Bimbingan & Logbook</div>
+                        <div class="text-[11px] text-slate-300">Bimbingan & Logbook</div>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 space-y-1">
                         <div class="text-emerald-400 font-black text-sm">📱 WhatsApp</div>
-                        <div class="text-[11px] text-slate-400">Fonnte Gateway</div>
+                        <div class="text-[11px] text-slate-300">Fonnte Gateway</div>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 space-y-1">
                         <div class="text-indigo-400 font-black text-sm">🎓 E-Berita Acara</div>
-                        <div class="text-[11px] text-slate-400">Tanda Tangan Digital</div>
+                        <div class="text-[11px] text-slate-300">Tanda Tangan Digital</div>
                     </div>
                 </div>
             </div>
 
             <!-- Footer Branding -->
-            <div class="relative z-10 text-xs font-medium text-slate-500 flex items-center justify-between border-t border-slate-800/80 pt-6">
+            <div class="relative z-10 text-xs font-medium text-slate-400 flex items-center justify-between border-t border-slate-800 pt-6">
                 <span>&copy; {{ date('Y') }} SIBIMA FASILKOM UNSUB</span>
                 <span class="text-slate-400 font-mono">v2.5 Release</span>
             </div>
         </div>
 
         <!-- Right Side: Form Login -->
-        <div class="lg:col-span-6 xl:col-span-5 flex flex-col justify-between p-6 sm:p-12 lg:p-16 bg-white dark:bg-slate-900">
+        <div class="lg:col-span-6 xl:col-span-5 flex flex-col justify-between p-6 sm:p-12 lg:p-16 bg-white dark:bg-slate-900 min-h-screen">
             
             <!-- Mobile Header Logo (Visible on Small Screens) -->
             <div class="lg:hidden flex items-center gap-3 mb-8">
@@ -105,7 +105,7 @@
                                    required 
                                    autofocus 
                                    autocomplete="username" 
-                                   class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium" 
+                                   class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium" 
                                    placeholder="Masukkan Username / NIDN / NPM">
                         </div>
                         <x-input-error :messages="$errors->get('username')" class="mt-2" />
@@ -132,7 +132,7 @@
                                    name="password" 
                                    required 
                                    autocomplete="current-password" 
-                                   class="block w-full pl-11 pr-12 py-3.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium" 
+                                   class="block w-full pl-11 pr-12 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium" 
                                    placeholder="••••••••">
                             
                             <!-- Toggle Show/Hide Password Eye Button -->
@@ -157,7 +157,7 @@
                     <!-- Submit Button -->
                     <div>
                         <button type="submit" 
-                                class="w-full flex justify-center items-center gap-2 py-4 px-6 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 focus:outline-none focus:ring-4 focus:ring-orange-500/20 shadow-lg shadow-orange-600/30 hover:shadow-orange-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+                                class="w-full flex justify-center items-center gap-2 py-4 px-6 rounded-2xl text-sm font-bold text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-500/20 shadow-lg shadow-orange-600/30 hover:shadow-orange-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
                             <span>Masuk ke Dashboard</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </button>
