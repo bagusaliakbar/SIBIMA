@@ -447,16 +447,16 @@
                                      style="display: none;">
                                     
                                     <!-- Header Panel with Title & Mark All as Read Button -->
-                                    <div class="p-4 border-b border-slate-100 dark:border-slate-700/60 bg-slate-50/80 dark:bg-slate-900/60 flex justify-between items-center">
-                                        <div class="flex items-center gap-2">
-                                            <h3 class="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">Pusat Notifikasi</h3>
+                                    <div class="p-4 border-b border-slate-100 dark:border-slate-700/60 bg-slate-50/80 dark:bg-slate-900/60 flex items-center justify-between gap-3">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <h3 class="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider whitespace-nowrap">Pusat Notifikasi</h3>
                                             <template x-if="unreadCount > 0">
-                                                <span class="px-2 py-0.5 text-[10px] font-extrabold bg-orange-100 text-orange-600 dark:bg-orange-950/60 dark:text-orange-400 rounded-full" x-text="unreadCount + ' baru'"></span>
+                                                <span class="px-2.5 py-0.5 text-[10px] font-extrabold bg-orange-100 text-orange-600 dark:bg-orange-950/60 dark:text-orange-400 rounded-full whitespace-nowrap shrink-0" x-text="unreadCount + ' baru'"></span>
                                             </template>
                                         </div>
                                         <button @click="markAllAsRead()" 
                                                 x-show="unreadCount > 0" 
-                                                class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline inline-flex items-center gap-1 transition-colors">
+                                                class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline inline-flex items-center gap-1 transition-colors whitespace-nowrap shrink-0">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                             Tandai Semua Dibaca
                                         </button>
@@ -515,7 +515,7 @@
                                                             <span x-text="timeAgo(notif.created_at)"></span>
                                                         </p>
                                                     </div>
-                                                    <div x-show="!notif.read_at" class="w-2.5 h-2.5 bg-orange-500 rounded-full mt-1.5 ring-4 ring-orange-100 dark:ring-slate-800"></div>
+                                                    <div x-show="!notif.read_at" class="w-2.5 h-2.5 bg-orange-500 rounded-full mt-1.5 ring-2 ring-orange-500/30 shrink-0"></div>
                                                 </div>
                                             </div>
                                         </template>
