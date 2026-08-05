@@ -60,7 +60,7 @@
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 overflow-hidden selection:bg-orange-100 selection:text-orange-900 transition-colors duration-300">
         <!-- Global Page Preloader -->
-        <div id="page-preloader" class="fixed inset-0 z-[99999] bg-white dark:bg-slate-900 flex flex-col items-center justify-center transition-opacity duration-300 pointer-events-none">
+        <div id="page-preloader" class="fixed inset-0 z-[99999] bg-white dark:bg-slate-900 flex flex-col items-center justify-center transition-opacity duration-400 ease-in-out pointer-events-none">
             <div class="relative flex items-center justify-center mb-4">
                 <!-- Glowing Outer Spinner Ring -->
                 <div class="w-16 h-16 border-4 border-orange-500/20 border-t-orange-600 rounded-full animate-spin"></div>
@@ -80,7 +80,7 @@
                 if (!preloader) return;
 
                 const startTime = performance.now();
-                const minDisplayTime = 700; // minimum 450ms for a visible smooth transition
+                const minDisplayTime = 700; // 700ms minimum display for elegant loading experience
 
                 function showPreloader() {
                     preloader.style.display = 'flex';
@@ -96,7 +96,7 @@
                         preloader.classList.add('opacity-0');
                         setTimeout(() => {
                             preloader.style.display = 'none';
-                        }, 300);
+                        }, 400);
                     }, remainingTime);
                 }
 
