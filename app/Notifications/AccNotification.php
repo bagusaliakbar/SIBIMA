@@ -52,10 +52,12 @@ class AccNotification extends Notification implements ShouldQueue
         $typeName = $this->type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
         $byName = $this->byUser ? $this->byUser->name : 'Dosen Pembimbing';
 
-        return "Halo *{$notifiable->name}*,\n\n"
-             . "Selamat! Anda telah mendapatkan **ACC {$typeName}** dari *{$byName}*.\n\n"
-             . "Silakan cek status kelengkapan ACC dan segera lakukan pendaftaran gelombang melalui dashboard SIBIMA:\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('acc_given', [
+            'nama_mahasiswa' => $notifiable->name,
+            'jenis_acc' => $typeName,
+            'nama_pemberi_acc' => $byName,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

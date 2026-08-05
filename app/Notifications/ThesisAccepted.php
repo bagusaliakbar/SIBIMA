@@ -46,13 +46,12 @@ class ThesisAccepted extends Notification implements ShouldQueue
         $p1 = $this->thesis->pembimbing1->name ?? 'Belum ditentukan';
         $p2 = $this->thesis->pembimbing2->name ?? 'Belum ditentukan';
 
-        return "Halo *{$notifiable->name}*,\n\n"
-             . "Pengajuan judul skripsi Anda **BISA DILANJUTKAN**\n\n"
-             . "Berikut adalah dosen pembimbing yang ditugaskan untuk Anda:\n"
-             . "Pembimbing 1: {$p1}\n"
-             . "Pembimbing 2: {$p2}\n\n"
-             . "Silakan segera menghubungi dosen pembimbing Anda, diskusikan konsep/gambaran rencana penelitiannya dan memulai proses bimbingan melalui dashboard SIBIMA:\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('thesis_accepted', [
+            'nama_mahasiswa' => $notifiable->name,
+            'pembimbing_1' => $p1,
+            'pembimbing_2' => $p2,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

@@ -32,14 +32,11 @@ class CriticalStudentReminderNotification extends Notification implements Should
     {
         $sem = $notifiable->current_semester ?? 'Akhir';
 
-        return "⚠️ *PERINGATAN MASA STUDI SIBIMA*\n\n"
-             . "Halo *{$notifiable->name}*,\n\n"
-             . "Saat ini Anda berada di **Semester {$sem}** (Semester Kritis). Mari manfaatkan waktu yang ada untuk segera menyelesaikan proses penyusunan skripsi Anda.\n\n"
-             . "💡 *Langkah yang disarankan:*\n"
-             . "1. Segera jadwalkan bimbingan rutin dengan Dosen Pembimbing.\n"
-             . "2. Konsultasikan kendala atau hambatan penelitian Anda ke Prodi.\n\n"
-             . "Mari selesaikan studi Anda tepat waktu! Cek progres Anda di dashboard SIBIMA:\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('critical_student_reminder', [
+            'nama_mahasiswa' => $notifiable->name,
+            'semester_ke' => $sem,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

@@ -48,12 +48,13 @@ class MentoringRequested extends Notification implements ShouldQueue
         $date = Carbon::parse($this->mentoringSession->scheduled_at)->translatedFormat('l, d F Y H:i');
         $topic = $this->mentoringSession->topic ?? '-';
 
-        return "Halo Bpk/Ibu *{$notifiable->name}*,\n\n"
-             . "Mahasiswa bimbingan Anda, *{$studentName}*, telah mengajukan jadwal bimbingan skripsi.\n\n"
-             . "Waktu: {$date} WIB\n"
-             . "Topik: {$topic}\n\n"
-             . "Silakan cek dan konfirmasi jadwal tersebut di dashboard SIBIMA:\n"
-             . url('/mentoring-sessions');
+        return \App\Models\WaTemplate::parse('mentoring_requested', [
+            'nama_dosen' => $notifiable->name,
+            'nama_mahasiswa' => $studentName,
+            'tanggal_bimbingan' => $date,
+            'topik_bimbingan' => $topic,
+            'link_mentoring' => url('/mentoring-sessions'),
+        ]);
     }
 
     /**

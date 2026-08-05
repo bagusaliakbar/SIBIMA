@@ -50,28 +50,18 @@ class MentoringReminderNotification extends Notification implements ShouldQueue
         $date = Carbon::parse($this->session->scheduled_at)->translatedFormat('l, d F Y H:i');
         $topic = $this->session->topic ?? '-';
         $location = $this->session->location ?? 'Sesuai kesepakatan';
+        $studentName = $this->session->thesis->student->name ?? 'Mahasiswa';
+        $dosenName = $this->session->dosen->name ?? 'Dosen Pembimbing';
 
-        if ($this->targetRole === 'dosen') {
-            $studentName = $this->session->thesis->student->name ?? 'Mahasiswa';
-            return "🔔 *REMINDER BIMBINGAN BESOK (H-1)*\n\n"
-                 . "Halo Bpk/Ibu *{$notifiable->name}*,\n\n"
-                 . "Anda memiliki jadwal bimbingan skripsi besok bersama mahasiswa *{$studentName}*.\n\n"
-                 . "📅 Waktu: {$date} WIB\n"
-                 . "📍 Tempat/Media: {$location}\n"
-                 . "📝 Topik: {$topic}\n\n"
-                 . "Cek detail bimbingan di dashboard SIBIMA:\n"
-                 . url('/mentoring-sessions');
-        } else {
-            $dosenName = $this->session->dosen->name ?? 'Dosen Pembimbing';
-            return "🔔 *REMINDER BIMBINGAN BESOK (H-1)*\n\n"
-                 . "Halo *{$notifiable->name}*,\n\n"
-                 . "Jangan lupa jadwal bimbingan skripsi Anda besok bersama *{$dosenName}*.\n\n"
-                 . "📅 Waktu: {$date} WIB\n"
-                 . "📍 Tempat/Media: {$location}\n"
-                 . "📝 Topik: {$topic}\n\n"
-                 . "Mohon persiapkan draf dan catatan bimbingan dengan baik. Cek detail di SIBIMA:\n"
-                 . url('/mentoring-sessions');
-        }
+        return \App\Models\WaTemplate::parse('mentoring_reminder', [
+            'nama_penerima' => $notifiable->name,
+            'nama_mahasiswa' => $studentName,
+            'nama_dosen' => $dosenName,
+            'tanggal_bimbingan' => $date,
+            'lokasi_bimbingan' => $location,
+            'topik_bimbingan' => $topic,
+            'link_mentoring' => url('/mentoring-sessions'),
+        ]);
     }
 
     /**

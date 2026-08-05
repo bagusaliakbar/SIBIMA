@@ -49,12 +49,13 @@ class SupervisorAssigned extends Notification implements ShouldQueue
         $studentName = $this->thesis->student->name ?? 'Mahasiswa';
         $title = $this->thesis->title ?? 'Tidak ada judul';
 
-        return "Halo Bpk/Ibu *{$notifiable->name}*,\n\n"
-             . "Anda telah ditugaskan sebagai *{$this->role}* untuk mahasiswa:\n"
-             . "Nama: *{$studentName}*\n"
-             . "Judul Skripsi: {$title}\n\n"
-             . "Silakan cek dashboard SIBIMA untuk melihat detail lebih lanjut.\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('supervisor_assigned', [
+            'nama_dosen' => $notifiable->name,
+            'peran_pembimbing' => $this->role,
+            'nama_mahasiswa' => $studentName,
+            'judul_skripsi' => $title,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

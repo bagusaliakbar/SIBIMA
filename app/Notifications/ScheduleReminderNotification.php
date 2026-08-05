@@ -49,17 +49,17 @@ class ScheduleReminderNotification extends Notification implements ShouldQueue
         $label = $this->scheduleData['label'] ?? 'H-1';
         $location = $this->scheduleData['location'] ?? 'Belum ditentukan';
 
-        return "🔔 *REMINDER JADWAL SIBIMA ({$label})*\n\n" .
-               "Halo, *{$notifiable->name}*!\n\n" .
-               "{$this->message}\n\n" .
-               "📅 *Detail Jadwal:*\n" .
-               "• Jenis: {$this->scheduleData['type']}\n" .
-               "• Tanggal: {$this->scheduleData['date']}\n" .
-               "• Waktu: {$this->scheduleData['time']}\n" .
-               "• Ruangan: {$location}\n" .
-               "• Mahasiswa: {$this->scheduleData['student']}\n\n" .
-               "Harap hadir tepat waktu dan mempersiapkan dokumen yang diperlukan. Cek detail di dashboard SIBIMA:\n" .
-               url('/login');
+        return \App\Models\WaTemplate::parse('schedule_reminder', [
+            'label_waktu' => $label,
+            'nama_penerima' => $notifiable->name,
+            'pesan_pengingat' => $this->message,
+            'jenis_ujian' => $this->scheduleData['type'] ?? 'Ujian',
+            'tanggal_ujian' => $this->scheduleData['date'] ?? '-',
+            'jam_ujian' => $this->scheduleData['time'] ?? '-',
+            'lokasi_ujian' => $location,
+            'nama_mahasiswa' => $this->scheduleData['student'] ?? '-',
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

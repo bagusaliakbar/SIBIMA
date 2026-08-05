@@ -49,12 +49,13 @@ class SchedulePublished extends Notification implements ShouldQueue
         $date = Carbon::parse($this->schedule->date)->translatedFormat('l, d F Y');
         $location = $this->schedule->location ?? 'Belum ditentukan';
 
-        return "Halo *{$notifiable->name}*,\n\n"
-             . "Jadwal *{$this->type}* Anda telah dirilis!\n\n"
-             . "Tanggal: {$date}\n"
-             . "Ruangan: {$location}\n\n"
-             . "Mohon hadir tepat waktu dan persiapkan segala dokumen yang diperlukan. Cek detail selengkapnya di dashboard SIBIMA:\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('schedule_published', [
+            'nama_penerima' => $notifiable->name,
+            'jenis_ujian' => $this->type,
+            'tanggal_ujian' => $date,
+            'lokasi_ujian' => $location,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

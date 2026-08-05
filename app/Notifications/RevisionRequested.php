@@ -46,10 +46,11 @@ class RevisionRequested extends Notification implements ShouldQueue
      */
     public function toFonnte($notifiable)
     {
-        return "Halo *{$notifiable->name}*,\n\n"
-             . "Dosen penguji telah memberikan **Revisi {$this->type}** untuk skripsi Anda.\n\n"
-             . "Silakan login ke dashboard SIBIMA untuk melihat detail revisi yang harus dikerjakan dan segera perbaiki sesuai tenggat waktu yang diberikan.\n\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('revision_requested', [
+            'nama_mahasiswa' => $notifiable->name,
+            'jenis_ujian' => $this->type,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

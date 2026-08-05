@@ -58,16 +58,14 @@ class MentoringStatusUpdatedNotification extends Notification implements ShouldQ
             default    => strtoupper($this->status),
         };
 
-        $msg = "Halo *{$notifiable->name}*,\n\n"
-             . "Status pengajuan bimbingan skripsi Anda (Topik: *{$topic}*) bersama *{$dosenName}* telah **{$statusText}**.\n\n";
-
-        if (!empty($this->feedback)) {
-            $msg .= "Catatan/Alasan Dosen:\n\"{$this->feedback}\"\n\n";
-        }
-
-        $msg .= "Silakan cek detail di dashboard SIBIMA:\n" . url('/mentoring-sessions');
-
-        return $msg;
+        return \App\Models\WaTemplate::parse('mentoring_status_updated', [
+            'nama_mahasiswa' => $notifiable->name,
+            'topik_bimbingan' => $topic,
+            'nama_dosen' => $dosenName,
+            'status_bimbingan' => $statusText,
+            'catatan_dosen' => $this->feedback ?? 'Tidak ada catatan.',
+            'link_mentoring' => url('/mentoring-sessions'),
+        ]);
     }
 
     /**

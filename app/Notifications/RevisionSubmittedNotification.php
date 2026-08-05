@@ -51,11 +51,13 @@ class RevisionSubmittedNotification extends Notification implements ShouldQueue
      */
     public function toFonnte($notifiable)
     {
-        return "Halo Bpk/Ibu *{$notifiable->name}*,\n\n"
-             . "Mahasiswa *{$this->studentName}* telah mengunggah tanggapan/perbaikan **Revisi {$this->type}**.\n\n"
-             . "Pesan/Catatan: \"{$this->notes}\"\n\n"
-             . "Silakan periksa dokumen perbaikan dan berikan persetujuan di dashboard SIBIMA:\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('revision_submitted', [
+            'nama_dosen' => $notifiable->name,
+            'nama_mahasiswa' => $this->studentName,
+            'jenis_ujian' => $this->type,
+            'catatan_mahasiswa' => $this->notes,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**

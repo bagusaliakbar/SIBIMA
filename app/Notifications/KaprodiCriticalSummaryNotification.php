@@ -44,25 +44,24 @@ class KaprodiCriticalSummaryNotification extends Notification implements ShouldQ
     public function toFonnte($notifiable)
     {
         $count = $this->students->count();
-        
-        $msg = "📊 *LAPORAN MAHASISWA SEMESTER KRITIS SIBIMA*\n\n"
-             . "Halo Bpk/Ibu *{$notifiable->name}*,\n\n"
-             . "Saat ini terdapat **{$count} mahasiswa** yang berada pada semester kritis (Semester 13-14+):\n\n";
-
         $limit = 5;
+        $studentList = '';
+
         foreach ($this->students->take($limit) as $student) {
-            $msg .= "• {$student->name} ({$student->identifier}) - Sem {$student->current_semester}\n";
+            $studentList .= "• {$student->name} ({$student->identifier}) - Sem {$student->current_semester}\n";
         }
 
         if ($count > $limit) {
             $remaining = $count - $limit;
-            $msg .= "...dan {$remaining} mahasiswa lainnya.\n";
+            $studentList .= "...dan {$remaining} mahasiswa lainnya.\n";
         }
 
-        $msg .= "\nSilakan periksa daftar selengkapnya dan lakukan pemantauan pada menu Monitoring Kritis SIBIMA:\n"
-             . url('/monitoring/critical');
-
-        return $msg;
+        return \App\Models\WaTemplate::parse('kaprodi_critical_summary', [
+            'nama_kaprodi' => $notifiable->name,
+            'jumlah_mahasiswa' => $count,
+            'daftar_mahasiswa' => $studentList,
+            'link_monitoring' => url('/monitoring/critical'),
+        ]);
     }
 
     /**

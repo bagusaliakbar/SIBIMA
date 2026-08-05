@@ -164,6 +164,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/waves/{wave}/toggle', [App\Http\Controllers\WaveController::class, 'toggle'])->name('waves.toggle');
         Route::resource('waves', App\Http\Controllers\WaveController::class)->except(['show', 'create', 'edit']);
 
+        // WA Templates Management
+        Route::get('/wa-templates', [App\Http\Controllers\WaTemplateController::class, 'index'])->name('wa-templates.index');
+        Route::get('/wa-templates/{waTemplate}/edit', [App\Http\Controllers\WaTemplateController::class, 'edit'])->name('wa-templates.edit');
+        Route::put('/wa-templates/{waTemplate}', [App\Http\Controllers\WaTemplateController::class, 'update'])->name('wa-templates.update');
+        Route::post('/wa-templates/{waTemplate}/reset', [App\Http\Controllers\WaTemplateController::class, 'reset'])->name('wa-templates.reset');
+
 
     });
 

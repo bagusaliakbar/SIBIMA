@@ -43,11 +43,10 @@ class ThesisCompleted extends Notification implements ShouldQueue
      */
     public function toFonnte($notifiable)
     {
-        return "Halo *{$notifiable->name}*,\n\n"
-             . "Selamat! Seluruh revisi sidang skripsi Anda telah disetujui oleh para penguji.\n\n"
-             . "Skripsi Anda kini berstatus **SELESAI / LULUS**.\n\n"
-             . "Silakan cek dashboard SIBIMA untuk langkah selanjutnya (seperti pemberkasan yudisium/wisuda).\n"
-             . url('/login');
+        return \App\Models\WaTemplate::parse('thesis_completed', [
+            'nama_mahasiswa' => $notifiable->name,
+            'link_login' => url('/login'),
+        ]);
     }
 
     /**
