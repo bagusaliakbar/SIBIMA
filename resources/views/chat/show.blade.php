@@ -311,20 +311,26 @@
                 console.warn('Echo is not defined. Real-time chat updates are disabled.');
             }
 
-            // Function to append message to UI
+            // Function to append message to UI with strict deduplication
             function appendMessage(message, side) {
+                if (message.id && document.getElementById('msg-box-' + message.id)) {
+                    return; // Prevent duplicate rendering of the same message
+                }
+
                 const time = new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 let html = '';
+                const msgIdAttr = message.id ? `id="msg-box-${message.id}"` : '';
                 
                 if (side === 'right') {
                     const checkColor = message.is_read ? 'text-blue-500 font-bold' : 'text-slate-400 dark:text-slate-500';
+                    const checkIdAttr = message.id ? `id="check-msg-${message.id}"` : '';
                     html = `
-                        <div class="flex justify-end">
+                        <div class="flex justify-end" ${msgIdAttr}>
                             <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
                                 <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">${message.message}</p>
                                 <div class="absolute bottom-1 right-2 flex items-center space-x-1">
                                     <span class="text-[9px] text-slate-500 dark:text-slate-400">${time}</span>
-                                    <span class="inline-flex ${checkColor}">
+                                    <span ${checkIdAttr} class="inline-flex ${checkColor}">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                         <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                     </span>
@@ -334,7 +340,7 @@
                     `;
                 } else {
                     html = `
-                        <div class="flex justify-start">
+                        <div class="flex justify-start" ${msgIdAttr}>
                             <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tl-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-slate-100 dark:border-slate-700">
                                 <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${message.message}</p>
                                 <span class="absolute bottom-1 right-2 text-[9px] text-slate-400 dark:text-slate-500">${time}</span>
@@ -347,11 +353,12 @@
                 scrollToBottom();
             }
 
+            let isSending = false;
             function sendMessageAjax() {
                 const text = messageInput.value.trim();
-                if (!text) return;
+                if (!text || isSending) return;
 
-                // Clear input early for better UX
+                isSending = true;
                 messageInput.value = '';
                 messageInput.style.height = '';
 
@@ -373,9 +380,11 @@
                     })
                     .catch(error => {
                         console.error('Error sending message:', error);
-                        // Restore text if it failed
                         messageInput.value = text;
                         alert('Gagal mengirim pesan. Silakan coba lagi.');
+                    })
+                    .finally(() => {
+                        isSending = false;
                     });
                 } else {
                     const formData = new FormData();
@@ -399,8 +408,12 @@
                         console.error('Error sending message:', err);
                         messageInput.value = text;
                         alert('Gagal mengirim pesan. Silakan coba lagi.');
+                    })
+                    .finally(() => {
+                        isSending = false;
                     });
                 }
+            }          }
             }
 
             // Handle AJAX form submission

@@ -56,19 +56,21 @@ class ChatController extends Controller
     public function status(User $user)
     {
         $this->touchOnlineStatus();
+
+        // 1. Fetch unread incoming messages from $user BEFORE marking them as read
+        $newIncomingMessages = Message::where('sender_id', $user->id)
+            ->where('receiver_id', Auth::id())
+            ->where('is_read', false)
+            ->get();
+
+        // 2. Mark incoming messages as read
         $this->chatService->markAsRead($user);
 
-        // Fetch IDs of messages sent by Auth::user() to $user that have been read
+        // 3. Fetch IDs of messages sent by Auth::user() to $user that have been read by $user
         $readMessageIds = Message::where('sender_id', Auth::id())
             ->where('receiver_id', $user->id)
             ->where('is_read', true)
             ->pluck('id');
-
-        // Fetch new unread incoming messages from $user (if any)
-        $newIncomingMessages = Message::where('sender_id', $user->id)
-            ->where('receiver_id', Auth::id())
-            ->where('created_at', '>=', now()->subSeconds(10))
-            ->get();
 
         return response()->json([
             'is_online' => $user->is_online,
