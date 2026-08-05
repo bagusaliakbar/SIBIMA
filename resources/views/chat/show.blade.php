@@ -413,7 +413,6 @@
                         isSending = false;
                     });
                 }
-            }          }
             }
 
             // Handle AJAX form submission
