@@ -158,6 +158,8 @@ class MentoringService
             'info'
         ));
         
+        $dosen->notify(new \App\Notifications\MentoringRequested($session));
+        
         return ['type' => 'student'];
     }
 

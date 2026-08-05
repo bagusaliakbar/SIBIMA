@@ -85,6 +85,13 @@ class ThesisService
             route('theses.index'),
             'info'
         ));
+        
+        if ($p1) {
+            $p1->notify(new \App\Notifications\SupervisorAssigned($thesis, 'Pembimbing 1'));
+        }
+        if ($p2) {
+            $p2->notify(new \App\Notifications\SupervisorAssigned($thesis, 'Pembimbing 2'));
+        }
     }
 
     /**

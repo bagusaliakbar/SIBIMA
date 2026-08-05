@@ -92,9 +92,16 @@ class ScheduleService
         $title = "Jadwal Baru Terbit";
         $message = "Jadwal " . $schedule->title . " telah dipublikasikan.";
 
+        $type = str_contains(get_class($schedule), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
+
         foreach ($userIds as $userId) {
             if ($userId != Auth::id()) {
                 broadcast(new NewNotification($userId, $title, $message, 'info'));
+                
+                $user = \App\Models\User::find($userId);
+                if ($user) {
+                    $user->notify(new \App\Notifications\SchedulePublished($schedule, $type));
+                }
             }
         }
     }

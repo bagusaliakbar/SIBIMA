@@ -207,4 +207,15 @@ class User extends Authenticatable
             ->whereNotNull('entry_year')
             ->where('entry_year', '<=', $thresholdYear);
     }
+
+    /**
+     * Route notifications for the Fonnte channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string|null
+     */
+    public function routeNotificationForFonnte($notification)
+    {
+        return \App\Helpers\PhoneHelper::formatForWhatsApp($this->phone_number);
+    }
 }

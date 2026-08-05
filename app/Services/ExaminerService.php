@@ -45,6 +45,11 @@ class ExaminerService
             }
         }
 
+        if (isset($detail->thesis) && isset($detail->thesis->student)) {
+            $type = str_contains(get_class($detail), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
+            $detail->thesis->student->notify(new \App\Notifications\RevisionRequested($detail->thesis, $type));
+        }
+
         return $message;
     }
 
@@ -126,6 +131,8 @@ class ExaminerService
                 route('dashboard'),
                 'success'
             ));
+
+            $thesis->student->notify(new \App\Notifications\ThesisCompleted($thesis));
 
             ActivityLog::log('Kelulusan', "Mahasiswa {$thesis->student->name} dinyatakan LULUS (Yudisium).", 'Yudisium', $thesis, ['status' => 'completed']);
         }
