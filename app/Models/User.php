@@ -59,9 +59,9 @@ class User extends Authenticatable
         if ($this->signature) {
             // Check if it's an old file path
             if (str_starts_with($this->signature, 'signatures/')) {
-                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->signature)) {
+                if (Storage::disk('public')->exists($this->signature)) {
                     try {
-                        $rawBytes = Crypt::decrypt(\Illuminate\Support\Facades\Storage::disk('public')->get($this->signature));
+                        $rawBytes = Crypt::decrypt(Storage::disk('public')->get($this->signature));
                         return 'data:image/png;base64,' . base64_encode($rawBytes);
                     } catch (\Exception $e) {
                         return null;
@@ -189,7 +189,7 @@ class User extends Authenticatable
                 return $this->avatar;
             }
             // Fallback for legacy files (just in case they weren't wiped yet)
-            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->avatar);
+            return Storage::disk('public')->url($this->avatar);
         }
 
         // Fallback to a default user silhouette SVG

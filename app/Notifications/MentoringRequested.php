@@ -44,7 +44,7 @@ class MentoringRequested extends Notification implements ShouldQueue
      */
     public function toFonnte($notifiable)
     {
-        $studentName = $this->mentoringSession->student->name ?? 'Mahasiswa';
+        $studentName = $this->mentoringSession->thesis->student->name ?? 'Mahasiswa';
         $date = Carbon::parse($this->mentoringSession->scheduled_at)->translatedFormat('l, d F Y H:i');
         $topic = $this->mentoringSession->topic ?? '-';
 

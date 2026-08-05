@@ -103,7 +103,7 @@
 </div>
 
 <!-- Modal Sync Portal -->
-<div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+<div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all">
         <div class="p-6">
             <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Migrasi Data Portal</h3>
