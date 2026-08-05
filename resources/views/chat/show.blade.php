@@ -106,6 +106,52 @@
                     @endforelse
                 </div>
 
+                <!-- Quick Templates Bar -->
+                <div class="px-3 pt-2.5 pb-1 bg-slate-50 dark:bg-slate-800 border-t border-slate-200/70 dark:border-slate-700/80 shrink-0">
+                    <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1.5 scroll-smooth">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 px-2 py-1 rounded-md shrink-0 border border-orange-200/60 dark:border-orange-500/20">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Templat Cepat:
+                        </span>
+
+                        @if(auth()->user()->role === 'mahasiswa')
+                            <button type="button" onclick="useTemplate('Yth. Bapak/Ibu, mohon izin mengonfirmasi permohonan bimbingan skripsi yang telah saya ajukan.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                📜 Konfirmasi Bimbingan
+                            </button>
+                            <button type="button" onclick="useTemplate('Yth. Bapak/Ibu, draf revisi skripsi telah saya perbarui. Mohon berkenan meninjau kembali.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                📝 Update Revisi
+                            </button>
+                            <button type="button" onclick="useTemplate('Yth. Bapak/Ibu, apakah ada waktu luang minggu ini untuk jadwal bimbingan tatap muka?')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                📅 Jadwal Bimbingan
+                            </button>
+                            <button type="button" onclick="useTemplate('Yth. Bapak/Ibu, terima kasih atas bimbingan dan arahan yang telah diberikan.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                🙏 Ucapan Terima Kasih
+                            </button>
+                        @else
+                            <button type="button" onclick="useTemplate('Baik, permohonan bimbingan disetujui. Silakan siapkan draf dan bahan diskusi.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                ✅ Bimbingan Disetujui
+                            </button>
+                            <button type="button" onclick="useTemplate('Draf sudah saya periksa. Silakan cek catatan revisi lengkap yang telah saya tambahkan di Logbook.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                📌 Cek Revisi Logbook
+                            </button>
+                            <button type="button" onclick="useTemplate('Silakan temui saya di ruang dosen FASILKOM pada jam operasional kerja untuk konsultasi.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                🏫 Jadwal Tatap Muka
+                            </button>
+                            <button type="button" onclick="useTemplate('Progres bimbingan bagus. Silakan lanjutkan pengerjaan ke bab berikutnya.')" 
+                                class="inline-flex items-center text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 px-2.5 py-1 rounded-lg shrink-0 transition-all shadow-2xs hover:scale-[1.02] active:scale-[0.98]">
+                                👍 Lanjutkan Bab
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Chat Input -->
                 <div class="p-3 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shrink-0">
                     <form action="{{ route('chat.store', $user->id) }}" method="POST" id="chat-form" onsubmit="return false;" class="flex items-end space-x-2">
@@ -144,6 +190,15 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
             scrollToBottom();
+
+            // Quick Template Handler
+            window.useTemplate = function(text) {
+                if (!messageInput) return;
+                messageInput.value = text;
+                messageInput.style.height = '';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 128) + 'px';
+                messageInput.focus();
+            };
 
             // Listen for new messages
             if (window.Echo) {
