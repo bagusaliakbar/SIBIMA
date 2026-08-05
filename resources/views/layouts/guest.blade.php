@@ -9,17 +9,21 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-slate-900 antialiased bg-slate-50">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-            <div class="w-full sm:max-w-md mt-6 px-8 py-10 bg-white shadow-sm border border-slate-100 overflow-hidden sm:rounded-md">
-                {{ $slot }}
+    <body class="font-sans text-slate-900 antialiased bg-slate-50 dark:bg-slate-900 selection:bg-orange-500 selection:text-white">
+        @if(isset($fullWidth) && $fullWidth)
+            {{ $slot }}
+        @else
+            <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+                <div class="w-full sm:max-w-md mt-6 px-8 py-10 bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden sm:rounded-2xl">
+                    {{ $slot }}
+                </div>
             </div>
-        </div>
+        @endif
     </body>
     <!-- Script to translate HTML5 validation messages to Indonesian -->
     <script>
@@ -35,14 +39,10 @@
                         if (!e.target.validity.valid) {
                             if (e.target.validity.valueMissing) {
                                 e.target.setCustomValidity("Bagian ini wajib diisi.");
-                            } else if (e.target.validity.typeMismatch) {
-                                if (e.target.type === 'email') {
-                                    e.target.setCustomValidity("Harap masukkan alamat email yang valid.");
-                                } else if (e.target.type === 'url') {
-                                    e.target.setCustomValidity("Harap masukkan URL yang valid.");
-                                } else {
-                                    e.target.setCustomValidity("Format masukan tidak sesuai.");
-                                }
+                            } else if (e.target.type === 'email') {
+                                e.target.setCustomValidity("Harap masukkan alamat email yang valid.");
+                            } else if (e.target.type === 'url') {
+                                e.target.setCustomValidity("Harap masukkan URL yang valid.");
                             } else {
                                 e.target.setCustomValidity("Masukan tidak valid.");
                             }
