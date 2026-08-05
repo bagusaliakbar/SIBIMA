@@ -19,6 +19,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         <style>
+            [x-cloak] { display: none !important; }
             body { font-family: 'Inter', sans-serif; }
             .sidebar-link { transition: all 0.2s ease-in-out; }
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }

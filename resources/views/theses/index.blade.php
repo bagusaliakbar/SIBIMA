@@ -220,11 +220,11 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            <div x-data="{ 
-                                                p1_id: '{{ $thesis->requested_pembimbing1_id }}', 
-                                                p2_id: '{{ $thesis->requested_pembimbing2_id }}',
+                                            <div x-data='{ 
+                                                p1_id: "{{ $thesis->requested_pembimbing1_id }}", 
+                                                p2_id: "{{ $thesis->requested_pembimbing2_id }}",
                                                 dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
-                                            }" class="flex flex-col gap-2 w-full">
+                                            }' class="flex flex-col gap-2 w-full">
                                                 <div class="flex items-center gap-2">
                                                     <div class="flex-1">
                                                         <select name="pembimbing1_id" x-model="p1_id" required class="w-full py-1.5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700 dark:text-slate-300">
@@ -302,11 +302,11 @@
                                                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Judul Final Skripsi</label>
                                                                     <textarea name="final_title" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all uppercase leading-relaxed p-4" required>{{ $thesis->final_title ?? $thesis->title }}</textarea>
                                                                 </div>
-                                                                <div x-data="{ 
-                                                                    p1_id: '{{ $thesis->pembimbing1_id }}', 
-                                                                    p2_id: '{{ $thesis->pembimbing2_id }}',
+                                                                <div x-data='{ 
+                                                                    p1_id: "{{ $thesis->pembimbing1_id }}", 
+                                                                    p2_id: "{{ $thesis->pembimbing2_id }}",
                                                                     dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
-                                                                }" class="grid grid-cols-2 gap-4">
+                                                                }' class="grid grid-cols-2 gap-4">
                                                                     <div>
                                                                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 1</label>
                                                                         <select name="pembimbing1_id" x-model="p1_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3" required>
