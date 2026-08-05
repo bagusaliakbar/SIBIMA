@@ -77,6 +77,8 @@ class ThesisService
                 route('dashboard'),
                 'success'
             ));
+            
+            $student->notify(new \App\Notifications\ThesisAccepted($thesis));
         }
 
         Notification::send([$p1, $p2], new GeneralNotification(
