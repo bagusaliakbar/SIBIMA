@@ -44,9 +44,25 @@
             .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                 background: rgba(255, 255, 255, 0.35);
             }
-            .custom-scrollbar {
-                scrollbar-width: thin;
-                scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+            /* Soft Bordered Table & Sticky Header */
+            table thead tr {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background-color: rgba(248, 250, 252, 0.95);
+                backdrop-filter: blur(8px);
+            }
+            .dark table thead tr {
+                background-color: rgba(15, 23, 42, 0.95);
+            }
+            table tbody tr {
+                transition: background-color 0.15s ease-in-out;
+            }
+            table tbody tr:hover {
+                background-color: rgba(241, 245, 249, 0.8) !important;
+            }
+            .dark table tbody tr:hover {
+                background-color: rgba(51, 65, 85, 0.4) !important;
             }
         </style>
         <script>
