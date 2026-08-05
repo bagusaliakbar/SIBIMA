@@ -2,7 +2,6 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <x-breadcrumb :items="[
-                ['label' => 'Dashboard',
                 ['label' => 'Template WhatsApp', 'route' => null]
             ]" />
         </div>
