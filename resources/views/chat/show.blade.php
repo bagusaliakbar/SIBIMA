@@ -437,6 +437,8 @@
 
                     noContactsMsg.classList.toggle('hidden', visibleCount > 0);
                 });
+            }
+
             // Real-time Polling for Online Status & Read Receipts (Every 3s)
             const statusUrl = "{{ route('chat.status', $user->id) }}";
             function pollChatStatus() {
