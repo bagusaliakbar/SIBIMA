@@ -14,9 +14,12 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-slate-900 antialiased bg-slate-50">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-            <div class="w-full sm:max-w-md mt-6 px-8 py-10 bg-white shadow-sm border border-slate-100 overflow-hidden sm:rounded-md">
+    <body class="font-sans text-slate-900 antialiased bg-slate-50/80 min-h-screen">
+        <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 relative">
+            <!-- Background Decorative Glow -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-200/40 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="w-full sm:max-w-md relative z-10 px-6 sm:px-8 py-8 sm:py-10 bg-white shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden rounded-3xl transition-all">
                 {{ $slot }}
             </div>
         </div>
