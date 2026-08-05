@@ -78,19 +78,48 @@
             (function() {
                 const preloader = document.getElementById('page-preloader');
                 if (!preloader) return;
-                function hidePreloader() {
-                    if (preloader.classList.contains('opacity-0')) return;
-                    preloader.classList.add('opacity-0');
-                    setTimeout(() => {
-                        preloader.style.display = 'none';
-                    }, 300);
+
+                const startTime = performance.now();
+                const minDisplayTime = 450; // minimum 450ms for a visible smooth transition
+
+                function showPreloader() {
+                    preloader.style.display = 'flex';
+                    preloader.offsetHeight; // force reflow
+                    preloader.classList.remove('opacity-0');
                 }
+
+                function hidePreloader() {
+                    const elapsedTime = performance.now() - startTime;
+                    const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+                    setTimeout(() => {
+                        preloader.classList.add('opacity-0');
+                        setTimeout(() => {
+                            preloader.style.display = 'none';
+                        }, 300);
+                    }, remainingTime);
+                }
+
                 if (document.readyState === 'complete') {
                     hidePreloader();
                 } else {
                     window.addEventListener('load', hidePreloader);
-                    setTimeout(hidePreloader, 1200);
+                    setTimeout(hidePreloader, 1500);
                 }
+
+                // Show preloader when clicking internal links
+                document.addEventListener('click', function(e) {
+                    const link = e.target.closest('a');
+                    if (link && link.href && !link.target && !link.hasAttribute('download') && link.origin === window.location.origin) {
+                        if (link.pathname === window.location.pathname && link.hash) return;
+                        showPreloader();
+                    }
+                });
+
+                // Show preloader on form submits
+                document.addEventListener('submit', function() {
+                    showPreloader();
+                });
             })();
         </script>
 
