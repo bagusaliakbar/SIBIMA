@@ -24,12 +24,17 @@
                         @foreach($users as $u)
                             <li class="contact-item-show" data-name="{{ strtolower($u->name) }}" data-role="{{ strtolower($u->role) }}">
                                 <a href="{{ route('chat.show', $u->id) }}" class="flex items-center px-4 py-3 transition-colors group {{ $u->id === $user->id ? 'bg-orange-50/50 dark:bg-orange-900/20 border-r-2 border-orange-500' : 'hover:bg-white dark:hover:bg-slate-800' }}">
-                                    <div class="relative">
+                                    <div class="relative w-10 h-10 shrink-0">
                                         <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-800 shadow-sm bg-orange-50 dark:bg-orange-900/10">
                                             <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
                                         </div>
+                                        @if($u->is_online)
+                                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-white dark:border-slate-800 rounded-full" title="Online"></span>
+                                        @else
+                                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-slate-300 dark:bg-slate-600 border border-white dark:border-slate-800 rounded-full" title="Offline"></span>
+                                        @endif
                                         @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0 && $u->id !== $user->id)
-                                            <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white dark:border-slate-800 rounded-full"></span>
+                                            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 border-2 border-white dark:border-slate-800 rounded-full"></span>
                                         @endif
                                     </div>
                                     <div class="ml-3 flex-1 min-w-0">
@@ -60,14 +65,14 @@
                     <a href="{{ route('chat.index') }}" class="md:hidden mr-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </a>
-                    <div class="relative shrink-0">
+                    <div class="relative w-10 h-10 shrink-0">
                         <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-800 shadow-sm bg-orange-50 dark:bg-orange-900/10">
                             <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                         </div>
                         @if($user->is_online)
-                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
                         @else
-                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
                         @endif
                     </div>
                     <div class="ml-3">
