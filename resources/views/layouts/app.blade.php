@@ -59,6 +59,41 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 overflow-hidden selection:bg-orange-100 selection:text-orange-900 transition-colors duration-300">
+        <!-- Global Page Preloader -->
+        <div id="page-preloader" class="fixed inset-0 z-[99999] bg-white dark:bg-slate-900 flex flex-col items-center justify-center transition-opacity duration-300 pointer-events-none">
+            <div class="relative flex items-center justify-center mb-4">
+                <!-- Glowing Outer Spinner Ring -->
+                <div class="w-16 h-16 border-4 border-orange-500/20 border-t-orange-600 rounded-full animate-spin"></div>
+                <!-- Center Logo -->
+                <img src="{{ asset('logo_unsub.png') }}" alt="SIBIMA Logo" class="w-8 h-8 object-contain absolute animate-pulse">
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-black tracking-[0.25em] text-slate-700 dark:text-slate-200 uppercase">SIBIMA</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping"></span>
+            </div>
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase mt-1">Memuat Halaman...</p>
+        </div>
+
+        <script>
+            (function() {
+                const preloader = document.getElementById('page-preloader');
+                if (!preloader) return;
+                function hidePreloader() {
+                    if (preloader.classList.contains('opacity-0')) return;
+                    preloader.classList.add('opacity-0');
+                    setTimeout(() => {
+                        preloader.style.display = 'none';
+                    }, 300);
+                }
+                if (document.readyState === 'complete') {
+                    hidePreloader();
+                } else {
+                    window.addEventListener('load', hidePreloader);
+                    setTimeout(hidePreloader, 1200);
+                }
+            })();
+        </script>
+
         <div class="flex h-screen w-full overflow-hidden">
             <!-- Sidebar Backdrop for Mobile -->
             <div 
