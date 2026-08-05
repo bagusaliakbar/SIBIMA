@@ -35,6 +35,17 @@ class RevisionService
             }
         }
 
+        $examiner = $revision->examiner ?? null;
+        if ($examiner) {
+            $type = str_contains(get_class($revision), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
+            $examiner->notify(new \App\Notifications\RevisionSubmittedNotification(
+                $revision,
+                $user->name,
+                $data['student_notes'],
+                $type
+            ));
+        }
+
         return $message;
     }
 }

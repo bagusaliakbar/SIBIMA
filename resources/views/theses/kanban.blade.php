@@ -5,19 +5,10 @@
                 ['label' => 'Data Skripsi', 'route' => route('theses.index')],
                 ['label' => 'Papan Kanban', 'route' => null]
             ]" />
-            <a href="{{ route('theses.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors shadow-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                Tampilan Tabel
-            </a>
         </div>
     </x-slot>
 
     <div class="w-full">
-        <div class="mb-6">
-            <h2 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Helicopter View Skripsi</h2>
-            <p class="text-xs text-slate-500 mt-1 font-medium">Pantau pergerakan progres skripsi mahasiswa secara visual dari hulu ke hilir.</p>
-        </div>
-
         <!-- Kanban Board Container -->
         <div class="flex items-start gap-4 overflow-x-auto pb-6 custom-scrollbar" style="min-height: calc(100vh - 250px);">
             

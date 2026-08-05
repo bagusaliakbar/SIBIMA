@@ -216,6 +216,12 @@ class MentoringService
                 $data['status'] === 'approved' ? 'success' : ($data['status'] === 'rejected' ? 'danger' : 'info')
             ));
 
+            $session->thesis->student->notify(new \App\Notifications\MentoringStatusUpdatedNotification(
+                $session,
+                $data['status'],
+                $data['feedback'] ?? null
+            ));
+
             $message = 'Status sesi bimbingan diperbarui menjadi: ' . ucfirst($data['status']);
         }
 

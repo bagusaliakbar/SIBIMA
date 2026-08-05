@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Notifications;
+
+use App\Channels\FonnteChannel;
+use App\Models\Thesis;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+
+class AccNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    public $thesis;
+    public $type; // 'up' or 'sidang'
+    public $byUser;
+
+    /**
+     * Create a new notification instance.
+     *
+     * @param Thesis $thesis
+     * @param string $type ('up' or 'sidang')
+     * @param mixed $byUser
+     */
+    public function __construct(Thesis $thesis, string $type, $byUser = null)
+    {
+        $this->thesis = $thesis;
+        $this->type = $type;
+        $this->byUser = $byUser;
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return [FonnteChannel::class, 'database'];
+    }
+
+    /**
+     * Get the Fonnte / WhatsApp representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return string
+     */
+    public function toFonnte($notifiable)
+    {
+        $typeName = $this->type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
+        $byName = $this->byUser ? $this->byUser->name : 'Dosen Pembimbing';
+
+        return "Halo *{$notifiable->name}*,\n\n"
+             . "Selamat! Anda telah mendapatkan **ACC {$typeName}** dari *{$byName}*.\n\n"
+             . "Silakan cek status kelengkapan ACC dan segera lakukan pendaftaran gelombang melalui dashboard SIBIMA:\n"
+             . url('/login');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function toArray($notifiable)
+    {
+        $typeName = $this->type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
+        return [
+            'thesis_id' => $this->thesis->id,
+            'message' => "Selamat! Anda telah mendapatkan ACC {$typeName}.",
+        ];
+    }
+}

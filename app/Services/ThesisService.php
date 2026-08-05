@@ -141,6 +141,9 @@ class ThesisService
                 $typeName = $type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
                 $statusText = $newVal ? 'memberikan' : 'membatalkan';
                 ActivityLog::log('ACC Bimbingan', "{$user->role} ({$user->name}) {$statusText} ACC {$typeName} (P1 & P2) untuk mahasiswa {$thesis->student->name}.", 'Skripsi', $thesis);
+                if ($newVal) {
+                    $thesis->student->notify(new \App\Notifications\AccNotification($thesis, $type, $user));
+                }
                 return $newVal ? 'diberikan' : 'dibatalkan';
             } else {
                 $column = $type === 'up' ? 'acc_up_p1' : 'acc_sidang_p1';
@@ -172,6 +175,8 @@ class ThesisService
                 route('mentoring-sessions.index'),
                 'success'
             ));
+
+            $thesis->student->notify(new \App\Notifications\AccNotification($thesis, $type, $user));
         }
 
         return $thesis->$column ? 'diberikan' : 'dibatalkan';
