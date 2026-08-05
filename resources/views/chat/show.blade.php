@@ -106,22 +106,21 @@
                     @endforelse
                 </div>
 
-                <!-- Chat Input Section with Popover Quick Templates -->
-                <div class="p-3 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shrink-0 relative" x-data="{ showTemplates: false }">
+                <!-- Chat Input Section with Expandable Quick Templates Drawer -->
+                <div class="bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 shrink-0" x-data="{ showTemplates: false }">
 
-                    <!-- Floating Popover Menu for Quick Templates -->
+                    <!-- Expandable Quick Templates Drawer (Inline, Never Clipped) -->
                     <div x-show="showTemplates" 
                          x-cloak 
-                         @click.away="showTemplates = false"
                          x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-                         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                         x-transition:enter-start="opacity-0 max-h-0"
+                         x-transition:enter-end="opacity-100 max-h-64"
                          x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                         x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                         class="absolute bottom-full left-3 mb-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden">
+                         x-transition:leave-start="opacity-100 max-h-64"
+                         x-transition:leave-end="opacity-0 max-h-0"
+                         class="border-b border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 overflow-hidden">
                         
-                        <div class="px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white flex justify-between items-center shadow-sm">
+                        <div class="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white flex justify-between items-center shadow-sm">
                             <div class="flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 <span class="text-xs font-bold uppercase tracking-wider">Pilih Templat Pesan Cepat</span>
@@ -131,71 +130,71 @@
                             </button>
                         </div>
 
-                        <div class="p-2 max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
+                        <div class="p-3 max-h-56 overflow-y-auto custom-scrollbar grid grid-cols-1 sm:grid-cols-2 gap-2">
                             @if(auth()->user()->role === 'mahasiswa')
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, mohon izin mengonfirmasi permohonan bimbingan skripsi yang telah saya ajukan.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">📜</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">📜</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Konfirmasi Bimbingan</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, mohon izin mengonfirmasi permohonan bimbingan skripsi...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, mohon izin mengonfirmasi...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, draf revisi skripsi telah saya perbarui. Mohon berkenan meninjau kembali.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">📝</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">📝</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Update Revisi</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, draf revisi skripsi telah saya perbarui...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, draf revisi skripsi telah...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, apakah ada waktu luang minggu ini untuk jadwal bimbingan tatap muka?'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">📅</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">📅</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Jadwal Bimbingan</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, apakah ada waktu luang minggu ini untuk...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, apakah ada waktu luang...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, terima kasih atas bimbingan dan arahan yang telah diberikan.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">🙏</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">🙏</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Ucapan Terima Kasih</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, terima kasih atas bimbingan dan arahan...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, terima kasih atas bimbingan...</p>
                                     </div>
                                 </button>
                             @else
                                 <button type="button" @click="useTemplate('Baik, permohonan bimbingan disetujui. Silakan siapkan draf dan bahan diskusi.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">✅</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">✅</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Bimbingan Disetujui</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Baik, permohonan bimbingan disetujui. Silakan siapkan...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Baik, permohonan bimbingan disetujui...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Draf sudah saya periksa. Silakan cek catatan revisi lengkap yang telah saya tambahkan di Logbook.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">📌</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">📌</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Cek Revisi Logbook</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Draf sudah saya periksa. Silakan cek catatan revisi...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Draf sudah saya periksa. Silakan cek...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Silakan temui saya di ruang dosen FASILKOM pada jam operasional kerja untuk konsultasi.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">🏫</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">🏫</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Jadwal Tatap Muka</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Silakan temui saya di ruang dosen FASILKOM pada jam...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Silakan temui saya di ruang dosen FASILKOM...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Progres bimbingan bagus. Silakan lanjutkan pengerjaan ke bab berikutnya.'); showTemplates = false" 
-                                    class="w-full text-left p-2.5 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex items-start gap-3 group">
-                                    <span class="text-lg">👍</span>
-                                    <div>
+                                    class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
+                                    <span class="text-base shrink-0">👍</span>
+                                    <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Lanjutkan Bab</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Progres bimbingan bagus. Silakan lanjutkan pengerjaan...</p>
+                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Progres bimbingan bagus. Silakan lanjutkan...</p>
                                     </div>
                                 </button>
                             @endif
@@ -203,32 +202,34 @@
                     </div>
 
                     <!-- Chat Form Input -->
-                    <form action="{{ route('chat.store', $user->id) }}" method="POST" id="chat-form" onsubmit="return false;" class="flex items-end space-x-2">
-                        @csrf
-                        
-                        <!-- Toggle Button Templat Cepat -->
-                        <button type="button" @click="showTemplates = !showTemplates" 
-                            class="h-11 px-3 rounded-xl bg-orange-50 dark:bg-orange-950/50 hover:bg-orange-100 dark:hover:bg-orange-900/40 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30 flex items-center gap-1.5 transition-all text-xs font-bold shrink-0 shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
-                            title="Pilih Templat Pesan Cepat">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <span class="hidden sm:inline">Templat</span>
-                        </button>
+                    <div class="p-3">
+                        <form action="{{ route('chat.store', $user->id) }}" method="POST" id="chat-form" onsubmit="return false;" class="flex items-end space-x-2">
+                            @csrf
+                            
+                            <!-- Toggle Button Templat Cepat -->
+                            <button type="button" @click="showTemplates = !showTemplates" 
+                                class="h-11 px-3 rounded-xl bg-orange-50 dark:bg-orange-950/50 hover:bg-orange-100 dark:hover:bg-orange-900/40 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30 flex items-center gap-1.5 transition-all text-xs font-bold shrink-0 shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
+                                title="Pilih Templat Pesan Cepat">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <span class="hidden sm:inline">Templat</span>
+                            </button>
 
-                        <div class="flex-1 bg-white dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all">
-                            <textarea 
-                                name="message" 
-                                id="message-input" 
-                                rows="1" 
-                                class="w-full border-0 focus:ring-0 resize-none py-3 px-4 text-sm max-h-32 min-h-[44px] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600" 
-                                placeholder="Ketik pesan..."
-                                required
-                                oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 128) + 'px'"></textarea>
-                        </div>
+                            <div class="flex-1 bg-white dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm overflow-hidden focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all">
+                                <textarea 
+                                    name="message" 
+                                    id="message-input" 
+                                    rows="1" 
+                                    class="w-full border-0 focus:ring-0 resize-none py-3 px-4 text-sm max-h-32 min-h-[44px] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600" 
+                                    placeholder="Ketik pesan..."
+                                    required
+                                    oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 128) + 'px'"></textarea>
+                            </div>
 
-                        <button type="submit" class="h-11 w-11 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 text-white flex items-center justify-center hover:from-orange-500 hover:to-orange-600 transition-all shadow-md shadow-orange-500/20 shrink-0 hover:scale-[1.02] active:scale-[0.98]">
-                            <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
-                        </button>
-                    </form>
+                            <button type="submit" class="h-11 w-11 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 text-white flex items-center justify-center hover:from-orange-500 hover:to-orange-600 transition-all shadow-md shadow-orange-500/20 shrink-0 hover:scale-[1.02] active:scale-[0.98]">
+                                <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
             </div>
