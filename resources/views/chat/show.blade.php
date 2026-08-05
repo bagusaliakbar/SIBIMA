@@ -60,12 +60,32 @@
                     <a href="{{ route('chat.index') }}" class="md:hidden mr-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </a>
-                    <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-800 shadow-sm bg-orange-50 dark:bg-orange-900/10 shrink-0">
-                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                    <div class="relative shrink-0">
+                        <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-800 shadow-sm bg-orange-50 dark:bg-orange-900/10">
+                            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                        </div>
+                        @if($user->is_online)
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
+                        @else
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
+                        @endif
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $user->name }}</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 capitalize">{{ $user->role }}</p>
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <span>{{ $user->name }}</span>
+                        </h3>
+                        <div class="flex items-center gap-1.5 text-[11px]">
+                            <span class="text-slate-500 dark:text-slate-400 capitalize font-medium">{{ $user->role }}</span>
+                            <span class="text-slate-300 dark:text-slate-600">•</span>
+                            @if($user->is_online)
+                                <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    Online
+                                </span>
+                            @else
+                                <span class="text-slate-400 dark:text-slate-500">Offline</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -83,10 +103,22 @@
                             <!-- Sent Message (Right) -->
                             <div class="flex justify-end">
                                 <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
-                                    <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">{{ $message->message }}</p>
+                                    <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">{{ $message->message }}</p>
                                     <div class="absolute bottom-1 right-2 flex items-center space-x-1">
                                         <span class="text-[9px] text-slate-500 dark:text-slate-400">{{ $message->created_at->format('H:i') }}</span>
-                                        <svg class="w-3 h-3 {{ $message->is_read ? 'text-blue-500' : 'text-slate-400 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        @if($message->is_read)
+                                            <!-- Double Blue Checkmark -->
+                                            <span class="inline-flex text-blue-500 font-bold" title="Dibaca">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                            </span>
+                                        @else
+                                            <!-- Double Grey Checkmark -->
+                                            <span class="inline-flex text-slate-400 dark:text-slate-500" title="Terkirim">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -278,13 +310,17 @@
                 let html = '';
                 
                 if (side === 'right') {
+                    const checkColor = message.is_read ? 'text-blue-500 font-bold' : 'text-slate-400 dark:text-slate-500';
                     html = `
                         <div class="flex justify-end">
                             <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
-                                <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${message.message}</p>
+                                <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">${message.message}</p>
                                 <div class="absolute bottom-1 right-2 flex items-center space-x-1">
                                     <span class="text-[9px] text-slate-500 dark:text-slate-400">${time}</span>
-                                    <svg class="w-3 h-3 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span class="inline-flex ${checkColor}">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                        <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                    </span>
                                 </div>
                             </div>
                         </div>

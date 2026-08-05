@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->append(\App\Http\Middleware\ContentSecurityPolicy::class);
+        $middleware->append(\App\Http\Middleware\UpdateUserOnlineStatus::class);
     })
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
         $schedule->command('app:send-schedule-reminders')->dailyAt('08:00');

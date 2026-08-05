@@ -30,6 +30,12 @@
                                         <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-500/20 shadow-sm bg-orange-50 dark:bg-orange-900/10 group-hover:scale-110 transition-transform">
                                             <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
                                         </div>
+                                        <!-- Online Status Indicator Dot -->
+                                        @if($u->is_online)
+                                            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
+                                        @else
+                                            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
+                                        @endif
                                         @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0)
                                             <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white dark:border-slate-800 rounded-lg flex items-center justify-center text-[8px] font-black text-white">
                                                 {{ $unreadCounts[$u->id] }}

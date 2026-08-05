@@ -39,6 +39,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * Check if user is online
+     */
+    public function getIsOnlineAttribute()
+    {
+        return \Illuminate\Support\Facades\Cache::has('user-is-online-' . $this->id);
+    }
+
+    /**
      * Get signature URL
      */
     public function getSignatureUrlAttribute()
