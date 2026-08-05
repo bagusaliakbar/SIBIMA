@@ -80,7 +80,7 @@
                 if (!preloader) return;
 
                 const startTime = performance.now();
-                const minDisplayTime = 450; // minimum 450ms for a visible smooth transition
+                const minDisplayTime = 700; // minimum 450ms for a visible smooth transition
 
                 function showPreloader() {
                     preloader.style.display = 'flex';
