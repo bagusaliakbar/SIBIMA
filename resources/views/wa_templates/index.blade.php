@@ -10,15 +10,15 @@
 
     <div class="w-full space-y-6">
         <!-- Banner Info -->
-        <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/10 rounded-full blur-2xl pointer-events-none"></div>
             <div class="relative z-10 max-w-3xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-emerald-100 mb-3 border border-white/20">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-orange-400 mb-3 border border-white/10">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     Manajemen Format Pesan WA
                 </div>
-                <h1 class="text-2xl md:text-3xl font-black tracking-tight mb-2">Pengaturan Template WhatsApp (Fonnte)</h1>
-                <p class="text-emerald-100 text-sm leading-relaxed">
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight mb-2 text-white">Pengaturan Template WhatsApp (Fonnte)</h1>
+                <p class="text-slate-300 text-sm leading-relaxed">
                     Atur format pesan notifikasi WhatsApp secara dinamis. Anda dapat menyisipkan kata-kata khusus, pesan ucapan, atau mengubah struktur kalimat menggunakan variabel/tag yang tersedia tanpa perlu memodifikasi kode program.
                 </p>
             </div>
@@ -27,12 +27,12 @@
         <!-- Filter Tab Category -->
         <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar border-b border-slate-200 dark:border-slate-800">
             <a href="{{ route('wa-templates.index', ['category' => 'all']) }}" 
-               class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === 'all' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
+               class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === 'all' ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
                 Semua Category
             </a>
             @foreach($categories as $cat)
                 <a href="{{ route('wa-templates.index', ['category' => $cat]) }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === $cat ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
+                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === $cat ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
                     {{ $cat }}
                 </a>
             @endforeach
@@ -73,7 +73,7 @@
 
                     <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
                         <a href="{{ route('wa-templates.edit', $template) }}" 
-                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shadow-emerald-600/20">
+                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shadow-orange-600/20">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             Edit Format Teks
                         </a>

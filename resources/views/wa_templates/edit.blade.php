@@ -13,7 +13,7 @@
         <!-- Header Edit Card -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 rounded-full text-xs font-bold mb-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 rounded-full text-xs font-bold mb-2">
                     <span>{{ $waTemplate->category }}</span>
                     <span>•</span>
                     <span class="font-mono">{{ $waTemplate->code }}</span>
@@ -80,7 +80,7 @@
                     <!-- Save Button -->
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700/60">
                         <button type="submit" 
-                                class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-emerald-600/30 inline-flex items-center gap-2">
+                                class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-orange-600/30 inline-flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             Simpan Perubahan Template
                         </button>
