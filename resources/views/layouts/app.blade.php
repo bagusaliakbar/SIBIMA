@@ -45,24 +45,23 @@
                 background: rgba(255, 255, 255, 0.35);
             }
             /* Soft Bordered Table & Sticky Header */
-            table thead tr {
+            table thead th {
                 position: sticky;
                 top: 0;
                 z-index: 10;
-                background-color: rgba(248, 250, 252, 0.95);
-                backdrop-filter: blur(8px);
+                background-color: #f8fafc;
             }
-            .dark table thead tr {
-                background-color: rgba(15, 23, 42, 0.95);
+            .dark table thead th {
+                background-color: #0f172a;
             }
             table tbody tr {
                 transition: background-color 0.15s ease-in-out;
             }
             table tbody tr:hover {
-                background-color: rgba(241, 245, 249, 0.8) !important;
+                background-color: #f1f5f9 !important;
             }
             .dark table tbody tr:hover {
-                background-color: rgba(51, 65, 85, 0.4) !important;
+                background-color: #1e293b !important;
             }
         </style>
         <script>
