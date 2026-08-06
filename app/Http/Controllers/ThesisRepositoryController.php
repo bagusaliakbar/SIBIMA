@@ -95,6 +95,8 @@ class ThesisRepositoryController extends Controller
             $rows = $xpath->query("//table[contains(@class, 'sr-table')]//tbody//tr");
             
             $count = 0;
+            $newCount = 0;
+            $duplicateCount = 0;
             
             foreach ($rows as $row) {
                 // Name: .student-info-main
@@ -125,7 +127,7 @@ class ThesisRepositoryController extends Controller
                 $pembimbing2 = $supervisorNodes->length > 1 ? trim($supervisorNodes->item(1)->textContent) : null;
                 
                 if ($name && $title) {
-                    ThesisRepository::updateOrCreate(
+                    $repo = ThesisRepository::updateOrCreate(
                         ['title' => $title, 'name' => $name],
                         [
                             'identifier' => $npm,
@@ -134,6 +136,12 @@ class ThesisRepositoryController extends Controller
                             'pembimbing2' => $pembimbing2
                         ]
                     );
+
+                    if ($repo->wasRecentlyCreated) {
+                        $newCount++;
+                    } else {
+                        $duplicateCount++;
+                    }
                     $count++;
                 }
             }
@@ -141,6 +149,8 @@ class ThesisRepositoryController extends Controller
             return response()->json([
                 'success' => true,
                 'count' => $count,
+                'new_count' => $newCount,
+                'duplicate_count' => $duplicateCount,
                 'message' => "Halaman {$page} berhasil disinkronisasi."
             ]);
             

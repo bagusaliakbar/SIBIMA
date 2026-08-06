@@ -103,24 +103,49 @@
 </div>
 
 <!-- Modal Sync Portal -->
-<div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all">
+<div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 dark:border-slate-700/60 overflow-hidden transform transition-all">
         <div class="p-6">
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Migrasi Data Portal</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Sistem sedang menarik data dari website portal FASILKOM (41 Halaman). Mohon jangan tutup jendela ini hingga proses selesai.</p>
-            
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-4 mb-2 overflow-hidden border border-slate-200 dark:border-slate-600">
-                <div id="syncProgress" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black shrink-0">
+                    <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">Migrasi Data Portal</h3>
+                    <p class="text-[11px] font-medium text-slate-400">Sinkronisasi Pustaka FASILKOM</p>
+                </div>
             </div>
             
-            <div class="flex justify-between items-center text-xs font-semibold text-slate-500 dark:text-slate-400">
-                <span id="syncStatus">Menunggu...</span>
-                <span id="syncPercentage">0% (0/41)</span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">Sistem sedang menarik data dari website portal FASILKOM (41 Halaman). Mohon jangan tutup jendela ini hingga proses selesai.</p>
+
+            <!-- Progress Bar Track Container -->
+            <div class="relative w-full bg-slate-100 dark:bg-slate-700/60 rounded-full h-4 mb-2 overflow-hidden border border-slate-200/80 dark:border-slate-600 shadow-inner">
+                <div id="syncProgress" class="bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-500 h-full rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs font-bold text-slate-600 dark:text-slate-300 mb-5">
+                <span id="syncStatus" class="truncate">Menunggu...</span>
+                <span id="syncPercentage" class="shrink-0 ml-2 font-black text-orange-600 dark:text-orange-400">0% (0/41)</span>
+            </div>
+
+            <!-- Live Migration Statistics Cards -->
+            <div class="grid grid-cols-3 gap-2.5 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
+                    <p id="statNewCount" class="text-base font-black text-emerald-600 dark:text-emerald-400">0</p>
+                </div>
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Duplikat</p>
+                    <p id="statDupCount" class="text-base font-black text-amber-600 dark:text-amber-400">0</p>
+                </div>
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Total</p>
+                    <p id="statTotalCount" class="text-base font-black text-indigo-600 dark:text-indigo-400">0</p>
+                </div>
             </div>
             
             <div class="mt-6 flex justify-end">
-                <button id="closeSyncModalBtn" onclick="closeSyncModal()" class="hidden bg-slate-800 dark:bg-white text-white dark:text-slate-800 px-4 py-2 rounded-lg font-bold text-sm">Tutup & Muat Ulang</button>
+                <button id="closeSyncModalBtn" onclick="closeSyncModal()" class="hidden bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm">Tutup & Muat Ulang</button>
             </div>
         </div>
     </div>
@@ -131,6 +156,8 @@
     const totalPages = 41;
     let currentPage = 1;
     let totalImported = 0;
+    let totalNew = 0;
+    let totalDuplicates = 0;
 
     async function startSync() {
         if (isSyncing) return;
@@ -142,8 +169,16 @@
         isSyncing = true;
         currentPage = 1;
         totalImported = 0;
+        totalNew = 0;
+        totalDuplicates = 0;
         
-        document.getElementById('syncModal').classList.remove('hidden');
+        document.getElementById('statNewCount').innerText = '0';
+        document.getElementById('statDupCount').innerText = '0';
+        document.getElementById('statTotalCount').innerText = '0';
+        
+        const modal = document.getElementById('syncModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
         document.getElementById('closeSyncModalBtn').classList.add('hidden');
         
         await processNextPage();
@@ -162,10 +197,16 @@
             const result = await response.json();
             
             if (result.success) {
-                totalImported += result.count;
+                totalImported += (result.count || 0);
+                totalNew += (result.new_count || 0);
+                totalDuplicates += (result.duplicate_count || 0);
+
+                document.getElementById('statNewCount').innerText = totalNew;
+                document.getElementById('statDupCount').innerText = totalDuplicates;
+                document.getElementById('statTotalCount').innerText = totalImported;
+
                 currentPage++;
-                // Lanjut halaman berikutnya
-                setTimeout(processNextPage, 500); // jeda 0.5 detik biar ga diban server portal
+                setTimeout(processNextPage, 400);
             } else {
                 handleSyncError(`Gagal di halaman ${currentPage}: ${result.message}`);
             }
@@ -176,7 +217,9 @@
 
     function updateProgressUI(current, total, statusText) {
         const percentage = Math.round((current / total) * 100);
-        document.getElementById('syncProgress').style.width = `${percentage}%`;
+        const progressBar = document.getElementById('syncProgress');
+        if (progressBar) progressBar.style.width = `${percentage}%`;
+        
         document.getElementById('syncPercentage').innerText = `${percentage}% (${current}/${total})`;
         document.getElementById('syncStatus').innerText = statusText;
     }
@@ -189,10 +232,12 @@
     }
 
     function finishSync() {
-        document.getElementById('syncProgress').style.width = `100%`;
-        document.getElementById('syncPercentage').innerText = `Selesai!`;
-        document.getElementById('syncStatus').innerText = `Berhasil menyinkronkan ${totalImported} skripsi.`;
-        document.getElementById('syncStatus').classList.add('text-emerald-500');
+        const progressBar = document.getElementById('syncProgress');
+        if (progressBar) progressBar.style.width = `100%`;
+        
+        document.getElementById('syncPercentage').innerText = `100% (Selesai)`;
+        document.getElementById('syncStatus').innerText = `Sinkronisasi selesai! ${totalNew} data baru, ${totalDuplicates} duplikat di-update.`;
+        document.getElementById('syncStatus').classList.add('text-emerald-600', 'dark:text-emerald-400');
         document.getElementById('closeSyncModalBtn').classList.remove('hidden');
         isSyncing = false;
     }
