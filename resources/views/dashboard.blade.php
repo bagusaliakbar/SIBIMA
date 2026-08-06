@@ -933,9 +933,11 @@
                         @forelse($onlineUsers as $u)
                         <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group">
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="relative w-9 h-9 shrink-0">
-                                    <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full rounded-full object-cover border border-slate-200 dark:border-slate-700">
-                                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs"></span>
+                                <div class="relative w-10 h-10 shrink-0">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-xs bg-slate-100 dark:bg-slate-800">
+                                        <img src="{{ $u->avatar_url }}" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs z-10" title="Online"></span>
                                 </div>
                                 <div class="min-w-0">
                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">{{ $u->name }}</p>
@@ -1401,9 +1403,11 @@
                                     html += `
                                         <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group">
                                             <div class="flex items-center gap-3 min-w-0">
-                                                <div class="relative w-9 h-9 shrink-0">
-                                                    <img src="${u.avatar_url}" alt="" class="w-full h-full rounded-full object-cover border border-slate-200 dark:border-slate-700">
-                                                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs"></span>
+                                                <div class="relative w-10 h-10 shrink-0">
+                                                    <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-xs bg-slate-100 dark:bg-slate-800">
+                                                        <img src="${u.avatar_url}" alt="" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs z-10" title="Online"></span>
                                                 </div>
                                                 <div class="min-w-0">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">${u.name}</p>
