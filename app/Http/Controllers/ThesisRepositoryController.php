@@ -81,9 +81,23 @@ class ThesisRepositoryController extends Controller
         }
 
         try {
-            $html = @file_get_contents("https://fasilkom.unsub.ac.id/penelitian-mahasiswa?page={$page}");
+            $opts = [
+                "http" => [
+                    "method" => "GET",
+                    "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\n",
+                    "timeout" => 15,
+                    "ignore_errors" => true,
+                ],
+                "ssl" => [
+                    "verify_peer" => false,
+                    "verify_peer_name" => false,
+                ]
+            ];
+            $context = stream_context_create($opts);
+            $html = @file_get_contents("https://fasilkom.unsub.ac.id/penelitian-mahasiswa?page={$page}", false, $context);
+            
             if (!$html) {
-                return response()->json(['success' => false, 'message' => 'Gagal mengakses portal'], 500);
+                return response()->json(['success' => false, 'message' => 'Gagal mengakses portal (Timeout)'], 500);
             }
             
             $dom = new \DOMDocument();

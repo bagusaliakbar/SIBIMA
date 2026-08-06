@@ -158,6 +158,8 @@
     let totalImported = 0;
     let totalNew = 0;
     let totalDuplicates = 0;
+    let pageRetryCount = 0;
+    const maxRetries = 3;
 
     async function startSync() {
         if (isSyncing) return;
@@ -171,6 +173,7 @@
         totalImported = 0;
         totalNew = 0;
         totalDuplicates = 0;
+        pageRetryCount = 0;
         
         document.getElementById('statNewCount').innerText = '0';
         document.getElementById('statDupCount').innerText = '0';
@@ -190,7 +193,9 @@
             return;
         }
 
-        updateProgressUI(currentPage, totalPages, `Menarik data halaman ${currentPage}...`);
+        updateProgressUI(currentPage, totalPages, pageRetryCount > 0 
+            ? `Mencoba ulang halaman ${currentPage} (Percobaan ${pageRetryCount+1}/${maxRetries})...` 
+            : `Menarik data halaman ${currentPage}...`);
 
         try {
             const response = await fetch(`/repositories/sync-page/${currentPage}`);
@@ -205,13 +210,24 @@
                 document.getElementById('statDupCount').innerText = totalDuplicates;
                 document.getElementById('statTotalCount').innerText = totalImported;
 
+                pageRetryCount = 0; // Reset retry counter on success
                 currentPage++;
-                setTimeout(processNextPage, 400);
+                setTimeout(processNextPage, 300);
             } else {
-                handleSyncError(`Gagal di halaman ${currentPage}: ${result.message}`);
+                throw new Error(result.message || 'Gagal merespons');
             }
         } catch (error) {
-            handleSyncError(`Terjadi kesalahan jaringan di halaman ${currentPage}`);
+            pageRetryCount++;
+            if (pageRetryCount < maxRetries) {
+                // Retry current page after 1.5s delay
+                setTimeout(processNextPage, 1500);
+            } else {
+                // Skip problematic page after max retries and continue to next page
+                console.warn(`Halaman ${currentPage} dilewati setelah ${maxRetries}x percobaan gagal.`);
+                pageRetryCount = 0;
+                currentPage++;
+                setTimeout(processNextPage, 500);
+            }
         }
     }
 
