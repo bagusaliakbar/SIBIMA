@@ -201,7 +201,7 @@ class User extends Authenticatable
         }
 
         // Fallback to a default user silhouette SVG
-        return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YxZjVmOSIvPjxwYXRoIGQ9Ik0xMiAxMmMyLjIxIDAgNC0xLjc5IDQtNHMtMS43OS04LTQtNC00IDEuNzktNCA0IDEuNzkgNCA0IDR6bTAgMmMtMi42NyAwLTggMS4zNC04IDR2MmgxNnYtMmMwLTIuNjYtNS4zMy00LTgtNHoiIGZpbGw9IiM5NGEzYjgiLz48L3N2Zz4=';
+        return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YxZjVmOSIvPjxwYXRoIGZpbGw9IiM5NGEzYjgiIGQ9Ik0xMiAyYTUgNSAwIDEgMCA1IDUgNSA1IDAgMCAwLTUtNXptMCA0Yy00LjQyIDAtOCAyLjI0LTggNXYxaDE2di0xYzAtMi43Ni0zLjU4LTUtOC01eiIvPjwvc3ZnPg==';
     }
 
     public function scopeCriticalSemester($query)
