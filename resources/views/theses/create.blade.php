@@ -156,7 +156,7 @@
                                     <ul class="text-[11px] text-slate-700 dark:text-slate-300 space-y-2 leading-relaxed">
                                         <li class="flex items-start gap-1.5">
                                             <span class="text-amber-600 font-bold">•</span>
-                                            <span><strong>Objek / Lokasi:</strong> Tambahkan instansi/lokasi spesifik (misal: <em>"pada PT XYZ"</em>).</span>
+                                            <span><strong>Objek / Lokasi:</strong> Tambahkan instansi/lokasi/objek spesifik (misal: <em>"pada PT XYZ"</em>).</span>
                                         </li>
                                         <li class="flex items-start gap-1.5">
                                             <span class="text-amber-600 font-bold">•</span>
@@ -169,7 +169,7 @@
                                     </ul>
                                 </div>
                                 <div class="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 text-[10px] text-amber-700 dark:text-amber-400 italic font-medium">
-                                    Judul yang spesifik meningkatkan kepastian persetujuan Dosen & Kaprodi.
+                                    Judul yang spesifik dan scope yang jelas meningkatkan kepastian persetujuan Dosen & Kaprodi.
                                 </div>
                             </div>
 

@@ -113,7 +113,7 @@ class ThesisController extends Controller
                 $similarTitles[] = [
                     'title' => $thesis->title,
                     'student_name' => $thesis->student->name ?? 'Unknown',
-                    'year' => $thesis->created_at ? $thesis->created_at->format('Y') : date('Y'),
+                    'year' => $thesis->student->entry_year ?? ($thesis->created_at ? $thesis->created_at->format('Y') : date('Y')),
                     'percentage' => $res['percentage'],
                     'matched_words' => $res['matched_words'],
                     'source' => 'Skripsi Aktif'
