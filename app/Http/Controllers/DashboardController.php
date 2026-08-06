@@ -65,6 +65,9 @@ class DashboardController extends Controller
             'studentHealthStats' => null,
             'cohortCompletionData' => [],
             'topicTrends' => [],
+            'onlineUsers' => collect(),
+            'onlineUsersCount' => 0,
+            'onlineUsersByRole' => ['mahasiswa' => 0, 'dosen' => 0, 'kaprodi' => 0, 'admin' => 0],
             'progress' => [
                 'percent' => 0, 
                 'isGraduated' => false, 
@@ -81,5 +84,31 @@ class DashboardController extends Controller
                 ]
             ],
         ];
+    }
+
+    public function onlineUsers()
+    {
+        $allUsers = \App\Models\User::all();
+        $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values()->map(function($u) {
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'role' => $u->role,
+                'avatar_url' => $u->avatar_url,
+                'identifier' => $u->identifier,
+                'chat_url' => route('chat.show', $u->id),
+            ];
+        });
+
+        return response()->json([
+            'count' => $onlineUsers->count(),
+            'users' => $onlineUsers,
+            'by_role' => [
+                'mahasiswa' => $onlineUsers->where('role', 'mahasiswa')->count(),
+                'dosen' => $onlineUsers->where('role', 'dosen')->count(),
+                'kaprodi' => $onlineUsers->where('role', 'kaprodi')->count(),
+                'admin' => $onlineUsers->where('role', 'admin')->count(),
+            ]
+        ]);
     }
 }

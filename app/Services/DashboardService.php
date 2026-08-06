@@ -203,7 +203,7 @@ class DashboardService
         }
 
         $data['examinerSeminarSchedules'] = $seminarQuery->orderBy('start_time', 'asc')->get()
-            ->reject(function ($detail) {
+            ->reject(function (SeminarScheduleDetail $detail) {
                 return ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
                     || $detail->isGraded()
                     || $detail->isAllRevisionsApproved()
@@ -222,7 +222,7 @@ class DashboardService
         }
 
         $data['examinerDefenseSchedules'] = $defenseQuery->orderBy('start_time', 'asc')->get()
-            ->reject(function ($detail) {
+            ->reject(function (ThesisDefenseScheduleDetail $detail) {
                 return ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
                     || $detail->isGradingComplete()
                     || $detail->isRevisionAllApproved()
@@ -460,8 +460,19 @@ class DashboardService
 
     public function getCommonData()
     {
+        $allUsers = User::all();
+        $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values();
+
         return [
-            'announcements' => Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get()
+            'announcements' => Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get(),
+            'onlineUsers' => $onlineUsers,
+            'onlineUsersCount' => $onlineUsers->count(),
+            'onlineUsersByRole' => [
+                'mahasiswa' => $onlineUsers->where('role', 'mahasiswa')->count(),
+                'dosen' => $onlineUsers->where('role', 'dosen')->count(),
+                'kaprodi' => $onlineUsers->where('role', 'kaprodi')->count(),
+                'admin' => $onlineUsers->where('role', 'admin')->count(),
+            ]
         ];
     }
 }

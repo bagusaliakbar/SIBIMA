@@ -197,7 +197,7 @@ class User extends Authenticatable
                 return $this->avatar;
             }
             // Fallback for legacy files (just in case they weren't wiped yet)
-            return Storage::disk('public')->url($this->avatar);
+            return Storage::url($this->avatar);
         }
 
         // Fallback to a default user silhouette SVG

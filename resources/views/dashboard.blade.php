@@ -908,6 +908,55 @@
 
             <!-- Right Column: Sidebar -->
             <div class="space-y-6">
+                <!-- Live Online Users Card (Admin & Kaprodi & Dosen) -->
+                @if(Auth::user()->role !== 'mahasiswa')
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
+                    <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700/50 bg-gradient-to-r from-emerald-500/10 via-slate-50 to-emerald-500/5 dark:from-emerald-950/20 dark:to-slate-900 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-xs"></span>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">Pengguna Online</h3>
+                        </div>
+                        <span id="online-users-count-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                            {{ $onlineUsersCount }} Aktif
+                        </span>
+                    </div>
+
+                    <!-- Role Breakdown Pills -->
+                    <div class="px-5 py-2.5 bg-slate-50/50 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] gap-1 font-bold">
+                        <span class="text-blue-600 dark:text-blue-400">Mhs: <strong id="online-count-mhs">{{ $onlineUsersByRole['mahasiswa'] ?? 0 }}</strong></span>
+                        <span class="text-indigo-600 dark:text-indigo-400">Dosen: <strong id="online-count-dosen">{{ $onlineUsersByRole['dosen'] ?? 0 }}</strong></span>
+                        <span class="text-orange-600 dark:text-orange-400">Admin/Kaprodi: <strong id="online-count-admin">{{ ($onlineUsersByRole['admin'] ?? 0) + ($onlineUsersByRole['kaprodi'] ?? 0) }}</strong></span>
+                    </div>
+
+                    <!-- Online Users List -->
+                    <div class="p-3 max-h-72 overflow-y-auto space-y-2" id="online-users-list">
+                        @forelse($onlineUsers as $u)
+                        <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="relative w-9 h-9 shrink-0">
+                                    <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full rounded-full object-cover border border-slate-200 dark:border-slate-700">
+                                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs"></span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">{{ $u->name }}</p>
+                                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">{{ $u->role }}</span>
+                                </div>
+                            </div>
+                            @if($u->id !== Auth::id())
+                            <a href="{{ route('chat.show', $u->id) }}" class="p-1.5 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 hover:bg-orange-500 hover:text-white transition-all shrink-0" title="Kirim Pesan">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                            </a>
+                            @endif
+                        </div>
+                        @empty
+                        <div class="text-center py-6">
+                            <p class="text-xs text-slate-400 font-medium italic">Tidak ada pengguna aktif lain saat ini.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+                @endif
+
                 <!-- Announcements Card -->
                 <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
                     <div class="px-5 py-4 border-b border-slate-50 dark:border-slate-700/50 bg-slate-800 dark:bg-slate-800 text-white flex justify-between items-center">
@@ -1320,7 +1369,59 @@
                             }
                         }
                     });
-                @endif
+            // Live Online Users Polling for Dashboard Widget
+            @if(Auth::user()->role !== 'mahasiswa')
+                const onlineEndpoint = "{{ route('dashboard.online-users') }}";
+                function updateOnlineUsersWidget() {
+                    fetch(onlineEndpoint, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => res.json())
+                    .then(data => {
+                        const badge = document.getElementById('online-users-count-badge');
+                        const mhsCount = document.getElementById('online-count-mhs');
+                        const dosenCount = document.getElementById('online-count-dosen');
+                        const adminCount = document.getElementById('online-count-admin');
+                        const listContainer = document.getElementById('online-users-list');
+
+                        if (badge) badge.innerText = `${data.count} Aktif`;
+                        if (mhsCount) mhsCount.innerText = data.by_role.mahasiswa || 0;
+                        if (dosenCount) dosenCount.innerText = data.by_role.dosen || 0;
+                        if (adminCount) adminCount.innerText = (data.by_role.admin || 0) + (data.by_role.kaprodi || 0);
+
+                        if (listContainer && data.users) {
+                            if (data.users.length === 0) {
+                                listContainer.innerHTML = '<div class="text-center py-6"><p class="text-xs text-slate-400 font-medium italic">Tidak ada pengguna aktif lain saat ini.</p></div>';
+                            } else {
+                                let html = '';
+                                const currentUserId = {{ Auth::id() }};
+                                data.users.forEach(u => {
+                                    const isSelf = u.id == currentUserId;
+                                    html += `
+                                        <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <div class="relative w-9 h-9 shrink-0">
+                                                    <img src="${u.avatar_url}" alt="${u.name}" class="w-full h-full rounded-full object-cover border border-slate-200 dark:border-slate-700">
+                                                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs"></span>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">${u.name}</p>
+                                                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">${u.role}</span>
+                                                </div>
+                                            </div>
+                                            ${!isSelf ? `
+                                            <a href="${u.chat_url}" class="p-1.5 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 hover:bg-orange-500 hover:text-white transition-all shrink-0" title="Kirim Pesan">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                            </a>` : ''}
+                                        </div>
+                                    `;
+                                });
+                                listContainer.innerHTML = html;
+                            }
+                        }
+                    })
+                    .catch(err => console.error('Error fetching online users:', err));
+                }
+
+                setInterval(updateOnlineUsersWidget, 10000);
             @endif
         });
     </script>

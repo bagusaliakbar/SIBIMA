@@ -214,7 +214,7 @@ class ThesisController extends Controller
         $lulus = collect();
 
         foreach ($theses as $thesis) {
-            /** @var \App\Models\Thesis $thesis */
+            /** @var Thesis $thesis */
             if ($thesis->status === 'completed') {
                 $lulus->push($thesis);
             } elseif ($thesis->status === 'pending') {
