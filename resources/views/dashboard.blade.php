@@ -1369,6 +1369,9 @@
                             }
                         }
                     });
+                @endif
+            @endif
+
             // Live Online Users Polling for Dashboard Widget
             @if(Auth::user()->role !== 'mahasiswa')
                 const onlineEndpoint = "{{ route('dashboard.online-users') }}";
