@@ -1402,7 +1402,7 @@
                                         <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group">
                                             <div class="flex items-center gap-3 min-w-0">
                                                 <div class="relative w-9 h-9 shrink-0">
-                                                    <img src="${u.avatar_url}" alt="${u.name}" class="w-full h-full rounded-full object-cover border border-slate-200 dark:border-slate-700">
+                                                    <img src="${u.avatar_url}" alt="" class="w-full h-full rounded-full object-cover border border-slate-200 dark:border-slate-700">
                                                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs"></span>
                                                 </div>
                                                 <div class="min-w-0">
