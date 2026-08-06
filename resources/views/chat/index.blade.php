@@ -26,18 +26,18 @@
                             <li class="contact-item" data-name="{{ strtolower($u->name) }}" data-role="{{ strtolower($u->role) }}">
                                 <a href="{{ route('chat.show', $u->id) }}" class="flex items-center px-6 py-4 hover:bg-white dark:hover:bg-slate-800 transition-all group relative">
                                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-600 scale-y-0 group-hover:scale-y-100 transition-transform"></div>
-                                    <div class="relative">
-                                        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-500/20 shadow-sm bg-orange-50 dark:bg-orange-900/10 group-hover:scale-110 transition-transform">
+                                    <div class="relative w-12 h-12 shrink-0">
+                                        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-orange-200 dark:border-orange-500/20 shadow-sm bg-orange-50 dark:bg-orange-900/10 group-hover:scale-105 transition-transform">
                                             <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
                                         </div>
                                         <!-- Online Status Indicator Dot -->
                                         @if($u->is_online)
-                                            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Online"></span>
+                                            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-xs z-10" title="Online"></span>
                                         @else
-                                            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs" title="Offline"></span>
+                                            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs z-10" title="Offline"></span>
                                         @endif
                                         @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0)
-                                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white dark:border-slate-800 rounded-lg flex items-center justify-center text-[8px] font-black text-white">
+                                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white dark:border-slate-800 rounded-lg flex items-center justify-center text-[8px] font-black text-white z-10">
                                                 {{ $unreadCounts[$u->id] }}
                                             </span>
                                         @endif
