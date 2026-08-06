@@ -107,28 +107,30 @@ class ThesisController extends Controller
         $similarTitles = [];
         
         foreach($theses as $thesis) {
-            $percent = $this->calculateSimilarity($inputTitle, $thesis->title);
+            $res = $this->calculateSimilarityDetails($inputTitle, $thesis->title);
             
-            if ($percent >= 50) { // Turunkan threshold sedikit karena stop word dihilangkan
+            if ($res['percentage'] >= 45) {
                 $similarTitles[] = [
                     'title' => $thesis->title,
                     'student_name' => $thesis->student->name ?? 'Unknown',
                     'year' => $thesis->created_at ? $thesis->created_at->format('Y') : date('Y'),
-                    'percentage' => round($percent, 1),
+                    'percentage' => $res['percentage'],
+                    'matched_words' => $res['matched_words'],
                     'source' => 'Skripsi Aktif'
                 ];
             }
         }
 
         foreach($repositories as $repo) {
-            $percent = $this->calculateSimilarity($inputTitle, $repo->title);
+            $res = $this->calculateSimilarityDetails($inputTitle, $repo->title);
             
-            if ($percent >= 50) {
+            if ($res['percentage'] >= 45) {
                 $similarTitles[] = [
                     'title' => $repo->title,
                     'student_name' => $repo->name,
                     'year' => $repo->year,
-                    'percentage' => round($percent, 1),
+                    'percentage' => $res['percentage'],
+                    'matched_words' => $res['matched_words'],
                     'source' => 'Arsip Alumni'
                 ];
             }
@@ -140,58 +142,57 @@ class ThesisController extends Controller
         });
         
         return response()->json([
-            'similar' => array_slice($similarTitles, 0, 3)
+            'similar' => array_slice($similarTitles, 0, 4)
         ]);
     }
 
-    private function calculateSimilarity($input, $existing)
+    private function calculateSimilarityDetails($input, $existing)
     {
         $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
         
-        // Bersihkan string (huruf kecil, hilangkan tanda baca)
         $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($input));
         $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($existing));
         
-        // Tokenisasi
-        $inputTokens = array_filter(explode(' ', $cleanInput));
-        $existingTokens = array_filter(explode(' ', $cleanExisting));
+        if (trim($cleanInput) === trim($cleanExisting)) {
+            return [
+                'percentage' => 100.0,
+                'matched_words' => array_values(array_unique(array_filter(explode(' ', $cleanInput))))
+            ];
+        }
+
+        $inputTokens = array_values(array_filter(explode(' ', $cleanInput)));
+        $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
         
-        // Hilangkan stop words
-        $inputTokensFiltered = array_diff($inputTokens, $stopwords);
-        $existingTokensFiltered = array_diff($existingTokens, $stopwords);
+        $inputTokensFiltered = array_values(array_diff($inputTokens, $stopwords));
+        $existingTokensFiltered = array_values(array_diff($existingTokens, $stopwords));
         
-        // Jika setelah di filter kosong (misal cuma ngetik "sistem informasi"), pakai token asli
         if (empty($inputTokensFiltered)) $inputTokensFiltered = $inputTokens;
         if (empty($existingTokensFiltered)) $existingTokensFiltered = $existingTokens;
         
-        // 1. Overlap Coefficient (Pencocokan Sub-himpunan Kata)
-        $intersection = array_intersect($inputTokensFiltered, $existingTokensFiltered);
-        $minTokens = min(count($inputTokensFiltered), count($existingTokensFiltered));
+        // Matched words
+        $intersection = array_values(array_unique(array_intersect($inputTokensFiltered, $existingTokensFiltered)));
+        $union = array_unique(array_merge($inputTokensFiltered, $existingTokensFiltered));
         
-        $overlapScore = 0;
-        if ($minTokens > 0) {
-            $overlapScore = (count($intersection) / $minTokens) * 100;
-        }
+        // Jaccard similarity on filtered tokens
+        $jaccardScore = count($union) > 0 ? (count($intersection) / count($union)) * 100 : 0;
         
-        // 2. Levenshtein Similarity (Pencocokan Karakter setelah stopword dibuang)
-        $reconstructedInput = implode(' ', $inputTokensFiltered);
-        $reconstructedExisting = implode(' ', $existingTokensFiltered);
-        
-        $levenshteinScore = 0;
-        similar_text($reconstructedInput, $reconstructedExisting, $levenshteinScore);
+        // Dice similarity
+        $diceScore = (count($inputTokensFiltered) + count($existingTokensFiltered)) > 0 
+            ? (2 * count($intersection) / (count($inputTokensFiltered) + count($existingTokensFiltered))) * 100 
+            : 0;
 
-        // 3. Substring Bonus
-        $bonus = 0;
-        if (!empty($reconstructedInput) && !empty($reconstructedExisting)) {
-            if (str_contains($reconstructedExisting, $reconstructedInput) || str_contains($reconstructedInput, $reconstructedExisting)) {
-                $bonus = 20; // Bonus 20% jika string satu adalah bagian utuh dari string lain
-            }
-        }
+        // Overall full text similarity
+        $similarTextPercent = 0;
+        similar_text($cleanInput, $cleanExisting, $similarTextPercent);
+
+        // Combined score: 60% Token similarity + 40% Full text similarity
+        $tokenScore = max($jaccardScore, $diceScore);
+        $finalScore = ($tokenScore * 0.60) + ($similarTextPercent * 0.40);
         
-        // Kombinasi: 60% Overlap + 40% Levenshtein + Bonus
-        $finalScore = ($overlapScore * 0.6) + ($levenshteinScore * 0.4) + $bonus;
-        
-        return min(100, $finalScore);
+        return [
+            'percentage' => min(100, round($finalScore, 1)),
+            'matched_words' => $intersection
+        ];
     }
 
     public function kanban()

@@ -81,34 +81,98 @@
                         Mengecek kemiripan judul...
                     </p>
 
-                    <!-- Alert Box -->
-                    <div x-show="similarTitles.length > 0" x-transition.opacity class="mt-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg relative" style="display: none;">
-                        <button type="button" @click="similarTitles = []" class="absolute top-2 right-2 text-red-400 hover:text-red-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                        <div class="flex items-start gap-3">
-                            <div class="mt-0.5 text-red-600 dark:text-red-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <!-- Modern Enhanced Similarity Alert Box -->
+                    <div x-show="similarTitles.length > 0" 
+                         x-cloak
+                         x-transition:enter="transition ease-out duration-300 transform"
+                         x-transition:enter-start="opacity-0 -translate-y-2 scale-98"
+                         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                         class="mt-4 p-5 rounded-2xl bg-gradient-to-br from-amber-50/90 via-red-50/60 to-orange-50/80 dark:from-red-950/40 dark:via-slate-900 dark:to-orange-950/30 border border-amber-300/80 dark:border-red-800/60 shadow-xl shadow-amber-500/5 relative overflow-hidden"
+                         style="display: none;">
+                        
+                        <!-- Top Accent Line -->
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-amber-500 to-orange-500"></div>
+
+                        <!-- Header Bar -->
+                        <div class="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-red-200/60 dark:border-red-800/40">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 border border-red-200 dark:border-red-800/40">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-red-900 dark:text-red-300 uppercase tracking-wider flex items-center gap-2">
+                                        <span>Analisis Kemiripan Judul</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50" x-text="similarTitles.length + ' Kemiripan Terdeteksi'"></span>
+                                    </h4>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">Sistem menemukan beberapa judul yang mirip di database skripsi & alumni.</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="text-xs font-black text-red-800 dark:text-red-300 uppercase tracking-widest mb-1">Peringatan: Judul Terlalu Mirip!</h4>
-                                <p class="text-[11px] text-red-700 dark:text-red-400 mb-2 leading-relaxed">Kami mendeteksi usulan judul Anda memiliki tingkat kemiripan yang tinggi (di atas 60%) dengan skripsi yang sudah ada. Mohon gunakan judul yang lebih unik untuk menghindari plagiarisme.</p>
-                                
-                                <ul class="space-y-2 mt-3">
-                                    <template x-for="item in similarTitles">
-                                        <li class="bg-white/60 dark:bg-slate-900/50 p-2.5 rounded border border-red-100 dark:border-red-900/30">
-                                            <div class="flex justify-between items-start gap-2 mb-1">
-                                                <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200" x-text="item.title"></p>
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-black shrink-0" :class="item.percentage >= 80 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'" x-text="item.percentage + '% Mirip'"></span>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <p class="text-[9px] text-slate-500 uppercase font-semibold">Milik: <span x-text="item.student_name"></span> (Angkatan <span x-text="item.year"></span>)</p>
-                                                <span class="px-1.5 py-[2px] rounded text-[8px] font-bold uppercase tracking-widest bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300" x-text="item.source || 'Skripsi Aktif'"></span>
-                                            </div>
+                            <button type="button" @click="similarTitles = []" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
+                        <!-- Content Grid: 2 Columns (Matches vs Guidance Tips) -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            
+                            <!-- Similar Titles List (2 Cols) -->
+                            <div class="lg:col-span-2 space-y-2.5">
+                                <template x-for="item in similarTitles">
+                                    <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:border-amber-400 dark:hover:border-amber-600 transition-all">
+                                        <div class="flex justify-between items-start gap-3 mb-1.5">
+                                            <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="item.title"></p>
+                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold shrink-0 shadow-2xs flex items-center gap-1"
+                                                  :class="item.percentage >= 80 ? 'bg-red-500 text-white' : (item.percentage >= 60 ? 'bg-amber-500 text-white' : 'bg-yellow-500 text-slate-900')">
+                                                <span x-text="item.percentage + '%'"></span>
+                                                <span class="text-[9px] opacity-90 font-normal">Mirip</span>
+                                            </span>
+                                        </div>
+
+                                        <!-- Matched Keywords Pills -->
+                                        <div class="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+                                            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Kata Kunci Sama:</span>
+                                            <template x-for="word in (item.matched_words || [])">
+                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40" x-text="word"></span>
+                                            </template>
+                                        </div>
+
+                                        <div class="flex items-center justify-between gap-2 mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+                                            <span class="font-medium truncate">Milik: <strong class="text-slate-700 dark:text-slate-300" x-text="item.student_name"></strong> (Angkatan <span x-text="item.year"></span>)</span>
+                                            <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider shrink-0" 
+                                                  :class="item.source === 'Skripsi Aktif' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'"
+                                                  x-text="item.source || 'Skripsi Aktif'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Guidance & Recommendations Tip Box (1 Col) -->
+                            <div class="bg-amber-500/10 dark:bg-amber-500/5 p-4 rounded-xl border border-amber-300/60 dark:border-amber-800/40 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 text-amber-800 dark:text-amber-300 mb-2">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                        <h5 class="text-xs font-bold uppercase tracking-wider">Tips Agar Judul Unik</h5>
+                                    </div>
+                                    <ul class="text-[11px] text-slate-700 dark:text-slate-300 space-y-2 leading-relaxed">
+                                        <li class="flex items-start gap-1.5">
+                                            <span class="text-amber-600 font-bold">•</span>
+                                            <span><strong>Objek / Lokasi:</strong> Tambahkan instansi/lokasi spesifik (misal: <em>"pada PT XYZ"</em>).</span>
                                         </li>
-                                    </template>
-                                </ul>
+                                        <li class="flex items-start gap-1.5">
+                                            <span class="text-amber-600 font-bold">•</span>
+                                            <span><strong>Metode / Algoritma:</strong> Spesifikasikan metode (misal: <em>"Metode SAW / Naive Bayes"</em>).</span>
+                                        </li>
+                                        <li class="flex items-start gap-1.5">
+                                            <span class="text-amber-600 font-bold">•</span>
+                                            <span><strong>Platform:</strong> Cantumkan platform (misal: <em>"Berbasis Android / PWA"</em>).</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 text-[10px] text-amber-700 dark:text-amber-400 italic font-medium">
+                                    Judul yang spesifik meningkatkan kepastian persetujuan Dosen & Kaprodi.
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
