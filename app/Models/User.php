@@ -200,8 +200,8 @@ class User extends Authenticatable
             return Storage::url($this->avatar);
         }
 
-        // Fallback to a default user silhouette SVG
-        return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YxZjVmOSIvPjxwYXRoIGZpbGw9IiM5NGEzYjgiIGQ9Ik0xMiAyYTUgNSAwIDEgMCA1IDUgNSA1IDAgMCAwLTUtNXptMCA0Yy00LjQyIDAtOCAyLjI0LTggNXYxaDE2di0xYzAtMi43Ni0zLjU4LTUtOC01eiIvPjwvc3ZnPg==';
+        // Fallback to a default user silhouette SVG (Heroicons User Solid)
+        return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzk0YTNiOCI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNNy41IDZhNC41IDQuNSAwIDExOSAwIDQuNSA0LjUgMCAwMS05IDB6TTMuNzUxIDIwLjEwNWE4LjI1IDguMjUgMCAwMTE2LjQ5OCAwIC43NS43NSAwIDAxLS40MzcuNjk1QTE4LjY4MyAxOC42ODMgMCAwMTEyIDIyLjVjLTIuNzg2IDAtNS40MzMtLjYtNy44MTItMS43YS43NS43NSAwIDAxLS40MzctLjY5NXoiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==';
     }
 
     public function scopeCriticalSemester($query)
