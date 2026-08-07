@@ -180,4 +180,63 @@ class Thesis extends Model
         }
         return $query;
     }
+
+    /**
+     * Calculate max title similarity score against active theses & alumni repository.
+     */
+    public function getMaxSimilarityScore()
+    {
+        $targetTitle = $this->final_title ?? $this->title;
+        if (!$targetTitle) return 0;
+
+        return \Illuminate\Support\Facades\Cache::remember('thesis_sim_score_' . $this->id . '_' . md5($targetTitle), 1800, function() use ($targetTitle) {
+            $maxScore = 0;
+            $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($targetTitle));
+            $inputTokens = array_values(array_filter(explode(' ', $cleanInput)));
+
+            if (empty($inputTokens)) return 0;
+
+            $otherTitles = self::where('id', '!=', $this->id)
+                ->whereNotNull('title')
+                ->pluck('title');
+
+            $repoTitles = \App\Models\ThesisRepository::whereNotNull('title')->pluck('title');
+            $allTitles = $otherTitles->concat($repoTitles);
+
+            $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
+            $inputFiltered = array_values(array_diff($inputTokens, $stopwords));
+            if (empty($inputFiltered)) $inputFiltered = $inputTokens;
+
+            foreach ($allTitles as $existingTitle) {
+                $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($existingTitle));
+                if (trim($cleanInput) === trim($cleanExisting)) {
+                    return 100;
+                }
+                
+                $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
+                $existingFiltered = array_values(array_diff($existingTokens, $stopwords));
+                if (empty($existingFiltered)) $existingFiltered = $existingTokens;
+
+                $intersection = array_intersect($inputFiltered, $existingFiltered);
+                $union = array_unique(array_merge($inputFiltered, $existingFiltered));
+
+                $jaccard = count($union) > 0 ? (count($intersection) / count($union)) * 100 : 0;
+                $dice = (count($inputFiltered) + count($existingFiltered)) > 0 
+                    ? (2 * count($intersection) / (count($inputFiltered) + count($existingFiltered))) * 100 
+                    : 0;
+
+                $similarTextPercent = 0;
+                similar_text($cleanInput, $cleanExisting, $similarTextPercent);
+
+                $tokenScore = max($jaccard, $dice);
+                $finalScore = ($tokenScore * 0.60) + ($similarTextPercent * 0.40);
+
+                if ($finalScore > $maxScore) {
+                    $maxScore = $finalScore;
+                }
+            }
+
+            return min(100, (int) round($maxScore));
+        });
+    }
 }
