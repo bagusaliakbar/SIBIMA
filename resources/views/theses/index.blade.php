@@ -96,8 +96,22 @@
                     @forelse($theses as $thesis)
                         <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="py-4 px-6">
-                                <div class="font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $thesis->student->name }}</div>
-                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-black tracking-widest">{{ $thesis->student->identifier ?? 'NPM TIDAK ADA' }}</div>
+                                <div class="flex items-center gap-3">
+                                    <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0 shadow-2xs">
+                                        <img src="{{ $thesis->student->avatar_url }}" alt="{{ $thesis->student->name }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <div class="font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight text-xs">{{ $thesis->student->name }}</div>
+                                        <div class="flex items-center gap-1.5 mt-1">
+                                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold tracking-wider font-mono">{{ $thesis->student->identifier ?? 'NPM -' }}</span>
+                                            @if($thesis->student->entry_year)
+                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
+                                                    Angkatan {{ $thesis->student->entry_year }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <td class="py-4 px-6 max-w-xs whitespace-normal">
                                 @if($thesis->final_title)
