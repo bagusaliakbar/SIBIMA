@@ -248,4 +248,114 @@ class Thesis extends Model
             return min(100, (int) round($maxScore));
         });
     }
+
+    /**
+     * Get top detailed similarity matches against active theses & alumni repository.
+     */
+    public function getDetailedSimilarityMatches()
+    {
+        $targetTitle = trim($this->final_title ?? $this->title ?? '');
+        $upper = strtoupper($targetTitle);
+        $placeholders = ['BELUM DIKETAHUI', 'BELUM DITENTUKAN', 'BELUM ADA JUDUL', 'BELUM ADA', '-'];
+        
+        if (empty($targetTitle) || in_array($upper, $placeholders) || strlen($targetTitle) < 8) {
+            return collect();
+        }
+
+        return \Illuminate\Support\Facades\Cache::remember('thesis_sim_details_' . $this->id . '_' . md5($targetTitle), 1800, function() use ($targetTitle, $placeholders) {
+            $matches = [];
+            $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($targetTitle));
+            $inputTokens = array_values(array_filter(explode(' ', $cleanInput)));
+
+            if (empty($inputTokens)) return collect();
+
+            $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
+            $inputFiltered = array_values(array_diff($inputTokens, $stopwords));
+            if (empty($inputFiltered)) $inputFiltered = $inputTokens;
+
+            // Check against active theses
+            $otherTheses = self::with('student')
+                ->where('id', '!=', $this->id)
+                ->whereNotNull('title')
+                ->get();
+
+            foreach ($otherTheses as $other) {
+                $t = trim($other->final_title ?? $other->title);
+                if (in_array(strtoupper($t), $placeholders) || strlen($t) < 8) continue;
+
+                $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($t));
+                $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
+                $existingFiltered = array_values(array_diff($existingTokens, $stopwords));
+                if (empty($existingFiltered)) $existingFiltered = $existingTokens;
+
+                $intersection = array_values(array_unique(array_intersect($inputFiltered, $existingFiltered)));
+                $union = array_unique(array_merge($inputFiltered, $existingFiltered));
+
+                $jaccard = count($union) > 0 ? (count($intersection) / count($union)) * 100 : 0;
+                $dice = (count($inputFiltered) + count($existingFiltered)) > 0 
+                    ? (2 * count($intersection) / (count($inputFiltered) + count($existingFiltered))) * 100 
+                    : 0;
+
+                $similarTextPercent = 0;
+                similar_text($cleanInput, $cleanExisting, $similarTextPercent);
+
+                $tokenScore = max($jaccard, $dice);
+                $finalScore = ($tokenScore * 0.60) + ($similarTextPercent * 0.40);
+                $percent = min(100, (int) round($finalScore));
+
+                if ($percent >= 30) {
+                    $matches[] = [
+                        'title' => $t,
+                        'author' => $other->student->name ?? 'Mahasiswa',
+                        'year' => $other->student->entry_year ?? ($other->created_at ? $other->created_at->format('Y') : date('Y')),
+                        'percentage' => $percent,
+                        'matched_words' => $intersection,
+                        'source' => 'Skripsi Mahasiswa Aktif'
+                    ];
+                }
+            }
+
+            // Check against repository alumni
+            $repos = \App\Models\ThesisRepository::whereNotNull('title')->get();
+            foreach ($repos as $repo) {
+                $t = trim($repo->title);
+                if (in_array(strtoupper($t), $placeholders) || strlen($t) < 8) continue;
+
+                $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($t));
+                $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
+                $existingFiltered = array_values(array_diff($existingTokens, $stopwords));
+                if (empty($existingFiltered)) $existingFiltered = $existingTokens;
+
+                $intersection = array_values(array_unique(array_intersect($inputFiltered, $existingFiltered)));
+                $union = array_unique(array_merge($inputFiltered, $existingFiltered));
+
+                $jaccard = count($union) > 0 ? (count($intersection) / count($union)) * 100 : 0;
+                $dice = (count($inputFiltered) + count($existingFiltered)) > 0 
+                    ? (2 * count($intersection) / (count($inputFiltered) + count($existingFiltered))) * 100 
+                    : 0;
+
+                $similarTextPercent = 0;
+                similar_text($cleanInput, $cleanExisting, $similarTextPercent);
+
+                $tokenScore = max($jaccard, $dice);
+                $finalScore = ($tokenScore * 0.60) + ($similarTextPercent * 0.40);
+                $percent = min(100, (int) round($finalScore));
+
+                if ($percent >= 30) {
+                    $matches[] = [
+                        'title' => $t,
+                        'author' => $repo->name ?? 'Alumni',
+                        'year' => $repo->year ?? date('Y'),
+                        'percentage' => $percent,
+                        'matched_words' => $intersection,
+                        'source' => 'Arsip Alumni FASILKOM'
+                    ];
+                }
+            }
+
+            usort($matches, fn($a, $b) => $b['percentage'] <=> $a['percentage']);
+
+            return collect(array_slice($matches, 0, 5));
+        });
+    }
 }
