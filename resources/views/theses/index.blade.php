@@ -152,91 +152,93 @@
                                             @endif
                                         </button>
 
-                                        <!-- Audit Kemiripan Judul Modal -->
-                                        <div x-show="openSimModal" class="fixed inset-0 z-[70] overflow-y-auto text-left" x-cloak x-transition>
-                                            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                                                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openSimModal = false">
-                                                    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-                                                </div>
-                                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-100 dark:border-slate-700">
-                                                    <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
-                                                        <div>
-                                                            <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2">
-                                                                <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                                <span>Audit Kemiripan Judul</span>
-                                                            </h3>
-                                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">Mahasiswa: {{ $thesis->student->name }} ({{ $thesis->student->identifier }})</p>
-                                                        </div>
-                                                        <button @click="openSimModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                        </button>
+                                        <!-- Kemiripan Judul Modal -->
+                                        <template x-teleport="body">
+                                            <div x-show="openSimModal" class="fixed inset-0 z-[9999] overflow-y-auto text-left" x-cloak x-transition>
+                                                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openSimModal = false">
+                                                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                     </div>
-                                                    
-                                                    <div class="p-8 space-y-6">
-                                                        <!-- Judul Yang Diuji -->
-                                                        <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-                                                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul Skripsi Diuji:</span>
-                                                            <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-relaxed">{{ $rawTitle }}</h4>
-                                                        </div>
-
-                                                        <!-- Match Summary Banner -->
-                                                        <div class="flex items-center justify-between p-4 rounded-2xl border {{ $simScore >= 66 ? 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300' : ($simScore >= 35 ? 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300') }}">
+                                                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                                    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                        <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                                                             <div>
-                                                                <span class="text-[10px] font-black uppercase tracking-widest block">Skor Kemiripan Tertinggi:</span>
-                                                                <span class="text-sm font-black uppercase tracking-tight">
-                                                                    @if($simScore >= 66)
-                                                                        🔴 {{ $simScore }}% Terdeteksi Sangat Mirip
-                                                                    @elseif($simScore >= 35)
-                                                                        🟧 {{ $simScore }}% Terdeteksi Kemiripan Sedang
-                                                                    @else
-                                                                        🟢 {{ 100 - $simScore }}% Judul Unik & Orisinal
-                                                                    @endif
-                                                                </span>
+                                                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2">
+                                                                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                                    <span>Kemiripan Judul</span>
+                                                                </h3>
+                                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">Mahasiswa: {{ $thesis->student->name }} ({{ $thesis->student->identifier }})</p>
                                                             </div>
-                                                            <span class="text-2xl font-black">{{ $simScore }}%</span>
+                                                            <button @click="openSimModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                            </button>
                                                         </div>
+                                                        
+                                                        <div class="p-8 space-y-6">
+                                                            <!-- Judul Yang Diuji -->
+                                                            <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+                                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul Skripsi Diuji:</span>
+                                                                <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-relaxed">{{ $rawTitle }}</h4>
+                                                            </div>
 
-                                                        <!-- Daftar Judul Mirip yang Ditemukan -->
-                                                        <div>
-                                                            <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Kemiripan Terdeteksi (Top Match):</h5>
-                                                            <div class="space-y-3">
-                                                                @forelse($simMatches as $match)
-                                                                    <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 shadow-2xs">
-                                                                        <div class="flex items-start justify-between gap-3">
-                                                                            <div class="space-y-0.5">
-                                                                                <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">{{ $match['source'] }}</span>
-                                                                                <h6 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-snug">{{ $match['title'] }}</h6>
+                                                            <!-- Match Summary Banner -->
+                                                            <div class="flex items-center justify-between p-4 rounded-2xl border {{ $simScore >= 66 ? 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300' : ($simScore >= 35 ? 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300') }}">
+                                                                <div>
+                                                                    <span class="text-[10px] font-black uppercase tracking-widest block">Skor Kemiripan Tertinggi:</span>
+                                                                    <span class="text-sm font-black uppercase tracking-tight">
+                                                                        @if($simScore >= 66)
+                                                                            🔴 {{ $simScore }}% Terdeteksi Sangat Mirip
+                                                                        @elseif($simScore >= 35)
+                                                                            🟧 {{ $simScore }}% Terdeteksi Kemiripan Sedang
+                                                                        @else
+                                                                            🟢 {{ 100 - $simScore }}% Judul Unik & Orisinal
+                                                                        @endif
+                                                                    </span>
+                                                                </div>
+                                                                <span class="text-2xl font-black">{{ $simScore }}%</span>
+                                                            </div>
+
+                                                            <!-- Daftar Judul Mirip yang Ditemukan -->
+                                                            <div>
+                                                                <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Kemiripan Terdeteksi:</h5>
+                                                                <div class="space-y-3">
+                                                                    @forelse($simMatches as $match)
+                                                                        <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 shadow-2xs">
+                                                                            <div class="flex items-start justify-between gap-3">
+                                                                                <div class="space-y-0.5">
+                                                                                    <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">{{ $match['source'] }}</span>
+                                                                                    <h6 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-snug">{{ $match['title'] }}</h6>
+                                                                                </div>
+                                                                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black shrink-0 {{ $match['percentage'] >= 66 ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' : ($match['percentage'] >= 35 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300') }}">
+                                                                                    {{ $match['percentage'] }}%
+                                                                                </span>
                                                                             </div>
-                                                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-black shrink-0 {{ $match['percentage'] >= 66 ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' : ($match['percentage'] >= 35 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300') }}">
-                                                                                {{ $match['percentage'] }}%
-                                                                            </span>
+                                                                            
+                                                                            <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                                                                                <span>Oleh: <strong class="text-slate-700 dark:text-slate-300 uppercase">{{ $match['author'] }}</strong> ({{ $match['year'] }})</span>
+                                                                                @if(!empty($match['matched_words']))
+                                                                                    <span class="text-[9px] font-bold text-slate-400">Kata Cocok: {{ implode(', ', array_slice($match['matched_words'], 0, 4)) }}</span>
+                                                                                @endif
+                                                                            </div>
                                                                         </div>
-                                                                        
-                                                                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
-                                                                            <span>Oleh: <strong class="text-slate-700 dark:text-slate-300 uppercase">{{ $match['author'] }}</strong> ({{ $match['year'] }})</span>
-                                                                            @if(!empty($match['matched_words']))
-                                                                                <span class="text-[9px] font-bold text-slate-400">Kata Cocok: {{ implode(', ', array_slice($match['matched_words'], 0, 4)) }}</span>
-                                                                            @endif
+                                                                    @empty
+                                                                        <div class="p-6 text-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                                                            <svg class="w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                                            <p class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">Tidak Ada Kemiripan Signifikan</p>
+                                                                            <p class="text-[10px] text-slate-400 mt-0.5">Judul ini memiliki tingkat keunikan tinggi dibanding arsip skripsi lainnya.</p>
                                                                         </div>
-                                                                    </div>
-                                                                @empty
-                                                                    <div class="p-6 text-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                                                        <svg class="w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                                        <p class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">Tidak Ada Kemiripan Signifikan</p>
-                                                                        <p class="text-[10px] text-slate-400 mt-0.5">Judul ini memiliki tingkat keunikan tinggi dibanding arsip skripsi lainnya.</p>
-                                                                    </div>
-                                                                @endforelse
+                                                                    @endforelse
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                                                        <button type="button" @click="openSimModal = false" class="px-6 py-2.5 bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-slate-900 transition-all">Tutup Audit</button>
+                                                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                                                            <button type="button" @click="openSimModal = false" class="px-6 py-2.5 bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-slate-900 transition-all">Tutup</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </template>
                                     </div>
                                 @endif
                             </td>
@@ -252,38 +254,41 @@
 
                                     <!-- Abstract Modal -->
                                     <div x-show="openAbstract" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
-                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                                            <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAbstract = false">
-                                                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-                                            </div>
-                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                            <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-100 dark:border-slate-700">
-                                                <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
-                                                    <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </button>
+                                    <template x-teleport="body">
+                                        <div x-show="openAbstract" class="fixed inset-0 z-[9999] overflow-y-auto" x-cloak x-transition>
+                                            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAbstract = false">
+                                                    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                 </div>
-                                                <div class="px-8 py-8 max-h-[60vh] overflow-y-auto">
-                                                    <div class="mb-8">
-                                                        <p class="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">Judul Pengajuan</p>
-                                                        <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight uppercase">{{ $thesis->title }}</h4>
+                                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                                <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                    <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                                                        <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
+                                                        <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                        </button>
                                                     </div>
-                                                    <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                                        <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Rencana</p>
-                                                        <div class="text-xs text-slate-600 dark:text-slate-400 leading-loose text-justify font-medium whitespace-pre-line">
-                                                            {{ $thesis->abstract }}
+                                                    <div class="px-8 py-8 max-h-[60vh] overflow-y-auto">
+                                                        <div class="mb-8">
+                                                            <p class="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">Judul Pengajuan</p>
+                                                            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight uppercase">{{ $thesis->title }}</h4>
+                                                        </div>
+                                                        <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                                            <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Rencana</p>
+                                                            <div class="text-xs text-slate-600 dark:text-slate-400 leading-loose text-justify font-medium whitespace-pre-line">
+                                                                {{ $thesis->abstract }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                                                    <button type="button" @click="openAbstract = false" class="px-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
-                                                        Tutup
-                                                    </button>
+                                                    <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                                                        <button type="button" @click="openAbstract = false" class="px-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
+                                                            Tutup
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </template>
                                 @else
                                     <span class="text-slate-300 text-xs italic">—</span>
                                 @endif
@@ -345,109 +350,111 @@
                                             </button>
 
                                             <!-- Modal Penugasan Pembimbing -->
-                                            <div x-show="openAssignModal" class="fixed inset-0 z-[60] overflow-y-auto text-left" x-cloak x-transition>
-                                                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                                                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAssignModal = false">
-                                                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-                                                    </div>
-                                                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100 dark:border-slate-700">
-                                                        <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                                                            <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Penugasan Dosen Pembimbing</h3>
-                                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">Mahasiswa: {{ $thesis->student->name }} ({{ $thesis->student->identifier }})</p>
+                                            <template x-teleport="body">
+                                                <div x-show="openAssignModal" class="fixed inset-0 z-[9999] overflow-y-auto text-left" x-cloak x-transition>
+                                                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAssignModal = false">
+                                                            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                         </div>
-                                                        
-                                                        <form action="{{ route('theses.assign', $thesis->id) }}" method="POST" class="p-8 space-y-5">
-                                                            @csrf
-                                                            <div x-data='{ 
-                                                                p1_id: "{{ $thesis->requested_pembimbing1_id }}", 
-                                                                p2_id: "{{ $thesis->requested_pembimbing2_id }}",
-                                                                dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
-                                                            }' class="space-y-5">
-                                                                
-                                                                <!-- Suggestions Chips Header -->
-                                                                @if($thesis->requestedPembimbing1 || $thesis->requestedPembimbing2)
-                                                                    <div class="p-4 bg-indigo-50/80 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 space-y-2">
-                                                                        <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
-                                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                                                            Usulan Pembimbing dari Mahasiswa:
-                                                                        </span>
-                                                                        <div class="flex flex-wrap gap-2">
-                                                                            @if($thesis->requestedPembimbing1)
-                                                                                @php $p1Full = $thesis->requestedPembimbing1->total_workload >= $thesis->requestedPembimbing1->max_quota; @endphp
-                                                                                <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p1Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
-                                                                                    <span>P1: {{ $thesis->requestedPembimbing1->name }}</span>
-                                                                                    <span class="font-black">({{ $thesis->requestedPembimbing1->total_workload }}/{{ $thesis->requestedPembimbing1->max_quota }})</span>
-                                                                                    @if($p1Full)<span class="text-rose-600 font-black">🔴 Penuh</span>@endif
-                                                                                </div>
-                                                                            @endif
-                                                                            @if($thesis->requestedPembimbing2)
-                                                                                @php $p2Full = $thesis->requestedPembimbing2->total_workload >= $thesis->requestedPembimbing2->max_quota; @endphp
-                                                                                <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p2Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
-                                                                                    <span>P2: {{ $thesis->requestedPembimbing2->name }}</span>
-                                                                                    <span class="font-black">({{ $thesis->requestedPembimbing2->total_workload }}/{{ $thesis->requestedPembimbing2->max_quota }})</span>
-                                                                                    @if($p2Full)<span class="text-rose-600 font-black">🔴 Penuh</span>@endif
-                                                                                </div>
-                                                                            @endif
-                                                                        </div>
-                                                                    </div>
-                                                                @endif
-
-                                                                <!-- Select P1 -->
-                                                                <div>
-                                                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 1</label>
-                                                                    <select name="pembimbing1_id" x-model="p1_id" required class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-800 dark:text-slate-100">
-                                                                        <option value="">Pilih P1...</option>
-                                                                        @foreach($dosens as $dosen)
-                                                                            @php 
-                                                                                $score = $thesis->getMatchScore($dosen);
-                                                                                $isFull = $dosen->total_workload >= $dosen->max_quota;
-                                                                            @endphp
-                                                                            <option value="{{ $dosen->id }}" class="{{ $isFull ? 'text-rose-500 font-bold' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-600' : 'text-slate-800') }}">
-                                                                                {{ $isFull ? '🔴 [PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <template x-if="p1_id && dosens[p1_id]">
-                                                                        <div class="mt-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
-                                                                            <span class="w-2 h-2 rounded-full shrink-0" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'bg-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></span>
-                                                                            <span x-text="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'Quota Penuh (' + dosens[p1_id].total_workload + '/' + dosens[p1_id].max_quota + ')' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia (' + dosens[p1_id].total_workload + '/' + dosens[p1_id].max_quota + ')')"></span>
-                                                                        </div>
-                                                                    </template>
-                                                                </div>
-
-                                                                <!-- Select P2 -->
-                                                                <div>
-                                                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 2</label>
-                                                                    <select name="pembimbing2_id" x-model="p2_id" required class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-800 dark:text-slate-100">
-                                                                        <option value="">Pilih P2...</option>
-                                                                        @foreach($dosens as $dosen)
-                                                                            @php 
-                                                                                $score = $thesis->getMatchScore($dosen);
-                                                                                $isFull = $dosen->total_workload >= $dosen->max_quota;
-                                                                            @endphp
-                                                                            <option value="{{ $dosen->id }}" class="{{ $isFull ? 'text-rose-500 font-bold' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-600' : 'text-slate-800') }}">
-                                                                                {{ $isFull ? '🔴 [PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <template x-if="p2_id && dosens[p2_id]">
-                                                                        <div class="mt-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
-                                                                            <span class="w-2 h-2 rounded-full shrink-0" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'bg-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></span>
-                                                                            <span x-text="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'Quota Penuh (' + dosens[p2_id].total_workload + '/' + dosens[p2_id].max_quota + ')' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia (' + dosens[p2_id].total_workload + '/' + dosens[p2_id].max_quota + ')')"></span>
-                                                                        </div>
-                                                                    </template>
-                                                                </div>
-
-                                                                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700">
-                                                                    <button type="button" @click="openAssignModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
-                                                                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all">Simpan Penugasan</button>
-                                                                </div>
+                                                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                                                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Penugasan Dosen Pembimbing</h3>
+                                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">Mahasiswa: {{ $thesis->student->name }} ({{ $thesis->student->identifier }})</p>
                                                             </div>
-                                                        </form>
+                                                            
+                                                            <form action="{{ route('theses.assign', $thesis->id) }}" method="POST" class="p-8 space-y-5">
+                                                                @csrf
+                                                                <div x-data='{ 
+                                                                    p1_id: "{{ $thesis->requested_pembimbing1_id }}", 
+                                                                    p2_id: "{{ $thesis->requested_pembimbing2_id }}",
+                                                                    dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
+                                                                }' class="space-y-5">
+                                                                    
+                                                                    <!-- Suggestions Chips Header -->
+                                                                    @if($thesis->requestedPembimbing1 || $thesis->requestedPembimbing2)
+                                                                        <div class="p-4 bg-indigo-50/80 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 space-y-2">
+                                                                            <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                                                Usulan Pembimbing dari Mahasiswa:
+                                                                            </span>
+                                                                            <div class="flex flex-wrap gap-2">
+                                                                                @if($thesis->requestedPembimbing1)
+                                                                                    @php $p1Full = $thesis->requestedPembimbing1->total_workload >= $thesis->requestedPembimbing1->max_quota; @endphp
+                                                                                    <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p1Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
+                                                                                        <span>P1: {{ $thesis->requestedPembimbing1->name }}</span>
+                                                                                        <span class="font-black">({{ $thesis->requestedPembimbing1->total_workload }}/{{ $thesis->requestedPembimbing1->max_quota }})</span>
+                                                                                        @if($p1Full)<span class="text-rose-600 font-black">🔴 Penuh</span>@endif
+                                                                                    </div>
+                                                                                @endif
+                                                                                @if($thesis->requestedPembimbing2)
+                                                                                    @php $p2Full = $thesis->requestedPembimbing2->total_workload >= $thesis->requestedPembimbing2->max_quota; @endphp
+                                                                                    <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p2Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
+                                                                                        <span>P2: {{ $thesis->requestedPembimbing2->name }}</span>
+                                                                                        <span class="font-black">({{ $thesis->requestedPembimbing2->total_workload }}/{{ $thesis->requestedPembimbing2->max_quota }})</span>
+                                                                                        @if($p2Full)<span class="text-rose-600 font-black">🔴 Penuh</span>@endif
+                                                                                    </div>
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <!-- Select P1 -->
+                                                                    <div>
+                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 1</label>
+                                                                        <select name="pembimbing1_id" x-model="p1_id" required class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-800 dark:text-slate-100">
+                                                                            <option value="">Pilih P1...</option>
+                                                                            @foreach($dosens as $dosen)
+                                                                                @php 
+                                                                                    $score = $thesis->getMatchScore($dosen);
+                                                                                    $isFull = $dosen->total_workload >= $dosen->max_quota;
+                                                                                @endphp
+                                                                                <option value="{{ $dosen->id }}" class="{{ $isFull ? 'text-rose-500 font-bold' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-600' : 'text-slate-800') }}">
+                                                                                    {{ $isFull ? '🔴 [PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                        <template x-if="p1_id && dosens[p1_id]">
+                                                                            <div class="mt-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
+                                                                                <span class="w-2 h-2 rounded-full shrink-0" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'bg-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></span>
+                                                                                <span x-text="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'Quota Penuh (' + dosens[p1_id].total_workload + '/' + dosens[p1_id].max_quota + ')' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia (' + dosens[p1_id].total_workload + '/' + dosens[p1_id].max_quota + ')')"></span>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+
+                                                                    <!-- Select P2 -->
+                                                                    <div>
+                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 2</label>
+                                                                        <select name="pembimbing2_id" x-model="p2_id" required class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-800 dark:text-slate-100">
+                                                                            <option value="">Pilih P2...</option>
+                                                                            @foreach($dosens as $dosen)
+                                                                                @php 
+                                                                                    $score = $thesis->getMatchScore($dosen);
+                                                                                    $isFull = $dosen->total_workload >= $dosen->max_quota;
+                                                                                @endphp
+                                                                                <option value="{{ $dosen->id }}" class="{{ $isFull ? 'text-rose-500 font-bold' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-600' : 'text-slate-800') }}">
+                                                                                    {{ $isFull ? '🔴 [PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                        <template x-if="p2_id && dosens[p2_id]">
+                                                                            <div class="mt-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
+                                                                                <span class="w-2 h-2 rounded-full shrink-0" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'bg-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></span>
+                                                                                <span x-text="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'Quota Penuh (' + dosens[p2_id].total_workload + '/' + dosens[p2_id].max_quota + ')' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia (' + dosens[p2_id].total_workload + '/' + dosens[p2_id].max_quota + ')')"></span>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+
+                                                                    <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700">
+                                                                        <button type="button" @click="openAssignModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
+                                                                        <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all">Simpan Penugasan</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </template>
                                         </div>
                                     @else
                                         <div class="flex justify-end gap-2" x-data="{ openEditModal: false }">
@@ -459,80 +466,82 @@
                                             </a>
 
                                             <!-- Edit Modal -->
-                                            <div x-show="openEditModal" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
-                                                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                                                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openEditModal = false">
-                                                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-                                                    </div>
-                                                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100 dark:border-slate-700">
-                                                        <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700">
-                                                            <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Edit Data Skripsi</h3>
-                                                            <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Mahasiswa: {{ $thesis->student->name }}</p>
+                                            <template x-teleport="body">
+                                                <div x-show="openEditModal" class="fixed inset-0 z-[9999] overflow-y-auto text-left" x-cloak x-transition>
+                                                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openEditModal = false">
+                                                            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                         </div>
-                                                        <form action="{{ route('theses.update', $thesis->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <div class="px-8 py-8 space-y-6">
-                                                                <div>
-                                                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Judul Final Skripsi</label>
-                                                                    <textarea name="final_title" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all uppercase leading-relaxed p-4" required>{{ $thesis->final_title ?? $thesis->title }}</textarea>
-                                                                </div>
-                                                                <div x-data='{ 
-                                                                    p1_id: "{{ $thesis->pembimbing1_id }}", 
-                                                                    p2_id: "{{ $thesis->pembimbing2_id }}",
-                                                                    dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
-                                                                }' class="grid grid-cols-2 gap-4">
-                                                                    <div>
-                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 1</label>
-                                                                        <select name="pembimbing1_id" x-model="p1_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3" required>
-                                                                            @foreach($dosens as $dosen)
-                                                                                @php $score = $thesis->getMatchScore($dosen); @endphp
-                                                                                <option value="{{ $dosen->id }}" 
-                                                                                        class="{{ $dosen->total_workload >= $dosen->max_quota ? 'text-rose-500' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500') }}">
-                                                                                    {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                        <template x-if="p1_id && dosens[p1_id]">
-                                                                            <div class="mt-2 flex items-center gap-1.5">
-                                                                                <div class="w-2 h-2 rounded-full" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'bg-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
-                                                                                <span class="text-[9px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
-                                                                                    <span x-text="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'Quota Penuh' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia')"></span>
-                                                                                </span>
-                                                                            </div>
-                                                                        </template>
-                                                                    </div>
-                                                                    <div>
-                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 2</label>
-                                                                        <select name="pembimbing2_id" x-model="p2_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3" required>
-                                                                            @foreach($dosens as $dosen)
-                                                                                @php $score = $thesis->getMatchScore($dosen); @endphp
-                                                                                <option value="{{ $dosen->id }}" 
-                                                                                        class="{{ $dosen->total_workload >= $dosen->max_quota ? 'text-rose-500' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500') }}">
-                                                                                    {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                        <template x-if="p2_id && dosens[p2_id]">
-                                                                            <div class="mt-2 flex items-center gap-1.5">
-                                                                                <div class="w-2 h-2 rounded-full" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'bg-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
-                                                                                <span class="text-[9px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
-                                                                                    <span x-text="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'Quota Penuh' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia')"></span>
-                                                                                </span>
-                                                                            </div>
-                                                                        </template>
-                                                                    </div>
-                                                                </div>
+                                                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                                                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Edit Data Skripsi</h3>
+                                                                <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Mahasiswa: {{ $thesis->student->name }}</p>
                                                             </div>
-                                                            <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                                                <button type="button" @click="openEditModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
-                                                                <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Simpan</button>
-                                                            </div>
-                                                        </form>
+                                                            <form action="{{ route('theses.update', $thesis->id) }}" method="POST">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <div class="px-8 py-8 space-y-6">
+                                                                    <div>
+                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Judul Final Skripsi</label>
+                                                                        <textarea name="final_title" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all uppercase leading-relaxed p-4 text-slate-800 dark:text-slate-100" required>{{ $thesis->final_title ?? $thesis->title }}</textarea>
+                                                                    </div>
+                                                                    <div x-data='{ 
+                                                                        p1_id: "{{ $thesis->pembimbing1_id }}", 
+                                                                        p2_id: "{{ $thesis->pembimbing2_id }}",
+                                                                        dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
+                                                                    }' class="grid grid-cols-2 gap-4">
+                                                                        <div>
+                                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 1</label>
+                                                                            <select name="pembimbing1_id" x-model="p1_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3 text-slate-800 dark:text-slate-100" required>
+                                                                                @foreach($dosens as $dosen)
+                                                                                    @php $score = $thesis->getMatchScore($dosen); @endphp
+                                                                                    <option value="{{ $dosen->id }}" 
+                                                                                            class="{{ $dosen->total_workload >= $dosen->max_quota ? 'text-rose-500' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500') }}">
+                                                                                        {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <template x-if="p1_id && dosens[p1_id]">
+                                                                                <div class="mt-2 flex items-center gap-1.5">
+                                                                                    <div class="w-2 h-2 rounded-full" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'bg-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
+                                                                                    <span class="text-[9px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
+                                                                                        <span x-text="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'Quota Penuh' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia')"></span>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </template>
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 2</label>
+                                                                            <select name="pembimbing2_id" x-model="p2_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3 text-slate-800 dark:text-slate-100" required>
+                                                                                @foreach($dosens as $dosen)
+                                                                                    @php $score = $thesis->getMatchScore($dosen); @endphp
+                                                                                    <option value="{{ $dosen->id }}" 
+                                                                                            class="{{ $dosen->total_workload >= $dosen->max_quota ? 'text-rose-500' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500') }}">
+                                                                                        {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <template x-if="p2_id && dosens[p2_id]">
+                                                                                <div class="mt-2 flex items-center gap-1.5">
+                                                                                    <div class="w-2 h-2 rounded-full" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'bg-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
+                                                                                    <span class="text-[9px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
+                                                                                        <span x-text="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'Quota Penuh' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia')"></span>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                                                                    <button type="button" @click="openEditModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
+                                                                    <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Simpan</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </template>
                                         </div>
                                     @endif
                                 </td>
