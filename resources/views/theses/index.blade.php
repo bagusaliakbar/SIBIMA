@@ -93,8 +93,8 @@
                         <th class="py-4 px-6">Rencana Judul Skripsi</th>
                         <th class="py-4 px-6">Deskripsi</th>
                         <th class="py-4 px-6 text-center">Status</th>
+                        <th class="py-4 px-6">Pembimbing</th>
                         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
-                            <th class="py-4 px-6">Pembimbing</th>
                             <th class="py-4 px-6 text-right">Aksi</th>
                         @endif
                     </tr>
@@ -109,12 +109,23 @@
                                     </div>
                                     <div>
                                         <div class="font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight text-xs">{{ $thesis->student->name }}</div>
-                                        <div class="flex items-center gap-1.5 mt-1">
+                                        <div class="flex items-center gap-1.5 mt-1 flex-wrap">
                                             <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold tracking-wider font-mono">{{ $thesis->student->identifier ?? 'NPM -' }}</span>
                                             @if($thesis->student->entry_year)
                                                 <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
                                                     Angkatan {{ $thesis->student->entry_year }}
                                                 </span>
+                                            @endif
+                                            @if(Auth::user()->role === 'dosen')
+                                                @if($thesis->pembimbing1_id === Auth::id())
+                                                    <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter bg-indigo-600 text-white shadow-2xs">
+                                                        Pembimbing 1
+                                                    </span>
+                                                @elseif($thesis->pembimbing2_id === Auth::id())
+                                                    <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter bg-purple-600 text-white shadow-2xs">
+                                                        Pembimbing 2
+                                                    </span>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -248,23 +259,38 @@
                                 </div>
                             </td>
                             
+                            <td class="py-4 px-6">
+                                @if($thesis->pembimbing1 || $thesis->pembimbing2)
+                                    <div class="flex flex-col gap-1.5">
+                                        @if($thesis->pembimbing1)
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-4 h-4 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20 shrink-0">1</span>
+                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter flex items-center gap-1">
+                                                    <span>{{ $thesis->pembimbing1->name }}</span>
+                                                    @if(Auth::user()->role === 'dosen' && $thesis->pembimbing1_id === Auth::id())
+                                                        <span class="px-1.5 py-0.2 text-[8px] bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 rounded font-black uppercase">(Saya)</span>
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endif
+                                        @if($thesis->pembimbing2)
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-4 h-4 rounded bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-[9px] font-black border border-purple-100 dark:border-purple-500/20 shrink-0">2</span>
+                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter flex items-center gap-1">
+                                                    <span>{{ $thesis->pembimbing2->name }}</span>
+                                                    @if(Auth::user()->role === 'dosen' && $thesis->pembimbing2_id === Auth::id())
+                                                        <span class="px-1.5 py-0.2 text-[8px] bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 rounded font-black uppercase">(Saya)</span>
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <x-status-badge type="slate" label="BELUM DITENTUKAN" />
+                                @endif
+                            </td>
+                            
                             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
-                                <td class="py-4 px-6">
-                                    @if($thesis->pembimbing1 && $thesis->pembimbing2)
-                                        <div class="flex flex-col gap-1.5">
-                                            <div class="flex items-center gap-2">
-                                                <span class="w-4 h-4 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">1</span>
-                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter">{{ $thesis->pembimbing1->name }}</span>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="w-4 h-4 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20">2</span>
-                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter">{{ $thesis->pembimbing2->name }}</span>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <x-status-badge type="slate" label="BELUM DITENTUKAN" />
-                                    @endif
-                                </td>
                                 <td class="py-4 px-6 text-right">
                                     @if(!$thesis->pembimbing1 || !$thesis->pembimbing2)
                                         <div x-data="{ openAssignModal: false }" class="inline-block">
@@ -472,7 +498,7 @@
                             @endif
                         </tr>
                     @empty
-                        <x-empty-state colspan="{{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? '6' : '4' }}" description="Belum ada data skripsi yang ditemukan." />
+                        <x-empty-state colspan="{{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? '6' : '5' }}" description="Belum ada data skripsi yang ditemukan." />
                     @endforelse
                 </tbody>
             </table>
