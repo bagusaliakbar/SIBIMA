@@ -265,23 +265,13 @@
                                         @if($thesis->pembimbing1)
                                             <div class="flex items-center gap-2">
                                                 <span class="w-4 h-4 rounded text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black border border-indigo-200 dark:border-indigo-800 shrink-0" style="background-color: #e0e7ff !important;">1</span>
-                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter flex items-center gap-1">
-                                                    <span>{{ $thesis->pembimbing1->name }}</span>
-                                                    @if(Auth::user()->role === 'dosen' && $thesis->pembimbing1_id === Auth::id())
-                                                        <span class="px-1.5 py-0.2 text-[8px] rounded font-black uppercase" style="background-color: #e0e7ff !important; color: #3730a3 !important;">(Saya)</span>
-                                                    @endif
-                                                </span>
+                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter">{{ $thesis->pembimbing1->name }}</span>
                                             </div>
                                         @endif
                                         @if($thesis->pembimbing2)
                                             <div class="flex items-center gap-2">
                                                 <span class="w-4 h-4 rounded text-purple-600 dark:text-purple-400 flex items-center justify-center text-[9px] font-black border border-purple-200 dark:border-purple-800 shrink-0" style="background-color: #f3e8ff !important;">2</span>
-                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter flex items-center gap-1">
-                                                    <span>{{ $thesis->pembimbing2->name }}</span>
-                                                    @if(Auth::user()->role === 'dosen' && $thesis->pembimbing2_id === Auth::id())
-                                                        <span class="px-1.5 py-0.2 text-[8px] rounded font-black uppercase" style="background-color: #f3e8ff !important; color: #6b21a8 !important;">(Saya)</span>
-                                                    @endif
-                                                </span>
+                                                <span class="font-black text-slate-700 dark:text-slate-200 text-[10px] uppercase tracking-tighter">{{ $thesis->pembimbing2->name }}</span>
                                             </div>
                                         @endif
                                     </div>
