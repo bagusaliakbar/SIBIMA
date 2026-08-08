@@ -666,7 +666,7 @@
                                 <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div>
-                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Audit Kemiripan Judul</h3>
+                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Kemiripan Judul</h3>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-0.5">
                                     Mahasiswa: <span class="text-slate-700 dark:text-slate-200" x-text="data.student"></span> (<span x-text="data.npm"></span>)
                                 </p>
