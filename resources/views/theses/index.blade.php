@@ -190,13 +190,13 @@
 
                                     <!-- Abstract Modal -->
                                     <template x-teleport="body">
-                                        <div x-show="openAbstract" class="fixed inset-0 z-[9999] overflow-y-auto" x-cloak x-transition>
+                                        <div x-show="openAbstract" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
                                             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                 <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAbstract = false">
                                                     <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                 </div>
                                                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
                                                     <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                                                         <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
                                                         <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
@@ -291,13 +291,13 @@
 
                                             <!-- Modal Penugasan Pembimbing -->
                                             <template x-teleport="body">
-                                                <div x-show="openAssignModal" class="fixed inset-0 z-[9999] overflow-y-auto text-left" x-cloak x-transition>
+                                                <div x-show="openAssignModal" class="fixed inset-0 overflow-y-auto text-left" style="z-index: 99999 !important;" x-cloak x-transition>
                                                     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                         <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAssignModal = false">
                                                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                         </div>
                                                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
                                                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                                                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Penugasan Dosen Pembimbing</h3>
                                                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">Mahasiswa: {{ $thesis->student->name }} ({{ $thesis->student->identifier }})</p>
@@ -407,13 +407,13 @@
 
                                             <!-- Edit Modal -->
                                             <template x-teleport="body">
-                                                <div x-show="openEditModal" class="fixed inset-0 z-[9999] overflow-y-auto text-left" x-cloak x-transition>
+                                                <div x-show="openEditModal" class="fixed inset-0 overflow-y-auto text-left" style="z-index: 99999 !important;" x-cloak x-transition>
                                                     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                         <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openEditModal = false">
                                                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                         </div>
                                                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-[10000]">
+                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
                                                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                                                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Edit Data Skripsi</h3>
                                                                 <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Mahasiswa: {{ $thesis->student->name }}</p>
