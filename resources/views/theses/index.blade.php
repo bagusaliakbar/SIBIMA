@@ -476,6 +476,8 @@
                     @endforelse
                 </tbody>
             </table>
+        </x-table-card>
+
         <!-- Single Global Audit Kemiripan Judul Modal -->
         <div x-show="auditModalOpen" class="fixed inset-0 z-[99999] overflow-y-auto text-left" x-cloak x-transition>
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
