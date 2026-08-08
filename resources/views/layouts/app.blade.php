@@ -233,46 +233,85 @@
                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pelaksanaan Skripsi</p>
                     </div>
                     <nav class="space-y-1 mb-10">
-                        <a href="{{ route('seminar-applications.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Validasi Seminar
-                        </a>
-                        <a href="{{ route('thesis-defense-applications.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Validasi Sidang
-                        </a>
+                        <!-- Direct Link: Daftar Pengajuan -->
                         <a href="{{ route('theses.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Daftar Pengajuan
                         </a>
-                        <a href="{{ route('mentoring-sessions.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('mentoring-sessions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('mentoring-sessions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Jadwal Bimbingan
-                        </a>
-                        <a href="{{ route('seminar-schedules.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-schedules.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-schedules.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Jadwal Seminar
-                        </a>
-                        <a href="{{ route('thesis-defense-schedules.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-schedules.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-schedules.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Jadwal Sidang
-                        </a>
-                        <a href="{{ route('seminar-examiner.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-examiner.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-examiner.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                            Penguji Seminar
-                        </a>
-                        <a href="{{ route('defense-examiner.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('defense-examiner.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('defense-examiner.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                            Penguji Sidang
-                        </a>
+
+                        <!-- Dropdown 1: Validasi & Verifikasi -->
+                        @php $isValidasiActive = request()->routeIs('seminar-applications.*') || request()->routeIs('thesis-defense-applications.*'); @endphp
+                        <div x-data="{ open: {{ $isValidasiActive ? 'true' : 'false' }} }">
+                            <button @click="open = !open" 
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isValidasiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 transition-colors {{ $isValidasiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <span>Validasi & Verifikasi</span>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('seminar-applications.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-applications.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Validasi Seminar
+                                </a>
+                                <a href="{{ route('thesis-defense-applications.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('thesis-defense-applications.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Validasi Sidang
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown 2: Jadwal & Agenda -->
+                        @php $isJadwalActive = request()->routeIs('mentoring-sessions.*') || request()->routeIs('seminar-schedules.*') || request()->routeIs('thesis-defense-schedules.*'); @endphp
+                        <div x-data="{ open: {{ $isJadwalActive ? 'true' : 'false' }} }">
+                            <button @click="open = !open" 
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isJadwalActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 transition-colors {{ $isJadwalActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>Jadwal & Agenda</span>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('mentoring-sessions.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('mentoring-sessions.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Jadwal Bimbingan
+                                </a>
+                                <a href="{{ route('seminar-schedules.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-schedules.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Jadwal Seminar
+                                </a>
+                                <a href="{{ route('thesis-defense-schedules.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('thesis-defense-schedules.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Jadwal Sidang
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown 3: Penugasan Penguji -->
+                        @php $isPengujiActive = request()->routeIs('seminar-examiner.*') || request()->routeIs('defense-examiner.*'); @endphp
+                        <div x-data="{ open: {{ $isPengujiActive ? 'true' : 'false' }} }">
+                            <button @click="open = !open" 
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isPengujiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 transition-colors {{ $isPengujiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 022-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                    <span>Penugasan Penguji</span>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('seminar-examiner.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-examiner.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Penguji Seminar
+                                </a>
+                                <a href="{{ route('defense-examiner.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('defense-examiner.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Penguji Sidang
+                                </a>
+                            </div>
+                        </div>
                     </nav>
 
                     <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
