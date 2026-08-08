@@ -312,73 +312,114 @@
                                 </a>
                             </div>
                         </div>
-                    </nav>
-
-                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                                  <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Monitoring</p>
                     </div>
                     <nav class="space-y-1 mb-10">
+                        <!-- Direct Link: Monitoring Bimbingan -->
                         <a href="{{ route('monitoring.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             Monitoring Bimbingan
                         </a>
-                        <a href="{{ route('monitoring.revisions') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.revisions') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.revisions') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                            Monitoring Revisi Seminar
-                        </a>
-                        <a href="{{ route('monitoring.defense-revisions') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.defense-revisions') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.defense-revisions') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                            Monitoring Revisi Sidang
-                        </a>
-                        <a href="{{ route('monitoring.defense-scores') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.defense-scores') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.defense-scores') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a.75.75 0 00-1.061 0l-1.061 1.06a.75.75 0 101.06 1.061l1.061-1.06a.75.75 0 000-1.061zM6 8a2 2 0 11-4 0 2 2 0 014 0zM22 12a10 10 0 11-20 0 10 10 0 0120 0z"></path></svg>
-                            Nilai Sidang
-                        </a>
-                        <a href="{{ route('monitoring.critical') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.critical') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.critical') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Monitoring Masa Studi
-                        </a>
-                        <a href="{{ route('monitoring.advanced-reporting') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.advanced-reporting') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.advanced-reporting') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                            Statistik & Pelaporan
-                        </a>
+
+                        <!-- Dropdown 1: Monitoring Revisi -->
+                        @php $isMonitoringRevisiActive = request()->routeIs('monitoring.revisions') || request()->routeIs('monitoring.defense-revisions'); @endphp
+                        <div x-data="{ open: {{ $isMonitoringRevisiActive ? 'true' : 'false' }} }">
+                            <button @click="open = !open" 
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isMonitoringRevisiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 transition-colors {{ $isMonitoringRevisiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 022-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                    <span>Monitoring Revisi</span>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('monitoring.revisions') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.revisions') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Revisi Seminar
+                                </a>
+                                <a href="{{ route('monitoring.defense-revisions') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.defense-revisions') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Revisi Sidang
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown 2: Evaluasi & Laporan -->
+                        @php $isEvaluasiActive = request()->routeIs('monitoring.defense-scores') || request()->routeIs('monitoring.critical') || request()->routeIs('monitoring.advanced-reporting'); @endphp
+                        <div x-data="{ open: {{ $isEvaluasiActive ? 'true' : 'false' }} }">
+                            <button @click="open = !open" 
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isEvaluasiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 transition-colors {{ $isEvaluasiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    <span>Evaluasi & Laporan</span>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('monitoring.defense-scores') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.defense-scores') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Nilai Sidang
+                                </a>
+                                <a href="{{ route('monitoring.critical') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.critical') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Monitoring Masa Studi
+                                </a>
+                                <a href="{{ route('monitoring.advanced-reporting') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.advanced-reporting') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Statistik & Pelaporan
+                                </a>
+                            </div>
+                        </div>
                     </nav>
 
                     <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Sistem & Konfigurasi</p>
                     </div>
                     <nav class="space-y-1 mb-10">
+                        <!-- Direct Link: Pengumuman -->
                         <a href="{{ route('announcements.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('announcements.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('announcements.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                             Pengumuman
                         </a>
+
+                        <!-- Direct Link: Data Pengguna -->
                         <a href="{{ route('users.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('users.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Data Pengguna
                         </a>
-                        <a href="{{ route('waves.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('waves.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('waves.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            Gelombang Pelaksanaan
-                        </a>
-                        <a href="{{ route('admin.letter-settings.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.letter-settings.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.letter-settings.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            Pengaturan Nomor Surat
-                        </a>
-                        <a href="{{ route('wa-templates.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('wa-templates.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('wa-templates.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                            Template WA
-                        </a>
+
+                        <!-- Dropdown 1: Konfigurasi Sistem -->
+                        @php $isConfigActive = request()->routeIs('waves.*') || request()->routeIs('admin.letter-settings.*') || request()->routeIs('wa-templates.*'); @endphp
+                        <div x-data="{ open: {{ $isConfigActive ? 'true' : 'false' }} }">
+                            <button @click="open = !open" 
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isConfigActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-3 transition-colors {{ $isConfigActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                                    <span>Konfigurasi Sistem</span>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('waves.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('waves.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Gelombang Pelaksanaan
+                                </a>
+                                <a href="{{ route('admin.letter-settings.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('admin.letter-settings.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Pengaturan Nomor Surat
+                                </a>
+                                <a href="{{ route('wa-templates.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('wa-templates.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Template WA
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Direct Link: Log Sistem -->
                         <a href="{{ route('admin.logs') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.logs') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.logs') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
