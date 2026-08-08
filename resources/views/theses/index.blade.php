@@ -178,7 +178,6 @@
                                     </div>
 
                                     <!-- Abstract Modal -->
-                                    <div x-show="openAbstract" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
                                     <template x-teleport="body">
                                         <div x-show="openAbstract" class="fixed inset-0 z-[9999] overflow-y-auto" x-cloak x-transition>
                                             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
