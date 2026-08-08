@@ -186,10 +186,15 @@ class Thesis extends Model
      */
     public function getMaxSimilarityScore()
     {
-        $targetTitle = $this->final_title ?? $this->title;
-        if (!$targetTitle) return 0;
+        $targetTitle = trim($this->final_title ?? $this->title ?? '');
+        $upper = strtoupper($targetTitle);
+        $placeholders = ['BELUM DIKETAHUI', 'BELUM DITENTUKAN', 'BELUM ADA JUDUL', 'BELUM ADA', '-'];
+        
+        if (empty($targetTitle) || in_array($upper, $placeholders) || strlen($targetTitle) < 8) {
+            return 0;
+        }
 
-        return \Illuminate\Support\Facades\Cache::remember('thesis_sim_score_' . $this->id . '_' . md5($targetTitle), 1800, function() use ($targetTitle) {
+        return \Illuminate\Support\Facades\Cache::remember('thesis_sim_score_' . $this->id . '_' . md5($targetTitle), 1800, function() use ($targetTitle, $placeholders) {
             $maxScore = 0;
             $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($targetTitle));
             $inputTokens = array_values(array_filter(explode(' ', $cleanInput)));
@@ -198,9 +203,13 @@ class Thesis extends Model
 
             $otherTitles = self::where('id', '!=', $this->id)
                 ->whereNotNull('title')
-                ->pluck('title');
+                ->pluck('title')
+                ->filter(fn($t) => !in_array(strtoupper(trim($t)), $placeholders) && strlen(trim($t)) >= 8);
 
-            $repoTitles = \App\Models\ThesisRepository::whereNotNull('title')->pluck('title');
+            $repoTitles = \App\Models\ThesisRepository::whereNotNull('title')
+                ->pluck('title')
+                ->filter(fn($t) => !in_array(strtoupper(trim($t)), $placeholders) && strlen(trim($t)) >= 8);
+
             $allTitles = $otherTitles->concat($repoTitles);
 
             $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];

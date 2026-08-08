@@ -122,26 +122,31 @@
                                 @endif
 
                                 @php
-                                    $simScore = $thesis->getMaxSimilarityScore();
+                                    $rawTitle = trim($thesis->final_title ?? $thesis->title ?? '');
+                                    $titleUpper = strtoupper($rawTitle);
+                                    $hasValidTitle = !empty($rawTitle) && !in_array($titleUpper, ['BELUM DIKETAHUI', 'BELUM DITENTUKAN', 'BELUM ADA JUDUL', 'BELUM ADA', '-']) && strlen($rawTitle) >= 8;
+                                    $simScore = $hasValidTitle ? $thesis->getMaxSimilarityScore() : 0;
                                 @endphp
-                                <div class="mt-1.5 flex items-center gap-1.5">
-                                    @if($simScore >= 66)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400" title="Potensi duplikasi tinggi dengan karya lain">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
-                                            <span>🔴 {{ $simScore }}% Sangat Mirip</span>
-                                        </span>
-                                    @elseif($simScore >= 35)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-400" title="Kemiripan sedang dengan arsip skripsi">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
-                                            <span>🟧 {{ $simScore }}% Mirip</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-400" title="Judul unik, tidak ada indikasi duplikasi">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                            <span>🟢 {{ 100 - $simScore }}% Unik</span>
-                                        </span>
-                                    @endif
-                                </div>
+                                @if($hasValidTitle)
+                                    <div class="mt-1.5 flex items-center gap-1.5">
+                                        @if($simScore >= 66)
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400" title="Potensi duplikasi tinggi dengan karya lain">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
+                                                <span>🔴 {{ $simScore }}% Sangat Mirip</span>
+                                            </span>
+                                        @elseif($simScore >= 35)
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-400" title="Kemiripan sedang dengan arsip skripsi">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                                                <span>🟧 {{ $simScore }}% Mirip</span>
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-400" title="Judul unik, tidak ada indikasi duplikasi">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                                <span>🟢 {{ 100 - $simScore }}% Unik</span>
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
                             </td>
                             <td class="py-4 px-6 max-w-[14rem] whitespace-normal" x-data="{ openAbstract: false }">
                                 @if($thesis->abstract)
