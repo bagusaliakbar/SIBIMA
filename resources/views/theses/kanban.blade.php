@@ -5,32 +5,27 @@
                 ['label' => 'Data Skripsi', 'route' => route('theses.index')],
                 ['label' => 'Papan Kanban', 'route' => null]
             ]" />
-
-            <div class="flex items-center gap-3">
-                <a href="{{ route('theses.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700 shadow-xs">
-                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                    <span>Tampilan Tabel</span>
-                </a>
-            </div>
         </div>
     </x-slot>
 
     <div class="w-full space-y-4" x-data="{ search: '' }">
         <!-- Top Toolbar -->
-        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
-            <div class="relative w-full sm:w-80">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all w-full sm:w-96">
+                <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
                 <input type="text" 
                        x-model="search" 
                        placeholder="Cari mahasiswa, NPM, atau judul..." 
-                       class="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
-                <button x-show="search" @click="search = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
+                       class="w-full bg-transparent border-0 p-0 text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-0">
+                <button x-show="search" @click="search = ''" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold shrink-0">
                     ✕
                 </button>
             </div>
 
-            <div class="flex items-center gap-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <span>Total: <strong class="text-slate-800 dark:text-slate-100 font-extrabold">{{ $pengajuanBaru->count() + $bimbinganUp->count() + $prosesSeminar->count() + $siapSidang->count() + $lulus->count() }}</strong> Skripsi</span>
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span>Total: <strong class="text-indigo-600 dark:text-indigo-400 font-black text-sm">{{ $pengajuanBaru->count() + $bimbinganUp->count() + $prosesSeminar->count() + $siapSidang->count() + $lulus->count() }}</strong> Skripsi</span>
             </div>
         </div>
 
