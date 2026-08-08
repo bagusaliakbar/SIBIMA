@@ -479,97 +479,99 @@
         </x-table-card>
 
         <!-- Single Global Audit Kemiripan Judul Modal -->
-        <div x-show="auditModalOpen" class="fixed inset-0 z-[99999] overflow-y-auto text-left" x-cloak x-transition>
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="auditModalOpen = false">
-                    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
-                </div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-200 dark:border-slate-700 relative z-[100000]">
-                    <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
-                        <div>
-                            <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span>Kemiripan Judul</span>
-                            </h3>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">
-                                Mahasiswa: <span x-text="auditData.student"></span> (<span x-text="auditData.npm"></span>)
-                            </p>
-                        </div>
-                        <button @click="auditModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
+        <template x-teleport="body">
+            <div x-show="auditModalOpen" class="fixed inset-0 z-[99999] overflow-y-auto text-left" x-cloak x-transition>
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="auditModalOpen = false">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                     </div>
-                    
-                    <div class="p-8 space-y-6">
-                        <!-- Judul Yang Diuji -->
-                        <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul Skripsi Diuji:</span>
-                            <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-relaxed" x-text="auditData.title"></h4>
-                        </div>
-
-                        <!-- Match Summary Banner -->
-                        <div class="flex items-center justify-between p-4 rounded-2xl border"
-                             :class="auditData.score >= 66 ? 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300' : (auditData.score >= 35 ? 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300')">
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-200 dark:border-slate-700 relative z-[100000]">
+                        <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                             <div>
-                                <span class="text-[10px] font-black uppercase tracking-widest block">Skor Kemiripan Tertinggi:</span>
-                                <span class="text-sm font-black uppercase tracking-tight">
-                                    <template x-if="auditData.score >= 66">
-                                        <span>🔴 <span x-text="auditData.score"></span>% Terdeteksi Sangat Mirip</span>
-                                    </template>
-                                    <template x-if="auditData.score >= 35 && auditData.score < 66">
-                                        <span>🟧 <span x-text="auditData.score"></span>% Terdeteksi Kemiripan Sedang</span>
-                                    </template>
-                                    <template x-if="auditData.score < 35">
-                                        <span>🟢 <span x-text="100 - auditData.score"></span>% Judul Unik & Orisinal</span>
-                                    </template>
-                                </span>
+                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>Kemiripan Judul</span>
+                                </h3>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">
+                                    Mahasiswa: <span x-text="auditData.student"></span> (<span x-text="auditData.npm"></span>)
+                                </p>
                             </div>
-                            <span class="text-2xl font-black"><span x-text="auditData.score"></span>%</span>
+                            <button @click="auditModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
                         </div>
+                        
+                        <div class="p-8 space-y-6">
+                            <!-- Judul Yang Diuji -->
+                            <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul Skripsi Diuji:</span>
+                                <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-relaxed" x-text="auditData.title"></h4>
+                            </div>
 
-                        <!-- Daftar Judul Mirip yang Ditemukan -->
-                        <div>
-                            <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Kemiripan Terdeteksi:</h5>
-                            <div class="space-y-3">
-                                <template x-for="(match, index) in auditData.matches" :key="index">
-                                    <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 shadow-2xs">
-                                        <div class="flex items-start justify-between gap-3">
-                                            <div class="space-y-0.5">
-                                                <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block" x-text="match.source"></span>
-                                                <h6 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-snug" x-text="match.title"></h6>
+                            <!-- Match Summary Banner -->
+                            <div class="flex items-center justify-between p-4 rounded-2xl border"
+                                 :class="auditData.score >= 66 ? 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-300' : (auditData.score >= 35 ? 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-300')">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-widest block">Skor Kemiripan Tertinggi:</span>
+                                    <span class="text-sm font-black uppercase tracking-tight">
+                                        <template x-if="auditData.score >= 66">
+                                            <span>🔴 <span x-text="auditData.score"></span>% Terdeteksi Sangat Mirip</span>
+                                        </template>
+                                        <template x-if="auditData.score >= 35 && auditData.score < 66">
+                                            <span>🟧 <span x-text="auditData.score"></span>% Terdeteksi Kemiripan Sedang</span>
+                                        </template>
+                                        <template x-if="auditData.score < 35">
+                                            <span>🟢 <span x-text="100 - auditData.score"></span>% Judul Unik & Orisinal</span>
+                                        </template>
+                                    </span>
+                                </div>
+                                <span class="text-2xl font-black"><span x-text="auditData.score"></span>%</span>
+                            </div>
+
+                            <!-- Daftar Judul Mirip yang Ditemukan -->
+                            <div>
+                                <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Kemiripan Terdeteksi:</h5>
+                                <div class="space-y-3">
+                                    <template x-for="(match, index) in auditData.matches" :key="index">
+                                        <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 shadow-2xs">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="space-y-0.5">
+                                                    <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block" x-text="match.source"></span>
+                                                    <h6 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-snug" x-text="match.title"></h6>
+                                                </div>
+                                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black shrink-0" 
+                                                      :class="match.percentage >= 66 ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' : (match.percentage >= 35 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300')"
+                                                      x-text="match.percentage + '%'">
+                                                </span>
                                             </div>
-                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-black shrink-0" 
-                                                  :class="match.percentage >= 66 ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' : (match.percentage >= 35 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300')"
-                                                  x-text="match.percentage + '%'">
-                                            </span>
+                                            
+                                            <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                                                <span>Oleh: <strong class="text-slate-700 dark:text-slate-300 uppercase" x-text="match.author"></strong> (<span x-text="match.year"></span>)</span>
+                                                <template x-if="match.matched_words && match.matched_words.length">
+                                                    <span class="text-[9px] font-bold text-slate-400">Kata Cocok: <span x-text="match.matched_words.slice(0,4).join(', ')"></span></span>
+                                                </template>
+                                            </div>
                                         </div>
-                                        
-                                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
-                                            <span>Oleh: <strong class="text-slate-700 dark:text-slate-300 uppercase" x-text="match.author"></strong> (<span x-text="match.year"></span>)</span>
-                                            <template x-if="match.matched_words && match.matched_words.length">
-                                                <span class="text-[9px] font-bold text-slate-400">Kata Cocok: <span x-text="match.matched_words.slice(0,4).join(', ')"></span></span>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </template>
+                                    </template>
 
-                                <template x-if="!auditData.matches || auditData.matches.length === 0">
-                                    <div class="p-6 text-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                        <svg class="w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <p class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">Tidak Ada Kemiripan Signifikan</p>
-                                        <p class="text-[10px] text-slate-400 mt-0.5">Judul ini memiliki tingkat keunikan tinggi dibanding arsip skripsi lainnya.</p>
-                                    </div>
-                                </template>
+                                    <template x-if="!auditData.matches || auditData.matches.length === 0">
+                                        <div class="p-6 text-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                            <svg class="w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <p class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">Tidak Ada Kemiripan Signifikan</p>
+                                            <p class="text-[10px] text-slate-400 mt-0.5">Judul ini memiliki tingkat keunikan tinggi dibanding arsip skripsi lainnya.</p>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                        <button type="button" @click="auditModalOpen = false" class="px-6 py-2.5 bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-slate-900 transition-all">Tutup</button>
+                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                            <button type="button" @click="auditModalOpen = false" class="px-6 py-2.5 bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-slate-900 transition-all">Tutup</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
 </x-app-layout>
