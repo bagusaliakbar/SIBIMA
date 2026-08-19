@@ -273,27 +273,56 @@ class ThesisController extends Controller
                     return $dosen;
                 });
 
-            // Compute Clean Data Audit for all pending thesis submissions
-            $pendingTheses = Thesis::with(['student', 'requestedPembimbing1', 'requestedPembimbing2'])
-                ->where('status', 'pending')
-                ->orderBy('created_at', 'desc')
-                ->get();
+            // Pending count for badge on the clean audit button
+            $pendingCount = Thesis::where('status', 'pending')->count();
+            $pendingSummary = ['total' => $pendingCount];
 
-            $pendingCleanData = $pendingTheses->map(function($thesis) use ($dosens) {
-                return $thesis->getAuditCleanData($dosens);
-            });
-
-            $pendingSummary = [
-                'total' => $pendingCleanData->count(),
-                'clean_count' => $pendingCleanData->where('category', 'clean')->count(),
-                'warning_count' => $pendingCleanData->where('category', 'warning')->count(),
-                'critical_count' => $pendingCleanData->where('category', 'critical')->count(),
-            ];
-
-            return view('theses.index', compact('theses', 'dosens', 'search', 'status', 'pendingCleanData', 'pendingSummary'));
+            return view('theses.index', compact('theses', 'dosens', 'search', 'status', 'pendingSummary'));
         }
 
         return view('theses.index', compact('theses', 'search', 'status'));
+    }
+
+    public function cleanAudit(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $dosens = User::where('role', 'dosen')
+            ->withCount(['thesesAsP1 as p1_count' => function ($query) {
+                $query->whereIn('status', ['active', 'seminar_proposal', 'seminar_hasil', 'sidang']);
+            }])
+            ->withCount(['thesesAsP2 as p2_count' => function ($query) {
+                $query->whereIn('status', ['active', 'seminar_proposal', 'seminar_hasil', 'sidang']);
+            }])
+            ->get()
+            ->map(function($dosen) {
+                $dosen->total_workload = $dosen->p1_count + $dosen->p2_count;
+                return $dosen;
+            });
+
+        $search = $request->query('search', '');
+        $filterCategory = $request->query('category', 'all');
+
+        $pendingTheses = Thesis::with(['student', 'requestedPembimbing1', 'requestedPembimbing2'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $cleanDataCollection = $pendingTheses->map(function($thesis) use ($dosens) {
+            return $thesis->getAuditCleanData($dosens);
+        });
+
+        $pendingSummary = [
+            'total' => $cleanDataCollection->count(),
+            'clean_count' => $cleanDataCollection->where('category', 'clean')->count(),
+            'warning_count' => $cleanDataCollection->where('category', 'warning')->count(),
+            'critical_count' => $cleanDataCollection->where('category', 'critical')->count(),
+        ];
+
+        return view('theses.clean-audit', compact('cleanDataCollection', 'pendingSummary', 'dosens', 'search', 'filterCategory'));
     }
 
     public function assignPembimbing(AssignPembimbingRequest $request, Thesis $thesis)

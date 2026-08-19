@@ -37,8 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/export-pdf', [App\Http\Controllers\ThesisController::class, 'exportPdf'])->name('theses.export-pdf');
     Route::post('/theses/{thesis}/toggle-acc/{type}', [App\Http\Controllers\ThesisController::class, 'toggleAcc'])->name('theses.toggle-acc');
     
-    // Data Migrasi Skripsi (Bypass)
+    // Data Migrasi Skripsi (Bypass) & Audit Clean
     Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/theses/clean-audit', [App\Http\Controllers\ThesisController::class, 'cleanAudit'])->name('theses.clean-audit');
         Route::get('/theses/migration/template', [App\Http\Controllers\ThesisController::class, 'downloadTemplate'])->name('theses.migration.template');
         Route::post('/theses/migration/import', [App\Http\Controllers\ThesisController::class, 'importExcel'])->name('theses.migration.import');
         Route::get('/theses/migration', [App\Http\Controllers\ThesisController::class, 'createMigration'])->name('theses.migration.create');
