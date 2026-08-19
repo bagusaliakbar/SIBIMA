@@ -5,6 +5,12 @@
         ]" />
     </x-slot>
 
+    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
+        <script>
+            window.sibimaPendingSubmissions = @json($pendingCleanData ?? []);
+        </script>
+    @endif
+
     <div class="w-full space-y-6" x-data="{ 
         auditModalOpen: false, 
         auditData: { student: '', npm: '', title: '', score: 0, matches: [] },
@@ -22,7 +28,7 @@
             this.rollbackData = { id: id, student: student, p1: p1, p2: p2 };
             this.rollbackModalOpen = true;
         },
-        pendingSubmissions: {{ isset($pendingCleanData) ? $pendingCleanData->toJson() : '[]' }},
+        pendingSubmissions: (typeof window.sibimaPendingSubmissions !== 'undefined' ? window.sibimaPendingSubmissions : []),
         get filteredPending() {
             return this.pendingSubmissions.filter(item => {
                 const matchTab = this.cleanTab === 'all' || item.category === this.cleanTab;
@@ -537,18 +543,31 @@
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
             <!-- MODAL 1: PUSAT AUDIT DATA CLEAN PENGAJUAN MAHASISWA BARU -->
             <template x-teleport="body">
-                <div x-show="cleanDataModalOpen" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
-                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="cleanDataModalOpen = false">
-                            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
-                        </div>
-                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-5xl w-full border border-slate-200 dark:border-slate-800 relative max-h-[90vh] flex flex-col" style="z-index: 100000 !important;">
+                <div x-show="cleanDataModalOpen" 
+                     class="fixed inset-0 overflow-y-auto" 
+                     style="z-index: 99999 !important;" 
+                     x-cloak 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95">
+                    
+                    <!-- Backdrop -->
+                    <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity" 
+                         @click="cleanDataModalOpen = false" 
+                         aria-hidden="true"></div>
+
+                    <!-- Modal Dialog Wrapper (Centered) -->
+                    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 text-center">
+                        <div class="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl text-left shadow-2xl border border-slate-200 dark:border-slate-800 relative z-50 max-h-[85vh] flex flex-col overflow-hidden my-auto transform transition-all"
+                             @click.stop>
                             
                             <!-- Header Modal -->
-                            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 flex flex-wrap justify-between items-center gap-4 shrink-0">
+                            <div class="px-8 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 flex flex-wrap justify-between items-center gap-4 shrink-0">
                                 <div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-2.5">
                                         <span class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                         </span>
@@ -558,13 +577,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button @click="cleanDataModalOpen = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <button @click="cleanDataModalOpen = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
 
                             <!-- KPI Stats Summary Row -->
-                            <div class="px-8 py-5 bg-slate-50/40 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
+                            <div class="px-8 py-4 bg-slate-50/40 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
                                 <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
                                     <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Pengajuan Baru</div>
                                     <div class="text-xl font-black text-slate-800 dark:text-slate-100 mt-1" x-text="pendingSubmissions.length"></div>
@@ -584,18 +603,18 @@
                             </div>
 
                             <!-- Filter Tabs & Quick Search -->
-                            <div class="px-8 py-3.5 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 shrink-0">
+                            <div class="px-8 py-3 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 shrink-0">
                                 <div class="flex items-center gap-1.5 overflow-x-auto">
-                                    <button @click="cleanTab = 'all'" :class="cleanTab === 'all' ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                    <button @click="cleanTab = 'all'" :class="cleanTab === 'all' ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer">
                                         Semua (<span x-text="pendingSubmissions.length"></span>)
                                     </button>
-                                    <button @click="cleanTab = 'clean'" :class="cleanTab === 'clean' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                    <button @click="cleanTab = 'clean'" :class="cleanTab === 'clean' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer">
                                         🟢 Siap ACC (<span x-text="pendingSubmissions.filter(i => i.category === 'clean').length"></span>)
                                     </button>
-                                    <button @click="cleanTab = 'warning'" :class="cleanTab === 'warning' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                    <button @click="cleanTab = 'warning'" :class="cleanTab === 'warning' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer">
                                         🟡 Perhatian (<span x-text="pendingSubmissions.filter(i => i.category === 'warning').length"></span>)
                                     </button>
-                                    <button @click="cleanTab = 'critical'" :class="cleanTab === 'critical' ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                    <button @click="cleanTab = 'critical'" :class="cleanTab === 'critical' ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer">
                                         🔴 Kritis (<span x-text="pendingSubmissions.filter(i => i.category === 'critical').length"></span>)
                                     </button>
                                 </div>
@@ -814,7 +833,7 @@
                             <!-- Footer Modal -->
                             <div class="px-8 py-4 bg-slate-50/70 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center shrink-0">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SIBIMA Quality & Fairness Checker</span>
-                                <button type="button" @click="cleanDataModalOpen = false" class="px-6 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-2xs">
+                                <button type="button" @click="cleanDataModalOpen = false" class="px-6 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-2xs cursor-pointer">
                                     Tutup
                                 </button>
                             </div>
@@ -825,19 +844,32 @@
 
             <!-- MODAL 2: DETAIL AUDIT KEMIRIPAN JUDUL -->
             <template x-teleport="body">
-                <div x-show="auditModalOpen" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
-                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="auditModalOpen = false">
-                            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
-                        </div>
-                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-800 relative" style="z-index: 100000 !important;">
+                <div x-show="auditModalOpen" 
+                     class="fixed inset-0 overflow-y-auto" 
+                     style="z-index: 99999 !important;" 
+                     x-cloak 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95">
+                    
+                    <!-- Backdrop -->
+                    <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity" 
+                         @click="auditModalOpen = false" 
+                         aria-hidden="true"></div>
+
+                    <!-- Centered Modal Box -->
+                    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 text-center">
+                        <div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 relative z-50 my-auto transform transition-all"
+                             @click.stop>
                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
                                 <div>
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Audit Kemiripan Judul</h3>
                                     <p class="text-[11px] text-slate-500 font-bold uppercase mt-0.5" x-text="auditData.student + ' (' + auditData.npm + ')'"></p>
                                 </div>
-                                <button @click="auditModalOpen = false" class="text-slate-400 hover:text-slate-600 transition-colors">
+                                <button @click="auditModalOpen = false" class="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
@@ -898,7 +930,7 @@
                             </div>
 
                             <div class="px-8 py-5 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                                <button type="button" @click="auditModalOpen = false" class="px-6 py-2.5 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-sm">
+                                <button type="button" @click="auditModalOpen = false" class="px-6 py-2.5 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-sm cursor-pointer">
                                     Tutup
                                 </button>
                             </div>
@@ -909,13 +941,26 @@
 
             <!-- MODAL 3: KONFIRMASI ROLLBACK PENUGASAN PEMBIMBING -->
             <template x-teleport="body">
-                <div x-show="rollbackModalOpen" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
-                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="rollbackModalOpen = false">
-                            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
-                        </div>
-                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md w-full border border-slate-200 dark:border-slate-800 relative" style="z-index: 100000 !important;">
+                <div x-show="rollbackModalOpen" 
+                     class="fixed inset-0 overflow-y-auto" 
+                     style="z-index: 99999 !important;" 
+                     x-cloak 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95">
+                    
+                    <!-- Backdrop -->
+                    <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity" 
+                         @click="rollbackModalOpen = false" 
+                         aria-hidden="true"></div>
+
+                    <!-- Centered Modal Box -->
+                    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 text-center">
+                        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 relative z-50 my-auto transform transition-all"
+                             @click.stop>
                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-rose-50/50 dark:bg-rose-950/30 flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-900/50 text-rose-600 flex items-center justify-center shrink-0">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -948,10 +993,10 @@
                                 </div>
 
                                 <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
-                                    <button type="button" @click="rollbackModalOpen = false" class="px-5 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">
+                                    <button type="button" @click="rollbackModalOpen = false" class="px-5 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors cursor-pointer">
                                         Batal
                                     </button>
-                                    <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-rose-500/20">
+                                    <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-rose-500/20 cursor-pointer">
                                         Ya, Rollback Penugasan
                                     </button>
                                 </div>
@@ -963,4 +1008,3 @@
         @endif
     </div>
 </x-app-layout>
-
