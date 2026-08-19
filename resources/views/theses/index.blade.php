@@ -303,8 +303,8 @@
                                 <td class="py-4 px-6 text-right">
                                     @if(!$thesis->pembimbing1 || !$thesis->pembimbing2)
                                         <div x-data="{ openAssignModal: false }" class="inline-block">
-                                            <button @click="openAssignModal = true" class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-indigo-500/20">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            <button @click="openAssignModal = true" class="inline-flex items-center justify-center gap-1.5 px-4 h-8 shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider shadow-sm shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all cursor-pointer">
+                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                                 <span>Tugaskan</span>
                                             </button>
 
@@ -416,18 +416,31 @@
                                             </template>
                                         </div>
                                     @else
-                                        <div class="flex justify-end items-center gap-2" x-data="{ openEditModal: false }">
-                                            <button @click="openRollbackModal('{{ $thesis->id }}', '{{ addslashes($thesis->student->name ?? 'Mahasiswa') }}', '{{ addslashes($thesis->pembimbing1?->name ?? '-') }}', '{{ addslashes($thesis->pembimbing2?->name ?? '-') }}')" 
-                                                    class="inline-flex items-center gap-1 px-3 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs"
+                                        <div class="flex justify-end items-center gap-1.5 shrink-0 whitespace-nowrap" x-data="{ openEditModal: false }">
+                                            <!-- Rollback Button -->
+                                            <button type="button"
+                                                    @click="openRollbackModal('{{ $thesis->id }}', '{{ addslashes($thesis->student->name ?? 'Mahasiswa') }}', '{{ addslashes($thesis->pembimbing1?->name ?? '-') }}', '{{ addslashes($thesis->pembimbing2?->name ?? '-') }}')" 
+                                                    class="inline-flex items-center justify-center gap-1.5 px-3 h-8 shrink-0 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-2xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
                                                     title="Rollback / Batalkan Penugasan Pembimbing">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                                                 <span>Rollback</span>
                                             </button>
-                                            <button @click="openEditModal = true" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
-                                                Edit
+
+                                            <!-- Edit Button -->
+                                            <button type="button"
+                                                    @click="openEditModal = true" 
+                                                    class="inline-flex items-center justify-center gap-1.5 px-3 h-8 shrink-0 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-2xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                                    title="Edit Judul & Data Skripsi">
+                                                <svg class="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                <span>Edit</span>
                                             </button>
-                                            <a href="{{ route('theses.logbooks', $thesis->id) }}" class="px-3.5 py-2 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 transition-all shadow-md shadow-orange-500/20">
-                                                Logbook
+
+                                            <!-- Logbook Button -->
+                                            <a href="{{ route('theses.logbooks', $thesis->id) }}" 
+                                               class="inline-flex items-center justify-center gap-1.5 px-3.5 h-8 shrink-0 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider shadow-sm shadow-orange-500/25 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                               title="Lihat Logbook Bimbingan">
+                                                <svg class="w-3.5 h-3.5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                <span>Logbook</span>
                                             </a>
 
                                             <!-- Edit Modal -->
