@@ -83,11 +83,13 @@
                     
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                         <div class="flex items-center gap-2 flex-wrap">
-                            <button @click="cleanDataModalOpen = true" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 relative group cursor-pointer">
-                                <svg class="w-4 h-4 mr-1.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                <span>Data Clean Pengajuan</span>
+                            <button @click="cleanDataModalOpen = true" 
+                                    class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md shadow-emerald-500/25 relative group cursor-pointer"
+                                    style="background-color: #059669 !important; color: #ffffff !important;">
+                                <svg class="w-4 h-4 mr-1.5 shrink-0" style="color: #ffffff !important;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                <span class="font-black" style="color: #ffffff !important;">Data Clean Pengajuan</span>
                                 @if(isset($pendingSummary) && $pendingSummary['total'] > 0)
-                                    <span class="ml-2 px-1.5 py-0.5 rounded-full text-[9px] bg-white text-emerald-700 font-black shadow-2xs">
+                                    <span class="ml-2 px-2 py-0.5 rounded-full text-[9px] font-black" style="background-color: #ffffff !important; color: #047857 !important;">
                                         {{ $pendingSummary['total'] }}
                                     </span>
                                 @endif
