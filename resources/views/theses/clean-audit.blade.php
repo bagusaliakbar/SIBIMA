@@ -33,27 +33,30 @@
     }">
 
         <!-- Header Hero Banner -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white p-8 sm:p-10 shadow-xl border border-emerald-700/30">
+        <div class="relative overflow-hidden rounded-3xl text-white p-8 sm:p-10 shadow-xl border border-emerald-900/30"
+             style="background: linear-gradient(135deg, #064e3b 0%, #115e59 50%, #0f172a 100%) !important; color: #ffffff !important;">
             <div class="absolute -right-12 -top-12 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute right-32 -bottom-16 w-64 h-64 bg-teal-400/15 rounded-full blur-3xl pointer-events-none"></div>
             
             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div class="space-y-2 max-w-2xl">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-[10px] font-black uppercase tracking-widest">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
+                         style="background-color: rgba(16, 185, 129, 0.2) !important; border: 1px solid rgba(52, 211, 153, 0.4) !important; color: #a7f3d0 !important;">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         Quality & Fairness Audit Engine
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight uppercase" style="color: #ffffff !important;">
                         Pusat Validasi & Data Clean Pengajuan Baru
                     </h1>
-                    <p class="text-xs sm:text-sm text-emerald-100/80 leading-relaxed font-medium">
+                    <p class="text-xs sm:text-sm leading-relaxed font-medium" style="color: #d1fae5 !important;">
                         Audit otomatis untuk mengevaluasi orisinalitas judul, kesiapan deskripsi abstrak, serta pembagian kuota dosen pembimbing yang adil dan seimbang sebelum disetujui (ACC).
                     </p>
                 </div>
 
                 <div class="flex items-center gap-3 shrink-0">
                     <a href="{{ route('theses.index') }}" 
-                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-black uppercase tracking-wider backdrop-blur-md transition-all shadow-md">
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider backdrop-blur-md transition-all shadow-md hover:brightness-110 cursor-pointer"
+                       style="background-color: rgba(255, 255, 255, 0.18) !important; border: 1px solid rgba(255, 255, 255, 0.35) !important; color: #ffffff !important;">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                         Kembali ke Daftar Skripsi
                     </a>
