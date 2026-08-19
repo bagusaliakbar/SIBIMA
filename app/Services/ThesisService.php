@@ -19,6 +19,16 @@ class ThesisService
         $studentId = $data['student_id'] ?? Auth::id();
         $student = User::find($studentId);
 
+        $existing = Thesis::where('student_id', $studentId)
+            ->whereIn('status', ['pending', 'active'])
+            ->first();
+
+        if ($existing) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'title' => ['Mahasiswa ini sudah memiliki pengajuan skripsi aktif/pending.']
+            ]);
+        }
+
         $thesis = Thesis::create([
             'student_id'               => $studentId,
             'title'                    => $data['title'],

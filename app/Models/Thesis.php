@@ -202,6 +202,7 @@ class Thesis extends Model
             if (empty($inputTokens)) return 0;
 
             $otherTitles = self::where('id', '!=', $this->id)
+                ->when($this->student_id, fn($q) => $q->where('student_id', '!=', $this->student_id))
                 ->whereNotNull('title')
                 ->pluck('title')
                 ->filter(fn($t) => !in_array(strtoupper(trim($t)), $placeholders) && strlen(trim($t)) >= 8);
@@ -276,6 +277,7 @@ class Thesis extends Model
             // Check against active theses
             $otherTheses = self::with('student')
                 ->where('id', '!=', $this->id)
+                ->when($this->student_id, fn($q) => $q->where('student_id', '!=', $this->student_id))
                 ->whereNotNull('title')
                 ->get();
 

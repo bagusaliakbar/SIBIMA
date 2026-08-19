@@ -101,7 +101,11 @@ class ThesisController extends Controller
 
         $inputTitle = $request->title;
         
-        $theses = Thesis::with('student')->get();
+        $thesesQuery = Thesis::with('student');
+        if (Auth::check() && Auth::user()->role === 'mahasiswa') {
+            $thesesQuery->where('student_id', '!=', Auth::id());
+        }
+        $theses = $thesesQuery->get();
         $repositories = \App\Models\ThesisRepository::all();
         
         $similarTitles = [];
