@@ -13,12 +13,6 @@
     <div class="w-full space-y-6 pb-12" x-data="{
         cleanTab: '{{ $filterCategory ?? 'all' }}',
         cleanSearch: '{{ $search ?? '' }}',
-        auditModalOpen: false,
-        auditData: { student: '', npm: '', title: '', score: 0, matches: [] },
-        openAuditModal(data) {
-            this.auditData = data;
-            this.auditModalOpen = true;
-        },
         items: (typeof window.sibimaPendingSubmissions !== 'undefined' ? window.sibimaPendingSubmissions : []),
         get filteredItems() {
             return this.items.filter(item => {
@@ -181,7 +175,7 @@
                             </span>
 
                             <!-- Similarity Score Button (Clickable for Modal Details) -->
-                            <button @click="openAuditModal({
+                            <button @click="$dispatch('open-audit-modal', {
                                 student: item.student_name,
                                 npm: item.student_identifier,
                                 title: item.title,
@@ -365,103 +359,6 @@
                 </div>
             </template>
         </div>
-
-        <!-- MODAL: DETAIL AUDIT KEMIRIPAN JUDUL -->
-        <template x-teleport="body">
-            <div x-show="auditModalOpen" 
-                 class="fixed inset-0 overflow-y-auto" 
-                 style="z-index: 99999 !important;" 
-                 x-cloak 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95">
-                
-                <!-- Backdrop -->
-                <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity" 
-                     @click="auditModalOpen = false" 
-                     aria-hidden="true"></div>
-
-                <!-- Centered Modal Box -->
-                <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 text-center">
-                    <div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 relative z-50 my-auto transform transition-all"
-                         @click.stop>
-                        <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
-                            <div>
-                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Audit Kemiripan Judul</h3>
-                                <p class="text-[11px] text-slate-500 font-bold uppercase mt-0.5" x-text="auditData.student + ' (' + auditData.npm + ')'"></p>
-                            </div>
-                            <button @click="auditModalOpen = false" class="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </div>
-
-                        <div class="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                            <!-- Checked Title -->
-                            <div>
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul yang Diuji</span>
-                                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs font-black uppercase leading-relaxed text-slate-800 dark:text-slate-100" x-text="auditData.title"></div>
-                            </div>
-
-                            <!-- Overall Score Gauge -->
-                            <div class="p-4 rounded-2xl border flex items-center justify-between"
-                                 :class="auditData.score >= 66 ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/60' : (auditData.score >= 35 ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/60' : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/60')">
-                                <div>
-                                    <div class="text-[10px] font-black uppercase tracking-widest">Tingkat Kemiripan Maksimal</div>
-                                    <div class="text-2xl font-black mt-0.5" x-text="auditData.score + '%'"></div>
-                                </div>
-                                <div class="text-right text-[11px] font-extrabold uppercase"
-                                     x-text="auditData.score >= 66 ? '🔴 Sangat Mirip / Indikasi Duplikasi' : (auditData.score >= 35 ? '🟡 Mirip Moderat' : '🟢 Sangat Unik / Orisinal')"></div>
-                            </div>
-
-                            <!-- Matches List -->
-                            <div>
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">Dokumen Pembanding Terdeteksi:</span>
-                                <div class="space-y-3">
-                                    <template x-for="(match, idx) in auditData.matches" :key="idx">
-                                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
-                                            <div class="flex items-center justify-between gap-2">
-                                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50" x-text="match.source"></span>
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-black"
-                                                      :class="match.percentage >= 66 ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'"
-                                                      x-text="match.percentage + '% Mirip'"></span>
-                                            </div>
-                                            <div class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase" x-text="match.title"></div>
-                                            <div class="text-[10px] text-slate-500 flex items-center gap-2">
-                                                <span x-text="'Penulis: ' + match.author"></span>
-                                                <span>•</span>
-                                                <span x-text="'Tahun: ' + match.year"></span>
-                                            </div>
-                                            <template x-if="match.matched_words && match.matched_words.length > 0">
-                                                <div class="flex flex-wrap gap-1 pt-1">
-                                                    <span class="text-[9px] font-bold text-slate-400">Kata Kunci Cocok:</span>
-                                                    <template x-for="word in match.matched_words" :key="word">
-                                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300" x-text="word"></span>
-                                                    </template>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </template>
-                                    <template x-if="!auditData.matches || auditData.matches.length === 0">
-                                        <div class="p-6 text-center text-xs font-bold text-slate-400 border border-dashed rounded-2xl">
-                                            Tidak ditemukan kemiripan signifikan dengan repositori skripsi yang ada.
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="px-8 py-5 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                            <button type="button" @click="auditModalOpen = false" class="px-6 py-2.5 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-sm cursor-pointer">
-                                Tutup
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
 
     </div>
 </x-app-layout>
