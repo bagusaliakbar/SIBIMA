@@ -97,6 +97,42 @@ class ThesisService
     }
 
     /**
+     * Unassign / Rollback supervisors for a thesis back to pending status.
+     */
+    public function unassignPembimbing(Thesis $thesis)
+    {
+        $oldP1Name = $thesis->pembimbing1?->name ?? 'Belum ada';
+        $oldP2Name = $thesis->pembimbing2?->name ?? 'Belum ada';
+        $student = $thesis->student;
+
+        $thesis->update([
+            'pembimbing1_id' => null,
+            'pembimbing2_id' => null,
+            'status'         => 'pending',
+            'acc_up_p1'      => false,
+            'acc_up_p2'      => false,
+            'acc_sidang_p1'  => false,
+            'acc_sidang_p2'  => false,
+        ]);
+
+        $userName = Auth::user()->name ?? 'Admin';
+        ActivityLog::log('Rollback Pembimbing', "{$userName} membatalkan penugasan pembimbing (sebelumnya P1: {$oldP1Name}, P2: {$oldP2Name}) dan mengembalikan status skripsi {$student->name} ke Menunggu (Pending).", 'Skripsi', $thesis, [
+            'previous_p1' => $oldP1Name,
+            'previous_p2' => $oldP2Name,
+            'status' => 'pending'
+        ]);
+
+        if ($student) {
+            $student->notify(new GeneralNotification(
+                'Penugasan Pembimbing Dibatalkan / Di-reset',
+                "Penugasan pembimbing skripsi Anda telah di-reset oleh Kaprodi/Admin ke status Menunggu (Pending).",
+                route('dashboard'),
+                'warning'
+            ));
+        }
+    }
+
+    /**
      * Update thesis data.
      */
     public function updateThesis(Thesis $thesis, array $data)

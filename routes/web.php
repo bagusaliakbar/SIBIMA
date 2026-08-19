@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/theses/check-title', [App\Http\Controllers\ThesisController::class, 'checkTitle'])->name('theses.check-title');
     Route::resource('theses', App\Http\Controllers\ThesisController::class);
     Route::post('/theses/{thesis}/assign', [App\Http\Controllers\ThesisController::class, 'assignPembimbing'])->name('theses.assign');
+    Route::post('/theses/{thesis}/unassign', [App\Http\Controllers\ThesisController::class, 'unassignPembimbing'])->name('theses.unassign');
     // Seminar Applications
     Route::get('/seminar-applications', [App\Http\Controllers\SeminarApplicationController::class, 'index'])->name('seminar-applications.index');
     Route::post('/seminar-applications', [App\Http\Controllers\SeminarApplicationController::class, 'store'])->name('seminar-applications.store');

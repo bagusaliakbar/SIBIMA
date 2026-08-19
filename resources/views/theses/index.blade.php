@@ -11,8 +11,30 @@
         openAuditModal(data) {
             this.auditData = data;
             this.auditModalOpen = true;
+        },
+        cleanDataModalOpen: false,
+        cleanTab: 'all',
+        cleanSearch: '',
+        selectedPending: null,
+        rollbackModalOpen: false,
+        rollbackData: { id: null, student: '', p1: '', p2: '' },
+        openRollbackModal(id, student, p1, p2) {
+            this.rollbackData = { id: id, student: student, p1: p1, p2: p2 };
+            this.rollbackModalOpen = true;
+        },
+        pendingSubmissions: {{ isset($pendingCleanData) ? $pendingCleanData->toJson() : '[]' }},
+        get filteredPending() {
+            return this.pendingSubmissions.filter(item => {
+                const matchTab = this.cleanTab === 'all' || item.category === this.cleanTab;
+                const matchSearch = !this.cleanSearch || 
+                    item.student_name.toLowerCase().includes(this.cleanSearch.toLowerCase()) ||
+                    item.student_identifier.toLowerCase().includes(this.cleanSearch.toLowerCase()) ||
+                    item.title.toLowerCase().includes(this.cleanSearch.toLowerCase());
+                return matchTab && matchSearch;
+            });
         }
-    }">
+    }"
+    @open-audit-modal.window="openAuditModal($event.detail)">
         <!-- Status Tabs Navigation -->
         <div class="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800 overflow-x-auto pb-px custom-scrollbar">
             @if(Auth::user()->role === 'dosen')
@@ -60,7 +82,17 @@
                         :params="['status' => $status ?? '']" />
                     
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button @click="cleanDataModalOpen = true" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 relative group cursor-pointer">
+                                <svg class="w-4 h-4 mr-1.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                <span>Data Clean Pengajuan</span>
+                                @if(isset($pendingSummary) && $pendingSummary['total'] > 0)
+                                    <span class="ml-2 px-1.5 py-0.5 rounded-full text-[9px] bg-white text-emerald-700 font-black shadow-2xs">
+                                        {{ $pendingSummary['total'] }}
+                                    </span>
+                                @endif
+                            </button>
+
                             <a href="{{ route('theses.kanban') }}" class="inline-flex items-center px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all shadow-sm">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
                                 Mode Kanban
@@ -397,11 +429,17 @@
                                             </template>
                                         </div>
                                     @else
-                                        <div class="flex justify-end gap-2" x-data="{ openEditModal: false }">
-                                            <button @click="openEditModal = true" class="px-4 py-2 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
+                                        <div class="flex justify-end items-center gap-2" x-data="{ openEditModal: false }">
+                                            <button @click="openRollbackModal('{{ $thesis->id }}', '{{ addslashes($thesis->student->name ?? 'Mahasiswa') }}', '{{ addslashes($thesis->pembimbing1?->name ?? '-') }}', '{{ addslashes($thesis->pembimbing2?->name ?? '-') }}')" 
+                                                    class="inline-flex items-center gap-1 px-3 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs"
+                                                    title="Rollback / Batalkan Penugasan Pembimbing">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                                                <span>Rollback</span>
+                                            </button>
+                                            <button @click="openEditModal = true" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
                                                 Edit
                                             </button>
-                                            <a href="{{ route('theses.logbooks', $thesis->id) }}" class="px-4 py-2 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20">
+                                            <a href="{{ route('theses.logbooks', $thesis->id) }}" class="px-3.5 py-2 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 transition-all shadow-md shadow-orange-500/20">
                                                 Logbook
                                             </a>
 
@@ -493,5 +531,434 @@
                 </tbody>
             </table>
         </x-table-card>
+
+        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
+            <!-- MODAL 1: PUSAT AUDIT DATA CLEAN PENGAJUAN MAHASISWA BARU -->
+            <template x-teleport="body">
+                <div x-show="cleanDataModalOpen" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="cleanDataModalOpen = false">
+                            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
+                        </div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-5xl w-full border border-slate-200 dark:border-slate-800 relative max-h-[90vh] flex flex-col" style="z-index: 100000 !important;">
+                            
+                            <!-- Header Modal -->
+                            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 flex flex-wrap justify-between items-center gap-4 shrink-0">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                        </span>
+                                        <div>
+                                            <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Pusat Validasi & Data Clean Pengajuan Baru</h3>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">Audit Orisinalitas Judul, Kesiapan Abstrak & Analisis Kuota Dosen Pembimbing</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button @click="cleanDataModalOpen = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+
+                            <!-- KPI Stats Summary Row -->
+                            <div class="px-8 py-5 bg-slate-50/40 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
+                                <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Pengajuan Baru</div>
+                                    <div class="text-xl font-black text-slate-800 dark:text-slate-100 mt-1" x-text="pendingSubmissions.length"></div>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 shadow-2xs">
+                                    <div class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">🟢 100% Bersih (Siap ACC)</div>
+                                    <div class="text-xl font-black text-emerald-700 dark:text-emerald-300 mt-1" x-text="pendingSubmissions.filter(i => i.category === 'clean').length"></div>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 shadow-2xs">
+                                    <div class="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">🟡 Perlu Penyesuaian</div>
+                                    <div class="text-xl font-black text-amber-700 dark:text-amber-300 mt-1" x-text="pendingSubmissions.filter(i => i.category === 'warning').length"></div>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40 shadow-2xs">
+                                    <div class="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">🔴 Duplikasi Kritis</div>
+                                    <div class="text-xl font-black text-rose-700 dark:text-rose-300 mt-1" x-text="pendingSubmissions.filter(i => i.category === 'critical').length"></div>
+                                </div>
+                            </div>
+
+                            <!-- Filter Tabs & Quick Search -->
+                            <div class="px-8 py-3.5 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 shrink-0">
+                                <div class="flex items-center gap-1.5 overflow-x-auto">
+                                    <button @click="cleanTab = 'all'" :class="cleanTab === 'all' ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                        Semua (<span x-text="pendingSubmissions.length"></span>)
+                                    </button>
+                                    <button @click="cleanTab = 'clean'" :class="cleanTab === 'clean' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                        🟢 Siap ACC (<span x-text="pendingSubmissions.filter(i => i.category === 'clean').length"></span>)
+                                    </button>
+                                    <button @click="cleanTab = 'warning'" :class="cleanTab === 'warning' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                        🟡 Perhatian (<span x-text="pendingSubmissions.filter(i => i.category === 'warning').length"></span>)
+                                    </button>
+                                    <button @click="cleanTab = 'critical'" :class="cleanTab === 'critical' ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100'" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">
+                                        🔴 Kritis (<span x-text="pendingSubmissions.filter(i => i.category === 'critical').length"></span>)
+                                    </button>
+                                </div>
+                                <div class="relative w-full sm:w-64">
+                                    <input type="text" x-model="cleanSearch" placeholder="Cari nama, NPM, judul..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                                    <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </div>
+                            </div>
+
+                            <!-- List of Clean Submissions (Scrollable) -->
+                            <div class="px-8 py-6 overflow-y-auto space-y-4 flex-1">
+                                <template x-for="item in filteredPending" :key="item.id">
+                                    <div class="p-6 rounded-3xl border transition-all" 
+                                         :class="item.category === 'clean' ? 'bg-white dark:bg-slate-900 border-emerald-200 dark:border-emerald-900/60 shadow-md shadow-emerald-500/5' : (item.category === 'warning' ? 'bg-white dark:bg-slate-900 border-amber-200 dark:border-amber-900/60 shadow-md shadow-amber-500/5' : 'bg-white dark:bg-slate-900 border-rose-200 dark:border-rose-900/60 shadow-md shadow-rose-500/5')">
+                                        
+                                        <!-- Top Row: Student & Clean Badge -->
+                                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0">
+                                                    <img :src="item.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(item.student_name)" :alt="item.student_name" class="w-full h-full object-cover">
+                                                </div>
+                                                <div>
+                                                    <div class="font-black text-slate-800 dark:text-slate-100 uppercase text-xs tracking-tight" x-text="item.student_name"></div>
+                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                        <span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400" x-text="item.student_identifier"></span>
+                                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50" x-text="'Angkatan ' + item.entry_year"></span>
+                                                        <span class="text-[9px] font-bold text-slate-400" x-text="'Diajukan: ' + item.created_at"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-2">
+                                                <!-- Category Badge -->
+                                                <span class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 border"
+                                                      :class="item.category === 'clean' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60' : (item.category === 'warning' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/60' : 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60')">
+                                                    <span class="w-2 h-2 rounded-full" :class="item.category === 'clean' ? 'bg-emerald-500' : (item.category === 'warning' ? 'bg-amber-500' : 'bg-rose-500')"></span>
+                                                    <span x-text="item.category_label"></span>
+                                                </span>
+
+                                                <!-- Similarity Button -->
+                                                <button @click="openAuditModal({
+                                                    student: item.student_name,
+                                                    npm: item.student_identifier,
+                                                    title: item.title,
+                                                    score: item.similarity_score,
+                                                    matches: item.similarity_matches
+                                                })" class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer"
+                                                        :class="item.similarity_score >= 66 ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100 dark:bg-rose-950/50' : (item.similarity_score >= 35 ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-950/50' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/50')">
+                                                    <span x-text="item.similarity_score + '% Kemiripan'"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Middle Section: Title & Abstract -->
+                                        <div class="py-4 space-y-3">
+                                            <div>
+                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Rencana Judul Skripsi</span>
+                                                <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-relaxed" x-text="item.title"></h4>
+                                            </div>
+
+                                            <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                                                <div class="flex items-center justify-between mb-1.5">
+                                                    <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Deskripsi / Abstrak</span>
+                                                    <span class="text-[9px] font-bold text-slate-400" x-text="item.word_count + ' kata'"></span>
+                                                </div>
+                                                <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed italic line-clamp-3" x-text="item.abstract || 'Tidak ada deskripsi yang dicantumkan.'"></p>
+                                            </div>
+
+                                            <!-- Audit Checklist Highlights -->
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+                                                <!-- Strengths -->
+                                                <template x-if="item.strengths && item.strengths.length > 0">
+                                                    <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 space-y-1">
+                                                        <span class="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                            Kesesuaian Valid:
+                                                        </span>
+                                                        <ul class="text-[10px] text-emerald-800 dark:text-emerald-300 font-medium space-y-0.5">
+                                                            <template x-for="st in item.strengths" :key="st">
+                                                                <li class="flex items-start gap-1.5">
+                                                                    <span class="text-emerald-500">•</span>
+                                                                    <span x-text="st"></span>
+                                                                </li>
+                                                            </template>
+                                                        </ul>
+                                                    </div>
+                                                </template>
+
+                                                <!-- Issues / Warnings -->
+                                                <template x-if="item.issues && item.issues.length > 0">
+                                                    <div class="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 space-y-1">
+                                                        <span class="text-[9px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest flex items-center gap-1">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                                            Catatan / Perhatian:
+                                                        </span>
+                                                        <ul class="text-[10px] text-amber-800 dark:text-amber-300 font-medium space-y-0.5">
+                                                            <template x-for="iss in item.issues" :key="iss">
+                                                                <li class="flex items-start gap-1.5">
+                                                                    <span class="text-amber-500">•</span>
+                                                                    <span x-text="iss"></span>
+                                                                </li>
+                                                            </template>
+                                                        </ul>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <!-- Bottom Section: Supervisors & Direct Assignment Actions -->
+                                        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                            
+                                            <!-- Usulan Mahasiswa -->
+                                            <div class="space-y-2">
+                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Usulan Dosen oleh Mahasiswa:</span>
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                    <!-- Usulan P1 -->
+                                                    <div class="p-2.5 rounded-xl border flex flex-col justify-between"
+                                                         :class="item.req_p1 ? (item.req_p1.is_full ? 'bg-rose-50/50 border-rose-200 dark:bg-rose-950/20' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700') : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300'">
+                                                        <div>
+                                                            <div class="text-[8px] font-black text-slate-400 uppercase tracking-widest">P1 Usulan</div>
+                                                            <div class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase truncate" x-text="item.req_p1 ? item.req_p1.name : 'Tidak Memilih'"></div>
+                                                        </div>
+                                                        <template x-if="item.req_p1">
+                                                            <div class="mt-2 flex items-center justify-between text-[9px] font-bold">
+                                                                <span :class="item.req_p1.is_full ? 'text-rose-600' : 'text-slate-500'" x-text="'Beban: ' + item.req_p1.workload + '/' + item.req_p1.max_quota"></span>
+                                                                <span class="text-indigo-600 dark:text-indigo-400" x-text="item.req_p1.match_score > 0 ? '✨ Match: ' + item.req_p1.match_score : ''"></span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+
+                                                    <!-- Usulan P2 -->
+                                                    <div class="p-2.5 rounded-xl border flex flex-col justify-between"
+                                                         :class="item.req_p2 ? (item.req_p2.is_full ? 'bg-rose-50/50 border-rose-200 dark:bg-rose-950/20' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700') : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300'">
+                                                        <div>
+                                                            <div class="text-[8px] font-black text-slate-400 uppercase tracking-widest">P2 Usulan</div>
+                                                            <div class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase truncate" x-text="item.req_p2 ? item.req_p2.name : 'Tidak Memilih'"></div>
+                                                        </div>
+                                                        <template x-if="item.req_p2">
+                                                            <div class="mt-2 flex items-center justify-between text-[9px] font-bold">
+                                                                <span :class="item.req_p2.is_full ? 'text-rose-600' : 'text-slate-500'" x-text="'Beban: ' + item.req_p2.workload + '/' + item.req_p2.max_quota"></span>
+                                                                <span class="text-indigo-600 dark:text-indigo-400" x-text="item.req_p2.match_score > 0 ? '✨ Match: ' + item.req_p2.match_score : ''"></span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Rekomendasi Pintar & Quick Action -->
+                                            <div class="space-y-2 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Rekomendasi AI Sesuai Topik:</span>
+                                                    <template x-if="item.recommended_p1">
+                                                        <span class="text-[9px] font-black text-emerald-600">Kuota Tersedia</span>
+                                                    </template>
+                                                </div>
+
+                                                <template x-if="item.recommended_p1">
+                                                    <div class="p-2 bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/40 text-[10px] space-y-1">
+                                                        <div class="flex items-center justify-between font-extrabold uppercase">
+                                                            <span class="text-indigo-800 dark:text-indigo-300 truncate">1. <span x-text="item.recommended_p1.name"></span></span>
+                                                            <span class="text-indigo-600 dark:text-indigo-400 shrink-0" x-text="'(' + item.recommended_p1.workload + '/' + item.recommended_p1.max_quota + ')'"></span>
+                                                        </div>
+                                                        <template x-if="item.recommended_p2">
+                                                            <div class="flex items-center justify-between font-extrabold uppercase">
+                                                                <span class="text-purple-800 dark:text-purple-300 truncate">2. <span x-text="item.recommended_p2.name"></span></span>
+                                                                <span class="text-purple-600 dark:text-purple-400 shrink-0" x-text="'(' + item.recommended_p2.workload + '/' + item.recommended_p2.max_quota + ')'"></span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+
+                                                <!-- Action Buttons Form -->
+                                                <div class="flex flex-wrap items-center gap-2 pt-1">
+                                                    <!-- Direct Assign Sesuai Usulan (if valid & not full) -->
+                                                    <template x-if="item.req_p1 && item.req_p2 && !item.req_p1.is_full && !item.req_p2.is_full">
+                                                        <form :action="'/theses/' + item.id + '/assign'" method="POST" class="inline-block">
+                                                            @csrf
+                                                            <input type="hidden" name="pembimbing1_id" :value="item.req_p1.id">
+                                                            <input type="hidden" name="pembimbing2_id" :value="item.req_p2.id">
+                                                            <button type="submit" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20 cursor-pointer">
+                                                                ✓ ACC Sesuai Usulan
+                                                            </button>
+                                                        </form>
+                                                    </template>
+
+                                                    <!-- Direct Assign Sesuai Rekomendasi -->
+                                                    <template x-if="item.recommended_p1 && item.recommended_p2">
+                                                        <form :action="'/theses/' + item.id + '/assign'" method="POST" class="inline-block">
+                                                            @csrf
+                                                            <input type="hidden" name="pembimbing1_id" :value="item.recommended_p1.id">
+                                                            <input type="hidden" name="pembimbing2_id" :value="item.recommended_p2.id">
+                                                            <button type="submit" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-md shadow-indigo-500/20 cursor-pointer">
+                                                                ✨ ACC Rekomendasi
+                                                            </button>
+                                                        </form>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </template>
+
+                                <!-- Empty State Inside Clean Modal -->
+                                <template x-if="filteredPending.length === 0">
+                                    <div class="text-center py-12 space-y-3">
+                                        <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center">
+                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <h4 class="text-sm font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest">Semua Pengajuan Bersih & Terproses</h4>
+                                        <p class="text-xs text-slate-400 max-w-sm mx-auto">Tidak ada pengajuan mahasiswa baru dalam kriteria filter ini.</p>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Footer Modal -->
+                            <div class="px-8 py-4 bg-slate-50/70 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center shrink-0">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SIBIMA Quality & Fairness Checker</span>
+                                <button type="button" @click="cleanDataModalOpen = false" class="px-6 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-2xs">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- MODAL 2: DETAIL AUDIT KEMIRIPAN JUDUL -->
+            <template x-teleport="body">
+                <div x-show="auditModalOpen" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="auditModalOpen = false">
+                            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
+                        </div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-800 relative" style="z-index: 100000 !important;">
+                            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Audit Kemiripan Judul</h3>
+                                    <p class="text-[11px] text-slate-500 font-bold uppercase mt-0.5" x-text="auditData.student + ' (' + auditData.npm + ')'"></p>
+                                </div>
+                                <button @click="auditModalOpen = false" class="text-slate-400 hover:text-slate-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+
+                            <div class="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+                                <!-- Checked Title -->
+                                <div>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul yang Diuji</span>
+                                    <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs font-black uppercase leading-relaxed text-slate-800 dark:text-slate-100" x-text="auditData.title"></div>
+                                </div>
+
+                                <!-- Overall Score Gauge -->
+                                <div class="p-4 rounded-2xl border flex items-center justify-between"
+                                     :class="auditData.score >= 66 ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/60' : (auditData.score >= 35 ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/60' : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/60')">
+                                    <div>
+                                        <div class="text-[10px] font-black uppercase tracking-widest">Tingkat Kemiripan Maksimal</div>
+                                        <div class="text-2xl font-black mt-0.5" x-text="auditData.score + '%'"></div>
+                                    </div>
+                                    <div class="text-right text-[11px] font-extrabold uppercase"
+                                         x-text="auditData.score >= 66 ? '🔴 Sangat Mirip / Indikasi Duplikasi' : (auditData.score >= 35 ? '🟡 Mirip Moderat' : '🟢 Sangat Unik / Orisinal')"></div>
+                                </div>
+
+                                <!-- Matches List -->
+                                <div>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">Dokumen Pembanding Terdeteksi:</span>
+                                    <div class="space-y-3">
+                                        <template x-for="(match, idx) in auditData.matches" :key="idx">
+                                            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+                                                <div class="flex items-center justify-between gap-2">
+                                                    <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50" x-text="match.source"></span>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-black"
+                                                          :class="match.percentage >= 66 ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'"
+                                                          x-text="match.percentage + '% Mirip'"></span>
+                                                </div>
+                                                <div class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase" x-text="match.title"></div>
+                                                <div class="text-[10px] text-slate-500 flex items-center gap-2">
+                                                    <span x-text="'Penulis: ' + match.author"></span>
+                                                    <span>•</span>
+                                                    <span x-text="'Tahun: ' + match.year"></span>
+                                                </div>
+                                                <template x-if="match.matched_words && match.matched_words.length > 0">
+                                                    <div class="flex flex-wrap gap-1 pt-1">
+                                                        <span class="text-[9px] font-bold text-slate-400">Kata Kunci Cocok:</span>
+                                                        <template x-for="word in match.matched_words" :key="word">
+                                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300" x-text="word"></span>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                        <template x-if="!auditData.matches || auditData.matches.length === 0">
+                                            <div class="p-6 text-center text-xs font-bold text-slate-400 border border-dashed rounded-2xl">
+                                                Tidak ditemukan kemiripan signifikan dengan repositori skripsi yang ada.
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="px-8 py-5 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                                <button type="button" @click="auditModalOpen = false" class="px-6 py-2.5 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-sm">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- MODAL 3: KONFIRMASI ROLLBACK PENUGASAN PEMBIMBING -->
+            <template x-teleport="body">
+                <div x-show="rollbackModalOpen" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="rollbackModalOpen = false">
+                            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
+                        </div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md w-full border border-slate-200 dark:border-slate-800 relative" style="z-index: 100000 !important;">
+                            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-rose-50/50 dark:bg-rose-950/30 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-900/50 text-rose-600 flex items-center justify-center shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-black text-rose-800 dark:text-rose-200 uppercase tracking-widest">Konfirmasi Rollback Pembimbing</h3>
+                                    <p class="text-[10px] text-rose-600 dark:text-rose-400 font-bold uppercase mt-0.5">Kembalikan status skripsi ke Menunggu</p>
+                                </div>
+                            </div>
+
+                            <form :action="'/theses/' + rollbackData.id + '/unassign'" method="POST" class="p-8 space-y-5">
+                                @csrf
+                                <div class="space-y-3">
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                        Apakah Anda yakin ingin membatalkan penugasan dosen pembimbing untuk mahasiswa <strong class="text-slate-800 dark:text-white uppercase" x-text="rollbackData.student"></strong>?
+                                    </p>
+                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400 uppercase font-black text-[9px]">Pembimbing 1 Saat Ini:</span>
+                                            <span class="font-extrabold text-slate-700 dark:text-slate-200" x-text="rollbackData.p1"></span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-400 uppercase font-black text-[9px]">Pembimbing 2 Saat Ini:</span>
+                                            <span class="font-extrabold text-slate-700 dark:text-slate-200" x-text="rollbackData.p2"></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold italic">
+                                        * Status skripsi akan dikembalikan ke 'pending', kuota pembimbing akan dilepaskan, dan seluruh riwayat ACC awal akan di-reset.
+                                    </p>
+                                </div>
+
+                                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
+                                    <button type="button" @click="rollbackModalOpen = false" class="px-5 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">
+                                        Batal
+                                    </button>
+                                    <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-rose-500/20">
+                                        Ya, Rollback Penugasan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        @endif
     </div>
 </x-app-layout>
+

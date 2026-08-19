@@ -272,7 +272,25 @@ class ThesisController extends Controller
                     $dosen->total_workload = $dosen->p1_count + $dosen->p2_count;
                     return $dosen;
                 });
-            return view('theses.index', compact('theses', 'dosens', 'search', 'status'));
+
+            // Compute Clean Data Audit for all pending thesis submissions
+            $pendingTheses = Thesis::with(['student', 'requestedPembimbing1', 'requestedPembimbing2'])
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $pendingCleanData = $pendingTheses->map(function($thesis) use ($dosens) {
+                return $thesis->getAuditCleanData($dosens);
+            });
+
+            $pendingSummary = [
+                'total' => $pendingCleanData->count(),
+                'clean_count' => $pendingCleanData->where('category', 'clean')->count(),
+                'warning_count' => $pendingCleanData->where('category', 'warning')->count(),
+                'critical_count' => $pendingCleanData->where('category', 'critical')->count(),
+            ];
+
+            return view('theses.index', compact('theses', 'dosens', 'search', 'status', 'pendingCleanData', 'pendingSummary'));
         }
 
         return view('theses.index', compact('theses', 'search', 'status'));
@@ -283,6 +301,18 @@ class ThesisController extends Controller
         $this->thesisService->assignPembimbing($thesis, $request->validated());
 
         return redirect()->back()->with('success', 'Dosen pembimbing berhasil ditugaskan.');
+    }
+
+    public function unassignPembimbing(Thesis $thesis)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $this->thesisService->unassignPembimbing($thesis);
+
+        return redirect()->back()->with('success', 'Penugasan pembimbing berhasil dibatalkan (di-rollback) dan status dikembalikan ke Menunggu.');
     }
 
     public function update(UpdateThesisRequest $request, Thesis $thesis)
