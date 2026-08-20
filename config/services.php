@@ -38,6 +38,9 @@ return [
     'whatsapp' => [
         'token' => env('WHATSAPP_TOKEN'),
         'base_url' => env('WHATSAPP_BASE_URL', 'https://api.fonnte.com/send'),
+        'delay' => env('WHATSAPP_DELAY', '5-12'), // Jeda acak 5-12 detik per pesan untuk hindari spam filter
+        'typing' => env('WHATSAPP_TYPING', true), // Simulasi status mengetik
+        'bot_number' => env('WHATSAPP_BOT_NUMBER', ''), // Nomor WhatsApp Bot SIBIMA untuk ditampilkan di banner kontak
     ],
 
 ];

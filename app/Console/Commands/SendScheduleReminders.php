@@ -89,10 +89,16 @@ class SendScheduleReminders extends Command
             $detail->schedule->moderator ?? null
         ])->filter()->unique('id');
 
+        $staggerIndex = 0;
         foreach ($recipients as $user) {
             try {
-                $user->notify(new ScheduleReminderNotification($title, $message, $scheduleData));
-                $this->line("Sent {$label} to: {$user->name} ({$user->role})");
+                // Stagger queued jobs with a 6-second interval to avoid burst spam detection
+                $delaySeconds = $staggerIndex * 6;
+                $notification = (new ScheduleReminderNotification($title, $message, $scheduleData))->delay(now()->addSeconds($delaySeconds));
+                
+                $user->notify($notification);
+                $this->line("Queued {$label} for {$user->name} ({$user->role}) with +{$delaySeconds}s delay");
+                $staggerIndex++;
             } catch (\Exception $e) {
                 $this->error("Failed to notify {$user->name}: " . $e->getMessage());
             }

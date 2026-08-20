@@ -70,6 +70,12 @@ class WaTemplate extends Model
             }
         }
 
+        // Support Spintax resolution if used in templates, e.g. {Halo|Hai|Yth.|Salam}
+        $templateText = preg_replace_callback('/\{([a-zA-Z0-9_\s\.\,\!\?\-]+\|[a-zA-Z0-9_\s\.\,\!\?\-\|]+)\}/', function ($matches) {
+            $options = explode('|', $matches[1]);
+            return trim($options[array_rand($options)]);
+        }, $templateText);
+
         return $templateText;
     }
 }

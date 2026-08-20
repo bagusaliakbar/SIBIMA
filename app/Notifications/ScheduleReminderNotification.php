@@ -35,7 +35,7 @@ class ScheduleReminderNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return [FonnteChannel::class, WhatsAppChannel::class, 'database', 'mail'];
+        return [FonnteChannel::class, 'database', 'mail'];
     }
 
     /**

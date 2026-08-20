@@ -46,10 +46,15 @@ class SendCriticalStudentReminders extends Command
 
         $this->info("Found " . $criticalStudents->count() . " critical semester students.");
 
+        $staggerIndex = 0;
         foreach ($criticalStudents as $student) {
             try {
-                $student->notify(new CriticalStudentReminderNotification());
-                $this->line("Sent critical semester reminder to student: {$student->name} (Sem {$student->current_semester})");
+                $delaySeconds = $staggerIndex * 7;
+                $notification = (new CriticalStudentReminderNotification())->delay(now()->addSeconds($delaySeconds));
+                
+                $student->notify($notification);
+                $this->line("Queued critical reminder for {$student->name} with +{$delaySeconds}s delay");
+                $staggerIndex++;
             } catch (\Exception $e) {
                 $this->error("Failed to notify student {$student->name}: " . $e->getMessage());
             }
@@ -59,8 +64,12 @@ class SendCriticalStudentReminders extends Command
         $kaprodis = User::whereIn('role', ['kaprodi', 'admin'])->get();
         foreach ($kaprodis as $kaprodi) {
             try {
-                $kaprodi->notify(new KaprodiCriticalSummaryNotification($criticalStudents));
-                $this->line("Sent critical summary to Kaprodi/Admin: {$kaprodi->name}");
+                $delaySeconds = $staggerIndex * 7;
+                $notification = (new KaprodiCriticalSummaryNotification($criticalStudents))->delay(now()->addSeconds($delaySeconds));
+                
+                $kaprodi->notify($notification);
+                $this->line("Queued critical summary for Kaprodi/Admin {$kaprodi->name} with +{$delaySeconds}s delay");
+                $staggerIndex++;
             } catch (\Exception $e) {
                 $this->error("Failed to notify Kaprodi {$kaprodi->name}: " . $e->getMessage());
             }

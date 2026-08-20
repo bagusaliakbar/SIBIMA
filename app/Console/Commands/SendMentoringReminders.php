@@ -40,14 +40,19 @@ class SendMentoringReminders extends Command
 
         $this->info("Found " . $sessions->count() . " mentoring sessions.");
 
+        $staggerIndex = 0;
         foreach ($sessions as $session) {
             $student = $session->thesis->student ?? null;
             $dosen = $session->dosen ?? null;
 
             if ($student) {
                 try {
-                    $student->notify(new MentoringReminderNotification($session, 'student'));
-                    $this->line("Sent H-1 mentoring reminder to student: {$student->name}");
+                    $delaySeconds = $staggerIndex * 6;
+                    $notification = (new MentoringReminderNotification($session, 'student'))->delay(now()->addSeconds($delaySeconds));
+                    
+                    $student->notify($notification);
+                    $this->line("Queued H-1 mentoring reminder for student {$student->name} with +{$delaySeconds}s delay");
+                    $staggerIndex++;
                 } catch (\Exception $e) {
                     $this->error("Failed to notify student {$student->name}: " . $e->getMessage());
                 }
@@ -55,8 +60,12 @@ class SendMentoringReminders extends Command
 
             if ($dosen) {
                 try {
-                    $dosen->notify(new MentoringReminderNotification($session, 'dosen'));
-                    $this->line("Sent H-1 mentoring reminder to dosen: {$dosen->name}");
+                    $delaySeconds = $staggerIndex * 6;
+                    $notification = (new MentoringReminderNotification($session, 'dosen'))->delay(now()->addSeconds($delaySeconds));
+                    
+                    $dosen->notify($notification);
+                    $this->line("Queued H-1 mentoring reminder for dosen {$dosen->name} with +{$delaySeconds}s delay");
+                    $staggerIndex++;
                 } catch (\Exception $e) {
                     $this->error("Failed to notify dosen {$dosen->name}: " . $e->getMessage());
                 }
