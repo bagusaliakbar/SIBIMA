@@ -347,7 +347,7 @@
                         </div>
 
                         <!-- Dropdown 2: Evaluasi & Laporan -->
-                        @php $isEvaluasiActive = request()->routeIs('monitoring.defense-scores') || request()->routeIs('monitoring.critical') || request()->routeIs('monitoring.advanced-reporting'); @endphp
+                        @php $isEvaluasiActive = request()->routeIs('monitoring.defense-scores') || request()->routeIs('monitoring.critical') || request()->routeIs('monitoring.advanced-reporting') || request()->routeIs('theses.unsubmitted-students'); @endphp
                         <div x-data="{ open: {{ $isEvaluasiActive ? 'true' : 'false' }} }">
                             <button @click="open = !open" 
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isEvaluasiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
@@ -358,6 +358,10 @@
                                 <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
                             <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('theses.unsubmitted-students') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('theses.unsubmitted-students') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Belum Mengajukan Judul
+                                </a>
                                 <a href="{{ route('monitoring.defense-scores') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.defense-scores') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Nilai Sidang

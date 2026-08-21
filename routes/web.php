@@ -37,8 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/export-pdf', [App\Http\Controllers\ThesisController::class, 'exportPdf'])->name('theses.export-pdf');
     Route::post('/theses/{thesis}/toggle-acc/{type}', [App\Http\Controllers\ThesisController::class, 'toggleAcc'])->name('theses.toggle-acc');
     
-    // Data Migrasi Skripsi (Bypass) & Audit Clean
+    // Data Migrasi Skripsi (Bypass), Audit Clean, & Mahasiswa Belum Mengajukan
     Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/theses/unsubmitted-students', [App\Http\Controllers\ThesisController::class, 'unsubmittedStudents'])->name('theses.unsubmitted-students');
+        Route::get('/theses/unsubmitted-students/export-excel', [App\Http\Controllers\ThesisController::class, 'exportUnsubmittedExcel'])->name('theses.unsubmitted-students.export-excel');
+        Route::get('/theses/unsubmitted-students/export-pdf', [App\Http\Controllers\ThesisController::class, 'exportUnsubmittedPdf'])->name('theses.unsubmitted-students.export-pdf');
         Route::get('/theses/clean-audit', [App\Http\Controllers\ThesisController::class, 'cleanAudit'])->name('theses.clean-audit');
         Route::get('/theses/migration/template', [App\Http\Controllers\ThesisController::class, 'downloadTemplate'])->name('theses.migration.template');
         Route::post('/theses/migration/import', [App\Http\Controllers\ThesisController::class, 'importExcel'])->name('theses.migration.import');

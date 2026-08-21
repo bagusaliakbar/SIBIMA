@@ -9,6 +9,7 @@ use App\Models\Thesis;
 use App\Models\User;
 use App\Services\ThesisService;
 use App\Exports\ThesesExport;
+use App\Exports\UnsubmittedStudentsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -436,5 +437,134 @@ class ThesisController extends Controller
         }
         
         return Excel::download(new \App\Exports\MigrationTemplateExport, 'Template_Migrasi_Skripsi.xlsx');
+    }
+
+    public function unsubmittedStudents(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $search = $request->input('search');
+        $entryYear = $request->input('entry_year');
+        $semesterFilter = $request->input('semester_filter'); // 'all', 'critical', 'warning', 'normal'
+
+        $allUnsubmitted = User::where('role', 'mahasiswa')
+            ->whereDoesntHave('thesis')
+            ->get();
+
+        $totalUnsubmitted = $allUnsubmitted->count();
+        $criticalCount = $allUnsubmitted->filter(fn($u) => $u->is_critical_semester)->count();
+        $warningCount = $allUnsubmitted->filter(fn($u) => ($u->current_semester ?? 0) >= 7 && !$u->is_critical_semester)->count();
+        $yearDistribution = $allUnsubmitted->whereNotNull('entry_year')->groupBy('entry_year')->map->count()->sortKeysDesc();
+
+        $entryYears = User::where('role', 'mahasiswa')
+            ->whereDoesntHave('thesis')
+            ->whereNotNull('entry_year')
+            ->distinct()
+            ->orderBy('entry_year', 'desc')
+            ->pluck('entry_year');
+
+        $query = User::where('role', 'mahasiswa')
+            ->whereDoesntHave('thesis')
+            ->when($search, function ($q, $search) {
+                $q->where(function ($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%")
+                       ->orWhere('identifier', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when($entryYear, function ($q, $entryYear) {
+                $q->where('entry_year', $entryYear);
+            });
+
+        if ($semesterFilter === 'critical') {
+            $filteredIds = $allUnsubmitted->filter(fn($u) => $u->is_critical_semester)->pluck('id');
+            $query->whereIn('id', $filteredIds);
+        } elseif ($semesterFilter === 'warning') {
+            $filteredIds = $allUnsubmitted->filter(fn($u) => ($u->current_semester ?? 0) >= 7 && !$u->is_critical_semester)->pluck('id');
+            $query->whereIn('id', $filteredIds);
+        } elseif ($semesterFilter === 'normal') {
+            $filteredIds = $allUnsubmitted->filter(fn($u) => ($u->current_semester ?? 0) < 7)->pluck('id');
+            $query->whereIn('id', $filteredIds);
+        }
+
+        $students = $query->orderBy('entry_year', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15)
+            ->appends($request->query());
+
+        return view('theses.unsubmitted_students', compact(
+            'students',
+            'search',
+            'entryYear',
+            'semesterFilter',
+            'entryYears',
+            'totalUnsubmitted',
+            'criticalCount',
+            'warningCount',
+            'yearDistribution'
+        ));
+    }
+
+    public function exportUnsubmittedExcel(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $search = $request->input('search');
+        $entryYear = $request->input('entry_year');
+        $semesterFilter = $request->input('semester_filter');
+
+        $fileName = 'Data_Mahasiswa_Belum_Mengajukan_' . ($entryYear ? 'Angkatan_' . $entryYear . '_' : '') . now()->format('Ymd') . '.xlsx';
+
+        return Excel::download(new UnsubmittedStudentsExport($search, $entryYear, $semesterFilter), $fileName);
+    }
+
+    public function exportUnsubmittedPdf(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $search = $request->input('search');
+        $entryYear = $request->input('entry_year');
+        $semesterFilter = $request->input('semester_filter');
+
+        $query = User::where('role', 'mahasiswa')
+            ->whereDoesntHave('thesis')
+            ->when($search, function ($q, $search) {
+                $q->where(function ($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%")
+                       ->orWhere('identifier', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when($entryYear, function ($q, $entryYear) {
+                $q->where('entry_year', $entryYear);
+            });
+
+        $students = $query->orderBy('entry_year', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if ($semesterFilter === 'critical') {
+            $students = $students->filter(fn($u) => $u->is_critical_semester);
+        } elseif ($semesterFilter === 'warning') {
+            $students = $students->filter(fn($u) => ($u->current_semester ?? 0) >= 7 && !$u->is_critical_semester);
+        } elseif ($semesterFilter === 'normal') {
+            $students = $students->filter(fn($u) => ($u->current_semester ?? 0) < 7);
+        }
+
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $pdf = Pdf::loadView('theses.unsubmitted_students_pdf', compact('students', 'kaprodi', 'entryYear', 'semesterFilter'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Data_Mahasiswa_Belum_Mengajukan_' . now()->format('Ymd') . '.pdf');
     }
 }
