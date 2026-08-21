@@ -56,53 +56,70 @@
             :footer="$theses->links()">
             
             <x-slot name="headerActions">
-                <div class="flex flex-wrap items-center gap-3">
-                    <x-search-input 
-                        name="search" 
-                        :value="$search ?? ''" 
-                        placeholder="Cari nama, NPM, atau judul..." 
-                        route="theses.index"
-                        :params="['status' => $status ?? '']" />
+                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 w-full">
+                    <!-- Search Input -->
+                    <div class="w-full sm:w-64">
+                        <x-search-input 
+                            name="search" 
+                            :value="$search ?? ''" 
+                            placeholder="Cari nama, NPM, judul..." 
+                            route="theses.index"
+                            :params="['status' => $status ?? '']" />
+                    </div>
                     
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                         <div class="flex items-center gap-2 flex-wrap">
-                            <a href="{{ route('theses.unsubmitted-students') }}" 
-                               class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md shadow-amber-500/20 relative group cursor-pointer">
-                                <svg class="w-4 h-4 mr-1.5 shrink-0 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                <span>Belum Mengajukan</span>
-                            </a>
+                            <!-- Group 1: Tools (Clean Audit, Kanban, Migrasi) -->
+                            <div class="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-700/60 rounded-xl border border-slate-200/70 dark:border-slate-700">
+                                <!-- Clean Audit -->
+                                <a href="{{ route('theses.clean-audit') }}" 
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 rounded-lg text-xs font-bold transition-all shadow-2xs border border-emerald-200/60 dark:border-emerald-700/40"
+                                   title="Pusat Validasi & Clean Audit Judul">
+                                    <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <span class="hidden md:inline">Clean Audit</span>
+                                    @if(isset($pendingSummary) && $pendingSummary['total'] > 0)
+                                        <span class="px-1.5 py-0.2 rounded-full bg-emerald-600 text-white text-[10px] font-black">
+                                            {{ $pendingSummary['total'] }}
+                                        </span>
+                                    @endif
+                                </a>
 
-                            <a href="{{ route('theses.clean-audit') }}" 
-                               class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md shadow-emerald-500/25 relative group cursor-pointer"
-                               style="background-color: #059669 !important; color: #ffffff !important;">
-                                <svg class="w-4 h-4 mr-1.5 shrink-0" style="color: #ffffff !important;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                <span class="font-black" style="color: #ffffff !important;">Data Clean Pengajuan</span>
-                                @if(isset($pendingSummary) && $pendingSummary['total'] > 0)
-                                    <span class="ml-2 px-2 py-0.5 rounded-full text-[9px] font-black" style="background-color: #ffffff !important; color: #047857 !important;">
-                                        {{ $pendingSummary['total'] }}
-                                    </span>
-                                @endif
-                            </a>
+                                <!-- Kanban View -->
+                                <a href="{{ route('theses.kanban') }}" 
+                                   class="inline-flex items-center gap-1 px-2.5 py-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/70 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-all"
+                                   title="Tampilan Mode Kanban">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+                                    <span class="hidden lg:inline">Kanban</span>
+                                </a>
 
-                            <a href="{{ route('theses.kanban') }}" class="inline-flex items-center px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all shadow-sm">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
-                                Mode Kanban
-                            </a>
-                            <a href="{{ route('theses.create') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-orange-700 transition-all shadow-md shadow-orange-500/20">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                Ajukan Judul
-                            </a>
-                            <a href="{{ route('theses.migration.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-                                Input Data Migrasi
-                            </a>
-                            <a href="{{ route('theses.export-excel', ['search' => request('search'), 'status' => $status ?? 'all']) }}" class="inline-flex items-center px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                Excel
-                            </a>
-                            <a href="{{ route('theses.export-pdf', ['search' => request('search'), 'status' => $status ?? 'all']) }}" class="inline-flex items-center px-4 py-2 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-rose-100 dark:border-rose-500/20 hover:bg-rose-600 hover:text-white transition-all shadow-sm">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                PDF
+                                <!-- Input Migrasi -->
+                                <a href="{{ route('theses.migration.create') }}" 
+                                   class="inline-flex items-center gap-1 px-2.5 py-1.5 text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-white/70 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-all"
+                                   title="Input Data Migrasi">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                                    <span class="hidden lg:inline">Migrasi</span>
+                                </a>
+                            </div>
+
+                            <!-- Group 2: Export Icons -->
+                            <div class="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-700/60 rounded-xl border border-slate-200/70 dark:border-slate-700">
+                                <a href="{{ route('theses.export-excel', ['search' => request('search'), 'status' => $status ?? 'all']) }}" 
+                                   class="p-1.5 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all" 
+                                   title="Ekspor ke Excel">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </a>
+                                <a href="{{ route('theses.export-pdf', ['search' => request('search'), 'status' => $status ?? 'all']) }}" 
+                                   class="p-1.5 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all" 
+                                   title="Ekspor ke PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                </a>
+                            </div>
+
+                            <!-- Group 3: Primary Action (Ajukan Judul) -->
+                            <a href="{{ route('theses.create') }}" 
+                               class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-orange-500/20 shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                <span>Ajukan Judul</span>
                             </a>
                         </div>
                     @endif
