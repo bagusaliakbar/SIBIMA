@@ -107,9 +107,19 @@ class ThesisController extends Controller
     {
         $request->validate([
             'title' => 'required|string|min:10'
+        ], [
+            'title.required' => 'Judul rencana skripsi wajib diisi.',
+            'title.min' => 'Judul rencana skripsi minimal 10 karakter.'
         ]);
 
-        $inputTitle = $request->title;
+        $inputTitle = trim($request->title);
+        $words = array_filter(explode(' ', $inputTitle));
+        if (count($words) < 2) {
+            return response()->json([
+                'message' => 'Judul harus terdiri dari minimal 2 kata yang bermakna.',
+                'similar' => []
+            ], 422);
+        }
         
         $thesesQuery = Thesis::with('student');
         if (Auth::check() && Auth::user()->role === 'mahasiswa') {

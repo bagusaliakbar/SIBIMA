@@ -34,8 +34,23 @@
             isChecking: false,
             checkResults: [],
             hasChecked: false,
+            errorMessage: '',
             async runTitleCheck() {
-                if (!this.testTitle.trim() || this.testTitle.trim().length < 5) return;
+                const cleaned = this.testTitle.trim();
+                if (!cleaned || cleaned.length < 10) {
+                    this.errorMessage = 'Judul terlalu pendek. Masukkan rencana judul minimal 10 karakter (contoh: Sistem Informasi Pengelolaan...).';
+                    this.hasChecked = false;
+                    this.checkResults = [];
+                    return;
+                }
+                const words = cleaned.split(/\s+/).filter(Boolean);
+                if (words.length < 2) {
+                    this.errorMessage = 'Judul harus terdiri dari minimal 2 kata yang bermakna.';
+                    this.hasChecked = false;
+                    this.checkResults = [];
+                    return;
+                }
+                this.errorMessage = '';
                 this.isChecking = true;
                 this.hasChecked = false;
                 try {
@@ -46,13 +61,20 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({ title: this.testTitle })
+                        body: JSON.stringify({ title: cleaned })
                     });
                     const data = await res.json();
+                    if (!res.ok) {
+                        this.errorMessage = data.message || 'Gagal menganalisis judul. Pastikan format judul sesuai.';
+                        this.hasChecked = false;
+                        this.checkResults = [];
+                        return;
+                    }
                     this.checkResults = data.similar || [];
                     this.hasChecked = true;
                 } catch (err) {
-                    console.error(err);
+                    this.errorMessage = 'Terjadi kendala jaringan saat menghubungi server.';
+                    this.hasChecked = false;
                 } finally {
                     this.isChecking = false;
                 }
@@ -73,7 +95,7 @@
             
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-orange-100 dark:border-slate-700 pb-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-md shadow-orange-500/30">
+                    <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-md shadow-orange-500/30 shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     </div>
                     <div>
@@ -86,28 +108,43 @@
                 </button>
             </div>
 
-            <form @submit.prevent="runTitleCheck" class="flex flex-col sm:flex-row gap-3">
-                <div class="relative flex-1">
-                    <input type="text" 
-                           x-model="testTitle" 
-                           placeholder="Masukkan draf rencana judul skripsi (contoh: Sistem Informasi Pengelolaan Stok...)" 
-                           class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100">
-                    <button type="button" x-show="testTitle" @click="testTitle = ''; checkResults = []; hasChecked = false;" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <form @submit.prevent="runTitleCheck" class="space-y-2">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <input type="text" 
+                               x-model="testTitle" 
+                               @input="errorMessage = ''; hasChecked = false;"
+                               placeholder="Masukkan draf rencana judul skripsi (contoh: Sistem Informasi Pengelolaan Stok Barang...)" 
+                               class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100">
+                        <button type="button" x-show="testTitle" @click="testTitle = ''; checkResults = []; hasChecked = false; errorMessage = '';" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <button type="submit" 
+                            :disabled="isChecking || !testTitle.trim()"
+                            class="px-6 py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+                        <template x-if="isChecking">
+                            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </template>
+                        <span x-text="isChecking ? 'Menganalisis...' : 'Analisis Kemiripan'"></span>
                     </button>
                 </div>
-                <button type="submit" 
-                        :disabled="isChecking || !testTitle.trim()"
-                        class="px-6 py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 shrink-0">
-                    <template x-if="isChecking">
-                        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </template>
-                    <span x-text="isChecking ? 'Menganalisis...' : 'Analisis Kemiripan'"></span>
-                </button>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
+                    <span>💡 Minimal 10 karakter & 2 kata yang bermakna.</span>
+                    <span x-text="testTitle.trim().length + ' karakter'"></span>
+                </div>
             </form>
 
+            <!-- Error Validation Notice -->
+            <div x-show="errorMessage" x-cloak class="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-2xl flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center font-black shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <p class="text-xs font-bold text-rose-700 dark:text-rose-300" x-text="errorMessage"></p>
+            </div>
+
             <!-- Results Display -->
-            <div x-show="hasChecked" x-cloak class="space-y-3 pt-2">
+            <div x-show="hasChecked && !errorMessage" x-cloak class="space-y-3 pt-1">
                 <template x-if="checkResults.length === 0">
                     <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl flex items-center gap-3">
                         <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black shrink-0">
