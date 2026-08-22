@@ -35,8 +35,7 @@
                     </div>
 
                     <div>
-                        <x-input-label for="meeting_link" value="Link Meeting (Google Meet/Zoom)" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <x-text-input id="meeting_link" name="meeting_link" type="url" class="mt-1 block w-full text-sm" placeholder="https://meet.google.com/xxx-xxxx-xxx" />
+                        <x-google-meet-input name="meeting_link" id="meeting_link" :value="old('meeting_link')" label="Link Meeting (Google Meet / Zoom)" />
                         <x-input-error :messages="$errors->get('meeting_link')" class="mt-2" />
                     </div>
 

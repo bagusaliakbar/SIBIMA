@@ -35,8 +35,10 @@
             @endif
             
             <form action="{{ route('mentoring-sessions.store') }}" method="POST" class="space-y-6" x-data="{
-                type: 'offline',
+                type: '{{ old('type', 'offline') }}',
+                location: '{{ old('location', '') }}',
                 selectedThesisId: '',
+                meetOpened: false,
                 thesesMap: {{ json_encode(($theses ?? collect())->keyBy('id')->map(fn($t) => [
                     'p1_id' => $t->pembimbing1_id,
                     'p1_name' => $t->pembimbing1?->name ?? 'Pembimbing 1',
@@ -45,6 +47,26 @@
                 ])) }},
                 get selectedThesis() {
                     return this.thesesMap[this.selectedThesisId] || null;
+                },
+                openGoogleMeetNew() {
+                    window.open('https://meet.google.com/new', '_blank');
+                    this.meetOpened = true;
+                },
+                async pasteClipboard() {
+                    try {
+                        const text = await navigator.clipboard.readText();
+                        if (text) {
+                            this.location = text.trim();
+                        }
+                    } catch (e) {
+                        alert('Silakan tekan Ctrl + V untuk menempelkan tautan.');
+                    }
+                },
+                isGoogleMeet() {
+                    return this.location && this.location.includes('meet.google.com');
+                },
+                isZoom() {
+                    return this.location && (this.location.includes('zoom.us') || this.location.includes('zoom.com'));
                 }
             }">
                 @csrf
@@ -148,8 +170,69 @@
                     </div>
 
                     <div>
-                        <label for="location" class="block text-sm font-medium text-slate-700 dark:text-slate-300" x-text="type === 'online' ? 'Tautan Google Meet / Zoom' : 'Ruangan / Tempat Bimbingan'"></label>
-                        <input type="text" name="location" id="location" :placeholder="type === 'online' ? 'https://meet.google.com/...' : 'Contoh: Ruang Dosen T.I / Lab Komputer'" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                        <div class="flex items-center justify-between">
+                            <label for="location" class="block text-sm font-medium text-slate-700 dark:text-slate-300" x-text="type === 'online' ? 'Tautan Google Meet / Zoom' : 'Ruangan / Tempat Bimbingan'"></label>
+                            
+                            <!-- Google Meet Quick Action Helper (Visible when Online) -->
+                            <template x-if="type === 'online'">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" 
+                                            @click="openGoogleMeetNew()" 
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all shadow-2xs active:scale-95 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        <span>⚡ Buat Google Meet Instan</span>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="relative mt-2">
+                            <input type="text" 
+                                   name="location" 
+                                   id="location" 
+                                   x-model="location"
+                                   :placeholder="type === 'online' ? 'https://meet.google.com/xxx-xxxx-xxx' : 'Contoh: Ruang Dosen T.I / Lab Komputer'" 
+                                   class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all"
+                                   :class="{'pr-24': type === 'online'}">
+
+                            <!-- Paste & Test Button inside input when Online -->
+                            <div x-show="type === 'online'" class="absolute inset-y-0 right-1.5 flex items-center gap-1">
+                                <button type="button" 
+                                        x-show="!location"
+                                        @click="pasteClipboard()" 
+                                        class="px-2 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded uppercase tracking-wider transition-all"
+                                        title="Tempel dari Clipboard">
+                                    📋 Tempel
+                                </button>
+                                <a x-show="location" 
+                                   :href="location.startsWith('http') ? location : 'https://' + location" 
+                                   target="_blank" 
+                                   class="px-2 py-1 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded uppercase tracking-wider transition-all"
+                                   title="Buka & Uji Link">
+                                    ↗ Tes Link
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Smart Validation Feedback & Step Guide -->
+                        <template x-if="type === 'online'">
+                            <div class="mt-2 space-y-1.5">
+                                <div x-show="meetOpened && !location" x-cloak class="p-2.5 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-lg flex items-start gap-2 text-xs text-emerald-800 dark:text-emerald-300 animate-pulse">
+                                    <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>Ruang Google Meet baru telah dibuka di tab sebelah. Salin link ruangannya, lalu klik tombol <b>📋 Tempel</b> di atas.</span>
+                                </div>
+
+                                <div x-show="isGoogleMeet()" x-cloak class="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-bold">
+                                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>Tautan Google Meet valid & siap dikirimkan ke mahasiswa.</span>
+                                </div>
+
+                                <div x-show="isZoom()" x-cloak class="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 font-bold">
+                                    <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>Tautan Zoom Meeting valid & siap digunakan.</span>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
