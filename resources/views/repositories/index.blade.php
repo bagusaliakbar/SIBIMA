@@ -1,106 +1,347 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center w-full">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
             <x-breadcrumb :items="[
                 ['label' => 'Katalog Pustaka Skripsi', 'route' => null]
             ]" />
-            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-            <div class="flex flex-wrap gap-2">
-                <button onclick="startSync()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] shadow-sm shadow-blue-500/30">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Migrasi Portal
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Instant Similarity Checker Toggle -->
+                <button type="button" 
+                        @click="showChecker = !showChecker"
+                        :class="showChecker ? 'bg-orange-600 text-white shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-orange-600 dark:hover:text-orange-400'"
+                        class="inline-flex items-center gap-2 px-3.5 py-2 text-[11px] font-black uppercase tracking-wider rounded-xl border transition-all shadow-2xs">
+                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span x-text="showChecker ? 'Tutup Cek Judul' : '🔍 Cek Kemiripan Judul'"></span>
                 </button>
-                <a href="{{ route('repositories.import.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] shadow-sm shadow-emerald-500/30">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Import Arsip
-                </a>
+
+                @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                    <button onclick="startSync()" class="inline-flex items-center px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm shadow-blue-500/30">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Migrasi Portal
+                    </button>
+                    <a href="{{ route('repositories.import.create') }}" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm shadow-emerald-500/30">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Import Arsip
+                    </a>
+                @endif
             </div>
-            @endif
         </div>
     </x-slot>
 
-    <div class="w-full">
-        <!-- Filter and Search -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
-            <form action="{{ route('repositories.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1">
-                    <label for="search" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cari Kata Kunci</label>
-                    <input type="text" name="search" id="search" value="{{ $search }}" placeholder="Judul, Abstrak, Nama Mahasiswa, atau Pembimbing..." class="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 px-3 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+    <div class="w-full space-y-6" x-data="{ 
+        showChecker: false,
+        testTitle: '',
+        isChecking: false,
+        checkResults: [],
+        hasChecked: false,
+        async runTitleCheck() {
+            if (!this.testTitle.trim() || this.testTitle.trim().length < 5) return;
+            this.isChecking = true;
+            this.hasChecked = false;
+            try {
+                const res = await fetch('{{ route('theses.check-title') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ title: this.testTitle })
+                });
+                const data = await res.json();
+                this.checkResults = data.similar || [];
+                this.hasChecked = true;
+            } catch (err) {
+                console.error(err);
+            } finally {
+                this.isChecking = false;
+            }
+        }
+    }">
+
+        <!-- INSTANT SIMILARITY CHECKER DRAWER -->
+        <div x-show="showChecker" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-4"
+             x-cloak
+             class="bg-gradient-to-br from-orange-500/5 via-white to-amber-500/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl p-6 border-2 border-orange-200 dark:border-orange-500/30 shadow-xl space-y-4">
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-orange-100 dark:border-slate-700 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-md shadow-orange-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">Uji Cepat Kemiripan Judul Skripsi</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Ketik calon judul proposal Anda untuk mengecek kemiripan dengan repositori alumni & skripsi aktif secara real-time.</p>
+                    </div>
                 </div>
-                <div class="w-full md:w-48">
-                    <label for="year" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Angkatan</label>
-                    <select name="year" id="year" class="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 px-3 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                        <option value="">Semua Angkatan</option>
-                        @foreach($years as $y)
-                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="flex items-end">
-                    <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm">
-                        Cari Arsip
+                <button type="button" @click="showChecker = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <form @submit.prevent="runTitleCheck" class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <input type="text" 
+                           x-model="testTitle" 
+                           placeholder="Masukkan draf rencana judul skripsi (contoh: Sistem Informasi Pengelolaan Stok...)" 
+                           class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100">
+                    <button type="button" x-show="testTitle" @click="testTitle = ''; checkResults = []; hasChecked = false;" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
+                <button type="submit" 
+                        :disabled="isChecking || !testTitle.trim()"
+                        class="px-6 py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 shrink-0">
+                    <template x-if="isChecking">
+                        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </template>
+                    <span x-text="isChecking ? 'Menganalisis...' : 'Analisis Kemiripan'"></span>
+                </button>
             </form>
+
+            <!-- Results Display -->
+            <div x-show="hasChecked" x-cloak class="space-y-3 pt-2">
+                <template x-if="checkResults.length === 0">
+                    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-tight">Judul Aman / Orisinal!</h4>
+                            <p class="text-[11px] text-emerald-700 dark:text-emerald-400">Tidak ditemukan judul yang memiliki kemiripan signifikan (&ge;45%) di database pustaka alumni dan skripsi berjalan.</p>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="checkResults.length > 0">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                Ditemukan <span class="text-orange-600 dark:text-orange-400" x-text="checkResults.length"></span> Judul Serupa Terkait:
+                            </p>
+                            <span class="text-[10px] text-slate-400">Batas toleransi kemiripan: &lt; 45%</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <template x-for="(item, idx) in checkResults" :key="idx">
+                                <div class="p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg"
+                                              :class="item.percentage >= 70 ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'"
+                                              x-text="item.percentage + '% Mirip'"></span>
+                                        <span class="text-[10px] font-bold text-slate-400" x-text="item.source + ' (' + item.year + ')'"></span>
+                                    </div>
+                                    <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="item.title"></h5>
+                                    <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-700/60">
+                                        <span x-text="'Oleh: ' + item.student_name"></span>
+                                        <span class="font-mono text-orange-600 dark:text-orange-400 font-bold" x-text="item.matched_words ? item.matched_words.length + ' kata cocok' : ''"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
 
-        <!-- Repository List -->
+        <!-- ADVANCED FILTER & DISCOVERY CARD -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm space-y-5">
+            <form action="{{ route('repositories.index') }}" method="GET" id="filterForm" class="space-y-4">
+                <!-- Hidden Topic Field -->
+                <input type="hidden" name="topic" id="topicInput" value="{{ $topic ?? 'all' }}">
+
+                <!-- Search & Dropdowns Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+                    <!-- Keyword Search -->
+                    <div class="lg:col-span-5 relative">
+                        <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Kata Kunci / Judul / Nama</label>
+                        <div class="relative flex items-center">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <input type="text" 
+                                   name="search" 
+                                   id="search" 
+                                   value="{{ $search }}" 
+                                   placeholder="Cari judul, topik, NPM, abstrak..." 
+                                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100">
+                        </div>
+                    </div>
+
+                    <!-- Angkatan Dropdown -->
+                    <div class="lg:col-span-3">
+                        <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Tahun Angkatan</label>
+                        <select name="year" id="year" onchange="this.form.submit()" 
+                                class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
+                            <option value="">Semua Angkatan</option>
+                            @foreach($years as $y)
+                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>Angkatan {{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Dosen Pembimbing Dropdown -->
+                    <div class="lg:col-span-4">
+                        <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</label>
+                        <select name="advisor" id="advisor" onchange="this.form.submit()" 
+                                class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
+                            <option value="">Semua Dosen Pembimbing</option>
+                            @foreach($advisors as $adv)
+                                <option value="{{ $adv }}" {{ $advisor == $adv ? 'selected' : '' }}>{{ $adv }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Horizontal Topic Filter Pills -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0 mr-1">Kategori:</span>
+                        @foreach($topics as $key => $topData)
+                            <button type="button" 
+                                    onclick="document.getElementById('topicInput').value='{{ $key }}'; document.getElementById('filterForm').submit();"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 {{ ($topic ?? 'all') === $key ? 'bg-orange-600 text-white shadow-sm shadow-orange-500/30' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                                <span>{{ $topData['label'] }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </form>
+
+            <!-- Active Filter Bar & Results Count -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs">
+                <div class="flex items-center gap-2 flex-wrap text-slate-600 dark:text-slate-400">
+                    <span class="font-bold">Menampilkan <strong class="text-slate-900 dark:text-white">{{ $repositories->total() }}</strong> dari {{ $totalCount }} pustaka</span>
+                    
+                    @if($search || $year || $advisor || ($topic && $topic !== 'all'))
+                        <span class="text-slate-300 dark:text-slate-600">•</span>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            @if($search)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 text-[10px] font-bold border border-orange-200 dark:border-orange-800">
+                                    "{{ $search }}"
+                                </span>
+                            @endif
+                            @if($year)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold border border-indigo-200 dark:border-indigo-800">
+                                    Angkatan {{ $year }}
+                                </span>
+                            @endif
+                            @if($advisor)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-[10px] font-bold border border-purple-200 dark:border-purple-800">
+                                    Pembimbing: {{ $advisor }}
+                                </span>
+                            @endif
+                            @if($topic && $topic !== 'all')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800">
+                                    {{ $topics[$topic]['label'] ?? $topic }}
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                @if($search || $year || $advisor || ($topic && $topic !== 'all'))
+                    <a href="{{ route('repositories.index') }}" class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        Reset Semua Filter
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        <!-- REPOSITORY CARDS GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($repositories as $repo)
-                <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden hover:shadow-lg transition-all hover:scale-[1.01] flex flex-col">
-                    <div class="p-5 flex-1 flex flex-col">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest rounded">
-                                Angkatan {{ $repo->year }}
-                            </span>
-                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">{{ $repo->identifier ?? '-' }}</span>
-                        </div>
-                        
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-2 leading-relaxed">
-                            {{ $repo->title }}
-                        </h3>
-                        
-                        <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 flex-1 line-clamp-3">
-                            {{ $repo->abstract ?? 'Tidak ada abstrak yang tersedia.' }}
-                        </p>
-                        
-                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700 mt-auto">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-500">
-                                    {{ substr($repo->name, 0, 1) }}
-                                </div>
-                                <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">{{ $repo->name }}</span>
+                @php
+                    $badge = $repo->topic_badge;
+                @endphp
+                <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-200 hover:-translate-y-1 flex flex-col group">
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <!-- Header Meta Badges -->
+                            <div class="flex justify-between items-center gap-2 mb-3">
+                                <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200/60 dark:border-slate-600">
+                                    Angkatan {{ $repo->year }}
+                                </span>
+
+                                <span class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border {{ $badge['bg'] }}">
+                                    {{ $badge['label'] }}
+                                </span>
                             </div>
                             
-                            @if($repo->pembimbing1 || $repo->pembimbing2)
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400 space-y-1">
-                                @if($repo->pembimbing1)
-                                    <div><span class="font-semibold">Pembimbing 1:</span> {{ $repo->pembimbing1 }}</div>
-                                @endif
-                                @if($repo->pembimbing2)
-                                    <div><span class="font-semibold">Pembimbing 2:</span> {{ $repo->pembimbing2 }}</div>
-                                @endif
+                            <!-- Title -->
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-2.5 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-3">
+                                {{ $repo->title }}
+                            </h3>
+                            
+                            <!-- Abstract Snippet -->
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-3 leading-relaxed">
+                                {{ $repo->abstract ?: 'Tidak ada abstrak yang tersedia.' }}
+                            </p>
+                        </div>
+                        
+                        <!-- Footer Info -->
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700/60 mt-auto space-y-2.5">
+                            <!-- Student -->
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-7 h-7 rounded-full bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 flex items-center justify-center text-[10px] font-black shrink-0">
+                                        {{ substr($repo->name, 0, 1) }}
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{{ $repo->name }}</span>
+                                </div>
+                                <span class="text-[10px] font-mono font-bold text-slate-400 shrink-0">{{ $repo->identifier ?? '-' }}</span>
                             </div>
+                            
+                            <!-- Advisors -->
+                            @if($repo->pembimbing1 || $repo->pembimbing2)
+                                <div class="p-2.5 bg-slate-50 dark:bg-slate-900/40 rounded-xl space-y-1 text-[10px]">
+                                    @if($repo->pembimbing1)
+                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-400">
+                                            <span class="font-bold text-slate-400 uppercase tracking-tighter shrink-0">P1:</span>
+                                            <span class="truncate font-semibold">{{ $repo->pembimbing1 }}</span>
+                                        </div>
+                                    @endif
+                                    @if($repo->pembimbing2)
+                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-400">
+                                            <span class="font-bold text-slate-400 uppercase tracking-tighter shrink-0">P2:</span>
+                                            <span class="truncate font-semibold">{{ $repo->pembimbing2 }}</span>
+                                        </div>
+                                    @endif
+                                </div>
                             @endif
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full py-12 text-center bg-white dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-600">
-                    <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">Belum Ada Pustaka</h3>
-                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Tidak ada arsip skripsi yang ditemukan atau belum ada data yang diimpor.</p>
+                <div class="col-span-full py-16 text-center bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 space-y-3">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-50 dark:bg-orange-950/30 text-orange-500 flex items-center justify-center">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Tidak Ada Pustaka Ditemukan</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">Tidak ada arsip skripsi yang cocok dengan kriteria pencarian dan filter Anda saat ini.</p>
+                    <div class="pt-2">
+                        <a href="{{ route('repositories.index') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-xs font-bold rounded-xl hover:bg-orange-700 transition-all shadow-sm">
+                            Reset Filter Pencarian
+                        </a>
+                    </div>
                 </div>
             @endforelse
         </div>
 
+        <!-- Pagination -->
         <div class="mt-6">
             {{ $repositories->links() }}
         </div>
     </div>
-</div>
 
 <!-- Modal Sync Portal -->
 <div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">

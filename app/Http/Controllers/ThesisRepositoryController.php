@@ -15,6 +15,8 @@ class ThesisRepositoryController extends Controller
     {
         $search = $request->input('search');
         $year = $request->input('year');
+        $advisor = $request->input('advisor');
+        $topic = $request->input('topic', 'all');
         
         $query = ThesisRepository::query();
 
@@ -22,6 +24,7 @@ class ThesisRepositoryController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                   ->orWhere('name', 'like', "%{$search}%")
+                  ->orWhere('identifier', 'like', "%{$search}%")
                   ->orWhere('abstract', 'like', "%{$search}%")
                   ->orWhere('pembimbing1', 'like', "%{$search}%")
                   ->orWhere('pembimbing2', 'like', "%{$search}%");
@@ -32,12 +35,68 @@ class ThesisRepositoryController extends Controller
             $query->where('year', $year);
         }
 
+        if ($advisor) {
+            $query->where(function($q) use ($advisor) {
+                $q->where('pembimbing1', 'like', "%{$advisor}%")
+                  ->orWhere('pembimbing2', 'like', "%{$advisor}%");
+            });
+        }
+
+        if ($topic && $topic !== 'all') {
+            $topicKeywords = match($topic) {
+                'web' => ['web', 'website', 'portal', 'sistem informasi'],
+                'mobile' => ['android', 'mobile', 'flutter', 'ios', 'smartphone'],
+                'spk' => ['spk', 'pendukung keputusan', 'ahp', 'saw', 'topsis', 'smart', 'profile matching', 'moora', 'vikor', 'mabac', 'promethee'],
+                'ai' => ['machine learning', 'deep learning', 'klasifikasi', 'clustering', 'k-means', 'naive bayes', 'svm', 'c4.5', 'decision tree', 'neural network', 'cnn', 'nlp', 'yolo', 'fuzzy', 'algoritma genetika'],
+                'ui_ux' => ['ui/ux', 'ui ', 'ux ', 'human-centered', 'human centered', 'design thinking', 'usability', 'user experience', 'user interface'],
+                'iot' => ['iot', 'internet of things', 'arduino', 'raspberry', 'sensor', 'mikrokontroler', 'jaringan', 'mikrotik', 'keamanan'],
+                'ecommerce' => ['e-commerce', 'penjualan', 'marketplace', 'toko online', 'pos ', 'point of sale', 'pemesanan', 'kasir'],
+                default => [$topic]
+            };
+
+            $query->where(function($q) use ($topicKeywords) {
+                foreach ($topicKeywords as $kw) {
+                    $q->orWhere('title', 'like', "%{$kw}%")
+                      ->orWhere('abstract', 'like', "%{$kw}%");
+                }
+            });
+        }
+
+        $totalCount = ThesisRepository::count();
+        $filteredCount = (clone $query)->count();
         $repositories = $query->orderBy('year', 'desc')->orderBy('name', 'asc')->paginate(12)->withQueryString();
 
         // Get unique years for filter
-        $years = ThesisRepository::select('year')->distinct()->orderBy('year', 'desc')->pluck('year');
+        $years = ThesisRepository::select('year')->whereNotNull('year')->where('year', '!=', '')->distinct()->orderBy('year', 'desc')->pluck('year');
 
-        return view('repositories.index', compact('repositories', 'search', 'year', 'years'));
+        // Compile distinct advisors from ThesisRepository and active lecturers
+        $p1 = ThesisRepository::whereNotNull('pembimbing1')->where('pembimbing1', '!=', '')->distinct()->pluck('pembimbing1');
+        $p2 = ThesisRepository::whereNotNull('pembimbing2')->where('pembimbing2', '!=', '')->distinct()->pluck('pembimbing2');
+        $dosenUsers = \App\Models\User::where('role', 'dosen')->pluck('name');
+
+        $advisors = $p1->concat($p2)->concat($dosenUsers)
+            ->map(function($name) {
+                return preg_replace('/^\d+\.\s*/', '', trim($name));
+            })
+            ->filter(fn($name) => !empty($name) && strlen($name) > 3)
+            ->unique()
+            ->sort()
+            ->values();
+
+        $topics = [
+            'all' => ['label' => 'Semua Topik', 'icon' => 'sparkles'],
+            'web' => ['label' => 'Web App & SI', 'icon' => 'globe'],
+            'mobile' => ['label' => 'Mobile / Android', 'icon' => 'device-mobile'],
+            'ai' => ['label' => 'AI & Data Science', 'icon' => 'cpu-chip'],
+            'spk' => ['label' => 'SPK / Keputusan', 'icon' => 'chart-bar'],
+            'ui_ux' => ['label' => 'UI/UX & HCD', 'icon' => 'paint-brush'],
+            'iot' => ['label' => 'IoT & Hardware', 'icon' => 'wifi'],
+            'ecommerce' => ['label' => 'E-Commerce / POS', 'icon' => 'shopping-cart'],
+        ];
+
+        return view('repositories.index', compact(
+            'repositories', 'search', 'year', 'advisor', 'topic', 'years', 'advisors', 'topics', 'totalCount', 'filteredCount'
+        ));
     }
 
     public function createImport()
