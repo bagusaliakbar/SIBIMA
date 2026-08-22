@@ -110,13 +110,17 @@
 
             <form @submit.prevent="runTitleCheck" class="space-y-2">
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <div class="relative flex-1">
+                    <div class="relative flex-1 flex items-center">
                         <input type="text" 
                                x-model="testTitle" 
                                @input="errorMessage = ''; hasChecked = false;"
                                placeholder="Masukkan draf rencana judul skripsi (contoh: Sistem Informasi Pengelolaan Stok Barang...)" 
-                               class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100">
-                        <button type="button" x-show="testTitle" @click="testTitle = ''; checkResults = []; hasChecked = false; errorMessage = '';" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                               class="w-full pl-4 pr-11 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100">
+                        <button type="button" 
+                                x-show="testTitle" 
+                                x-cloak
+                                @click="testTitle = ''; checkResults = []; hasChecked = false; errorMessage = '';" 
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
