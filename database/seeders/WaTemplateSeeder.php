@@ -27,6 +27,20 @@ class WaTemplateSeeder extends Seeder
                 ],
             ],
             [
+                'code' => 'mentoring_scheduled_by_dosen',
+                'name' => 'Jadwal Bimbingan Baru dari Dosen (ke Mahasiswa)',
+                'category' => 'Bimbingan',
+                'content' => "🔔 *JADWAL BIMBINGAN SKRIPSI BARU*\n\nHalo *{nama_mahasiswa}*,\n\nDosen Pembimbing Anda, *{nama_dosen}*, telah membuat jadwal bimbingan skripsi baru:\n\n📝 *Topik*: {topik_bimbingan}\n📅 *Waktu*: {tanggal_bimbingan} WIB\n📍 *Jenis/Lokasi*: {jenis_bimbingan}\n\n⚠️ *Penting*: Silakan buka sistem SIBIMA untuk melakukan *Konfirmasi Kehadiran* (Akan Hadir / Izin):\n{link_mentoring}\n\nTerima kasih.\n_Sistem Informasi Bimbingan Skripsi (SIBIMA)_",
+                'available_variables' => [
+                    'nama_mahasiswa' => 'Nama Mahasiswa',
+                    'nama_dosen' => 'Nama Dosen Pembimbing',
+                    'topik_bimbingan' => 'Topik Bimbingan',
+                    'tanggal_bimbingan' => 'Waktu & Tanggal Bimbingan',
+                    'jenis_bimbingan' => 'Jenis Bimbingan (Online / Offline) & Lokasi',
+                    'link_mentoring' => 'Tautan ke Halaman Bimbingan',
+                ],
+            ],
+            [
                 'code' => 'mentoring_status_updated',
                 'name' => 'Persetujuan / Penolakan Bimbingan (ke Mahasiswa)',
                 'category' => 'Bimbingan',

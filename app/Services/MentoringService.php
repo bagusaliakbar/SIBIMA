@@ -7,6 +7,7 @@ use App\Models\Thesis;
 use App\Models\ActivityLog;
 use App\Models\User;
 use App\Notifications\GeneralNotification;
+use App\Notifications\MentoringScheduledByDosenNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -49,12 +50,7 @@ class MentoringService
                 
                 ActivityLog::log('Jadwal Bimbingan Massal', "{$user->name} menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
 
-                $thesis->student->notify(new GeneralNotification(
-                    'Jadwal Bimbingan Baru',
-                    "Jadwal bimbingan baru dibuat: {$data['topic']}",
-                    route('mentoring-sessions.index'),
-                    'info'
-                ));
+                $thesis->student->notify(new MentoringScheduledByDosenNotification($session));
             }
             
             return ['count' => $theses->count(), 'type' => 'mass'];
@@ -96,12 +92,7 @@ class MentoringService
 
             ActivityLog::log('Jadwal Bimbingan', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
 
-            $thesis->student->notify(new GeneralNotification(
-                'Jadwal Bimbingan Baru',
-                "Dosen " . Auth::user()->name . " menjadwalkan bimbingan: {$data['topic']}",
-                route('mentoring-sessions.index'),
-                'info'
-            ));
+            $thesis->student->notify(new MentoringScheduledByDosenNotification($session));
             
             return ['type' => 'single'];
         }
