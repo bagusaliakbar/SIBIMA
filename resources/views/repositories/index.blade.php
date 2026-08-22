@@ -266,12 +266,18 @@
                                x-model="testTitle" 
                                @input="errorMessage = ''; hasChecked = false;"
                                placeholder="Masukkan draf rencana judul skripsi (contoh: Sistem Informasi Pengelolaan Stok Barang...)" 
-                               class="w-full pl-4 pr-11 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
+                               class="w-full pl-4 pr-12 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
                         <button type="button" 
                                 x-show="testTitle" 
+                                x-cloak
                                 @click="testTitle = ''; errorMessage = ''; hasChecked = false; checkResults = [];" 
-                                class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
-                            &times;
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                title="Hapus teks judul">
+                            <div class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </div>
                         </button>
                     </div>
                     <button type="submit" 
@@ -350,7 +356,7 @@
                 <!-- Search & Dropdowns Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
                     <!-- Keyword Search -->
-                    <div class="lg:col-span-5 relative">
+                    <div class="lg:col-span-5 relative" x-data="{ q: '{{ addslashes($search) }}' }">
                         <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Kata Kunci / Judul / Nama</label>
                         <div class="relative flex items-center">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
@@ -359,9 +365,21 @@
                             <input type="text" 
                                    name="search" 
                                    id="search" 
-                                   value="{{ $search }}" 
+                                   x-model="q"
                                    placeholder="Cari judul, topik, NPM, abstrak..." 
-                                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
+                                   class="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
+                            <button type="button" 
+                                    x-show="q" 
+                                    x-cloak
+                                    @click="q = ''; document.getElementById('search').value = ''; document.getElementById('filterForm').submit();"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                    title="Hapus pencarian">
+                                <div class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </div>
+                            </button>
                         </div>
                     </div>
 
