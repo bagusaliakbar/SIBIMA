@@ -217,8 +217,8 @@
             <!-- Results Display -->
             <div x-show="hasChecked && !errorMessage" x-cloak class="space-y-3 pt-1">
                 <template x-if="checkResults.length === 0">
-                    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black shrink-0">
+                    <div class="p-4 bg-emerald-500/10 dark:bg-emerald-950/70 border border-emerald-500/30 dark:border-emerald-700/60 rounded-2xl flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black shrink-0 shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                         </div>
                         <div>
@@ -239,15 +239,15 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <template x-for="(item, idx) in checkResults" :key="idx">
-                                <div class="p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                                <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                                     <div class="flex items-center justify-between">
                                         <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg"
-                                              :class="item.percentage >= 70 ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'"
+                                              :class="item.percentage >= 70 ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border dark:border-rose-800/60' : 'bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border dark:border-amber-800/60'"
                                               x-text="item.percentage + '% Mirip'"></span>
                                         <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500" x-text="item.source + ' (' + item.year + ')'"></span>
                                     </div>
                                     <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="item.title"></h5>
-                                    <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-700/60">
+                                    <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
                                         <span x-text="'Oleh: ' + item.student_name"></span>
                                         <span class="font-mono text-orange-600 dark:text-orange-400 font-bold" x-text="item.matched_words ? item.matched_words.length + ' kata cocok' : ''"></span>
                                     </div>
@@ -315,7 +315,7 @@
                         @foreach($topics as $key => $topData)
                             <button type="button" 
                                     onclick="document.getElementById('topicInput').value='{{ $key }}'; document.getElementById('filterForm').submit();"
-                                    class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 {{ ($topic ?? 'all') === $key ? 'bg-orange-600 text-white shadow-sm shadow-orange-500/30' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/60' }}">
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 {{ ($topic ?? 'all') === $key ? 'bg-orange-600 text-white shadow-sm shadow-orange-500/30' : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80' }}">
                                 <span>{{ $topData['label'] }}</span>
                             </button>
                         @endforeach
@@ -376,7 +376,7 @@
                             <!-- Header Meta Badges & Admin Actions -->
                             <div class="flex justify-between items-center gap-2 mb-3">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/80 text-slate-700 dark:text-slate-200 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200/80 dark:border-slate-600">
+                                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200 dark:border-slate-700">
                                         Angkatan {{ $repo->year }}
                                     </span>
 
