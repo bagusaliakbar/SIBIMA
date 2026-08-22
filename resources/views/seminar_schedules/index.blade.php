@@ -27,8 +27,10 @@
                 <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
                     <form action="{{ route('seminar-schedules.index') }}" method="GET" class="relative group">
                         <select name="wave_id" onchange="this.form.submit()" 
-                                class="pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[220px]">
-                            <option value="">SEMUA GELOMBANG</option>
+                                class="pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[240px]">
+                            <option value="" {{ empty($selectedWaveId) ? 'selected' : '' }}>
+                                📅 JADWAL MENDATANG (HARI INI+)
+                            </option>
                             @foreach($waves as $wave)
                                 <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
                                     {{ strtoupper($wave->name) }} {{ $wave->is_active ? '(AKTIF)' : '' }}
@@ -204,9 +206,21 @@
                         </div>
                     </div>
                 @empty
-                    <x-table-card title="Agenda Pelaksanaan Seminar">
-                        <x-empty-state description="Agenda pelaksanaan seminar belum tersedia untuk gelombang ini." icon="calendar" />
-                    </x-table-card>
+                    <div class="p-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-3">
+                        <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-800 dark:text-white">
+                            {{ empty($selectedWaveId) ? 'Tidak Ada Jadwal Seminar Aktif / Mendatang' : 'Belum Ada Jadwal Pada Gelombang Ini' }}
+                        </h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-medium">
+                            @if(empty($selectedWaveId))
+                                Jadwal seminar pada tanggal pelaksanaan sebelumnya telah selesai. Untuk melihat riwayat agenda pelaksanaan terdahulu, silakan <strong>pilih Gelombang Pelaksanaan</strong> pada menu pilihan di atas.
+                            @else
+                                Tidak ditemukan agenda pelaksanaan seminar yang terjadwal untuk gelombang yang dipilih.
+                            @endif
+                        </p>
+                    </div>
                 @endforelse
 
                 <div class="mt-4">

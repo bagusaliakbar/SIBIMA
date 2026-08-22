@@ -43,20 +43,41 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
 
     public function index(Request $request)
     {
+        $user = Auth::user();
         $activeWave = Wave::getCurrentActive();
-        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $hasWaveFilter = $request->filled('wave_id');
+        $selectedWaveId = $request->input('wave_id');
 
-        $schedules = ThesisDefenseSchedule::with(['chairman', 'moderator', 'creator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2'])
-            ->when($selectedWaveId, function($query) use ($selectedWaveId) {
+        $query = ThesisDefenseSchedule::with(['chairman', 'moderator', 'creator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
+
+        if ($user->role === 'dosen') {
+            if ($hasWaveFilter) {
+                // Dosen memilih gelombang secara eksplisit untuk melihat seluruh agenda gelombang tersebut
                 $query->where('wave_id', $selectedWaveId);
-            })
-            ->orderBy('date', 'desc')
+            } else {
+                // Dosen belum memilih gelombang:
+                // Jangan tampilkan jadwal yang tanggal pelaksanaannya sudah lewat (date < today).
+                // Tampilkan hanya jadwal aktif / mendatang (date >= today).
+                $query->where('date', '>=', now()->toDateString())
+                      ->when($activeWave, function($q) use ($activeWave) {
+                          $q->where('wave_id', $activeWave->id);
+                      });
+            }
+        } else {
+            // Admin & Kaprodi: default to activeWave if no wave is selected
+            $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+            $query->when($selectedWaveId, function($q) use ($selectedWaveId) {
+                $q->where('wave_id', $selectedWaveId);
+            });
+        }
+
+        $schedules = $query->orderBy('date', 'desc')
             ->paginate(10)
-            ->appends(['wave_id' => $selectedWaveId]);
+            ->appends($request->query());
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('thesis_defense_schedules.index', compact('schedules', 'waves', 'selectedWaveId', 'activeWave'));
+        return view('thesis_defense_schedules.index', compact('schedules', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter'));
     }
 
     public function create()
