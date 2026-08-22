@@ -37,30 +37,46 @@ class SeminarExaminerController extends Controller implements HasMiddleware
     {
         $user = Auth::user();
         $activeWave = Wave::getCurrentActive();
-        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $hasWaveFilter = $request->filled('wave_id');
+        $selectedWaveId = $request->input('wave_id');
 
-        $query = SeminarScheduleDetail::has('thesis.student')->with(['thesis.student', 'schedule', 'revisions']);
+        $query = SeminarScheduleDetail::has('thesis.student')
+            ->with(['thesis.student', 'schedule', 'revisions'])
+            ->join('seminar_schedules', 'seminar_schedule_details.seminar_schedule_id', '=', 'seminar_schedules.id');
 
         if ($user->role === 'dosen') {
             $query->where(function ($q) use ($user) {
                 $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
             });
+
+            if ($hasWaveFilter) {
+                // Dosen memilih gelombang secara eksplisit untuk melihat riwayat/arsip gelombang tersebut
+                $query->where('seminar_schedules.wave_id', $selectedWaveId);
+            } else {
+                // Dosen belum memilih gelombang:
+                // Jangan tampilkan jadwal yang tanggal pelaksanaannya sudah lewat (date < today).
+                // Hanya tampilkan jadwal aktif / mendatang (date >= today).
+                $query->where('seminar_schedules.date', '>=', now()->toDateString())
+                      ->when($activeWave, function($q) use ($activeWave) {
+                          $q->where('seminar_schedules.wave_id', $activeWave->id);
+                      });
+            }
+        } else {
+            // Admin & Kaprodi: default to activeWave if no wave is selected
+            $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+            $query->when($selectedWaveId, function($q) use ($selectedWaveId) {
+                $q->where('seminar_schedules.wave_id', $selectedWaveId);
+            });
         }
 
         $examinations = $query
-            ->when($selectedWaveId, function($q) use ($selectedWaveId) {
-                $q->whereHas('schedule', function($query) use ($selectedWaveId) {
-                    $query->where('wave_id', $selectedWaveId);
-                });
-            })
-            ->join('seminar_schedules', 'seminar_schedule_details.seminar_schedule_id', '=', 'seminar_schedules.id')
             ->orderBy('seminar_schedules.date', 'desc')
             ->select('seminar_schedule_details.*')
             ->get();
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('seminar-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave'));
+        return view('seminar-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter'));
     }
 
     public function show(SeminarScheduleDetail $detail)

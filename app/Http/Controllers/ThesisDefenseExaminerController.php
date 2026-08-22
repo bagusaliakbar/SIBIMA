@@ -37,9 +37,12 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
     {
         $user = Auth::user();
         $activeWave = Wave::getCurrentActive();
-        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $hasWaveFilter = $request->filled('wave_id');
+        $selectedWaveId = $request->input('wave_id');
 
-        $query = ThesisDefenseScheduleDetail::has('thesis.student')->with(['thesis.student', 'schedule', 'revisions']);
+        $query = ThesisDefenseScheduleDetail::has('thesis.student')
+            ->with(['thesis.student', 'schedule', 'revisions'])
+            ->join('thesis_defense_schedules', 'thesis_defense_schedule_details.thesis_defense_schedule_id', '=', 'thesis_defense_schedules.id');
 
         if ($user->role === 'dosen') {
             $query->where(function ($q) use ($user) {
@@ -49,22 +52,35 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
                       $t->where('pembimbing1_id', $user->id);
                   });
             });
+
+            if ($hasWaveFilter) {
+                // Dosen memilih gelombang secara eksplisit untuk melihat riwayat/arsip gelombang tersebut
+                $query->where('thesis_defense_schedules.wave_id', $selectedWaveId);
+            } else {
+                // Dosen belum memilih gelombang:
+                // Jangan tampilkan jadwal yang tanggal pelaksanaannya sudah lewat (date < today).
+                // Hanya tampilkan jadwal aktif / mendatang (date >= today).
+                $query->where('thesis_defense_schedules.date', '>=', now()->toDateString())
+                      ->when($activeWave, function($q) use ($activeWave) {
+                          $q->where('thesis_defense_schedules.wave_id', $activeWave->id);
+                      });
+            }
+        } else {
+            // Admin & Kaprodi: default to activeWave if no wave is selected
+            $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+            $query->when($selectedWaveId, function($q) use ($selectedWaveId) {
+                $q->where('thesis_defense_schedules.wave_id', $selectedWaveId);
+            });
         }
 
         $examinations = $query
-            ->when($selectedWaveId, function($q) use ($selectedWaveId) {
-                $q->whereHas('schedule', function($query) use ($selectedWaveId) {
-                    $query->where('wave_id', $selectedWaveId);
-                });
-            })
-            ->join('thesis_defense_schedules', 'thesis_defense_schedule_details.thesis_defense_schedule_id', '=', 'thesis_defense_schedules.id')
             ->orderBy('thesis_defense_schedules.date', 'desc')
             ->select('thesis_defense_schedule_details.*')
             ->get();
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('defense-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave'));
+        return view('defense-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter'));
     }
 
     public function show(ThesisDefenseScheduleDetail $detail)

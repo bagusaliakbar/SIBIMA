@@ -17,8 +17,10 @@
                 <div class="flex items-center gap-3">
                     <form action="{{ route('defense-examiner.index') }}" method="GET" class="relative group">
                         <select name="wave_id" onchange="this.form.submit()" 
-                                class="pl-4 pr-10 py-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[200px] text-slate-700 dark:text-slate-300">
-                            <option value="">Semua Gelombang</option>
+                                class="pl-4 pr-10 py-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[240px] text-slate-700 dark:text-slate-300">
+                            <option value="" {{ empty($selectedWaveId) ? 'selected' : '' }}>
+                                📅 Jadwal Mendatang (Hari Ini+)
+                            </option>
                             @foreach($waves as $wave)
                                 <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
                                     {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
@@ -137,7 +139,23 @@
                             </td>
                         </tr>
                     @empty
-                        <x-empty-state colspan="5" description="Anda belum diplot sebagai penguji sidang." icon="book" />
+                        <tr>
+                            <td colspan="5" class="py-12 text-center">
+                                <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-3">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white">
+                                    {{ empty($selectedWaveId) ? 'Tidak Ada Tugas Penguji Sidang Aktif / Mendatang' : 'Tidak Ada Tugas Penguji Pada Gelombang Ini' }}
+                                </h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mt-1 leading-relaxed">
+                                    @if(empty($selectedWaveId))
+                                        Jadwal sidang pada tanggal pelaksanaan sebelumnya telah selesai. Untuk melihat riwayat tugas penguji dan nilai terdahulu, silakan <strong>pilih Gelombang Pelaksanaan</strong> pada menu di atas.
+                                    @else
+                                        Belum ada penugasan penguji sidang untuk gelombang yang dipilih.
+                                    @endif
+                                </p>
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
