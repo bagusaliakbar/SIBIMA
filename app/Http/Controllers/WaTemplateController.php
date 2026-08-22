@@ -24,6 +24,8 @@ class WaTemplateController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
+        $this->ensureDefaultTemplatesExist();
+
         $selectedCategory = $request->input('category', 'all');
 
         $query = WaTemplate::query();
@@ -36,6 +38,38 @@ class WaTemplateController extends Controller implements HasMiddleware
         $categories = ['Bimbingan', 'Skripsi', 'Ujian', 'Pengingat'];
 
         return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory'));
+    }
+
+    /**
+     * Auto-ensure all required standard templates exist in the database (useful for hosting/production).
+     */
+    private function ensureDefaultTemplatesExist(): void
+    {
+        $requiredCodes = [
+            'mentoring_requested',
+            'mentoring_scheduled_by_dosen',
+            'mentoring_status_updated',
+            'mentoring_reminder',
+            'supervisor_assigned',
+            'thesis_accepted',
+            'revision_requested',
+            'revision_submitted',
+            'thesis_completed',
+            'schedule_published',
+            'schedule_reminder',
+            'critical_student_reminder',
+            'kaprodi_critical_summary',
+        ];
+
+        $existingCount = WaTemplate::whereIn('code', $requiredCodes)->count();
+        if ($existingCount < count($requiredCodes)) {
+            try {
+                $seeder = new \Database\Seeders\WaTemplateSeeder();
+                $seeder->run();
+            } catch (\Throwable $e) {
+                // Ignore if DB connection or permissions issue occurs
+            }
+        }
     }
 
     public function edit(WaTemplate $waTemplate)
