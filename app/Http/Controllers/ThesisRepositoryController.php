@@ -16,6 +16,10 @@ class ThesisRepositoryController extends Controller
 {
     public function exportExcel(Request $request)
     {
+        if (Auth::user()->role === 'mahasiswa') {
+            abort(403, 'Akses ekspor tidak diizinkan untuk mahasiswa.');
+        }
+
         $search = $request->input('search');
         $year = $request->input('year');
         $advisor = $request->input('advisor');
@@ -27,6 +31,10 @@ class ThesisRepositoryController extends Controller
 
     public function exportPdf(Request $request)
     {
+        if (Auth::user()->role === 'mahasiswa') {
+            abort(403, 'Akses ekspor tidak diizinkan untuk mahasiswa.');
+        }
+
         $search = $request->input('search');
         $year = $request->input('year');
         $advisor = $request->input('advisor');
