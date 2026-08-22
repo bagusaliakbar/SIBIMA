@@ -165,6 +165,31 @@ class ThesisRepositoryController extends Controller
         // Compile distinct deduplicated advisors from ThesisRepository and active lecturers
         $advisors = $this->getNormalizedAdvisorsList();
 
+        $minYear = $years->min();
+        $maxYear = $years->max();
+        $yearRange = ($minYear && $maxYear) ? ($minYear == $maxYear ? $minYear : "{$minYear} – {$maxYear}") : '-';
+
+        // Count topics distribution dynamically
+        $topicStats = [];
+        $sampleRepos = ThesisRepository::select('title')->get();
+        foreach ($sampleRepos as $r) {
+            $badge = $r->topic_badge;
+            $lbl = $badge['label'] ?? 'Lainnya';
+            $topicStats[$lbl] = ($topicStats[$lbl] ?? 0) + 1;
+        }
+        arsort($topicStats);
+        $topTopicLabel = key($topicStats) ?? 'Web App & SI';
+        $topTopicCount = current($topicStats) ?: 0;
+
+        $stats = [
+            'total' => $totalCount,
+            'year_range' => $yearRange,
+            'total_years' => $years->count(),
+            'total_advisors' => count($advisors),
+            'top_topic' => $topTopicLabel,
+            'top_topic_count' => $topTopicCount,
+        ];
+
         $topics = [
             'all' => ['label' => 'Semua Topik', 'icon' => 'sparkles'],
             'web' => ['label' => 'Web App & SI', 'icon' => 'globe'],
@@ -177,7 +202,7 @@ class ThesisRepositoryController extends Controller
         ];
 
         return view('repositories.index', compact(
-            'repositories', 'search', 'year', 'advisor', 'topic', 'years', 'advisors', 'topics', 'totalCount', 'filteredCount'
+            'repositories', 'search', 'year', 'advisor', 'topic', 'years', 'advisors', 'topics', 'totalCount', 'filteredCount', 'stats'
         ));
     }
 

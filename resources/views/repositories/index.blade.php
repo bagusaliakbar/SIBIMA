@@ -59,6 +59,39 @@
             checkResults: [],
             hasChecked: false,
             errorMessage: '',
+            viewMode: localStorage.getItem('sibima_repo_view_mode') || 'grid',
+
+            init() {
+                this.$watch('viewMode', val => localStorage.setItem('sibima_repo_view_mode', val));
+            },
+
+            // Abstract Detail Modal State
+            abstractModalOpen: false,
+            abstractData: {
+                id: null,
+                name: '',
+                identifier: '',
+                year: '',
+                title: '',
+                pembimbing1: '',
+                pembimbing2: '',
+                abstract: '',
+                badge: {}
+            },
+            openAbstractModal(repo, badge) {
+                this.abstractData = {
+                    id: repo.id,
+                    name: repo.name || '',
+                    identifier: repo.identifier || '-',
+                    year: repo.year || '',
+                    title: repo.title || '',
+                    pembimbing1: repo.pembimbing1 || '',
+                    pembimbing2: repo.pembimbing2 || '',
+                    abstract: repo.abstract || '',
+                    badge: badge || {}
+                };
+                this.abstractModalOpen = true;
+            },
 
             // Quick Edit Modal State
             editModalOpen: false,
@@ -149,6 +182,57 @@
          }"
          @toggle-checker.window="showChecker = !showChecker">
 
+        <!-- STATISTICAL METRIC SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Metric 1: Total Arsip -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-2xs flex items-center gap-4 hover:border-orange-200 dark:hover:border-orange-800/60 transition-all group">
+                <div class="w-12 h-12 rounded-2xl bg-orange-500/10 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Total Arsip Skripsi</p>
+                    <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ number_format($stats['total']) }} <span class="text-xs font-bold text-slate-400 dark:text-slate-500">Judul</span></h3>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">Database Arsip Alumni</p>
+                </div>
+            </div>
+
+            <!-- Metric 2: Rentang Angkatan -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-2xs flex items-center gap-4 hover:border-indigo-200 dark:hover:border-indigo-800/60 transition-all group">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Rentang Angkatan</p>
+                    <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ $stats['year_range'] }}</h3>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{{ $stats['total_years'] }} Angkatan Terdaftar</p>
+                </div>
+            </div>
+
+            <!-- Metric 3: Topik Populer -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-2xs flex items-center gap-4 hover:border-emerald-200 dark:hover:border-emerald-800/60 transition-all group">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Topik Terpopuler</p>
+                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight truncate max-w-[170px]" title="{{ $stats['top_topic'] }}">{{ $stats['top_topic'] }}</h3>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{{ $stats['top_topic_count'] }} Judul Terkait</p>
+                </div>
+            </div>
+
+            <!-- Metric 4: Pembimbing Terdata -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-700 shadow-2xs flex items-center gap-4 hover:border-purple-200 dark:hover:border-purple-800/60 transition-all group">
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Dosen Pembimbing</p>
+                    <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ $stats['total_advisors'] }} <span class="text-xs font-bold text-slate-400 dark:text-slate-500">Dosen</span></h3>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">Riwayat Pembimbingan</p>
+                </div>
+            </div>
+        </div>
+
         <!-- INSTANT SIMILARITY CHECKER DRAWER -->
         <div x-show="showChecker" 
              x-transition:enter="transition ease-out duration-300"
@@ -185,34 +269,32 @@
                                class="w-full pl-4 pr-11 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
                         <button type="button" 
                                 x-show="testTitle" 
-                                x-cloak
-                                @click="testTitle = ''; checkResults = []; hasChecked = false; errorMessage = '';" 
-                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                @click="testTitle = ''; errorMessage = ''; hasChecked = false; checkResults = [];" 
+                                class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
+                            &times;
                         </button>
                     </div>
                     <button type="submit" 
-                            :disabled="isChecking || !testTitle.trim()"
-                            class="px-6 py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 shrink-0 cursor-pointer">
-                        <template x-if="isChecking">
-                            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            :disabled="isChecking || !testTitle"
+                            class="px-6 py-3 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-2xl font-bold text-xs shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 cursor-pointer">
+                        <template x-if="!isChecking">
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <span>Analisis Orisinalitas</span>
+                            </span>
                         </template>
-                        <span x-text="isChecking ? 'Menganalisis...' : 'Analisis Kemiripan'"></span>
+                        <template x-if="isChecking">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <span>Memeriksa Kemiripan...</span>
+                            </span>
+                        </template>
                     </button>
                 </div>
-                <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 px-1">
-                    <span>💡 Minimal 10 karakter & 2 kata yang bermakna.</span>
-                    <span x-text="testTitle.trim().length + ' karakter'"></span>
-                </div>
+                <template x-if="errorMessage">
+                    <p class="text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1 pt-1" x-text="errorMessage"></p>
+                </template>
             </form>
-
-            <!-- Error Validation Notice -->
-            <div x-show="errorMessage" x-cloak class="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-2xl flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center font-black shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                </div>
-                <p class="text-xs font-bold text-rose-700 dark:text-rose-300" x-text="errorMessage"></p>
-            </div>
 
             <!-- Results Display -->
             <div x-show="hasChecked && !errorMessage" x-cloak class="space-y-3 pt-1">
@@ -323,7 +405,7 @@
                 </div>
             </form>
 
-            <!-- Active Filter Bar & Results Count -->
+            <!-- Active Filter Bar, Results Count & View Switcher -->
             <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs">
                 <div class="flex items-center gap-2 flex-wrap text-slate-600 dark:text-slate-400">
                     <span class="font-bold">Menampilkan <strong class="text-slate-900 dark:text-white">{{ $repositories->total() }}</strong> dari {{ $totalCount }} pustaka</span>
@@ -355,17 +437,37 @@
                     @endif
                 </div>
 
-                @if($search || $year || $advisor || ($topic && $topic !== 'all'))
-                    <a href="{{ route('repositories.index') }}" class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        Reset Semua Filter
-                    </a>
-                @endif
+                <div class="flex items-center gap-3 flex-wrap">
+                    @if($search || $year || $advisor || ($topic && $topic !== 'all'))
+                        <a href="{{ route('repositories.index') }}" class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            Reset Filter
+                        </a>
+                    @endif
+
+                    <!-- Mode Tampilan Ganda (Grid vs Table) -->
+                    <div class="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-xl shadow-2xs">
+                        <button type="button" 
+                                @click="viewMode = 'grid'"
+                                :class="viewMode === 'grid' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            <span>Grid Kartu</span>
+                        </button>
+                        <button type="button" 
+                                @click="viewMode = 'table'"
+                                :class="viewMode === 'table' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                            <span>Tabel Ramping</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- REPOSITORY CARDS GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- VIEW MODE 1: REPOSITORY CARDS GRID -->
+        <div x-show="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($repositories as $repo)
                 @php
                     $badge = $repo->topic_badge;
@@ -405,8 +507,10 @@
                                 @endif
                             </div>
                             
-                            <!-- Title -->
-                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-2.5 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-3">
+                            <!-- Title (Click to open abstract) -->
+                            <h3 @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
+                                class="text-sm font-black text-slate-800 dark:text-slate-100 mb-2.5 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-3 cursor-pointer"
+                                title="Klik untuk membaca detail & abstrak">
                                 {{ $repo->title }}
                             </h3>
                             
@@ -443,9 +547,13 @@
                                             <span class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">P2:</span>
                                             <span class="truncate font-semibold text-slate-700 dark:text-slate-300">{{ $repo->pembimbing2 }}</span>
                                         </div>
-                                    @endif
-                                </div>
-                            @endif
+                            <!-- Read Detail Button in Card -->
+                            <button type="button" 
+                                    @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
+                                    class="w-full py-2 bg-slate-50 hover:bg-orange-50 dark:bg-slate-900/60 dark:hover:bg-orange-950/40 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 rounded-xl text-[11px] font-bold transition-all border border-slate-100 dark:border-slate-700/60 flex items-center justify-center gap-1.5 cursor-pointer">
+                                <span>Lihat Detail Abstrak</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -467,10 +575,193 @@
             @endforelse
         </div>
 
+        <!-- VIEW MODE 2: COMPACT TABLE / LIST -->
+        <div x-show="viewMode === 'table'" x-cloak class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-slate-50/75 dark:bg-slate-900/60 text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                            <th class="py-3.5 px-5">Angkatan & Mahasiswa</th>
+                            <th class="py-3.5 px-5">Judul Skripsi & Topik</th>
+                            <th class="py-3.5 px-5">Dosen Pembimbing</th>
+                            <th class="py-3.5 px-5 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                        @forelse($repositories as $repo)
+                            @php
+                                $badge = $repo->topic_badge;
+                            @endphp
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors group">
+                                <!-- Student & Year -->
+                                <td class="py-3.5 px-5 align-top">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-[9px] font-black uppercase tracking-wider rounded-md border border-slate-200 dark:border-slate-700">
+                                                {{ $repo->year }}
+                                            </span>
+                                            <span class="font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight text-xs">{{ $repo->name }}</span>
+                                        </div>
+                                        <div class="text-[10px] font-mono font-semibold text-slate-400 dark:text-slate-500">
+                                            NPM: {{ $repo->identifier ?? '-' }}
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Title & Smart Topic Badge -->
+                                <td class="py-3.5 px-5 align-top max-w-md whitespace-normal">
+                                    <div class="space-y-1.5">
+                                        <h4 class="font-bold text-slate-800 dark:text-slate-100 text-xs leading-snug line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors cursor-pointer"
+                                            @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})">
+                                            {{ $repo->title }}
+                                        </h4>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md border {{ $badge['bg'] }}">
+                                                {{ $badge['label'] }}
+                                            </span>
+                                            @if($repo->abstract)
+                                                <button type="button" 
+                                                        @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
+                                                        class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5 cursor-pointer">
+                                                    <span>Baca Abstrak</span>
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Advisors -->
+                                <td class="py-3.5 px-5 align-top">
+                                    @if($repo->pembimbing1 || $repo->pembimbing2)
+                                        <div class="space-y-1 max-w-xs text-[11px]">
+                                            @if($repo->pembimbing1)
+                                                <div class="flex items-center gap-1.5 truncate">
+                                                    <span class="w-3.5 h-3.5 rounded bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-[8px] font-black border border-indigo-200 dark:border-indigo-800/80 shrink-0">1</span>
+                                                    <span class="text-slate-700 dark:text-slate-300 font-semibold truncate">{{ $repo->pembimbing1 }}</span>
+                                                </div>
+                                            @endif
+                                            @if($repo->pembimbing2)
+                                                <div class="flex items-center gap-1.5 truncate">
+                                                    <span class="w-3.5 h-3.5 rounded bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 flex items-center justify-center text-[8px] font-black border border-purple-200 dark:border-purple-800/80 shrink-0">2</span>
+                                                    <span class="text-slate-700 dark:text-slate-300 font-semibold truncate">{{ $repo->pembimbing2 }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-slate-400 text-[11px] italic">-</span>
+                                    @endif
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="py-3.5 px-5 align-middle text-right">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" 
+                                                @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
+                                                class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg text-xs font-bold transition-all border border-slate-200/70 dark:border-slate-700 shadow-2xs cursor-pointer"
+                                                title="Lihat Detail Abstrak">
+                                            Detail
+                                        </button>
+
+                                        @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                            <button type="button" 
+                                                    @click="openEditModal({{ json_encode($repo) }})"
+                                                    class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-all cursor-pointer"
+                                                    title="Edit Data Arsip">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                            </button>
+                                            <button type="button" 
+                                                    @click="openDeleteModal({{ json_encode($repo) }})"
+                                                    class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all cursor-pointer"
+                                                    title="Hapus Arsip">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-12 text-center text-slate-500 dark:text-slate-400">
+                                    Tidak ada arsip skripsi yang cocok dengan filter pencarian.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Pagination -->
         <div class="mt-6">
             {{ $repositories->links() }}
         </div>
+
+        <!-- Modal Detail Abstrak Pustaka -->
+        <template x-teleport="body">
+            <div x-show="abstractModalOpen" 
+                 class="fixed inset-0 overflow-y-auto text-left" 
+                 style="z-index: 99999 !important;" 
+                 x-cloak 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="abstractModalOpen = false">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
+                    </div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative" 
+                         style="z-index: 100000 !important;">
+                        <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-lg" x-text="'Angkatan ' + abstractData.year"></span>
+                                <span class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border" :class="abstractData.badge?.bg" x-text="abstractData.badge?.label"></span>
+                            </div>
+                            <button type="button" @click="abstractModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1 cursor-pointer">&times;</button>
+                        </div>
+                        
+                        <div class="p-8 space-y-5 max-h-[70vh] overflow-y-auto">
+                            <!-- Judul -->
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 mb-1">Judul Skripsi</p>
+                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 leading-snug uppercase" x-text="abstractData.title"></h3>
+                            </div>
+
+                            <!-- Meta Mahasiswa & Pembimbing -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Mahasiswa Alumni</p>
+                                    <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5" x-text="abstractData.name"></p>
+                                    <p class="text-[10px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + (abstractData.identifier || '-')"></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Dosen Pembimbing</p>
+                                    <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mt-0.5" x-text="abstractData.pembimbing1 ? 'P1: ' + abstractData.pembimbing1 : '-'"></p>
+                                    <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-300" x-text="abstractData.pembimbing2 ? 'P2: ' + abstractData.pembimbing2 : ''"></p>
+                                </div>
+                            </div>
+
+                            <!-- Abstrak -->
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Abstrak / Rangkuman</p>
+                                <div class="p-4 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line text-justify font-medium" 
+                                     x-text="abstractData.abstract || 'Tidak ada teks abstrak yang tersedia untuk arsip ini.'"></div>
+                            </div>
+                        </div>
+
+                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                            <button type="button" @click="abstractModalOpen = false" class="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
 
         @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
             <!-- Modal Edit Arsip Pustaka -->
