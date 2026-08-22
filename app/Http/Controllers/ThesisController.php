@@ -43,6 +43,7 @@ class ThesisController extends Controller
         }
 
         $search = $request->input('search');
+        $roleFilter = $request->input('role_filter');
         $defaultStatus = $user->role === 'dosen' ? 'active' : 'all';
         $status = $request->input('status', $defaultStatus);
 
@@ -52,6 +53,14 @@ class ThesisController extends Controller
 
         if ($status !== 'all') {
             $thesesQuery->where('status', $status);
+        }
+
+        if ($user->role === 'dosen' && in_array($roleFilter, ['p1', 'p2'])) {
+            if ($roleFilter === 'p1') {
+                $thesesQuery->where('pembimbing1_id', $user->id);
+            } elseif ($roleFilter === 'p2') {
+                $thesesQuery->where('pembimbing2_id', $user->id);
+            }
         }
 
         $theses = $thesesQuery->get();
@@ -244,6 +253,7 @@ class ThesisController extends Controller
     {
         $user = Auth::user();
         $search = $request->input('search');
+        $roleFilter = $request->input('role_filter');
 
         if ($user->role === 'mahasiswa') {
             return redirect()->route('dashboard');
@@ -260,9 +270,17 @@ class ThesisController extends Controller
             $thesesQuery->where('status', $status);
         }
 
+        if ($user->role === 'dosen' && in_array($roleFilter, ['p1', 'p2'])) {
+            if ($roleFilter === 'p1') {
+                $thesesQuery->where('pembimbing1_id', $user->id);
+            } elseif ($roleFilter === 'p2') {
+                $thesesQuery->where('pembimbing2_id', $user->id);
+            }
+        }
+
         $theses = $thesesQuery->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->appends(['search' => $search, 'status' => $status]);
+            ->appends(['search' => $search, 'status' => $status, 'role_filter' => $roleFilter]);
 
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosens = User::where('role', 'dosen')
@@ -282,10 +300,16 @@ class ThesisController extends Controller
             $pendingCount = Thesis::where('status', 'pending')->count();
             $pendingSummary = ['total' => $pendingCount];
 
-            return view('theses.index', compact('theses', 'dosens', 'search', 'status', 'pendingSummary'));
+            return view('theses.index', compact('theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter'));
         }
 
-        return view('theses.index', compact('theses', 'search', 'status'));
+        $dosenStats = [
+            'total' => Thesis::forUser($user)->where('status', $status)->count(),
+            'p1' => Thesis::where('pembimbing1_id', $user->id)->where('status', $status)->count(),
+            'p2' => Thesis::where('pembimbing2_id', $user->id)->where('status', $status)->count(),
+        ];
+
+        return view('theses.index', compact('theses', 'search', 'status', 'roleFilter', 'dosenStats'));
     }
 
     public function cleanAudit(Request $request)

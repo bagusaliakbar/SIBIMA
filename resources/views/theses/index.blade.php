@@ -16,12 +16,12 @@
         <!-- Status Tabs Navigation -->
         <div class="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800 overflow-x-auto pb-px custom-scrollbar">
             @if(Auth::user()->role === 'dosen')
-                <a href="{{ route('theses.index', ['status' => 'active', 'search' => $search]) }}" 
+                <a href="{{ route('theses.index', ['status' => 'active', 'search' => $search, 'role_filter' => $roleFilter ?? '']) }}" 
                    class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'active') === 'active' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     Bimbingan Aktif
                 </a>
-                <a href="{{ route('theses.index', ['status' => 'completed', 'search' => $search]) }}" 
+                <a href="{{ route('theses.index', ['status' => 'completed', 'search' => $search, 'role_filter' => $roleFilter ?? '']) }}" 
                    class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'active') === 'completed' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Riwayat Bimbingan (Lulus)
@@ -64,8 +64,40 @@
                             :value="$search ?? ''" 
                             placeholder="Cari nama, NPM, judul..." 
                             route="theses.index"
-                            :params="['status' => $status ?? '']" />
+                            :params="['status' => $status ?? '', 'role_filter' => $roleFilter ?? '']" />
                     </div>
+
+                    @if(Auth::user()->role === 'dosen')
+                        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                            <!-- Dosen Role Filter Dropdown -->
+                            <form action="{{ route('theses.index') }}" method="GET" class="relative">
+                                <input type="hidden" name="status" value="{{ $status ?? 'active' }}">
+                                @if($search)
+                                    <input type="hidden" name="search" value="{{ $search }}">
+                                @endif
+                                <select name="role_filter" onchange="this.form.submit()" 
+                                        class="pl-3 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs cursor-pointer">
+                                    <option value="" {{ empty($roleFilter) ? 'selected' : '' }}>
+                                        Semua Peran ({{ $dosenStats['total'] ?? $theses->total() }})
+                                    </option>
+                                    <option value="p1" {{ ($roleFilter ?? '') === 'p1' ? 'selected' : '' }}>
+                                        👤 Pembimbing 1 ({{ $dosenStats['p1'] ?? 0 }})
+                                    </option>
+                                    <option value="p2" {{ ($roleFilter ?? '') === 'p2' ? 'selected' : '' }}>
+                                        👥 Pembimbing 2 ({{ $dosenStats['p2'] ?? 0 }})
+                                    </option>
+                                </select>
+                            </form>
+
+                            <!-- Export PDF for Dosen -->
+                            <a href="{{ route('theses.export-pdf', ['search' => $search ?? '', 'status' => $status ?? 'active', 'role_filter' => $roleFilter ?? '']) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg text-xs font-bold transition-all border border-slate-200/70 dark:border-slate-700 shadow-2xs" 
+                               title="Ekspor PDF Mahasiswa Bimbingan">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                <span>PDF</span>
+                            </a>
+                        </div>
+                    @endif
                     
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                         <div class="flex items-center gap-2 flex-wrap">
