@@ -372,40 +372,42 @@
                         ];
                     @endphp
 
-                    <!-- 3. Category Filter Tabs -->
-                    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-100 dark:border-slate-700">
-                        <!-- All Categories Tab -->
-                        <button type="button" 
-                                @click="activeTab = 'all'" 
-                                class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-2 cursor-pointer"
-                                :class="activeTab === 'all' ? 'bg-orange-600 text-white shadow-xs border border-orange-600' : 'bg-slate-100/90 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700/60'">
-                            <svg class="w-4 h-4 shrink-0" :class="activeTab === 'all' ? 'text-white' : 'text-slate-500 dark:text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                            <span>Semua Kategori</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold" 
-                                  :class="totalFilled === totalCount ? (activeTab === 'all' ? 'bg-emerald-400 text-slate-900' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300') : (activeTab === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300')"
-                                  x-text="totalFilled + '/' + totalCount"></span>
-                        </button>
-
-                        @foreach($categories as $catKey => $cat)
+                    <!-- 3. Category Filter Tabs (Sleek Border-Bottom Design) -->
+                    <div class="border-b border-slate-200 dark:border-slate-700 -mx-6 px-6">
+                        <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
+                            <!-- All Categories Tab -->
                             <button type="button" 
-                                    @click="activeTab = '{{ $catKey }}'" 
-                                    class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-2 cursor-pointer"
-                                    :class="activeTab === '{{ $catKey }}' ? 'bg-orange-600 text-white shadow-xs border border-orange-600' : 'bg-slate-100/90 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-700/60'">
-                                @if($cat['icon'] === 'document')
-                                    <svg class="w-4 h-4 shrink-0" :class="activeTab === '{{ $catKey }}' ? 'text-white' : 'text-slate-500 dark:text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                @elseif($cat['icon'] === 'academic')
-                                    <svg class="w-4 h-4 shrink-0" :class="activeTab === '{{ $catKey }}' ? 'text-white' : 'text-slate-500 dark:text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-                                @elseif($cat['icon'] === 'award')
-                                    <svg class="w-4 h-4 shrink-0" :class="activeTab === '{{ $catKey }}' ? 'text-white' : 'text-slate-500 dark:text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                                @elseif($cat['icon'] === 'library')
-                                    <svg class="w-4 h-4 shrink-0" :class="activeTab === '{{ $catKey }}' ? 'text-white' : 'text-slate-500 dark:text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                @endif
-                                <span>{{ $cat['title'] }}</span>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold"
-                                      :class="countFilled({{ json_encode($cat['keys']) }}) === {{ count($cat['keys']) }} ? (activeTab === '{{ $catKey }}' ? 'bg-emerald-400 text-slate-900' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300') : (activeTab === '{{ $catKey }}' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300')"
-                                      x-text="countFilled({{ json_encode($cat['keys']) }}) + '/{{ count($cat['keys']) }}'"></span>
+                                    @click="activeTab = 'all'" 
+                                    class="px-4 py-3 border-b-2 text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-2 cursor-pointer shrink-0"
+                                    :class="activeTab === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                <span>Semua Kategori</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors" 
+                                      :class="totalFilled === totalCount ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-200/80 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
+                                      x-text="totalFilled + '/' + totalCount"></span>
                             </button>
-                        @endforeach
+
+                            @foreach($categories as $catKey => $cat)
+                                <button type="button" 
+                                        @click="activeTab = '{{ $catKey }}'" 
+                                        class="px-4 py-3 border-b-2 text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-2 cursor-pointer shrink-0"
+                                        :class="activeTab === '{{ $catKey }}' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'">
+                                    @if($cat['icon'] === 'document')
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    @elseif($cat['icon'] === 'academic')
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                                    @elseif($cat['icon'] === 'award')
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                                    @elseif($cat['icon'] === 'library')
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    @endif
+                                    <span>{{ $cat['title'] }}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors"
+                                          :class="countFilled({{ json_encode($cat['keys']) }}) === {{ count($cat['keys']) }} ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-200/80 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
+                                          x-text="countFilled({{ json_encode($cat['keys']) }}) + '/{{ count($cat['keys']) }}'"></span>
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
 
                     <!-- 4. Grouped Input Fields -->
