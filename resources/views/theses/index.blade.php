@@ -51,83 +51,6 @@
             @endif
         </div>
 
-        <!-- Filter Segment: Angkatan Baru vs Angkatan Lama & Pilihan Tahun Angkatan -->
-        <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- Left: Quick Cohort Segment Buttons -->
-            <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">Kategori:</span>
-                
-                {{-- Semua Mahasiswa --}}
-                <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'all', 'entry_year' => $entryYear ?? '']) }}"
-                   class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-orange-500 text-white border-orange-500 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
-                    <span>Semua</span>
-                    <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                        {{ $cohortCounts['all'] ?? 0 }}
-                    </span>
-                </a>
-
-                {{-- Angkatan Baru (Baru Mengajukan) --}}
-                <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'new', 'entry_year' => $entryYear ?? '']) }}"
-                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs' : 'bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300 border-emerald-200/70 dark:border-emerald-800/50 hover:bg-emerald-100/60' }}"
-                   title="Mahasiswa Angkatan Baru (Baru Mengajukan Skripsi / Semester Normal)">
-                    <span>🌱 Angkatan Baru</span>
-                    <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' }}">
-                        {{ $cohortCounts['new'] ?? 0 }}
-                    </span>
-                </a>
-
-                {{-- Angkatan Lama (Senior / Lanjutan) --}}
-                <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'old', 'entry_year' => $entryYear ?? '']) }}"
-                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-amber-600 text-white border-amber-600 shadow-xs' : 'bg-amber-50/50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 border-amber-200/70 dark:border-amber-800/50 hover:bg-amber-100/60' }}"
-                   title="Mahasiswa Angkatan Lama (Senior / Masa Studi Lanjut / Semester 9+)">
-                    <span>⏳ Angkatan Lama</span>
-                    <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200' }}">
-                        {{ $cohortCounts['old'] ?? 0 }}
-                    </span>
-                </a>
-            </div>
-
-            <!-- Right: Dropdown Pilihan Spesifik Tahun Angkatan -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <form action="{{ route('theses.index') }}" method="GET" class="flex items-center gap-2">
-                    <input type="hidden" name="status" value="{{ $status ?? ($user->role === 'dosen' ? 'active' : 'all') }}">
-                    <input type="hidden" name="cohort_filter" value="{{ $cohortFilter ?? 'all' }}">
-                    @if($search)
-                        <input type="hidden" name="search" value="{{ $search }}">
-                    @endif
-                    @if(isset($roleFilter) && $roleFilter)
-                        <input type="hidden" name="role_filter" value="{{ $roleFilter }}">
-                    @endif
-
-                    <div class="relative flex items-center">
-                        <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        </span>
-                        <select name="entry_year" onchange="this.form.submit()"
-                                class="pl-8 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
-                            <option value="all" {{ empty($entryYear) || $entryYear === 'all' ? 'selected' : '' }}>
-                                Semua Tahun Angkatan
-                            </option>
-                            @foreach($availableEntryYears as $yr)
-                                <option value="{{ $yr }}" {{ (string)$entryYear === (string)$yr ? 'selected' : '' }}>
-                                    Angkatan {{ $yr }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </form>
-
-                @if(($cohortFilter ?? 'all') !== 'all' || (!empty($entryYear) && $entryYear !== 'all'))
-                    <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '']) }}"
-                       class="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors"
-                       title="Reset filter angkatan">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        <span>Reset Filter</span>
-                    </a>
-                @endif
-            </div>
-        </div>
-
         <x-table-card 
             title="{{ Auth::user()->role === 'dosen' ? 'Daftar Mahasiswa Bimbingan' : 'Daftar Pengajuan Skripsi' }}"
             :footer="$theses->links()">
@@ -240,6 +163,78 @@
                     @endif
                 </div>
             </x-slot>
+
+            <!-- Sub-Toolbar: Filter Angkatan Baru vs Lama & Tahun Angkatan -->
+            <div class="px-5 py-3 bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <!-- Left: Quick Cohort Segment Pills -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">Angkatan:</span>
+                    
+                    {{-- Semua Mahasiswa --}}
+                    <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'all', 'entry_year' => $entryYear ?? '']) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-orange-500 text-white border-orange-500 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                        <span>Semua</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            {{ $cohortCounts['all'] ?? 0 }}
+                        </span>
+                    </a>
+
+                    {{-- Angkatan Baru --}}
+                    <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'new', 'entry_year' => $entryYear ?? '']) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40' }}"
+                       title="Mahasiswa Angkatan Baru (Semester Normal / Baru Mengajukan)">
+                        <span>🌱 Angkatan Baru</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' }}">
+                            {{ $cohortCounts['new'] ?? 0 }}
+                        </span>
+                    </a>
+
+                    {{-- Angkatan Lama --}}
+                    <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'old', 'entry_year' => $entryYear ?? '']) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60 hover:bg-amber-50 dark:hover:bg-amber-950/40' }}"
+                       title="Mahasiswa Angkatan Lama (Senior / Masa Studi Lanjut / Semester 9+)">
+                        <span>⏳ Angkatan Lama</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200' }}">
+                            {{ $cohortCounts['old'] ?? 0 }}
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Right: Dropdown Pilihan Spesifik Tahun Angkatan -->
+                <div class="flex items-center gap-2">
+                    <form action="{{ route('theses.index') }}" method="GET" class="flex items-center">
+                        <input type="hidden" name="status" value="{{ $status ?? ($user->role === 'dosen' ? 'active' : 'all') }}">
+                        <input type="hidden" name="cohort_filter" value="{{ $cohortFilter ?? 'all' }}">
+                        @if($search)
+                            <input type="hidden" name="search" value="{{ $search }}">
+                        @endif
+                        @if(isset($roleFilter) && $roleFilter)
+                            <input type="hidden" name="role_filter" value="{{ $roleFilter }}">
+                        @endif
+
+                        <select name="entry_year" onchange="this.form.submit()"
+                                class="pl-3 pr-8 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs cursor-pointer">
+                            <option value="all" {{ empty($entryYear) || $entryYear === 'all' ? 'selected' : '' }}>
+                                Semua Tahun Angkatan
+                            </option>
+                            @foreach($availableEntryYears as $yr)
+                                <option value="{{ $yr }}" {{ (string)$entryYear === (string)$yr ? 'selected' : '' }}>
+                                    Angkatan {{ $yr }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+
+                    @if(($cohortFilter ?? 'all') !== 'all' || (!empty($entryYear) && $entryYear !== 'all'))
+                        <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '']) }}"
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-xl transition-all shadow-2xs"
+                           title="Reset filter angkatan">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <span>Reset</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
 
             <table class="w-full text-left text-sm whitespace-nowrap">
                 <thead>
