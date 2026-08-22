@@ -4,23 +4,25 @@
             <x-breadcrumb :items="[
                 ['label' => 'Katalog Pustaka Skripsi', 'route' => null]
             ]" />
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2.5">
                 <!-- Instant Similarity Checker Toggle -->
                 <button type="button" 
                         @click="$dispatch('toggle-checker')"
-                        class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] cursor-pointer">
-                    <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        class="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-orange-200 dark:border-orange-800/70 rounded-xl text-xs font-bold transition-all shadow-xs hover:scale-[1.02] cursor-pointer">
+                    <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     <span>Cek Kemiripan Judul</span>
                 </button>
 
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                    <button onclick="startSync()" class="inline-flex items-center px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm shadow-blue-500/30">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Migrasi Portal
+                    <button onclick="startSync()" 
+                            class="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-blue-200 dark:border-blue-800/70 rounded-xl text-xs font-bold transition-all shadow-xs hover:scale-[1.02] cursor-pointer">
+                        <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Migrasi Portal</span>
                     </button>
-                    <a href="{{ route('repositories.import.create') }}" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm shadow-emerald-500/30">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        Import Arsip
+                    <a href="{{ route('repositories.import.create') }}" 
+                       class="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/70 rounded-xl text-xs font-bold transition-all shadow-xs hover:scale-[1.02]">
+                        <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span>Import Arsip</span>
                     </a>
                 @endif
             </div>
@@ -99,7 +101,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">Uji Cepat Kemiripan Judul Skripsi</h3>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">Cek Kemiripan Judul Skripsi</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Ketik calon judul proposal Anda untuk mengecek kemiripan dengan repositori alumni & skripsi aktif secara real-time.</p>
                     </div>
                 </div>
