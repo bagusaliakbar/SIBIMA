@@ -63,12 +63,16 @@ Route::middleware('auth')->group(function () {
 
     // Digital Repository
     Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
+    Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
+    Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');
     Route::get('/repositories', [\App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
     Route::middleware(['role:admin,kaprodi'])->group(function () {
         Route::get('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'createImport'])->name('repositories.import.create');
         Route::post('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'storeImport'])->name('repositories.import.store');
         Route::get('/repositories/template', [App\Http\Controllers\ThesisRepositoryController::class, 'downloadTemplate'])->name('repositories.template');
         Route::post('/repositories/clean-advisors', [\App\Http\Controllers\ThesisRepositoryController::class, 'cleanAdvisorsData'])->name('repositories.clean-advisors');
+        Route::put('/repositories/{repository}', [\App\Http\Controllers\ThesisRepositoryController::class, 'update'])->name('repositories.update');
+        Route::delete('/repositories/{repository}', [\App\Http\Controllers\ThesisRepositoryController::class, 'destroy'])->name('repositories.destroy');
     });
 
     // Seminar Examiner Routes

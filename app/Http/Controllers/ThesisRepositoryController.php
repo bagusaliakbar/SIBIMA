@@ -3,14 +3,93 @@
 namespace App\Http\Controllers;
 
 use App\Models\ThesisRepository;
+use App\Models\User;
 use App\Exports\RepositoryTemplateExport;
+use App\Exports\RepositoryCatalogExport;
 use App\Imports\ThesisRepositoriesImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ThesisRepositoryController extends Controller
 {
+    public function exportExcel(Request $request)
+    {
+        $search = $request->input('search');
+        $year = $request->input('year');
+        $advisor = $request->input('advisor');
+        $topic = $request->input('topic', 'all');
+
+        $fileName = 'katalog-pustaka-' . ($year ? "angkatan-{$year}-" : '') . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new RepositoryCatalogExport($search, $year, $advisor, $topic), $fileName);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $search = $request->input('search');
+        $year = $request->input('year');
+        $advisor = $request->input('advisor');
+        $topic = $request->input('topic', 'all');
+
+        $query = ThesisRepository::query();
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%")
+                  ->orWhere('identifier', 'like', "%{$search}%")
+                  ->orWhere('abstract', 'like', "%{$search}%")
+                  ->orWhere('pembimbing1', 'like', "%{$search}%")
+                  ->orWhere('pembimbing2', 'like', "%{$search}%");
+            });
+        }
+
+        if ($year) {
+            $query->where('year', $year);
+        }
+
+        if ($advisor) {
+            $cleanAdv = preg_replace('/^(drs\.|dr\.|ir\.|prof\.|h\.|hj\.)\s+/i', '', preg_replace('/^\d+[\.\)]\s*/', '', trim($advisor)));
+            $baseAdvName = trim(explode(',', $cleanAdv)[0]);
+
+            $query->where(function($q) use ($advisor, $baseAdvName) {
+                $q->where('pembimbing1', 'like', "%{$baseAdvName}%")
+                  ->orWhere('pembimbing2', 'like', "%{$baseAdvName}%")
+                  ->orWhere('pembimbing1', 'like', "%{$advisor}%")
+                  ->orWhere('pembimbing2', 'like', "%{$advisor}%");
+            });
+        }
+
+        if ($topic && $topic !== 'all') {
+            $topicKeywords = match($topic) {
+                'web' => ['web', 'website', 'portal', 'sistem informasi'],
+                'mobile' => ['android', 'mobile', 'flutter', 'ios', 'smartphone'],
+                'spk' => ['spk', 'pendukung keputusan', 'ahp', 'saw', 'topsis', 'smart', 'profile matching', 'moora', 'vikor', 'mabac', 'promethee'],
+                'ai' => ['machine learning', 'deep learning', 'klasifikasi', 'clustering', 'k-means', 'naive bayes', 'svm', 'c4.5', 'decision tree', 'neural network', 'cnn', 'nlp', 'yolo', 'fuzzy', 'algoritma genetika'],
+                'ui_ux' => ['ui/ux', 'ui ', 'ux ', 'human-centered', 'human centered', 'design thinking', 'usability', 'user experience', 'user interface'],
+                'iot' => ['iot', 'internet of things', 'arduino', 'raspberry', 'sensor', 'mikrokontroler', 'jaringan', 'mikrotik', 'keamanan'],
+                'ecommerce' => ['e-commerce', 'penjualan', 'marketplace', 'toko online', 'pos ', 'point of sale', 'pemesanan', 'kasir'],
+                default => [$topic]
+            };
+
+            $query->where(function($q) use ($topicKeywords) {
+                foreach ($topicKeywords as $kw) {
+                    $q->orWhere('title', 'like', "%{$kw}%")
+                      ->orWhere('abstract', 'like', "%{$kw}%");
+                }
+            });
+        }
+
+        $repositories = $query->orderBy('year', 'desc')->orderBy('name', 'asc')->get();
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $pdf = Pdf::loadView('repositories.pdf', compact('repositories', 'kaprodi', 'search', 'year', 'advisor', 'topic'));
+        $pdf->setPaper('a4', 'landscape');
+
+        $fileName = 'katalog-pustaka-' . ($year ? "angkatan-{$year}-" : '') . now()->format('Y-m-d') . '.pdf';
+        return $pdf->download($fileName);
+    }
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -316,5 +395,60 @@ class ThesisRepositoryController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function update(Request $request, ThesisRepository $repository)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:500',
+            'identifier' => 'nullable|string|max:50',
+            'year' => 'nullable|integer|digits:4',
+            'pembimbing1' => 'nullable|string|max:255',
+            'pembimbing2' => 'nullable|string|max:255',
+            'abstract' => 'nullable|string',
+        ]);
+
+        if (!empty($validated['pembimbing1'])) {
+            $validated['pembimbing1'] = trim(preg_replace('/^\d+[\.\)]\s*/', '', $validated['pembimbing1']));
+        }
+        if (!empty($validated['pembimbing2'])) {
+            $validated['pembimbing2'] = trim(preg_replace('/^\d+[\.\)]\s*/', '', $validated['pembimbing2']));
+        }
+
+        $repository->update($validated);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data arsip skripsi berhasil diperbarui.',
+                'repository' => $repository
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Data arsip skripsi berhasil diperbarui.');
+    }
+
+    public function destroy(Request $request, ThesisRepository $repository)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $title = $repository->title;
+        $repository->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Arsip skripsi berhasil dihapus.'
+            ]);
+        }
+
+        return redirect()->back()->with('success', "Arsip '{$title}' berhasil dihapus dari pustaka.");
     }
 }
