@@ -79,6 +79,18 @@ class MentoringSessionPolicy
     }
 
     /**
+     * Determine whether the user can confirm attendance (Student only).
+     */
+    public function confirmAttendance(User $user, MentoringSession $mentoringSession): bool
+    {
+        if ($user->role === 'mahasiswa') {
+            return $user->id === $mentoringSession->thesis->student_id;
+        }
+
+        return false;
+    }
+
+    /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, MentoringSession $mentoringSession): bool

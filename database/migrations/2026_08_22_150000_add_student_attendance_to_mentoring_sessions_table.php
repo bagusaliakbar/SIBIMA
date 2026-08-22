@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('mentoring_sessions', function (Blueprint $table) {
+            $table->enum('student_attendance_status', ['pending', 'attending', 'permission'])
+                  ->default('pending')
+                  ->after('status');
+            $table->text('student_attendance_reason')
+                  ->nullable()
+                  ->after('student_attendance_status');
+            $table->timestamp('student_confirmed_at')
+                  ->nullable()
+                  ->after('student_attendance_reason');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('mentoring_sessions', function (Blueprint $table) {
+            $table->dropColumn([
+                'student_attendance_status',
+                'student_attendance_reason',
+                'student_confirmed_at',
+            ]);
+        });
+    }
+};

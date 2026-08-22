@@ -862,9 +862,30 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <x-status-badge 
-                                        :type="$session->status === 'approved' ? 'emerald' : 'orange'" 
-                                        :label="$session->status === 'approved' ? 'Disetujui' : 'Menunggu'" />
+                                    <div class="flex flex-col items-end gap-1">
+                                        <x-status-badge 
+                                            :type="$session->status === 'approved' ? 'emerald' : 'orange'" 
+                                            :label="$session->status === 'approved' ? 'Disetujui' : 'Menunggu'" />
+
+                                        @if($session->status === 'approved')
+                                            @if($session->student_attendance_status === 'attending')
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    Akan Hadir
+                                                </span>
+                                            @elseif($session->student_attendance_status === 'permission')
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-tight" title="{{ $session->student_attendance_reason }}">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                    Izin
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tight">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                                    Perlu Konfirmasi
+                                                </span>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                             @empty

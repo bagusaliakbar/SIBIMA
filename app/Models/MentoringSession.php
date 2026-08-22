@@ -17,6 +17,9 @@ class MentoringSession extends Model
         'type',
         'location',
         'status',
+        'student_attendance_status',
+        'student_attendance_reason',
+        'student_confirmed_at',
         'is_absent',
         'notes',
         'feedback',
@@ -26,7 +29,23 @@ class MentoringSession extends Model
 
     protected $casts = [
         'scheduled_at' => 'datetime',
+        'student_confirmed_at' => 'datetime',
     ];
+
+    public function isStudentConfirmed(): bool
+    {
+        return in_array($this->student_attendance_status, ['attending', 'permission']);
+    }
+
+    public function isStudentAttending(): bool
+    {
+        return $this->student_attendance_status === 'attending';
+    }
+
+    public function isStudentPermission(): bool
+    {
+        return $this->student_attendance_status === 'permission';
+    }
 
     public function thesis()
     {

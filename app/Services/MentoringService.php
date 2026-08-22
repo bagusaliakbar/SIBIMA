@@ -146,6 +146,8 @@ class MentoringService
             'location' => $data['location'] ?? null,
             'notes' => $data['notes'] ?? null,
             'status' => 'pending',
+            'student_attendance_status' => 'attending',
+            'student_confirmed_at' => now(),
         ]);
 
         ActivityLog::log('Pengajuan Bimbingan', "Mahasiswa mengajukan bimbingan: {$data['topic']}", 'Bimbingan', $session);
@@ -188,7 +190,50 @@ class MentoringService
             'location' => $data['location'] ?? null,
             'notes' => $data['notes'] ?? null,
             'status' => $status,
+            'student_attendance_status' => 'pending',
+            'student_attendance_reason' => null,
+            'student_confirmed_at' => null,
         ]);
+    }
+
+    /**
+     * Confirm attendance by student.
+     */
+    public function confirmAttendance(MentoringSession $session, array $data)
+    {
+        $status = $data['status']; // 'attending' or 'permission'
+        $reason = $status === 'permission' ? ($data['reason'] ?? null) : null;
+
+        $session->update([
+            'student_attendance_status' => $status,
+            'student_attendance_reason' => $reason,
+            'student_confirmed_at' => now(),
+        ]);
+
+        $statusText = $status === 'attending' ? 'Akan Hadir' : 'Izin (Berhalangan Hadir)';
+        $studentName = $session->thesis->student->name ?? Auth::user()->name;
+
+        // Log Activity
+        ActivityLog::log(
+            'Konfirmasi Kehadiran Bimbingan',
+            "Mahasiswa {$studentName} mengonfirmasi: {$statusText} pada sesi bimbingan {$session->topic}" . ($reason ? " (Alasan: {$reason})" : ""),
+            'Bimbingan',
+            $session
+        );
+
+        // Notify Dosen
+        if ($session->dosen) {
+            $session->dosen->notify(new GeneralNotification(
+                'Konfirmasi Kehadiran Mahasiswa',
+                "Mahasiswa {$studentName} telah mengonfirmasi {$statusText} pada sesi bimbingan: {$session->topic}" . ($reason ? " (Alasan: {$reason})" : ""),
+                route('mentoring-sessions.index'),
+                $status === 'attending' ? 'success' : 'warning'
+            ));
+        }
+
+        return $status === 'attending' 
+            ? 'Terima kasih, konfirmasi kehadiran (Akan Hadir) berhasil disimpan.' 
+            : 'Konfirmasi izin berhasil dikirimkan ke Dosen Pembimbing.';
     }
 
     /**

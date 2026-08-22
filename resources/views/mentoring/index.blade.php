@@ -252,6 +252,43 @@
                                                 </a>
                                             </div>
                                         @endif
+
+                                        <!-- Konfirmasi Kehadiran Mahasiswa -->
+                                        @if(!in_array($session->status, ['completed', 'rejected']))
+                                            <div class="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+                                                <div class="flex items-center justify-between gap-2">
+                                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Kehadiran Mhs:</span>
+                                                    @if($session->student_attendance_status === 'attending')
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-[9px] font-black uppercase tracking-wider">
+                                                            <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                            Akan Hadir
+                                                        </span>
+                                                    @elseif($session->student_attendance_status === 'permission')
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 text-[9px] font-black uppercase tracking-wider">
+                                                            <svg class="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path></svg>
+                                                            Izin / Berhalangan
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[9px] font-black uppercase tracking-wider">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                            Menunggu Konfirmasi
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                
+                                                @if($session->student_attendance_status === 'permission' && $session->student_attendance_reason)
+                                                    <div class="p-2.5 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/50 rounded-xl space-y-1">
+                                                        <p class="text-[9px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-tighter">Alasan Izin Mahasiswa:</p>
+                                                        <p class="text-[11px] text-amber-900 dark:text-amber-200 font-medium italic leading-relaxed">"{{ $session->student_attendance_reason }}"</p>
+                                                        @if($session->student_confirmed_at)
+                                                            <p class="text-[8px] text-amber-700/70 dark:text-amber-400/60 text-right">{{ $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') }} WIB</p>
+                                                        @endif
+                                                    </div>
+                                                @elseif($session->student_attendance_status === 'attending' && $session->student_confirmed_at)
+                                                    <p class="text-[9px] text-slate-400 dark:text-slate-500 text-right font-medium">Dikonfirmasi: {{ $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') }} WIB</p>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </div>
                                     
                                     @if($session->status === 'pending')

@@ -171,4 +171,23 @@ class MentoringSessionController extends Controller
 
         return redirect()->back()->with('success', 'Dokumen berhasil dihapus.');
     }
+
+    public function confirmAttendance(Request $request, MentoringSession $session)
+    {
+        // Only the session's student can confirm
+        $this->authorize('confirmAttendance', $session);
+
+        $validated = $request->validate([
+            'status' => 'required|in:attending,permission',
+            'reason' => 'nullable|required_if:status,permission|string|max:500',
+        ], [
+            'status.required' => 'Pilihan kehadiran wajib ditentukan.',
+            'reason.required_if' => 'Mohon sertakan alasan / keterangan jika Anda berhalangan hadir (izin).',
+            'reason.max' => 'Alasan izin maksimal 500 karakter.',
+        ]);
+
+        $message = $this->mentoringService->confirmAttendance($session, $validated);
+
+        return redirect()->back()->with('success', $message);
+    }
 }
