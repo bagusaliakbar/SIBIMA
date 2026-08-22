@@ -171,7 +171,7 @@
 
                     <div>
                         <div class="flex items-center justify-between">
-                            <label for="location" class="block text-sm font-medium text-slate-700 dark:text-slate-300" x-text="type === 'online' ? 'Tautan Google Meet / Zoom' : 'Ruangan / Tempat Bimbingan'"></label>
+                            <label for="location" class="block text-sm font-medium text-slate-700 dark:text-slate-300" x-text="type === 'online' ? 'Tautan Google Meet' : 'Ruangan / Tempat Bimbingan'"></label>
                             
                             <!-- Google Meet Quick Action Helper (Visible when Online) -->
                             <div x-show="type === 'online'" class="flex items-center gap-1.5">
