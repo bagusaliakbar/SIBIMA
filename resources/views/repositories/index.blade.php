@@ -158,9 +158,9 @@
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-4"
              x-cloak
-             class="bg-gradient-to-br from-orange-500/5 via-white to-amber-500/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl p-6 border-2 border-orange-200 dark:border-orange-500/30 shadow-xl space-y-4">
+             class="bg-gradient-to-br from-orange-500/5 via-white to-amber-500/5 dark:from-slate-900 dark:via-slate-850 dark:to-slate-900 rounded-3xl p-6 border-2 border-orange-200 dark:border-orange-500/30 shadow-xl space-y-4">
             
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-orange-100 dark:border-slate-700 pb-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-orange-100 dark:border-slate-700/80 pb-3">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-md shadow-orange-500/30 shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -170,7 +170,7 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Ketik calon judul proposal Anda untuk mengecek kemiripan dengan repositori alumni & skripsi aktif secara real-time.</p>
                     </div>
                 </div>
-                <button type="button" @click="showChecker = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                <button type="button" @click="showChecker = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -182,7 +182,7 @@
                                x-model="testTitle" 
                                @input="errorMessage = ''; hasChecked = false;"
                                placeholder="Masukkan draf rencana judul skripsi (contoh: Sistem Informasi Pengelolaan Stok Barang...)" 
-                               class="w-full pl-4 pr-11 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100">
+                               class="w-full pl-4 pr-11 py-3 bg-white dark:bg-slate-900 border border-orange-200 dark:border-slate-700 rounded-2xl text-xs font-semibold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all shadow-inner text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
                         <button type="button" 
                                 x-show="testTitle" 
                                 x-cloak
@@ -200,7 +200,7 @@
                         <span x-text="isChecking ? 'Menganalisis...' : 'Analisis Kemiripan'"></span>
                     </button>
                 </div>
-                <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
+                <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 px-1">
                     <span>💡 Minimal 10 karakter & 2 kata yang bermakna.</span>
                     <span x-text="testTitle.trim().length + ' karakter'"></span>
                 </div>
@@ -234,7 +234,7 @@
                             <p class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                 Ditemukan <span class="text-orange-600 dark:text-orange-400" x-text="checkResults.length"></span> Judul Serupa Terkait:
                             </p>
-                            <span class="text-[10px] text-slate-400">Batas toleransi kemiripan: &lt; 45%</span>
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500">Batas toleransi kemiripan: &lt; 45%</span>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -244,7 +244,7 @@
                                         <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg"
                                               :class="item.percentage >= 70 ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'"
                                               x-text="item.percentage + '% Mirip'"></span>
-                                        <span class="text-[10px] font-bold text-slate-400" x-text="item.source + ' (' + item.year + ')'"></span>
+                                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500" x-text="item.source + ' (' + item.year + ')'"></span>
                                     </div>
                                     <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="item.title"></h5>
                                     <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-700/60">
@@ -271,7 +271,7 @@
                     <div class="lg:col-span-5 relative">
                         <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Kata Kunci / Judul / Nama</label>
                         <div class="relative flex items-center">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <input type="text" 
@@ -279,7 +279,7 @@
                                    id="search" 
                                    value="{{ $search }}" 
                                    placeholder="Cari judul, topik, NPM, abstrak..." 
-                                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100">
+                                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500">
                         </div>
                     </div>
 
@@ -288,9 +288,9 @@
                         <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Tahun Angkatan</label>
                         <select name="year" id="year" onchange="this.form.submit()" 
                                 class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
-                            <option value="">Semua Angkatan</option>
+                            <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
                             @foreach($years as $y)
-                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>Angkatan {{ $y }}</option>
+                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Angkatan {{ $y }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -300,9 +300,9 @@
                         <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</label>
                         <select name="advisor" id="advisor" onchange="this.form.submit()" 
                                 class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
-                            <option value="">Semua Dosen Pembimbing</option>
+                            <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Dosen Pembimbing</option>
                             @foreach($advisors as $adv)
-                                <option value="{{ $adv }}" {{ $advisor == $adv ? 'selected' : '' }}>{{ $adv }}</option>
+                                <option value="{{ $adv }}" {{ $advisor == $adv ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">{{ $adv }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -311,11 +311,11 @@
                 <!-- Horizontal Topic Filter Pills -->
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60">
                     <div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0 mr-1">Kategori:</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 shrink-0 mr-1">Kategori:</span>
                         @foreach($topics as $key => $topData)
                             <button type="button" 
                                     onclick="document.getElementById('topicInput').value='{{ $key }}'; document.getElementById('filterForm').submit();"
-                                    class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 {{ ($topic ?? 'all') === $key ? 'bg-orange-600 text-white shadow-sm shadow-orange-500/30' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 {{ ($topic ?? 'all') === $key ? 'bg-orange-600 text-white shadow-sm shadow-orange-500/30' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/60' }}">
                                 <span>{{ $topData['label'] }}</span>
                             </button>
                         @endforeach
@@ -370,13 +370,13 @@
                 @php
                     $badge = $repo->topic_badge;
                 @endphp
-                <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-200 hover:-translate-y-1 flex flex-col group">
+                <div class="bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-200 hover:-translate-y-1 flex flex-col group">
                     <div class="p-6 flex-1 flex flex-col justify-between">
                         <div>
                             <!-- Header Meta Badges & Admin Actions -->
                             <div class="flex justify-between items-center gap-2 mb-3">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200/60 dark:border-slate-600">
+                                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/80 text-slate-700 dark:text-slate-200 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200/80 dark:border-slate-600">
                                         Angkatan {{ $repo->year }}
                                     </span>
 
@@ -417,31 +417,31 @@
                         </div>
                         
                         <!-- Footer Info -->
-                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700/60 mt-auto space-y-2.5">
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700/80 mt-auto space-y-2.5">
                             <!-- Student -->
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 min-w-0">
-                                    <div class="w-7 h-7 rounded-full bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 flex items-center justify-center text-[10px] font-black shrink-0">
+                                    <div class="w-7 h-7 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/40 flex items-center justify-center text-[10px] font-black shrink-0">
                                         {{ substr($repo->name, 0, 1) }}
                                     </div>
                                     <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{{ $repo->name }}</span>
                                 </div>
-                                <span class="text-[10px] font-mono font-bold text-slate-400 shrink-0">{{ $repo->identifier ?? '-' }}</span>
+                                <span class="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 shrink-0">{{ $repo->identifier ?? '-' }}</span>
                             </div>
                             
                             <!-- Advisors -->
                             @if($repo->pembimbing1 || $repo->pembimbing2)
-                                <div class="p-2.5 bg-slate-50 dark:bg-slate-900/40 rounded-xl space-y-1 text-[10px]">
+                                <div class="p-2.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/60 rounded-xl space-y-1 text-[10px]">
                                     @if($repo->pembimbing1)
-                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-400">
-                                            <span class="font-bold text-slate-400 uppercase tracking-tighter shrink-0">P1:</span>
-                                            <span class="truncate font-semibold">{{ $repo->pembimbing1 }}</span>
+                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-300">
+                                            <span class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">P1:</span>
+                                            <span class="truncate font-semibold text-slate-700 dark:text-slate-300">{{ $repo->pembimbing1 }}</span>
                                         </div>
                                     @endif
                                     @if($repo->pembimbing2)
-                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-400">
-                                            <span class="font-bold text-slate-400 uppercase tracking-tighter shrink-0">P2:</span>
-                                            <span class="truncate font-semibold">{{ $repo->pembimbing2 }}</span>
+                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-300">
+                                            <span class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">P2:</span>
+                                            <span class="truncate font-semibold text-slate-700 dark:text-slate-300">{{ $repo->pembimbing2 }}</span>
                                         </div>
                                     @endif
                                 </div>
