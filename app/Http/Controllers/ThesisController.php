@@ -32,7 +32,10 @@ class ThesisController extends Controller
         }
         $search = $request->input('search');
         $status = $request->input('status', 'all');
-        return Excel::download(new ThesesExport($search, $status), 'data-skripsi-' . now()->format('Y-m-d') . '.xlsx');
+        $cohortFilter = $request->input('cohort_filter', 'all');
+        $entryYear = $request->input('entry_year');
+
+        return Excel::download(new ThesesExport($search, $status, $cohortFilter, $entryYear), 'data-skripsi-' . now()->format('Y-m-d') . '.xlsx');
     }
 
     public function exportPdf(Request $request)
@@ -46,6 +49,8 @@ class ThesisController extends Controller
         $roleFilter = $request->input('role_filter');
         $defaultStatus = $user->role === 'dosen' ? 'active' : 'all';
         $status = $request->input('status', $defaultStatus);
+        $cohortFilter = $request->input('cohort_filter', 'all');
+        $entryYear = $request->input('entry_year');
 
         $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->forUser($user)
@@ -63,11 +68,34 @@ class ThesisController extends Controller
             }
         }
 
+        $currentYear = now()->year;
+        $isSecondHalf = now()->month >= 9;
+        $oldCohortThresholdYear = $isSecondHalf ? ($currentYear - 4) : ($currentYear - 5);
+
+        if ($cohortFilter === 'new') {
+            $thesesQuery->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where(function ($sub) use ($oldCohortThresholdYear) {
+                    $sub->where('entry_year', '>', $oldCohortThresholdYear)
+                        ->orWhereNull('entry_year');
+                });
+            });
+        } elseif ($cohortFilter === 'old') {
+            $thesesQuery->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where('entry_year', '<=', $oldCohortThresholdYear);
+            });
+        }
+
+        if (!empty($entryYear) && $entryYear !== 'all') {
+            $thesesQuery->whereHas('student', function ($q) use ($entryYear) {
+                $q->where('entry_year', $entryYear);
+            });
+        }
+
         $theses = $thesesQuery->get();
 
         $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         
-        $pdf = Pdf::loadView('theses.pdf', compact('theses', 'kaprodi'));
+        $pdf = Pdf::loadView('theses.pdf', compact('theses', 'kaprodi', 'cohortFilter', 'entryYear'));
         return $pdf->download('data-skripsi-' . now()->format('Y-m-d') . '.pdf');
     }
 
@@ -264,6 +292,8 @@ class ThesisController extends Controller
         $user = Auth::user();
         $search = $request->input('search');
         $roleFilter = $request->input('role_filter');
+        $cohortFilter = $request->input('cohort_filter', 'all');
+        $entryYear = $request->input('entry_year');
 
         if ($user->role === 'mahasiswa') {
             return redirect()->route('dashboard');
@@ -288,9 +318,77 @@ class ThesisController extends Controller
             }
         }
 
+        // Cohort threshold year calculation
+        $currentYear = now()->year;
+        $isSecondHalf = now()->month >= 9;
+        $oldCohortThresholdYear = $isSecondHalf ? ($currentYear - 4) : ($currentYear - 5);
+
+        // Filter Cohort Type (new vs old)
+        if ($cohortFilter === 'new') {
+            $thesesQuery->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where(function ($sub) use ($oldCohortThresholdYear) {
+                    $sub->where('entry_year', '>', $oldCohortThresholdYear)
+                        ->orWhereNull('entry_year');
+                });
+            });
+        } elseif ($cohortFilter === 'old') {
+            $thesesQuery->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where('entry_year', '<=', $oldCohortThresholdYear);
+            });
+        }
+
+        // Filter Specific Entry Year
+        if (!empty($entryYear) && $entryYear !== 'all') {
+            $thesesQuery->whereHas('student', function ($q) use ($entryYear) {
+                $q->where('entry_year', $entryYear);
+            });
+        }
+
         $theses = $thesesQuery->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->appends(['search' => $search, 'status' => $status, 'role_filter' => $roleFilter]);
+            ->appends([
+                'search' => $search, 
+                'status' => $status, 
+                'role_filter' => $roleFilter,
+                'cohort_filter' => $cohortFilter,
+                'entry_year' => $entryYear
+            ]);
+
+        // Distinct available entry years for dropdown filter
+        $availableEntryYears = User::where('role', 'mahasiswa')
+            ->whereNotNull('entry_year')
+            ->distinct()
+            ->orderBy('entry_year', 'desc')
+            ->pluck('entry_year');
+
+        // Cohort counts within current scope
+        $baseScopeQuery = Thesis::forUser($user);
+        if ($status !== 'all') {
+            $baseScopeQuery->where('status', $status);
+        }
+        if ($user->role === 'dosen' && in_array($roleFilter, ['p1', 'p2'])) {
+            if ($roleFilter === 'p1') {
+                $baseScopeQuery->where('pembimbing1_id', $user->id);
+            } elseif ($roleFilter === 'p2') {
+                $baseScopeQuery->where('pembimbing2_id', $user->id);
+            }
+        }
+        if ($search) {
+            $baseScopeQuery->search($search);
+        }
+
+        $cohortCounts = [
+            'all' => (clone $baseScopeQuery)->count(),
+            'new' => (clone $baseScopeQuery)->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where(function ($sub) use ($oldCohortThresholdYear) {
+                    $sub->where('entry_year', '>', $oldCohortThresholdYear)
+                        ->orWhereNull('entry_year');
+                });
+            })->count(),
+            'old' => (clone $baseScopeQuery)->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where('entry_year', '<=', $oldCohortThresholdYear);
+            })->count(),
+        ];
 
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosens = User::where('role', 'dosen')
@@ -310,7 +408,10 @@ class ThesisController extends Controller
             $pendingCount = Thesis::where('status', 'pending')->count();
             $pendingSummary = ['total' => $pendingCount];
 
-            return view('theses.index', compact('theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter'));
+            return view('theses.index', compact(
+                'theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter',
+                'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts'
+            ));
         }
 
         $dosenStats = [
@@ -319,7 +420,10 @@ class ThesisController extends Controller
             'p2' => Thesis::where('pembimbing2_id', $user->id)->where('status', $status)->count(),
         ];
 
-        return view('theses.index', compact('theses', 'search', 'status', 'roleFilter', 'dosenStats'));
+        return view('theses.index', compact(
+            'theses', 'search', 'status', 'roleFilter', 'dosenStats',
+            'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts'
+        ));
     }
 
     public function cleanAudit(Request $request)

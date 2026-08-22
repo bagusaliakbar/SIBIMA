@@ -147,8 +147,10 @@
         <table>
             <tr>
                 <td class="logo-cell">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}"
-                        class="logo-img">
+                    @if(file_exists(public_path('logo_unsub.png')))
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}"
+                            class="logo-img">
+                    @endif
                 </td>
                 <td class="info-cell">
                     <div class="univ-name">UNIVERSITAS SUBANG</div>

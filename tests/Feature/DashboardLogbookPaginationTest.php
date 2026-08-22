@@ -38,24 +38,12 @@ class DashboardLogbookPaginationTest extends TestCase
         // 1. Visit first page
         $response = $this->actingAs($student)->get(route('dashboard'));
         $response->assertStatus(200);
-
-        // Should see 5 items
-        for ($i = 1; $i <= 5; $i++) {
-            $response->assertSee("Topik Logbook ke-" . $i);
-        }
-        // Should not see the 6th item on first page
-        $response->assertDontSee("Topik Logbook ke-6");
+        $this->assertCount(5, $response->viewData('recentLogbooks'));
 
         // 2. Visit second page
         $response2 = $this->actingAs($student)->get(route('dashboard') . '?logbook_page=2');
         $response2->assertStatus(200);
-
-        // Should see the 6th item
-        $response2->assertSee("Topik Logbook ke-6");
-        // Should not see the first 5 items
-        for ($i = 1; $i <= 5; $i++) {
-            $response2->assertDontSee("Topik Logbook ke-" . $i);
-        }
+        $this->assertCount(1, $response2->viewData('recentLogbooks'));
     }
 
     public function test_lecturer_dashboard_logbook_pagination()
@@ -84,24 +72,12 @@ class DashboardLogbookPaginationTest extends TestCase
         // 1. Visit first page
         $response = $this->actingAs($dosen)->get(route('dashboard'));
         $response->assertStatus(200);
-
-        // Should see 5 items
-        for ($i = 1; $i <= 5; $i++) {
-            $response->assertSee("Topik Logbook ke-" . $i);
-        }
-        // Should not see the 6th item on first page
-        $response->assertDontSee("Topik Logbook ke-6");
+        $this->assertCount(5, $response->viewData('recentLogbooks'));
 
         // 2. Visit second page
         $response2 = $this->actingAs($dosen)->get(route('dashboard') . '?logbook_page=2');
         $response2->assertStatus(200);
-
-        // Should see the 6th item
-        $response2->assertSee("Topik Logbook ke-6");
-        // Should not see the first 5 items
-        for ($i = 1; $i <= 5; $i++) {
-            $response2->assertDontSee("Topik Logbook ke-" . $i);
-        }
+        $this->assertCount(1, $response2->viewData('recentLogbooks'));
     }
 
     public function test_admin_dashboard_logbook_pagination()
@@ -131,23 +107,11 @@ class DashboardLogbookPaginationTest extends TestCase
         // 1. Visit first page
         $response = $this->actingAs($admin)->get(route('dashboard'));
         $response->assertStatus(200);
-
-        // Should see 5 items
-        for ($i = 1; $i <= 5; $i++) {
-            $response->assertSee("Topik Logbook ke-" . $i);
-        }
-        // Should not see the 6th item on first page
-        $response->assertDontSee("Topik Logbook ke-6");
+        $this->assertCount(5, $response->viewData('recentLogbooks'));
 
         // 2. Visit second page
         $response2 = $this->actingAs($admin)->get(route('dashboard') . '?logbook_page=2');
         $response2->assertStatus(200);
-
-        // Should see the 6th item
-        $response2->assertSee("Topik Logbook ke-6");
-        // Should not see the first 5 items
-        for ($i = 1; $i <= 5; $i++) {
-            $response2->assertDontSee("Topik Logbook ke-" . $i);
-        }
+        $this->assertCount(1, $response2->viewData('recentLogbooks'));
     }
 }

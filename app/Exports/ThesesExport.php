@@ -33,12 +33,16 @@ class ThesesExport extends DefaultValueBinder implements
 {
     protected $search;
     protected $status;
+    protected $cohortFilter;
+    protected $entryYear;
     private $rowNumber = 0;
 
-    public function __construct($search = null, $status = 'all')
+    public function __construct($search = null, $status = 'all', $cohortFilter = 'all', $entryYear = null)
     {
         $this->search = $search;
         $this->status = $status;
+        $this->cohortFilter = $cohortFilter ?? 'all';
+        $this->entryYear = $entryYear;
     }
 
     public function collection()
@@ -67,6 +71,29 @@ class ThesesExport extends DefaultValueBinder implements
 
         if ($this->status && $this->status !== 'all') {
             $query->where('status', $this->status);
+        }
+
+        $currentYear = now()->year;
+        $isSecondHalf = now()->month >= 9;
+        $oldCohortThresholdYear = $isSecondHalf ? ($currentYear - 4) : ($currentYear - 5);
+
+        if ($this->cohortFilter === 'new') {
+            $query->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where(function ($sub) use ($oldCohortThresholdYear) {
+                    $sub->where('entry_year', '>', $oldCohortThresholdYear)
+                        ->orWhereNull('entry_year');
+                });
+            });
+        } elseif ($this->cohortFilter === 'old') {
+            $query->whereHas('student', function ($q) use ($oldCohortThresholdYear) {
+                $q->where('entry_year', '<=', $oldCohortThresholdYear);
+            });
+        }
+
+        if (!empty($this->entryYear) && $this->entryYear !== 'all') {
+            $query->whereHas('student', function ($q) {
+                $q->where('entry_year', $this->entryYear);
+            });
         }
 
         if ($this->search) {

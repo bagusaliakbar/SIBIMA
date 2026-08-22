@@ -132,7 +132,9 @@
         <table>
             <tr>
                 <td class="logo-cell">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
+                    @if(file_exists(public_path('logo_unsub.png')))
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
+                    @endif
                 </td>
                 <td class="info-cell">
                     <div class="univ-name">UNIVERSITAS SUBANG</div>
@@ -147,6 +149,13 @@
 
     <div class="report-title">
         Laporan Data Pengajuan Skripsi Mahasiswa
+        @if(isset($cohortFilter) && $cohortFilter === 'new')
+            <div style="font-size: 10pt; font-weight: normal; margin-top: 4px; text-decoration: none; color: #16a34a;">(Kategori: Mahasiswa Angkatan Baru / Baru Mengajukan)</div>
+        @elseif(isset($cohortFilter) && $cohortFilter === 'old')
+            <div style="font-size: 10pt; font-weight: normal; margin-top: 4px; text-decoration: none; color: #d97706;">(Kategori: Mahasiswa Angkatan Lama / Senior)</div>
+        @elseif(!empty($entryYear) && $entryYear !== 'all')
+            <div style="font-size: 10pt; font-weight: normal; margin-top: 4px; text-decoration: none; color: #2563eb;">(Tahun Angkatan: {{ $entryYear }})</div>
+        @endif
     </div>
 
     <table>
@@ -166,7 +175,10 @@
                     <td>{{ $index + 1 }}</td>
                     <td>
                         <strong>{{ $thesis->student->name }}</strong><br>
-                        <span style="color: #666; font-size: 9pt;">{{ $thesis->student->identifier }}</span>
+                        <span style="color: #666; font-size: 9pt;">NPM: {{ $thesis->student->identifier }}</span>
+                        @if($thesis->student->entry_year)
+                            <br><span style="color: #444; font-size: 8pt;">Angkatan {{ $thesis->student->entry_year }} ({{ $thesis->isOldCohort() ? 'Angkatan Lama' : 'Angkatan Baru' }})</span>
+                        @endif
                     </td>
                     <td>
                         @if($thesis->final_title)

@@ -60,6 +60,22 @@ class Thesis extends Model
         return $this->status === 'completed';
     }
 
+    public function isOldCohort(): bool
+    {
+        if (!$this->student || !$this->student->entry_year) {
+            return false;
+        }
+        $currentYear = now()->year;
+        $isSecondHalf = now()->month >= 9;
+        $thresholdYear = $isSecondHalf ? ($currentYear - 4) : ($currentYear - 5);
+        return (int)$this->student->entry_year <= $thresholdYear;
+    }
+
+    public function isNewCohort(): bool
+    {
+        return !$this->isOldCohort();
+    }
+
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
