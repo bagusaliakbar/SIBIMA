@@ -480,10 +480,10 @@
                             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                                 <td class="py-4 px-6 text-right">
                                     @if(!$thesis->pembimbing1 || !$thesis->pembimbing2)
-                                        <div x-data="{ openAssignModal: false }" class="inline-block">
-                                            <button @click="openAssignModal = true" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] cursor-pointer">
-                                                <svg class="w-3.5 h-3.5 shrink-0 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                                <span>Tugaskan</span>
+                                        <div x-data="{ openAssignModal: false }" class="inline-block whitespace-nowrap">
+                                            <button @click="openAssignModal = true" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] cursor-pointer whitespace-nowrap shrink-0">
+                                                <svg class="w-3.5 h-3.5 shrink-0 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                <span class="leading-none">Tugaskan</span>
                                             </button>
 
                                             <!-- Modal Penugasan Pembimbing -->
@@ -594,31 +594,31 @@
                                             </template>
                                         </div>
                                     @else
-                                        <div class="flex justify-end items-center gap-1.5 shrink-0 whitespace-nowrap" x-data="{ openEditModal: false }">
+                                        <div class="flex justify-end items-center gap-2 shrink-0 whitespace-nowrap" x-data="{ openEditModal: false }">
                                             <!-- Rollback Button -->
                                             <button type="button"
                                                     @click="openRollbackModal('{{ $thesis->id }}', '{{ addslashes($thesis->student->name ?? 'Mahasiswa') }}', '{{ addslashes($thesis->pembimbing1?->name ?? '-') }}', '{{ addslashes($thesis->pembimbing2?->name ?? '-') }}')" 
-                                                    class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer"
+                                                    class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
                                                     title="Rollback / Batalkan Penugasan Pembimbing">
                                                 <svg class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                                                <span>Rollback</span>
+                                                <span class="leading-none">Rollback</span>
                                             </button>
 
                                             <!-- Edit Button -->
                                             <button type="button"
                                                     @click="openEditModal = true" 
-                                                    class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer"
+                                                    class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
                                                     title="Edit Judul & Data Skripsi">
                                                 <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                <span>Edit</span>
+                                                <span class="leading-none">Edit</span>
                                             </button>
 
                                             <!-- Logbook Button -->
                                             <a href="{{ route('theses.logbooks', $thesis->id) }}" 
-                                               class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] cursor-pointer"
+                                               class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] cursor-pointer whitespace-nowrap shrink-0"
                                                title="Lihat Logbook Bimbingan">
                                                 <svg class="w-3.5 h-3.5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                                <span>Logbook</span>
+                                                <span class="leading-none">Logbook</span>
                                             </a>
 
                                             <!-- Edit Modal -->
