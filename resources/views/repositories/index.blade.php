@@ -547,6 +547,10 @@
                                             <span class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">P2:</span>
                                             <span class="truncate font-semibold text-slate-700 dark:text-slate-300">{{ $repo->pembimbing2 }}</span>
                                         </div>
+                                    @endif
+                                </div>
+                            @endif
+
                             <!-- Read Detail Button in Card -->
                             <button type="button" 
                                     @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
