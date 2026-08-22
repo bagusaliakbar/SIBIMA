@@ -7,11 +7,10 @@
             <div class="flex flex-wrap items-center gap-2">
                 <!-- Instant Similarity Checker Toggle -->
                 <button type="button" 
-                        @click="showChecker = !showChecker"
-                        :class="showChecker ? 'bg-orange-600 text-white shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-orange-600 dark:hover:text-orange-400'"
-                        class="inline-flex items-center gap-2 px-3.5 py-2 text-[11px] font-black uppercase tracking-wider rounded-xl border transition-all shadow-2xs">
-                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <span x-text="showChecker ? 'Tutup Cek Judul' : '🔍 Cek Kemiripan Judul'"></span>
+                        @click="$dispatch('toggle-checker')"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] cursor-pointer">
+                    <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span>Cek Kemiripan Judul</span>
                 </button>
 
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
@@ -28,36 +27,38 @@
         </div>
     </x-slot>
 
-    <div class="w-full space-y-6" x-data="{ 
-        showChecker: false,
-        testTitle: '',
-        isChecking: false,
-        checkResults: [],
-        hasChecked: false,
-        async runTitleCheck() {
-            if (!this.testTitle.trim() || this.testTitle.trim().length < 5) return;
-            this.isChecking = true;
-            this.hasChecked = false;
-            try {
-                const res = await fetch('{{ route('theses.check-title') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ title: this.testTitle })
-                });
-                const data = await res.json();
-                this.checkResults = data.similar || [];
-                this.hasChecked = true;
-            } catch (err) {
-                console.error(err);
-            } finally {
-                this.isChecking = false;
+    <div class="w-full space-y-6" 
+         x-data="{ 
+            showChecker: false,
+            testTitle: '',
+            isChecking: false,
+            checkResults: [],
+            hasChecked: false,
+            async runTitleCheck() {
+                if (!this.testTitle.trim() || this.testTitle.trim().length < 5) return;
+                this.isChecking = true;
+                this.hasChecked = false;
+                try {
+                    const res = await fetch('{{ route('theses.check-title') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ title: this.testTitle })
+                    });
+                    const data = await res.json();
+                    this.checkResults = data.similar || [];
+                    this.hasChecked = true;
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    this.isChecking = false;
+                }
             }
-        }
-    }">
+         }"
+         @toggle-checker.window="showChecker = !showChecker">
 
         <!-- INSTANT SIMILARITY CHECKER DRAWER -->
         <div x-show="showChecker" 
