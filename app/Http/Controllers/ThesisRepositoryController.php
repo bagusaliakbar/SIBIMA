@@ -36,8 +36,14 @@ class ThesisRepositoryController extends Controller
         }
 
         if ($advisor) {
-            $query->where(function($q) use ($advisor) {
-                $q->where('pembimbing1', 'like', "%{$advisor}%")
+            // Find base keyword from advisor parameter to match all uppercase/lowercase/degree variants
+            $cleanAdv = preg_replace('/^(drs\.|dr\.|ir\.|prof\.|h\.|hj\.)\s+/i', '', preg_replace('/^\d+[\.\)]\s*/', '', trim($advisor)));
+            $baseAdvName = trim(explode(',', $cleanAdv)[0]);
+            
+            $query->where(function($q) use ($advisor, $baseAdvName) {
+                $q->where('pembimbing1', 'like', "%{$baseAdvName}%")
+                  ->orWhere('pembimbing2', 'like', "%{$baseAdvName}%")
+                  ->orWhere('pembimbing1', 'like', "%{$advisor}%")
                   ->orWhere('pembimbing2', 'like', "%{$advisor}%");
             });
         }
@@ -69,19 +75,8 @@ class ThesisRepositoryController extends Controller
         // Get unique years for filter
         $years = ThesisRepository::select('year')->whereNotNull('year')->where('year', '!=', '')->distinct()->orderBy('year', 'desc')->pluck('year');
 
-        // Compile distinct advisors from ThesisRepository and active lecturers
-        $p1 = ThesisRepository::whereNotNull('pembimbing1')->where('pembimbing1', '!=', '')->distinct()->pluck('pembimbing1');
-        $p2 = ThesisRepository::whereNotNull('pembimbing2')->where('pembimbing2', '!=', '')->distinct()->pluck('pembimbing2');
-        $dosenUsers = \App\Models\User::where('role', 'dosen')->pluck('name');
-
-        $advisors = $p1->concat($p2)->concat($dosenUsers)
-            ->map(function($name) {
-                return preg_replace('/^\d+\.\s*/', '', trim($name));
-            })
-            ->filter(fn($name) => !empty($name) && strlen($name) > 3)
-            ->unique()
-            ->sort()
-            ->values();
+        // Compile distinct deduplicated advisors from ThesisRepository and active lecturers
+        $advisors = $this->getNormalizedAdvisorsList();
 
         $topics = [
             'all' => ['label' => 'Semua Topik', 'icon' => 'sparkles'],
@@ -97,6 +92,94 @@ class ThesisRepositoryController extends Controller
         return view('repositories.index', compact(
             'repositories', 'search', 'year', 'advisor', 'topic', 'years', 'advisors', 'topics', 'totalCount', 'filteredCount'
         ));
+    }
+
+    /**
+     * Normalize and deduplicate advisors across repository records and active lecturers.
+     */
+    private function getNormalizedAdvisorsList(): array
+    {
+        $p1 = ThesisRepository::whereNotNull('pembimbing1')->where('pembimbing1', '!=', '')->distinct()->pluck('pembimbing1');
+        $p2 = ThesisRepository::whereNotNull('pembimbing2')->where('pembimbing2', '!=', '')->distinct()->pluck('pembimbing2');
+        $dosenUsers = \App\Models\User::where('role', 'dosen')->pluck('name');
+
+        $rawList = $p1->concat($p2)->concat($dosenUsers);
+        $groups = [];
+
+        foreach ($rawList as $raw) {
+            $trimmed = trim(preg_replace('/^\d+[\.\)]\s*/', '', $raw));
+            if (empty($trimmed) || strlen($trimmed) < 3) continue;
+
+            // Extract base name without title prefixes or comma degrees
+            $base = preg_replace('/^(drs\.|dr\.|ir\.|prof\.|h\.|hj\.)\s+/i', '', $trimmed);
+            $baseNameOnly = trim(explode(',', $base)[0]);
+            $key = preg_replace('/[^a-z0-9]/', '', strtolower($baseNameOnly));
+
+            if (empty($key) || strlen($key) < 3) continue;
+
+            $isAllUpper = ctype_upper(str_replace([' ', '.', ',', '-', "'", '/'], '', $trimmed));
+            $formatted = $trimmed;
+            if ($isAllUpper) {
+                $formatted = ucwords(strtolower($trimmed));
+                // Fix common degree casings
+                $formatted = preg_replace_callback('/\b(m\.kom|m\.cs|m\.si|m\.t|mt|s\.kom|s\.si|s\.sos|s\.s|sfc)\b/i', fn($m) => strtoupper($m[0]), $formatted);
+            }
+
+            if (!isset($groups[$key])) {
+                $groups[$key] = $formatted;
+            } else {
+                $existing = $groups[$key];
+                $existingIsUpper = ctype_upper(str_replace([' ', '.', ',', '-', "'", '/'], '', $existing));
+                $newIsUpper = ctype_upper(str_replace([' ', '.', ',', '-', "'", '/'], '', $trimmed));
+
+                // Prefer non-all-caps version, or more complete degree format
+                if ($existingIsUpper && !$newIsUpper) {
+                    $groups[$key] = $trimmed;
+                } elseif (!$newIsUpper && strlen($trimmed) > strlen($existing)) {
+                    $groups[$key] = $trimmed;
+                }
+            }
+        }
+
+        // Check if any key matches registered active lecturers in SIBIMA, use their official name
+        foreach ($dosenUsers as $dosenName) {
+            $base = preg_replace('/^(drs\.|dr\.|ir\.|prof\.|h\.|hj\.)\s+/i', '', trim($dosenName));
+            $baseNameOnly = trim(explode(',', $base)[0]);
+            $key = preg_replace('/[^a-z0-9]/', '', strtolower($baseNameOnly));
+            if (isset($groups[$key])) {
+                $groups[$key] = $dosenName;
+            }
+        }
+
+        $advisors = array_values($groups);
+        natcasesort($advisors);
+
+        return array_values($advisors);
+    }
+
+    public function cleanAdvisorsData()
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $repositories = ThesisRepository::all();
+        $cleanedCount = 0;
+
+        foreach ($repositories as $repo) {
+            $p1 = $repo->pembimbing1 ? trim(preg_replace('/^\d+[\.\)]\s*/', '', $repo->pembimbing1)) : null;
+            $p2 = $repo->pembimbing2 ? trim(preg_replace('/^\d+[\.\)]\s*/', '', $repo->pembimbing2)) : null;
+
+            if ($p1 !== $repo->pembimbing1 || $p2 !== $repo->pembimbing2) {
+                $repo->update([
+                    'pembimbing1' => $p1,
+                    'pembimbing2' => $p2,
+                ]);
+                $cleanedCount++;
+            }
+        }
+
+        return redirect()->route('repositories.index')->with('success', "Berhasil merapikan data pembimbing pada {$cleanedCount} arsip skripsi.");
     }
 
     public function createImport()
@@ -196,8 +279,8 @@ class ThesisRepositoryController extends Controller
                 
                 // Supervisor: .supervisor-tag
                 $supervisorNodes = $xpath->query(".//*[contains(@class, 'supervisor-tag')]", $row);
-                $pembimbing1 = $supervisorNodes->length > 0 ? trim($supervisorNodes->item(0)->textContent) : null;
-                $pembimbing2 = $supervisorNodes->length > 1 ? trim($supervisorNodes->item(1)->textContent) : null;
+                $pembimbing1 = $supervisorNodes->length > 0 ? trim(preg_replace('/^\d+[\.\)]\s*/', '', $supervisorNodes->item(0)->textContent)) : null;
+                $pembimbing2 = $supervisorNodes->length > 1 ? trim(preg_replace('/^\d+[\.\)]\s*/', '', $supervisorNodes->item(1)->textContent)) : null;
                 
                 if ($name && $title) {
                     $repo = ThesisRepository::updateOrCreate(

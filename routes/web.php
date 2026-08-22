@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'createImport'])->name('repositories.import.create');
         Route::post('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'storeImport'])->name('repositories.import.store');
         Route::get('/repositories/template', [App\Http\Controllers\ThesisRepositoryController::class, 'downloadTemplate'])->name('repositories.template');
+        Route::post('/repositories/clean-advisors', [\App\Http\Controllers\ThesisRepositoryController::class, 'cleanAdvisorsData'])->name('repositories.clean-advisors');
     });
 
     // Seminar Examiner Routes
