@@ -198,6 +198,24 @@ class Thesis extends Model
     }
 
     /**
+     * Common academic stopwords & Indonesian conjunctions/prepositions ignored in keyword matching.
+     */
+    public static function getStopwords(): array
+    {
+        return [
+            'sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 
+            'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 
+            'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 
+            'analisis', 'evaluasi', 'pengujian', 'penelitian', 'kajian', 'tinjauan', 'perbandingan', 
+            'model', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv', 'ud', 'tbk',
+            'dan', 'atau', 'di', 'ke', 'dari', 'yang', 'dalam', 'oleh', 'serta', 'maupun', 
+            'sebagai', 'terhadap', 'tentang', 'atas', 'bagi', 'antar', 'antara', 'hingga', 
+            'sampai', 'sebuah', 'suatu', 'hal', 'dll', 'dkk', 'dst', 'seperti', 'agar', 
+            'supaya', 'karena', 'sehingga', 'jika', 'bila'
+        ];
+    }
+
+    /**
      * Calculate max title similarity score against active theses & alumni repository.
      */
     public function getMaxSimilarityScore()
@@ -210,7 +228,7 @@ class Thesis extends Model
             return 0;
         }
 
-        return \Illuminate\Support\Facades\Cache::remember('thesis_sim_score_' . $this->id . '_' . md5($targetTitle), 1800, function() use ($targetTitle, $placeholders) {
+        return \Illuminate\Support\Facades\Cache::remember('thesis_max_sim_' . $this->id . '_' . md5($targetTitle), 1800, function() use ($targetTitle, $placeholders) {
             $maxScore = 0;
             $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($targetTitle));
             $inputTokens = array_values(array_filter(explode(' ', $cleanInput)));
@@ -229,8 +247,8 @@ class Thesis extends Model
 
             $allTitles = $otherTitles->concat($repoTitles);
 
-            $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
-            $inputFiltered = array_values(array_diff($inputTokens, $stopwords));
+            $stopwords = self::getStopwords();
+            $inputFiltered = array_values(array_filter(array_diff($inputTokens, $stopwords), fn($w) => strlen($w) > 2));
             if (empty($inputFiltered)) $inputFiltered = $inputTokens;
 
             foreach ($allTitles as $existingTitle) {
@@ -240,7 +258,7 @@ class Thesis extends Model
                 }
                 
                 $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
-                $existingFiltered = array_values(array_diff($existingTokens, $stopwords));
+                $existingFiltered = array_values(array_filter(array_diff($existingTokens, $stopwords), fn($w) => strlen($w) > 2));
                 if (empty($existingFiltered)) $existingFiltered = $existingTokens;
 
                 $intersection = array_intersect($inputFiltered, $existingFiltered);
@@ -286,8 +304,8 @@ class Thesis extends Model
 
             if (empty($inputTokens)) return collect();
 
-            $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
-            $inputFiltered = array_values(array_diff($inputTokens, $stopwords));
+            $stopwords = self::getStopwords();
+            $inputFiltered = array_values(array_filter(array_diff($inputTokens, $stopwords), fn($w) => strlen($w) > 2));
             if (empty($inputFiltered)) $inputFiltered = $inputTokens;
 
             // Check against active theses
@@ -303,7 +321,7 @@ class Thesis extends Model
 
                 $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($t));
                 $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
-                $existingFiltered = array_values(array_diff($existingTokens, $stopwords));
+                $existingFiltered = array_values(array_filter(array_diff($existingTokens, $stopwords), fn($w) => strlen($w) > 2));
                 if (empty($existingFiltered)) $existingFiltered = $existingTokens;
 
                 $intersection = array_values(array_unique(array_intersect($inputFiltered, $existingFiltered)));
@@ -341,7 +359,7 @@ class Thesis extends Model
 
                 $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($t));
                 $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
-                $existingFiltered = array_values(array_diff($existingTokens, $stopwords));
+                $existingFiltered = array_values(array_filter(array_diff($existingTokens, $stopwords), fn($w) => strlen($w) > 2));
                 if (empty($existingFiltered)) $existingFiltered = $existingTokens;
 
                 $intersection = array_values(array_unique(array_intersect($inputFiltered, $existingFiltered)));

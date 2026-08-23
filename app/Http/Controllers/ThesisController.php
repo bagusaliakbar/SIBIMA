@@ -200,7 +200,7 @@ class ThesisController extends Controller
 
     private function calculateSimilarityDetails($input, $existing)
     {
-        $stopwords = ['sistem', 'informasi', 'aplikasi', 'perancangan', 'rancang', 'bangun', 'pembuatan', 'pengembangan', 'berbasis', 'web', 'android', 'website', 'mobile', 'dengan', 'metode', 'menggunakan', 'pada', 'untuk', 'studi', 'kasus', 'penerapan', 'implementasi', 'pengaruh', 'analisis', 'evaluasi', 'pengujian', 'desa', 'kabupaten', 'kota', 'kecamatan', 'pt', 'cv'];
+        $stopwords = Thesis::getStopwords();
         
         $cleanInput = preg_replace('/[^a-z0-9\s]/', '', strtolower($input));
         $cleanExisting = preg_replace('/[^a-z0-9\s]/', '', strtolower($existing));
@@ -215,8 +215,8 @@ class ThesisController extends Controller
         $inputTokens = array_values(array_filter(explode(' ', $cleanInput)));
         $existingTokens = array_values(array_filter(explode(' ', $cleanExisting)));
         
-        $inputTokensFiltered = array_values(array_diff($inputTokens, $stopwords));
-        $existingTokensFiltered = array_values(array_diff($existingTokens, $stopwords));
+        $inputTokensFiltered = array_values(array_filter(array_diff($inputTokens, $stopwords), fn($w) => strlen($w) > 2));
+        $existingTokensFiltered = array_values(array_filter(array_diff($existingTokens, $stopwords), fn($w) => strlen($w) > 2));
         
         if (empty($inputTokensFiltered)) $inputTokensFiltered = $inputTokens;
         if (empty($existingTokensFiltered)) $existingTokensFiltered = $existingTokens;
