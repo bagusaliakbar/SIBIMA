@@ -94,7 +94,20 @@ class MentoringSessionController extends Controller
                 ->with('thesis.student')
                 ->paginate(12)
                 ->appends(['search' => $search, 'tab' => $activeTab]);
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab'));
+
+            $calendarEvents = MentoringSession::forUser($user)
+                ->whereHas('thesis', function($q) use ($activeTab) {
+                    if ($activeTab === 'history') {
+                        $q->where('status', 'completed');
+                    } else {
+                        $q->where('status', '!=', 'completed');
+                    }
+                })
+                ->with(['thesis.student', 'dosen'])
+                ->get()
+                ->map(fn($s) => $this->formatCalendarEvent($s));
+
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'calendarEvents'));
         } elseif ($user->role === 'mahasiswa') {
             $sessions = MentoringSession::forUser($user)
                 ->search($search)
@@ -131,12 +144,71 @@ class MentoringSessionController extends Controller
                 ->paginate(15)
                 ->appends(['search' => $search, 'tab' => $activeTab, 'dosen_id' => $dosenId]);
 
+            $calendarQuery = MentoringSession::query()
+                ->whereHas('thesis', function($q) use ($activeTab) {
+                    if ($activeTab === 'history') {
+                        $q->where('status', 'completed');
+                    } else {
+                        $q->where('status', '!=', 'completed');
+                    }
+                });
+
+            if ($dosenId) {
+                $calendarQuery->where(function($q) use ($dosenId) {
+                    $q->where('dosen_id', $dosenId)
+                      ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+                });
+            }
+            $calendarEvents = $calendarQuery->with(['thesis.student', 'dosen'])->get()->map(fn($s) => $this->formatCalendarEvent($s));
+
             $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'dosens', 'dosenId'));
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'dosens', 'dosenId', 'calendarEvents'));
         }
 
         abort(403);
+    }
+
+    private function formatCalendarEvent(MentoringSession $session): array
+    {
+        $statusColor = match($session->status) {
+            'completed' => '#10b981',
+            'approved' => '#ea580c',
+            'pending' => '#f59e0b',
+            'rejected' => '#ef4444',
+            default => '#64748b'
+        };
+        $statusBg = match($session->status) {
+            'completed' => '#ecfdf5',
+            'approved' => '#fff7ed',
+            'pending' => '#fef3c7',
+            'rejected' => '#fef2f2',
+            default => '#f8fafc'
+        };
+
+        return [
+            'id' => $session->id,
+            'title' => ($session->thesis->student->name ?? 'Mahasiswa') . ' - ' . $session->topic,
+            'start' => $session->scheduled_at->toIso8601String(),
+            'backgroundColor' => $statusBg,
+            'borderColor' => $statusColor,
+            'textColor' => $statusColor,
+            'extendedProps' => [
+                'id' => $session->id,
+                'student_name' => $session->thesis->student->name ?? '-',
+                'student_npm' => $session->thesis->student->identifier ?? '-',
+                'student_avatar' => $session->thesis->student->avatar_url ?? null,
+                'topic' => $session->topic,
+                'type' => $session->type,
+                'location' => $session->location,
+                'status' => $session->status,
+                'is_absent' => (bool) $session->is_absent,
+                'notes' => $session->notes,
+                'feedback' => $session->feedback,
+                'time' => $session->scheduled_at->format('H:i') . ' WIB',
+                'date' => $session->scheduled_at->locale('id')->translatedFormat('l, d F Y'),
+            ]
+        ];
     }
 
     public function updateStatus(UpdateMentoringSessionStatusRequest $request, MentoringSession $session)
