@@ -53,6 +53,43 @@
                 </div>
             </div>
 
+            @if(isset($relatedSessions) && $relatedSessions->count() > 0)
+                <div class="p-4 sm:p-5 bg-indigo-50/70 dark:bg-indigo-950/40 border-2 border-indigo-200/80 dark:border-indigo-800/80 rounded-2xl space-y-3.5">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-950 dark:text-indigo-200">
+                                    Sesi Bimbingan Bersama / Kelompok ({{ $relatedSessions->count() + 1 }} Mahasiswa)
+                                </h4>
+                                <p class="text-[11px] text-indigo-700 dark:text-indigo-300">Jadwal ini dibuat untuk beberapa mahasiswa sekaligus pada waktu yang sama.</p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 bg-indigo-100 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 rounded-lg text-[10px] font-black uppercase tracking-wider shrink-0">
+                            Bimbingan Bersama
+                        </span>
+                    </div>
+
+                    <!-- List of students in this group -->
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <div class="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded-xl shadow-2xs">
+                            <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ $mentoringSession->thesis?->student?->name }}</span>
+                            <span class="text-[10px] text-slate-400 font-semibold">({{ $mentoringSession->thesis?->student?->identifier }})</span>
+                        </div>
+                        @foreach($relatedSessions as $rel)
+                            <div class="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-900 border border-indigo-200/80 dark:border-indigo-800/60 rounded-xl shadow-2xs">
+                                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $rel->thesis?->student?->name }}</span>
+                                <span class="text-[10px] text-slate-400 font-semibold">({{ $rel->thesis?->student?->identifier }})</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div class="p-4 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
                     <div class="flex items-start gap-3">
@@ -276,6 +313,26 @@
                                   placeholder="Sampaikan dokumen atau materi yang perlu disiapkan mahasiswa sebelum sesi bimbingan ini...">{{ old('notes', $mentoringSession->notes) }}</textarea>
                     </div>
                 </div>
+
+                @if(isset($relatedSessions) && $relatedSessions->count() > 0)
+                    <div class="p-4 bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-2xl">
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   name="apply_to_group" 
+                                   value="1" 
+                                   checked 
+                                   class="mt-0.5 w-4 h-4 text-indigo-600 rounded border-slate-300 dark:border-slate-700 focus:ring-indigo-500 cursor-pointer">
+                            <div>
+                                <span class="text-xs font-bold text-indigo-950 dark:text-indigo-100 group-hover:text-indigo-600 transition-colors">
+                                    Reschedule Bersama: Terapkan perubahan jadwal ini ke seluruh {{ $relatedSessions->count() + 1 }} mahasiswa dalam sesi ini
+                                </span>
+                                <p class="text-[11px] text-indigo-700/80 dark:text-indigo-300/80 mt-0.5">
+                                    Tanggal/jam baru, lokasi, dan catatan akan otomatis diperbarui untuk seluruh {{ $relatedSessions->count() + 1 }} mahasiswa dan masing-masing menerima notifikasi WhatsApp/Web.
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                @endif
 
                 <!-- Reschedule Info Notice -->
                 <div class="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-2xl flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">

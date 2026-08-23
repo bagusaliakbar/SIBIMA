@@ -35,6 +35,7 @@ class UpdateMentoringSessionRequest extends FormRequest
             'type' => 'required|in:offline,online',
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
+            'apply_to_group' => 'nullable|boolean',
         ];
     }
 

@@ -81,7 +81,15 @@ class MentoringSessionController extends Controller
 
         $mentoringSession->load(['thesis.student', 'dosen']);
 
-        return view('mentoring.edit', compact('mentoringSession'));
+        // Find sibling sessions of the same lecturer at the exact same scheduled time (not completed)
+        $relatedSessions = MentoringSession::where('dosen_id', $mentoringSession->dosen_id)
+            ->where('scheduled_at', $mentoringSession->scheduled_at)
+            ->where('id', '!=', $mentoringSession->id)
+            ->where('status', '!=', 'completed')
+            ->with('thesis.student')
+            ->get();
+
+        return view('mentoring.edit', compact('mentoringSession', 'relatedSessions'));
     }
 
     public function update(UpdateMentoringSessionRequest $request, MentoringSession $mentoringSession)
@@ -89,7 +97,12 @@ class MentoringSessionController extends Controller
         $this->authorize('update', $mentoringSession);
 
         try {
-            $this->mentoringService->updateSession($mentoringSession, $request->validated());
+            $result = $this->mentoringService->updateSession($mentoringSession, $request->validated());
+
+            if (($result['count'] ?? 1) > 1) {
+                return redirect()->route('mentoring-sessions.index')
+                    ->with('success', "Jadwal bimbingan bersama berhasil diperbarui untuk {$result['count']} mahasiswa dan notifikasi perubahan jadwal telah dikirimkan.");
+            }
 
             return redirect()->route('mentoring-sessions.index')
                 ->with('success', 'Jadwal bimbingan berhasil diperbarui dan notifikasi perubahan jadwal telah dikirim ke mahasiswa.');
