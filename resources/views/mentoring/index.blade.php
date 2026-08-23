@@ -817,26 +817,26 @@
                             <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
                                 <button type="button" 
                                         @click="liveTab = 'all'" 
-                                        :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                        :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 font-bold'"
+                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     Semua (<span x-text="attendanceStats.total || 0"></span>)
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'attending'" 
-                                        :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'"
-                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                        :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs font-black' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-bold'"
+                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     Akan Hadir (<span x-text="attendanceStats.attending || 0"></span>)
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'permission'" 
-                                        :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'"
-                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                        :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs font-black' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-bold'"
+                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     Izin (<span x-text="attendanceStats.permission || 0"></span>)
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'pending'" 
-                                        :class="liveTab === 'pending' ? 'bg-slate-700 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200'"
-                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                        :class="liveTab === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-2xs font-black' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800/60 font-bold'"
+                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     Belum Konfirmasi (<span x-text="attendanceStats.pending || 0"></span>)
                                 </button>
                             </div>
