@@ -116,6 +116,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/thesis-defense-applications/{application}', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'destroy'])->name('thesis-defense-applications.destroy');
 
     Route::resource('mentoring-sessions', App\Http\Controllers\MentoringSessionController::class);
+    Route::get('/mentoring-sessions-live-attendance', [App\Http\Controllers\MentoringSessionController::class, 'liveAttendance'])->name('mentoring-sessions.live-attendance');
     Route::patch('/mentoring-sessions/{session}/status', [App\Http\Controllers\MentoringSessionController::class, 'updateStatus'])->name('mentoring-sessions.status');
     Route::post('/mentoring-sessions/{session}/upload-document', [App\Http\Controllers\MentoringSessionController::class, 'uploadDocument'])->name('mentoring-sessions.upload-document');
     Route::delete('/mentoring-sessions/{session}/document', [App\Http\Controllers\MentoringSessionController::class, 'deleteDocument'])->name('mentoring-sessions.delete-document');

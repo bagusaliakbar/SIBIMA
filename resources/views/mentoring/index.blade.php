@@ -133,7 +133,7 @@
                 <!-- 1. CARDS VIEW -->
                 <div x-show="viewMode === 'cards'" x-transition>
                     <!-- Tabs for Active vs History -->
-                    <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/50 pb-4 mb-6">
+                    <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/50 pb-4 mb-4">
                         <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
                            class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'active' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                             Bimbingan Aktif
@@ -143,6 +143,53 @@
                             Riwayat Bimbingan
                         </a>
                     </div>
+
+                    @if($activeTab === 'active')
+                    <!-- Real-Time Attendance Filter Bar & Live Monitor Button -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-slate-50/80 dark:bg-slate-900/40 rounded-2xl border border-slate-200/70 dark:border-slate-800 mb-6">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mr-1">Status Kehadiran Mhs:</span>
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                               class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ empty($attendanceFilter) ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-800 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100' }}">
+                                Semua (<span x-text="attendanceStats.total">{{ $attendanceStats['total'] ?? 0 }}</span>)
+                            </a>
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'attending']) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ $attendanceFilter === 'attending' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' }}">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>🟢 Akan Hadir (<span x-text="attendanceStats.attending">{{ $attendanceStats['attending'] ?? 0 }}</span>)</span>
+                            </a>
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'permission']) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ $attendanceFilter === 'permission' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80 hover:bg-amber-50 dark:hover:bg-amber-950/30' }}">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <span>🟡 Izin (<span x-text="attendanceStats.permission">{{ $attendanceStats['permission'] ?? 0 }}</span>)</span>
+                            </a>
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'pending']) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ $attendanceFilter === 'pending' ? 'bg-slate-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100' }}">
+                                <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></span>
+                                <span>⚪ Belum Respon (<span x-text="attendanceStats.pending">{{ $attendanceStats['pending'] ?? 0 }}</span>)</span>
+                            </a>
+                        </div>
+
+                        <!-- Live Real-Time Monitor Button & Sync Indicator -->
+                        <div class="flex items-center gap-2">
+                            <button type="button" 
+                                    @click="openLiveModal()" 
+                                    class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                                </span>
+                                <span>👥 Monitor Kehadiran Real-Time</span>
+                            </button>
+                            <button type="button" 
+                                    @click="fetchLiveAttendance(false)" 
+                                    title="Segarkan data kehadiran real-time"
+                                    class="p-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer shadow-2xs">
+                                <svg class="w-4 h-4" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    @endif
 
                     <div class="space-y-12">
                     @php
@@ -572,6 +619,37 @@
                         </div>
                     </div>
 
+                    <!-- Student Attendance Status in Calendar Modal -->
+                    <template x-if="selectedEvent?.student_attendance_status && selectedEvent?.status !== 'completed'">
+                        <div class="p-3.5 rounded-xl border space-y-1.5"
+                             :class="{
+                                 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800': selectedEvent.student_attendance_status === 'attending',
+                                 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800': selectedEvent.student_attendance_status === 'permission',
+                                 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700': selectedEvent.student_attendance_status === 'pending'
+                             }">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Konfirmasi Kehadiran Mahasiswa:</span>
+                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider"
+                                      :class="{
+                                          'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200': selectedEvent.student_attendance_status === 'attending',
+                                          'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200': selectedEvent.student_attendance_status === 'permission',
+                                          'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300': selectedEvent.student_attendance_status === 'pending'
+                                      }"
+                                      x-text="selectedEvent.student_attendance_status === 'attending' ? '🟢 Akan Hadir' : (selectedEvent.student_attendance_status === 'permission' ? '🟡 Izin / Berhalangan' : '⚪ Menunggu Konfirmasi')">
+                                </span>
+                            </div>
+                            <template x-if="selectedEvent.student_attendance_status === 'permission' && selectedEvent.student_attendance_reason">
+                                <div class="mt-1">
+                                    <span class="text-[9px] font-bold text-amber-800 dark:text-amber-300">Alasan Izin:</span>
+                                    <p class="text-[11px] text-amber-950 dark:text-amber-200 italic font-medium leading-relaxed" x-text="'&ldquo;' + selectedEvent.student_attendance_reason + '&rdquo;'"></p>
+                                </div>
+                            </template>
+                            <template x-if="selectedEvent.student_confirmed_at">
+                                <p class="text-[9px] text-slate-400 dark:text-slate-500 text-right font-medium" x-text="'Dikonfirmasi: ' + selectedEvent.student_confirmed_at"></p>
+                            </template>
+                        </div>
+                    </template>
+
                     <!-- Student Notes -->
                     <template x-if="selectedEvent?.notes">
                         <div class="space-y-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
@@ -603,6 +681,255 @@
                     <button type="button" @click="eventModalOpen = false" class="px-5 py-2 bg-slate-800 dark:bg-white text-white dark:text-slate-800 font-bold rounded-xl text-xs hover:bg-slate-900 dark:hover:bg-slate-100 transition-all shadow-xs cursor-pointer">
                         Tutup
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. LIVE REAL-TIME ATTENDANCE MONITOR MODAL -->
+        <div x-show="liveModalOpen" 
+             x-cloak 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             aria-labelledby="modal-title" 
+             role="dialog" 
+             aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="liveModalOpen" 
+                     x-transition:enter="ease-out duration-300" 
+                     x-transition:enter-start="opacity-0" 
+                     x-transition:enter-end="opacity-100" 
+                     x-transition:leave="ease-in duration-200" 
+                     x-transition:leave-start="opacity-100" 
+                     x-transition:leave-end="opacity-0" 
+                     @click="liveModalOpen = false" 
+                     class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="liveModalOpen" 
+                     x-transition:enter="ease-out duration-300" 
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                     x-transition:leave="ease-in duration-200" 
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                     class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-100 dark:border-slate-700">
+                    
+                    <!-- Modal Header -->
+                    <div class="p-6 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight">Monitor Kehadiran Mahasiswa</h3>
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Real-Time Sync
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau status konfirmasi kehadiran mahasiswa untuk seluruh sesi bimbingan aktif.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button type="button" 
+                                    @click="fetchLiveAttendance(false)" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-2xs cursor-pointer">
+                                <svg class="w-3.5 h-3.5" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <span>Segarkan</span>
+                            </button>
+                            <button type="button" @click="liveModalOpen = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+                        <!-- KPI Status Quick Metrics -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <button type="button" 
+                                    @click="liveTab = 'attending'" 
+                                    :class="liveTab === 'attending' ? 'ring-2 ring-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-emerald-50/30'"
+                                    class="p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/50 text-left transition-all cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400">🟢 Akan Hadir</span>
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                </div>
+                                <div class="text-2xl font-black text-emerald-950 dark:text-emerald-100 mt-1" x-text="attendanceStats.attending || 0">0</div>
+                                <p class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 font-medium">Mahasiswa siap hadir</p>
+                            </button>
+
+                            <button type="button" 
+                                    @click="liveTab = 'permission'" 
+                                    :class="liveTab === 'permission' ? 'ring-2 ring-amber-500 bg-amber-50/80 dark:bg-amber-950/40' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-amber-50/30'"
+                                    class="p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/50 text-left transition-all cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">🟡 Izin / Berhalangan</span>
+                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                </div>
+                                <div class="text-2xl font-black text-amber-950 dark:text-amber-100 mt-1" x-text="attendanceStats.permission || 0">0</div>
+                                <p class="text-[10px] text-amber-700/80 dark:text-amber-400/80 font-medium">Dengan alasan izin</p>
+                            </button>
+
+                            <button type="button" 
+                                    @click="liveTab = 'pending'" 
+                                    :class="liveTab === 'pending' ? 'ring-2 ring-slate-500 bg-slate-100 dark:bg-slate-700/50' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100'"
+                                    class="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-left transition-all cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">⚪ Belum Konfirmasi</span>
+                                    <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></span>
+                                </div>
+                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1" x-text="attendanceStats.pending || 0">0</div>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Menunggu respon mahasiswa</p>
+                            </button>
+                        </div>
+
+                        <!-- Filter Tabs & Search in Modal -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                            <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <button type="button" 
+                                        @click="liveTab = 'all'" 
+                                        :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                    Semua (<span x-text="attendanceStats.total || 0"></span>)
+                                </button>
+                                <button type="button" 
+                                        @click="liveTab = 'attending'" 
+                                        :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'"
+                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                    Akan Hadir (<span x-text="attendanceStats.attending || 0"></span>)
+                                </button>
+                                <button type="button" 
+                                        @click="liveTab = 'permission'" 
+                                        :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'"
+                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                    Izin (<span x-text="attendanceStats.permission || 0"></span>)
+                                </button>
+                                <button type="button" 
+                                        @click="liveTab = 'pending'" 
+                                        :class="liveTab === 'pending' ? 'bg-slate-700 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200'"
+                                        class="px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+                                    Belum Konfirmasi (<span x-text="attendanceStats.pending || 0"></span>)
+                                </button>
+                            </div>
+
+                            <div class="w-full sm:w-64">
+                                <input type="text" 
+                                       x-model="liveSearch" 
+                                       placeholder="Cari nama / topik..." 
+                                       class="w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500">
+                            </div>
+                        </div>
+
+                        <!-- Students List in Modal -->
+                        <div class="space-y-2.5">
+                            <template x-for="item in filteredLiveSessions" :key="item.id">
+                                <div class="p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                                     :class="{
+                                         'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/70 dark:border-emerald-900/40': item.attendance_status === 'attending',
+                                         'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200/70 dark:border-amber-900/40': item.attendance_status === 'permission',
+                                         'bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/80': item.attendance_status === 'pending'
+                                     }">
+                                    
+                                    <div class="flex items-start gap-3.5 min-w-0 flex-1">
+                                        <template x-if="item.student_avatar">
+                                            <img :src="item.student_avatar" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                                        </template>
+                                        <template x-if="!item.student_avatar">
+                                            <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-xs shrink-0"
+                                                 :class="{
+                                                     'bg-emerald-600': item.attendance_status === 'attending',
+                                                     'bg-amber-600': item.attendance_status === 'permission',
+                                                     'bg-slate-700': item.attendance_status === 'pending'
+                                                 }"
+                                                 x-text="item.student_name ? item.student_name.substring(0, 2).toUpperCase() : 'MH'">
+                                            </div>
+                                        </template>
+                                        
+                                        <div class="min-w-0 flex-1 space-y-1">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <h4 class="text-xs font-black text-slate-800 dark:text-slate-100" x-text="item.student_name"></h4>
+                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold" x-text="item.student_identifier"></span>
+                                                <template x-if="item.is_today">
+                                                    <span class="px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 text-[9px] font-black uppercase">Hari Ini</span>
+                                                </template>
+                                            </div>
+                                            <p class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 truncate" x-text="item.topic"></p>
+                                            <div class="flex items-center gap-3 text-[10px] text-slate-500 dark:text-slate-400">
+                                                <span class="font-bold text-slate-700 dark:text-slate-300" x-text="item.scheduled_date_formatted + ' • ' + item.scheduled_time_formatted"></span>
+                                                <span x-text="item.type === 'online' ? '🎥 Daring' : '🏢 Tatap Muka'"></span>
+                                                <template x-if="item.dosen_name">
+                                                    <span class="text-slate-400" x-text="'Dosen: ' + item.dosen_name"></span>
+                                                </template>
+                                            </div>
+
+                                            <!-- Permission Reason Callout -->
+                                            <template x-if="item.attendance_status === 'permission' && item.attendance_reason">
+                                                <div class="mt-2 p-2 bg-amber-100/70 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800/80">
+                                                    <span class="text-[9px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider block">Alasan Izin Mahasiswa:</span>
+                                                    <p class="text-[11px] text-amber-950 dark:text-amber-200 font-medium italic" x-text="'&ldquo;' + item.attendance_reason + '&rdquo;'"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status Badge & Quick Actions -->
+                                    <div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800">
+                                        <template x-if="item.attendance_status === 'attending'">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase tracking-wider">
+                                                <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                <span>Akan Hadir</span>
+                                            </span>
+                                        </template>
+                                        <template x-if="item.attendance_status === 'permission'">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase tracking-wider">
+                                                <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                                <span>Izin / Berhalangan</span>
+                                            </span>
+                                        </template>
+                                        <template x-if="item.attendance_status === 'pending'">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
+                                                <span>Belum Respon</span>
+                                            </span>
+                                        </template>
+
+                                        <template x-if="item.confirmed_at_formatted">
+                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-medium" x-text="item.confirmed_at_formatted"></span>
+                                        </template>
+
+                                        <!-- WhatsApp Reminder Button for Pending / Permission -->
+                                        <template x-if="item.student_phone && (item.attendance_status === 'pending' || item.attendance_status === 'permission')">
+                                            <a :href="'https://wa.me/' + item.student_phone.replace(/^0/, '62') + '?text=' + encodeURIComponent('Halo ' + item.student_name + ', pengingat jadwal bimbingan SIBIMA pada ' + item.scheduled_date_formatted + ' pukul ' + item.scheduled_time_formatted + '. Topik: ' + item.topic + '.')" 
+                                               target="_blank" 
+                                               class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-[10px] font-bold transition-all">
+                                                <span>📲 Chat WA</span>
+                                            </a>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template x-if="filteredLiveSessions.length === 0">
+                                <div class="p-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                                    <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Tidak ada mahasiswa yang sesuai dengan filter kehadiran ini.</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="p-4 px-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Live Sync Otomatis Aktif (tiap 10 detik) • Terakhir: <strong x-text="lastUpdated"></strong></span>
+                        </div>
+                        <button type="button" @click="liveModalOpen = false" class="px-5 py-2 bg-slate-800 dark:bg-white text-white dark:text-slate-800 font-bold rounded-xl text-xs hover:bg-slate-900 dark:hover:bg-slate-100 transition-all shadow-xs cursor-pointer">
+                            Tutup
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -682,12 +1009,65 @@
                 viewMode: '{{ request('view', 'cards') }}',
                 selectedEvent: null,
                 eventModalOpen: false,
+                liveModalOpen: false,
+                liveTab: 'all',
+                liveSearch: '',
+                isSyncing: false,
+                lastUpdated: '{{ now()->locale('id')->translatedFormat('H:i:s') }} WIB',
+                attendanceStats: @json($attendanceStats),
+                liveSessions: [],
                 calendarInitialized: false,
                 events: @json($calendarEvents ?? []),
                 init() {
                     if (this.viewMode === 'calendar') {
                         this.initCalendar();
                     }
+                    this.fetchLiveAttendance(true);
+                    setInterval(() => {
+                        this.fetchLiveAttendance(true);
+                    }, 10000);
+                },
+                async fetchLiveAttendance(silent = false) {
+                    if (!silent) this.isSyncing = true;
+                    try {
+                        const dosenId = '{{ $dosenId ?? '' }}';
+                        const url = '{{ route('mentoring-sessions.live-attendance') }}' + (dosenId ? '?dosen_id=' + dosenId : '');
+                        const response = await fetch(url, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.summary) {
+                                this.attendanceStats = data.summary;
+                                this.lastUpdated = data.summary.last_updated || this.lastUpdated;
+                            }
+                            if (data.sessions) {
+                                this.liveSessions = data.sessions;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Live attendance sync error:', e);
+                    } finally {
+                        if (!silent) this.isSyncing = false;
+                    }
+                },
+                openLiveModal() {
+                    this.liveModalOpen = true;
+                    this.fetchLiveAttendance(false);
+                },
+                get filteredLiveSessions() {
+                    return this.liveSessions.filter(item => {
+                        const matchesTab = (this.liveTab === 'all') || (item.attendance_status === this.liveTab);
+                        const searchLower = this.liveSearch.toLowerCase();
+                        const matchesSearch = !this.liveSearch || 
+                            (item.student_name && item.student_name.toLowerCase().includes(searchLower)) ||
+                            (item.student_identifier && item.student_identifier.toLowerCase().includes(searchLower)) ||
+                            (item.topic && item.topic.toLowerCase().includes(searchLower));
+                        return matchesTab && matchesSearch;
+                    });
                 },
                 initCalendar() {
                     if (this.calendarInitialized) return;

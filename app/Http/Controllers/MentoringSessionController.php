@@ -118,9 +118,10 @@ class MentoringSessionController extends Controller
         $user = Auth::user();
         $search = $request->input('search');
         $activeTab = $request->input('tab', 'active');
+        $attendanceFilter = $request->input('attendance');
 
         if ($user->role === 'dosen') {
-            $sessions = MentoringSession::forUser($user)
+            $query = MentoringSession::forUser($user)
                 ->search($search)
                 ->whereHas('thesis', function($q) use ($activeTab) {
                     if ($activeTab === 'history') {
@@ -128,27 +129,40 @@ class MentoringSessionController extends Controller
                     } else {
                         $q->where('status', '!=', 'completed');
                     }
-                })
+                });
+
+            if ($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending'])) {
+                $query->where('student_attendance_status', $attendanceFilter);
+            }
+
+            $sessions = $query
                 ->orderBy('scheduled_at', 'desc')
                 ->with('thesis.student')
                 ->paginate(12)
-                ->appends(['search' => $search, 'tab' => $activeTab]);
+                ->appends(['search' => $search, 'tab' => $activeTab, 'attendance' => $attendanceFilter]);
 
-            $calendarEvents = MentoringSession::forUser($user)
+            $calendarQuery = MentoringSession::forUser($user)
                 ->whereHas('thesis', function($q) use ($activeTab) {
                     if ($activeTab === 'history') {
                         $q->where('status', 'completed');
                     } else {
                         $q->where('status', '!=', 'completed');
                     }
-                })
+                });
+
+            if ($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending'])) {
+                $calendarQuery->where('student_attendance_status', $attendanceFilter);
+            }
+
+            $calendarEvents = $calendarQuery
                 ->with(['thesis.student', 'dosen'])
                 ->get()
                 ->map(fn($s) => $this->formatCalendarEvent($s));
 
             $kpiStats = $this->calculateKpiStats($user);
+            $attendanceStats = $this->calculateAttendanceStats($user);
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'calendarEvents', 'kpiStats'));
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'attendanceFilter', 'calendarEvents', 'kpiStats', 'attendanceStats'));
         } elseif ($user->role === 'mahasiswa') {
             $sessions = MentoringSession::forUser($user)
                 ->search($search)
@@ -179,11 +193,15 @@ class MentoringSessionController extends Controller
                 });
             }
 
+            if ($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending'])) {
+                $query->where('student_attendance_status', $attendanceFilter);
+            }
+
             $sessions = $query
                 ->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
                 ->orderBy('scheduled_at', 'desc')
                 ->paginate(15)
-                ->appends(['search' => $search, 'tab' => $activeTab, 'dosen_id' => $dosenId]);
+                ->appends(['search' => $search, 'tab' => $activeTab, 'dosen_id' => $dosenId, 'attendance' => $attendanceFilter]);
 
             $calendarQuery = MentoringSession::query()
                 ->whereHas('thesis', function($q) use ($activeTab) {
@@ -200,15 +218,120 @@ class MentoringSessionController extends Controller
                       ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
                 });
             }
+
+            if ($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending'])) {
+                $calendarQuery->where('student_attendance_status', $attendanceFilter);
+            }
+
             $calendarEvents = $calendarQuery->with(['thesis.student', 'dosen'])->get()->map(fn($s) => $this->formatCalendarEvent($s));
 
             $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
             $kpiStats = $this->calculateKpiStats($user, $dosenId);
+            $attendanceStats = $this->calculateAttendanceStats($user, $dosenId);
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'dosens', 'dosenId', 'calendarEvents', 'kpiStats'));
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'attendanceFilter', 'dosens', 'dosenId', 'calendarEvents', 'kpiStats', 'attendanceStats'));
         }
 
         abort(403);
+    }
+
+    /**
+     * Real-time live attendance polling endpoint for lecturers and admins.
+     */
+    public function liveAttendance(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['dosen', 'admin', 'kaprodi'])) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $dosenId = $request->input('dosen_id');
+
+        $query = MentoringSession::query()
+            ->whereHas('thesis', function($q) {
+                $q->where('status', '!=', 'completed');
+            })
+            ->whereNotIn('status', ['rejected', 'completed']);
+
+        if ($user->role === 'dosen') {
+            $query->forUser($user);
+        } elseif ($dosenId) {
+            $query->where(function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            });
+        }
+
+        $sessions = $query->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+
+        $attendingCount = $sessions->where('student_attendance_status', 'attending')->count();
+        $permissionCount = $sessions->where('student_attendance_status', 'permission')->count();
+        $pendingCount = $sessions->where('student_attendance_status', 'pending')->count();
+
+        $items = $sessions->map(function($s) {
+            $student = $s->thesis?->student;
+            $dosen = $s->dosen ?? $s->thesis?->pembimbing1;
+            return [
+                'id' => $s->id,
+                'student_name' => $student?->name ?? 'Mahasiswa',
+                'student_identifier' => $student?->identifier ?? '-',
+                'student_phone' => $student?->phone_number ?? null,
+                'student_avatar' => $student?->avatar_url,
+                'thesis_title' => $s->thesis?->title ?? '-',
+                'dosen_name' => $dosen?->name ?? '-',
+                'topic' => $s->topic,
+                'type' => $s->type,
+                'location' => $s->location,
+                'scheduled_at' => $s->scheduled_at->format('Y-m-d H:i:s'),
+                'scheduled_date_formatted' => $s->scheduled_at->locale('id')->translatedFormat('d M Y'),
+                'scheduled_time_formatted' => $s->scheduled_at->format('H:i') . ' WIB',
+                'is_today' => $s->scheduled_at->isToday(),
+                'status' => $s->status,
+                'attendance_status' => $s->student_attendance_status ?? 'pending',
+                'attendance_reason' => $s->student_attendance_reason,
+                'confirmed_at_formatted' => $s->student_confirmed_at ? $s->student_confirmed_at->locale('id')->translatedFormat('d M H:i') . ' WIB' : null,
+            ];
+        });
+
+        return response()->json([
+            'summary' => [
+                'total' => $sessions->count(),
+                'attending' => $attendingCount,
+                'permission' => $permissionCount,
+                'pending' => $pendingCount,
+                'last_updated' => now()->locale('id')->translatedFormat('H:i:s') . ' WIB',
+            ],
+            'sessions' => $items,
+        ]);
+    }
+
+    private function calculateAttendanceStats($user, $dosenId = null): array
+    {
+        $query = MentoringSession::query()
+            ->whereHas('thesis', function($q) {
+                $q->where('status', '!=', 'completed');
+            })
+            ->whereNotIn('status', ['rejected', 'completed']);
+
+        if ($user->role === 'dosen') {
+            $query->forUser($user);
+        } elseif ($dosenId) {
+            $query->where(function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            });
+        }
+
+        $sessions = $query->get();
+
+        return [
+            'total' => $sessions->count(),
+            'attending' => $sessions->where('student_attendance_status', 'attending')->count(),
+            'permission' => $sessions->where('student_attendance_status', 'permission')->count(),
+            'pending' => $sessions->where('student_attendance_status', 'pending')->count(),
+        ];
     }
 
     private function calculateKpiStats($user, $dosenId = null): array
@@ -329,6 +452,9 @@ class MentoringSessionController extends Controller
                 'location' => $session->location,
                 'status' => $session->status,
                 'is_absent' => (bool) $session->is_absent,
+                'student_attendance_status' => $session->student_attendance_status ?? 'pending',
+                'student_attendance_reason' => $session->student_attendance_reason,
+                'student_confirmed_at' => $session->student_confirmed_at ? $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') . ' WIB' : null,
                 'notes' => $session->notes,
                 'feedback' => $session->feedback,
                 'time' => $session->scheduled_at->format('H:i') . ' WIB',
