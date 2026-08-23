@@ -76,16 +76,8 @@ class RepositoryCatalogExport extends DefaultValueBinder implements FromCollecti
         }
 
         if ($this->topic && $this->topic !== 'all') {
-            $topicKeywords = match($this->topic) {
-                'web' => ['web', 'website', 'portal', 'sistem informasi'],
-                'mobile' => ['android', 'mobile', 'flutter', 'ios', 'smartphone'],
-                'spk' => ['spk', 'pendukung keputusan', 'ahp', 'saw', 'topsis', 'smart', 'profile matching', 'moora', 'vikor', 'mabac', 'promethee'],
-                'ai' => ['machine learning', 'deep learning', 'klasifikasi', 'clustering', 'k-means', 'naive bayes', 'svm', 'c4.5', 'decision tree', 'neural network', 'cnn', 'nlp', 'yolo', 'fuzzy', 'algoritma genetika'],
-                'ui_ux' => ['ui/ux', 'ui ', 'ux ', 'human-centered', 'human centered', 'design thinking', 'usability', 'user experience', 'user interface'],
-                'iot' => ['iot', 'internet of things', 'arduino', 'raspberry', 'sensor', 'mikrokontroler', 'jaringan', 'mikrotik', 'keamanan'],
-                'ecommerce' => ['e-commerce', 'penjualan', 'marketplace', 'toko online', 'pos ', 'point of sale', 'pemesanan', 'kasir'],
-                default => [$this->topic]
-            };
+            $definitions = ThesisRepository::getTopicDefinitions();
+            $topicKeywords = $definitions[$this->topic]['keywords'] ?? [$this->topic];
 
             $query->where(function($q) use ($topicKeywords) {
                 foreach ($topicKeywords as $kw) {

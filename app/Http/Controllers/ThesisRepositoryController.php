@@ -70,16 +70,8 @@ class ThesisRepositoryController extends Controller
         }
 
         if ($topic && $topic !== 'all') {
-            $topicKeywords = match($topic) {
-                'web' => ['web', 'website', 'portal', 'sistem informasi'],
-                'mobile' => ['android', 'mobile', 'flutter', 'ios', 'smartphone'],
-                'spk' => ['spk', 'pendukung keputusan', 'ahp', 'saw', 'topsis', 'smart', 'profile matching', 'moora', 'vikor', 'mabac', 'promethee'],
-                'ai' => ['machine learning', 'deep learning', 'klasifikasi', 'clustering', 'k-means', 'naive bayes', 'svm', 'c4.5', 'decision tree', 'neural network', 'cnn', 'nlp', 'yolo', 'fuzzy', 'algoritma genetika'],
-                'ui_ux' => ['ui/ux', 'ui ', 'ux ', 'human-centered', 'human centered', 'design thinking', 'usability', 'user experience', 'user interface'],
-                'iot' => ['iot', 'internet of things', 'arduino', 'raspberry', 'sensor', 'mikrokontroler', 'jaringan', 'mikrotik', 'keamanan'],
-                'ecommerce' => ['e-commerce', 'penjualan', 'marketplace', 'toko online', 'pos ', 'point of sale', 'pemesanan', 'kasir'],
-                default => [$topic]
-            };
+            $definitions = ThesisRepository::getTopicDefinitions();
+            $topicKeywords = $definitions[$topic]['keywords'] ?? [$topic];
 
             $query->where(function($q) use ($topicKeywords) {
                 foreach ($topicKeywords as $kw) {
@@ -136,16 +128,8 @@ class ThesisRepositoryController extends Controller
         }
 
         if ($topic && $topic !== 'all') {
-            $topicKeywords = match($topic) {
-                'web' => ['web', 'website', 'portal', 'sistem informasi'],
-                'mobile' => ['android', 'mobile', 'flutter', 'ios', 'smartphone'],
-                'spk' => ['spk', 'pendukung keputusan', 'ahp', 'saw', 'topsis', 'smart', 'profile matching', 'moora', 'vikor', 'mabac', 'promethee'],
-                'ai' => ['machine learning', 'deep learning', 'klasifikasi', 'clustering', 'k-means', 'naive bayes', 'svm', 'c4.5', 'decision tree', 'neural network', 'cnn', 'nlp', 'yolo', 'fuzzy', 'algoritma genetika'],
-                'ui_ux' => ['ui/ux', 'ui ', 'ux ', 'human-centered', 'human centered', 'design thinking', 'usability', 'user experience', 'user interface'],
-                'iot' => ['iot', 'internet of things', 'arduino', 'raspberry', 'sensor', 'mikrokontroler', 'jaringan', 'mikrotik', 'keamanan'],
-                'ecommerce' => ['e-commerce', 'penjualan', 'marketplace', 'toko online', 'pos ', 'point of sale', 'pemesanan', 'kasir'],
-                default => [$topic]
-            };
+            $definitions = ThesisRepository::getTopicDefinitions();
+            $topicKeywords = $definitions[$topic]['keywords'] ?? [$topic];
 
             $query->where(function($q) use ($topicKeywords) {
                 foreach ($topicKeywords as $kw) {
