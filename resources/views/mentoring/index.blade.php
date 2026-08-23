@@ -10,66 +10,66 @@
         <!-- KPI Quick Bar (4 Metrik Ringkas) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <!-- 1. Jadwal Minggu Ini -->
-            <div class="p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-100 dark:border-slate-700/80 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-orange-200 dark:hover:border-orange-500/30">
+            <div class="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-orange-200 dark:hover:border-orange-500/30">
                 <div class="space-y-1">
-                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Jadwal Minggu Ini</span>
+                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Jadwal Minggu Ini</span>
                     <div class="flex items-baseline gap-2">
                         <span class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ $kpiStats['this_week'] ?? 0 }}</span>
-                        <span class="text-[11px] font-bold text-slate-400">Sesi</span>
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Sesi</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Sesi terjadwal aktif minggu ini</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Sesi terjadwal aktif minggu ini</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/50 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-slate-700/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
 
             <!-- 2. Menunggu Hasil / Catatan Dosen -->
-            <div class="p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-100 dark:border-slate-700/80 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-amber-200 dark:hover:border-amber-500/30">
+            <div class="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-amber-200 dark:hover:border-amber-500/30">
                 <div class="space-y-1">
                     <div class="flex items-center gap-1.5">
-                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Perlu Catatan / Hasil</span>
+                        <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Perlu Catatan / Hasil</span>
                         @if(($kpiStats['pending_feedback'] ?? 0) > 0)
                             <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
                         @endif
                     </div>
                     <div class="flex items-baseline gap-2">
                         <span class="text-2xl font-black {{ ($kpiStats['pending_feedback'] ?? 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-slate-100' }}">{{ $kpiStats['pending_feedback'] ?? 0 }}</span>
-                        <span class="text-[11px] font-bold text-slate-400">Sesi</span>
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Sesi</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Sesi lewat waktu belum dinilai</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Sesi lewat waktu belum dinilai</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-slate-700/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </div>
             </div>
 
             <!-- 3. Mahasiswa Siap ACC Seminar -->
-            <div class="p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-100 dark:border-slate-700/80 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/30">
+            <div class="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/30">
                 <div class="space-y-1">
-                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Siap ACC Seminar</span>
+                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Siap ACC Seminar</span>
                     <div class="flex items-baseline gap-2">
                         <span class="text-2xl font-black {{ ($kpiStats['ready_acc_seminar'] ?? 0) > 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-800 dark:text-slate-100' }}">{{ $kpiStats['ready_acc_seminar'] ?? 0 }}</span>
-                        <span class="text-[11px] font-bold text-slate-400">Mhs</span>
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Mhs</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Mencapai syarat &ge; 4x bimbingan</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Mencapai syarat &ge; 4x bimbingan</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-slate-700/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
                 </div>
             </div>
 
             <!-- 4. Mahasiswa Siap ACC Sidang -->
-            <div class="p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-100 dark:border-slate-700/80 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/30">
+            <div class="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-between transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/30">
                 <div class="space-y-1">
-                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Siap ACC Sidang</span>
+                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Siap ACC Sidang</span>
                     <div class="flex items-baseline gap-2">
                         <span class="text-2xl font-black {{ ($kpiStats['ready_acc_sidang'] ?? 0) > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-100' }}">{{ $kpiStats['ready_acc_sidang'] ?? 0 }}</span>
-                        <span class="text-[11px] font-bold text-slate-400">Mhs</span>
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Mhs</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Mencapai syarat &ge; 8x bimbingan</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Mencapai syarat &ge; 8x bimbingan</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-slate-700/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
                 </div>
             </div>
