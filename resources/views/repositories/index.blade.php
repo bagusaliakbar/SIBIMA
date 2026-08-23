@@ -572,7 +572,7 @@
                             <!-- Read Detail Button in Card -->
                             <button type="button" 
                                     @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
-                                    class="w-full py-2 bg-slate-50 hover:bg-orange-50 dark:bg-slate-900/60 dark:hover:bg-orange-950/40 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 rounded-xl text-[11px] font-bold transition-all border border-slate-100 dark:border-slate-700/60 flex items-center justify-center gap-1.5 cursor-pointer">
+                                    class="w-full py-2 bg-slate-50 hover:bg-orange-50 dark:bg-slate-900 dark:hover:bg-orange-950/40 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 rounded-xl text-[11px] font-bold transition-all border border-slate-200/80 dark:border-slate-700 flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span>Lihat Detail Abstrak</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
@@ -680,7 +680,7 @@
                                     <div class="flex items-center justify-end gap-1.5">
                                         <button type="button" 
                                                 @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
-                                                class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg text-xs font-bold transition-all border border-slate-200/70 dark:border-slate-700 shadow-2xs cursor-pointer"
+                                                class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/50 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg text-xs font-bold transition-all border border-slate-200/80 dark:border-slate-600 shadow-2xs cursor-pointer"
                                                 title="Lihat Detail Abstrak">
                                             Detail
                                         </button>
