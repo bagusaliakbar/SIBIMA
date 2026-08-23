@@ -5,57 +5,7 @@
         ]" />
     </x-slot>
 
-    <div class="w-full" x-data="{
-        viewMode: '{{ request('view', 'cards') }}',
-        selectedEvent: null,
-        eventModalOpen: false,
-        calendarInitialized: false,
-        initCalendar() {
-            if (this.calendarInitialized) return;
-            this.$nextTick(() => {
-                const calendarEl = document.getElementById('mentoring-calendar');
-                if (!calendarEl) return;
-                
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,listMonth'
-                    },
-                    buttonText: {
-                        today: 'Hari Ini',
-                        month: 'Bulan',
-                        week: 'Minggu',
-                        list: 'Agenda'
-                    },
-                    locale: 'id',
-                    events: {!! json_encode($calendarEvents ?? []) !!},
-                    eventClick: (info) => {
-                        this.selectedEvent = info.event.extendedProps;
-                        this.eventModalOpen = true;
-                    },
-                    eventTimeFormat: {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        meridiem: false,
-                        hour12: false
-                    },
-                    height: 'auto',
-                    contentHeight: 650,
-                    dayMaxEvents: 3
-                });
-                calendar.render();
-                this.calendarInitialized = true;
-            });
-        },
-        switchView(mode) {
-            this.viewMode = mode;
-            if (mode === 'calendar') {
-                this.initCalendar();
-            }
-        }
-    }" x-init="if (viewMode === 'calendar') initCalendar()">
+    <div class="w-full" x-data="mentoringSchedule()">
         
         <x-table-card 
             title="{{ $activeTab === 'history' ? 'Riwayat Bimbingan' : 'Jadwal Bimbingan' }}"
@@ -637,5 +587,66 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+        function mentoringSchedule() {
+            return {
+                viewMode: '{{ request('view', 'cards') }}',
+                selectedEvent: null,
+                eventModalOpen: false,
+                calendarInitialized: false,
+                events: @json($calendarEvents ?? []),
+                init() {
+                    if (this.viewMode === 'calendar') {
+                        this.initCalendar();
+                    }
+                },
+                initCalendar() {
+                    if (this.calendarInitialized) return;
+                    this.$nextTick(() => {
+                        const calendarEl = document.getElementById('mentoring-calendar');
+                        if (!calendarEl || typeof FullCalendar === 'undefined') return;
+                        
+                        const calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
+                            headerToolbar: {
+                                left: 'prev,next today',
+                                center: 'title',
+                                right: 'dayGridMonth,timeGridWeek,listMonth'
+                            },
+                            buttonText: {
+                                today: 'Hari Ini',
+                                month: 'Bulan',
+                                week: 'Minggu',
+                                list: 'Agenda'
+                            },
+                            locale: 'id',
+                            events: this.events,
+                            eventClick: (info) => {
+                                this.selectedEvent = info.event.extendedProps;
+                                this.eventModalOpen = true;
+                            },
+                            eventTimeFormat: {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                meridiem: false,
+                                hour12: false
+                            },
+                            height: 'auto',
+                            contentHeight: 650,
+                            dayMaxEvents: 3
+                        });
+                        calendar.render();
+                        this.calendarInitialized = true;
+                    });
+                },
+                switchView(mode) {
+                    this.viewMode = mode;
+                    if (mode === 'calendar') {
+                        this.initCalendar();
+                    }
+                }
+            };
+        }
+    </script>
     @endpush
 </x-app-layout>
