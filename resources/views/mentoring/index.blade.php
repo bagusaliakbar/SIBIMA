@@ -132,62 +132,76 @@
             <div class="p-6">
                 <!-- 1. CARDS VIEW -->
                 <div x-show="viewMode === 'cards'" x-transition>
-                    <!-- Tabs for Active vs History -->
-                    <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/50 pb-4 mb-4">
-                        <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
-                           class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'active' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
-                            Bimbingan Aktif
-                        </a>
-                        <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
-                           class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'history' ? 'bg-orange-600 text-white shadow-md' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
-                            Riwayat Bimbingan
-                        </a>
-                    </div>
-
-                    @if($activeTab === 'active')
-                    <!-- Real-Time Attendance Filter Bar & Live Monitor Button -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-slate-50/80 dark:bg-slate-900/40 rounded-2xl border border-slate-200/70 dark:border-slate-800 mb-6">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mr-1">Status Kehadiran Mhs:</span>
-                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
-                               class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ empty($attendanceFilter) ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-800 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100' }}">
-                                Semua (<span x-text="attendanceStats.total">{{ $attendanceStats['total'] ?? 0 }}</span>)
+                    <!-- Sub-Toolbar: Navigation Tabs & Real-Time Actions -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-100 dark:border-slate-800">
+                        <!-- Primary Tabs: Aktif vs Riwayat -->
+                        <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-2xs">
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                               class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'active' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/60' }}">
+                                Bimbingan Aktif
                             </a>
-                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'attending']) }}" 
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ $attendanceFilter === 'attending' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' }}">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <span>🟢 Akan Hadir (<span x-text="attendanceStats.attending">{{ $attendanceStats['attending'] ?? 0 }}</span>)</span>
-                            </a>
-                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'permission']) }}" 
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ $attendanceFilter === 'permission' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80 hover:bg-amber-50 dark:hover:bg-amber-950/30' }}">
-                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                                <span>🟡 Izin (<span x-text="attendanceStats.permission">{{ $attendanceStats['permission'] ?? 0 }}</span>)</span>
-                            </a>
-                            <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'pending']) }}" 
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all {{ $attendanceFilter === 'pending' ? 'bg-slate-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-100' }}">
-                                <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></span>
-                                <span>⚪ Belum Respon (<span x-text="attendanceStats.pending">{{ $attendanceStats['pending'] ?? 0 }}</span>)</span>
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                               class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'history' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/60' }}">
+                                Riwayat Bimbingan
                             </a>
                         </div>
 
-                        <!-- Live Real-Time Monitor Button & Sync Indicator -->
-                        <div class="flex items-center gap-2">
+                        <!-- Real-Time Actions (Monitor & Sync) -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
                             <button type="button" 
                                     @click="openLiveModal()" 
-                                    class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-95 cursor-pointer">
+                                <span class="relative flex h-2 w-2 shrink-0">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                                 </span>
-                                <span>👥 Monitor Kehadiran Real-Time</span>
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                <span>Monitor Kehadiran</span>
                             </button>
+
                             <button type="button" 
                                     @click="fetchLiveAttendance(false)" 
                                     title="Segarkan data kehadiran real-time"
-                                    class="p-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer shadow-2xs">
-                                <svg class="w-4 h-4" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    class="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95">
+                                <svg class="w-4 h-4 shrink-0" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             </button>
                         </div>
+                    </div>
+
+                    @if($activeTab === 'active')
+                    <!-- Quick Attendance Filter Pills (Clean Segmented) -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-6">
+                        <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 shrink-0 mr-1 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            Filter Kehadiran:
+                        </span>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ empty($attendanceFilter) ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-800 shadow-2xs' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700' }}">
+                            <span>Semua</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ empty($attendanceFilter) ? 'bg-slate-700 text-slate-100 dark:bg-slate-200 dark:text-slate-800' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats.total">{{ $attendanceStats['total'] ?? 0 }}</span>
+                        </a>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'attending']) }}" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'attending' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/40' }}">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                            <span>Akan Hadir</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $attendanceFilter === 'attending' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' }}" x-text="attendanceStats.attending">{{ $attendanceStats['attending'] ?? 0 }}</span>
+                        </a>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'permission']) }}" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'permission' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80 hover:bg-amber-50 dark:hover:bg-amber-950/40' }}">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                            <span>Izin / Berhalangan</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $attendanceFilter === 'permission' ? 'bg-amber-700 text-white' : 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200' }}" x-text="attendanceStats.permission">{{ $attendanceStats['permission'] ?? 0 }}</span>
+                        </a>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'pending']) }}" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'pending' ? 'bg-slate-600 text-white shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
+                            <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse shrink-0"></span>
+                            <span>Belum Respon</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $attendanceFilter === 'pending' ? 'bg-slate-700 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats.pending">{{ $attendanceStats['pending'] ?? 0 }}</span>
+                        </a>
                     </div>
                     @endif
 
@@ -751,38 +765,38 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <button type="button" 
                                     @click="liveTab = 'attending'" 
-                                    :class="liveTab === 'attending' ? 'ring-2 ring-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-emerald-50/30'"
+                                    :class="liveTab === 'attending' ? 'ring-2 ring-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-emerald-50/30'"
                                     class="p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/50 text-left transition-all cursor-pointer">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400">🟢 Akan Hadir</span>
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Akan Hadir</span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                                 </div>
-                                <div class="text-2xl font-black text-emerald-950 dark:text-emerald-100 mt-1" x-text="attendanceStats.attending || 0">0</div>
-                                <p class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 font-medium">Mahasiswa siap hadir</p>
+                                <div class="text-2xl font-black text-emerald-950 dark:text-emerald-100 mt-1.5" x-text="attendanceStats.attending || 0">0</div>
+                                <p class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 font-medium mt-0.5">Mahasiswa siap hadir</p>
                             </button>
 
                             <button type="button" 
                                     @click="liveTab = 'permission'" 
-                                    :class="liveTab === 'permission' ? 'ring-2 ring-amber-500 bg-amber-50/80 dark:bg-amber-950/40' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-amber-50/30'"
+                                    :class="liveTab === 'permission' ? 'ring-2 ring-amber-500 bg-amber-50/80 dark:bg-amber-950/40 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-amber-50/30'"
                                     class="p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/50 text-left transition-all cursor-pointer">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">🟡 Izin / Berhalangan</span>
-                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">Izin / Berhalangan</span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
                                 </div>
-                                <div class="text-2xl font-black text-amber-950 dark:text-amber-100 mt-1" x-text="attendanceStats.permission || 0">0</div>
-                                <p class="text-[10px] text-amber-700/80 dark:text-amber-400/80 font-medium">Dengan alasan izin</p>
+                                <div class="text-2xl font-black text-amber-950 dark:text-amber-100 mt-1.5" x-text="attendanceStats.permission || 0">0</div>
+                                <p class="text-[10px] text-amber-700/80 dark:text-amber-400/80 font-medium mt-0.5">Dengan alasan izin</p>
                             </button>
 
                             <button type="button" 
                                     @click="liveTab = 'pending'" 
-                                    :class="liveTab === 'pending' ? 'ring-2 ring-slate-500 bg-slate-100 dark:bg-slate-700/50' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100'"
+                                    :class="liveTab === 'pending' ? 'ring-2 ring-slate-500 bg-slate-100 dark:bg-slate-700/50 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100'"
                                     class="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-left transition-all cursor-pointer">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">⚪ Belum Konfirmasi</span>
-                                    <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></span>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Belum Konfirmasi</span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400 animate-pulse"></span>
                                 </div>
-                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1" x-text="attendanceStats.pending || 0">0</div>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Menunggu respon mahasiswa</p>
+                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1.5" x-text="attendanceStats.pending || 0">0</div>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Menunggu respon mahasiswa</p>
                             </button>
                         </div>
 
