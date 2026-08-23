@@ -107,7 +107,9 @@ class MentoringSessionController extends Controller
                 ->get()
                 ->map(fn($s) => $this->formatCalendarEvent($s));
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'calendarEvents'));
+            $kpiStats = $this->calculateKpiStats($user);
+
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'calendarEvents', 'kpiStats'));
         } elseif ($user->role === 'mahasiswa') {
             $sessions = MentoringSession::forUser($user)
                 ->search($search)
@@ -162,11 +164,96 @@ class MentoringSessionController extends Controller
             $calendarEvents = $calendarQuery->with(['thesis.student', 'dosen'])->get()->map(fn($s) => $this->formatCalendarEvent($s));
 
             $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
+            $kpiStats = $this->calculateKpiStats($user, $dosenId);
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'dosens', 'dosenId', 'calendarEvents'));
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'dosens', 'dosenId', 'calendarEvents', 'kpiStats'));
         }
 
         abort(403);
+    }
+
+    private function calculateKpiStats($user, $dosenId = null): array
+    {
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+
+        // 1. Session base query
+        $sessionBaseQuery = ($user->role === 'dosen')
+            ? MentoringSession::forUser($user)
+            : MentoringSession::query();
+
+        if (in_array($user->role, ['admin', 'kaprodi']) && $dosenId) {
+            $sessionBaseQuery->where(function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            });
+        }
+
+        // 1. Jadwal Minggu Ini
+        $thisWeekCount = (clone $sessionBaseQuery)
+            ->whereBetween('scheduled_at', [$startOfWeek, $endOfWeek])
+            ->whereIn('status', ['pending', 'approved'])
+            ->count();
+
+        // 2. Menunggu Hasil / Catatan Dosen (sesi yang sudah lewat/berjalan tapi belum diselesaikan/feedback kosong)
+        $pendingFeedbackCount = (clone $sessionBaseQuery)
+            ->where('scheduled_at', '<=', now())
+            ->where('status', 'approved')
+            ->where(function($q) {
+                $q->whereNull('feedback')->orWhere('feedback', '');
+            })
+            ->count();
+
+        // 3 & 4. Theses base query
+        $thesisQuery = Thesis::with(['mentoringSessions'])
+            ->where('status', 'active');
+
+        if ($user->role === 'dosen') {
+            $thesisQuery->where(function($q) use ($user) {
+                $q->where('pembimbing1_id', $user->id)
+                  ->orWhere('pembimbing2_id', $user->id);
+            });
+        } elseif (in_array($user->role, ['admin', 'kaprodi']) && $dosenId) {
+            $thesisQuery->where(function($q) use ($dosenId) {
+                $q->where('pembimbing1_id', $dosenId)
+                  ->orWhere('pembimbing2_id', $dosenId);
+            });
+        }
+
+        $theses = $thesisQuery->get();
+
+        // 3. Mahasiswa Siap ACC Seminar (>= 4 bimbingan dan belum ACC UP)
+        $readyAccSeminarCount = $theses->filter(function($thesis) use ($user, $dosenId) {
+            $count = ($user->role === 'dosen')
+                ? $thesis->getCompletedMentoringCountForDosen($user->id)
+                : ($dosenId ? $thesis->getCompletedMentoringCountForDosen($dosenId) : $thesis->completed_mentoring_count);
+
+            $isAcc = ($user->role === 'dosen')
+                ? ($user->id === $thesis->pembimbing1_id ? $thesis->acc_up_p1 : ($user->id === $thesis->pembimbing2_id ? $thesis->acc_up_p2 : false))
+                : ($dosenId ? ($dosenId === $thesis->pembimbing1_id ? $thesis->acc_up_p1 : ($dosenId === $thesis->pembimbing2_id ? $thesis->acc_up_p2 : false)) : ($thesis->acc_up_p1 && $thesis->acc_up_p2));
+
+            return $count >= 4 && !$isAcc;
+        })->count();
+
+        // 4. Mahasiswa Siap ACC Sidang (>= 8 bimbingan dan belum ACC Sidang)
+        $readyAccSidangCount = $theses->filter(function($thesis) use ($user, $dosenId) {
+            $count = ($user->role === 'dosen')
+                ? $thesis->getCompletedMentoringCountForDosen($user->id)
+                : ($dosenId ? $thesis->getCompletedMentoringCountForDosen($dosenId) : $thesis->completed_mentoring_count);
+
+            $isAcc = ($user->role === 'dosen')
+                ? ($user->id === $thesis->pembimbing1_id ? $thesis->acc_sidang_p1 : ($user->id === $thesis->pembimbing2_id ? $thesis->acc_sidang_p2 : false))
+                : ($dosenId ? ($dosenId === $thesis->pembimbing1_id ? $thesis->acc_sidang_p1 : ($dosenId === $thesis->pembimbing2_id ? $thesis->acc_sidang_p2 : false)) : ($thesis->acc_sidang_p1 && $thesis->acc_sidang_p2));
+
+            return $count >= 8 && !$isAcc;
+        })->count();
+
+        return [
+            'this_week' => $thisWeekCount,
+            'pending_feedback' => $pendingFeedbackCount,
+            'ready_acc_seminar' => $readyAccSeminarCount,
+            'ready_acc_sidang' => $readyAccSidangCount,
+        ];
     }
 
     private function formatCalendarEvent(MentoringSession $session): array
