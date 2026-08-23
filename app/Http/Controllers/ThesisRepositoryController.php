@@ -16,8 +16,8 @@ class ThesisRepositoryController extends Controller
 {
     public function exportExcel(Request $request)
     {
-        if (Auth::user()->role === 'mahasiswa') {
-            abort(403, 'Akses ekspor tidak diizinkan untuk mahasiswa.');
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            abort(403, 'Akses ekspor katalog pustaka hanya diizinkan untuk Admin dan Kaprodi.');
         }
 
         $search = $request->input('search');
@@ -31,8 +31,8 @@ class ThesisRepositoryController extends Controller
 
     public function exportPdf(Request $request)
     {
-        if (Auth::user()->role === 'mahasiswa') {
-            abort(403, 'Akses ekspor tidak diizinkan untuk mahasiswa.');
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            abort(403, 'Akses ekspor katalog pustaka hanya diizinkan untuk Admin dan Kaprodi.');
         }
 
         $search = $request->input('search');

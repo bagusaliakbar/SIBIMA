@@ -5,7 +5,7 @@
                 ['label' => 'Katalog Pustaka Skripsi', 'route' => null]
             ]" />
             <div class="flex flex-wrap items-center gap-2.5">
-                @if(Auth::user()->role !== 'mahasiswa')
+                @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
                     <!-- Export Segmented Group -->
                     <div class="inline-flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xs divide-x divide-slate-200 dark:divide-slate-700 overflow-hidden">
                         <a href="{{ route('repositories.export-excel', request()->query()) }}" 
