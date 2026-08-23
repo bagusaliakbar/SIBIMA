@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMentoringSessionRequest;
+use App\Http\Requests\UpdateMentoringSessionRequest;
 use App\Http\Requests\UpdateMentoringSessionStatusRequest;
 use App\Http\Requests\UploadMentoringDocumentRequest;
 use App\Models\MentoringSession;
@@ -67,6 +68,31 @@ class MentoringSessionController extends Controller
                 return redirect()->route('dashboard')
                     ->with('success', 'Jadwal bimbingan berhasil diajukan dan menunggu persetujuan dosen.');
             }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function edit(MentoringSession $mentoringSession)
+    {
+        $this->authorize('update', $mentoringSession);
+
+        $mentoringSession->load(['thesis.student', 'dosen']);
+
+        return view('mentoring.edit', compact('mentoringSession'));
+    }
+
+    public function update(UpdateMentoringSessionRequest $request, MentoringSession $mentoringSession)
+    {
+        $this->authorize('update', $mentoringSession);
+
+        try {
+            $this->mentoringService->updateSession($mentoringSession, $request->validated());
+
+            return redirect()->route('mentoring-sessions.index')
+                ->with('success', 'Jadwal bimbingan berhasil diperbarui dan notifikasi perubahan jadwal telah dikirim ke mahasiswa.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {

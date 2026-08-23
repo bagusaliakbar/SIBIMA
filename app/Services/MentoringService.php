@@ -8,6 +8,7 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use App\Notifications\GeneralNotification;
 use App\Notifications\MentoringScheduledByDosenNotification;
+use App\Notifications\MentoringRescheduledNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,6 +26,83 @@ class MentoringService
         } else {
             return $this->handleStudentStore($data);
         }
+    }
+
+    /**
+     * Update / Reschedule an existing mentoring session.
+     */
+    public function updateSession(MentoringSession $session, array $data)
+    {
+        $user = Auth::user();
+
+        if ($session->status === 'completed') {
+            throw new \Exception('Sesi bimbingan yang sudah selesai tidak dapat diubah / dijadwalkan ulang.');
+        }
+
+        $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+        $data['scheduled_at'] = $scheduledAt;
+
+        $targetDosenId = $session->dosen_id ?? Auth::id();
+
+        // 1. Check Dosen conflict (excluding this session)
+        $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
+            ->where('id', '!=', $session->id)
+            ->where('scheduled_at', $scheduledAt)
+            ->where('status', '!=', 'rejected')
+            ->first();
+
+        if ($existingDosenSession) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'scheduled_at' => 'Terdapat jadwal bimbingan lain pada tanggal dan jam tersebut untuk dosen pembimbing ini.',
+            ]);
+        }
+
+        // 2. Check Student conflict (excluding this session)
+        $thesis = $session->thesis;
+        if ($thesis) {
+            $existingStudentSession = MentoringSession::whereHas('thesis', function($q) use ($thesis) {
+                    $q->where('student_id', $thesis->student_id);
+                })
+                ->where('id', '!=', $session->id)
+                ->where('scheduled_at', $scheduledAt)
+                ->where('status', '!=', 'rejected')
+                ->first();
+
+            if ($existingStudentSession) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'scheduled_at' => "Mahasiswa {$thesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                ]);
+            }
+        }
+
+        $timeChanged = $session->scheduled_at->format('Y-m-d H:i:00') !== $scheduledAt;
+        $oldDate = $session->scheduled_at->format('d/m/Y H:i');
+
+        // Update fields
+        $session->update([
+            'scheduled_at' => $scheduledAt,
+            'topic'        => $data['topic'],
+            'type'         => $data['type'],
+            'location'     => $data['location'] ?? null,
+            'notes'        => $data['notes'] ?? null,
+            'student_attendance_status' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? 'pending' : $session->student_attendance_status,
+            'student_attendance_reason' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $session->student_attendance_reason,
+            'student_confirmed_at'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $session->student_confirmed_at,
+        ]);
+
+        ActivityLog::log(
+            'Reschedule Bimbingan', 
+            "{$user->name} memperbarui jadwal bimbingan {$thesis->student->name} (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}", 
+            'Bimbingan', 
+            $session
+        );
+
+        // Send notifications if rescheduled
+        if ($thesis && $thesis->student) {
+            $thesis->student->notify(new MentoringRescheduledNotification($session));
+        }
+
+        return $session;
     }
 
     private function handleDosenStore(array $data)

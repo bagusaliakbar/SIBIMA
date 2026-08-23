@@ -43,6 +43,22 @@ class MentoringSessionPolicy
     }
 
     /**
+     * Determine whether the user can update / reschedule the session.
+     */
+    public function update(User $user, MentoringSession $mentoringSession): bool
+    {
+        if ($mentoringSession->status === 'completed') {
+            return false;
+        }
+
+        if ($user->role === 'dosen') {
+            return $user->id === $mentoringSession->thesis->pembimbing1_id || $user->id === $mentoringSession->thesis->pembimbing2_id;
+        }
+
+        return false;
+    }
+
+    /**
      * Determine whether the user can update the status (Dosen only).
      */
     public function updateStatus(User $user, MentoringSession $mentoringSession): bool
