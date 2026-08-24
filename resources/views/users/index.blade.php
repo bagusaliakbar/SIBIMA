@@ -177,83 +177,47 @@
                 </div>
             </x-slot>
 
-            <!-- Sub-Toolbar: Filter Peran, Angkatan, Tahun, dan Paginasi -->
-            <div class="px-5 py-3.5 bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700/80 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
-                <!-- Left: Role & Cohort Segment Filter Pills -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 flex-wrap">
-                    <!-- Role Filter Segment -->
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">Peran:</span>
-                        
-                        {{-- Semua Peran --}}
-                        <a href="{{ route('users.index', ['role' => 'all', 'status' => $status ?? 'all', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? 'all') === 'all' ? 'bg-orange-500 text-white border-orange-500 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                            <span>Semua</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                                {{ $roleCounts['all'] ?? 0 }}
-                            </span>
-                        </a>
+            <!-- Sub-Toolbar: Filter Peran, Tahun Angkatan, dan Paginasi -->
+            <div class="px-5 py-3.5 bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+                <!-- Left: Role Filter Segment -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">Peran:</span>
+                    
+                    {{-- Semua Peran --}}
+                    <a href="{{ route('users.index', ['role' => 'all', 'status' => $status ?? 'all', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? 'all') === 'all' ? 'bg-orange-500 text-white border-orange-500 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                        <span>Semua</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            {{ $roleCounts['all'] ?? 0 }}
+                        </span>
+                    </a>
 
-                        {{-- Mahasiswa --}}
-                        <a href="{{ route('users.index', ['role' => 'mahasiswa', 'status' => $status ?? 'all', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'mahasiswa' ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                            <span>👨‍🎓 Mahasiswa</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'mahasiswa' ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-200' }}">
-                                {{ $roleCounts['mahasiswa'] ?? 0 }}
-                            </span>
-                        </a>
+                    {{-- Mahasiswa --}}
+                    <a href="{{ route('users.index', ['role' => 'mahasiswa', 'status' => $status ?? 'all', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'mahasiswa' ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                        <span>👨‍🎓 Mahasiswa</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'mahasiswa' ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-200' }}">
+                            {{ $roleCounts['mahasiswa'] ?? 0 }}
+                        </span>
+                    </a>
 
-                        {{-- Dosen --}}
-                        <a href="{{ route('users.index', ['role' => 'dosen', 'status' => $status ?? 'all', 'cohort_filter' => 'all', 'entry_year' => '', 'search' => $search, 'per_page' => $perPage]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'dosen' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                            <span>👨‍🏫 Dosen</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'dosen' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-200' }}">
-                                {{ $roleCounts['dosen'] ?? 0 }}
-                            </span>
-                        </a>
+                    {{-- Dosen --}}
+                    <a href="{{ route('users.index', ['role' => 'dosen', 'status' => $status ?? 'all', 'entry_year' => '', 'search' => $search, 'per_page' => $perPage]) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'dosen' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                        <span>👨‍🏫 Dosen</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'dosen' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-200' }}">
+                            {{ $roleCounts['dosen'] ?? 0 }}
+                        </span>
+                    </a>
 
-                        {{-- Kaprodi --}}
-                        <a href="{{ route('users.index', ['role' => 'kaprodi', 'status' => $status ?? 'all', 'cohort_filter' => 'all', 'entry_year' => '', 'search' => $search, 'per_page' => $perPage]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'kaprodi' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                            <span>👔 Kaprodi</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'kaprodi' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
-                                {{ $roleCounts['kaprodi'] ?? 0 }}
-                            </span>
-                        </a>
-                    </div>
-
-                    @if(($role ?? 'all') === 'all' || ($role ?? '') === 'mahasiswa')
-                        <!-- Cohort Filter (Angkatan Baru vs Lama) -->
-                        <div class="flex items-center gap-1.5 flex-wrap sm:border-l sm:border-slate-200 sm:dark:border-slate-700 sm:pl-2.5">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">Angkatan:</span>
-                            
-                            {{-- Semua Angkatan --}}
-                            <a href="{{ route('users.index', ['role' => $role ?? 'all', 'status' => $status ?? 'all', 'cohort_filter' => 'all', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
-                               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-slate-800 dark:bg-slate-700 text-white border-slate-800 dark:border-slate-700 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                                <span>Semua</span>
-                            </a>
-
-                            {{-- Angkatan Baru --}}
-                            <a href="{{ route('users.index', ['role' => $role ?? 'all', 'status' => $status ?? 'all', 'cohort_filter' => 'new', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
-                               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40' }}"
-                               title="Mahasiswa Angkatan Baru (Semester $\le$ 8)">
-                                <span>🌱 Baru</span>
-                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' }}">
-                                    {{ $cohortCounts['new'] ?? 0 }}
-                                </span>
-                            </a>
-
-                            {{-- Angkatan Lama --}}
-                            <a href="{{ route('users.index', ['role' => $role ?? 'all', 'status' => $status ?? 'all', 'cohort_filter' => 'old', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
-                               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($cohortFilter ?? 'old') === 'old' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60 hover:bg-amber-50 dark:hover:bg-amber-950/40' }}"
-                               title="Mahasiswa Angkatan Lama (Semester 9+)">
-                                <span>⏳ Lama</span>
-                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200' }}">
-                                    {{ $cohortCounts['old'] ?? 0 }}
-                                </span>
-                            </a>
-                        </div>
-                    @endif
+                    {{-- Kaprodi --}}
+                    <a href="{{ route('users.index', ['role' => 'kaprodi', 'status' => $status ?? 'all', 'entry_year' => '', 'search' => $search, 'per_page' => $perPage]) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'kaprodi' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                        <span>👔 Kaprodi</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'kaprodi' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
+                            {{ $roleCounts['kaprodi'] ?? 0 }}
+                        </span>
+                    </a>
                 </div>
 
                 <!-- Right: Dropdown Pilihan Spesifik Tahun Angkatan & Jumlah Per Halaman -->
@@ -261,7 +225,6 @@
                     <form action="{{ route('users.index') }}" method="GET" class="flex items-center gap-2">
                         <input type="hidden" name="role" value="{{ $role ?? 'all' }}">
                         <input type="hidden" name="status" value="{{ $status ?? 'all' }}">
-                        <input type="hidden" name="cohort_filter" value="{{ $cohortFilter ?? 'all' }}">
                         @if($search)
                             <input type="hidden" name="search" value="{{ $search }}">
                         @endif
@@ -445,12 +408,8 @@
                                 <div class="flex flex-col items-center gap-1">
                                     <span class="font-black text-[11px] text-slate-700 dark:text-slate-300 tracking-wider font-mono">{{ $user->identifier }}</span>
                                     @if($user->role === 'mahasiswa' && $user->entry_year)
-                                        @php
-                                            $isOldCohort = $user->entry_year <= $oldCohortThresholdYear;
-                                        @endphp
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black {{ $isOldCohort ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300' }}"
-                                              title="{{ $isOldCohort ? 'Mahasiswa Angkatan Lama (Semester 9+)' : 'Mahasiswa Angkatan Baru' }}">
-                                            <span>{{ $isOldCohort ? '⏳' : '🌱' }} {{ $user->entry_year }}</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                            Angkatan {{ $user->entry_year }}
                                         </span>
                                     @endif
                                 </div>
@@ -679,9 +638,8 @@
                                                 <span>Informasi Skripsi & Akademik</span>
                                             </h4>
                                             <template x-if="selectedUser.entry_year">
-                                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold border"
-                                                      :class="selectedUser.is_old_cohort ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/80' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'">
-                                                    <span x-text="selectedUser.is_old_cohort ? '⏳ Angkatan Lama (' + selectedUser.entry_year + ')' : '🌱 Angkatan Baru (' + selectedUser.entry_year + ')'"></span>
+                                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700">
+                                                    <span x-text="'Angkatan ' + selectedUser.entry_year"></span>
                                                 </span>
                                             </template>
                                         </div>
