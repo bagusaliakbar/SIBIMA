@@ -5,7 +5,45 @@
         ]" />
     </x-slot>
 
-    <div class="w-full space-y-6">
+    @php
+        $fileLabels = [
+            'file_formulir' => '1. Formulir Pendaftaran Sidang',
+            'file_transkrip' => '2. Scan Transkrip Nilai Akhir',
+            'file_acc_pembimbing' => '3. Scan Bukti ACC Pembimbing',
+            'file_logbook' => '4. Scan Kartu Bimbingan / Logbook',
+            'file_pembayaran' => '5. Scan Bukti Pembayaran Sidang',
+            'file_skripsi' => '6. Dokumen Soft File Skripsi',
+            'file_ktm' => '7. Scan KTM',
+            'file_pkkmb_univ' => '8. Scan Sertifikat PKKMB Univ',
+            'file_pkkmb_fak' => '9. Scan Sertifikat PKKMB Fak',
+            'file_makrab' => '10. Scan Sertifikat Makrab',
+            'file_cisco' => '11. Scan Sertifikat Cisco IPv6',
+            'file_workshop' => '12. Scan Sertifikat Workshop',
+            'file_organisasi' => '13. Scan Sertifikat Organisasi',
+            'file_toefl' => '14. Scan Sertifikat TOEFL',
+            'file_kewirausahaan' => '15. Scan Sertifikat Wirausaha',
+            'file_tahsin' => '16. Scan Sertifikat Tahsin',
+            'file_komputer' => '17. Scan Sertifikat Komputer',
+            'file_perpus_pinjam' => '18. Scan Bebas Pinjam Perpus',
+            'file_perpus_sumbang' => '19. Scan Sumbang Buku Perpus',
+            'file_ijazah' => '20. Scan Ijazah SMA/SMK',
+        ];
+    @endphp
+
+    <div class="w-full space-y-6" 
+         x-data="{
+             openValidation: false,
+             showFiles: false,
+             selectedApp: null,
+             setAllStatus(val) {
+                 if (!this.$refs.validForm) return;
+                 const radios = this.$refs.validForm.querySelectorAll('input[type=radio][value=' + val + ']');
+                 radios.forEach(r => {
+                     r.checked = true;
+                     r.dispatchEvent(new Event('change'));
+                 });
+             }
+         }">
         {{-- Wave Filter & Template Management Section --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {{-- Wave Filter --}}
@@ -66,7 +104,7 @@
                     </button>
 
                     <!-- Upload Template Modal -->
-                    <div x-show="open" class="fixed inset-0 z-[110] overflow-y-auto" x-cloak x-transition>
+                    <div x-show="open" class="fixed inset-0 z-[150] overflow-y-auto" x-cloak x-transition>
                         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                             <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="open = false">
                                 <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
@@ -271,31 +309,6 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700/80">
-                        @php
-                            $fileLabels = [
-                                'file_formulir' => '1. Formulir Pendaftaran Sidang',
-                                'file_transkrip' => '2. Scan Transkrip Nilai Akhir',
-                                'file_acc_pembimbing' => '3. Scan Bukti ACC Pembimbing',
-                                'file_logbook' => '4. Scan Kartu Bimbingan / Logbook',
-                                'file_pembayaran' => '5. Scan Bukti Pembayaran Sidang',
-                                'file_skripsi' => '6. Dokumen Soft File Skripsi',
-                                'file_ktm' => '7. Scan KTM',
-                                'file_pkkmb_univ' => '8. Scan Sertifikat PKKMB Univ',
-                                'file_pkkmb_fak' => '9. Scan Sertifikat PKKMB Fak',
-                                'file_makrab' => '10. Scan Sertifikat Makrab',
-                                'file_cisco' => '11. Scan Sertifikat Cisco IPv6',
-                                'file_workshop' => '12. Scan Sertifikat Workshop',
-                                'file_organisasi' => '13. Scan Sertifikat Organisasi',
-                                'file_toefl' => '14. Scan Sertifikat TOEFL',
-                                'file_kewirausahaan' => '15. Scan Sertifikat Wirausaha',
-                                'file_tahsin' => '16. Scan Sertifikat Tahsin',
-                                'file_komputer' => '17. Scan Sertifikat Komputer',
-                                'file_perpus_pinjam' => '18. Scan Bebas Pinjam Perpus',
-                                'file_perpus_sumbang' => '19. Scan Sumbang Buku Perpus',
-                                'file_ijazah' => '20. Scan Ijazah SMA/SMK',
-                            ];
-                        @endphp
-
                         @forelse($applications as $app)
                             @php
                                 $rejectedCount = 0;
@@ -304,6 +317,38 @@
                                         if (($rev['status'] ?? '') === 'rejected') $rejectedCount++;
                                     }
                                 }
+
+                                $appData = [
+                                    'id' => $app->id,
+                                    'validate_url' => route('thesis-defense-applications.validate', $app->id),
+                                    'student_name' => $app->thesis->student->name,
+                                    'student_id' => $app->thesis->student->identifier,
+                                    'status' => $app->status,
+                                    'admin_feedback' => $app->admin_feedback,
+                                    'file_reviews' => $app->file_reviews ?? [],
+                                    'files' => [
+                                        'file_formulir' => $app->file_formulir,
+                                        'file_transkrip' => $app->file_transkrip,
+                                        'file_acc_pembimbing' => $app->file_acc_pembimbing,
+                                        'file_logbook' => $app->file_logbook,
+                                        'file_pembayaran' => $app->file_pembayaran,
+                                        'file_skripsi' => $app->file_skripsi,
+                                        'file_ktm' => $app->file_ktm,
+                                        'file_pkkmb_univ' => $app->file_pkkmb_univ,
+                                        'file_pkkmb_fak' => $app->file_pkkmb_fak,
+                                        'file_makrab' => $app->file_makrab,
+                                        'file_cisco' => $app->file_cisco,
+                                        'file_workshop' => $app->file_workshop,
+                                        'file_organisasi' => $app->file_organisasi,
+                                        'file_toefl' => $app->file_toefl,
+                                        'file_kewirausahaan' => $app->file_kewirausahaan,
+                                        'file_tahsin' => $app->file_tahsin,
+                                        'file_komputer' => $app->file_komputer,
+                                        'file_perpus_pinjam' => $app->file_perpus_pinjam,
+                                        'file_perpus_sumbang' => $app->file_perpus_sumbang,
+                                        'file_ijazah' => $app->file_ijazah,
+                                    ]
+                                ];
                             @endphp
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors group">
                                 <td class="py-4 px-6 max-w-md">
@@ -346,8 +391,9 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 text-center whitespace-nowrap">
-                                    <div class="flex flex-col items-center gap-1.5" x-data="{ showFiles: false }">
-                                        <button @click="showFiles = true" 
+                                    <div class="flex flex-col items-center gap-1.5">
+                                        <button type="button"
+                                                @click="selectedApp = {{ json_encode($appData) }}; showFiles = true" 
                                                 class="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border {{ $rejectedCount > 0 ? 'border-rose-300 dark:border-rose-800 bg-rose-50/30' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600' }} rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-2xs group/doc cursor-pointer">
                                             <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -367,50 +413,6 @@
                                                 Klik untuk periksa
                                             </span>
                                         @endif
-
-                                        <!-- Files List Modal (Quick View) -->
-                                        <div x-show="showFiles" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
-                                            <div class="flex items-start justify-center min-h-screen px-4 text-center">
-                                                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showFiles = false">
-                                                    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-                                                </div>
-                                                <div class="relative w-full my-8 sm:my-16 bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-4xl border border-slate-100 dark:border-slate-700">
-                                                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
-                                                        <div>
-                                                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Daftar Dokumen Sidang Skripsi (20 File)</h3>
-                                                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">{{ $app->thesis->student->name }} ({{ $app->thesis->student->identifier }})</p>
-                                                        </div>
-                                                        <button @click="showFiles = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                        </button>
-                                                    </div>
-                                                    <div class="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                        @foreach($fileLabels as $field => $label)
-                                                            @php
-                                                                $rev = $app->file_reviews[$field] ?? null;
-                                                                $isRej = ($rev['status'] ?? '') === 'rejected';
-                                                            @endphp
-                                                            <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 border {{ $isRej ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30' : 'border-slate-200/80 dark:border-slate-700/80' }} rounded-xl flex items-center justify-between gap-3 shadow-2xs">
-                                                                <div class="min-w-0 flex-1">
-                                                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">{{ $label }}</span>
-                                                                    @if($isRej)
-                                                                        <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 mt-0.5 block">Ditolak: {{ $rev['note'] ?? 'Perlu revisi' }}</span>
-                                                                    @endif
-                                                                </div>
-                                                                <a href="{{ $app->$field }}" target="_blank" 
-                                                                   class="inline-flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-lg text-[10px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0 shadow-2xs">
-                                                                    <span>Buka File</span>
-                                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                                                </a>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                    <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                                                        <button type="button" @click="showFiles = false" class="px-5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">Tutup</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 text-center">
@@ -432,159 +434,11 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
-                                    <div class="flex justify-end items-center" 
-                                         x-data="{ 
-                                             openValidation: false,
-                                             setAllStatus(val) {
-                                                 const form = $refs.validForm;
-                                                 const radios = form.querySelectorAll('input[type=radio][value=' + val + ']');
-                                                 radios.forEach(r => {
-                                                     r.checked = true;
-                                                     r.dispatchEvent(new Event('change'));
-                                                 });
-                                             }
-                                         }">
-                                        <button @click="openValidation = true" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
-                                            Validasi
-                                        </button>
-                                        
-                                        <!-- WIDE 2-COLUMN VALIDATION MODAL -->
-                                        <div x-show="openValidation" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
-                                            <div class="flex items-start justify-center min-h-screen px-4 text-center">
-                                                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openValidation = false">
-                                                    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-                                                </div>
-                                                <div class="relative w-full my-6 sm:my-10 bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-5xl border border-slate-100 dark:border-slate-700">
-                                                    {{-- Modal Header --}}
-                                                    <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/70 dark:bg-slate-900/60">
-                                                        <div>
-                                                            <div class="flex items-center gap-2">
-                                                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Validasi Berkas Sidang Skripsi</h3>
-                                                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
-                                                                    20 Dokumen
-                                                                </span>
-                                                            </div>
-                                                            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-1">
-                                                                {{ $app->thesis->student->name }} <span class="font-mono text-slate-400">({{ $app->thesis->student->identifier }})</span>
-                                                            </p>
-                                                        </div>
-
-                                                        <div class="flex items-center gap-2">
-                                                            <button type="button" @click="setAllStatus('approved')" 
-                                                                    class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
-                                                                ✓ Setujui Semua (OK)
-                                                            </button>
-                                                            <button type="button" @click="setAllStatus('rejected')" 
-                                                                    class="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
-                                                                ✕ Tolak Semua
-                                                            </button>
-                                                            <button @click="openValidation = false" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors ml-2">
-                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                    <form x-ref="validForm" action="{{ route('thesis-defense-applications.validate', $app->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('PATCH')
-
-                                                        <div class="px-6 sm:px-8 py-6 space-y-6 max-h-[68vh] overflow-y-auto">
-                                                            {{-- 2-Column Responsive Grid for 20 Files --}}
-                                                            <div>
-                                                                <div class="flex items-center justify-between mb-3">
-                                                                    <label class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">
-                                                                        Verifikasi 20 Berkas Persyaratan:
-                                                                    </label>
-                                                                    <span class="text-[10px] text-slate-400 font-medium">Klik nama berkas untuk melihat isi file</span>
-                                                                </div>
-
-                                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                                                    @foreach($fileLabels as $field => $label)
-                                                                        @php
-                                                                            $defaultOk = !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved';
-                                                                        @endphp
-                                                                        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between gap-2.5 transition-all shadow-2xs"
-                                                                             x-data="{ isRejected: {{ $defaultOk ? 'false' : 'true' }} }">
-                                                                            <div class="flex items-center justify-between gap-2">
-                                                                                <a href="{{ $app->$field }}" target="_blank" 
-                                                                                   class="text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5 truncate group/filelink"
-                                                                                   title="Buka {{ $label }}">
-                                                                                    <span class="truncate">{{ $label }}</span>
-                                                                                    <svg class="w-3 h-3 text-slate-400 group-hover/filelink:text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                                                                </a>
-
-                                                                                {{-- Radio Controls (OK / Tolak) --}}
-                                                                                <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
-                                                                                    <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
-                                                                                           :class="!isRejected ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black' : 'text-slate-400 hover:text-slate-600'">
-                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
-                                                                                               @change="isRejected = false"
-                                                                                               {{ $defaultOk ? 'checked' : '' }} 
-                                                                                               class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600">
-                                                                                        <span class="ml-1 text-[10px]">OK</span>
-                                                                                    </label>
-                                                                                    <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
-                                                                                           :class="isRejected ? 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-black' : 'text-slate-400 hover:text-slate-600'">
-                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected" 
-                                                                                               @change="isRejected = true"
-                                                                                               {{ !$defaultOk ? 'checked' : '' }} 
-                                                                                               class="w-3 h-3 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600">
-                                                                                        <span class="ml-1 text-[10px]">Tolak</span>
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            {{-- Note Input (Active or Expandable on Reject) --}}
-                                                                            <input type="text" name="file_reviews[{{ $field }}][note]" 
-                                                                                   value="{{ $app->file_reviews[$field]['note'] ?? '' }}" 
-                                                                                   placeholder="Catatan revisi jika berkas ditolak..." 
-                                                                                   :class="isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/40 text-rose-900 dark:text-rose-200 placeholder-rose-400' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 placeholder-slate-400'"
-                                                                                   class="w-full rounded-xl text-xs font-medium px-3 py-1.5 border transition-all focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-
-                                                            {{-- Final Decision & Admin Global Note in 2 Columns --}}
-                                                            <div class="pt-5 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
-                                                                <div>
-                                                                    <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-                                                                        Status Akhir Pengajuan:
-                                                                    </label>
-                                                                    <select name="status" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold uppercase tracking-wider p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs">
-                                                                        <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>✓ SETUJUI (BERKAS VALID & LENGKAP)</option>
-                                                                        <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>✕ TOLAK (PERLU REVISI BERKAS)</option>
-                                                                        <option value="pending" {{ $app->status === 'pending' ? 'selected' : '' }}>⏳ TETAP MENUNGGU</option>
-                                                                    </select>
-                                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">
-                                                                        Pilih "SETUJUI" jika seluruh 20 berkas telah lengkap dan sesuai syarat.
-                                                                    </p>
-                                                                </div>
-                                                                
-                                                                <div>
-                                                                    <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-                                                                        Catatan Admin (Global / Feedback Mahasiswa):
-                                                                    </label>
-                                                                    <textarea name="admin_feedback" rows="2" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-medium p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs" placeholder="Silakan upload ulang berkas yang ditolak...">{{ $app->admin_feedback }}</textarea>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- Modal Footer --}}
-                                                        <div class="px-6 sm:px-8 py-4 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                                                            <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
-                                                                Perubahan akan tersimpan dan dapat dilihat oleh mahasiswa.
-                                                            </span>
-                                                            <div class="flex items-center gap-3">
-                                                                <button type="button" @click="openValidation = false" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">Batal</button>
-                                                                <button type="submit" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl uppercase tracking-wider shadow-xs shadow-orange-500/20 transition-all cursor-pointer">Simpan Keputusan</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <button type="button"
+                                            @click="selectedApp = {{ json_encode($appData) }}; openValidation = true" 
+                                            class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                        Validasi
+                                    </button>
                                 </td>
                             </tr>
                         @empty
@@ -599,6 +453,199 @@
                     {{ $applications->links() }}
                 </div>
             @endif
+        </div>
+
+        {{-- GLOBAL VIEW FILES MODAL (OUTSIDE TABLE, PERFECTLY CENTERED) --}}
+        <div x-show="showFiles" class="fixed inset-0 z-[150] overflow-y-auto" x-cloak x-transition>
+            <div class="flex items-center justify-center min-h-screen px-4 py-8 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showFiles = false">
+                    <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full border border-slate-100 dark:border-slate-700 relative z-10">
+                    <template x-if="selectedApp">
+                        <div>
+                            <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                                <div>
+                                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Daftar Dokumen Sidang Skripsi (20 File)</h3>
+                                    <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                                        <span x-text="selectedApp.student_name"></span> (<span x-text="selectedApp.student_id" class="font-mono"></span>)
+                                    </p>
+                                </div>
+                                <button @click="showFiles = false" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+
+                            <div class="p-6 sm:p-8 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                @foreach($fileLabels as $field => $label)
+                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 border rounded-2xl flex items-center justify-between gap-3 shadow-2xs"
+                                         :class="(selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected') ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30' : 'border-slate-200/80 dark:border-slate-700/80'">
+                                        <div class="min-w-0 flex-1">
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">{{ $label }}</span>
+                                            <template x-if="selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected'">
+                                                <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 mt-0.5 block" x-text="'Ditolak: ' + (selectedApp.file_reviews['{{ $field }}'].note || 'Perlu revisi')"></span>
+                                            </template>
+                                        </div>
+                                        <a :href="selectedApp.files['{{ $field }}']" target="_blank" 
+                                           class="inline-flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-lg text-[10px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0 shadow-2xs">
+                                            <span>Buka File</span>
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="px-6 sm:px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                                <button type="button" @click="showFiles = false" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">Tutup</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        {{-- GLOBAL WIDE 2-COLUMN VALIDATION MODAL (OUTSIDE TABLE, PERFECTLY CENTERED) --}}
+        <div x-show="openValidation" class="fixed inset-0 z-[150] overflow-y-auto" x-cloak x-transition>
+            <div class="flex items-center justify-center min-h-screen px-4 py-8 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openValidation = false">
+                    <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl w-full border border-slate-100 dark:border-slate-700 relative z-10">
+                    <template x-if="selectedApp">
+                        <div>
+                            {{-- Modal Header --}}
+                            <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/70 dark:bg-slate-900/60">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Validasi Berkas Sidang Skripsi</h3>
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                                            20 Dokumen
+                                        </span>
+                                    </div>
+                                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-1">
+                                        <span x-text="selectedApp.student_name"></span> <span class="font-mono text-slate-400">(<span x-text="selectedApp.student_id"></span>)</span>
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <button type="button" @click="setAllStatus('approved')" 
+                                            class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
+                                        ✓ Setujui Semua (OK)
+                                    </button>
+                                    <button type="button" @click="setAllStatus('rejected')" 
+                                            class="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
+                                        ✕ Tolak Semua
+                                    </button>
+                                    <button @click="openValidation = false" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors ml-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <form x-ref="validForm" :action="selectedApp.validate_url" method="POST">
+                                @csrf
+                                @method('PATCH')
+
+                                <div class="px-6 sm:px-8 py-6 space-y-6 max-h-[68vh] overflow-y-auto">
+                                    {{-- 2-Column Responsive Grid for 20 Files --}}
+                                    <div>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <label class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">
+                                                Verifikasi 20 Berkas Persyaratan:
+                                            </label>
+                                            <span class="text-[10px] text-slate-400 font-medium">Klik nama berkas untuk melihat isi file</span>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                            @foreach($fileLabels as $field => $label)
+                                                <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between gap-2.5 transition-all shadow-2xs"
+                                                     x-data="{ isRejected: (selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected') }">
+                                                    <div class="flex items-center justify-between gap-2">
+                                                        <a :href="selectedApp.files['{{ $field }}']" target="_blank" 
+                                                           class="text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5 truncate group/filelink"
+                                                           title="Buka {{ $label }}">
+                                                            <span class="truncate">{{ $label }}</span>
+                                                            <svg class="w-3 h-3 text-slate-400 group-hover/filelink:text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                        </a>
+
+                                                        {{-- Radio Controls (OK / Tolak) --}}
+                                                        <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
+                                                            <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
+                                                                   :class="!isRejected ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black' : 'text-slate-400 hover:text-slate-600'">
+                                                                <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
+                                                                       @change="isRejected = false"
+                                                                       :checked="!isRejected"
+                                                                       class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600">
+                                                                <span class="ml-1 text-[10px]">OK</span>
+                                                            </label>
+                                                            <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
+                                                                   :class="isRejected ? 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-black' : 'text-slate-400 hover:text-slate-600'">
+                                                                <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected" 
+                                                                       @change="isRejected = true"
+                                                                       :checked="isRejected"
+                                                                       class="w-3 h-3 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600">
+                                                                <span class="ml-1 text-[10px]">Tolak</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Note Input --}}
+                                                    <input type="text" name="file_reviews[{{ $field }}][note]" 
+                                                           :value="selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] ? selectedApp.file_reviews['{{ $field }}'].note : ''" 
+                                                           placeholder="Catatan revisi jika berkas ditolak..." 
+                                                           :class="isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/40 text-rose-900 dark:text-rose-200 placeholder-rose-400' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 placeholder-slate-400'"
+                                                           class="w-full rounded-xl text-xs font-medium px-3 py-1.5 border transition-all focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    {{-- Final Decision & Admin Global Note in 2 Columns --}}
+                                    <div class="pt-5 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                                        <div>
+                                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                                                Status Akhir Pengajuan:
+                                            </label>
+                                            <select name="status" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold uppercase tracking-wider p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs">
+                                                <option value="approved" :selected="selectedApp.status === 'approved'">✓ SETUJUI (BERKAS VALID & LENGKAP)</option>
+                                                <option value="rejected" :selected="selectedApp.status === 'rejected'">✕ TOLAK (PERLU REVISI BERKAS)</option>
+                                                <option value="pending" :selected="selectedApp.status === 'pending'">⏳ TETAP MENUNGGU</option>
+                                            </select>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">
+                                                Pilih "SETUJUI" jika seluruh 20 berkas telah lengkap dan sesuai syarat.
+                                            </p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                                                Catatan Admin (Global / Feedback Mahasiswa):
+                                            </label>
+                                            <textarea name="admin_feedback" rows="2" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-medium p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs" placeholder="Silakan upload ulang berkas yang ditolak..." x-text="selectedApp.admin_feedback || ''"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Modal Footer --}}
+                                <div class="px-6 sm:px-8 py-4 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                    <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                                        Perubahan akan tersimpan dan dapat dilihat oleh mahasiswa.
+                                    </span>
+                                    <div class="flex items-center gap-3">
+                                        <button type="button" @click="openValidation = false" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">Batal</button>
+                                        <button type="submit" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl uppercase tracking-wider shadow-xs shadow-orange-500/20 transition-all cursor-pointer">Simpan Keputusan</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
