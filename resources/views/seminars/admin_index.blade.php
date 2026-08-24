@@ -360,76 +360,158 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
-                                    <div class="flex justify-end items-center gap-2" x-data="{ openValidation: false }">
+                                    <div class="flex justify-end items-center gap-2" 
+                                         x-data="{ 
+                                             openValidation: false,
+                                             setAllStatus(val) {
+                                                 const form = $refs.validSeminarForm;
+                                                 const radios = form.querySelectorAll('input[type=radio][value=' + val + ']');
+                                                 radios.forEach(r => {
+                                                     r.checked = true;
+                                                     r.dispatchEvent(new Event('change'));
+                                                 });
+                                             }
+                                         }">
                                         <button @click="openValidation = true" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
                                             Validasi
                                         </button>
                                         
-                                        <!-- Validation Modal -->
+                                        <!-- WIDE 2-COLUMN VALIDATION MODAL -->
                                         <div x-show="openValidation" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
                                             <div class="flex items-start justify-center min-h-screen px-4 text-center">
                                                 <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openValidation = false">
                                                     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
                                                 </div>
-                                                <div class="relative w-full my-8 sm:my-16 bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg border border-slate-100 dark:border-slate-700">
-                                                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                                                <div class="relative w-full my-6 sm:my-10 bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-4xl border border-slate-100 dark:border-slate-700">
+                                                    {{-- Modal Header --}}
+                                                    <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/70 dark:bg-slate-900/60">
                                                         <div>
-                                                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Validasi Berkas Seminar</h3>
-                                                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">{{ $app->thesis->student->name }} ({{ $app->thesis->student->identifier }})</p>
+                                                            <div class="flex items-center gap-2">
+                                                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Validasi Berkas Seminar Proposal</h3>
+                                                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                                                                    5 Dokumen
+                                                                </span>
+                                                            </div>
+                                                            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-1">
+                                                                {{ $app->thesis->student->name }} <span class="font-mono text-slate-400">({{ $app->thesis->student->identifier }})</span>
+                                                            </p>
                                                         </div>
-                                                        <button @click="openValidation = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                        </button>
+
+                                                        <div class="flex items-center gap-2">
+                                                            <button type="button" @click="setAllStatus('approved')" 
+                                                                    class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
+                                                                ✓ Setujui Semua (OK)
+                                                            </button>
+                                                            <button type="button" @click="setAllStatus('rejected')" 
+                                                                    class="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
+                                                                ✕ Tolak Semua
+                                                            </button>
+                                                            <button @click="openValidation = false" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors ml-2">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                            </button>
+                                                        </div>
                                                     </div>
 
-                                                    <form action="{{ route('seminar-applications.validate', $app->id) }}" method="POST">
+                                                    <form x-ref="validSeminarForm" action="{{ route('seminar-applications.validate', $app->id) }}" method="POST">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <div class="px-6 py-6 space-y-5 max-h-[65vh] overflow-y-auto">
+
+                                                        <div class="px-6 sm:px-8 py-6 space-y-6 max-h-[68vh] overflow-y-auto">
                                                             <div>
-                                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Verifikasi Setiap Berkas:</label>
-                                                                <div class="space-y-3">
-                                                                    @foreach(['file_acc_pembimbing' => 'ACC Pembimbing', 'file_pembayaran' => 'Bukti Bayar', 'file_kartu_bimbingan' => 'Logbook', 'file_skripsi' => 'Draf Skripsi', 'file_formulir' => 'Formulir'] as $field => $label)
-                                                                        <div class="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                                                                            <div class="flex items-center justify-between mb-2">
-                                                                                <a href="{{ $app->$field }}" target="_blank" class="text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5">
-                                                                                    <span>{{ $label }}</span>
-                                                                                    <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                <div class="flex items-center justify-between mb-3">
+                                                                    <label class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">
+                                                                        Verifikasi 5 Berkas Persyaratan:
+                                                                    </label>
+                                                                    <span class="text-[10px] text-slate-400 font-medium">Klik nama berkas untuk melihat dokumen</span>
+                                                                </div>
+
+                                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                                                    @foreach([
+                                                                        'file_acc_pembimbing' => '1. Bukti ACC Pembimbing',
+                                                                        'file_pembayaran' => '2. Scan Bukti Pembayaran',
+                                                                        'file_kartu_bimbingan' => '3. Scan Kartu Bimbingan / Logbook',
+                                                                        'file_skripsi' => '4. Dokumen Draf Skripsi',
+                                                                        'file_formulir' => '5. Formulir Pendaftaran Seminar'
+                                                                    ] as $field => $label)
+                                                                        @php
+                                                                            $defaultOk = !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved';
+                                                                        @endphp
+                                                                        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between gap-2.5 transition-all shadow-2xs"
+                                                                             x-data="{ isRejected: {{ $defaultOk ? 'false' : 'true' }} }">
+                                                                            <div class="flex items-center justify-between gap-2">
+                                                                                <a href="{{ $app->$field }}" target="_blank" 
+                                                                                   class="text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5 truncate group/filelink"
+                                                                                   title="Buka {{ $label }}">
+                                                                                    <span class="truncate">{{ $label }}</span>
+                                                                                    <svg class="w-3 h-3 text-slate-400 group-hover/filelink:text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                                                 </a>
-                                                                                <div class="flex items-center gap-3">
-                                                                                    <label class="inline-flex items-center cursor-pointer group/radio">
-                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" {{ !isset($app->file_reviews[$field]['status']) || $app->file_reviews[$field]['status'] === 'approved' ? 'checked' : '' }} class="w-3.5 h-3.5 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600">
-                                                                                        <span class="ml-1.5 text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase">OK</span>
+
+                                                                                {{-- Radio Controls (OK / Tolak) --}}
+                                                                                <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
+                                                                                    <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
+                                                                                           :class="!isRejected ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black' : 'text-slate-400 hover:text-slate-600'">
+                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
+                                                                                               @change="isRejected = false"
+                                                                                               {{ $defaultOk ? 'checked' : '' }} 
+                                                                                               class="w-3 h-3 text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600">
+                                                                                        <span class="ml-1 text-[10px]">OK</span>
                                                                                     </label>
-                                                                                    <label class="inline-flex items-center cursor-pointer group/radio">
-                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected" {{ isset($app->file_reviews[$field]['status']) && $app->file_reviews[$field]['status'] === 'rejected' ? 'checked' : '' }} class="w-3.5 h-3.5 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600">
-                                                                                        <span class="ml-1.5 text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase">TOLAK</span>
+                                                                                    <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
+                                                                                           :class="isRejected ? 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-black' : 'text-slate-400 hover:text-slate-600'">
+                                                                                        <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected" 
+                                                                                               @change="isRejected = true"
+                                                                                               {{ !$defaultOk ? 'checked' : '' }} 
+                                                                                               class="w-3 h-3 text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-600">
+                                                                                        <span class="ml-1 text-[10px]">Tolak</span>
                                                                                     </label>
                                                                                 </div>
                                                                             </div>
-                                                                            <input type="text" name="file_reviews[{{ $field }}][note]" value="{{ $app->file_reviews[$field]['note'] ?? '' }}" placeholder="Catatan revisi jika ditolak..." class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-medium p-2 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
+
+                                                                            {{-- Note Input --}}
+                                                                            <input type="text" name="file_reviews[{{ $field }}][note]" 
+                                                                                   value="{{ $app->file_reviews[$field]['note'] ?? '' }}" 
+                                                                                   placeholder="Catatan revisi jika berkas ditolak..." 
+                                                                                   :class="isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/40 text-rose-900 dark:text-rose-200 placeholder-rose-400' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 placeholder-slate-400'"
+                                                                                   class="w-full rounded-xl text-xs font-medium px-3 py-1.5 border transition-all focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
                                                             </div>
 
-                                                            <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
-                                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Status Akhir Pengajuan:</label>
-                                                                <select name="status" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold uppercase tracking-wider p-3 focus:ring-2 focus:ring-orange-500/20">
-                                                                    <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>SETUJUI (BERKAS VALID)</option>
-                                                                    <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>TOLAK (PERLU REVISI)</option>
-                                                                    <option value="pending" {{ $app->status === 'pending' ? 'selected' : '' }}>TETAP MENUNGGU</option>
-                                                                </select>
-                                                            </div>
-                                                            
-                                                            <div>
-                                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Catatan Admin (Global):</label>
-                                                                <textarea name="admin_feedback" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-medium p-3 focus:ring-2 focus:ring-orange-500/20" placeholder="Silakan upload ulang berkas yang ditolak...">{{ $app->admin_feedback }}</textarea>
+                                                            {{-- Final Decision & Admin Global Note in 2 Columns --}}
+                                                            <div class="pt-5 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                                                                <div>
+                                                                    <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                                                                        Status Akhir Pengajuan:
+                                                                    </label>
+                                                                    <select name="status" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold uppercase tracking-wider p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs">
+                                                                        <option value="approved" {{ $app->status === 'approved' ? 'selected' : '' }}>✓ SETUJUI (BERKAS VALID & LENGKAP)</option>
+                                                                        <option value="rejected" {{ $app->status === 'rejected' ? 'selected' : '' }}>✕ TOLAK (PERLU REVISI BERKAS)</option>
+                                                                        <option value="pending" {{ $app->status === 'pending' ? 'selected' : '' }}>⏳ TETAP MENUNGGU</option>
+                                                                    </select>
+                                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">
+                                                                        Pilih "SETUJUI" jika seluruh 5 berkas telah lengkap dan sesuai syarat.
+                                                                    </p>
+                                                                </div>
+                                                                
+                                                                <div>
+                                                                    <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                                                                        Catatan Admin (Global / Feedback Mahasiswa):
+                                                                    </label>
+                                                                    <textarea name="admin_feedback" rows="2" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-medium p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs" placeholder="Silakan upload ulang berkas yang ditolak...">{{ $app->admin_feedback }}</textarea>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                                            <button type="button" @click="openValidation = false" class="px-5 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 dark:hover:text-slate-300 transition-colors">Batal</button>
-                                                            <button type="submit" class="px-5 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-xs shadow-orange-500/20 transition-all">Simpan Keputusan</button>
+
+                                                        {{-- Modal Footer --}}
+                                                        <div class="px-6 sm:px-8 py-4 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                                            <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                                                                Perubahan akan tersimpan dan dapat dilihat oleh mahasiswa.
+                                                            </span>
+                                                            <div class="flex items-center gap-3">
+                                                                <button type="button" @click="openValidation = false" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">Batal</button>
+                                                                <button type="submit" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl uppercase tracking-wider shadow-xs shadow-orange-500/20 transition-all cursor-pointer">Simpan Keputusan</button>
+                                                            </div>
                                                         </div>
                                                     </form>
                                                 </div>
