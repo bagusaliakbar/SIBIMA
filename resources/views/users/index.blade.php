@@ -603,74 +603,70 @@
                             </div>
 
                             <!-- Modal Body Details -->
-                            <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                                <!-- Grid Info Kontak & Identitas -->
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <p class="text-[9px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">NPM / NIDN</p>
-                                        <p class="text-xs font-mono font-black text-slate-900 dark:text-white" x-text="selectedUser.identifier || '-'"></p>
-                                    </div>
-                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <p class="text-[9px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">WhatsApp</p>
-                                        <div class="flex items-center gap-1.5 flex-wrap">
-                                            <p class="text-xs font-bold text-slate-900 dark:text-white" x-text="selectedUser.phone_number || '-'"></p>
-                                            <template x-if="selectedUser.has_wa">
-                                                <span class="text-[8px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">● Terhubung</span>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <p class="text-[9px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">Status Akun</p>
-                                        <span class="inline-flex items-center gap-1.5 text-xs font-bold" :class="selectedUser.is_active ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'">
-                                            <span class="w-2 h-2 rounded-full" :class="selectedUser.is_active ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'"></span>
-                                            <span x-text="selectedUser.is_active ? 'Aktif' : 'Pending'"></span>
-                                        </span>
-                                    </div>
-                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <p class="text-[9px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">Terakhir Login</p>
+                            <div class="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
+                                <!-- Clean Unified User Overview Card -->
+                                <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4.5 border border-slate-200 dark:border-slate-700/80">
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-6">
+                                        <!-- 1. NPM / NIDN -->
                                         <div>
-                                            <p class="text-xs font-bold text-slate-900 dark:text-white" x-text="selectedUser.last_login_at_human"></p>
-                                            <template x-if="selectedUser.last_login_at_full">
-                                                <p class="text-[9px] text-slate-400 dark:text-slate-500 font-mono mt-0.5" x-text="selectedUser.last_login_at_full"></p>
-                                            </template>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">NPM / NIDN</span>
+                                            <span class="text-xs font-mono font-black text-slate-800 dark:text-slate-100 mt-1 block" x-text="selectedUser.identifier || '-'"></span>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <!-- Audit Trail & Status Verifikasi Bar -->
-                                <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">Verifikasi Email:</span>
-                                        <template x-if="selectedUser.has_email_verified">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700" :title="'Terverifikasi: ' + selectedUser.email_verified_at">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                <span>Terverifikasi</span>
-                                            </span>
-                                        </template>
-                                        <template x-if="!selectedUser.has_email_verified">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                                                Belum Verifikasi
-                                            </span>
-                                        </template>
-                                    </div>
+                                        <!-- 2. WhatsApp -->
+                                        <div>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Kontak WhatsApp</span>
+                                            <div class="flex items-center gap-1.5 mt-1">
+                                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100" x-text="selectedUser.phone_number || '-'"></span>
+                                                <template x-if="selectedUser.has_wa">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                                                        Terhubung
+                                                    </span>
+                                                </template>
+                                            </div>
+                                        </div>
 
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">Status WA:</span>
-                                        <template x-if="selectedUser.has_wa">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700">
-                                                <span>📱 Terhubung</span>
-                                            </span>
-                                        </template>
-                                        <template x-if="!selectedUser.has_wa">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700">
-                                                ⚠️ Belum Ada Nomor
-                                            </span>
-                                        </template>
-                                    </div>
+                                        <!-- 3. Status Akun -->
+                                        <div>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Status Akun</span>
+                                            <div class="flex items-center gap-1.5 mt-1">
+                                                <span class="w-2 h-2 rounded-full" :class="selectedUser.is_active ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'"></span>
+                                                <span class="text-xs font-bold" :class="selectedUser.is_active ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'" x-text="selectedUser.is_active ? 'Aktif' : 'Menunggu Aktivasi'"></span>
+                                            </div>
+                                        </div>
 
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">Terdaftar Sejak:</span>
-                                        <span class="font-bold text-slate-700 dark:text-slate-200 text-[11px]" x-text="selectedUser.registered_at"></span>
+                                        <!-- 4. Terakhir Login -->
+                                        <div>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Terakhir Login</span>
+                                            <div class="mt-1">
+                                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100" x-text="selectedUser.last_login_at_human"></span>
+                                                <template x-if="selectedUser.last_login_at_full">
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 block font-mono mt-0.5" x-text="selectedUser.last_login_at_full"></span>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <!-- 5. Verifikasi Email -->
+                                        <div>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Verifikasi Email</span>
+                                            <div class="mt-1 flex items-center gap-1">
+                                                <template x-if="selectedUser.has_email_verified">
+                                                    <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                        <span>Terverifikasi</span>
+                                                    </span>
+                                                </template>
+                                                <template x-if="!selectedUser.has_email_verified">
+                                                    <span class="text-xs font-medium text-slate-400 dark:text-slate-500 italic">Belum Verifikasi</span>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <!-- 6. Terdaftar Sejak -->
+                                        <div>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Terdaftar Pada</span>
+                                            <span class="text-xs font-medium text-slate-700 dark:text-slate-300 mt-1 block" x-text="selectedUser.registered_at"></span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -683,49 +679,49 @@
                                                 <span>Informasi Skripsi & Akademik</span>
                                             </h4>
                                             <template x-if="selectedUser.entry_year">
-                                                <span class="px-2.5 py-1 rounded-xl text-[10px] font-black border"
-                                                      :class="selectedUser.is_old_cohort ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-700' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-700'">
+                                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold border"
+                                                      :class="selectedUser.is_old_cohort ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/80' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'">
                                                     <span x-text="selectedUser.is_old_cohort ? '⏳ Angkatan Lama (' + selectedUser.entry_year + ')' : '🌱 Angkatan Baru (' + selectedUser.entry_year + ')'"></span>
                                                 </span>
                                             </template>
                                         </div>
 
                                         <template x-if="selectedUser.thesis">
-                                            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-4">
+                                            <div class="p-4.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3.5">
                                                 <!-- Thesis Title -->
                                                 <div>
-                                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">Judul Skripsi Aktif:</span>
-                                                    <h5 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight mt-1 leading-snug" x-text="selectedUser.thesis.title"></h5>
+                                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">Judul Skripsi Aktif:</span>
+                                                    <h5 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight mt-1 leading-relaxed" x-text="selectedUser.thesis.title"></h5>
                                                 </div>
 
                                                 <!-- Stage & Topic -->
-                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-                                                        <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 mb-1">Tahapan Saat Ini</p>
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700/60">
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
+                                                        <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1">Tahapan Saat Ini</p>
                                                         <p class="text-xs font-black text-indigo-600 dark:text-indigo-400" x-text="selectedUser.thesis.stage"></p>
                                                     </div>
-                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-                                                        <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 mb-1">Topik / Minat</p>
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
+                                                        <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1">Topik / Minat</p>
                                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-200" x-text="selectedUser.thesis.topic"></p>
                                                     </div>
                                                 </div>
 
                                                 <!-- Supervisors -->
-                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                                                    <div class="p-3.5 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-blue-800">
-                                                        <span class="text-[9px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-wider">👨‍🏫 Pembimbing 1 (Utama)</span>
-                                                        <p class="text-xs font-black text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing1"></p>
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
+                                                        <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">👨‍🏫 Pembimbing 1 (Utama)</span>
+                                                        <p class="text-xs font-bold text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing1"></p>
                                                     </div>
-                                                    <div class="p-3.5 rounded-xl bg-indigo-50 dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800">
-                                                        <span class="text-[9px] font-black text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">👨‍🏫 Pembimbing 2 (Pendamping)</span>
-                                                        <p class="text-xs font-black text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing2"></p>
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
+                                                        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">👨‍🏫 Pembimbing 2 (Pendamping)</span>
+                                                        <p class="text-xs font-bold text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing2"></p>
                                                     </div>
                                                 </div>
 
                                                 <!-- Open Thesis Action -->
-                                                <div class="pt-2 flex justify-end">
+                                                <div class="pt-1 flex justify-end">
                                                     <a :href="selectedUser.thesis.url" target="_blank"
-                                                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs">
+                                                       class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs">
                                                         <span>Buka Halaman Skripsi</span>
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                     </a>
@@ -734,8 +730,8 @@
                                         </template>
 
                                         <template x-if="!selectedUser.thesis">
-                                            <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-700 text-center">
-                                                <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Mahasiswa ini belum mengajukan judul skripsi.</p>
+                                            <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-dashed border-slate-300 dark:border-slate-700 text-center">
+                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Mahasiswa ini belum mengajukan judul skripsi.</p>
                                             </div>
                                         </template>
                                     </div>
@@ -743,46 +739,46 @@
 
                                 <!-- SECTION: Dosen Specific Academic Info -->
                                 <template x-if="selectedUser.role === 'dosen' || selectedUser.role === 'kaprodi'">
-                                    <div class="space-y-4">
+                                    <div class="space-y-3.5">
                                         <h4 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
                                             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                                             <span>Statistik & Beban Bimbingan Skripsi</span>
                                         </h4>
 
                                         <template x-if="selectedUser.dosen">
-                                            <div class="space-y-3.5">
+                                            <div class="p-4.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3.5">
                                                 <!-- Dosen KPI Stat Mini Grid -->
                                                 <div class="grid grid-cols-3 gap-3">
-                                                    <div class="p-3.5 rounded-2xl bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-blue-800 text-center">
-                                                        <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider">Pembimbing 1</span>
-                                                        <p class="text-xl font-black text-blue-700 dark:text-blue-300 mt-1" x-text="selectedUser.dosen.p1_count + ' Mhs'"></p>
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70 text-center">
+                                                        <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">Pembimbing 1</span>
+                                                        <p class="text-lg font-black text-blue-700 dark:text-blue-300 mt-0.5" x-text="selectedUser.dosen.p1_count + ' Mhs'"></p>
                                                     </div>
-                                                    <div class="p-3.5 rounded-2xl bg-indigo-50 dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800 text-center">
-                                                        <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Pembimbing 2</span>
-                                                        <p class="text-xl font-black text-indigo-700 dark:text-indigo-300 mt-1" x-text="selectedUser.dosen.p2_count + ' Mhs'"></p>
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70 text-center">
+                                                        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Pembimbing 2</span>
+                                                        <p class="text-lg font-black text-indigo-700 dark:text-indigo-300 mt-0.5" x-text="selectedUser.dosen.p2_count + ' Mhs'"></p>
                                                     </div>
-                                                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
-                                                        <span class="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Bimbingan</span>
-                                                        <p class="text-xl font-black text-slate-900 dark:text-white mt-1" x-text="selectedUser.dosen.total_active + ' / ' + selectedUser.dosen.max_quota"></p>
+                                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70 text-center">
+                                                        <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Total Bimbingan</span>
+                                                        <p class="text-lg font-black text-slate-900 dark:text-white mt-0.5" x-text="selectedUser.dosen.total_active + ' / ' + selectedUser.dosen.max_quota"></p>
                                                     </div>
                                                 </div>
 
-                                                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                                                    <p class="text-[9px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest">Bidang Minat / Riset:</p>
+                                                <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
+                                                    <p class="text-[9px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Bidang Minat / Riset</p>
                                                     <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5" x-text="selectedUser.dosen.research_interests"></p>
                                                 </div>
 
                                                 <!-- List of Supervised Students -->
                                                 <div>
                                                     <div class="flex items-center justify-between mb-2">
-                                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Mahasiswa Bimbingan Aktif</span>
+                                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Mahasiswa Bimbingan Aktif</span>
                                                         <span class="text-[10px] font-bold text-slate-400" x-text="selectedUser.dosen.students.length + ' Mahasiswa'"></span>
                                                     </div>
 
                                                     <template x-if="selectedUser.dosen.students.length > 0">
-                                                        <div class="divide-y divide-slate-200 dark:divide-slate-700 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden max-h-48 overflow-y-auto bg-white dark:bg-slate-800">
+                                                        <div class="divide-y divide-slate-200 dark:divide-slate-700/70 border border-slate-200 dark:border-slate-700/70 rounded-xl overflow-hidden max-h-48 overflow-y-auto bg-white dark:bg-slate-900">
                                                             <template x-for="(st, idx) in selectedUser.dosen.students" :key="idx">
-                                                                <div class="p-3 flex items-start justify-between gap-3 text-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors">
+                                                                <div class="p-3 flex items-start justify-between gap-3 text-xs hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                                                                     <div class="min-w-0 flex-1">
                                                                         <div class="flex items-center gap-2">
                                                                             <span class="font-bold text-slate-900 dark:text-white uppercase" x-text="st.student_name"></span>
@@ -790,8 +786,8 @@
                                                                         </div>
                                                                         <p class="text-[11px] text-slate-600 dark:text-slate-300 truncate mt-0.5" x-text="st.title"></p>
                                                                     </div>
-                                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase shrink-0 border"
-                                                                          :class="st.role === 'Pembimbing 1' ? 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' : 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700'"
+                                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase shrink-0 border"
+                                                                          :class="st.role === 'Pembimbing 1' ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800' : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800'"
                                                                           x-text="st.role"></span>
                                                                 </div>
                                                             </template>
@@ -799,8 +795,8 @@
                                                     </template>
 
                                                     <template x-if="selectedUser.dosen.students.length === 0">
-                                                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-700 text-center py-4">
-                                                            <p class="text-xs font-semibold text-slate-400">Belum ada mahasiswa bimbingan skripsi yang aktif saat ini.</p>
+                                                        <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 text-center py-4">
+                                                            <p class="text-xs font-medium text-slate-400">Belum ada mahasiswa bimbingan skripsi yang aktif saat ini.</p>
                                                         </div>
                                                     </template>
                                                 </div>
