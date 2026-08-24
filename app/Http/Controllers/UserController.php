@@ -100,6 +100,12 @@ class UserController extends Controller implements HasMiddleware
 
         // Main Query
         $usersQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->with([
+                'thesis.pembimbing1',
+                'thesis.pembimbing2',
+                'thesesAsP1' => fn($q) => $q->where('status', 'active')->with('student'),
+                'thesesAsP2' => fn($q) => $q->where('status', 'active')->with('student'),
+            ])
             ->when($role !== 'all', fn($q) => $q->where('role', $role))
             ->when($status !== 'all', function ($query) use ($status) {
                 if ($status === 'active') return $query->where('is_active', true);

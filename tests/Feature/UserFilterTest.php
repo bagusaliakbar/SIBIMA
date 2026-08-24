@@ -197,4 +197,22 @@ class UserFilterTest extends TestCase
         $this->assertEquals(1, $kpiStats['active_mahasiswa']);
         $this->assertEquals(1, $kpiStats['total_pending']);
     }
+
+    public function test_quick_preview_modal_and_whatsapp_shortcut_rendered(): void
+    {
+        $student = User::factory()->create([
+            'name' => 'Budi Santoso',
+            'role' => 'mahasiswa',
+            'identifier' => 'MHS999',
+            'phone_number' => '081234567890',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('users.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Budi Santoso');
+        $response->assertSee('https://wa.me/6281234567890', false);
+        $response->assertSee('openDetailModal');
+        $response->assertSee('selectedUser');
+    }
 }
