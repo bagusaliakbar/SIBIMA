@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\WaTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,8 +37,43 @@ class WaTemplateController extends Controller implements HasMiddleware
 
         $templates = $query->orderBy('category')->orderBy('id')->get();
         $categories = ['Bimbingan', 'Skripsi', 'Ujian', 'Pengingat'];
+        $isWhatsAppGloballyEnabled = Setting::isWhatsAppEnabled();
 
-        return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory'));
+        return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory', 'isWhatsAppGloballyEnabled'));
+    }
+
+    /**
+     * Toggle the global WhatsApp master switch.
+     */
+    public function toggleGlobal(Request $request)
+    {
+        $current = Setting::isWhatsAppEnabled();
+        $newState = !$current;
+        Setting::setWhatsAppEnabled($newState);
+
+        $message = $newState 
+            ? 'Notifikasi WhatsApp secara global berhasil DIAKTIFKAN. Seluruh pesan gateway aktif dikirimkan.' 
+            : 'Notifikasi WhatsApp secara global berhasil DINONAKTIFKAN. Seluruh pengiriman pesan gateway dihentikan sementara.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Toggle the status (active/inactive) for a specific template.
+     */
+    public function toggleStatus(Request $request, WaTemplate $waTemplate)
+    {
+        $newStatus = !$waTemplate->is_active;
+        $waTemplate->update([
+            'is_active' => $newStatus,
+        ]);
+
+        WaTemplate::clearCache($waTemplate->code);
+
+        $statusText = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
+        $message = "Template notifikasi '{$waTemplate->name}' berhasil {$statusText}.";
+
+        return redirect()->back()->with('success', $message);
     }
 
     /**
@@ -83,10 +119,16 @@ class WaTemplateController extends Controller implements HasMiddleware
             'content' => 'required|string|min:5',
         ]);
 
-        $waTemplate->update([
+        $updateData = [
             'content' => $request->input('content'),
             'is_customized' => true,
-        ]);
+        ];
+
+        if ($request->has('is_active')) {
+            $updateData['is_active'] = (bool) $request->input('is_active');
+        }
+
+        $waTemplate->update($updateData);
 
         WaTemplate::clearCache($waTemplate->code);
 

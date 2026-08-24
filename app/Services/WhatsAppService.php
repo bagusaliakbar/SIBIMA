@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -16,6 +17,12 @@ class WhatsAppService
      */
     public function sendMessage($to, $message)
     {
+        // 1. Check if WhatsApp is enabled globally
+        if (! Setting::isWhatsAppEnabled()) {
+            Log::info('WhatsApp Service: Message skipped because WhatsApp is globally disabled by Admin.');
+            return false;
+        }
+
         $token = config('services.whatsapp.token');
         $baseUrl = config('services.whatsapp.base_url', 'https://api.fonnte.com/send');
 

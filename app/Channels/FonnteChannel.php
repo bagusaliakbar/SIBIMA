@@ -2,6 +2,7 @@
 
 namespace App\Channels;
 
+use App\Models\Setting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +18,13 @@ class FonnteChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        // Get the phone number from the notifiable model
+        // 1. Check if WhatsApp notifications are globally enabled by Admin
+        if (! Setting::isWhatsAppEnabled()) {
+            Log::info('FonnteChannel: WhatsApp notifications are globally disabled by Admin. Skipped.');
+            return;
+        }
+
+        // 2. Get the phone number from the notifiable model
         if (! method_exists($notifiable, 'routeNotificationForFonnte')) {
             return;
         }
@@ -28,13 +35,14 @@ class FonnteChannel
             return;
         }
 
-        // Get the message content from the notification
+        // 3. Get the message content from the notification
         if (! method_exists($notification, 'toFonnte')) {
             return;
         }
 
         $message = $notification->toFonnte($notifiable);
 
+        // If message is empty (e.g. specific template is disabled via WaTemplate::parse), skip gracefully
         if (empty($message)) {
             return;
         }

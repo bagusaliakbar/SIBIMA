@@ -72,14 +72,31 @@
                                   x-model="content"
                                   x-ref="textarea"
                                   rows="10" 
-                                  class="w-full rounded-2xl border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 text-sm font-mono focus:border-emerald-500 focus:ring-emerald-500 transition-colors p-4 leading-relaxed"
+                                  class="w-full rounded-2xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm font-mono focus:border-orange-500 focus:ring-orange-500 transition-colors p-4 leading-relaxed"
                                   required></textarea>
+                    </div>
+
+                    <!-- Status Toggle Option -->
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between gap-4">
+                        <div>
+                            <label for="is_active" class="text-xs font-bold text-slate-900 dark:text-white block cursor-pointer">
+                                Status Pengiriman Notifikasi Ini
+                            </label>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                Jika dimatikan, pesan jenis ini tidak akan dikirimkan ke WhatsApp penerima.
+                            </p>
+                        </div>
+                        <input type="hidden" name="is_active" value="0">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="is_active" name="is_active" value="1" {{ $waTemplate->is_active ? 'checked' : '' }} class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-hidden rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-600"></div>
+                        </label>
                     </div>
 
                     <!-- Save Button -->
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700/60">
                         <button type="submit" 
-                                class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-orange-600/30 inline-flex items-center gap-2">
+                                class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-orange-600/30 inline-flex items-center gap-2 cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             Simpan Perubahan Template
                         </button>

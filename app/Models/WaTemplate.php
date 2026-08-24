@@ -14,11 +14,13 @@ class WaTemplate extends Model
         'content',
         'available_variables',
         'is_customized',
+        'is_active',
     ];
 
     protected $casts = [
         'available_variables' => 'array',
         'is_customized' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -28,16 +30,33 @@ class WaTemplate extends Model
     {
         if ($code) {
             Cache::forget("wa_template_{$code}");
+            Cache::forget("wa_template_meta_{$code}");
         } else {
             $templates = self::all();
             foreach ($templates as $template) {
                 Cache::forget("wa_template_{$template->code}");
+                Cache::forget("wa_template_meta_{$template->code}");
             }
         }
     }
 
     /**
+     * Check if a specific WhatsApp template code is currently active.
+     *
+     * @param string $code
+     * @return bool
+     */
+    public static function isActive(string $code): bool
+    {
+        return Cache::remember("wa_template_active_{$code}", 86400, function () use ($code) {
+            $tpl = self::where('code', $code)->first();
+            return $tpl ? (bool) $tpl->is_active : true;
+        });
+    }
+
+    /**
      * Parse template by replacing placeholders with actual data.
+     * If template is deactivated, returns empty string to skip sending.
      *
      * @param string $code
      * @param array $data
@@ -46,13 +65,23 @@ class WaTemplate extends Model
      */
     public static function parse(string $code, array $data = [], ?string $defaultFallback = null): string
     {
-        $templateText = Cache::remember("wa_template_{$code}", 86400, function () use ($code, $defaultFallback) {
+        $templateData = Cache::remember("wa_template_meta_{$code}", 86400, function () use ($code, $defaultFallback) {
             $tpl = self::where('code', $code)->first();
-            return $tpl ? $tpl->content : $defaultFallback;
+            return [
+                'content' => $tpl ? $tpl->content : $defaultFallback,
+                'is_active' => $tpl ? (bool) $tpl->is_active : true,
+            ];
         });
 
+        // If template is explicitly deactivated by Admin, return empty string to bypass WhatsApp sending
+        if (isset($templateData['is_active']) && !$templateData['is_active']) {
+            return '';
+        }
+
+        $templateText = $templateData['content'] ?? $defaultFallback ?? '';
+
         if (empty($templateText)) {
-            $templateText = $defaultFallback ?? '';
+            return '';
         }
 
         // Always ensure {link_login} or {link_dashboard} can be parsed if not explicitly provided
