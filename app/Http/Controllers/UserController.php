@@ -36,8 +36,55 @@ class UserController extends Controller implements HasMiddleware
     {
         $search = $request->input('search');
         $status = $request->input('status', 'all');
+        $role = $request->input('role', 'all');
+        $cohortFilter = $request->input('cohort_filter', 'all');
+        $entryYear = $request->input('entry_year');
+        $perPage = in_array((int) $request->input('per_page'), [10, 25, 50, 100]) ? (int) $request->input('per_page') : 10;
 
-        $users = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+        // Cohort threshold year calculation (following SIBIMA standard)
+        $currentYear = now()->year;
+        $isSecondHalf = now()->month >= 9;
+        $oldCohortThresholdYear = $isSecondHalf ? ($currentYear - 4) : ($currentYear - 5);
+
+        // Role Counts for quick filter tabs
+        $baseCountQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi']);
+        $roleCounts = [
+            'all' => (clone $baseCountQuery)->count(),
+            'mahasiswa' => (clone $baseCountQuery)->where('role', 'mahasiswa')->count(),
+            'dosen' => (clone $baseCountQuery)->where('role', 'dosen')->count(),
+            'kaprodi' => (clone $baseCountQuery)->where('role', 'kaprodi')->count(),
+        ];
+
+        // Status Counts
+        $statusCountQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->when($role !== 'all', fn($q) => $q->where('role', $role));
+        $statusCounts = [
+            'all' => (clone $statusCountQuery)->count(),
+            'active' => (clone $statusCountQuery)->where('is_active', true)->count(),
+            'pending' => (clone $statusCountQuery)->where('is_active', false)->count(),
+        ];
+
+        // Cohort Counts for students
+        $studentQuery = User::where('role', 'mahasiswa');
+        $cohortCounts = [
+            'all' => (clone $studentQuery)->count(),
+            'new' => (clone $studentQuery)->where(function ($q) use ($oldCohortThresholdYear) {
+                $q->where('entry_year', '>', $oldCohortThresholdYear)
+                  ->orWhereNull('entry_year');
+            })->count(),
+            'old' => (clone $studentQuery)->where('entry_year', '<=', $oldCohortThresholdYear)->count(),
+        ];
+
+        // Distinct available entry years for dropdown
+        $availableEntryYears = User::where('role', 'mahasiswa')
+            ->whereNotNull('entry_year')
+            ->distinct()
+            ->orderBy('entry_year', 'desc')
+            ->pluck('entry_year');
+
+        // Main Query
+        $usersQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->when($role !== 'all', fn($q) => $q->where('role', $role))
             ->when($status !== 'all', function ($query) use ($status) {
                 if ($status === 'active') return $query->where('is_active', true);
                 if ($status === 'pending') return $query->where('is_active', false);
@@ -46,14 +93,53 @@ class UserController extends Controller implements HasMiddleware
                 return $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
                       ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('identifier', 'like', "%{$search}%");
+                      ->orWhere('identifier', 'like', "%{$search}%")
+                      ->orWhere('phone_number', 'like', "%{$search}%");
                 });
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10)
-            ->appends(['search' => $search, 'status' => $status]);
+            });
 
-        return view('users.index', compact('users', 'search', 'status'));
+        // Filter Cohort Type (new vs old)
+        if ($cohortFilter === 'new') {
+            $usersQuery->where(function ($q) use ($oldCohortThresholdYear) {
+                $q->where('role', '!=', 'mahasiswa')
+                  ->orWhere('entry_year', '>', $oldCohortThresholdYear)
+                  ->orWhereNull('entry_year');
+            });
+        } elseif ($cohortFilter === 'old') {
+            $usersQuery->where('role', 'mahasiswa')
+                       ->where('entry_year', '<=', $oldCohortThresholdYear);
+        }
+
+        // Filter Specific Entry Year
+        if (!empty($entryYear) && $entryYear !== 'all') {
+            $usersQuery->where('entry_year', $entryYear);
+        }
+
+        $users = $usersQuery->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->appends([
+                'search' => $search,
+                'status' => $status,
+                'role' => $role,
+                'cohort_filter' => $cohortFilter,
+                'entry_year' => $entryYear,
+                'per_page' => $perPage,
+            ]);
+
+        return view('users.index', compact(
+            'users',
+            'search',
+            'status',
+            'role',
+            'cohortFilter',
+            'entryYear',
+            'perPage',
+            'roleCounts',
+            'statusCounts',
+            'cohortCounts',
+            'availableEntryYears',
+            'oldCohortThresholdYear'
+        ));
     }
 
     public function create()
@@ -121,9 +207,18 @@ class UserController extends Controller implements HasMiddleware
         return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus.');
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new UsersExport, "data_pengguna_" . date('Y-m-d_H-i-s') . ".xlsx");
+        $search = $request->input('search');
+        $status = $request->input('status', 'all');
+        $role = $request->input('role', 'all');
+        $cohortFilter = $request->input('cohort_filter', 'all');
+        $entryYear = $request->input('entry_year');
+
+        return Excel::download(
+            new UsersExport($search, $status, $role, $cohortFilter, $entryYear),
+            "data_pengguna_" . date('Y-m-d_H-i-s') . ".xlsx"
+        );
     }
 
     public function import(Request $request)
