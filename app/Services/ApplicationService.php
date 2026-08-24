@@ -166,20 +166,59 @@ class ApplicationService
     }
 
     /**
-     * Delete rejected application files and the application record.
+     * Delete/cancel an application (Admin or Student owner).
+     */
+    public function deleteApplication($application, array $files, bool $isAdmin = false, string $type = 'Pengajuan')
+    {
+        if (!$isAdmin && $application->status !== 'rejected' && $application->status !== 'pending') {
+            throw new \Exception('Hanya pengajuan yang berstatus ditolak atau menunggu yang dapat dibatalkan.');
+        }
+
+        // Delete physical files
+        foreach ($files as $file) {
+            if ($application->$file) {
+                if (!filter_var($application->$file, FILTER_VALIDATE_URL)) {
+                    Storage::disk(config('filesystems.default'))->delete($application->$file);
+                }
+            }
+        }
+
+        // Clean up associated schedule details if any to prevent foreign key errors
+        if ($application instanceof \App\Models\SeminarApplication) {
+            \App\Models\SeminarScheduleDetail::where('thesis_id', $application->thesis_id)->delete();
+        } elseif ($application instanceof \App\Models\ThesisDefenseApplication) {
+            \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $application->thesis_id)->delete();
+        }
+
+        $studentName = $application->thesis->student->name ?? 'Mahasiswa';
+        
+        if ($isAdmin) {
+            ActivityLog::log(
+                "Pembatalan {$type}",
+                "Admin membatalkan dan menghapus {$type} untuk mahasiswa {$studentName}.",
+                'Pendaftaran',
+                $application->thesis
+            );
+
+            // Notify student
+            if ($application->thesis && $application->thesis->student) {
+                $application->thesis->student->notify(new GeneralNotification(
+                    "Pembatalan {$type}",
+                    "Pengajuan {$type} Anda telah dibatalkan oleh Admin. Anda dapat mengajukan ulang berkas yang sesuai melalui dashboard SIBIMA.",
+                    url('/dashboard'),
+                    'danger'
+                ));
+            }
+        }
+
+        $application->delete();
+    }
+
+    /**
+     * Backward compatibility for deleteRejectedApplication
      */
     public function deleteRejectedApplication($application, array $files)
     {
-        if ($application->status !== 'rejected') {
-            throw new \Exception('Hanya pengajuan yang ditolak yang dapat dihapus.');
-        }
-
-        foreach ($files as $file) {
-            if ($application->$file) {
-                Storage::disk(config('filesystems.default'))->delete($application->$file);
-            }
-        }
-        
-        $application->delete();
+        $this->deleteApplication($application, $files, false, 'Pengajuan');
     }
 }

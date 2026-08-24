@@ -205,14 +205,23 @@ class SeminarApplicationController extends Controller
 
     public function destroy(SeminarApplication $application)
     {
-        if (Auth::user()->role !== 'mahasiswa' || $application->thesis->student_id !== Auth::id()) {
+        $user = Auth::user();
+        $isAdmin = in_array($user->role, ['admin', 'kaprodi']);
+        $isStudentOwner = $user->role === 'mahasiswa' && $application->thesis && $application->thesis->student_id === $user->id;
+
+        if (!$isAdmin && !$isStudentOwner) {
             abort(403);
         }
 
         try {
             $files = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
-            $this->applicationService->deleteRejectedApplication($application, $files);
-            return redirect()->back()->with('success', 'Pengajuan sebelumnya telah dihapus. Silakan ajukan ulang dengan berkas yang benar.');
+            $this->applicationService->deleteApplication($application, $files, $isAdmin, 'Seminar Proposal');
+            
+            $msg = $isAdmin 
+                ? 'Pengajuan seminar proposal mahasiswa berhasil dibatalkan dan dihapus.' 
+                : 'Pengajuan seminar proposal Anda telah dibatalkan. Silakan ajukan ulang dengan berkas yang benar.';
+                
+            return redirect()->back()->with('success', $msg);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

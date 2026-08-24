@@ -433,11 +433,24 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
-                                    <button type="button"
-                                            @click="selectedApp = {{ json_encode($appData) }}; openValidation = true" 
-                                            class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
-                                        Validasi
-                                    </button>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button type="button"
+                                                @click="selectedApp = {{ json_encode($appData) }}; openValidation = true" 
+                                                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                            Validasi
+                                        </button>
+                                        <form action="{{ route('thesis-defense-applications.destroy', $app) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin MEMBATALKAN & MENGHAPUS pengajuan sidang skripsi untuk mahasiswa {{ addslashes($app->thesis->student->name) }}?\n\nMahasiswa dapat mengajukan ulang berkas pendaftaran baru.');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    title="Batalkan & Hapus Pengajuan Sidang" 
+                                                    class="p-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-xl transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

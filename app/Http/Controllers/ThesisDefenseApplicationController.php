@@ -210,7 +210,11 @@ class ThesisDefenseApplicationController extends Controller
 
     public function destroy(ThesisDefenseApplication $application)
     {
-        if (Auth::user()->role !== 'mahasiswa' || $application->thesis->student_id !== Auth::id()) {
+        $user = Auth::user();
+        $isAdmin = in_array($user->role, ['admin', 'kaprodi']);
+        $isStudentOwner = $user->role === 'mahasiswa' && $application->thesis && $application->thesis->student_id === $user->id;
+
+        if (!$isAdmin && !$isStudentOwner) {
             abort(403);
         }
 
@@ -221,8 +225,13 @@ class ThesisDefenseApplicationController extends Controller
                 'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
                 'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
             ];
-            $this->applicationService->deleteRejectedApplication($application, $files);
-            return redirect()->back()->with('success', 'Pengajuan sebelumnya telah dihapus. Silakan ajukan ulang dengan berkas yang benar.');
+            $this->applicationService->deleteApplication($application, $files, $isAdmin, 'Sidang Skripsi');
+            
+            $msg = $isAdmin 
+                ? 'Pengajuan sidang skripsi mahasiswa berhasil dibatalkan dan dihapus.' 
+                : 'Pengajuan sidang skripsi Anda telah dibatalkan. Silakan ajukan ulang dengan berkas yang benar.';
+                
+            return redirect()->back()->with('success', $msg);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
