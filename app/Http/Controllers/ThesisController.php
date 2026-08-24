@@ -426,6 +426,21 @@ class ThesisController extends Controller
         ));
     }
 
+    public function show(Thesis $thesis)
+    {
+        $user = Auth::user();
+        
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
+            || ($user->role === 'dosen' && in_array($user->id, [$thesis->pembimbing1_id, $thesis->pembimbing2_id]))
+            || ($user->role === 'mahasiswa' && $thesis->student_id === $user->id);
+
+        if (!$isAuthorized) {
+            abort(403, 'Anda tidak memiliki hak akses untuk melihat data skripsi ini.');
+        }
+
+        return redirect()->route('theses.logbooks', $thesis->id);
+    }
+
     public function cleanAudit(Request $request)
     {
         $user = Auth::user();

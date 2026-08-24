@@ -59,7 +59,10 @@ class LogbookController extends Controller
     public function show(Thesis $thesis)
     {
         $user = Auth::user();
-        $isAuthorized = $user->role === 'admin' || $user->role === 'kaprodi' || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
+        $isAuthorized = $user->role === 'admin' 
+            || $user->role === 'kaprodi' 
+            || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id))
+            || ($user->role === 'mahasiswa' && $thesis->student_id === $user->id);
 
         if (!$isAuthorized) abort(403);
             

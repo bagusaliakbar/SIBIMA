@@ -116,4 +116,22 @@ class ThesisWorkflowTest extends TestCase
 
         $response->assertSessionHasErrors('scheduled_at');
     }
+
+    public function test_thesis_show_redirects_to_logbooks()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Judul Skripsi Pengujian',
+            'abstract' => 'Abstrak Pengujian',
+            'status' => 'active',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('theses.show', $thesis->id));
+        $response->assertRedirect(route('theses.logbooks', $thesis->id));
+
+        $response = $this->actingAs($student)->get(route('theses.show', $thesis->id));
+        $response->assertRedirect(route('theses.logbooks', $thesis->id));
+    }
 }
