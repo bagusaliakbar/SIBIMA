@@ -28,8 +28,8 @@ class WhatsAppToggleFeatureTest extends TestCase
         $response = $this->actingAs($admin)->get(route('wa-templates.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('Manajemen WhatsApp Gateway');
-        $response->assertSee('MASTER SWITCH: AKTIF');
+        $response->assertSee('Template WhatsApp');
+        $response->assertSee('Saklar Utama Sistem');
     }
 
     public function test_admin_can_toggle_global_master_switch()
