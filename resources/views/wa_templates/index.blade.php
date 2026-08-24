@@ -81,10 +81,7 @@
         <!-- Notification Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($templates as $template)
-                @php
-                    $isEffectivelySending = $isWhatsAppGloballyEnabled && $template->is_active;
-                @endphp
-                <div class="bg-white dark:bg-slate-800 rounded-2xl border {{ $isEffectivelySending ? 'border-slate-200 dark:border-slate-700' : 'border-slate-300 dark:border-slate-700/60 opacity-90' }} p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all group relative">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border {{ $template->is_active ? 'border-slate-200 dark:border-slate-700' : 'border-slate-300 dark:border-slate-700/60 opacity-85' }} p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all group relative">
                     <div>
                         <!-- Card Badges Header -->
                         <div class="flex items-center justify-between gap-2 mb-3">
@@ -99,30 +96,16 @@
                                     </span>
                                 @endif
 
-                                @if(!$isWhatsAppGloballyEnabled)
-                                    @if($template->is_active)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80" title="Template ini disetel aktif, namun saat ini terjeda karena Saklar Utama Sistem mati">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            Terjeda (Master OFF)
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                            Nonaktif
-                                        </span>
-                                    @endif
+                                @if($template->is_active)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Aktif
+                                    </span>
                                 @else
-                                    @if($template->is_active)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            Aktif
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                            Nonaktif
-                                        </span>
-                                    @endif
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                        Nonaktif
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -146,15 +129,10 @@
                             @csrf
                             <button type="submit" 
                                     title="{{ $template->is_active ? 'Klik untuk mematikan notifikasi ini' : 'Klik untuk mengaktifkan notifikasi ini' }}"
-                                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border shadow-2xs cursor-pointer {{ $template->is_active ? ($isWhatsAppGloballyEnabled ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 hover:bg-rose-50 hover:text-rose-700') : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200' }}">
+                                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border shadow-2xs cursor-pointer {{ $template->is_active ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 dark:hover:bg-rose-950 dark:hover:text-rose-300' : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200' }}">
                                 @if($template->is_active)
-                                    @if($isWhatsAppGloballyEnabled)
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        <span>ON</span>
-                                    @else
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span>ON (Terjeda)</span>
-                                    @endif
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>ON</span>
                                 @else
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     <span>OFF</span>
