@@ -36,6 +36,7 @@ class User extends Authenticatable
         'signature_token',
         'research_interests',
         'max_quota',
+        'last_login_at',
     ];
 
     /**
@@ -143,6 +144,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'phone_number' => 'encrypted',
+            'last_login_at' => 'datetime',
         ];
     }
 

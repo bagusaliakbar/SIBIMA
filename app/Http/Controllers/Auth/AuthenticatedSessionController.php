@@ -27,6 +27,11 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = $request->user();
+        if ($user) {
+            $user->update(['last_login_at' => now()]);
+        }
+
         $request->session()->regenerate();
         
         ActivityLog::log('Login', 'User berhasil login ke sistem.', 'Auth');

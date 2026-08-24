@@ -81,11 +81,14 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
         return [
             'Nama',
             'Email',
+            'Status Email',
             'Peran (dosen/mahasiswa)',
             'NPM/NIDN',
             'Tahun Angkatan',
-            'No. Telepon',
+            'No. WhatsApp',
+            'Status WhatsApp',
             'Status Aktif (1=Aktif, 0=Pending)',
+            'Terakhir Login',
         ];
     }
 
@@ -94,11 +97,14 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
         return [
             $user->name,
             $user->email,
+            $user->email_verified_at ? 'Terverifikasi' : 'Belum Verifikasi',
             $user->role,
             $user->identifier,
             $user->entry_year,
             $user->phone_number,
+            $user->phone_number ? 'Terhubung' : 'Belum Ada',
             $user->is_active ? 1 : 0,
+            $user->last_login_at ? $user->last_login_at->translatedFormat('d F Y, H:i') : 'Belum Pernah Login',
         ];
     }
 }

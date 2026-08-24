@@ -215,4 +215,42 @@ class UserFilterTest extends TestCase
         $response->assertSee('openDetailModal');
         $response->assertSee('selectedUser');
     }
+
+    public function test_user_login_updates_last_login_at_timestamp(): void
+    {
+        $user = User::factory()->create([
+            'username' => 'testaudit',
+            'password' => 'password123',
+            'is_active' => true,
+            'last_login_at' => null,
+        ]);
+
+        $response = $this->post(route('login'), [
+            'username' => 'testaudit',
+            'password' => 'password123',
+        ]);
+
+        $response->assertRedirect(route('dashboard'));
+        $user->refresh();
+        $this->assertNotNull($user->last_login_at);
+    }
+
+    public function test_last_login_and_verification_badges_displayed_in_user_management(): void
+    {
+        $userWithLogin = User::factory()->create([
+            'name' => 'Dr. Hendra Dosen',
+            'role' => 'dosen',
+            'email_verified_at' => now(),
+            'phone_number' => '081122334455',
+            'last_login_at' => now()->subHours(2),
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('users.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Terakhir Login');
+        $response->assertSee('Dr. Hendra Dosen');
+        $response->assertSee('Terhubung WA');
+        $response->assertSee($userWithLogin->last_login_at->diffForHumans());
+    }
 }

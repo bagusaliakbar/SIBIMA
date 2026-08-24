@@ -20,7 +20,7 @@ trait Auditable
             // Identify which fields actually changed
             foreach ($model->getChanges() as $key => $value) {
                 // Ignore timestamp fields if they are the only things that changed
-                if (in_array($key, ['updated_at', 'created_at'])) {
+                if (in_array($key, ['updated_at', 'created_at', 'last_login_at'])) {
                     continue;
                 }
 
