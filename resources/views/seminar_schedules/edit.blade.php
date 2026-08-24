@@ -113,7 +113,7 @@
                                         <select :name="`details[${index}][thesis_id]`" x-model="row.thesis_id" class="w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 rounded-md text-xs focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Pilih Mahasiswa</option>
                                             @foreach($theses as $thesis)
-                                                <option value="{{ $thesis->id }}">{{ $thesis->student->name }} - {{ Str::limit($thesis->title, 50) }}</option>
+                                                <option value="{{ $thesis->id }}">{{ $thesis->student->name }} - {{ Str::limit($thesis->final_title ?? $thesis->title, 50) }}</option>
                                             @endforeach
                                         </select>
                                         <div class="mt-1 text-[9px] text-slate-500 font-medium" x-show="row.thesis_id">

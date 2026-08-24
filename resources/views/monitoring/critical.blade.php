@@ -109,7 +109,7 @@
                                             @else Pengerjaan Bab 1-3
                                             @endif
                                         </div>
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate max-w-[200px] italic">"{{ $thesis->title }}"</p>
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate max-w-[200px] italic">"{{ $thesis->final_title ?? $thesis->title }}"</p>
                                     @else
                                         <span class="text-[10px] text-slate-400 italic">Belum Mengajukan Judul</span>
                                     @endif

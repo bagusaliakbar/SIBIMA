@@ -403,7 +403,7 @@
                                                     <div class="px-8 py-8 max-h-[60vh] overflow-y-auto">
                                                         <div class="mb-8">
                                                             <p class="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">Judul Pengajuan</p>
-                                                            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight uppercase">{{ $thesis->title }}</h4>
+                                                            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 leading-tight uppercase">{{ $thesis->final_title ?? $thesis->title }}</h4>
                                                         </div>
                                                         <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                                                             <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Rencana</p>

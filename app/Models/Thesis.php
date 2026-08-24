@@ -28,6 +28,11 @@ class Thesis extends Model
         'topic',
     ];
 
+    public function getDisplayTitleAttribute()
+    {
+        return $this->final_title ?: $this->title;
+    }
+
     public function getCompletedMentoringCountAttribute()
     {
         return $this->mentoringSessions()

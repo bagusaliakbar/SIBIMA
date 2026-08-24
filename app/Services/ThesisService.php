@@ -150,6 +150,7 @@ class ThesisService
         if (Auth::user()->role === 'mahasiswa') {
             $thesis->update([
                 'title' => $data['title'],
+                'final_title' => $data['title'],
                 'abstract' => $data['abstract'] ?? $thesis->abstract,
             ]);
             
@@ -158,6 +159,7 @@ class ThesisService
             ]);
         } else {
             $thesis->update([
+                'title' => $data['final_title'],
                 'final_title' => $data['final_title'],
                 'pembimbing1_id' => $data['pembimbing1_id'],
                 'pembimbing2_id' => $data['pembimbing2_id'],

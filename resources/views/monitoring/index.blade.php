@@ -148,7 +148,7 @@
                                 <td class="py-4 px-6">
                                     <div class="font-black text-sm text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{{ $thesis->student->name }}</div>
                                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tracking-widest font-black uppercase">{{ $thesis->student->identifier }}</div>
-                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 italic line-clamp-1 max-w-[250px]" title="{{ $thesis->title }}">{{ $thesis->title }}</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 italic line-clamp-1 max-w-[250px]" title="{{ $thesis->final_title ?? $thesis->title }}">{{ $thesis->final_title ?? $thesis->title }}</div>
                                 </td>
                                 <td class="py-4 px-6 text-center">
                                     <div class="flex flex-col items-center gap-2">

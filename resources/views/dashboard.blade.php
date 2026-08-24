@@ -111,7 +111,7 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 relative z-10">
                     <div>
                         @if($thesis)
-                            <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-1 max-w-2xl">{{ $thesis->title }}</h3>
+                            <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-1 max-w-2xl">{{ $thesis->final_title ?? $thesis->title }}</h3>
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Pembimbing: {{ $thesis->pembimbing1->name ?? 'Belum Ditentukan' }} & {{ $thesis->pembimbing2->name ?? 'Belum Ditentukan' }}</p>
                             @if(!$thesis->isAccSidangFinal())
                                 <button onclick="document.getElementById('edit-thesis-modal').classList.remove('hidden')" class="inline-flex items-center px-3 py-1.5 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-200 dark:hover:bg-orange-500/20 transition-colors border border-orange-200 dark:border-orange-500/20 shadow-sm">
@@ -1520,7 +1520,7 @@
                     <div class="px-6 py-6 space-y-6">
                         <div>
                             <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Judul Skripsi <span class="text-orange-600">*</span></label>
-                            <textarea name="title" id="title" rows="3" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors">{{ old('title', $thesis->title) }}</textarea>
+                            <textarea name="title" id="title" rows="3" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors">{{ old('title', $thesis->final_title ?? $thesis->title) }}</textarea>
                             @error('title')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
