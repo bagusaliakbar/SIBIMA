@@ -43,7 +43,7 @@ class WaTemplateController extends Controller implements HasMiddleware
     }
 
     /**
-     * Toggle the global WhatsApp master switch.
+     * Toggle the global WhatsApp master switch and synchronize all templates.
      */
     public function toggleGlobal(Request $request)
     {
@@ -51,9 +51,13 @@ class WaTemplateController extends Controller implements HasMiddleware
         $newState = !$current;
         Setting::setWhatsAppEnabled($newState);
 
+        // Synchronize all templates in DB with the new master switch state
+        WaTemplate::query()->update(['is_active' => $newState]);
+        WaTemplate::clearCache();
+
         $message = $newState 
-            ? 'Notifikasi WhatsApp secara global berhasil DIAKTIFKAN. Seluruh pesan gateway aktif dikirimkan.' 
-            : 'Notifikasi WhatsApp secara global berhasil DINONAKTIFKAN. Seluruh pengiriman pesan gateway dihentikan sementara.';
+            ? 'Seluruh notifikasi WhatsApp berhasil DIAKTIFKAN. Saklar utama dan seluruh template kartu aktif.' 
+            : 'Seluruh notifikasi WhatsApp berhasil DINONAKTIFKAN. Saklar utama dan seluruh template kartu dimatikan.';
 
         return redirect()->back()->with('success', $message);
     }
@@ -69,6 +73,10 @@ class WaTemplateController extends Controller implements HasMiddleware
         ]);
 
         WaTemplate::clearCache($waTemplate->code);
+
+        // If at least 1 template is active, keep master switch enabled; if all are inactive, disable master switch.
+        $anyActive = WaTemplate::where('is_active', true)->exists();
+        Setting::setWhatsAppEnabled($anyActive);
 
         $statusText = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
         $message = "Template notifikasi '{$waTemplate->name}' berhasil {$statusText}.";

@@ -35,18 +35,28 @@ class WhatsAppToggleFeatureTest extends TestCase
     public function test_admin_can_toggle_global_master_switch()
     {
         $admin = User::factory()->create(['role' => 'admin']);
+        $template = WaTemplate::create([
+            'code' => 'test_sync_template',
+            'name' => 'Test Sync Template',
+            'category' => 'Bimbingan',
+            'content' => 'Halo {nama_mahasiswa}',
+            'is_active' => true,
+        ]);
 
         $this->assertTrue(Setting::isWhatsAppEnabled());
+        $this->assertTrue($template->is_active);
 
-        // Toggle to OFF
+        // Toggle to OFF -> master switch OFF and all templates is_active = false
         $response = $this->actingAs($admin)->post(route('wa-templates.toggle-global'));
         $response->assertRedirect();
         $this->assertFalse(Setting::isWhatsAppEnabled());
+        $this->assertFalse($template->fresh()->is_active);
 
-        // Toggle back to ON
+        // Toggle back to ON -> master switch ON and all templates is_active = true
         $response = $this->actingAs($admin)->post(route('wa-templates.toggle-global'));
         $response->assertRedirect();
         $this->assertTrue(Setting::isWhatsAppEnabled());
+        $this->assertTrue($template->fresh()->is_active);
     }
 
     public function test_admin_can_toggle_individual_template_status()
