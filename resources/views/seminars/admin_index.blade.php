@@ -313,14 +313,14 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
-                                    <div class="grid grid-cols-2 gap-2 max-w-xs">
+                                    <div class="flex flex-wrap gap-1.5 max-w-[280px]">
                                         @php
                                             $files = [
-                                                ['key' => 'file_acc_pembimbing', 'label' => 'Bukti ACC', 'path' => $app->file_acc_pembimbing, 'color' => 'orange'],
-                                                ['key' => 'file_pembayaran', 'label' => 'Bukti Bayar', 'path' => $app->file_pembayaran, 'color' => 'emerald'],
-                                                ['key' => 'file_kartu_bimbingan', 'label' => 'Logbook', 'path' => $app->file_kartu_bimbingan, 'color' => 'blue'],
-                                                ['key' => 'file_skripsi', 'label' => 'Draf Skripsi', 'path' => $app->file_skripsi, 'color' => 'indigo'],
-                                                ['key' => 'file_formulir', 'label' => 'Formulir', 'path' => $app->file_formulir, 'color' => 'pink'],
+                                                ['key' => 'file_acc_pembimbing', 'label' => 'Bukti ACC', 'path' => $app->file_acc_pembimbing],
+                                                ['key' => 'file_pembayaran', 'label' => 'Bukti Bayar', 'path' => $app->file_pembayaran],
+                                                ['key' => 'file_kartu_bimbingan', 'label' => 'Logbook', 'path' => $app->file_kartu_bimbingan],
+                                                ['key' => 'file_skripsi', 'label' => 'Draf Skripsi', 'path' => $app->file_skripsi],
+                                                ['key' => 'file_formulir', 'label' => 'Formulir', 'path' => $app->file_formulir],
                                             ];
                                         @endphp
                                         @foreach($files as $file)
@@ -329,13 +329,13 @@
                                                 $isRejected = ($review['status'] ?? '') === 'rejected';
                                             @endphp
                                             <a href="{{ $file['path'] }}" target="_blank" 
-                                               class="flex items-center justify-between px-2.5 py-1.5 bg-slate-50 dark:bg-slate-900 border {{ $isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-orange-300 dark:hover:border-orange-700' }} rounded-xl text-[10px] font-bold transition-all shadow-2xs"
-                                               title="{{ $isRejected ? 'Ditolak: ' . ($review['note'] ?? 'Perlu revisi') : 'Lihat Berkas' }}">
-                                                <span class="truncate">{{ $file['label'] }}</span>
+                                               class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 dark:bg-slate-900 border {{ $isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400' }} rounded-lg text-[10px] font-bold transition-all shadow-2xs"
+                                               title="{{ $isRejected ? 'Ditolak: ' . ($review['note'] ?? 'Perlu revisi') : 'Lihat ' . $file['label'] }}">
+                                                <span>{{ $file['label'] }}</span>
                                                 @if($isRejected)
                                                     <span class="text-rose-500 font-black text-xs">✕</span>
                                                 @else
-                                                    <svg class="w-3.5 h-3.5 text-slate-400 ml-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                 @endif
                                             </a>
                                         @endforeach

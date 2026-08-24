@@ -265,12 +265,21 @@
                     <thead>
                         <tr class="bg-slate-50/70 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700/80">
                             <th class="py-4 px-6">Mahasiswa & Judul Skripsi</th>
+                            <th class="py-4 px-6 text-center">Berkas Persyaratan</th>
                             <th class="py-4 px-6 text-center">Status</th>
                             <th class="py-4 px-6 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700/80">
                         @forelse($applications as $app)
+                            @php
+                                $rejectedCount = 0;
+                                if (!empty($app->file_reviews)) {
+                                    foreach ($app->file_reviews as $rev) {
+                                        if (($rev['status'] ?? '') === 'rejected') $rejectedCount++;
+                                    }
+                                }
+                            @endphp
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors group">
                                 <td class="py-4 px-6 max-w-md">
                                     <div class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm">
@@ -311,33 +320,29 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex flex-col items-center gap-1.5">
-                                        @if($app->status === 'approved')
-                                            <x-status-badge type="emerald" label="DISETUJUI" />
-                                        @elseif($app->status === 'rejected')
-                                            <x-status-badge type="rose" label="DITOLAK / REVISI" />
+                                <td class="py-4 px-6 text-center whitespace-nowrap">
+                                    <div class="flex flex-col items-center gap-1.5" x-data="{ showFiles: false }">
+                                        <button @click="showFiles = true" 
+                                                class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border {{ $rejectedCount > 0 ? 'border-rose-300 dark:border-rose-800 bg-rose-50/30' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600' }} rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-2xs group/doc cursor-pointer">
+                                            <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <span>20 Berkas Sidang</span>
+                                            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/doc:text-indigo-600 dark:group-hover/doc:text-indigo-400 transition-transform group-hover/doc:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </button>
+
+                                        @if($rejectedCount > 0)
+                                            <span class="inline-flex items-center gap-1 text-[9px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">
+                                                ⚠️ {{ $rejectedCount }} Berkas Ditolak
+                                            </span>
                                         @else
-                                            <x-status-badge type="amber" label="MENUNGGU" />
+                                            <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                                                Klik untuk periksa
+                                            </span>
                                         @endif
-                                        
-                                        @if($app->admin_feedback)
-                                            <p class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1 max-w-[140px] truncate bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50" 
-                                               title="{{ $app->admin_feedback }}">
-                                                "{{ $app->admin_feedback }}"
-                                            </p>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="py-4 px-6 text-right whitespace-nowrap">
-                                    <div class="flex justify-end items-center gap-2" x-data="{ openValidation: false, showFiles: false }">
-                                        <button @click="showFiles = true" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">
-                                            Berkas (20)
-                                        </button>
-                                        <button @click="openValidation = true" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
-                                            Validasi
-                                        </button>
-                                        
+
                                         <!-- Files List Modal -->
                                         <div x-show="showFiles" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
                                             <div class="flex items-start justify-center min-h-screen px-4 text-center">
@@ -354,7 +359,7 @@
                                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                         </button>
                                                     </div>
-                                                    <div class="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                                    <div class="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3">
                                                         @php
                                                             $fileLabels = [
                                                                 'file_formulir' => '1. Formulir Pendaftaran Sidang',
@@ -384,23 +389,50 @@
                                                                 $rev = $app->file_reviews[$field] ?? null;
                                                                 $isRej = ($rev['status'] ?? '') === 'rejected';
                                                             @endphp
-                                                            <a href="{{ $app->$field }}" target="_blank" class="flex items-center p-3.5 bg-slate-50 dark:bg-slate-900 border {{ $isRej ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30' : 'border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-700' }} rounded-xl transition-all group/file shadow-2xs">
-                                                                <div class="p-2 bg-white dark:bg-slate-800 rounded-lg mr-3 border border-slate-200 dark:border-slate-700 group-hover/file:bg-orange-50 dark:group-hover/file:bg-orange-950/40 transition-colors shrink-0">
-                                                                    <svg class="w-4 h-4 text-slate-400 group-hover/file:text-orange-600 dark:group-hover/file:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                                </div>
+                                                            <div class="p-3 bg-slate-50 dark:bg-slate-900 border {{ $isRej ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30' : 'border-slate-200 dark:border-slate-700' }} rounded-xl flex items-center justify-between gap-3 shadow-2xs">
                                                                 <div class="min-w-0 flex-1">
                                                                     <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">{{ $label }}</span>
                                                                     @if($isRej)
-                                                                        <span class="text-[10px] font-black text-rose-600 dark:text-rose-400">Ditolak: {{ $rev['note'] ?? 'Perlu revisi' }}</span>
+                                                                        <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 mt-0.5 block">Ditolak: {{ $rev['note'] ?? 'Perlu revisi' }}</span>
                                                                     @endif
                                                                 </div>
-                                                            </a>
+                                                                <a href="{{ $app->$field }}" target="_blank" 
+                                                                   class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-lg text-[10px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0 shadow-2xs">
+                                                                    <span>Buka File</span>
+                                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                </a>
+                                                            </div>
                                                         @endforeach
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <div class="flex flex-col items-center gap-1.5">
+                                        @if($app->status === 'approved')
+                                            <x-status-badge type="emerald" label="DISETUJUI" />
+                                        @elseif($app->status === 'rejected')
+                                            <x-status-badge type="rose" label="DITOLAK / REVISI" />
+                                        @else
+                                            <x-status-badge type="amber" label="MENUNGGU" />
+                                        @endif
+                                        
+                                        @if($app->admin_feedback)
+                                            <p class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1 max-w-[140px] truncate bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50" 
+                                               title="{{ $app->admin_feedback }}">
+                                                "{{ $app->admin_feedback }}"
+                                            </p>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-right whitespace-nowrap">
+                                    <div class="flex justify-end items-center" x-data="{ openValidation: false }">
+                                        <button @click="openValidation = true" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                            Validasi
+                                        </button>
+                                        
                                         <!-- Validation Modal -->
                                         <div x-show="openValidation" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
                                             <div class="flex items-start justify-center min-h-screen px-4 text-center">
@@ -475,7 +507,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <x-empty-state colspan="3" description="Tidak ada pengajuan sidang skripsi yang sesuai dengan kriteria filter." icon="academic-cap" />
+                            <x-empty-state colspan="4" description="Tidak ada pengajuan sidang skripsi yang sesuai dengan kriteria filter." icon="academic-cap" />
                         @endforelse
                     </tbody>
                 </table>
