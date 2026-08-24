@@ -460,7 +460,7 @@
                 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" @click="showFiles = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
-                    <div class="relative w-full max-w-4xl bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 my-8" @click.stop>
+                    <div class="relative w-full max-w-3xl bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 my-8" @click.stop>
                         <template x-if="selectedApp">
                             <div>
                                 <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
@@ -475,18 +475,18 @@
                                     </button>
                                 </div>
 
-                                <div class="p-6 sm:p-8 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <div class="p-6 sm:p-8 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3">
                                     @foreach($fileLabels as $field => $label)
-                                        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 border rounded-2xl flex items-center justify-between gap-3 shadow-2xs"
+                                        <div class="p-3 bg-slate-50 dark:bg-slate-900/70 border rounded-2xl flex items-center justify-between gap-2.5 shadow-2xs"
                                              :class="(selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected') ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30' : 'border-slate-200/80 dark:border-slate-700/80'">
                                             <div class="min-w-0 flex-1">
                                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">{{ $label }}</span>
                                                 <template x-if="selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected'">
-                                                    <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 mt-0.5 block" x-text="'Ditolak: ' + (selectedApp.file_reviews['{{ $field }}'].note || 'Perlu revisi')"></span>
+                                                    <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 mt-0.5 block truncate" x-text="'Ditolak: ' + (selectedApp.file_reviews['{{ $field }}'].note || 'Perlu revisi')"></span>
                                                 </template>
                                             </div>
                                             <a :href="selectedApp.files['{{ $field }}']" target="_blank" 
-                                               class="inline-flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-lg text-[10px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0 shadow-2xs">
+                                               class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-lg text-[10px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0 shadow-2xs">
                                                 <span>Buka File</span>
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                             </a>
@@ -510,7 +510,7 @@
                 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" @click="openValidation = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
-                    <div class="relative w-full max-w-5xl bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 my-8" @click.stop>
+                    <div class="relative w-full max-w-3xl bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 my-8" @click.stop>
                         <template x-if="selectedApp">
                             <div>
                                 {{-- Modal Header --}}
@@ -546,19 +546,19 @@
                                     @csrf
                                     @method('PATCH')
 
-                                    <div class="px-6 sm:px-8 py-6 space-y-6 max-h-[68vh] overflow-y-auto">
+                                    <div class="px-6 py-5 space-y-5 max-h-[68vh] overflow-y-auto">
                                         {{-- 2-Column Responsive Grid for 20 Files --}}
                                         <div>
-                                            <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center justify-between mb-2.5">
                                                 <label class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">
                                                     Verifikasi 20 Berkas Persyaratan:
                                                 </label>
-                                                <span class="text-[10px] text-slate-400 font-medium">Klik nama berkas untuk melihat isi file</span>
+                                                <span class="text-[10px] text-slate-400 font-medium">Klik nama berkas untuk melihat file</span>
                                             </div>
 
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                                                 @foreach($fileLabels as $field => $label)
-                                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-900/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between gap-2.5 transition-all shadow-2xs"
+                                                    <div class="p-3 bg-slate-50 dark:bg-slate-900/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between gap-2 transition-all shadow-2xs"
                                                          x-data="{ isRejected: (selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected') }">
                                                         <div class="flex items-center justify-between gap-2">
                                                             <a :href="selectedApp.files['{{ $field }}']" target="_blank" 
@@ -569,7 +569,7 @@
                                                             </a>
 
                                                             {{-- Radio Controls (OK / Tolak) --}}
-                                                            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
+                                                            <div class="flex items-center gap-1 bg-white dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
                                                                 <label class="inline-flex items-center px-2 py-0.5 rounded-lg cursor-pointer transition-colors"
                                                                        :class="!isRejected ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-black' : 'text-slate-400 hover:text-slate-600'">
                                                                     <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
@@ -601,26 +601,26 @@
                                         </div>
 
                                         {{-- Final Decision & Admin Global Note in 2 Columns --}}
-                                        <div class="pt-5 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/50 dark:bg-slate-900/30 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
                                             <div>
-                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">
                                                     Status Akhir Pengajuan:
                                                 </label>
-                                                <select name="status" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold uppercase tracking-wider p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs">
+                                                <select name="status" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold uppercase tracking-wider p-2.5 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs">
                                                     <option value="approved" :selected="selectedApp.status === 'approved'">✓ SETUJUI (BERKAS VALID & LENGKAP)</option>
                                                     <option value="rejected" :selected="selectedApp.status === 'rejected'">✕ TOLAK (PERLU REVISI BERKAS)</option>
                                                     <option value="pending" :selected="selectedApp.status === 'pending'">⏳ TETAP MENUNGGU</option>
                                                 </select>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">
+                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
                                                     Pilih "SETUJUI" jika seluruh 20 berkas telah lengkap dan sesuai syarat.
                                                 </p>
                                             </div>
                                             
                                             <div>
-                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                                                <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">
                                                     Catatan Admin (Global / Feedback Mahasiswa):
                                                 </label>
-                                                <textarea name="admin_feedback" rows="2" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-medium p-3 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs" placeholder="Silakan upload ulang berkas yang ditolak..." x-text="selectedApp.admin_feedback || ''"></textarea>
+                                                <textarea name="admin_feedback" rows="2" class="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-medium p-2.5 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs" placeholder="Silakan upload ulang berkas yang ditolak..." x-text="selectedApp.admin_feedback || ''"></textarea>
                                             </div>
                                         </div>
                                     </div>
