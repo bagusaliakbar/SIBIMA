@@ -59,14 +59,53 @@ class SeminarApplicationController extends Controller
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $activeWave = Wave::getCurrentActive();
             $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+            $search = $request->input('search');
+            $status = $request->input('status', 'all');
 
-            $applications = SeminarApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave'])
-                ->when($selectedWaveId, function($q) use ($selectedWaveId) {
-                    $q->where('wave_id', $selectedWaveId);
-                })
-                ->orderBy('created_at', 'desc')
+            // Base query for the selected wave (or all waves)
+            $baseWaveQuery = SeminarApplication::query();
+            if (!empty($selectedWaveId) && $selectedWaveId !== 'all') {
+                $baseWaveQuery->where('wave_id', $selectedWaveId);
+            }
+
+            // Statistics for the selected wave scope
+            $stats = [
+                'total' => (clone $baseWaveQuery)->count(),
+                'pending' => (clone $baseWaveQuery)->where('status', 'pending')->count(),
+                'approved' => (clone $baseWaveQuery)->where('status', 'approved')->count(),
+                'rejected' => (clone $baseWaveQuery)->where('status', 'rejected')->count(),
+            ];
+
+            // Filtered applications query
+            $applicationsQuery = SeminarApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+            
+            if (!empty($selectedWaveId) && $selectedWaveId !== 'all') {
+                $applicationsQuery->where('wave_id', $selectedWaveId);
+            }
+
+            if (!empty($status) && $status !== 'all') {
+                $applicationsQuery->where('status', $status);
+            }
+
+            if (!empty($search)) {
+                $applicationsQuery->where(function($q) use ($search) {
+                    $q->whereHas('thesis.student', function($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%")
+                           ->orWhere('identifier', 'like', "%{$search}%")
+                           ->orWhere('email', 'like', "%{$search}%");
+                    })->orWhereHas('thesis', function($tq) use ($search) {
+                        $tq->where('title', 'like', "%{$search}%");
+                    });
+                });
+            }
+
+            $applications = $applicationsQuery->orderBy('created_at', 'desc')
                 ->paginate(10)
-                ->appends(['wave_id' => $selectedWaveId]);
+                ->appends([
+                    'wave_id' => $selectedWaveId,
+                    'status' => $status,
+                    'search' => $search,
+                ]);
             
             $waves = Wave::orderBy('created_at', 'desc')->get()->map(function($w) {
                 $w->app_count = SeminarApplication::where('wave_id', $w->id)->count();
@@ -74,7 +113,7 @@ class SeminarApplicationController extends Controller
             });
             $template = SeminarTemplate::where('is_active', true)->latest()->first();
             
-            return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave'));
+            return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats'));
         }
 
         abort(403);

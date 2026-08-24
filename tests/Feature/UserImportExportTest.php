@@ -40,37 +40,44 @@ class UserImportExportTest extends TestCase
 
         // Verify headings count and items
         $headings = $export->headings();
-        $this->assertCount(7, $headings);
+        $this->assertCount(10, $headings);
         $this->assertEquals([
             'Nama',
             'Email',
+            'Status Email',
             'Peran (dosen/mahasiswa)',
             'NPM/NIDN',
             'Tahun Angkatan',
-            'No. Telepon',
+            'No. WhatsApp',
+            'Status WhatsApp',
             'Status Aktif (1=Aktif, 0=Pending)',
+            'Terakhir Login',
         ], $headings);
 
         // Verify mapped data
         $studentMap = $export->map($student);
-        $this->assertCount(7, $studentMap);
+        $this->assertCount(10, $studentMap);
         $this->assertEquals('John Doe', $studentMap[0]);
         $this->assertEquals('john@sibima.com', $studentMap[1]);
-        $this->assertEquals('mahasiswa', $studentMap[2]);
-        $this->assertEquals('12345678', $studentMap[3]);
-        $this->assertEquals(2021, $studentMap[4]);
-        $this->assertEquals('081234567890', $studentMap[5]);
-        $this->assertEquals(1, $studentMap[6]);
+        $this->assertEquals('Terverifikasi', $studentMap[2]);
+        $this->assertEquals('mahasiswa', $studentMap[3]);
+        $this->assertEquals('12345678', $studentMap[4]);
+        $this->assertEquals(2021, $studentMap[5]);
+        $this->assertEquals('081234567890', $studentMap[6]);
+        $this->assertEquals('Terhubung', $studentMap[7]);
+        $this->assertEquals(1, $studentMap[8]);
 
         $lecturerMap = $export->map($lecturer);
-        $this->assertCount(7, $lecturerMap);
+        $this->assertCount(10, $lecturerMap);
         $this->assertEquals('Jane Smith', $lecturerMap[0]);
         $this->assertEquals('jane@sibima.com', $lecturerMap[1]);
-        $this->assertEquals('dosen', $lecturerMap[2]);
-        $this->assertEquals('987654321', $lecturerMap[3]);
-        $this->assertNull($lecturerMap[4]);
-        $this->assertEquals('089876543210', $lecturerMap[5]);
-        $this->assertEquals(0, $lecturerMap[6]);
+        $this->assertEquals('Terverifikasi', $lecturerMap[2]);
+        $this->assertEquals('dosen', $lecturerMap[3]);
+        $this->assertEquals('987654321', $lecturerMap[4]);
+        $this->assertNull($lecturerMap[5]);
+        $this->assertEquals('089876543210', $lecturerMap[6]);
+        $this->assertEquals('Terhubung', $lecturerMap[7]);
+        $this->assertEquals(0, $lecturerMap[8]);
     }
 
     public function test_users_import_correctly_saves_all_fields()
