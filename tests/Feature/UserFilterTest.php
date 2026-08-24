@@ -174,4 +174,27 @@ class UserFilterTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('users.export', ['role' => 'dosen']));
         $response->assertStatus(200);
     }
+
+    public function test_kpi_summary_cards_display_accurate_statistics_and_active_state(): void
+    {
+        // 1. Create active dosen
+        User::factory()->create(['role' => 'dosen', 'is_active' => true]);
+        // 2. Create active mahasiswa
+        User::factory()->create(['role' => 'mahasiswa', 'is_active' => true, 'entry_year' => 2024]);
+        // 3. Create pending mahasiswa
+        User::factory()->create(['role' => 'mahasiswa', 'is_active' => false, 'entry_year' => 2023]);
+
+        $response = $this->actingAs($this->admin)->get(route('users.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Total Pengguna');
+        $response->assertSee('Dosen Pembimbing Aktif');
+        $response->assertSee('Mahasiswa Aktif');
+        $response->assertSee('Menunggu Persetujuan');
+
+        $kpiStats = $response->viewData('kpiStats');
+        $this->assertNotNull($kpiStats);
+        $this->assertEquals(1, $kpiStats['active_dosen']);
+        $this->assertEquals(1, $kpiStats['active_mahasiswa']);
+        $this->assertEquals(1, $kpiStats['total_pending']);
+    }
 }

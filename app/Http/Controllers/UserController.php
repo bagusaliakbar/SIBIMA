@@ -82,6 +82,22 @@ class UserController extends Controller implements HasMiddleware
             ->orderBy('entry_year', 'desc')
             ->pluck('entry_year');
 
+        // Global KPI Stats for top interactive summary cards
+        $totalSupervisedTheses = \App\Models\Thesis::where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNotNull('pembimbing1_id')->orWhereNotNull('pembimbing2_id');
+            })->count();
+
+        $kpiStats = [
+            'total_users' => (clone $baseCountQuery)->count(),
+            'total_active' => (clone $baseCountQuery)->where('is_active', true)->count(),
+            'total_pending' => (clone $baseCountQuery)->where('is_active', false)->count(),
+            'active_dosen' => (clone $baseCountQuery)->where('role', 'dosen')->where('is_active', true)->count(),
+            'total_supervised' => $totalSupervisedTheses,
+            'active_mahasiswa' => (clone $baseCountQuery)->where('role', 'mahasiswa')->where('is_active', true)->count(),
+            'active_kaprodi' => (clone $baseCountQuery)->where('role', 'kaprodi')->where('is_active', true)->count(),
+        ];
+
         // Main Query
         $usersQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
             ->when($role !== 'all', fn($q) => $q->where('role', $role))
@@ -138,7 +154,8 @@ class UserController extends Controller implements HasMiddleware
             'statusCounts',
             'cohortCounts',
             'availableEntryYears',
-            'oldCohortThresholdYear'
+            'oldCohortThresholdYear',
+            'kpiStats'
         ));
     }
 
