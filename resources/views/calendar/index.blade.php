@@ -5,36 +5,36 @@
                 <x-breadcrumb :items="[
                     ['label' => 'Kalender Akademik', 'route' => null]
                 ]" />
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
+                <h2 class="font-black text-xl sm:text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
                     Kalender Akademik Skripsi
                 </h2>
             </div>
             
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-4 px-4 py-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 text-[10px] font-bold">
+            <div class="flex items-center w-full md:w-auto">
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-4 px-3 sm:px-4 py-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-700 text-[10px] font-bold w-full md:w-auto justify-between sm:justify-start">
                     <div class="flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                        <span class="text-slate-500">Gelombang</span>
+                        <span class="text-slate-600 dark:text-slate-300">Gelombang</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
-                        <span class="text-slate-500">Bimbingan</span>
+                        <span class="text-slate-600 dark:text-slate-300">Bimbingan</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                        <span class="text-slate-500">Seminar</span>
+                        <span class="text-slate-600 dark:text-slate-300">Seminar</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                        <span class="text-slate-500">Sidang</span>
+                        <span class="text-slate-600 dark:text-slate-300">Sidang</span>
                     </div>
                 </div>
             </div>
         </div>
     </x-slot>
 
-    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 p-6 lg:p-8">
-        <div id="calendar-container" class="min-h-[700px]">
+    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 p-3.5 sm:p-6 lg:p-8">
+        <div id="calendar-container" class="min-h-[500px] sm:min-h-[700px]">
             <div id="calendar"></div>
         </div>
     </div>
@@ -91,8 +91,8 @@
             color: #f1f5f9;
         }
         .fc .fc-button-active {
-            background-color: #4f46e5 !important;
-            border-color: #4f46e5 !important;
+            background-color: #ea580c !important;
+            border-color: #ea580c !important;
             color: #ffffff !important;
         }
         .fc .fc-col-header-cell-cushion {
@@ -102,6 +102,9 @@
             letter-spacing: 0.05em;
             color: #64748b;
             padding: 1rem 0 !important;
+        }
+        .dark .fc .fc-col-header-cell-cushion {
+            color: #94a3b8;
         }
         .fc-event {
             cursor: pointer;
@@ -116,6 +119,73 @@
             transform: translateY(-1px);
             filter: brightness(0.95);
         }
+
+        /* Popover & List Dark Mode */
+        .dark .fc-popover {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f1f5f9 !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4) !important;
+        }
+        .dark .fc-popover-header {
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+        }
+        .dark .fc-list-day-cushion {
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+        }
+        .dark .fc-list-event:hover td {
+            background-color: #334155 !important;
+        }
+        .dark .fc-list-empty {
+            background-color: #1e293b !important;
+            color: #94a3b8 !important;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 640px) {
+            .fc .fc-toolbar {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 0.625rem !important;
+                margin-bottom: 1rem !important;
+            }
+            .fc .fc-toolbar-title {
+                font-size: 1.05rem !important;
+                text-align: center !important;
+            }
+            .fc .fc-toolbar-chunk {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                flex-wrap: wrap !important;
+                gap: 0.25rem !important;
+            }
+            .fc .fc-button {
+                padding: 0.35rem 0.65rem !important;
+                font-size: 0.65rem !important;
+                border-radius: 0.5rem !important;
+            }
+            .fc .fc-col-header-cell-cushion {
+                font-size: 0.6rem !important;
+                padding: 0.4rem 0 !important;
+            }
+            .fc-event {
+                font-size: 9px !important;
+                padding: 1px 3px !important;
+            }
+            .fc .fc-daygrid-day-number {
+                font-size: 0.7rem !important;
+                padding: 2px 4px !important;
+            }
+            .fc .fc-list-event-title,
+            .fc .fc-list-event-time {
+                font-size: 0.75rem !important;
+            }
+        }
+
         .tippy-box[data-theme~='sibima'] {
             background-color: #1e293b;
             color: white;
@@ -134,14 +204,29 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
+            var isMobile = window.innerWidth < 640;
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
+                initialView: isMobile ? 'listMonth' : 'dayGridMonth',
+                headerToolbar: isMobile ? {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listMonth'
+                } : {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,listMonth'
                 },
+                buttonText: {
+                    today: 'Hari Ini',
+                    month: 'Bulan',
+                    week: 'Minggu',
+                    day: 'Hari',
+                    list: 'Daftar'
+                },
                 locale: 'id',
+                dayMaxEvents: 2,
+                moreLinkClick: 'popover',
                 eventTimeFormat: {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -163,7 +248,7 @@
                             <div class="space-y-1.5 mt-3 border-t border-white/10 pt-3">
                                 <div class="flex items-center gap-2 text-[10px] text-slate-300">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>${info.event.allDay ? 'Sepanjang Hari' : info.event.start.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' - ' + info.event.end.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</span>
+                                    <span>${info.event.allDay ? 'Sepanjang Hari' : info.event.start.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' - ' + (info.event.end ? info.event.end.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '')}</span>
                                 </div>
                                 ${props.location ? `
                                 <div class="flex items-center gap-2 text-[10px] text-slate-300">
@@ -184,14 +269,14 @@
                         content: content,
                         allowHTML: true,
                         theme: 'sibima',
-                        placement: 'top',
+                        placement: 'auto',
                         interactive: true,
                         animation: 'shift-away',
-                        maxWidth: 300
+                        maxWidth: 280,
+                        trigger: 'mouseenter click'
                     });
                 },
                 eventClick: function(info) {
-                    // Optional: redirect to detail if it's a seminar/defense
                     const id = info.event.id;
                     if (id.startsWith('seminar_')) {
                         // window.location.href = '/seminar-schedules/' + id.replace('seminar_', '');
@@ -199,6 +284,15 @@
                 }
             });
             calendar.render();
+
+            // Responsive view switch on window resize
+            window.addEventListener('resize', function() {
+                var currentIsMobile = window.innerWidth < 640;
+                if (currentIsMobile !== isMobile) {
+                    isMobile = currentIsMobile;
+                    calendar.changeView(isMobile ? 'listMonth' : 'dayGridMonth');
+                }
+            });
 
             // Support Dark Mode Refresh
             window.addEventListener('darkModeChanged', () => {
