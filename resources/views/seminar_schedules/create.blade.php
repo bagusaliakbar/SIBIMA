@@ -220,10 +220,8 @@
                     if (!date || !row.start_time || !row.end_time) return;
 
                     const dosenIds = [];
-                    if (this.chairman_id) dosenIds.push(this.chairman_id);
-                    if (this.moderator_id) dosenIds.push(this.moderator_id);
                     if (row.examiner1_id) dosenIds.push(row.examiner1_id);
-                    if (row.examiner2_id) dosenIds.push(row.examiner2_id);
+                    if (row.examiner2_id && row.examiner2_id !== row.examiner1_id) dosenIds.push(row.examiner2_id);
 
                     if (dosenIds.length === 0) {
                         row.conflicts = [];

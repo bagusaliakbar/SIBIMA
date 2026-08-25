@@ -155,4 +155,69 @@ class OptionalChairmanModeratorTest extends TestCase
         $this->assertNull($schedule->chairman_id);
         $this->assertNull($schedule->moderator_id);
     }
+
+    public function test_dosen_can_be_moderator_or_chairman_and_also_examiner_in_same_schedule_without_conflict()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $dosenTazkia = User::factory()->create(['role' => 'dosen', 'name' => 'Tazkia Salsabila']);
+        $dosenOther = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Penguji 1']);
+        $wave = Wave::create([
+            'name' => 'Gelombang 4',
+            'academic_year' => '2025/2026',
+            'semester' => 'genap',
+            'is_active' => true,
+        ]);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Skripsi Mas Fatli Jiha',
+            'pembimbing1_id' => $dosenOther->id,
+            'status' => 'acc_kompre',
+        ]);
+
+        // Dosen Tazkia is Moderator AND Penguji 2 on the same schedule
+        $postData = [
+            'title' => 'SEMESTER GENAP GELOMBANG 4 TAHUN AKADEMIK 2025/2026',
+            'date' => '2026-08-25',
+            'chairman_id' => $dosenOther->id,
+            'moderator_id' => $dosenTazkia->id, // Tazkia as Moderator
+            'location' => 'Ruang Sidang 1',
+            'details' => [
+                [
+                    'start_time' => '08:00',
+                    'end_time' => '09:00',
+                    'thesis_id' => $thesis->id,
+                    'examiner1_id' => $dosenOther->id,
+                    'examiner2_id' => $dosenTazkia->id, // Tazkia ALSO as Penguji 2
+                ]
+            ]
+        ];
+
+        $response = $this->actingAs($admin)->post(route('thesis-defense-schedules.store'), $postData);
+        $response->assertRedirect(route('thesis-defense-schedules.index'));
+        $response->assertSessionHas('success');
+
+        $schedule = ThesisDefenseSchedule::where('title', 'SEMESTER GENAP GELOMBANG 4 TAHUN AKADEMIK 2025/2026')->first();
+        $this->assertNotNull($schedule);
+        $this->assertSame($dosenTazkia->id, $schedule->moderator_id);
+        $this->assertSame($dosenTazkia->id, $schedule->details->first()->examiner2_id);
+
+        // Check availability API endpoint: Checking Tazkia for a slot where she's not conflicting with any other schedule
+        $checkAvailabilityResponse = $this->actingAs($admin)->postJson(route('check-dosen-availability'), [
+            'dosen_ids' => [$dosenOther->id, $dosenTazkia->id],
+            'date' => '2026-08-25',
+            'start_time' => '08:00',
+            'end_time' => '09:00',
+            'schedule_type' => 'defense',
+            'current_schedule_id' => $schedule->id,
+        ]);
+
+        $checkAvailabilityResponse->assertStatus(200);
+        $checkAvailabilityResponse->assertJson([
+            'has_conflict' => false,
+            'conflicts' => [],
+        ]);
+    }
 }
+
