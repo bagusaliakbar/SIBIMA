@@ -23,6 +23,10 @@
             body { font-family: 'Inter', sans-serif; }
             .sidebar-link { transition: all 0.2s ease-in-out; }
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
+            .dark input[type="date"],
+            .dark input[type="time"] {
+                color-scheme: dark;
+            }
             .dark input[type="date"]::-webkit-calendar-picker-indicator,
             .dark input[type="time"]::-webkit-calendar-picker-indicator {
                 filter: invert(1) brightness(0.9);

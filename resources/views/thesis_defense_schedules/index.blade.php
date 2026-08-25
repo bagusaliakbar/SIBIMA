@@ -90,12 +90,12 @@
 
                     <!-- Compact Inline Date Range -->
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Tgl:</span>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Tgl:</span>
                         <input type="date" name="date_from" value="{{ $dateFrom }}" title="Dari Tanggal"
-                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-0 w-[115px]">
-                        <span class="text-slate-400 text-xs font-bold">-</span>
+                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 w-[115px] [color-scheme:light] dark:[color-scheme:dark]">
+                        <span class="text-slate-400 dark:text-slate-500 text-xs font-bold">-</span>
                         <input type="date" name="date_to" value="{{ $dateTo }}" title="Sampai Tanggal"
-                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-0 w-[115px]">
+                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 w-[115px] [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
 
                     <!-- Filter Action Button -->
@@ -105,7 +105,7 @@
                     </button>
 
                     @if(request()->hasAny(['search', 'wave_id', 'date', 'date_from', 'date_to', 'my_schedules']) || ($filterDate && $filterDate !== 'upcoming'))
-                        <a href="{{ route('thesis-defense-schedules.index') }}" class="p-2 text-slate-400 hover:text-rose-600 rounded-xl transition-all" title="Reset Filter">
+                        <a href="{{ route('thesis-defense-schedules.index') }}" class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-all" title="Reset Filter">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
                     @endif
@@ -113,11 +113,11 @@
 
                 <!-- Right Side: Expand / Collapse All Controls -->
                 <div class="flex items-center gap-2 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end">
-                    <button type="button" @click="allOpen = true" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-all">
+                    <button type="button" @click="allOpen = true" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-600 shadow-2xs transition-all">
                         <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         Buka Semua
                     </button>
-                    <button type="button" @click="allOpen = false" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-all">
+                    <button type="button" @click="allOpen = false" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-600 shadow-2xs transition-all">
                         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                         Tutup Semua
                     </button>
