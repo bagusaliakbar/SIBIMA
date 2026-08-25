@@ -70,14 +70,14 @@
                                     <div class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold text-[10px]">K</div>
                                     <div class="truncate">
                                         <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Ketua Sidang</span>
-                                        <span class="font-bold text-slate-100 truncate block">{{ $schedule->chairman->name }}</span>
+                                        <span class="font-bold text-slate-100 truncate block">{{ $schedule->chairman?->name ?? '-' }}</span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2.5 px-3 py-2 bg-white/5 rounded-xl border border-white/5">
                                     <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-[10px]">M</div>
                                     <div class="truncate">
                                         <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Moderator</span>
-                                        <span class="font-bold text-slate-100 truncate block">{{ $schedule->moderator->name }}</span>
+                                        <span class="font-bold text-slate-100 truncate block">{{ $schedule->moderator?->name ?? '-' }}</span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2.5 px-3 py-2 bg-white/5 rounded-xl border border-white/5">
@@ -284,11 +284,11 @@
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-2">
                                             <span class="w-14 text-[8px] text-slate-400 uppercase font-black tracking-widest">Ketua</span>
-                                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->chairman->name }}</span>
+                                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->chairman?->name ?? '-' }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <span class="w-14 text-[8px] text-slate-400 uppercase font-black tracking-widest">Moderator</span>
-                                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->moderator->name }}</span>
+                                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->moderator?->name ?? '-' }}</span>
                                         </div>
                                     </div>
                                 </td>

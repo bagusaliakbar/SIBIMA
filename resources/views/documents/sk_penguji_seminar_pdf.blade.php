@@ -158,9 +158,14 @@
                         <td><strong>{{ $detail->thesis->student->name }}</strong><br>({{ $detail->thesis->student->identifier }})</td>
                         <td style="font-style: italic;">{{ $detail->thesis->title }}</td>
                         <td>
-                            1. {{ $schedule->chairman->name }} (Ketua)<br>
-                            2. {{ $detail->examiner1->name }} (Anggota I)<br>
-                            3. {{ $detail->examiner2->name }} (Anggota II)
+                            @if($schedule->chairman)
+                                1. {{ $schedule->chairman->name }} (Ketua)<br>
+                                2. {{ $detail->examiner1?->name ?? '-' }} (Anggota I)<br>
+                                3. {{ $detail->examiner2?->name ?? '-' }} (Anggota II)
+                            @else
+                                1. {{ $detail->examiner1?->name ?? '-' }} (Penguji I)<br>
+                                2. {{ $detail->examiner2?->name ?? '-' }} (Penguji II)
+                            @endif
                         </td>
                     </tr>
                     @endif

@@ -41,8 +41,9 @@
                     </div>
 
                     <div>
-                        <x-input-label for="chairman_id" value="Ketua Sidang" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <select id="chairman_id" name="chairman_id" x-model="chairman_id" @change="recheckAll()" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm" required>
+                        <x-input-label for="chairman_id" value="Ketua Sidang (Opsional)" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
+                        <select id="chairman_id" name="chairman_id" x-model="chairman_id" @change="recheckAll()" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm">
+                            <option value="">Pilih Ketua Sidang (Opsional)</option>
                             @foreach($dosens as $dosen)
                                 <option value="{{ $dosen->id }}" {{ $seminarSchedule->chairman_id == $dosen->id ? 'selected' : '' }}>{{ $dosen->name }}</option>
                             @endforeach
@@ -51,8 +52,9 @@
                     </div>
 
                     <div>
-                        <x-input-label for="moderator_id" value="Moderator" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
-                        <select id="moderator_id" name="moderator_id" x-model="moderator_id" @change="recheckAll()" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm" required>
+                        <x-input-label for="moderator_id" value="Moderator (Opsional)" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
+                        <select id="moderator_id" name="moderator_id" x-model="moderator_id" @change="recheckAll()" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm">
+                            <option value="">Pilih Moderator (Opsional)</option>
                             @foreach($dosens as $dosen)
                                 <option value="{{ $dosen->id }}" {{ $seminarSchedule->moderator_id == $dosen->id ? 'selected' : '' }}>{{ $dosen->name }}</option>
                             @endforeach

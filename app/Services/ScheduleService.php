@@ -17,8 +17,8 @@ class ScheduleService
             $schedule = $model::create([
                 'title' => $data['title'],
                 'date' => $data['date'],
-                'chairman_id' => $data['chairman_id'],
-                'moderator_id' => $data['moderator_id'],
+                'chairman_id' => $data['chairman_id'] ?? null,
+                'moderator_id' => $data['moderator_id'] ?? null,
                 'location' => $data['location'] ?? null,
                 'meeting_link' => $data['meeting_link'] ?? null,
                 'created_by' => Auth::id(),
@@ -42,8 +42,8 @@ class ScheduleService
             $schedule->update([
                 'title' => $data['title'],
                 'date' => $data['date'],
-                'chairman_id' => $data['chairman_id'],
-                'moderator_id' => $data['moderator_id'],
+                'chairman_id' => $data['chairman_id'] ?? null,
+                'moderator_id' => $data['moderator_id'] ?? null,
                 'location' => $data['location'] ?? null,
                 'meeting_link' => $data['meeting_link'] ?? null,
             ]);
@@ -76,7 +76,7 @@ class ScheduleService
 
     private function notifyParticipants($schedule, array $details)
     {
-        $userIds = collect([$schedule->chairman_id, $schedule->moderator_id]);
+        $userIds = collect([$schedule->chairman_id, $schedule->moderator_id])->filter();
 
         foreach ($details as $detail) {
             if (isset($detail['examiner1_id'])) $userIds->push($detail['examiner1_id']);

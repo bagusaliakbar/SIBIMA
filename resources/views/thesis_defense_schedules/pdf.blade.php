@@ -195,12 +195,12 @@
         </tr>
         <tr>
             <td class="label">Ketua Sidang</td>
-            <td>: {{ $thesisDefenseSchedule->chairman->name }}</td>
+            <td>: {{ $thesisDefenseSchedule->chairman?->name ?? '-' }}</td>
             <td></td>
         </tr>
         <tr>
             <td class="label">Moderator</td>
-            <td>: {{ $thesisDefenseSchedule->moderator->name }}</td>
+            <td>: {{ $thesisDefenseSchedule->moderator?->name ?? '-' }}</td>
             <td></td>
         </tr>
         @if($thesisDefenseSchedule->meeting_link)

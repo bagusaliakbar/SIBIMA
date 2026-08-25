@@ -17,8 +17,8 @@ class StoreScheduleRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'date' => 'required|date',
-            'chairman_id' => 'required|exists:users,id',
-            'moderator_id' => 'required|exists:users,id',
+            'chairman_id' => 'nullable|exists:users,id',
+            'moderator_id' => 'nullable|exists:users,id',
             'location' => 'nullable|string|max:255',
             'meeting_link' => 'nullable|url',
             'details' => 'required|array|min:1',

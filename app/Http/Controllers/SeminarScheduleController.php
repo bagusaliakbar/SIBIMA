@@ -175,8 +175,8 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         $user = Auth::user();
         $isAuthorized = $user->role === 'admin' 
             || $user->role === 'kaprodi'
-            || $user->id === $seminarSchedule->chairman_id 
-            || $user->id === $seminarSchedule->moderator_id
+            || ($seminarSchedule->chairman_id && $user->id === $seminarSchedule->chairman_id)
+            || ($seminarSchedule->moderator_id && $user->id === $seminarSchedule->moderator_id)
             || $seminarSchedule->details()->where(function($q) use ($user) {
                 $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
             })->exists();

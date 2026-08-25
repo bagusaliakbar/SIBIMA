@@ -36,11 +36,11 @@
                         </div>
                         <div class="flex items-center">
                             <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Ketua Sidang</span>
-                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->chairman->name }}</span>
+                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->chairman?->name ?? '-' }}</span>
                         </div>
                         <div class="flex items-center">
                             <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Moderator</span>
-                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->moderator->name }}</span>
+                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->moderator?->name ?? '-' }}</span>
                         </div>
                     </div>
                     <div class="flex flex-col md:items-end justify-start space-y-3">
@@ -94,7 +94,7 @@
                                             <div class="space-y-2">
                                                 <div class="flex items-start">
                                                     <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
-                                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->thesis->pembimbing1->name }}</span>
+                                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
                                                 </div>
                                                 @if($detail->thesis->pembimbing2)
                                                 <div class="flex items-start">
