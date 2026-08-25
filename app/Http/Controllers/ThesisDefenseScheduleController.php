@@ -45,39 +45,164 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     {
         $user = Auth::user();
         $activeWave = Wave::getCurrentActive();
-        $hasWaveFilter = $request->filled('wave_id');
         $selectedWaveId = $request->input('wave_id');
+        $hasWaveFilter = $request->filled('wave_id');
 
-        $query = ThesisDefenseSchedule::with(['chairman', 'moderator', 'creator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
+        $filterDate = $request->input('filter_date'); // 'all', 'today', 'upcoming', 'past', 'custom'
+        $selectedDate = $request->input('date');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+        $mySchedules = $request->boolean('my_schedules');
+        $searchQuery = $request->input('search');
 
+        // Default filter_date for dosen if no date filter is explicitly passed
+        if (!$request->has('filter_date') && !$request->filled('date') && !$request->filled('date_from') && !$request->filled('date_to')) {
+            if ($user->role === 'dosen') {
+                $filterDate = $hasWaveFilter ? 'all' : 'upcoming';
+            } else {
+                $filterDate = 'all';
+            }
+        }
+
+        $query = ThesisDefenseSchedule::with([
+            'chairman', 
+            'moderator', 
+            'creator', 
+            'details.thesis.student', 
+            'details.thesis.pembimbing1', 
+            'details.thesis.pembimbing2', 
+            'details.examiner1', 
+            'details.examiner2'
+        ]);
+
+        // Wave filter
         if ($user->role === 'dosen') {
             if ($hasWaveFilter) {
-                // Dosen memilih gelombang secara eksplisit untuk melihat seluruh agenda gelombang tersebut
                 $query->where('wave_id', $selectedWaveId);
-            } else {
-                // Dosen belum memilih gelombang:
-                // Jangan tampilkan jadwal yang tanggal pelaksanaannya sudah lewat (date < today).
-                // Tampilkan hanya jadwal aktif / mendatang (date >= today).
-                $query->where('date', '>=', now()->toDateString())
-                      ->when($activeWave, function($q) use ($activeWave) {
-                          $q->where('wave_id', $activeWave->id);
-                      });
+            } elseif ($filterDate === 'upcoming' && $activeWave) {
+                $query->where('wave_id', $activeWave->id);
             }
         } else {
-            // Admin & Kaprodi: default to activeWave if no wave is selected
             $selectedWaveId = $request->input('wave_id', $activeWave?->id);
-            $query->when($selectedWaveId, function($q) use ($selectedWaveId) {
-                $q->where('wave_id', $selectedWaveId);
+            if ($selectedWaveId) {
+                $query->where('wave_id', $selectedWaveId);
+            }
+        }
+
+        // Date filtering
+        if ($selectedDate) {
+            $query->whereDate('date', $selectedDate);
+            $filterDate = 'custom';
+        } elseif ($dateFrom || $dateTo) {
+            if ($dateFrom) $query->whereDate('date', '>=', $dateFrom);
+            if ($dateTo) $query->whereDate('date', '<=', $dateTo);
+            $filterDate = 'custom';
+        } elseif ($filterDate === 'today') {
+            $query->whereDate('date', now()->toDateString());
+        } elseif ($filterDate === 'upcoming') {
+            $query->whereDate('date', '>=', now()->toDateString());
+        } elseif ($filterDate === 'past') {
+            $query->whereDate('date', '<', now()->toDateString());
+        }
+
+        // "Jadwal Saya" filter
+        if ($mySchedules && $user->role === 'dosen') {
+            $userId = $user->id;
+            $query->where(function($q) use ($userId) {
+                $q->where('chairman_id', $userId)
+                  ->orWhere('moderator_id', $userId)
+                  ->orWhereHas('details', function($dq) use ($userId) {
+                      $dq->where('examiner1_id', $userId)
+                         ->orWhere('examiner2_id', $userId)
+                         ->orWhereHas('thesis', function($tq) use ($userId) {
+                             $tq->where('pembimbing1_id', $userId)
+                                ->orWhere('pembimbing2_id', $userId);
+                         });
+                  });
             });
         }
 
-        $schedules = $query->orderBy('date', 'desc')
+        // Keyword Search
+        if ($request->filled('search')) {
+            $search = '%' . trim($searchQuery) . '%';
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', $search)
+                  ->orWhere('location', 'like', $search)
+                  ->orWhereHas('details', function($dq) use ($search) {
+                      $dq->where('activity_name', 'like', $search)
+                         ->orWhereHas('thesis', function($tq) use ($search) {
+                             $tq->where('title', 'like', $search)
+                                ->orWhereHas('student', function($sq) use ($search) {
+                                    $sq->where('name', 'like', $search)
+                                       ->orWhere('identifier', 'like', $search);
+                                });
+                         })
+                         ->orWhereHas('examiner1', fn($eq) => $eq->where('name', 'like', $search))
+                         ->orWhereHas('examiner2', fn($eq) => $eq->where('name', 'like', $search));
+                  });
+            });
+        }
+
+        // Count queries for Quick Filter Badges (scoped to current wave context)
+        $countBaseQuery = ThesisDefenseSchedule::query();
+        if ($user->role === 'dosen') {
+            if ($hasWaveFilter) {
+                $countBaseQuery->where('wave_id', $selectedWaveId);
+            } elseif ($activeWave) {
+                $countBaseQuery->where('wave_id', $activeWave->id);
+            }
+        } else {
+            if ($selectedWaveId) {
+                $countBaseQuery->where('wave_id', $selectedWaveId);
+            }
+        }
+
+        $counts = [
+            'all' => (clone $countBaseQuery)->count(),
+            'today' => (clone $countBaseQuery)->whereDate('date', now()->toDateString())->count(),
+            'upcoming' => (clone $countBaseQuery)->whereDate('date', '>=', now()->toDateString())->count(),
+            'past' => (clone $countBaseQuery)->whereDate('date', '<', now()->toDateString())->count(),
+            'mySchedules' => 0,
+        ];
+
+        if ($user->role === 'dosen') {
+            $userId = $user->id;
+            $counts['mySchedules'] = (clone $countBaseQuery)->where(function($q) use ($userId) {
+                $q->where('chairman_id', $userId)
+                  ->orWhere('moderator_id', $userId)
+                  ->orWhereHas('details', function($dq) use ($userId) {
+                      $dq->where('examiner1_id', $userId)
+                         ->orWhere('examiner2_id', $userId)
+                         ->orWhereHas('thesis', function($tq) use ($userId) {
+                             $tq->where('pembimbing1_id', $userId)
+                                ->orWhere('pembimbing2_id', $userId);
+                         });
+                  });
+            })->count();
+        }
+
+        $sortDirection = ($filterDate === 'upcoming' || $filterDate === 'today') ? 'asc' : 'desc';
+        $schedules = $query->orderBy('date', $sortDirection)
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->appends($request->query());
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('thesis_defense_schedules.index', compact('schedules', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter'));
+        return view('thesis_defense_schedules.index', compact(
+            'schedules', 
+            'waves', 
+            'selectedWaveId', 
+            'activeWave', 
+            'hasWaveFilter',
+            'filterDate',
+            'selectedDate',
+            'dateFrom',
+            'dateTo',
+            'mySchedules',
+            'searchQuery',
+            'counts'
+        ));
     }
 
     public function create()
