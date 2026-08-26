@@ -17,16 +17,16 @@
                 this.permissionReason = session.student_attendance_reason || '';
                 this.permissionModalOpen = true;
             }
-        }" class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+        }" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
             @if(session('success'))
-                <div class="m-6 mb-0 p-4 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-sm flex items-center border border-emerald-100 dark:border-emerald-500/20">
+                <div class="m-6 mb-0 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-sm flex items-center border border-emerald-200 dark:border-emerald-500/20">
                     <svg class="w-4 h-4 mr-3 text-emerald-600 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     {{ session('success') }}
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="m-6 mb-0 p-4 rounded bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 text-sm flex items-start border border-red-100 dark:border-red-500/20">
+                <div class="m-6 mb-0 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 text-sm flex items-start border border-red-200 dark:border-red-500/20">
                     <svg class="w-4 h-4 mr-3 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <div>
                         @foreach($errors->all() as $error)
@@ -71,21 +71,21 @@
                 @endphp
                 
                 {{-- Academic Progress Section --}}
-                <div class="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30" id="progress-card">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30" id="progress-card">
                     <div class="flex justify-between items-center mb-5">
                         <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Progress Bimbingan
                         </h3>
                         <div class="flex items-center gap-3">
-                            <button onclick="captureProgress()" class="inline-flex items-center px-2.5 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm">
+                            <button onclick="captureProgress()" class="inline-flex items-center px-2.5 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm">
                                 <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 DOWNLOAD BUKTI ACC
                             </button>
                         </div>
                     </div>
                     
-                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 p-3 bg-white/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-lg">
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 p-3 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-3 rounded bg-orange-500"></div>
                             <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Progres Sesi Bimbingan</span>
@@ -101,11 +101,11 @@
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {{-- Seminar UP Progress --}}
-                        <div class="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Seminar Usulan Penelitian (UP)</span>
                                 @if($thesis->isAccUpFinal())
-                                    <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-100 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
+                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
                                 @endif
                             </div>
                             
@@ -153,11 +153,11 @@
                         </div>
 
                         {{-- Sidang Akhir Progress --}}
-                        <div class="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Sidang Akhir Skripsi</span>
                                 @if($thesis->isAccSidangFinal())
-                                    <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-100 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
+                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
                                 @endif
                             </div>
 
@@ -207,7 +207,7 @@
                 </div>
             @endif
 
-            <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Riwayat Bimbingan</h3>
                 
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -231,7 +231,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
-                        <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                        <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                             <th class="py-3 px-5 font-semibold text-xs tracking-wider whitespace-nowrap">TANGGAL & WAKTU</th>
                             <th class="py-3 px-5 font-semibold text-xs tracking-wider whitespace-nowrap">TOPIK PEMBAHASAN</th>
                             <th class="py-3 px-5 font-semibold text-xs tracking-wider whitespace-nowrap">DOSEN PEMBIMBING</th>
@@ -471,9 +471,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="py-12 text-center text-slate-500 border-b border-slate-100">
-                                    <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <p class="font-medium text-sm text-slate-600">Belum ada riwayat bimbingan.</p>
+                                <td colspan="7" class="py-12 text-center text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                    <svg class="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <p class="font-medium text-sm text-slate-600 dark:text-slate-400">Belum ada riwayat bimbingan.</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -482,7 +482,7 @@
             </div>
             
             @if($sessions->hasPages())
-                <div class="p-4 border-t border-slate-100 dark:border-slate-700">
+                <div class="p-4 border-t border-slate-200 dark:border-slate-700">
                     {{ $sessions->links() }}
                 </div>
             @endif
@@ -509,7 +509,7 @@
                             <form :action="'/mentoring-sessions/' + activeSessionId + '/confirm-attendance'" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="permission">
-                                <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+                                <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                                     <div class="flex items-center gap-2.5">
                                         <div class="w-8 h-8 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -522,7 +522,7 @@
                                     <button type="button" @click="permissionModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold p-1 cursor-pointer">&times;</button>
                                 </div>
                                 <div class="p-6 space-y-4">
-                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700/60">
+                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
                                         <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Topik Sesi Bimbingan</label>
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200" x-text="activeSessionTopic"></p>
                                     </div>
@@ -540,7 +540,7 @@
                                         <p class="text-[10px] text-slate-400 mt-1">Alasan ini akan dikirimkan langsung ke Dosen Pembimbing Anda.</p>
                                     </div>
                                 </div>
-                                <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
+                                <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
                                     <button type="button" @click="permissionModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer">
                                         Batal
                                     </button>

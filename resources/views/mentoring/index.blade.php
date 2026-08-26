@@ -133,7 +133,7 @@
                 <!-- 1. CARDS VIEW -->
                 <div x-show="viewMode === 'cards'" x-transition>
                     <!-- Sub-Toolbar: Navigation Tabs & Real-Time Actions -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-100 dark:border-slate-800">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-200 dark:border-slate-800">
                         <!-- Primary Tabs: Aktif vs Riwayat -->
                         <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-2xs">
                             <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
@@ -232,7 +232,7 @@
                                     ? $studentThesis->completed_mentoring_count 
                                     : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
                             @endphp
-                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-100 dark:border-slate-700/50 pb-4 gap-4">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-200 dark:border-slate-700 pb-4 gap-4">
                                 <div class="flex items-center">
                                     <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm bg-orange-50 dark:bg-orange-900/10 mr-3 shrink-0">
                                         <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
@@ -241,11 +241,11 @@
                                         <div class="flex items-center gap-2 flex-wrap">
                                             <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $studentName }}</h4>
                                             @if($studentThesis->status === 'completed')
-                                                <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                                                <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">
                                                     Lulus
                                                 </span>
                                             @endif
-                                            <span class="px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider">
+                                            <span class="px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider">
                                                 {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
                                             </span>
                                         </div>
@@ -276,7 +276,7 @@
                                             $hasAccUp = $isAdminOrKaprodi ? ($studentThesis->acc_up_p1 && $studentThesis->acc_up_p2) : ($isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false));
                                         @endphp
                                         {{-- ACC UP Group --}}
-                                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
                                             <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?{{ $mentoringCount < 4 && !$hasAccUp ? ' Catatan: Jumlah bimbingan mahasiswa belum mencapai 4 kali.' : '' }}')">
                                                 @csrf
@@ -305,7 +305,7 @@
                                         @php
                                             $hasAccSidang = $isAdminOrKaprodi ? ($studentThesis->acc_sidang_p1 && $studentThesis->acc_sidang_p2) : ($isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false));
                                         @endphp
-                                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
                                             <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?{{ $mentoringCount < 8 && !$hasAccSidang ? ' Catatan: Jumlah bimbingan mahasiswa belum mencapai 8 kali.' : '' }}')">
                                                 @csrf
@@ -352,7 +352,7 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 @foreach($studentSessions as $session)
-                                    <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-5 relative overflow-hidden group hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none hover:border-orange-200 dark:hover:border-orange-500/30 transition-all">
+                                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 relative overflow-hidden group hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none hover:border-orange-200 dark:hover:border-orange-500/30 transition-all">
                                         <!-- Status Indicator -->
                                         <div class="absolute top-0 left-0 w-full h-1.5 
                                             {{ $session->status === 'pending' ? 'bg-amber-400' : '' }}
@@ -394,7 +394,7 @@
                                                         <span class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-600 border border-blue-100 dark:border-blue-500/20">Online</span>
                                                     @endif
                                                 @else
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-50 dark:bg-slate-800 text-slate-500 mr-2 border border-slate-100 dark:border-slate-700">Offline</span>
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-50 dark:bg-slate-800 text-slate-500 mr-2 border border-slate-200 dark:border-slate-700">Offline</span>
                                                     @if($session->location)
                                                         <span class="text-slate-400 truncate max-w-[120px]" title="{{ $session->location }}">{{ $session->location }}</span>
                                                     @endif
@@ -402,7 +402,7 @@
                                             </div>
 
                                             @if($session->notes)
-                                                <div class="mt-4 pl-3 border-l-2 border-slate-100 dark:border-slate-700">
+                                                <div class="mt-4 pl-3 border-l-2 border-slate-200 dark:border-slate-700">
                                                     <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Catatan Mahasiswa</div>
                                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 italic line-clamp-2">"{{ $session->notes }}"</p>
                                                 </div>
@@ -411,14 +411,14 @@
                                             @if($session->feedback)
                                                 <div class="mt-4">
                                                     <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Hasil Bimbingan</div>
-                                                    <p class="text-[11px] text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 p-2.5 rounded-xl font-medium italic">"{{ $session->feedback }}"</p>
+                                                    <p class="text-[11px] text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl font-medium italic">"{{ $session->feedback }}"</p>
                                                 </div>
                                             @endif
 
                                             @if($session->document_path)
-                                                <div class="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                                                <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800/50">
                                                     <a href="{{ $session->document_path }}" target="_blank"
-                                                       class="flex items-center gap-3 p-2 bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all group/doc">
+                                                       class="flex items-center gap-3 p-2 bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-200 dark:border-indigo-500/20 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all group/doc">
                                                         <div class="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-indigo-500 border border-indigo-100 dark:border-indigo-500/20 group-hover/doc:scale-110 transition-transform">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                                         </div>
@@ -432,7 +432,7 @@
 
                                             <!-- Konfirmasi Kehadiran Mahasiswa -->
                                             @if(!in_array($session->status, ['completed', 'rejected']))
-                                                <div class="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+                                                <div class="mt-4 pt-3.5 border-t border-slate-200 dark:border-slate-700/80 space-y-2">
                                                     <div class="flex items-center justify-between gap-2">
                                                         <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Kehadiran Mhs:</span>
                                                         @if($session->student_attendance_status === 'attending')
@@ -537,7 +537,7 @@
                 <!-- 2. CALENDAR VIEW -->
                 <div x-show="viewMode === 'calendar'" x-cloak x-transition class="space-y-4">
                     <!-- Legend Indicators -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60">
+                    <div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700">
                         <div class="flex flex-wrap items-center gap-4 text-xs font-bold">
                             <div class="flex items-center gap-1.5">
                                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
@@ -560,7 +560,7 @@
                     </div>
 
                     <!-- Calendar Container -->
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700/60 min-h-[600px]">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 min-h-[600px]">
                         <div id="mentoring-calendar"></div>
                     </div>
                 </div>
@@ -578,11 +578,11 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0">
             
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 max-w-lg w-full overflow-hidden"
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 max-w-lg w-full overflow-hidden"
                  @click.outside="eventModalOpen = false">
                 
                 <!-- Modal Header -->
-                <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
+                <div class="p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-orange-50 shrink-0">
                             <template x-if="selectedEvent?.student_avatar">
@@ -684,7 +684,7 @@
 
                     <!-- Student Notes -->
                     <template x-if="selectedEvent?.notes">
-                        <div class="space-y-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                        <div class="space-y-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Catatan Pengajuan Mahasiswa:</span>
                             <p class="text-slate-600 dark:text-slate-300 italic" x-text="'&ldquo;' + selectedEvent.notes + '&rdquo;'"></p>
                         </div>
@@ -692,7 +692,7 @@
 
                     <!-- Lecturer Feedback -->
                     <template x-if="selectedEvent?.feedback">
-                        <div class="space-y-1 p-3 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/30">
+                        <div class="space-y-1 p-3 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
                             <span class="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Hasil / Catatan Bimbingan Dosen:</span>
                             <p class="text-emerald-900 dark:text-emerald-200 font-medium italic" x-text="'&ldquo;' + selectedEvent.feedback + '&rdquo;'"></p>
                         </div>
@@ -700,7 +700,7 @@
                 </div>
 
                 <!-- Modal Footer -->
-                <div class="p-4 px-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3">
+                <div class="p-4 px-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
                     <div>
                         <template x-if="selectedEvent?.status !== 'completed' && selectedEvent?.id">
                             <a :href="'/mentoring-sessions/' + selectedEvent.id + '/edit'" 
@@ -742,12 +742,11 @@
                      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
                      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
                      x-transition:leave="ease-in duration-200" 
-                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
                      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-                     class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-100 dark:border-slate-700">
+                     class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700">
                     
                     <!-- Modal Header -->
-                    <div class="p-6 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between gap-4">
+                    <div class="p-6 bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
                             <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -755,7 +754,7 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight">Monitor Kehadiran Mahasiswa</h3>
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold border border-emerald-200/60 dark:border-emerald-800/60">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                         Real-Time Sync
                                     </span>
@@ -781,40 +780,58 @@
                     <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
                         <!-- KPI Status Quick Metrics -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <!-- Akan Hadir -->
                             <button type="button" 
                                     @click="liveTab = 'attending'" 
-                                    :class="liveTab === 'attending' ? 'ring-2 ring-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-emerald-50/30'"
-                                    class="p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/50 text-left transition-all cursor-pointer">
+                                    :class="liveTab === 'attending' 
+                                        ? 'ring-2 ring-emerald-500 border-emerald-300 dark:border-emerald-700 bg-emerald-50/90 dark:bg-emerald-950/50 shadow-xs' 
+                                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 hover:border-emerald-200 dark:hover:border-emerald-800'"
+                                    class="p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Akan Hadir</span>
-                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider border border-emerald-200/60 dark:border-emerald-800/60">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Akan Hadir
+                                    </span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
                                 </div>
-                                <div class="text-2xl font-black text-emerald-950 dark:text-emerald-100 mt-1.5" x-text="attendanceStats.attending || 0">0</div>
-                                <p class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 font-medium mt-0.5">Mahasiswa siap hadir</p>
+                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-2.5" x-text="attendanceStats.attending || 0">0</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Mahasiswa siap hadir</p>
                             </button>
 
+                            <!-- Izin / Berhalangan -->
                             <button type="button" 
                                     @click="liveTab = 'permission'" 
-                                    :class="liveTab === 'permission' ? 'ring-2 ring-amber-500 bg-amber-50/80 dark:bg-amber-950/40 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-amber-50/30'"
-                                    class="p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/50 text-left transition-all cursor-pointer">
+                                    :class="liveTab === 'permission' 
+                                        ? 'ring-2 ring-amber-500 border-amber-300 dark:border-amber-700 bg-amber-50/90 dark:bg-amber-950/50 shadow-xs' 
+                                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-amber-50/40 dark:hover:bg-amber-950/20 hover:border-amber-200 dark:hover:border-amber-800'"
+                                    class="p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">Izin / Berhalangan</span>
-                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-100/80 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-200/60 dark:border-amber-800/60">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                        Izin / Berhalangan
+                                    </span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span>
                                 </div>
-                                <div class="text-2xl font-black text-amber-950 dark:text-amber-100 mt-1.5" x-text="attendanceStats.permission || 0">0</div>
-                                <p class="text-[10px] text-amber-700/80 dark:text-amber-400/80 font-medium mt-0.5">Dengan alasan izin</p>
+                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-2.5" x-text="attendanceStats.permission || 0">0</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Dengan alasan izin</p>
                             </button>
 
+                            <!-- Belum Konfirmasi -->
                             <button type="button" 
                                     @click="liveTab = 'pending'" 
-                                    :class="liveTab === 'pending' ? 'ring-2 ring-slate-500 bg-slate-100 dark:bg-slate-700/50 shadow-xs' : 'bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100'"
-                                    class="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-left transition-all cursor-pointer">
+                                    :class="liveTab === 'pending' 
+                                        ? 'ring-2 ring-slate-500 border-slate-400 dark:border-slate-500 bg-slate-100 dark:bg-slate-800/80 shadow-xs' 
+                                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/40'"
+                                    class="p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Belum Konfirmasi</span>
-                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400 animate-pulse"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
+                                        Belum Konfirmasi
+                                    </span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
                                 </div>
-                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1.5" x-text="attendanceStats.pending || 0">0</div>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Menunggu respon mahasiswa</p>
+                                <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-2.5" x-text="attendanceStats.pending || 0">0</div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Menunggu respon mahasiswa</p>
                             </button>
                         </div>
 
@@ -860,9 +877,9 @@
                             <template x-for="item in filteredLiveSessions" :key="item.id">
                                 <div class="p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                                      :class="{
-                                         'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/70 dark:border-emerald-900/40': item.attendance_status === 'attending',
-                                         'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200/70 dark:border-amber-900/40': item.attendance_status === 'permission',
-                                         'bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/80': item.attendance_status === 'pending'
+                                         'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/80': item.attendance_status === 'attending',
+                                         'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/80': item.attendance_status === 'permission',
+                                         'bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-700': item.attendance_status === 'pending'
                                      }">
                                     
                                     <div class="flex items-start gap-3.5 min-w-0 flex-1">
@@ -883,9 +900,9 @@
                                         <div class="min-w-0 flex-1 space-y-1">
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <h4 class="text-xs font-black text-slate-800 dark:text-slate-100" x-text="item.student_name"></h4>
-                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold" x-text="item.student_identifier"></span>
+                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold border border-slate-200/60 dark:border-slate-700" x-text="item.student_identifier"></span>
                                                 <template x-if="item.is_today">
-                                                    <span class="px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 text-[9px] font-black uppercase">Hari Ini</span>
+                                                    <span class="px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 text-[9px] font-black uppercase border border-red-200 dark:border-red-800/80">Hari Ini</span>
                                                 </template>
                                             </div>
                                             <p class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 truncate" x-text="item.topic"></p>
@@ -899,7 +916,7 @@
 
                                             <!-- Permission Reason Callout -->
                                             <template x-if="item.attendance_status === 'permission' && item.attendance_reason">
-                                                <div class="mt-2 p-2 bg-amber-100/70 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800/80">
+                                                <div class="mt-2 p-2.5 bg-amber-100/70 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800/80">
                                                     <span class="text-[9px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider block">Alasan Izin Mahasiswa:</span>
                                                     <p class="text-[11px] text-amber-950 dark:text-amber-200 font-medium italic" x-text="'&ldquo;' + item.attendance_reason + '&rdquo;'"></p>
                                                 </div>
@@ -908,16 +925,16 @@
                                     </div>
 
                                     <!-- Status Badge & Quick Actions -->
-                                    <div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800">
+                                    <div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 dark:border-slate-700">
                                         <template x-if="item.attendance_status === 'attending'">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase tracking-wider">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
                                                 <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                 <span>Akan Hadir</span>
                                             </span>
                                         </template>
                                         <template x-if="item.attendance_status === 'permission'">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase tracking-wider">
-                                                <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
+                                                <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                                 <span>Izin / Berhalangan</span>
                                             </span>
                                         </template>
@@ -945,7 +962,7 @@
                             </template>
 
                             <template x-if="filteredLiveSessions.length === 0">
-                                <div class="p-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                                <div class="p-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-700">
                                     <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Tidak ada mahasiswa yang sesuai dengan filter kehadiran ini.</p>
                                 </div>
                             </template>
@@ -953,7 +970,7 @@
                     </div>
 
                     <!-- Modal Footer -->
-                    <div class="p-4 px-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3 text-xs">
+                    <div class="p-4 px-6 bg-slate-50/80 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 text-xs">
                         <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                             <span>Live Sync Otomatis Aktif (tiap 10 detik) • Terakhir: <strong x-text="lastUpdated"></strong></span>

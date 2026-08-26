@@ -6,8 +6,8 @@
     </x-slot>
 
     <div class="w-full">
-        <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
-            <div class="mb-6 border-b border-slate-100 dark:border-slate-700 pb-4">
+        <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors">
+            <div class="mb-6 border-b border-slate-200 dark:border-slate-700 pb-4">
                 <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Form {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Penjadwalan' : 'Pengajuan' }}</h3>
                 <p class="text-slate-500 dark:text-slate-400 mt-1 text-xs">{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Pilih mahasiswa dan tentukan waktu bimbingan.' : 'Pilih jadwal dan topik untuk sesi bimbingan Anda berikutnya.' }}</p>
             </div>
