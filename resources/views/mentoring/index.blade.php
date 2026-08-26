@@ -249,13 +249,19 @@
                                                 {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
                                             </span>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-2.5 mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                                            <span class="inline-flex items-center gap-1 bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-700/50 text-[10px]">
-                                                <span class="font-bold text-slate-400">P1:</span> <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $studentThesis->pembimbing1->name ?? '-' }}</span>
-                                            </span>
-                                            <span class="inline-flex items-center gap-1 bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-700/50 text-[10px]">
-                                                <span class="font-bold text-slate-400">P2:</span> <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $studentThesis->pembimbing2->name ?? '-' }}</span>
-                                            </span>
+                                        <div class="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                                            @if($studentThesis->pembimbing1)
+                                                <span class="inline-flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px]">
+                                                    <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[8px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
+                                                    <span class="font-bold text-slate-700 dark:text-slate-200">{{ $studentThesis->pembimbing1->name }}</span>
+                                                </span>
+                                            @endif
+                                            @if($studentThesis->pembimbing2)
+                                                <span class="inline-flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px]">
+                                                    <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[8px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
+                                                    <span class="font-bold text-slate-700 dark:text-slate-200">{{ $studentThesis->pembimbing2->name }}</span>
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

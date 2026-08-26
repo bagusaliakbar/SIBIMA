@@ -575,22 +575,34 @@
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $mySeminarSchedule->schedule->location ?: '-' }}</p>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700/60">
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Pembimbing</p>
-                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
-                                            <p><span class="text-[10px] text-slate-400">P1:</span> {{ $mySeminarSchedule->thesis->pembimbing1->name ?? $thesis->pembimbing1->name ?? '-' }}</p>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-1.5">
+                                            <div class="flex items-center gap-1.5 truncate">
+                                                <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[8px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
+                                                <span class="truncate font-semibold">{{ $mySeminarSchedule->thesis->pembimbing1->name ?? $thesis->pembimbing1->name ?? '-' }}</span>
+                                            </div>
                                             @if(($mySeminarSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name ?? false))
-                                                <p><span class="text-[10px] text-slate-400">P2:</span> {{ $mySeminarSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name }}</p>
+                                                <div class="flex items-center gap-1.5 truncate">
+                                                    <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[8px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
+                                                    <span class="truncate font-semibold">{{ $mySeminarSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name }}</span>
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Penguji</p>
-                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
-                                            <p><span class="text-[10px] text-slate-400">U1:</span> {{ $mySeminarSchedule->examiner1->name ?? '-' }}</p>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Penguji</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-1.5">
+                                            <div class="flex items-center gap-1.5 truncate">
+                                                <span class="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 font-bold text-[8px] rounded border border-amber-200/80 dark:border-amber-800/80 shrink-0">U1</span>
+                                                <span class="truncate font-semibold">{{ $mySeminarSchedule->examiner1->name ?? '-' }}</span>
+                                            </div>
                                             @if($mySeminarSchedule->examiner2)
-                                                <p><span class="text-[10px] text-slate-400">U2:</span> {{ $mySeminarSchedule->examiner2->name }}</p>
+                                                <div class="flex items-center gap-1.5 truncate">
+                                                    <span class="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 font-bold text-[8px] rounded border border-amber-200/80 dark:border-amber-800/80 shrink-0">U2</span>
+                                                    <span class="truncate font-semibold">{{ $mySeminarSchedule->examiner2->name }}</span>
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
@@ -649,22 +661,34 @@
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $myDefenseSchedule->schedule->location ?: '-' }}</p>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700/60">
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Pembimbing</p>
-                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
-                                            <p><span class="text-[10px] text-slate-400">P1:</span> {{ $myDefenseSchedule->thesis->pembimbing1->name ?? $thesis->pembimbing1->name ?? '-' }}</p>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-1.5">
+                                            <div class="flex items-center gap-1.5 truncate">
+                                                <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[8px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
+                                                <span class="truncate font-semibold">{{ $myDefenseSchedule->thesis->pembimbing1->name ?? $thesis->pembimbing1->name ?? '-' }}</span>
+                                            </div>
                                             @if(($myDefenseSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name ?? false))
-                                                <p><span class="text-[10px] text-slate-400">P2:</span> {{ $myDefenseSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name }}</p>
+                                                <div class="flex items-center gap-1.5 truncate">
+                                                    <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[8px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
+                                                    <span class="truncate font-semibold">{{ $myDefenseSchedule->thesis->pembimbing2->name ?? $thesis->pembimbing2->name }}</span>
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Dosen Penguji</p>
-                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-0.5">
-                                            <p><span class="text-[10px] text-slate-400">U1:</span> {{ $myDefenseSchedule->examiner1->name ?? '-' }}</p>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Penguji</p>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 space-y-1.5">
+                                            <div class="flex items-center gap-1.5 truncate">
+                                                <span class="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 font-bold text-[8px] rounded border border-amber-200/80 dark:border-amber-800/80 shrink-0">U1</span>
+                                                <span class="truncate font-semibold">{{ $myDefenseSchedule->examiner1->name ?? '-' }}</span>
+                                            </div>
                                             @if($myDefenseSchedule->examiner2)
-                                                <p><span class="text-[10px] text-slate-400">U2:</span> {{ $myDefenseSchedule->examiner2->name }}</p>
+                                                <div class="flex items-center gap-1.5 truncate">
+                                                    <span class="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 font-bold text-[8px] rounded border border-amber-200/80 dark:border-amber-800/80 shrink-0">U2</span>
+                                                    <span class="truncate font-semibold">{{ $myDefenseSchedule->examiner2->name }}</span>
+                                                </div>
                                             @endif
                                         </div>
                                     </div>

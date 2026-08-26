@@ -539,7 +539,7 @@
                         </div>
                         
                         <!-- Footer Info -->
-                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700/80 mt-auto space-y-2.5">
+                        <div class="pt-4 border-t border-slate-200 dark:border-slate-700/80 mt-auto space-y-2.5">
                             <!-- Student -->
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 min-w-0">
@@ -553,17 +553,17 @@
                             
                             <!-- Advisors -->
                             @if($repo->pembimbing1 || $repo->pembimbing2)
-                                <div class="p-2.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/60 rounded-xl space-y-1 text-[10px]">
+                                <div class="p-2.5 bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl space-y-1.5 text-[10px]">
                                     @if($repo->pembimbing1)
-                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-300">
-                                            <span class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">P1:</span>
-                                            <span class="truncate font-semibold text-slate-700 dark:text-slate-300">{{ $repo->pembimbing1 }}</span>
+                                        <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 min-w-0">
+                                            <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[8px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
+                                            <span class="truncate font-bold text-slate-700 dark:text-slate-200">{{ $repo->pembimbing1 }}</span>
                                         </div>
                                     @endif
                                     @if($repo->pembimbing2)
-                                        <div class="flex items-start gap-1 text-slate-600 dark:text-slate-300">
-                                            <span class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">P2:</span>
-                                            <span class="truncate font-semibold text-slate-700 dark:text-slate-300">{{ $repo->pembimbing2 }}</span>
+                                        <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 min-w-0">
+                                            <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[8px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
+                                            <span class="truncate font-bold text-slate-700 dark:text-slate-200">{{ $repo->pembimbing2 }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -754,28 +754,43 @@
                             </div>
 
                             <!-- Meta Mahasiswa & Pembimbing -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                                 <div>
                                     <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Mahasiswa Alumni</p>
                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5" x-text="abstractData.name"></p>
                                     <p class="text-[10px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + (abstractData.identifier || '-')"></p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Dosen Pembimbing</p>
-                                    <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mt-0.5" x-text="abstractData.pembimbing1 ? 'P1: ' + abstractData.pembimbing1 : '-'"></p>
-                                    <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-300" x-text="abstractData.pembimbing2 ? 'P2: ' + abstractData.pembimbing2 : ''"></p>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Dosen Pembimbing</p>
+                                    <div class="space-y-1">
+                                        <template x-if="abstractData.pembimbing1">
+                                            <div class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-200">
+                                                <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[9px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
+                                                <span class="font-bold truncate" x-text="abstractData.pembimbing1"></span>
+                                            </div>
+                                        </template>
+                                        <template x-if="abstractData.pembimbing2">
+                                            <div class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-200">
+                                                <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[9px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
+                                                <span class="font-bold truncate" x-text="abstractData.pembimbing2"></span>
+                                            </div>
+                                        </template>
+                                        <template x-if="!abstractData.pembimbing1 && !abstractData.pembimbing2">
+                                            <span class="text-xs text-slate-400 italic">-</span>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Abstrak -->
                             <div>
                                 <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Abstrak / Rangkuman</p>
-                                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line text-justify font-medium" 
+                                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line text-justify font-medium" 
                                      x-text="abstractData.abstract || 'Tidak ada teks abstrak yang tersedia untuk arsip ini.'"></div>
                             </div>
                         </div>
 
-                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex justify-end">
                             <button type="button" @click="abstractModalOpen = false" class="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">
                                 Tutup
                             </button>
