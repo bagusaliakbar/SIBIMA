@@ -40,7 +40,7 @@ class SendScheduleReminders extends Command
             // 1. Seminar Reminders
             $seminarDetails = SeminarScheduleDetail::whereHas('schedule', function($q) use ($date) {
                 $q->whereDate('date', $date);
-            })->with(['schedule.chairman', 'schedule.moderator', 'thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'examiner1', 'examiner2'])->get();
+            })->with(['schedule.chairman', 'schedule.moderator', 'thesis.student', 'thesis.pembimbing1', 'examiner1', 'examiner2'])->get();
 
             $this->info("Found " . $seminarDetails->count() . " seminar entries for {$label}.");
             foreach ($seminarDetails as $detail) {
@@ -50,7 +50,7 @@ class SendScheduleReminders extends Command
             // 2. Defense (Sidang) Reminders
             $defenseDetails = ThesisDefenseScheduleDetail::whereHas('schedule', function($q) use ($date) {
                 $q->whereDate('date', $date);
-            })->with(['schedule.chairman', 'schedule.moderator', 'thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'examiner1', 'examiner2'])->get();
+            })->with(['schedule.chairman', 'schedule.moderator', 'thesis.student', 'thesis.pembimbing1', 'examiner1', 'examiner2'])->get();
 
             $this->info("Found " . $defenseDetails->count() . " defense entries for {$label}.");
             foreach ($defenseDetails as $detail) {
@@ -82,11 +82,10 @@ class SendScheduleReminders extends Command
         $title = "Pengingat Jadwal {$type} ({$label})";
         $message = "Anda memiliki jadwal {$type} {$timeWord}.";
 
-        // Recipients: Student, Advisors, Examiners, Chairman, Moderator
+        // Recipients: Student, Pembimbing 1, Examiners, Chairman, Moderator (Pembimbing 2 is not involved in seminar & defense)
         $recipients = collect([
             $detail->thesis->student ?? null,
             $detail->thesis->pembimbing1 ?? null,
-            $detail->thesis->pembimbing2 ?? null,
             $detail->examiner1 ?? null,
             $detail->examiner2 ?? null,
             $detail->schedule->chairman ?? null,

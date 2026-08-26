@@ -84,7 +84,12 @@ class ScheduleService
             
             if (isset($detail['thesis_id'])) {
                 $thesis = \App\Models\Thesis::find($detail['thesis_id']);
-                if ($thesis) $userIds->push($thesis->student_id);
+                if ($thesis) {
+                    $userIds->push($thesis->student_id);
+                    if ($thesis->pembimbing1_id) {
+                        $userIds->push($thesis->pembimbing1_id);
+                    }
+                }
             }
         }
 
