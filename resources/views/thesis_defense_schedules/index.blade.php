@@ -115,12 +115,12 @@
 
                 <!-- Right Side: Expand / Collapse All Controls -->
                 <div class="flex items-center gap-2.5 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end">
-                    <button type="button" @click="allOpen = true" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-600 shadow-2xs transition-all whitespace-nowrap">
+                    <button type="button" @click="allOpen = true" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap">
                         <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                         <span>Buka Semua</span>
                     </button>
-                    <button type="button" @click="allOpen = false" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-600 shadow-2xs transition-all whitespace-nowrap">
-                        <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+                    <button type="button" @click="allOpen = false" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap">
+                        <svg class="w-4 h-4 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
                         <span>Tutup Semua</span>
                     </button>
                 </div>
@@ -175,7 +175,7 @@
                                                 🔵 Mendatang
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                            <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 rounded-full text-[10px] font-black uppercase tracking-wider">
                                                 ⚪ Selesai
                                             </span>
                                         @endif
@@ -186,7 +186,7 @@
                                             </span>
                                         @endif
 
-                                        <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full text-[10px] font-bold">
+                                        <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 rounded-full text-[10px] font-bold">
                                             👥 {{ $studentCount }} Mahasiswa
                                         </span>
                                     </div>
@@ -200,17 +200,17 @@
                                 <!-- Header Action Buttons -->
                                 <div class="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 w-full sm:w-auto pt-1 sm:pt-0">
                                     <a href="{{ route('thesis-defense-schedules.export-pdf', $schedule) }}" 
-                                       class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-bold shadow-2xs transition-all whitespace-nowrap shrink-0"
+                                       class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold shadow-2xs transition-all whitespace-nowrap shrink-0"
                                        title="Cetak PDF">
-                                        <svg class="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         <span>Cetak PDF</span>
                                     </a>
 
                                     <button type="button" @click="open = !open" 
-                                            class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all border border-slate-200 dark:border-slate-600 whitespace-nowrap shrink-0"
+                                            class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 shadow-2xs whitespace-nowrap shrink-0"
                                             title="Buka/Tutup Rincian">
                                         <span x-text="open ? 'Tutup' : 'Rincian'"></span>
-                                        <svg class="w-4 h-4 transition-transform duration-200 shrink-0" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        <svg class="w-4 h-4 transition-transform duration-200 shrink-0 text-slate-500 dark:text-slate-400" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </button>
                                 </div>
                             </div>
@@ -263,7 +263,7 @@
                                                 @endphp
                                                 <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors {{ ($isMyStudent || $isMyExam) ? 'bg-amber-500/5 dark:bg-amber-500/10' : '' }}">
                                                     <td class="py-3.5 px-3 text-center border-r border-slate-200 dark:border-slate-700">
-                                                        <span class="inline-flex items-center justify-center w-6 h-6 {{ ($isMyStudent || $isMyExam) ? 'bg-amber-500 text-white font-black' : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold' }} rounded-lg text-xs">
+                                                        <span class="inline-flex items-center justify-center w-6 h-6 {{ ($isMyStudent || $isMyExam) ? 'bg-amber-500 text-white font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700 font-bold' }} rounded-lg text-xs">
                                                             {{ $studentNo++ }}
                                                         </span>
                                                     </td>
@@ -276,7 +276,7 @@
                                                     <td class="py-3.5 px-5 border-r border-slate-200 dark:border-slate-700">
                                                         <div class="space-y-1.5">
                                                             <div class="flex items-center flex-wrap gap-2">
-                                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-black text-[10px] rounded uppercase tracking-wider">
+                                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-black text-[10px] rounded uppercase tracking-wider">
                                                                     {{ $detail->thesis->student->identifier }}
                                                                 </span>
                                                                 <span class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</span>
@@ -351,52 +351,45 @@
                         </div>
                     </div>
                 @empty
-                    <div class="p-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-xs space-y-3">
-                        <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                    <!-- Empty State -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-12 text-center shadow-xs">
+                        <div class="w-16 h-16 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-orange-200 dark:border-orange-900/60 shadow-inner">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <h4 class="text-base font-bold text-slate-800 dark:text-white">
-                            Tidak Ada Jadwal Sidang Ditemukan
-                        </h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-medium">
-                            Tidak ditemukan agenda sidang yang sesuai dengan filter atau kriteria pencarian yang Anda pilih.
+                        <h4 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-1">Tidak Ada Jadwal Sidang Ditemukan</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+                            @if(request()->hasAny(['search', 'wave_id', 'date_from', 'date_to', 'my_schedules']) || ($filterDate && $filterDate !== 'upcoming'))
+                                Tidak ada jadwal yang cocok dengan filter atau kata kunci pencarian Anda.
+                            @else
+                                Belum ada agenda sidang skripsi yang aktif atau mendatang untuk saat ini.
+                            @endif
                         </p>
-                        <div>
-                            <a href="{{ route('thesis-defense-schedules.index') }}" class="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
-                                Reset Semua Filter
+                        @if(request()->hasAny(['search', 'wave_id', 'date_from', 'date_to', 'my_schedules']) || ($filterDate && $filterDate !== 'upcoming'))
+                            <a href="{{ route('thesis-defense-schedules.index') }}" class="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
+                                <svg class="w-4 h-4 mr-2 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                Reset Filter Pencarian
                             </a>
-                        </div>
+                        @endif
                     </div>
                 @endforelse
-
-                <div class="mt-4">
+            </div>
+            
+            @if($schedules->hasPages())
+                <div class="mt-6">
                     {{ $schedules->links() }}
                 </div>
-            </div>
+            @endif
         @else
-            <!-- ADMIN & KAPRODI VIEW: Compact Table Card with Enhanced Filters -->
-            <x-table-card 
-                title="Agenda Pelaksanaan Sidang Skripsi"
-                :footer="$schedules->links()">
-                
-                <x-slot name="headerActions">
-                    <div class="flex flex-wrap items-center gap-3">
+            <!-- KAPRODI / ADMIN VIEW: Advanced Management Table with Search & Status Filter -->
+            <x-table-card title="Daftar Jadwal Sidang Skripsi">
+                <x-slot name="actions">
+                    <div class="flex flex-wrap items-center gap-2.5">
                         <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
-                            <!-- Search -->
-                            <div class="relative">
-                                <input type="text" name="search" value="{{ $searchQuery }}" placeholder="Cari jadwal / mahasiswa..."
-                                       class="py-2 pl-3 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 min-w-[180px]">
-                            </div>
-
-                            <!-- Date From & To -->
-                            <input type="date" name="date_from" value="{{ $dateFrom }}" title="Dari Tanggal"
-                                   class="py-2 px-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                            <input type="date" name="date_to" value="{{ $dateTo }}" title="Sampai Tanggal"
-                                   class="py-2 px-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest">
-
-                            <!-- Wave Filter -->
-                            <select name="wave_id" onchange="this.form.submit()" 
-                                    class="py-2 pl-3 pr-8 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 min-w-[170px]">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="CARI JADWAL..."
+                                class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 uppercase placeholder:text-slate-400 focus:ring-1 focus:ring-orange-500">
+                            
+                            <select name="wave_id" onchange="this.form.submit()"
+                                class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 uppercase focus:ring-1 focus:ring-orange-500">
                                 <option value="">SEMUA GELOMBANG</option>
                                 @foreach($waves as $wave)
                                     <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -405,12 +398,12 @@
                                 @endforeach
                             </select>
 
-                            <button type="submit" class="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-slate-700 dark:text-slate-200" title="Cari">
+                            <button type="submit" class="p-2 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700" title="Cari">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </button>
 
                             @if(request()->hasAny(['search', 'date_from', 'date_to', 'wave_id']))
-                                <a href="{{ route('thesis-defense-schedules.index') }}" class="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-500 rounded-xl" title="Reset">
+                                <a href="{{ route('thesis-defense-schedules.index') }}" class="p-2 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700" title="Reset">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </a>
                             @endif

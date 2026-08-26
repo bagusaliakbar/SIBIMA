@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col md:items-end justify-start space-y-3">
-                        <div class="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+                        <div class="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
                             <span class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mr-3">Tempat:</span>
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $thesisDefenseSchedule->location ?: '-' }}</span>
                         </div>
@@ -75,7 +75,7 @@
                                     <tr class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                                         <td class="py-5 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-800 dark:text-slate-200">{{ $studentNo++ }}</td>
                                         <td class="py-5 px-3 text-center border-r border-slate-200 dark:border-slate-700">
-                                            <span class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs font-bold text-slate-700 dark:text-slate-300">
+                                            <span class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
                                                 {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
                                             </span>
                                         </td>
