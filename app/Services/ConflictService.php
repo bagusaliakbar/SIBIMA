@@ -30,7 +30,8 @@ class ConflictService
                 if ($this->isOverlapping($startTime, $endTime, $d->start_time, $d->end_time)) {
                     $role = $d->examiner1_id == $dosenId ? 'Penguji 1' : 'Penguji 2';
                     $student = $d->thesis ? $d->thesis->student->name : 'Kegiatan';
-                    $dosenConflicts[] = "Seminar: {$d->schedule->title} ({$role} - {$student}) - {$d->start_time} s/d {$d->end_time}";
+                    $timeFormatted = Carbon::parse($d->start_time)->format('H:i') . ' s/d ' . Carbon::parse($d->end_time)->format('H:i') . ' WIB';
+                    $dosenConflicts[] = "Seminar: {$d->schedule->title} ({$role} - {$student}) - {$timeFormatted}";
                 }
             }
 
@@ -44,7 +45,8 @@ class ConflictService
                 if ($this->isOverlapping($startTime, $endTime, $d->start_time, $d->end_time)) {
                     $role = $d->examiner1_id == $dosenId ? 'Penguji 1' : 'Penguji 2';
                     $student = $d->thesis ? $d->thesis->student->name : 'Kegiatan';
-                    $dosenConflicts[] = "Sidang: {$d->schedule->title} ({$role} - {$student}) - {$d->start_time} s/d {$d->end_time}";
+                    $timeFormatted = Carbon::parse($d->start_time)->format('H:i') . ' s/d ' . Carbon::parse($d->end_time)->format('H:i') . ' WIB';
+                    $dosenConflicts[] = "Sidang: {$d->schedule->title} ({$role} - {$student}) - {$timeFormatted}";
                 }
             }
 
