@@ -11,8 +11,8 @@
             @csrf
             
             <!-- Basic Information -->
-            <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 rounded-lg overflow-hidden mb-6">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
+            <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-6">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
                     <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Informasi Utama Sesi</h3>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,8 +64,8 @@
             </div>
 
             <!-- Details List -->
-            <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 rounded-lg overflow-hidden">
-                <div class="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 flex justify-between items-center">
+            <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 flex justify-between items-center">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Susunan Jadwal & Peserta</h3>
                         <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 uppercase font-medium text-xs">Tambahkan urutan waktu, kegiatan, atau mahasiswa yang akan seminar</p>
@@ -85,7 +85,7 @@
                 <div class="p-6">
                     <div class="space-y-4">
                         <template x-for="(row, index) in rows" :key="index">
-                            <div class="p-4 border rounded-lg dark:border-slate-700 relative bg-slate-50/20 dark:bg-slate-900/10" :class="row.type === 'student' ? 'border-orange-100 dark:border-orange-900/30' : 'border-slate-100 dark:border-slate-700'">
+                            <div class="p-4 border rounded-lg dark:border-slate-700 relative bg-slate-50/20 dark:bg-slate-900/10" :class="row.type === 'student' ? 'border-orange-100 dark:border-orange-900/30' : 'border-slate-200 dark:border-slate-700'">
                                 <div class="flex justify-between items-start mb-4">
                                     <span class="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" :class="row.type === 'student' ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'" x-text="row.type === 'student' ? 'Data Peserta Seminar' : 'Kegiatan / Persiapan'"></span>
                                     <button type="button" @click="removeRow(index)" class="text-slate-400 hover:text-red-500 transition-colors">
@@ -167,7 +167,7 @@
                     </div>
                 </div>
 
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 flex justify-end">
+                <div class="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30 flex justify-end">
                     <a href="{{ route('seminar-schedules.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md font-semibold text-xs text-slate-700 dark:text-slate-300 uppercase tracking-widest shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition ease-in-out duration-150 mr-3">Batal</a>
                     <x-primary-button>Simpan Jadwal</x-primary-button>
                 </div>

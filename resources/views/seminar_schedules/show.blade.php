@@ -21,8 +21,8 @@
     </x-slot>
 
     <div class="w-full mx-auto">
-        <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 rounded-lg overflow-hidden mb-6">
-            <div class="p-8 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
+        <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-6">
+            <div class="p-8 text-center border-b border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
                 <h2 class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-[0.2em] mb-2">JADWAL SEMINAR SKRIPSI</h2>
                 <h3 class="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest">{{ $seminarSchedule->title }}</h3>
             </div>
@@ -68,18 +68,18 @@
                                 <th class="py-4 px-3 w-50 border-b border-slate-200 dark:border-slate-700">PENGUJI</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                             @php $studentNo = 1; @endphp
                             @foreach($seminarSchedule->details as $detail)
                                 @if($detail->thesis_id)
                                     <tr class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                                        <td class="py-5 px-3 text-center border-r border-slate-100 dark:border-slate-700/50 font-bold text-slate-800 dark:text-slate-200">{{ $studentNo++ }}</td>
-                                        <td class="py-5 px-3 text-center border-r border-slate-100 dark:border-slate-700/50">
+                                        <td class="py-5 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-800 dark:text-slate-200">{{ $studentNo++ }}</td>
+                                        <td class="py-5 px-3 text-center border-r border-slate-200 dark:border-slate-700">
                                             <span class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs font-bold text-slate-700 dark:text-slate-300">
                                                 {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
                                             </span>
                                         </td>
-                                        <td class="py-5 px-6 border-r border-slate-100 dark:border-slate-700/50">
+                                        <td class="py-5 px-6 border-r border-slate-200 dark:border-slate-700">
                                             <div class="space-y-2">
                                                 <div class="flex items-center flex-wrap gap-2">
                                                     <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider">
@@ -90,7 +90,7 @@
                                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-lg">{{ $detail->thesis->title }}</p>
                                             </div>
                                         </td>
-                                        <td class="py-5 px-5 border-r border-slate-100 dark:border-slate-700/50">
+                                        <td class="py-5 px-5 border-r border-slate-200 dark:border-slate-700">
                                             <div class="space-y-2">
                                                 <div class="flex items-start">
                                                     <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
@@ -104,7 +104,7 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="py-5 px-5 border-slate-100 dark:border-slate-700/50">
+                                        <td class="py-5 px-5 border-slate-200 dark:border-slate-700">
                                             <div class="space-y-2">
                                                 @if($detail->examiner1)
                                                 <div class="flex items-start">
@@ -123,8 +123,8 @@
                                     </tr>
                                 @else
                                     <tr class="bg-slate-50/50 dark:bg-slate-900/30">
-                                        <td class="py-3 px-3 text-center border-r border-slate-100 dark:border-slate-700/50 font-bold text-slate-400">#</td>
-                                        <td class="py-3 px-3 text-center border-r border-slate-100 dark:border-slate-700/50">
+                                        <td class="py-3 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-400">#</td>
+                                        <td class="py-3 px-3 text-center border-r border-slate-200 dark:border-slate-700">
                                             <span class="text-xs font-bold text-slate-500">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
                                         </td>
                                         <td colspan="3" class="py-3 px-8">
