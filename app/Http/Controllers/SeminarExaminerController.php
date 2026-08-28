@@ -161,20 +161,39 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             abort(403);
         }
 
-        $detail->load(['thesis.student', 'schedule']);
+        $detail->load(['thesis.student', 'examiner1', 'examiner2', 'schedule', 'revisions']);
         
         $actingId = $user->id;
-        if (in_array($user->role, ['admin', 'kaprodi']) && request()->has('target_examiner_id')) {
-            $actingId = request()->input('target_examiner_id');
-        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
-            $actingId = $detail->examiner1_id ?? $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            if (request()->has('target_examiner_id')) {
+                $actingId = request()->input('target_examiner_id');
+            } else {
+                $actingId = $detail->examiner1_id ?? $user->id;
+            }
         }
 
         $myRevision = SeminarRevision::where('seminar_schedule_detail_id', $detail->id)
             ->where('examiner_id', $actingId)
             ->first();
 
-        return view('seminar-examiner.grade', compact('detail', 'myRevision'));
+        $targetUser = \App\Models\User::find($actingId);
+
+        $examiners = collect([
+            [
+                'role_label' => 'Penguji 1',
+                'user' => $detail->examiner1,
+                'revision' => $detail->revisions->where('examiner_id', $detail->examiner1_id)->first(),
+                'color' => 'rose',
+            ],
+            [
+                'role_label' => 'Penguji 2',
+                'user' => $detail->examiner2,
+                'revision' => $detail->revisions->where('examiner_id', $detail->examiner2_id)->first(),
+                'color' => 'rose',
+            ],
+        ])->filter(fn($item) => $item['user'] !== null);
+
+        return view('seminar-examiner.grade', compact('detail', 'myRevision', 'actingId', 'targetUser', 'examiners'));
     }
 
     public function storeGrading(Request $request, SeminarScheduleDetail $detail)
@@ -192,10 +211,11 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             'score_presentation' => 'required|integer|min:0|max:100',
             'score_explanation' => 'required|integer|min:0|max:100',
             'score_writing' => 'required|integer|min:0|max:100',
+            'target_examiner_id' => 'nullable|exists:users,id',
         ]);
 
         $actingUser = $user;
-        if (in_array($user->role, ['admin', 'kaprodi']) && $request->has('target_examiner_id')) {
+        if (in_array($user->role, ['admin', 'kaprodi']) && $request->filled('target_examiner_id')) {
             $target = \App\Models\User::find($request->input('target_examiner_id'));
             if ($target) $actingUser = $target;
         } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
@@ -204,7 +224,11 @@ class SeminarExaminerController extends Controller implements HasMiddleware
 
         $this->examinerService->storeGrading(SeminarRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $actingUser);
 
-        return redirect()->route('seminar-examiner.index')->with('success', 'Nilai seminar berhasil disimpan.');
+        if ($request->input('redirect_to') === 'monitoring') {
+            return redirect()->route('monitoring.revisions')->with('success', "Nilai seminar untuk {$actingUser->name} berhasil disimpan.");
+        }
+
+        return redirect()->route('seminar-examiner.index')->with('success', "Nilai seminar untuk {$actingUser->name} berhasil disimpan.");
     }
 
     public function exportBeritaAcara(SeminarScheduleDetail $detail)

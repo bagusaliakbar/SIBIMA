@@ -181,9 +181,18 @@
                                 </div>
                             </td>
                             <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-indigo-50/20 dark:bg-indigo-900/10">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black uppercase">1.</span>
-                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->thesis->pembimbing1->name }}">{{ $detail->thesis->pembimbing1->name }}</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black uppercase shrink-0">1.</span>
+                                        <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->thesis->pembimbing1?->name }}">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
+                                    </div>
+                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->thesis?->pembimbing1_id)
+                                        <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->thesis->pembimbing1_id, 'redirect_to' => 'monitoring']) }}" 
+                                           class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
+                                           title="Input / Ubah Nilai Pembimbing 1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                             <td class="py-3 px-3 text-center text-xs font-bold border-r border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400">{{ $revP1->score_presentation ?? '-' }}</td>
@@ -206,9 +215,18 @@
                         <!-- Row Penguji 1 -->
                         <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
                             <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase">2.</span>
-                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner1->name }}">{{ $detail->examiner1->name }}</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase shrink-0">2.</span>
+                                        <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner1?->name }}">{{ $detail->examiner1?->name ?? '-' }}</span>
+                                    </div>
+                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
+                                        <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring']) }}" 
+                                           class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
+                                           title="Input / Ubah Nilai Penguji 1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                             <td class="py-3 px-3 text-center text-xs font-bold border-r border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400">{{ $revE1->score_presentation ?? '-' }}</td>
@@ -222,9 +240,18 @@
                         <!-- Row Penguji 2 -->
                         <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors border-b-2 border-slate-100 dark:border-slate-700">
                             <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase">3.</span>
-                                    <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner2->name }}">{{ $detail->examiner2->name }}</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase shrink-0">3.</span>
+                                        <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner2?->name }}">{{ $detail->examiner2?->name ?? '-' }}</span>
+                                    </div>
+                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
+                                        <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring']) }}" 
+                                           class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
+                                           title="Input / Ubah Nilai Penguji 2">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                             <td class="py-3 px-3 text-center text-xs font-bold border-r border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400">{{ $revE2->score_presentation ?? '-' }}</td>
