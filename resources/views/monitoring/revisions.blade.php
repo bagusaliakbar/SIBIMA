@@ -132,11 +132,19 @@
                                 <!-- Penguji 1 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner1->name }}">
-                                            {{ $detail->examiner1->name }}
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner1?->name }}">
+                                            {{ $detail->examiner1?->name ?? '-' }}
                                         </div>
-                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[150px]">
-                                            <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
+                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px]">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
+                                                    <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}"
+                                                       class="p-0.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition-colors" title="Kelola / Input Revisi">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                    </a>
+                                                @endif
+                                            </div>
                                             @if($rev1)
                                                 @if($rev1->isApproved())
                                                     <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
@@ -155,11 +163,19 @@
                                 <!-- Penguji 2 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner2->name }}">
-                                            {{ $detail->examiner2->name }}
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner2?->name }}">
+                                            {{ $detail->examiner2?->name ?? '-' }}
                                         </div>
-                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[150px]">
-                                            <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
+                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px]">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
+                                                    <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}"
+                                                       class="p-0.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition-colors" title="Kelola / Input Revisi">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                    </a>
+                                                @endif
+                                            </div>
                                             @if($rev2)
                                                 @if($rev2->isApproved())
                                                     <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>

@@ -102,14 +102,15 @@ class ExaminerService
      */
     public function approveRevision($revision)
     {
-        if ($revision->examiner_id !== Auth::id()) {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi']) && $revision->examiner_id !== Auth::id()) {
             throw new \Exception('Unauthorized access to revision.', 403);
         }
 
         $revision->update(['status' => 'approved']);
 
         $moduleName = str_contains(get_class($revision), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
-        ActivityLog::log('Penyetujuan Revisi', "Dosen " . Auth::user()->name . " menyetujui revisi {$moduleName} mahasiswa.", $moduleName, $revision, ['status' => 'approved']);
+        $actorName = Auth::user()->name . (in_array(Auth::user()->role, ['admin', 'kaprodi']) ? ' (' . ucfirst(Auth::user()->role) . ')' : '');
+        ActivityLog::log('Penyetujuan Revisi', "{$actorName} menyetujui revisi {$moduleName} mahasiswa.", $moduleName, $revision, ['status' => 'approved']);
 
         if (method_exists($revision, 'detail')) {
             $this->checkGraduation($revision->detail);

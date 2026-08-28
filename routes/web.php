@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/seminar-examiner/{detail}/grading', [App\Http\Controllers\SeminarExaminerController::class, 'storeGrading'])->name('seminar-examiner.store-grading');
     Route::post('/seminar-examiner/{detail}/revision', [App\Http\Controllers\SeminarExaminerController::class, 'storeRevision'])->name('seminar-examiner.store-revision');
     Route::post('/seminar-examiner/revisions/{revision}/approve', [App\Http\Controllers\SeminarExaminerController::class, 'approveRevision'])->name('seminar-examiner.approve-revision');
+    Route::post('/seminar-examiner/{detail}/approve-direct', [App\Http\Controllers\SeminarExaminerController::class, 'approveRevisionDirect'])->name('seminar-examiner.approve-revision-direct');
     Route::get('/seminar-examiner/{detail}/export-berita-acara', [App\Http\Controllers\SeminarExaminerController::class, 'exportBeritaAcara'])->name('seminar-examiner.export-berita-acara');
 
     // Thesis Defense Examiner Routes

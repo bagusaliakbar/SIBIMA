@@ -86,7 +86,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
     public function show(ThesisDefenseScheduleDetail $detail)
     {
         $user = Auth::user();
-        $detail->load(['thesis.student', 'schedule', 'revisions.messages.sender']);
+        $detail->load(['thesis.student', 'thesis.pembimbing1', 'examiner1', 'examiner2', 'schedule', 'revisions.messages.sender']);
 
         $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
             || $detail->examiner1_id === $user->id
@@ -98,15 +98,39 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         }
         
         $actingId = $user->id;
-        if (in_array($user->role, ['admin', 'kaprodi']) && request()->has('target_examiner_id')) {
-            $actingId = request()->input('target_examiner_id');
-        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
-            $actingId = $detail->examiner1_id ?? $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            if (request()->has('target_examiner_id')) {
+                $actingId = request()->input('target_examiner_id');
+            } else {
+                $actingId = $detail->examiner1_id ?? $detail->thesis?->pembimbing1_id ?? $user->id;
+            }
         }
 
         $myRevision = $detail->revisions->where('examiner_id', $actingId)->first();
+        $targetUser = \App\Models\User::find($actingId);
 
-        return view('defense-examiner.show', compact('detail', 'myRevision'));
+        $examiners = collect([
+            [
+                'role_label' => 'Penguji 1',
+                'user' => $detail->examiner1,
+                'revision' => $detail->revisions->where('examiner_id', $detail->examiner1_id)->first(),
+                'color' => 'rose',
+            ],
+            [
+                'role_label' => 'Penguji 2',
+                'user' => $detail->examiner2,
+                'revision' => $detail->revisions->where('examiner_id', $detail->examiner2_id)->first(),
+                'color' => 'rose',
+            ],
+            [
+                'role_label' => 'Pembimbing 1',
+                'user' => $detail->thesis?->pembimbing1,
+                'revision' => $detail->revisions->where('examiner_id', $detail->thesis?->pembimbing1_id)->first(),
+                'color' => 'indigo',
+            ],
+        ])->filter(fn($item) => $item['user'] !== null);
+
+        return view('defense-examiner.show', compact('detail', 'myRevision', 'actingId', 'targetUser', 'examiners'));
     }
 
     public function grading(ThesisDefenseScheduleDetail $detail)
@@ -220,11 +244,11 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         ]);
 
         $actingUser = $user;
-        if (in_array($user->role, ['admin', 'kaprodi']) && $request->has('target_examiner_id')) {
+        if (in_array($user->role, ['admin', 'kaprodi']) && $request->filled('target_examiner_id')) {
             $target = \App\Models\User::find($request->input('target_examiner_id'));
             if ($target) $actingUser = $target;
         } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
-            $actingUser = $detail->examiner1 ?? $user;
+            $actingUser = $detail->examiner1 ?? $detail->thesis?->pembimbing1 ?? $user;
         }
 
         try {
@@ -233,7 +257,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
                 $request->only('revision_notes'), $request->input('revision_link'),
                 $actingUser
             );
-            return redirect()->back()->with('success', 'Catatan revisi baru berhasil dikirim.');
+            return redirect()->back()->with('success', "Catatan revisi baru atas nama {$actingUser->name} berhasil dikirim.");
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Gagal mengirim catatan revisi: ' . $e->getMessage())->withInput();
         }
@@ -265,7 +289,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
 
         $actingId = $user->id;
         if (in_array($user->role, ['admin', 'kaprodi'])) {
-            $actingId = $request->input('target_examiner_id', $detail->examiner1_id ?? $user->id);
+            $actingId = $request->input('target_examiner_id', $detail->examiner1_id ?? $detail->thesis?->pembimbing1_id ?? $user->id);
         }
 
         ThesisDefenseRevision::updateOrCreate(

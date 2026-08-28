@@ -135,20 +135,36 @@
                                 <!-- Penguji 1 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner1->name }}">
-                                            {{ $detail->examiner1->name }}
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner1?->name }}">
+                                            {{ $detail->examiner1?->name ?? '-' }}
                                         </div>
                                         <div class="grid grid-cols-2 gap-2">
-                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Penilaian</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Penilaian</span>
+                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
+                                                        <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                           class="p-0.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded transition-colors" title="Input / Ubah Nilai">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                                 @if($grade1)
                                                     <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">{{ number_format($rev1->total_score, 1) }}</span>
                                                 @else
                                                     <span class="text-[9px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-tighter block animate-pulse">Belum</span>
                                                 @endif
                                             </div>
-                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
+                                                        <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                           class="p-0.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded transition-colors" title="Kelola / Input Revisi">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                                 @if($rev1 && $rev1->isApproved())
                                                     <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
                                                 @elseif($rev1 && $rev1->isResubmitted())
@@ -166,20 +182,36 @@
                                 <!-- Penguji 2 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner2->name }}">
-                                            {{ $detail->examiner2->name }}
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner2?->name }}">
+                                            {{ $detail->examiner2?->name ?? '-' }}
                                         </div>
                                         <div class="grid grid-cols-2 gap-2">
-                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Penilaian</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Penilaian</span>
+                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
+                                                        <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                           class="p-0.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded transition-colors" title="Input / Ubah Nilai">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                                 @if($grade2)
                                                     <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">{{ number_format($rev2->total_score, 1) }}</span>
                                                 @else
                                                     <span class="text-[9px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-tighter block animate-pulse">Belum</span>
                                                 @endif
                                             </div>
-                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
+                                                        <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                           class="p-0.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded transition-colors" title="Kelola / Input Revisi">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                                 @if($rev2 && $rev2->isApproved())
                                                     <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
                                                 @elseif($rev2 && $rev2->isResubmitted())
@@ -197,20 +229,36 @@
                                 <!-- Pembimbing 1 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->thesis->pembimbing1->name }}">
-                                            {{ $detail->thesis->pembimbing1->name }}
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->thesis->pembimbing1?->name }}">
+                                            {{ $detail->thesis->pembimbing1?->name ?? '-' }}
                                         </div>
                                         <div class="grid grid-cols-2 gap-2">
-                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Penilaian</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Penilaian</span>
+                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->thesis?->pembimbing1_id)
+                                                        <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->thesis->pembimbing1_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                           class="p-0.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded transition-colors" title="Input / Ubah Nilai">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                                 @if($gradeP1)
                                                     <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">{{ number_format($revP1->total_score, 1) }}</span>
                                                 @else
                                                     <span class="text-[9px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-tighter block animate-pulse">Belum</span>
                                                 @endif
                                             </div>
-                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-center">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Revisi</span>
+                                            <div class="bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->thesis?->pembimbing1_id)
+                                                        <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->thesis->pembimbing1_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                           class="p-0.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition-colors" title="Kelola / Input Revisi">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                                 <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase italic block">N/A</span>
                                             </div>
                                         </div>
