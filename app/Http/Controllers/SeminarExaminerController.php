@@ -91,7 +91,15 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         }
 
         $detail->load(['thesis.student', 'schedule', 'revisions.messages.sender']);
-        $myRevision = $detail->revisions->first();
+        
+        $actingId = $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi']) && request()->has('target_examiner_id')) {
+            $actingId = request()->input('target_examiner_id');
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingId = $detail->examiner1_id ?? $user->id;
+        }
+
+        $myRevision = $detail->revisions->where('examiner_id', $actingId)->first();
 
         return view('seminar-examiner.show', compact('detail', 'myRevision'));
     }
@@ -154,7 +162,16 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         }
 
         $detail->load(['thesis.student', 'schedule']);
+        
+        $actingId = $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi']) && request()->has('target_examiner_id')) {
+            $actingId = request()->input('target_examiner_id');
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingId = $detail->examiner1_id ?? $user->id;
+        }
+
         $myRevision = SeminarRevision::where('seminar_schedule_detail_id', $detail->id)
+            ->where('examiner_id', $actingId)
             ->first();
 
         return view('seminar-examiner.grade', compact('detail', 'myRevision'));

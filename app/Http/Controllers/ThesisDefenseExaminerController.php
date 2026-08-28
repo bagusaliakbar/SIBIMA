@@ -97,7 +97,14 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             abort(403);
         }
         
-        $myRevision = $detail->revisions->first();
+        $actingId = $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi']) && request()->has('target_examiner_id')) {
+            $actingId = request()->input('target_examiner_id');
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingId = $detail->examiner1_id ?? $user->id;
+        }
+
+        $myRevision = $detail->revisions->where('examiner_id', $actingId)->first();
 
         return view('defense-examiner.show', compact('detail', 'myRevision'));
     }
@@ -116,7 +123,15 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             abort(403);
         }
         
+        $actingId = $user->id;
+        if (in_array($user->role, ['admin', 'kaprodi']) && request()->has('target_examiner_id')) {
+            $actingId = request()->input('target_examiner_id');
+        } elseif (in_array($user->role, ['admin', 'kaprodi'])) {
+            $actingId = $detail->examiner1_id ?? $user->id;
+        }
+
         $myRevision = ThesisDefenseRevision::where('thesis_defense_schedule_detail_id', $detail->id)
+            ->where('examiner_id', $actingId)
             ->first();
 
         return view('defense-examiner.grade', compact('detail', 'myRevision'));
