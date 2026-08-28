@@ -131,62 +131,68 @@
                                 
                                 <!-- Penguji 1 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
-                                    <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner1?->name }}">
+                                    <div class="flex flex-col gap-3">
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug truncate" title="{{ $detail->examiner1?->name }}">
                                             {{ $detail->examiner1?->name ?? '-' }}
                                         </div>
-                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px]">
-                                            <div class="flex items-center justify-between mb-1">
+                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px] flex flex-col justify-between min-h-[58px]">
+                                            <div class="flex items-center justify-between gap-1 mb-1">
                                                 <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
                                                 @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
                                                     <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}"
-                                                       class="p-0.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition-colors" title="Kelola / Input Revisi">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                       class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
+                                                       title="Kelola / Input Revisi">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </a>
                                                 @endif
                                             </div>
-                                            @if($rev1)
-                                                @if($rev1->isApproved())
-                                                    <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
-                                                @elseif($rev1->isResubmitted())
-                                                    <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block animate-pulse">Terkirim</span>
+                                            <div>
+                                                @if($rev1)
+                                                    @if($rev1->isApproved())
+                                                        <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block leading-none">Selesai</span>
+                                                    @elseif($rev1->isResubmitted())
+                                                        <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block leading-none animate-pulse">Terkirim</span>
+                                                    @else
+                                                        <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block leading-none">Dikirim</span>
+                                                    @endif
                                                 @else
-                                                    <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block">Dikirim</span>
+                                                    <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block leading-none">Belum Ada</span>
                                                 @endif
-                                            @else
-                                                <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block">Belum Ada</span>
-                                            @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
 
                                 <!-- Penguji 2 -->
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
-                                    <div class="flex flex-col gap-3.5">
-                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug" title="{{ $detail->examiner2?->name }}">
+                                    <div class="flex flex-col gap-3">
+                                        <div class="font-black text-[11px] text-slate-700 dark:text-slate-300 uppercase tracking-tight leading-snug truncate" title="{{ $detail->examiner2?->name }}">
                                             {{ $detail->examiner2?->name ?? '-' }}
                                         </div>
-                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px]">
-                                            <div class="flex items-center justify-between mb-1">
+                                        <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px] flex flex-col justify-between min-h-[58px]">
+                                            <div class="flex items-center justify-between gap-1 mb-1">
                                                 <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
                                                 @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
                                                     <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}"
-                                                       class="p-0.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition-colors" title="Kelola / Input Revisi">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                       class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
+                                                       title="Kelola / Input Revisi">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </a>
                                                 @endif
                                             </div>
-                                            @if($rev2)
-                                                @if($rev2->isApproved())
-                                                    <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block">Selesai</span>
-                                                @elseif($rev2->isResubmitted())
-                                                    <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block animate-pulse">Terkirim</span>
+                                            <div>
+                                                @if($rev2)
+                                                    @if($rev2->isApproved())
+                                                        <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block leading-none">Selesai</span>
+                                                    @elseif($rev2->isResubmitted())
+                                                        <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block leading-none animate-pulse">Terkirim</span>
+                                                    @else
+                                                        <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block leading-none">Dikirim</span>
+                                                    @endif
                                                 @else
-                                                    <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block">Dikirim</span>
+                                                    <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block leading-none">Belum Ada</span>
                                                 @endif
-                                            @else
-                                                <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block">Belum Ada</span>
-                                            @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
