@@ -120,6 +120,24 @@
                 @endif
             </div>
             
+            <style>
+                /* Reliable dark mode input styling & hidden spinners */
+                input.score-input::-webkit-outer-spin-button,
+                input.score-input::-webkit-inner-spin-button {
+                    -webkit-appearance: none !important;
+                    margin: 0 !important;
+                }
+                input.score-input {
+                    -moz-appearance: textfield !important;
+                    appearance: textfield !important;
+                }
+                .dark input.score-input {
+                    background-color: #0f172a !important;
+                    color: #ffffff !important;
+                    border-color: #334155 !important;
+                }
+            </style>
+
             <form action="{{ route('seminar-examiner.store-grading', $detail->id) }}" method="POST" class="p-6 space-y-6" x-data="{
                 scores: {
                     presentation: '{{ old('score_presentation', $myRevision->score_presentation ?? '') }}',
@@ -191,7 +209,7 @@
                                 <th class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 w-12 text-center">NO</th>
                                 <th class="py-3 px-4 border-b border-slate-200 dark:border-slate-700">KOMPONEN PENILAIAN SEMINAR</th>
                                 <th class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 w-20 text-center">Bobot (%)</th>
-                                <th class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 w-48 text-center">Nilai (0-100) & Stepper</th>
+                                <th class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 w-48 text-center">Nilai (0-100)</th>
                                 <th class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 w-24 text-center">Jumlah</th>
                             </tr>
                         </thead>
@@ -215,12 +233,12 @@
                                 <td class="py-4 px-4 text-center font-bold text-slate-500 text-xs align-top">25</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="space-y-1.5 max-w-[170px] mx-auto">
-                                        <!-- Stepper Input -->
-                                        <div class="flex items-center rounded-xl border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/90 shadow-xs overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 p-0.5">
+                                        <!-- Stepper Input Row -->
+                                        <div class="flex items-center justify-center gap-1.5">
                                             <button type="button" 
                                                     @click="adjustScore('presentation', -5)" 
                                                     title="Kurangi 5"
-                                                    class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-black text-xs">
+                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
                                                 -5
                                             </button>
                                             <input type="number" 
@@ -228,12 +246,12 @@
                                                    id="score_presentation" 
                                                    x-model="scores.presentation" 
                                                    min="0" max="100" required 
-                                                   class="w-full border-0 bg-transparent text-center font-black text-sm text-slate-800 dark:text-slate-100 p-1 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs" 
                                                    placeholder="0">
                                             <button type="button" 
                                                     @click="adjustScore('presentation', 5)" 
                                                     title="Tambah 5"
-                                                    class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-black text-xs">
+                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
                                                 +5
                                             </button>
                                         </div>
@@ -242,7 +260,7 @@
                                             <template x-for="val in presets" :key="val">
                                                 <button type="button" 
                                                         @click="setScore('presentation', val)" 
-                                                        :class="scores.presentation == val ? 'bg-indigo-600 text-white font-black shadow-xs ring-1 ring-indigo-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300'" 
+                                                        :class="scores.presentation == val ? 'bg-indigo-600 text-white font-black shadow-xs ring-1 ring-indigo-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-300 border border-slate-200/80 dark:border-slate-700/60'" 
                                                         class="px-1.5 py-0.5 rounded-md text-[9px] font-bold transition-all" 
                                                         x-text="val">
                                                 </button>
@@ -277,12 +295,12 @@
                                 <td class="py-4 px-4 text-center font-bold text-slate-500 text-xs align-top">40</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="space-y-1.5 max-w-[170px] mx-auto">
-                                        <!-- Stepper Input -->
-                                        <div class="flex items-center rounded-xl border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/90 shadow-xs overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 p-0.5">
+                                        <!-- Stepper Input Row -->
+                                        <div class="flex items-center justify-center gap-1.5">
                                             <button type="button" 
                                                     @click="adjustScore('explanation', -5)" 
                                                     title="Kurangi 5"
-                                                    class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-black text-xs">
+                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
                                                 -5
                                             </button>
                                             <input type="number" 
@@ -290,12 +308,12 @@
                                                    id="score_explanation" 
                                                    x-model="scores.explanation" 
                                                    min="0" max="100" required 
-                                                   class="w-full border-0 bg-transparent text-center font-black text-sm text-slate-800 dark:text-slate-100 p-1 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs" 
                                                    placeholder="0">
                                             <button type="button" 
                                                     @click="adjustScore('explanation', 5)" 
                                                     title="Tambah 5"
-                                                    class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-black text-xs">
+                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
                                                 +5
                                             </button>
                                         </div>
@@ -304,7 +322,7 @@
                                             <template x-for="val in presets" :key="val">
                                                 <button type="button" 
                                                         @click="setScore('explanation', val)" 
-                                                        :class="scores.explanation == val ? 'bg-indigo-600 text-white font-black shadow-xs ring-1 ring-indigo-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300'" 
+                                                        :class="scores.explanation == val ? 'bg-indigo-600 text-white font-black shadow-xs ring-1 ring-indigo-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-300 border border-slate-200/80 dark:border-slate-700/60'" 
                                                         class="px-1.5 py-0.5 rounded-md text-[9px] font-bold transition-all" 
                                                         x-text="val">
                                                 </button>
@@ -335,12 +353,12 @@
                                 <td class="py-4 px-4 text-center font-bold text-slate-500 text-xs align-top">35</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="space-y-1.5 max-w-[170px] mx-auto">
-                                        <!-- Stepper Input -->
-                                        <div class="flex items-center rounded-xl border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/90 shadow-xs overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 p-0.5">
+                                        <!-- Stepper Input Row -->
+                                        <div class="flex items-center justify-center gap-1.5">
                                             <button type="button" 
                                                     @click="adjustScore('writing', -5)" 
                                                     title="Kurangi 5"
-                                                    class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-black text-xs">
+                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
                                                 -5
                                             </button>
                                             <input type="number" 
@@ -348,12 +366,12 @@
                                                    id="score_writing" 
                                                    x-model="scores.writing" 
                                                    min="0" max="100" required 
-                                                   class="w-full border-0 bg-transparent text-center font-black text-sm text-slate-800 dark:text-slate-100 p-1 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs" 
                                                    placeholder="0">
                                             <button type="button" 
                                                     @click="adjustScore('writing', 5)" 
                                                     title="Tambah 5"
-                                                    class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-black text-xs">
+                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
                                                 +5
                                             </button>
                                         </div>
@@ -362,7 +380,7 @@
                                             <template x-for="val in presets" :key="val">
                                                 <button type="button" 
                                                         @click="setScore('writing', val)" 
-                                                        :class="scores.writing == val ? 'bg-indigo-600 text-white font-black shadow-xs ring-1 ring-indigo-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300'" 
+                                                        :class="scores.writing == val ? 'bg-indigo-600 text-white font-black shadow-xs ring-1 ring-indigo-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-300 border border-slate-200/80 dark:border-slate-700/60'" 
                                                         class="px-1.5 py-0.5 rounded-md text-[9px] font-bold transition-all" 
                                                         x-text="val">
                                                 </button>
