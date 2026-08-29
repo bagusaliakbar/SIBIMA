@@ -262,18 +262,17 @@
                             <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-4 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-5">
                                 @php
                                     $slotGroups = [
-                                        ['label' => 'Pagi', 'icon' => '🌅', 'slots' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30']],
-                                        ['label' => 'Siang & Sore', 'icon' => '☀️', 'slots' => ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00']],
-                                        ['label' => 'Malam', 'icon' => '🌙', 'slots' => ['18:30', '19:00', '19:30', '20:00']]
+                                        ['label' => 'Pagi', 'slots' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30']],
+                                        ['label' => 'Siang & Sore', 'slots' => ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00']],
+                                        ['label' => 'Malam', 'slots' => ['18:30', '19:00', '19:30', '20:00']]
                                     ];
                                 @endphp
 
                                 @foreach($slotGroups as $group)
                                     <div>
-                                        <div class="flex items-center gap-2 mb-3">
-                                            <span class="text-sm">{{ $group['icon'] }}</span>
-                                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">{{ $group['label'] }}</span>
-                                            <div class="flex-1 h-px bg-slate-200 dark:bg-slate-800 ml-2"></div>
+                                        <div class="flex items-center gap-2 mb-2.5">
+                                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ $group['label'] }}</span>
+                                            <div class="flex-1 h-px bg-slate-200/80 dark:bg-slate-800 ml-1"></div>
                                         </div>
                                         <div class="flex flex-wrap gap-2 sm:gap-2.5">
                                             @foreach($group['slots'] as $slot)
