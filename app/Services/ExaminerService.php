@@ -118,6 +118,34 @@ class ExaminerService
     }
 
     /**
+     * Unapprove / Revert an approved revision.
+     */
+    public function unapproveRevision($revision)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi']) && $revision->examiner_id !== Auth::id()) {
+            throw new \Exception('Unauthorized access to revision.', 403);
+        }
+
+        $newStatus = 'revision';
+        if ($revision->student_notes || $revision->student_file || $revision->resubmitted_at) {
+            $newStatus = 'resubmitted';
+        }
+
+        $revision->update(['status' => $newStatus]);
+
+        if (method_exists($revision, 'detail') && $revision->detail?->thesis) {
+            $thesis = $revision->detail->thesis;
+            if ($thesis->status === 'completed') {
+                $thesis->update(['status' => 'active']);
+            }
+        }
+
+        $moduleName = str_contains(get_class($revision), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
+        $actorName = Auth::user()->name . (in_array(Auth::user()->role, ['admin', 'kaprodi']) ? ' (' . ucfirst(Auth::user()->role) . ')' : '');
+        ActivityLog::log('Pembatalan Penyetujuan Revisi', "{$actorName} membatalkan status selesai revisi {$moduleName} mahasiswa untuk ditinjau kembali.", $moduleName, $revision, ['status' => $newStatus]);
+    }
+
+    /**
      * Check if all revisions are approved and mark thesis as completed.
      */
     public function checkGraduation($detail)

@@ -169,6 +169,16 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         }
     }
 
+    public function unapproveRevision(SeminarRevision $revision)
+    {
+        try {
+            $this->examinerService->unapproveRevision($revision);
+            return redirect()->back()->with('success', 'Status selesai berhasil dibatalkan. Revisi seminar kini dibuka kembali.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
     public function approveRevisionDirect(Request $request, SeminarScheduleDetail $detail)
     {
         $user = Auth::user();

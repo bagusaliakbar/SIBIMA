@@ -273,6 +273,16 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         }
     }
 
+    public function unapproveRevision(ThesisDefenseRevision $revision)
+    {
+        try {
+            $this->examinerService->unapproveRevision($revision);
+            return redirect()->back()->with('success', 'Status selesai berhasil dibatalkan. Revisi kini dibuka kembali.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
     public function approveRevisionDirect(Request $request, ThesisDefenseScheduleDetail $detail)
     {
         $user = Auth::user();
