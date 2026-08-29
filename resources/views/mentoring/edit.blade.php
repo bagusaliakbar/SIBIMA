@@ -242,18 +242,24 @@
 
                         <!-- Visual Time Slot Selector -->
                         <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Pilih Waktu / Jam Baru <span class="text-orange-600">*</span>
-                                    <span class="ml-2 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-3 py-1 rounded-full border border-orange-200/60 dark:border-orange-900/50" x-text="selectedTime + ' WIB'"></span>
-                                </label>
-                                <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 underline transition-colors">
-                                    <span x-text="customTimeMode ? '← Pilih Slot Waktu' : '⚙️ Waktu Kustom / Spesifik'"></span>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <label class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                                        <span>Pilih Waktu / Jam Baru</span>
+                                        <span class="text-orange-600 font-bold">*</span>
+                                    </label>
+                                    <span class="inline-flex items-center gap-1 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-lg border border-orange-200/60 dark:border-orange-900/50 whitespace-nowrap shadow-xs">
+                                        <span x-text="selectedTime"></span>
+                                        <span class="text-[10px] text-orange-500/90 font-bold">WIB</span>
+                                    </span>
+                                </div>
+                                <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto">
+                                    <span x-text="customTimeMode ? '← Kembali ke Slot Waktu' : '⚙️ Input Manual / Kustom'"></span>
                                 </button>
                             </div>
 
                             <!-- Modern Well-Spaced Slot Container -->
-                            <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-5">
+                            <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-4 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-5">
                                 @php
                                     $slotGroups = [
                                         ['label' => 'Pagi', 'icon' => '🌅', 'slots' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30']],
@@ -269,7 +275,7 @@
                                             <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">{{ $group['label'] }}</span>
                                             <div class="flex-1 h-px bg-slate-200 dark:bg-slate-800 ml-2"></div>
                                         </div>
-                                        <div class="flex flex-wrap gap-2.5 sm:gap-3">
+                                        <div class="flex flex-wrap gap-2 sm:gap-2.5">
                                             @foreach($group['slots'] as $slot)
                                                 <button type="button" 
                                                         @click="selectTimeSlot('{{ $slot }}')" 
@@ -280,7 +286,7 @@
                                                             : (isSlotDisabled('{{ $slot }}') 
                                                                 ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/40 dark:border-slate-800 cursor-not-allowed line-through opacity-40' 
                                                                 : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 shadow-sm')"
-                                                        class="flex-1 min-w-[72px] max-w-[105px] py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center">
+                                                        class="flex-1 min-w-[68px] sm:min-w-[72px] max-w-[105px] py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center">
                                                     <span>{{ $slot }}</span>
                                                 </button>
                                             @endforeach
@@ -288,10 +294,10 @@
                                     </div>
                                 @endforeach
 
-                                <div class="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center gap-5 text-[11px] text-slate-500 dark:text-slate-400">
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Terpilih</span></span>
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 inline-block shadow-sm"></span> <span class="font-medium">Tersedia</span></span>
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block line-through opacity-60"></span> <span class="font-medium">Terlewat</span></span>
+                                <div class="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center gap-4 sm:gap-6 text-[11px] text-slate-600 dark:text-slate-300">
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Terpilih</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 inline-block shadow-sm"></span> <span class="font-medium text-slate-700 dark:text-slate-200">Tersedia</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 inline-block"></span> <span class="font-medium text-slate-400 dark:text-slate-400 line-through">Terlewat</span></span>
                                 </div>
                             </div>
 
