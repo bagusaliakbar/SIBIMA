@@ -269,7 +269,7 @@
                                             <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">{{ $group['label'] }}</span>
                                             <div class="flex-1 h-px bg-slate-200 dark:bg-slate-800 ml-2"></div>
                                         </div>
-                                        <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2 sm:gap-2.5">
+                                        <div class="flex flex-wrap gap-2.5 sm:gap-3">
                                             @foreach($group['slots'] as $slot)
                                                 <button type="button" 
                                                         @click="selectTimeSlot('{{ $slot }}')" 
@@ -280,7 +280,7 @@
                                                             : (isSlotDisabled('{{ $slot }}') 
                                                                 ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/40 dark:border-slate-800 cursor-not-allowed line-through opacity-40' 
                                                                 : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 shadow-sm')"
-                                                        class="py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center">
+                                                        class="flex-1 min-w-[72px] max-w-[105px] py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center">
                                                     <span>{{ $slot }}</span>
                                                 </button>
                                             @endforeach
