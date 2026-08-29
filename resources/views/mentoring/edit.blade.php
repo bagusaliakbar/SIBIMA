@@ -241,62 +241,58 @@
                         </div>
 
                         <!-- Visual Time Slot Selector -->
-                        <div class="space-y-3">
+                        <div class="space-y-2.5">
                             <div class="flex items-center justify-between">
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Pilih Waktu / Jam Baru <span class="text-orange-600">*</span>
-                                    <span class="ml-2 text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-2.5 py-0.5 rounded-full" x-text="selectedTime + ' WIB'"></span>
+                                    <span class="ml-2 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/60 dark:border-orange-900/50" x-text="selectedTime + ' WIB'"></span>
                                 </label>
                                 <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 underline transition-colors">
-                                    <span x-text="customTimeMode ? '← Kembali ke Pilihan Slot' : '⚙️ Waktu Kustom / Spesifik'"></span>
+                                    <span x-text="customTimeMode ? '← Pilih Slot Waktu' : '⚙️ Waktu Lainnya'"></span>
                                 </button>
                             </div>
 
-                            <!-- Slot Grid View -->
-                            <div x-show="!customTimeMode" class="space-y-4 bg-slate-50/60 dark:bg-slate-900/40 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-                                <template x-for="(slots, period) in timeSlots" :key="period">
-                                    <div class="space-y-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500" x-text="period"></span>
-                                            <div class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
-                                        </div>
-                                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
-                                            <template x-for="slot in slots" :key="slot">
-                                                <button type="button" 
-                                                        @click="selectTimeSlot(slot)" 
-                                                        :disabled="isSlotDisabled(slot)"
-                                                        :title="isSlotDisabled(slot) ? 'Waktu telah terlewat' : 'Pilih jam ' + slot + ' WIB'"
-                                                        :class="[
-                                                            selectedTime === slot ? 'bg-orange-600 text-white font-black border-orange-600 shadow-md shadow-orange-500/25 ring-2 ring-orange-500/30 scale-[1.03]' : '',
-                                                            isSlotDisabled(slot) ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/50 dark:border-slate-800/80 cursor-not-allowed line-through opacity-50' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 shadow-sm'
-                                                        ]"
-                                                        class="relative px-2.5 py-2 rounded-xl border text-xs font-bold transition-all duration-150 flex items-center justify-center gap-1.5 min-h-[38px]">
-                                                    <span x-text="slot"></span>
-                                                    <svg x-show="selectedTime === slot" class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                </button>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </template>
+                            <!-- Compact Slot Flex Container -->
+                            <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-3.5 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                                @php
+                                    $slotGroups = [
+                                        'Pagi' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
+                                        'Siang & Sore' => ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
+                                        'Malam' => ['18:30', '19:00', '19:30', '20:00']
+                                    ];
+                                @endphp
 
-                                <div class="pt-2 flex flex-wrap items-center gap-4 text-[10px] text-slate-400 dark:text-slate-500">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded bg-orange-600 inline-block shadow-sm"></span>
-                                        <span>Aktif Terpilih</span>
+                                @foreach($slotGroups as $groupLabel => $slots)
+                                    <div>
+                                        <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1.5">{{ $groupLabel }}</span>
+                                        <div class="flex flex-wrap gap-1.5 sm:gap-2">
+                                            @foreach($slots as $slot)
+                                                <button type="button" 
+                                                        @click="selectTimeSlot('{{ $slot }}')" 
+                                                        :disabled="isSlotDisabled('{{ $slot }}')"
+                                                        :title="isSlotDisabled('{{ $slot }}') ? 'Waktu telah terlewat' : 'Pilih jam {{ $slot }} WIB'"
+                                                        :class="selectedTime === '{{ $slot }}' 
+                                                            ? 'bg-orange-600 text-white font-black border-orange-600 shadow-sm ring-2 ring-orange-500/30 scale-105' 
+                                                            : (isSlotDisabled('{{ $slot }}') 
+                                                                ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/40 dark:border-slate-800 cursor-not-allowed line-through opacity-40' 
+                                                                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 shadow-sm')"
+                                                        class="px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs font-bold transition-all min-w-[58px] sm:min-w-[62px] text-center flex items-center justify-center gap-1">
+                                                    <span>{{ $slot }}</span>
+                                                </button>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 inline-block"></span>
-                                        <span>Tersedia</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block line-through text-slate-400"></span>
-                                        <span>Terlewat / Nonaktif</span>
-                                    </div>
+                                @endforeach
+
+                                <div class="pt-2 border-t border-slate-200/50 dark:border-slate-800/80 flex flex-wrap items-center gap-4 text-[10px] text-slate-400 dark:text-slate-500">
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> Terpilih</span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 inline-block"></span> Tersedia</span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block line-through"></span> Terlewat</span>
                                 </div>
                             </div>
 
                             <!-- Fallback Custom Time Picker -->
-                            <div x-show="customTimeMode" class="bg-slate-50/60 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                            <div x-show="customTimeMode" class="bg-slate-50/60 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800">
                                 <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-2">Input Waktu Kustom (Jam & Menit Manual):</label>
                                 <input type="time" 
                                        x-model="selectedTime"
