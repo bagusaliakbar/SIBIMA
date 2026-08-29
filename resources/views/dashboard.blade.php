@@ -208,12 +208,6 @@
                                                 <div class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-600 text-white rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-800 shadow-sm">
                                                     <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 </div>
-                                            @elseif($isCurrent)
-                                                <!-- Pulsing Beacon for Active Step -->
-                                                <div class="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5">
-                                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-500 ring-2 ring-white dark:ring-slate-800"></span>
-                                                </div>
                                             @endif
                                         </div>
                                     </div>
