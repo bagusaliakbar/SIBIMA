@@ -106,15 +106,11 @@ class DashboardService
     public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense)
     {
         $isGraduated = $thesis && $thesis->status === 'completed';
-        $progressPercent = 0;
-        $seminarDone = false;
-        $defenseDone = false;
-        $revisionDone = false;
-        $currentStage = 0; // 0: No Thesis, 1: Judul, 2: Bimbingan, 3: Seminar, 4: Sidang, 5: Revisi, 6: Yudisium
+        $pastSessions = (int)($pastSessionsCount ?? 0);
 
+        // Revisions Check
         $hasDefenseRevisions = false;
         $allDefenseRevisionsApproved = false;
-
         if ($thesis) {
             $hasDefenseRevisions = ThesisDefenseRevision::whereHas('detail', function ($q) use ($thesis) {
                 $q->where('thesis_id', $thesis->id);
@@ -125,63 +121,70 @@ class DashboardService
                     $q->where('thesis_id', $thesis->id);
                 })->where('status', '!=', 'approved')->exists();
             }
-
-            $currentStage = 1; // Judul
-            $progressPercent = 15;
-
-            // Step 2: Bimbingan
-            if ($pastSessionsCount > 0) {
-                $currentStage = 2;
-                $progressPercent = 15 + min(25, ($pastSessionsCount / 8) * 25);
-            }
-
-            // Step 3: Seminar Proposal
-            $seminarDone = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']))
-                || ($thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2);
-            if ($seminarDone) {
-                $currentStage = 3;
-                $progressPercent = 50;
-            }
-
-            // Step 4: Sidang Akhir
-            $defenseDone = ($defense && in_array($defense->status, ['approved', 'completed', 'finished'])) 
-                || $hasDefenseRevisions 
-                || ($thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2);
-            if ($defenseDone) {
-                $currentStage = 4;
-                $progressPercent = 75;
-            }
-
-            // Step 5: Revisi Selesai
-            if ($hasDefenseRevisions && $allDefenseRevisionsApproved) {
-                $revisionDone = true;
-                $currentStage = 5;
-                $progressPercent = 90;
-            }
-
-            // Step 6: Yudisium / Kelulusan
-            if ($isGraduated) {
-                $currentStage = 6;
-                $progressPercent = 100;
-                $seminarDone = true;
-                $defenseDone = true;
-                $revisionDone = true;
-            }
         }
 
-        $stage1Done = $thesis && ($currentStage > 1 || $thesis->status === 'active' || $thesis->status === 'completed');
-        $stage2Done = $currentStage > 2 || $seminarDone || ($pastSessionsCount >= 8);
-        $stage3Done = $currentStage > 3 || $defenseDone;
-        $stage4Done = $currentStage > 4 || $revisionDone || $isGraduated;
-        $stage5Done = ($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated;
+        // Determine step completion in chronological order
+        // 1. Judul Selesai: Thesis exists and is active or completed
+        $stage1Done = $thesis && in_array($thesis->status, ['active', 'completed']);
+        
+        // 3. Seminar Done: Seminar approved/completed OR ACC Sempro given by both advisors
+        $stage3Done = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']))
+            || ($thesis && $thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2);
+
+        // 2. Bimbingan Done: 8 or more sessions completed OR already reached seminar
+        $stage2Done = $stage1Done && ($pastSessions >= 8 || $stage3Done);
+
+        // 4. Sidang Done: Defense approved/completed OR Revisions exist OR ACC Sidang given
+        $stage4Done = ($defense && in_array($defense->status, ['approved', 'completed', 'finished']))
+            || $hasDefenseRevisions
+            || ($thesis && $thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2);
+
+        // 5. Revisi Done: Defense done and (all revisions approved or no revisions needed and defense is completed)
+        $stage5Done = $stage4Done && (($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated);
+
+        // 6. Yudisium Done: Graduated
         $stage6Done = $isGraduated;
+
+        // If graduated, all prior steps are completed
+        if ($isGraduated) {
+            $stage1Done = true;
+            $stage2Done = true;
+            $stage3Done = true;
+            $stage4Done = true;
+            $stage5Done = true;
+            $stage6Done = true;
+        }
+
+        // Determine current active stage (1 to 6)
+        if (!$stage1Done) {
+            $currentStage = 1;
+            $progressPercent = $thesis ? 10 : 0;
+        } elseif (!$stage2Done) {
+            $currentStage = 2;
+            $progressPercent = 15 + min(25, ($pastSessions / 8) * 25);
+        } elseif (!$stage3Done) {
+            $currentStage = 3;
+            $progressPercent = 45;
+        } elseif (!$stage4Done) {
+            $currentStage = 4;
+            $progressPercent = 70;
+        } elseif (!$stage5Done) {
+            $currentStage = 5;
+            $progressPercent = 85;
+        } elseif (!$stage6Done) {
+            $currentStage = 6;
+            $progressPercent = 95;
+        } else {
+            $currentStage = 6;
+            $progressPercent = 100;
+        }
 
         return [
             'percent' => $progressPercent,
             'isGraduated' => $isGraduated,
-            'seminarDone' => $seminarDone,
-            'defenseDone' => $defenseDone,
-            'revisionDone' => $revisionDone,
+            'seminarDone' => $stage3Done,
+            'defenseDone' => $stage4Done,
+            'revisionDone' => $stage5Done,
             'currentStage' => $currentStage,
             'stages' => [
                 [
@@ -192,7 +195,7 @@ class DashboardService
                     'url' => $thesis ? route('theses.index') : route('theses.create'),
                     'badge' => null,
                     'is_completed' => $stage1Done,
-                    'is_current' => $currentStage == 1 && !$stage1Done,
+                    'is_current' => $currentStage === 1,
                 ],
                 [
                     'number' => 2,
@@ -200,9 +203,9 @@ class DashboardService
                     'short_name' => 'Bimbingan',
                     'desc' => 'Proses bimbingan berkala',
                     'url' => route('mentoring-sessions.index'),
-                    'badge' => ($pastSessionsCount ?? 0) . '/8',
+                    'badge' => $pastSessions . '/8',
                     'is_completed' => $stage2Done,
-                    'is_current' => $currentStage == 2 && !$stage2Done,
+                    'is_current' => $currentStage === 2,
                 ],
                 [
                     'number' => 3,
@@ -212,7 +215,7 @@ class DashboardService
                     'url' => route('seminar-applications.index'),
                     'badge' => null,
                     'is_completed' => $stage3Done,
-                    'is_current' => $currentStage == 3 && !$stage3Done,
+                    'is_current' => $currentStage === 3,
                 ],
                 [
                     'number' => 4,
@@ -222,7 +225,7 @@ class DashboardService
                     'url' => route('thesis-defense-applications.index'),
                     'badge' => null,
                     'is_completed' => $stage4Done,
-                    'is_current' => $currentStage == 4 && !$stage4Done,
+                    'is_current' => $currentStage === 4,
                 ],
                 [
                     'number' => 5,
@@ -232,7 +235,7 @@ class DashboardService
                     'url' => route('student-defense-revisions.index'),
                     'badge' => null,
                     'is_completed' => $stage5Done,
-                    'is_current' => ($currentStage == 5 || ($defenseDone && !$stage5Done)) && !$isGraduated,
+                    'is_current' => $currentStage === 5,
                 ],
                 [
                     'number' => 6,
@@ -242,7 +245,7 @@ class DashboardService
                     'url' => route('student.history'),
                     'badge' => $isGraduated ? 'Lulus' : null,
                     'is_completed' => $stage6Done,
-                    'is_current' => $stage6Done || ($stage5Done && !$stage6Done),
+                    'is_current' => $currentStage === 6 && !$stage6Done,
                 ]
             ]
         ];

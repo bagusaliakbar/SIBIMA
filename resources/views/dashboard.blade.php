@@ -149,39 +149,38 @@
 
                 <!-- Interactive Student Journey Roadmap -->
                 <div class="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
-                    <div class="relative pt-6 pb-6 min-w-[760px] sm:min-w-0">
-                        <!-- Progress Line (Background) -->
-                        <div class="absolute top-[48px] left-8 right-8 h-2 bg-slate-100 dark:bg-slate-900 rounded-full"></div>
-                        
-                        @php
-                            $completedCount = collect($stages)->filter(fn($s) => !empty($s['is_completed']))->count();
-                            $activeProgressPercent = count($stages) > 1 ? max(0, min(100, ($completedCount / (count($stages) - 1)) * 100)) : 0;
-                        @endphp
-
-                        <!-- Progress Line (Active Animated Glow) -->
-                        <div class="absolute top-[48px] left-8 h-2 bg-gradient-to-r from-emerald-500 via-orange-500 to-amber-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" 
-                             style="width: calc({{ $activeProgressPercent }}% * 0.88)"></div>
-
-                        <div class="relative flex justify-between gap-3">
+                    <div class="min-w-[760px] sm:min-w-0 py-3">
+                        <div class="flex items-start justify-between">
                         @foreach($stages as $index => $stage)
                             @php 
                                 $stageNum = $stage['number'] ?? ($index + 1);
                                 $isCompleted = !empty($stage['is_completed']);
                                 $isCurrent = !empty($stage['is_current']);
                                 $stageUrl = $stage['url'] ?? '#';
+                                $isFirst = $index === 0;
                             @endphp
                             
-                            <div class="flex flex-col items-center flex-1">
+                            <!-- Stage Item Container with Dynamic Connected Line -->
+                            <div class="flex-1 flex flex-col items-center relative">
+                                
+                                <!-- Connector Line from Previous Stage -->
+                                @if(!$isFirst)
+                                    <div class="absolute top-7 right-[50%] left-[-50%] h-1 -translate-y-1/2 z-0
+                                        {{ $isCompleted ? 'bg-emerald-500' : ($isCurrent ? 'bg-gradient-to-r from-emerald-500 to-orange-500' : 'bg-slate-200 dark:bg-slate-700') }}">
+                                    </div>
+                                @endif
+
+                                <!-- Clickable Milestone Node -->
                                 <a href="{{ $stageUrl }}" 
                                    title="Buka {{ $stage['name'] }}"
-                                   class="flex flex-col items-center group/node transition-transform duration-300 hover:scale-105 cursor-pointer text-center w-full">
+                                   class="relative z-10 flex flex-col items-center group/node transition-all duration-300 hover:scale-105 cursor-pointer text-center w-full px-1">
                                     
                                     <!-- Node Circle / Icon Wrapper -->
-                                    <div class="relative z-10">
+                                    <div class="relative">
                                         <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative
-                                            {{ $isCompleted ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-900/20 ring-2 ring-emerald-400/40' : '' }}
-                                            {{ $isCurrent && !$isCompleted ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white ring-4 ring-orange-500/30 shadow-[0_0_25px_rgba(249,115,22,0.45)] animate-pulse' : '' }}
-                                            {{ !$isCompleted && !$isCurrent ? 'bg-white dark:bg-slate-800 border-2 border-slate-200/80 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover/node:border-orange-400 dark:group-hover/node:border-orange-500' : '' }}">
+                                            {{ $isCompleted ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 ring-4 ring-emerald-100 dark:ring-emerald-950/60' : '' }}
+                                            {{ $isCurrent ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white ring-4 ring-orange-500/30 dark:ring-orange-500/40 shadow-[0_0_25px_rgba(249,115,22,0.45)] scale-110' : '' }}
+                                            {{ !$isCompleted && !$isCurrent ? 'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover/node:border-orange-400 group-hover/node:text-orange-500 dark:group-hover/node:border-orange-500' : '' }}">
                                             
                                             <!-- Step Icons -->
                                             @if($stageNum == 1)
@@ -206,14 +205,14 @@
 
                                             <!-- Green Checkmark Badge for Completed Step -->
                                             @if($isCompleted)
-                                                <div class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-900 shadow-sm animate-bounce">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M5 13l4 4L19 7"></path></svg>
+                                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-600 text-white rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-800 shadow-sm">
+                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 </div>
                                             @elseif($isCurrent)
                                                 <!-- Pulsing Beacon for Active Step -->
-                                                <div class="absolute -top-1 -right-1 flex h-3 w-3">
+                                                <div class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
                                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500 ring-2 ring-white dark:ring-slate-900"></span>
+                                                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-500 ring-2 ring-white dark:ring-slate-800"></span>
                                                 </div>
                                             @endif
                                         </div>
@@ -221,7 +220,7 @@
                                         <!-- Badge Sub-counter (e.g. 6/8 Sesi) -->
                                         @if(!empty($stage['badge']))
                                             <div class="absolute -bottom-2.5 inset-x-0 flex justify-center">
-                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black {{ $isCompleted ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : ($isCurrent ? 'bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400') }} shadow-xs">
+                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black {{ $isCompleted ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800' : ($isCurrent ? 'bg-orange-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600') }}">
                                                     {{ $stage['badge'] }}
                                                 </span>
                                             </div>
@@ -229,25 +228,27 @@
                                     </div>
                                     
                                     <!-- Step Label & Status -->
-                                    <div class="mt-4 text-center px-1">
+                                    <div class="mt-4 text-center">
                                         <h4 class="text-[11px] font-black uppercase tracking-tight transition-colors group-hover/node:text-orange-600 dark:group-hover/node:text-orange-400
                                             {{ $isCompleted ? 'text-slate-800 dark:text-slate-100' : '' }}
-                                            {{ $isCurrent && !$isCompleted ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
+                                            {{ $isCurrent ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
                                             {{ !$isCompleted && !$isCurrent ? 'text-slate-400 dark:text-slate-500' : '' }}">
                                             {{ $stage['name'] }}
                                         </h4>
                                         
                                         <div class="mt-1">
                                             @if($isCompleted)
-                                                <span class="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
-                                                    <span>✓</span> Selesai
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                    Selesai
                                                 </span>
                                             @elseif($isCurrent)
-                                                <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-orange-600 dark:text-orange-400 animate-pulse">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Aktif
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-2 py-0.5 rounded-md border border-orange-200 dark:border-orange-800/60 animate-pulse">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                                    Aktif
                                                 </span>
                                             @else
-                                                <span class="text-[8px] font-semibold text-slate-400 dark:text-slate-600">
+                                                <span class="text-[9px] font-medium text-slate-400 dark:text-slate-600">
                                                     Menunggu
                                                 </span>
                                             @endif
