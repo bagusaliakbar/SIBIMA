@@ -109,76 +109,141 @@ class DashboardService
         $progressPercent = 0;
         $seminarDone = false;
         $defenseDone = false;
-        $currentStage = 0; // 0: No Thesis, 1: Judul, 2: Bimbingan, 3: Seminar, 4: Penelitian, 5: Sidang, 6: Yudisium
+        $revisionDone = false;
+        $currentStage = 0; // 0: No Thesis, 1: Judul, 2: Bimbingan, 3: Seminar, 4: Sidang, 5: Revisi, 6: Yudisium
+
+        $hasDefenseRevisions = false;
+        $allDefenseRevisionsApproved = false;
 
         if ($thesis) {
+            $hasDefenseRevisions = ThesisDefenseRevision::whereHas('detail', function ($q) use ($thesis) {
+                $q->where('thesis_id', $thesis->id);
+            })->exists();
+
+            if ($hasDefenseRevisions) {
+                $allDefenseRevisionsApproved = !ThesisDefenseRevision::whereHas('detail', function ($q) use ($thesis) {
+                    $q->where('thesis_id', $thesis->id);
+                })->where('status', '!=', 'approved')->exists();
+            }
+
             $currentStage = 1; // Judul
             $progressPercent = 15;
 
-            // Step 2: Bimbingan (Minimal 4 kali)
-            $mentoring1 = min(4, $pastSessionsCount);
+            // Step 2: Bimbingan
             if ($pastSessionsCount > 0) {
                 $currentStage = 2;
-                $progressPercent += ($mentoring1 / 4) * 20;
+                $progressPercent = 15 + min(25, ($pastSessionsCount / 8) * 25);
             }
 
-            if ($mentoring1 >= 4) {
-                // Step 3: Seminar
-                $seminarDone = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']));
-                if ($seminarDone) {
-                    $currentStage = 3;
-                    $progressPercent = 55;
-
-                    // Step 4: Penelitian (Bimbingan setelah seminar)
-                    $mentoring2 = max(0, min(4, $pastSessionsCount - 4));
-                    if ($mentoring2 > 0) {
-                        $currentStage = 4;
-                        $progressPercent += ($mentoring2 / 4) * 20;
-                    }
-
-                    if ($mentoring2 >= 4) {
-                        // Step 5: Sidang
-                        $hasDefenseRevisions = ThesisDefenseRevision::whereHas('detail', function ($q) use ($thesis) {
-                            $q->where('thesis_id', $thesis->id);
-                        })->exists();
-
-                        $defenseDone = ($defense && in_array($defense->status, ['approved', 'completed', 'finished'])) || $hasDefenseRevisions;
-                        if ($defenseDone) {
-                            $currentStage = 5;
-                            $progressPercent = 90;
-
-                            // Step 6: Yudisium / Kelulusan
-                            if ($isGraduated) {
-                                $currentStage = 6;
-                                $progressPercent = 100;
-                            }
-                        }
-                    }
-                }
+            // Step 3: Seminar Proposal
+            $seminarDone = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']))
+                || ($thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2);
+            if ($seminarDone) {
+                $currentStage = 3;
+                $progressPercent = 50;
             }
 
-            // Fallback: If thesis is already completed, force 100% progress
+            // Step 4: Sidang Akhir
+            $defenseDone = ($defense && in_array($defense->status, ['approved', 'completed', 'finished'])) 
+                || $hasDefenseRevisions 
+                || ($thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2);
+            if ($defenseDone) {
+                $currentStage = 4;
+                $progressPercent = 75;
+            }
+
+            // Step 5: Revisi Selesai
+            if ($hasDefenseRevisions && $allDefenseRevisionsApproved) {
+                $revisionDone = true;
+                $currentStage = 5;
+                $progressPercent = 90;
+            }
+
+            // Step 6: Yudisium / Kelulusan
             if ($isGraduated) {
                 $currentStage = 6;
                 $progressPercent = 100;
                 $seminarDone = true;
                 $defenseDone = true;
+                $revisionDone = true;
             }
         }
+
+        $stage1Done = $thesis && ($currentStage > 1 || $thesis->status === 'active' || $thesis->status === 'completed');
+        $stage2Done = $currentStage > 2 || $seminarDone || ($pastSessionsCount >= 8);
+        $stage3Done = $currentStage > 3 || $defenseDone;
+        $stage4Done = $currentStage > 4 || $revisionDone || $isGraduated;
+        $stage5Done = ($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated;
+        $stage6Done = $isGraduated;
 
         return [
             'percent' => $progressPercent,
             'isGraduated' => $isGraduated,
             'seminarDone' => $seminarDone,
             'defenseDone' => $defenseDone,
+            'revisionDone' => $revisionDone,
             'currentStage' => $currentStage,
             'stages' => [
-                ['name' => 'Judul', 'desc' => 'Pengajuan judul skripsi'],
-                ['name' => 'Bimbingan', 'desc' => 'Proses bimbingan Bab 1-3'],
-                ['name' => 'Seminar', 'desc' => 'Seminar proposal/hasil'],
-                ['name' => 'Penelitian', 'desc' => 'Pengolahan data & bimbingan Bab 4-5'],
-                ['name' => 'Sidang', 'desc' => 'Ujian sidang akhir skripsi'],
-                ['name' => 'Yudisium', 'desc' => 'Pernyataan kelulusan final']
+                [
+                    'number' => 1,
+                    'name' => 'Pengajuan Judul',
+                    'short_name' => 'Judul',
+                    'desc' => 'Pengajuan judul skripsi',
+                    'url' => $thesis ? route('theses.index') : route('theses.create'),
+                    'badge' => null,
+                    'is_completed' => $stage1Done,
+                    'is_current' => $currentStage == 1 && !$stage1Done,
+                ],
+                [
+                    'number' => 2,
+                    'name' => 'Bimbingan',
+                    'short_name' => 'Bimbingan',
+                    'desc' => 'Proses bimbingan berkala',
+                    'url' => route('mentoring-sessions.index'),
+                    'badge' => ($pastSessionsCount ?? 0) . '/8',
+                    'is_completed' => $stage2Done,
+                    'is_current' => $currentStage == 2 && !$stage2Done,
+                ],
+                [
+                    'number' => 3,
+                    'name' => 'Seminar Proposal',
+                    'short_name' => 'Sempro',
+                    'desc' => 'Ujian seminar proposal',
+                    'url' => route('seminar-applications.index'),
+                    'badge' => null,
+                    'is_completed' => $stage3Done,
+                    'is_current' => $currentStage == 3 && !$stage3Done,
+                ],
+                [
+                    'number' => 4,
+                    'name' => 'Sidang Akhir',
+                    'short_name' => 'Sidang',
+                    'desc' => 'Ujian sidang skripsi',
+                    'url' => route('thesis-defense-applications.index'),
+                    'badge' => null,
+                    'is_completed' => $stage4Done,
+                    'is_current' => $currentStage == 4 && !$stage4Done,
+                ],
+                [
+                    'number' => 5,
+                    'name' => 'Revisi Selesai',
+                    'short_name' => 'Revisi',
+                    'desc' => 'Penyelesaian revisi sidang',
+                    'url' => route('student-defense-revisions.index'),
+                    'badge' => null,
+                    'is_completed' => $stage5Done,
+                    'is_current' => ($currentStage == 5 || ($defenseDone && !$stage5Done)) && !$isGraduated,
+                ],
+                [
+                    'number' => 6,
+                    'name' => 'Yudisium',
+                    'short_name' => 'Yudisium',
+                    'desc' => 'Pernyataan kelulusan final',
+                    'url' => route('student.history'),
+                    'badge' => $isGraduated ? 'Lulus' : null,
+                    'is_completed' => $stage6Done,
+                    'is_current' => $stage6Done || ($stage5Done && !$stage6Done),
+                ]
             ]
         ];
     }

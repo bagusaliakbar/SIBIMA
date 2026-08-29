@@ -147,91 +147,147 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
-                    <div class="relative pt-4 pb-4 min-w-[500px] sm:min-w-0">
+                <!-- Interactive Student Journey Roadmap -->
+                <div class="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
+                    <div class="relative pt-6 pb-6 min-w-[760px] sm:min-w-0">
                         <!-- Progress Line (Background) -->
-                        <div class="absolute top-[42px] left-0 right-0 h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full"></div>
-                        <!-- Progress Line (Active) -->
-                        <div class="absolute top-[42px] left-0 h-1.5 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" style="width: {{ max(0, min(100, (($currentStage - 1) / (count($stages) - 1)) * 100)) }}%"></div>
+                        <div class="absolute top-[48px] left-8 right-8 h-2 bg-slate-100 dark:bg-slate-900 rounded-full"></div>
+                        
+                        @php
+                            $completedCount = collect($stages)->filter(fn($s) => !empty($s['is_completed']))->count();
+                            $activeProgressPercent = count($stages) > 1 ? max(0, min(100, ($completedCount / (count($stages) - 1)) * 100)) : 0;
+                        @endphp
 
-                        <div class="relative flex justify-between gap-2">
+                        <!-- Progress Line (Active Animated Glow) -->
+                        <div class="absolute top-[48px] left-8 h-2 bg-gradient-to-r from-emerald-500 via-orange-500 to-amber-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" 
+                             style="width: calc({{ $activeProgressPercent }}% * 0.88)"></div>
+
+                        <div class="relative flex justify-between gap-3">
                         @foreach($stages as $index => $stage)
                             @php 
-                                $stageNum = $index + 1;
-                                $isActive = $currentStage >= $stageNum;
-                                $isCurrent = $currentStage == $stageNum;
-                                
-                                // Final stage logic: if currentStage is 6, then stage 6 is completed
-                                $statusLabel = 'Pending';
-                                if ($isActive) {
-                                    if ($isCurrent) {
-                                        $statusLabel = ($stageNum == 6 && $isGraduated) ? 'Completed' : 'In Progress';
-                                    } else {
-                                        $statusLabel = 'Completed';
-                                    }
-                                }
+                                $stageNum = $stage['number'] ?? ($index + 1);
+                                $isCompleted = !empty($stage['is_completed']);
+                                $isCurrent = !empty($stage['is_current']);
+                                $stageUrl = $stage['url'] ?? '#';
                             @endphp
+                            
                             <div class="flex flex-col items-center flex-1">
-                                <div class="relative group/step">
-                                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center z-10 transition-all duration-500 relative
-                                        {{ $isActive ? 'bg-orange-600 text-white shadow-2xl shadow-orange-900/30' : 'bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-300 dark:text-slate-600' }}
-                                        {{ $isCurrent ? 'ring-4 ring-orange-500/20 scale-110' : '' }}">
-                                        
-                                        @if($stageNum == 1)
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        @elseif($stageNum == 2)
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                        @elseif($stageNum == 3)
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 4v4h4"></path></svg>
-                                        @elseif($stageNum == 4)
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                                        @elseif($stageNum == 5)
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"></path></svg>
-                                        @else
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
-                                        @endif
+                                <a href="{{ $stageUrl }}" 
+                                   title="Buka {{ $stage['name'] }}"
+                                   class="flex flex-col items-center group/node transition-transform duration-300 hover:scale-105 cursor-pointer text-center w-full">
+                                    
+                                    <!-- Node Circle / Icon Wrapper -->
+                                    <div class="relative z-10">
+                                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative
+                                            {{ $isCompleted ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-900/20 ring-2 ring-emerald-400/40' : '' }}
+                                            {{ $isCurrent && !$isCompleted ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white ring-4 ring-orange-500/30 shadow-[0_0_25px_rgba(249,115,22,0.45)] animate-pulse' : '' }}
+                                            {{ !$isCompleted && !$isCurrent ? 'bg-white dark:bg-slate-800 border-2 border-slate-200/80 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover/node:border-orange-400 dark:group-hover/node:border-orange-500' : '' }}">
+                                            
+                                            <!-- Step Icons -->
+                                            @if($stageNum == 1)
+                                                <!-- 1. Pengajuan Judul -->
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            @elseif($stageNum == 2)
+                                                <!-- 2. Bimbingan -->
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            @elseif($stageNum == 3)
+                                                <!-- 3. Seminar Proposal -->
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 4v4h4"></path></svg>
+                                            @elseif($stageNum == 4)
+                                                <!-- 4. Sidang Akhir -->
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                            @elseif($stageNum == 5)
+                                                <!-- 5. Revisi Selesai -->
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                            @else
+                                                <!-- 6. Yudisium -->
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
+                                            @endif
 
-                                        @if($isActive && !($isCurrent && $statusLabel != 'Completed'))
-                                            <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-sm">
-                                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                            <!-- Green Checkmark Badge for Completed Step -->
+                                            @if($isCompleted)
+                                                <div class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-900 shadow-sm animate-bounce">
+                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M5 13l4 4L19 7"></path></svg>
+                                                </div>
+                                            @elseif($isCurrent)
+                                                <!-- Pulsing Beacon for Active Step -->
+                                                <div class="absolute -top-1 -right-1 flex h-3 w-3">
+                                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500 ring-2 ring-white dark:ring-slate-900"></span>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <!-- Badge Sub-counter (e.g. 6/8 Sesi) -->
+                                        @if(!empty($stage['badge']))
+                                            <div class="absolute -bottom-2.5 inset-x-0 flex justify-center">
+                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black {{ $isCompleted ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : ($isCurrent ? 'bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400') }} shadow-xs">
+                                                    {{ $stage['badge'] }}
+                                                </span>
                                             </div>
                                         @endif
                                     </div>
                                     
-                                    <!-- Tooltip / Label -->
-                                    <div class="mt-4 text-center">
-                                        <h4 class="text-[11px] font-black uppercase tracking-tight {{ $isActive ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400' }}">{{ $stage['name'] }}</h4>
-                                        <p class="text-[8px] font-bold {{ $isActive ? 'text-orange-500' : 'text-slate-400' }} leading-none mt-1 opacity-70">{{ $statusLabel }}</p>
+                                    <!-- Step Label & Status -->
+                                    <div class="mt-4 text-center px-1">
+                                        <h4 class="text-[11px] font-black uppercase tracking-tight transition-colors group-hover/node:text-orange-600 dark:group-hover/node:text-orange-400
+                                            {{ $isCompleted ? 'text-slate-800 dark:text-slate-100' : '' }}
+                                            {{ $isCurrent && !$isCompleted ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
+                                            {{ !$isCompleted && !$isCurrent ? 'text-slate-400 dark:text-slate-500' : '' }}">
+                                            {{ $stage['name'] }}
+                                        </h4>
+                                        
+                                        <div class="mt-1">
+                                            @if($isCompleted)
+                                                <span class="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                                                    <span>✓</span> Selesai
+                                                </span>
+                                            @elseif($isCurrent)
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-orange-600 dark:text-orange-400 animate-pulse">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Aktif
+                                                </span>
+                                            @else
+                                                <span class="text-[8px] font-semibold text-slate-400 dark:text-slate-600">
+                                                    Menunggu
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
 
-                <!-- Footer Insight -->
-                <div class="mt-6 pt-6 border-t border-slate-50 dark:border-slate-700/50 flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <!-- Footer Stage Insight -->
+                <div class="mt-4 pt-5 border-t border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 shadow-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <p class="text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                            @if($currentStage == 1)
+                                Judul sudah diajukan! Mohon menunggu <span class="text-orange-600 dark:text-orange-400 font-bold">Persetujuan Koordinator/Pembimbing</span> dan persiapkan draf awal proposal.
+                            @elseif($currentStage == 2)
+                                Anda sedang dalam tahap bimbingan aktif. Lakukan bimbingan rutin hingga mendapatkan <span class="text-orange-600 dark:text-orange-400 font-bold">ACC Seminar Proposal</span> dari kedua pembimbing.
+                            @elseif($currentStage == 3)
+                                Tahap Seminar Proposal. Silakan ajukan jadwal dan persiapkan naskah proposal untuk diuji oleh tim penelaah/penguji.
+                            @elseif($currentStage == 4)
+                                Persiapkan materi presentasi dan naskah akhir skripsi Anda untuk menghadapi <span class="text-orange-600 dark:text-orange-400 font-bold">Sidang Akhir Skripsi</span>.
+                            @elseif($currentStage == 5)
+                                Ujian sidang selesai! Segera selesaikan catatan <span class="text-orange-600 dark:text-orange-400 font-bold">Revisi Naskah</span> dan mintalah persetujuan (approval) dari seluruh dosen penguji.
+                            @elseif($currentStage == 6)
+                                Luar biasa! Anda telah menyelesaikan seluruh rintangan skripsi dan dinyatakan <span class="text-emerald-600 dark:text-emerald-400 font-bold">LULUS / SIAP YUDISIUM</span>.
+                            @else
+                                Silakan ajukan judul skripsi untuk memulai perjalanan akademik skripsi Anda di SIBIMA.
+                            @endif
+                        </p>
                     </div>
-                    <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 italic">
-                        @if($currentStage == 1)
-                            Judul sudah diajukan! mohon untuk menunggu <span class="text-orange-600 font-bold">Persetujuan</span> dan matangkan konsep penelitiannya untuk didiskusikan dengan dosen pembimbing.
-                        @elseif($currentStage == 2)
-                            Anda sedang dalam tahap bimbingan. Terus perbaiki draf proposal (Bab 1-3) Anda hingga mendapatkan <span class="text-orange-600 font-bold">ACC Seminar</span> dari dosen pembimbing.
-                        @elseif($currentStage == 3)
-                            Selamat atas seminarnya! Segera revisi dan lanjutkan ke tahap <span class="text-orange-600 font-bold">Penelitian</span> untuk melengkapi bab 4 dan 5.
-                        @elseif($currentStage == 4)
-                            Fokus pada pengolahan data dan penyusunan <span class="text-orange-600 font-bold">Bab 4-5</span>. Anda sudah semakin dekat dengan sidang akhir!
-                        @elseif($currentStage == 5)
-                            Tahap krusial! Persiapkan materi presentasi Anda sebaik mungkin untuk menghadapi <span class="text-orange-600 font-bold">Sidang Akhir</span>.
-                        @elseif($currentStage == 6)
-                            Luar biasa! Anda telah menyelesaikan seluruh rintangan. Selamat atas status <span class="text-emerald-600 font-bold">LULUS</span> Anda!
-                        @else
-                            Silakan ajukan judul skripsi untuk memulai perjalanan akademik Anda di SIBIMA.
-                        @endif
-                    </p>
+
+                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest self-end sm:self-center shrink-0">
+                        💡 Klik tahapan untuk membuka
+                    </span>
                 </div>
             </div>
 
