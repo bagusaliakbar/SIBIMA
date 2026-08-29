@@ -241,42 +241,46 @@
                         </div>
 
                         <!-- Visual Time Slot Selector -->
-                        <div class="space-y-2.5">
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Pilih Waktu / Jam Baru <span class="text-orange-600">*</span>
-                                    <span class="ml-2 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/60 dark:border-orange-900/50" x-text="selectedTime + ' WIB'"></span>
+                                    <span class="ml-2 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-3 py-1 rounded-full border border-orange-200/60 dark:border-orange-900/50" x-text="selectedTime + ' WIB'"></span>
                                 </label>
                                 <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 underline transition-colors">
-                                    <span x-text="customTimeMode ? '← Pilih Slot Waktu' : '⚙️ Waktu Lainnya'"></span>
+                                    <span x-text="customTimeMode ? '← Pilih Slot Waktu' : '⚙️ Waktu Kustom / Spesifik'"></span>
                                 </button>
                             </div>
 
-                            <!-- Compact Slot Flex Container -->
-                            <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-3.5 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                            <!-- Modern Well-Spaced Slot Container -->
+                            <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-5">
                                 @php
                                     $slotGroups = [
-                                        'Pagi' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
-                                        'Siang & Sore' => ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                                        'Malam' => ['18:30', '19:00', '19:30', '20:00']
+                                        ['label' => 'Pagi', 'icon' => '🌅', 'slots' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30']],
+                                        ['label' => 'Siang & Sore', 'icon' => '☀️', 'slots' => ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00']],
+                                        ['label' => 'Malam', 'icon' => '🌙', 'slots' => ['18:30', '19:00', '19:30', '20:00']]
                                     ];
                                 @endphp
 
-                                @foreach($slotGroups as $groupLabel => $slots)
+                                @foreach($slotGroups as $group)
                                     <div>
-                                        <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1.5">{{ $groupLabel }}</span>
-                                        <div class="flex flex-wrap gap-1.5 sm:gap-2">
-                                            @foreach($slots as $slot)
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span class="text-sm">{{ $group['icon'] }}</span>
+                                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">{{ $group['label'] }}</span>
+                                            <div class="flex-1 h-px bg-slate-200 dark:bg-slate-800 ml-2"></div>
+                                        </div>
+                                        <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2 sm:gap-2.5">
+                                            @foreach($group['slots'] as $slot)
                                                 <button type="button" 
                                                         @click="selectTimeSlot('{{ $slot }}')" 
                                                         :disabled="isSlotDisabled('{{ $slot }}')"
                                                         :title="isSlotDisabled('{{ $slot }}') ? 'Waktu telah terlewat' : 'Pilih jam {{ $slot }} WIB'"
                                                         :class="selectedTime === '{{ $slot }}' 
-                                                            ? 'bg-orange-600 text-white font-black border-orange-600 shadow-sm ring-2 ring-orange-500/30 scale-105' 
+                                                            ? 'bg-orange-600 text-white font-black border-orange-600 shadow-md shadow-orange-500/25 ring-2 ring-orange-500/30 scale-[1.03]' 
                                                             : (isSlotDisabled('{{ $slot }}') 
                                                                 ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/40 dark:border-slate-800 cursor-not-allowed line-through opacity-40' 
                                                                 : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 shadow-sm')"
-                                                        class="px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs font-bold transition-all min-w-[58px] sm:min-w-[62px] text-center flex items-center justify-center gap-1">
+                                                        class="py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center">
                                                     <span>{{ $slot }}</span>
                                                 </button>
                                             @endforeach
@@ -284,10 +288,10 @@
                                     </div>
                                 @endforeach
 
-                                <div class="pt-2 border-t border-slate-200/50 dark:border-slate-800/80 flex flex-wrap items-center gap-4 text-[10px] text-slate-400 dark:text-slate-500">
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> Terpilih</span>
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 inline-block"></span> Tersedia</span>
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block line-through"></span> Terlewat</span>
+                                <div class="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center gap-5 text-[11px] text-slate-500 dark:text-slate-400">
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Terpilih</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 inline-block shadow-sm"></span> <span class="font-medium">Tersedia</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block line-through opacity-60"></span> <span class="font-medium">Terlewat</span></span>
                                 </div>
                             </div>
 
