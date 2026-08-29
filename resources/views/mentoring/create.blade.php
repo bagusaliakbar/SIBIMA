@@ -45,9 +45,81 @@
                     'p2_id' => $t->pembimbing2_id,
                     'p2_name' => $t->pembimbing2?->name,
                 ])) }},
+                today: '{{ date('Y-m-d') }}',
+                scheduledDate: '{{ old('scheduled_date', date('Y-m-d')) }}',
+                scheduledHour: '{{ old('scheduled_hour', '09') }}',
+                scheduledMinute: '{{ old('scheduled_minute', '00') }}',
+                availableHours: ['07','08','09','10','11','12','13','14','15','16','17','18','19','20','21'],
+                availableMinutes: ['00','05','10','15','20','25','30','35','40','45','50','55'],
+
+                init() {
+                    this.validateAndAdjustTime();
+                },
+
                 get selectedThesis() {
                     return this.thesesMap[this.selectedThesisId] || null;
                 },
+
+                isToday() {
+                    return this.scheduledDate === this.today;
+                },
+
+                isHourDisabled(h) {
+                    if (!this.isToday()) return false;
+                    const now = new Date();
+                    return parseInt(h) < now.getHours();
+                },
+
+                isMinuteDisabled(m) {
+                    if (!this.isToday()) return false;
+                    const now = new Date();
+                    const currentH = now.getHours();
+                    const selectedH = parseInt(this.scheduledHour);
+                    if (selectedH < currentH) return true;
+                    if (selectedH === currentH) return parseInt(m) <= now.getMinutes();
+                    return false;
+                },
+
+                onDateChange() {
+                    if (this.scheduledDate < this.today) {
+                        this.scheduledDate = this.today;
+                    }
+                    this.validateAndAdjustTime();
+                },
+
+                onHourChange() {
+                    this.validateAndAdjustTime();
+                },
+
+                validateAndAdjustTime() {
+                    if (this.isHourDisabled(this.scheduledHour) || !this.availableHours.includes(this.scheduledHour)) {
+                        const firstValidHour = this.availableHours.find(h => !this.isHourDisabled(h));
+                        if (firstValidHour) {
+                            this.scheduledHour = firstValidHour;
+                        } else {
+                            const d = new Date(this.scheduledDate);
+                            d.setDate(d.getDate() + 1);
+                            this.scheduledDate = d.toISOString().split('T')[0];
+                            this.scheduledHour = '08';
+                            this.scheduledMinute = '00';
+                            return;
+                        }
+                    }
+
+                    if (this.isMinuteDisabled(this.scheduledMinute)) {
+                        const firstValidMin = this.availableMinutes.find(m => !this.isMinuteDisabled(m));
+                        if (firstValidMin) {
+                            this.scheduledMinute = firstValidMin;
+                        } else {
+                            const nextHourIndex = this.availableHours.indexOf(this.scheduledHour) + 1;
+                            if (nextHourIndex < this.availableHours.length) {
+                                this.scheduledHour = this.availableHours[nextHourIndex];
+                                this.scheduledMinute = '00';
+                            }
+                        }
+                    }
+                },
+
                 openGoogleMeetNew() {
                     window.open('https://meet.google.com/new', '_blank');
                     this.meetOpened = true;
@@ -115,28 +187,46 @@
                     <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="scheduled_date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal <span class="text-orange-600">*</span></label>
-                            <input type="date" name="scheduled_date" id="scheduled_date" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                            <input type="date" 
+                                   name="scheduled_date" 
+                                   id="scheduled_date" 
+                                   min="{{ date('Y-m-d') }}"
+                                   x-model="scheduledDate"
+                                   @change="onDateChange()"
+                                   required 
+                                   class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                            <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Tanggal yang telah terlewat tidak dapat dipilih.</p>
                         </div>
                         <div>
-                            <label for="scheduled_hour" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Waktu <span class="text-orange-600">*</span></label>
+                            <label for="scheduled_hour" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Waktu / Jam Tersedia <span class="text-orange-600">*</span></label>
                             <div class="mt-2 flex items-center space-x-2">
                                 <div class="flex-1">
-                                    <select name="scheduled_hour" id="scheduled_hour" required class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                                        @for($h = 0; $h < 24; $h++)
-                                            <option value="{{ sprintf('%02d', $h) }}" {{ $h == 9 ? 'selected' : '' }}>{{ sprintf('%02d', $h) }}</option>
-                                        @endfor
+                                    <select name="scheduled_hour" 
+                                            id="scheduled_hour" 
+                                            x-model="scheduledHour"
+                                            @change="onHourChange()"
+                                            required 
+                                            class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                                        <template x-for="h in availableHours" :key="h">
+                                            <option :value="h" :disabled="isHourDisabled(h)" x-text="isHourDisabled(h) ? h + ' (Terlewat)' : h"></option>
+                                        </template>
                                     </select>
                                 </div>
                                 <span class="text-slate-500 dark:text-slate-400 font-bold">:</span>
                                 <div class="flex-1">
-                                    <select name="scheduled_minute" id="scheduled_minute" required class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                                        @for($m = 0; $m < 60; $m += 5)
-                                            <option value="{{ sprintf('%02d', $m) }}">{{ sprintf('%02d', $m) }}</option>
-                                        @endfor
+                                    <select name="scheduled_minute" 
+                                            id="scheduled_minute" 
+                                            x-model="scheduledMinute"
+                                            required 
+                                            class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                                        <template x-for="m in availableMinutes" :key="m">
+                                            <option :value="m" :disabled="isMinuteDisabled(m)" x-text="m"></option>
+                                        </template>
                                     </select>
                                 </div>
                                 <span class="text-xs text-slate-500 dark:text-slate-400 font-medium ml-2">WIB</span>
                             </div>
+                            <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Jam & menit yang telah terlewat hari ini otomatis dinonaktifkan.</p>
                         </div>
                     </div>
                     

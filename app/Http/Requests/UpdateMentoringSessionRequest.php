@@ -30,7 +30,7 @@ class UpdateMentoringSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'scheduled_at' => 'required|date',
+            'scheduled_at' => 'required|date|after:now',
             'topic' => 'required|string|max:255',
             'type' => 'required|in:offline,online',
             'location' => 'nullable|string|max:255',
@@ -43,6 +43,7 @@ class UpdateMentoringSessionRequest extends FormRequest
     {
         return [
             'scheduled_at.required' => 'Tanggal dan jam bimbingan wajib diisi.',
+            'scheduled_at.after' => 'Waktu bimbingan baru harus di masa mendatang.',
             'topic.required' => 'Topik bimbingan wajib diisi.',
             'type.required' => 'Tipe bimbingan wajib dipilih.',
         ];
