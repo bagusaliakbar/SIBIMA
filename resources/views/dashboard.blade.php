@@ -179,7 +179,7 @@
                                     <div class="relative">
                                         <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative
                                             {{ $isCompleted ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 ring-4 ring-emerald-100 dark:ring-emerald-950/60' : '' }}
-                                            {{ $isCurrent ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white ring-4 ring-orange-500/30 dark:ring-orange-500/40 shadow-[0_0_25px_rgba(249,115,22,0.45)] scale-110' : '' }}
+                                            {{ $isCurrent ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white ring-4 ring-orange-400/30 dark:ring-orange-500/30 shadow-lg shadow-orange-500/20 scale-105' : '' }}
                                             {{ !$isCompleted && !$isCurrent ? 'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover/node:border-orange-400 group-hover/node:text-orange-500 dark:group-hover/node:border-orange-500' : '' }}">
                                             
                                             <!-- Step Icons -->
@@ -216,19 +216,10 @@
                                                 </div>
                                             @endif
                                         </div>
-
-                                        <!-- Badge Sub-counter (e.g. 6/8 Sesi) -->
-                                        @if(!empty($stage['badge']))
-                                            <div class="absolute -bottom-2.5 inset-x-0 flex justify-center">
-                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black {{ $isCompleted ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800' : ($isCurrent ? 'bg-orange-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600') }}">
-                                                    {{ $stage['badge'] }}
-                                                </span>
-                                            </div>
-                                        @endif
                                     </div>
                                     
                                     <!-- Step Label & Status -->
-                                    <div class="mt-4 text-center">
+                                    <div class="mt-3.5 text-center">
                                         <h4 class="text-[11px] font-black uppercase tracking-tight transition-colors group-hover/node:text-orange-600 dark:group-hover/node:text-orange-400
                                             {{ $isCompleted ? 'text-slate-800 dark:text-slate-100' : '' }}
                                             {{ $isCurrent ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
@@ -236,19 +227,19 @@
                                             {{ $stage['name'] }}
                                         </h4>
                                         
-                                        <div class="mt-1">
+                                        <div class="mt-1.5">
                                             @if($isCompleted)
-                                                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs">
                                                     <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                    Selesai
+                                                    <span>Selesai {{ !empty($stage['badge']) ? '(' . $stage['badge'] . ')' : '' }}</span>
                                                 </span>
                                             @elseif($isCurrent)
-                                                <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-2 py-0.5 rounded-md border border-orange-200 dark:border-orange-800/60 animate-pulse">
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/80 dark:border-orange-800/80 shadow-2xs animate-pulse">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                                                    Aktif
+                                                    <span>Aktif {{ !empty($stage['badge']) ? '(' . $stage['badge'] . ')' : '' }}</span>
                                                 </span>
                                             @else
-                                                <span class="text-[9px] font-medium text-slate-400 dark:text-slate-600">
+                                                <span class="inline-flex items-center text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5 rounded-full border border-slate-100 dark:border-slate-700/50">
                                                     Menunggu
                                                 </span>
                                             @endif
