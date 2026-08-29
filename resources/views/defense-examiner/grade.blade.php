@@ -162,14 +162,11 @@
                 },
                 get gradeLetter() {
                     const s = parseFloat(this.finalScore);
-                    if (s >= 85) return 'A';
-                    if (s >= 80) return 'A-';
-                    if (s >= 75) return 'B+';
+                    if (s >= 80) return 'A';
                     if (s >= 70) return 'B';
-                    if (s >= 65) return 'B-';
-                    if (s >= 60) return 'C+';
-                    if (s >= 55) return 'C';
-                    return 'D/E';
+                    if (s >= 60) return 'C';
+                    if (s >= 50) return 'D';
+                    return 'E';
                 },
                 setScore(component, value) {
                     this.scores[component] = Math.max(0, Math.min(100, value));
