@@ -178,8 +178,8 @@
                                     <!-- Node Circle / Icon Wrapper -->
                                     <div class="relative">
                                         <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative
-                                            {{ $isCompleted ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 ring-4 ring-emerald-100 dark:ring-emerald-950/60' : '' }}
-                                            {{ $isCurrent ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white ring-4 ring-orange-400/30 dark:ring-orange-500/30 shadow-lg shadow-orange-500/20 scale-105' : '' }}
+                                            {{ $isCompleted ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 border-2 border-emerald-400/40 dark:border-emerald-400/30' : '' }}
+                                            {{ $isCurrent ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 border-2 border-orange-300/60 dark:border-orange-400/50 scale-105' : '' }}
                                             {{ !$isCompleted && !$isCurrent ? 'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover/node:border-orange-400 group-hover/node:text-orange-500 dark:group-hover/node:border-orange-500' : '' }}">
                                             
                                             <!-- Step Icons -->
@@ -205,12 +205,12 @@
 
                                             <!-- Green Checkmark Badge for Completed Step -->
                                             @if($isCompleted)
-                                                <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-600 text-white rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-800 shadow-sm">
+                                                <div class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-600 text-white rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-800 shadow-sm">
                                                     <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 </div>
                                             @elseif($isCurrent)
                                                 <!-- Pulsing Beacon for Active Step -->
-                                                <div class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                                                <div class="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5">
                                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                                                     <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-500 ring-2 ring-white dark:ring-slate-800"></span>
                                                 </div>
@@ -218,28 +218,30 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Step Label & Status -->
-                                    <div class="mt-3.5 text-center">
-                                        <h4 class="text-[11px] font-black uppercase tracking-tight transition-colors group-hover/node:text-orange-600 dark:group-hover/node:text-orange-400
-                                            {{ $isCompleted ? 'text-slate-800 dark:text-slate-100' : '' }}
-                                            {{ $isCurrent ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
-                                            {{ !$isCompleted && !$isCurrent ? 'text-slate-400 dark:text-slate-500' : '' }}">
-                                            {{ $stage['name'] }}
-                                        </h4>
+                                    <!-- Step Label & Status with Clean Spacing -->
+                                    <div class="mt-5 text-center w-full px-1">
+                                        <div class="min-h-[2rem] flex items-center justify-center">
+                                            <h4 class="text-[11px] font-black uppercase tracking-wider leading-tight transition-colors group-hover/node:text-orange-600 dark:group-hover/node:text-orange-400
+                                                {{ $isCompleted ? 'text-slate-800 dark:text-slate-100' : '' }}
+                                                {{ $isCurrent ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
+                                                {{ !$isCompleted && !$isCurrent ? 'text-slate-400 dark:text-slate-500' : '' }}">
+                                                {{ $stage['name'] }}
+                                            </h4>
+                                        </div>
                                         
-                                        <div class="mt-1.5">
+                                        <div class="mt-2.5 flex justify-center">
                                             @if($isCompleted)
                                                 <span class="inline-flex items-center gap-1 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs">
                                                     <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     <span>Selesai {{ !empty($stage['badge']) ? '(' . $stage['badge'] . ')' : '' }}</span>
                                                 </span>
                                             @elseif($isCurrent)
-                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/80 dark:border-orange-800/80 shadow-2xs animate-pulse">
+                                                <span class="inline-flex items-center gap-1.5 text-[9px] font-black text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/80 dark:border-orange-800/80 shadow-2xs animate-pulse">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                                                     <span>Aktif {{ !empty($stage['badge']) ? '(' . $stage['badge'] . ')' : '' }}</span>
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5 rounded-full border border-slate-100 dark:border-slate-700/50">
+                                                <span class="inline-flex items-center text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-2.5 py-0.5 rounded-full border border-slate-100 dark:border-slate-700/50">
                                                     Menunggu
                                                 </span>
                                             @endif
@@ -277,9 +279,6 @@
                         </p>
                     </div>
 
-                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest self-end sm:self-center shrink-0">
-                        💡 Klik tahapan untuk membuka
-                    </span>
                 </div>
             </div>
 
