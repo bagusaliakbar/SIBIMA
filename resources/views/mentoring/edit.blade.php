@@ -128,12 +128,28 @@
                 type: '{{ old('type', $mentoringSession->type) }}',
                 location: '{{ old('location', $mentoringSession->location ?? '') }}',
                 meetOpened: false,
+                customTimeMode: false,
                 today: '{{ date('Y-m-d') }}',
                 scheduledDate: '{{ old('scheduled_date', $mentoringSession->scheduled_at->isPast() ? date('Y-m-d') : $mentoringSession->scheduled_at->format('Y-m-d')) }}',
-                scheduledHour: '{{ old('scheduled_hour', $mentoringSession->scheduled_at->format('H')) }}',
-                scheduledMinute: '{{ old('scheduled_minute', sprintf('%02d', (int)round((int)$mentoringSession->scheduled_at->format('i') / 5) * 5 % 60)) }}',
-                availableHours: ['07','08','09','10','11','12','13','14','15','16','17','18','19','20','21'],
-                availableMinutes: ['00','05','10','15','20','25','30','35','40','45','50','55'],
+                selectedTime: '{{ old('scheduled_hour', $mentoringSession->scheduled_at->format('H')) }}:{{ old('scheduled_minute', sprintf('%02d', (int)round((int)$mentoringSession->scheduled_at->format('i') / 5) * 5 % 60)) }}',
+                
+                timeSlots: {
+                    'Pagi': ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
+                    'Siang & Sore': ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
+                    'Malam': ['18:30', '19:00', '19:30', '20:00']
+                },
+
+                get allSlots() {
+                    return [...this.timeSlots['Pagi'], ...this.timeSlots['Siang & Sore'], ...this.timeSlots['Malam']];
+                },
+
+                get selectedHour() {
+                    return this.selectedTime.split(':')[0] || '09';
+                },
+
+                get selectedMinute() {
+                    return this.selectedTime.split(':')[1] || '00';
+                },
 
                 init() {
                     this.validateAndAdjustTime();
@@ -143,20 +159,20 @@
                     return this.scheduledDate === this.today;
                 },
 
-                isHourDisabled(h) {
+                isSlotDisabled(slot) {
                     if (!this.isToday()) return false;
-                    const now = new Date();
-                    return parseInt(h) < now.getHours();
-                },
-
-                isMinuteDisabled(m) {
-                    if (!this.isToday()) return false;
+                    const [h, m] = slot.split(':').map(Number);
                     const now = new Date();
                     const currentH = now.getHours();
-                    const selectedH = parseInt(this.scheduledHour);
-                    if (selectedH < currentH) return true;
-                    if (selectedH === currentH) return parseInt(m) <= now.getMinutes();
+                    const currentM = now.getMinutes();
+                    if (h < currentH) return true;
+                    if (h === currentH) return m <= currentM;
                     return false;
+                },
+
+                selectTimeSlot(slot) {
+                    if (this.isSlotDisabled(slot)) return;
+                    this.selectedTime = slot;
                 },
 
                 onDateChange() {
@@ -166,35 +182,16 @@
                     this.validateAndAdjustTime();
                 },
 
-                onHourChange() {
-                    this.validateAndAdjustTime();
-                },
-
                 validateAndAdjustTime() {
-                    if (this.isHourDisabled(this.scheduledHour) || !this.availableHours.includes(this.scheduledHour)) {
-                        const firstValidHour = this.availableHours.find(h => !this.isHourDisabled(h));
-                        if (firstValidHour) {
-                            this.scheduledHour = firstValidHour;
+                    if (this.isSlotDisabled(this.selectedTime)) {
+                        const firstAvailable = this.allSlots.find(s => !this.isSlotDisabled(s));
+                        if (firstAvailable) {
+                            this.selectedTime = firstAvailable;
                         } else {
                             const d = new Date(this.scheduledDate);
                             d.setDate(d.getDate() + 1);
                             this.scheduledDate = d.toISOString().split('T')[0];
-                            this.scheduledHour = '08';
-                            this.scheduledMinute = '00';
-                            return;
-                        }
-                    }
-
-                    if (this.isMinuteDisabled(this.scheduledMinute)) {
-                        const firstValidMin = this.availableMinutes.find(m => !this.isMinuteDisabled(m));
-                        if (firstValidMin) {
-                            this.scheduledMinute = firstValidMin;
-                        } else {
-                            const nextHourIndex = this.availableHours.indexOf(this.scheduledHour) + 1;
-                            if (nextHourIndex < this.availableHours.length) {
-                                this.scheduledHour = this.availableHours[nextHourIndex];
-                                this.scheduledMinute = '00';
-                            }
+                            this.selectedTime = '08:00';
                         }
                     }
                 },
@@ -223,9 +220,13 @@
                 @csrf
                 @method('PUT')
 
+                <!-- Hidden inputs for backend compatibility -->
+                <input type="hidden" name="scheduled_hour" :value="selectedHour">
+                <input type="hidden" name="scheduled_minute" :value="selectedMinute">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Row 1: Tanggal & Waktu -->
-                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2 space-y-4">
                         <div>
                             <label for="scheduled_date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Bimbingan Baru <span class="text-orange-600">*</span></label>
                             <input type="date" 
@@ -235,39 +236,72 @@
                                    x-model="scheduledDate"
                                    @change="onDateChange()"
                                    required 
-                                   class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                            <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Tanggal sebelum hari ini tidak dapat dipilih.</p>
+                                   class="mt-2 block w-full md:w-1/2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                            <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Pilih tanggal baru. Tanggal sebelum hari ini otomatis dinonaktifkan.</p>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Waktu / Jam Bimbingan Baru <span class="text-orange-600">*</span></label>
-                            <div class="mt-2 flex items-center space-x-2">
-                                <div class="flex-1">
-                                    <select name="scheduled_hour" 
-                                            id="scheduled_hour" 
-                                            x-model="scheduledHour"
-                                            @change="onHourChange()"
-                                            required 
-                                            class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                                        <template x-for="h in availableHours" :key="h">
-                                            <option :value="h" :disabled="isHourDisabled(h)" x-text="isHourDisabled(h) ? h + ' (Terlewat)' : h"></option>
-                                        </template>
-                                    </select>
-                                </div>
-                                <span class="text-slate-500 dark:text-slate-400 font-bold">:</span>
-                                <div class="flex-1">
-                                    <select name="scheduled_minute" 
-                                            id="scheduled_minute" 
-                                            x-model="scheduledMinute"
-                                            required 
-                                            class="block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                                        <template x-for="m in availableMinutes" :key="m">
-                                            <option :value="m" :disabled="isMinuteDisabled(m)" x-text="m"></option>
-                                        </template>
-                                    </select>
-                                </div>
-                                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium ml-2">WIB</span>
+
+                        <!-- Visual Time Slot Selector -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Pilih Waktu / Jam Baru <span class="text-orange-600">*</span>
+                                    <span class="ml-2 text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-2.5 py-0.5 rounded-full" x-text="selectedTime + ' WIB'"></span>
+                                </label>
+                                <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 underline transition-colors">
+                                    <span x-text="customTimeMode ? '← Kembali ke Pilihan Slot' : '⚙️ Waktu Kustom / Spesifik'"></span>
+                                </button>
                             </div>
-                            <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Jam & menit yang telah terlewat hari ini otomatis dinonaktifkan.</p>
+
+                            <!-- Slot Grid View -->
+                            <div x-show="!customTimeMode" class="space-y-4 bg-slate-50/60 dark:bg-slate-900/40 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                                <template x-for="(slots, period) in timeSlots" :key="period">
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500" x-text="period"></span>
+                                            <div class="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
+                                        </div>
+                                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
+                                            <template x-for="slot in slots" :key="slot">
+                                                <button type="button" 
+                                                        @click="selectTimeSlot(slot)" 
+                                                        :disabled="isSlotDisabled(slot)"
+                                                        :title="isSlotDisabled(slot) ? 'Waktu telah terlewat' : 'Pilih jam ' + slot + ' WIB'"
+                                                        :class="[
+                                                            selectedTime === slot ? 'bg-orange-600 text-white font-black border-orange-600 shadow-md shadow-orange-500/25 ring-2 ring-orange-500/30 scale-[1.03]' : '',
+                                                            isSlotDisabled(slot) ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/50 dark:border-slate-800/80 cursor-not-allowed line-through opacity-50' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 shadow-sm'
+                                                        ]"
+                                                        class="relative px-2.5 py-2 rounded-xl border text-xs font-bold transition-all duration-150 flex items-center justify-center gap-1.5 min-h-[38px]">
+                                                    <span x-text="slot"></span>
+                                                    <svg x-show="selectedTime === slot" class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <div class="pt-2 flex flex-wrap items-center gap-4 text-[10px] text-slate-400 dark:text-slate-500">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded bg-orange-600 inline-block shadow-sm"></span>
+                                        <span>Aktif Terpilih</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 inline-block"></span>
+                                        <span>Tersedia</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block line-through text-slate-400"></span>
+                                        <span>Terlewat / Nonaktif</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fallback Custom Time Picker -->
+                            <div x-show="customTimeMode" class="bg-slate-50/60 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-2">Input Waktu Kustom (Jam & Menit Manual):</label>
+                                <input type="time" 
+                                       x-model="selectedTime"
+                                       class="block w-full sm:w-48 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm font-bold">
+                            </div>
                         </div>
                     </div>
 
