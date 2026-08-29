@@ -217,6 +217,14 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
 
         $this->examinerService->storeGrading(ThesisDefenseRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $actingUser);
 
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            return redirect()->route('defense-examiner.grading', [
+                'detail' => $detail->id,
+                'target_examiner_id' => $actingUser->id,
+                'redirect_to' => $request->input('redirect_to')
+            ])->with('success', "Nilai sidang untuk {$actingUser->name} berhasil disimpan.");
+        }
+
         if ($request->input('redirect_to') === 'monitoring') {
             return redirect()->route('monitoring.defense-scores')->with('success', "Nilai sidang untuk {$actingUser->name} berhasil disimpan.");
         }

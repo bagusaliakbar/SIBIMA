@@ -281,6 +281,14 @@ class SeminarExaminerController extends Controller implements HasMiddleware
 
         $this->examinerService->storeGrading(SeminarRevision::class, $detail, $request->only('score_presentation', 'score_explanation', 'score_writing'), $actingUser);
 
+        if (in_array($user->role, ['admin', 'kaprodi'])) {
+            return redirect()->route('seminar-examiner.grading', [
+                'detail' => $detail->id,
+                'target_examiner_id' => $actingUser->id,
+                'redirect_to' => $request->input('redirect_to')
+            ])->with('success', "Nilai seminar untuk {$actingUser->name} berhasil disimpan.");
+        }
+
         if ($request->input('redirect_to') === 'monitoring') {
             return redirect()->route('monitoring.revisions')->with('success', "Nilai seminar untuk {$actingUser->name} berhasil disimpan.");
         }
