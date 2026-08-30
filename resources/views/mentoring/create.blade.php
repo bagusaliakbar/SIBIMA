@@ -740,7 +740,7 @@
                                 <!-- Info Alert -->
                                 <div class="mt-4 p-3 rounded-xl bg-orange-50/70 dark:bg-orange-500/10 border border-orange-200/80 dark:border-orange-500/20 text-orange-800 dark:text-orange-300 text-[11px] flex items-center gap-2">
                                     <svg class="w-4 h-4 shrink-0 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>Notifikasi pengajuan bimbingan ini akan langsung dikirimkan ke dosen pembimbing melalui sistem & WhatsApp.</span>
+                                    <span>{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Notifikasi jadwal bimbingan ini akan langsung dikirimkan ke seluruh mahasiswa terkait melalui sistem & WhatsApp.' : 'Notifikasi pengajuan bimbingan ini akan langsung dikirimkan ke dosen pembimbing melalui sistem & WhatsApp.' }}</span>
                                 </div>
 
                                 <!-- Modal Actions -->
@@ -754,10 +754,10 @@
                                             @click="submitConfirmed()" 
                                             :disabled="isSubmitting"
                                             class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-orange-500/20 hover:scale-[1.02] active:scale-95 flex items-center gap-1.5 cursor-pointer">
-                                        <span x-show="!isSubmitting">✓ Ya, Kirim Pengajuan</span>
+                                        <span x-show="!isSubmitting">✓ {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Ya, Simpan Jadwal' : 'Ya, Kirim Pengajuan' }}</span>
                                         <span x-show="isSubmitting" class="flex items-center gap-1.5">
                                             <svg class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                            <span>Mengirim...</span>
+                                            <span>Menyimpan...</span>
                                         </span>
                                     </button>
                                 </div>
