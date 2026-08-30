@@ -25,17 +25,29 @@ class StoreMentoringSessionRequest extends FormRequest
                 ]);
             }
         }
+
+        if ($this->has('thesis_ids')) {
+            $ids = is_array($this->thesis_ids) ? $this->thesis_ids : explode(',', $this->thesis_ids);
+            $ids = array_filter(array_map('trim', $ids));
+            $this->merge(['thesis_ids' => array_values($ids)]);
+        } elseif ($this->has('thesis_id') && !empty($this->thesis_id)) {
+            $this->merge(['thesis_ids' => [$this->thesis_id]]);
+        }
     }
 
     public function rules(): array
     {
+        $isStaff = in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']);
+
         return [
             'scheduled_at' => 'required|date|after:now',
             'topic' => 'required|string|max:255',
             'type' => 'required|in:offline,online',
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'thesis_id' => in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'required' : 'nullable',
+            'thesis_id' => 'nullable',
+            'thesis_ids' => $isStaff ? 'required|array|min:1' : 'nullable|array',
+            'thesis_ids.*' => 'string',
             'dosen_id' => Auth::user()->role === 'mahasiswa' ? 'required|exists:users,id' : 'nullable',
         ];
     }
@@ -44,6 +56,8 @@ class StoreMentoringSessionRequest extends FormRequest
     {
         return [
             'scheduled_at.after' => 'Waktu bimbingan harus di masa mendatang.',
+            'thesis_ids.required' => 'Pilih minimal satu mahasiswa untuk dijadwalkan bimbingan.',
+            'thesis_ids.min' => 'Pilih minimal satu mahasiswa untuk dijadwalkan bimbingan.',
         ];
     }
 }

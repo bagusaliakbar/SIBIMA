@@ -1,19 +1,29 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-[1.1rem] font-bold text-slate-800 dark:text-slate-100 tracking-tight">
-            {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Buat Jadwal Bimbingan' : 'Pengajuan Jadwal Bimbingan' }}
-        </h2>
+        <div class="flex items-center gap-3">
+            <a href="{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? route('mentoring-sessions.index') : route('dashboard') }}" class="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-2xs transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            <div>
+                <h2 class="text-[1.1rem] font-bold text-slate-800 dark:text-slate-100 tracking-tight">
+                    {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Buat Jadwal Bimbingan' : 'Pengajuan Jadwal Bimbingan' }}
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Pilih satu, beberapa, atau seluruh mahasiswa bimbingan dan tentukan jadwal sesi.' : 'Pilih jadwal dan topik untuk sesi bimbingan Anda berikutnya.' }}
+                </p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="w-full">
         <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors">
             <div class="mb-6 border-b border-slate-200 dark:border-slate-700 pb-4">
                 <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Form {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Penjadwalan' : 'Pengajuan' }}</h3>
-                <p class="text-slate-500 dark:text-slate-400 mt-1 text-xs">{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Pilih mahasiswa dan tentukan waktu bimbingan.' : 'Pilih jadwal dan topik untuk sesi bimbingan Anda berikutnya.' }}</p>
+                <p class="text-slate-500 dark:text-slate-400 mt-1 text-xs">{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Tentukan mahasiswa yang akan dibimbing serta waktu dan lokasi pelaksanaan.' : 'Pilih jadwal dan topik untuk sesi bimbingan Anda berikutnya.' }}</p>
             </div>
 
             @if ($errors->any())
-                <div class="mb-6 p-4 rounded-md bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20">
+                <div class="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-red-400 dark:text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -37,15 +47,27 @@
             <form action="{{ route('mentoring-sessions.store') }}" method="POST" class="space-y-6" x-data="{
                 type: '{{ old('type', 'offline') }}',
                 location: '{{ old('location', '') }}',
-                selectedThesisId: '',
                 meetOpened: false,
                 customTimeMode: false,
-                thesesMap: {{ json_encode(($theses ?? collect())->keyBy('id')->map(fn($t) => [
-                    'p1_id' => $t->pembimbing1_id,
+                
+                // Student Selection Multi-Select State
+                selectionMode: '{{ (is_array(old('thesis_ids')) && in_array('all', old('thesis_ids'))) ? 'all' : 'multiple' }}',
+                selectedThesisIds: {{ json_encode(array_values(array_map('strval', array_filter((array)old('thesis_ids', []))))) }},
+                studentSearch: '',
+                thesesList: {{ json_encode(($theses ?? collect())->map(fn($t) => [
+                    'id' => (string)$t->id,
+                    'name' => $t->student?->name ?? 'Mahasiswa',
+                    'npm' => $t->student?->identifier ?? 'NPM -',
+                    'avatar' => $t->student?->avatar_url,
+                    'title' => $t->final_title ?? $t->title ?? 'Judul Skripsi',
+                    'is_p1' => $t->pembimbing1_id === Auth::id(),
+                    'is_p2' => $t->pembimbing2_id === Auth::id(),
+                    'role_label' => ($t->pembimbing1_id === Auth::id()) ? 'Pembimbing 1' : (($t->pembimbing2_id === Auth::id()) ? 'Pembimbing 2' : 'Dosen'),
                     'p1_name' => $t->pembimbing1?->name ?? 'Pembimbing 1',
                     'p2_id' => $t->pembimbing2_id,
                     'p2_name' => $t->pembimbing2?->name,
-                ])) }},
+                ])->values()) }},
+
                 today: '{{ date('Y-m-d') }}',
                 scheduledDate: '{{ old('scheduled_date', date('Y-m-d')) }}',
                 selectedTime: '{{ old('scheduled_hour', '09') }}:{{ old('scheduled_minute', '00') }}',
@@ -72,8 +94,35 @@
                     this.validateAndAdjustTime();
                 },
 
-                get selectedThesis() {
-                    return this.thesesMap[this.selectedThesisId] || null;
+                get filteredTheses() {
+                    if (!this.studentSearch.trim()) return this.thesesList;
+                    const q = this.studentSearch.toLowerCase();
+                    return this.thesesList.filter(t => 
+                        t.name.toLowerCase().includes(q) || 
+                        t.npm.toLowerCase().includes(q) || 
+                        t.title.toLowerCase().includes(q)
+                    );
+                },
+
+                toggleThesis(id) {
+                    if (this.selectedThesisIds.includes(id)) {
+                        this.selectedThesisIds = this.selectedThesisIds.filter(x => x !== id);
+                    } else {
+                        this.selectedThesisIds.push(id);
+                    }
+                },
+
+                selectAllFiltered() {
+                    const idsToAdd = this.filteredTheses.map(t => t.id);
+                    this.selectedThesisIds = [...new Set([...this.selectedThesisIds, ...idsToAdd])];
+                },
+
+                clearAllSelection() {
+                    this.selectedThesisIds = [];
+                },
+
+                isSelected(id) {
+                    return this.selectedThesisIds.includes(id);
                 },
 
                 isToday() {
@@ -147,28 +196,131 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                    <div class="md:col-span-2 space-y-4">
-                        <div>
-                            <label for="thesis_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Mahasiswa Bimbingan <span class="text-orange-600">*</span></label>
-                            <select name="thesis_id" id="thesis_id" x-model="selectedThesisId" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                                <option value="">Pilih Mahasiswa...</option>
-                                <option value="all" class="font-bold text-orange-600">-- Pilih Semua Mahasiswa Bimbingan --</option>
-                                @foreach($theses as $t)
-                                    <option value="{{ $t->id }}">{{ $t->student?->name ?? 'Mahasiswa' }} - {{ \Illuminate\Support\Str::limit($t->title, 50) }}</option>
-                                @endforeach
-                            </select>
+                    <!-- Multi-Select Mahasiswa Bimbingan Section -->
+                    <div class="md:col-span-2 space-y-3">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <label class="block text-sm font-bold text-slate-800 dark:text-slate-200">
+                                Mahasiswa Bimbingan <span class="text-orange-600">*</span>
+                            </label>
+                            
+                            <!-- Selection Mode Toggle (Pilih Beberapa vs Semua) -->
+                            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold">
+                                <button type="button" 
+                                        @click="selectionMode = 'multiple'" 
+                                        :class="selectionMode === 'multiple' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
+                                        class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span>Pilih Satu / Beberapa Mahasiswa</span>
+                                </button>
+                                <button type="button" 
+                                        @click="selectionMode = 'all'" 
+                                        :class="selectionMode === 'all' ? 'bg-orange-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
+                                        class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>Pilih Semua ({{ count($theses) }} Mahasiswa)</span>
+                                </button>
+                            </div>
                         </div>
 
-                        @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                        <div>
-                            <label for="dosen_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Pilih Dosen Pembimbing</label>
-                            <select name="dosen_id" id="dosen_id" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                                <option value="" x-text="selectedThesis ? ('Pembimbing 1: ' + selectedThesis.p1_name) : 'Pembimbing 1 Mahasiswa (Otomatis)'"></option>
-                                <option value="p2" x-show="!selectedThesis || selectedThesis.p2_id" x-text="selectedThesis && selectedThesis.p2_name ? ('Pembimbing 2: ' + selectedThesis.p2_name) : 'Pembimbing 2 Mahasiswa (Otomatis)'"></option>
-                            </select>
-                            <p class="mt-1 text-xs text-slate-400 dark:text-slate-500 italic">Pilihan dibatasi khusus dosen pembimbing (Pembimbing 1 / Pembimbing 2) dari mahasiswa yang dipilih.</p>
+                        <!-- Mode: ALL STUDENTS -->
+                        <div x-show="selectionMode === 'all'" x-cloak class="p-4 bg-orange-50 dark:bg-orange-500/10 border border-orange-200/80 dark:border-orange-500/25 rounded-2xl flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+                                    🌐
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-orange-950 dark:text-orange-200">Sesi Bimbingan Massal (Semua Mahasiswa)</h4>
+                                    <p class="text-xs text-orange-800/80 dark:text-orange-300/80 mt-0.5">Jadwal bimbingan akan dibuat dan dikirimkan untuk seluruh {{ count($theses) }} mahasiswa bimbingan aktif Anda sekaligus.</p>
+                                </div>
+                            </div>
+                            <input type="hidden" name="thesis_ids[]" value="all" :disabled="selectionMode !== 'all'">
                         </div>
-                        @endif
+
+                        <!-- Mode: MULTI / SINGLE SELECTION -->
+                        <div x-show="selectionMode === 'multiple'" class="space-y-3">
+                            <!-- Search & Batch Action Bar -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700/80">
+                                <div class="relative flex-1">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                    </div>
+                                    <input type="text" 
+                                           x-model="studentSearch" 
+                                           placeholder="Ketik nama mahasiswa, NPM, atau judul skripsi..." 
+                                           class="block w-full pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                </div>
+
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button type="button" 
+                                            @click="selectAllFiltered()" 
+                                            class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer">
+                                        ☑️ Centang Semua
+                                    </button>
+                                    <button type="button" 
+                                            @click="clearAllSelection()" 
+                                            x-show="selectedThesisIds.length > 0"
+                                            class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20 rounded-lg text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer">
+                                        ✕ Reset (<span x-text="selectedThesisIds.length"></span>)
+                                    </button>
+                                    <span class="px-2.5 py-1.5 rounded-lg text-xs font-bold" 
+                                          :class="selectedThesisIds.length > 0 ? 'bg-orange-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">
+                                        <span x-text="selectedThesisIds.length"></span> Mahasiswa Terpilih
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Student Cards List (Max height scrollable) -->
+                            <div class="max-h-[340px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                <template x-for="t in filteredTheses" :key="t.id">
+                                    <div @click="toggleThesis(t.id)"
+                                         class="p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none"
+                                         :class="isSelected(t.id) 
+                                             ? 'bg-orange-50/70 dark:bg-orange-500/10 border-orange-300 dark:border-orange-500/40 shadow-xs' 
+                                             : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'">
+                                        
+                                        <!-- Custom Checkbox -->
+                                        <div class="pt-0.5 shrink-0">
+                                            <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-colors"
+                                                 :class="isSelected(t.id) ? 'bg-orange-600 border-orange-600 text-white' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'">
+                                                <svg x-show="isSelected(t.id)" class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                                            </div>
+                                        </div>
+
+                                        <!-- Hidden Form Input for Selected Thesis -->
+                                        <template x-if="isSelected(t.id) && selectionMode === 'multiple'">
+                                            <input type="hidden" name="thesis_ids[]" :value="t.id">
+                                        </template>
+
+                                        <!-- Student Avatar & Info -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase" x-text="t.name"></span>
+                                                    <span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700" x-text="t.npm"></span>
+                                                </div>
+                                                <span class="text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
+                                                      :class="t.is_p1 ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/20' : 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20'"
+                                                      x-text="t.role_label">
+                                                </span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-1 mt-1 italic" x-text="'&quot;' + t.title + '&quot;'"></p>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Empty Search Result -->
+                                <div x-show="filteredTheses.length === 0" class="p-8 text-center bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                                    <p class="font-bold">Tidak ada mahasiswa yang cocok dengan kata kunci "<span x-text="studentSearch"></span>"</p>
+                                    <button type="button" @click="studentSearch = ''" class="text-orange-600 dark:text-orange-400 hover:underline font-semibold mt-1">Hapus kata kunci pencarian</button>
+                                </div>
+                            </div>
+
+                            <!-- Validation Alert if 0 selected -->
+                            <div x-show="selectionMode === 'multiple' && selectedThesisIds.length === 0" class="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200/80 dark:border-amber-500/25 rounded-xl text-xs font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <span>Silakan centang minimal 1 mahasiswa bimbingan pada daftar di atas.</span>
+                            </div>
+                        </div>
                     </div>
                     @else
                     <div class="md:col-span-2">
@@ -208,7 +360,7 @@
                                     <span>Pilih Waktu Bimbingan</span>
                                     <span class="text-orange-600 font-bold">*</span>
                                 </label>
-                                <span class="inline-flex items-center gap-1 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-lg border border-orange-200/60 dark:border-orange-900/50 whitespace-nowrap shadow-xs">
+                                <span class="inline-flex items-center gap-1 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/15 px-2.5 py-1 rounded-lg border border-orange-200/60 dark:border-orange-500/25 whitespace-nowrap shadow-xs">
                                     <span x-text="selectedTime"></span>
                                     <span class="text-[10px] text-orange-500/90 font-bold">WIB</span>
                                 </span>
@@ -271,26 +423,26 @@
                     
                     <div>
                         <label for="topic" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Topik Pembahasan <span class="text-orange-600">*</span></label>
-                        <input type="text" name="topic" id="topic" required placeholder="Contoh: Revisi Bab 1" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                        <input type="text" name="topic" id="topic" required placeholder="Contoh: Revisi Bab 1 & Metodologi" class="mt-2 block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tipe Bimbingan <span class="text-orange-600">*</span></label>
                         <div class="mt-2 grid grid-cols-2 gap-3">
-                            <label class="relative flex cursor-pointer rounded-lg border bg-white dark:bg-slate-900 p-3 shadow-sm focus:outline-none transition-all" :class="type === 'offline' ? 'border-orange-500 ring-1 ring-orange-500' : 'border-slate-300 dark:border-slate-700'">
+                            <label class="relative flex cursor-pointer rounded-xl border bg-white dark:bg-slate-900 p-3.5 shadow-sm focus:outline-none transition-all" :class="type === 'offline' ? 'border-orange-500 ring-2 ring-orange-500/20' : 'border-slate-300 dark:border-slate-700'">
                                 <input type="radio" name="type" value="offline" x-model="type" class="sr-only">
                                 <span class="flex flex-1">
                                     <span class="flex flex-col">
-                                        <span class="block text-sm font-medium text-slate-900 dark:text-slate-100">Tatap Muka (Offline)</span>
+                                        <span class="block text-sm font-bold text-slate-900 dark:text-slate-100">Tatap Muka (Offline)</span>
                                     </span>
                                 </span>
                                 <svg class="h-5 w-5 text-orange-600" :class="type === 'offline' ? 'block' : 'hidden'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
                             </label>
-                            <label class="relative flex cursor-pointer rounded-lg border bg-white dark:bg-slate-900 p-3 shadow-sm focus:outline-none transition-all" :class="type === 'online' ? 'border-orange-500 ring-1 ring-orange-500' : 'border-slate-300 dark:border-slate-700'">
+                            <label class="relative flex cursor-pointer rounded-xl border bg-white dark:bg-slate-900 p-3.5 shadow-sm focus:outline-none transition-all" :class="type === 'online' ? 'border-orange-500 ring-2 ring-orange-500/20' : 'border-slate-300 dark:border-slate-700'">
                                 <input type="radio" name="type" value="online" x-model="type" class="sr-only">
                                 <span class="flex flex-1">
                                     <span class="flex flex-col">
-                                        <span class="block text-sm font-medium text-slate-900 dark:text-slate-100">Daring (Online)</span>
+                                        <span class="block text-sm font-bold text-slate-900 dark:text-slate-100">Daring (Online)</span>
                                     </span>
                                 </span>
                                 <svg class="h-5 w-5 text-orange-600" :class="type === 'online' ? 'block' : 'hidden'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
@@ -311,7 +463,7 @@
                                 </button>
                                 <button type="button" 
                                         @click="openGoogleMeetNew()" 
-                                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all shadow-2xs active:scale-95 cursor-pointer">
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/25 rounded-lg text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-500/25 transition-all shadow-2xs active:scale-95 cursor-pointer">
                                     <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                     <span>⚡ Buat Google Meet Instan</span>
                                 </button>
@@ -324,12 +476,12 @@
                                    id="location" 
                                    x-model="location"
                                    :placeholder="type === 'online' ? 'https://meet.google.com/xxx-xxxx-xxx' : 'Contoh: Ruang Dosen T.I / Lab Komputer'" 
-                                   class="block w-full rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-xs focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm transition-all">
+                                   class="block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-xs focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm transition-all">
                         </div>
 
                         <!-- Smart Validation Feedback & Step Guide -->
                         <div x-show="type === 'online'" class="mt-2 space-y-2">
-                            <div x-show="meetOpened && !location" x-cloak class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-xl flex items-center justify-between gap-3 text-xs text-emerald-800 dark:text-emerald-300">
+                            <div x-show="meetOpened && !location" x-cloak class="p-3 bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200/80 dark:border-emerald-500/25 rounded-xl flex items-center justify-between gap-3 text-xs text-emerald-800 dark:text-emerald-300">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <span>Ruang Google Meet baru telah dibuka di tab sebelah. Salin link ruangannya dan tempelkan di sini.</span>
@@ -372,14 +524,27 @@
 
                 <div>
                     <label for="notes" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Catatan Tambahan (Opsional)</label>
-                    <textarea name="notes" id="notes" rows="4" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all" placeholder="Sampaikan apa yang ingin Anda diskusikan secara spesifik..."></textarea>
+                    <textarea name="notes" id="notes" rows="3" class="mt-2 block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all" placeholder="Sampaikan poin yang perlu dipersiapkan mahasiswa sebelum bimbingan..."></textarea>
                 </div>
 
-                <div class="pt-5 flex items-center space-x-3">
-                    <button type="submit" class="px-5 py-2 bg-orange-600 hover:bg-orange-700 rounded text-sm font-medium text-white shadow-sm transition-colors border border-transparent">
-                        {{ Auth::user()->role === 'dosen' ? 'Simpan Jadwal' : 'Kirim Permintaan' }}
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
+                    <a href="{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? route('mentoring-sessions.index') : route('dashboard') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-2xs">
+                        Batal
+                    </a>
+                    <button type="submit" 
+                            :disabled="selectionMode === 'multiple' && selectedThesisIds.length === 0"
+                            :class="selectionMode === 'multiple' && selectedThesisIds.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01] active:scale-95 cursor-pointer'"
+                            class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 rounded-xl text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-orange-500/20 transition-all border border-transparent flex items-center gap-2">
+                        <span>{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Simpan Jadwal Bimbingan' : 'Kirim Permintaan' }}</span>
+                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                            <template x-if="selectionMode === 'multiple' && selectedThesisIds.length > 0">
+                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black" x-text="selectedThesisIds.length + ' Mhs'"></span>
+                            </template>
+                            <template x-if="selectionMode === 'all'">
+                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black" x-text="'Semua Mhs ({{ count($theses) }})'"></span>
+                            </template>
+                        @endif
                     </button>
-                    <a href="{{ Auth::user()->role === 'dosen' ? route('mentoring-sessions.index') : route('dashboard') }}" class="px-5 py-2 rounded text-sm font-medium text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm">Batal</a>
                 </div>
             </form>
         </div>

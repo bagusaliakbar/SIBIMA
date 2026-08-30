@@ -187,9 +187,16 @@ class MentoringService
     private function handleDosenStore(array $data)
     {
         $user = Auth::user();
+        $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+        $data['scheduled_at'] = $scheduledAt;
 
-        if ($data['thesis_id'] === 'all') {
-            $thesesQuery = Thesis::where('status', 'active');
+        // Normalize thesis IDs from either thesis_ids array or thesis_id string
+        $thesisIds = $data['thesis_ids'] ?? (isset($data['thesis_id']) ? (is_array($data['thesis_id']) ? $data['thesis_id'] : [$data['thesis_id']]) : []);
+
+        $isAll = in_array('all', $thesisIds);
+
+        if ($isAll) {
+            $thesesQuery = Thesis::with('student')->where('status', 'active');
             if ($user->role === 'dosen') {
                 $thesesQuery->where(function($q) {
                     $q->where('pembimbing1_id', Auth::id())
@@ -197,31 +204,18 @@ class MentoringService
                 });
             }
             $theses = $thesesQuery->get();
-            
-            if ($theses->isEmpty()) {
-                throw new \Exception('Tidak ada mahasiswa bimbingan yang aktif.');
-            }
-            
-            foreach ($theses as $thesis) {
-                $session = $this->createSessionForThesis($thesis, $data, 'approved');
-                
-                ActivityLog::log('Jadwal Bimbingan Massal', "{$user->name} menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
-
-                $thesis->student->notify(new MentoringScheduledByDosenNotification($session));
-            }
-            
-            return ['count' => $theses->count(), 'type' => 'mass'];
         } else {
-            $thesis = Thesis::findOrFail($data['thesis_id']);
-            
-            if ($user->role === 'dosen' && $thesis->pembimbing1_id !== Auth::id() && $thesis->pembimbing2_id !== Auth::id()) {
-                throw new \Exception('Unauthorized access to thesis.', 403);
-            }
-            
-            $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
-            $data['scheduled_at'] = $scheduledAt;
+            $theses = Thesis::with('student')->whereIn('id', $thesisIds)->where('status', 'active')->get();
+        }
 
-            $existingDosenSession = MentoringSession::where('dosen_id', Auth::id())
+        if ($theses->isEmpty()) {
+            throw new \Exception('Tidak ada mahasiswa bimbingan aktif yang dipilih.');
+        }
+
+        // 1. Check Dosen conflict at this time slot
+        $targetDosenId = ($user->role === 'dosen') ? Auth::id() : null;
+        if ($targetDosenId) {
+            $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
                 ->where('scheduled_at', $scheduledAt)
                 ->where('status', '!=', 'rejected')
                 ->first();
@@ -230,6 +224,13 @@ class MentoringService
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'scheduled_at' => 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.',
                 ]);
+            }
+        }
+
+        // 2. Check each student for conflicting sessions at scheduled_at
+        foreach ($theses as $thesis) {
+            if ($user->role === 'dosen' && $thesis->pembimbing1_id !== Auth::id() && $thesis->pembimbing2_id !== Auth::id()) {
+                throw new \Exception("Akses ditolak untuk skripsi mahasiswa {$thesis->student->name}.", 403);
             }
 
             $existingStudentSession = MentoringSession::whereHas('thesis', function($q) use ($thesis) {
@@ -244,15 +245,33 @@ class MentoringService
                     'scheduled_at' => "Mahasiswa {$thesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
                 ]);
             }
-
-            $session = $this->createSessionForThesis($thesis, $data, 'approved');
-
-            ActivityLog::log('Jadwal Bimbingan', "Dosen menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 'Bimbingan', $session);
-
-            $thesis->student->notify(new MentoringScheduledByDosenNotification($session));
-            
-            return ['type' => 'single'];
         }
+
+        // 3. Create mentoring session for each student
+        $createdSessions = collect();
+        $isGroup = $theses->count() > 1;
+
+        foreach ($theses as $thesis) {
+            $session = $this->createSessionForThesis($thesis, $data, 'approved');
+            $createdSessions->push($session);
+
+            ActivityLog::log(
+                $isGroup ? 'Jadwal Bimbingan Kelompok' : 'Jadwal Bimbingan', 
+                "{$user->name} menjadwalkan bimbingan untuk {$thesis->student->name}: {$data['topic']}", 
+                'Bimbingan', 
+                $session
+            );
+
+            if ($thesis->student) {
+                $thesis->student->notify(new MentoringScheduledByDosenNotification($session));
+            }
+        }
+
+        if ($isGroup) {
+            return ['count' => $theses->count(), 'type' => 'mass'];
+        }
+
+        return ['count' => 1, 'type' => 'single', 'session' => $createdSessions->first()];
     }
 
     private function handleStudentStore(array $data)
