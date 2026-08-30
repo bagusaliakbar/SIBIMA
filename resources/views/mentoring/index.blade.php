@@ -11,84 +11,8 @@
                 viewMode: '{{ request('view', 'cards') }}',
                 selectedEvent: null,
                 eventModalOpen: false,
-                liveModalOpen: false,
-                liveTab: 'all',
-                liveSearch: '',
-                isSyncing: false,
-                lastUpdated: '{{ now()->locale('id')->translatedFormat('H:i:s') }} WIB',
-                attendanceStats: @json($attendanceStats ?? []),
-                liveSessions: [],
                 calendarInitialized: false,
                 events: @json($calendarEvents ?? []),
-                cancelModalOpen: false,
-                cancelData: {
-                    id: null,
-                    student_name: '',
-                    student_npm: '',
-                    topic: '',
-                    scheduled_date: '',
-                    scheduled_time: '',
-                    is_group: false,
-                    group_count: 1,
-                    reason: '',
-                    apply_to_group: true,
-                },
-                openCancelModal(data) {
-                    if (!data) return;
-                    this.cancelData = {
-                        id: data.id,
-                        student_name: data.student_name || 'Mahasiswa',
-                        student_npm: data.student_npm || '-',
-                        topic: data.topic || '-',
-                        scheduled_date: data.scheduled_date || '-',
-                        scheduled_time: data.scheduled_time || '-',
-                        is_group: !!data.is_group,
-                        group_count: data.group_count || 1,
-                        reason: '',
-                        apply_to_group: !!data.is_group,
-                    };
-                    this.cancelModalOpen = true;
-                },
-                openCancelModalFromEl(el) {
-                    if (!el) return;
-                    this.openCancelModal({
-                        id: el.getAttribute('data-session-id'),
-                        student_name: el.getAttribute('data-student-name'),
-                        student_npm: el.getAttribute('data-student-npm'),
-                        topic: el.getAttribute('data-topic'),
-                        scheduled_date: el.getAttribute('data-scheduled-date'),
-                        scheduled_time: el.getAttribute('data-scheduled-time'),
-                        is_group: el.getAttribute('data-is-group') === '1',
-                        group_count: parseInt(el.getAttribute('data-group-count') || '1'),
-                    });
-                },
-                openLiveModal() {
-                    this.liveModalOpen = true;
-                    this.fetchLiveAttendance(false);
-                },
-                get filteredLiveSessions() {
-                    if (!Array.isArray(this.liveSessions)) return [];
-                    return this.liveSessions.filter(item => {
-                        if (!item) return false;
-                        const matchesTab = (this.liveTab === 'all') || (item.attendance_status === this.liveTab);
-                        const searchLower = (this.liveSearch || '').toLowerCase().trim();
-                        const matchesSearch = !searchLower || 
-                            (item.student_name && item.student_name.toLowerCase().includes(searchLower)) ||
-                            (item.student_identifier && String(item.student_identifier).toLowerCase().includes(searchLower)) ||
-                            (item.topic && item.topic.toLowerCase().includes(searchLower));
-                        return matchesTab && matchesSearch;
-                    });
-                },
-                getWaLink(item) {
-                    if (!item || !item.student_phone) return '#';
-                    const phone = String(item.student_phone).replace(/^0/, '62').replace(/\D/g, '');
-                    const text = encodeURIComponent(`Halo ${item.student_name || 'Mahasiswa'}, pengingat jadwal bimbingan SIBIMA pada ${item.scheduled_date_formatted || ''} pukul ${item.scheduled_time_formatted || ''}. Topik: ${item.topic || ''}.`);
-                    return `https://wa.me/${phone}?text=${text}`;
-                },
-                getInitials(name) {
-                    if (!name) return 'MH';
-                    return name.substring(0, 2).toUpperCase();
-                },
                 initCalendar() {
                     if (this.calendarInitialized) return;
                     this.$nextTick(() => {
@@ -134,6 +58,50 @@
                         this.initCalendar();
                     }
                 },
+                init() {
+                    if (this.viewMode === 'calendar') {
+                        this.initCalendar();
+                    }
+                }
+            };
+        }
+
+        function mentoringLiveAttendance() {
+            return {
+                liveModalOpen: false,
+                liveTab: 'all',
+                liveSearch: '',
+                isSyncing: false,
+                lastUpdated: '{{ now()->locale('id')->translatedFormat('H:i:s') }} WIB',
+                attendanceStats: @json($attendanceStats ?? []),
+                liveSessions: [],
+                openModal() {
+                    this.liveModalOpen = true;
+                    this.fetchLiveAttendance(false);
+                },
+                get filteredLiveSessions() {
+                    if (!Array.isArray(this.liveSessions)) return [];
+                    return this.liveSessions.filter(item => {
+                        if (!item) return false;
+                        const matchesTab = (this.liveTab === 'all') || (item.attendance_status === this.liveTab);
+                        const searchLower = (this.liveSearch || '').toLowerCase().trim();
+                        const matchesSearch = !searchLower || 
+                            (item.student_name && item.student_name.toLowerCase().includes(searchLower)) ||
+                            (item.student_identifier && String(item.student_identifier).toLowerCase().includes(searchLower)) ||
+                            (item.topic && item.topic.toLowerCase().includes(searchLower));
+                        return matchesTab && matchesSearch;
+                    });
+                },
+                getWaLink(item) {
+                    if (!item || !item.student_phone) return '#';
+                    const phone = String(item.student_phone).replace(/^0/, '62').replace(/\D/g, '');
+                    const text = encodeURIComponent(`Halo ${item.student_name || 'Mahasiswa'}, pengingat jadwal bimbingan SIBIMA pada ${item.scheduled_date_formatted || ''} pukul ${item.scheduled_time_formatted || ''}. Topik: ${item.topic || ''}.`);
+                    return `https://wa.me/${phone}?text=${text}`;
+                },
+                getInitials(name) {
+                    if (!name) return 'MH';
+                    return name.substring(0, 2).toUpperCase();
+                },
                 async fetchLiveAttendance(silent = false) {
                     if (!silent) this.isSyncing = true;
                     try {
@@ -162,10 +130,7 @@
                     }
                 },
                 init() {
-                    window.__mentoringScope = this;
-                    if (this.viewMode === 'calendar') {
-                        this.initCalendar();
-                    }
+                    window.__liveAttendanceScope = this;
                     this.fetchLiveAttendance(true);
                     setInterval(() => {
                         this.fetchLiveAttendance(true);
@@ -174,22 +139,66 @@
             };
         }
 
+        function mentoringCancelModal() {
+            return {
+                cancelModalOpen: false,
+                cancelData: {
+                    id: null,
+                    student_name: '',
+                    student_npm: '',
+                    topic: '',
+                    scheduled_date: '',
+                    scheduled_time: '',
+                    is_group: false,
+                    group_count: 1,
+                    reason: '',
+                    apply_to_group: true,
+                },
+                openModal(data) {
+                    if (!data) return;
+                    this.cancelData = {
+                        id: data.id,
+                        student_name: data.student_name || 'Mahasiswa',
+                        student_npm: data.student_npm || '-',
+                        topic: data.topic || '-',
+                        scheduled_date: data.scheduled_date || '-',
+                        scheduled_time: data.scheduled_time || '-',
+                        is_group: !!data.is_group,
+                        group_count: data.group_count || 1,
+                        reason: '',
+                        apply_to_group: !!data.is_group,
+                    };
+                    this.cancelModalOpen = true;
+                },
+                init() {
+                    window.__cancelModalScope = this;
+                }
+            };
+        }
+
         window.mentoringSchedule = mentoringSchedule;
+        window.mentoringLiveAttendance = mentoringLiveAttendance;
+        window.mentoringCancelModal = mentoringCancelModal;
 
         if (window.Alpine) {
             window.Alpine.data('mentoringSchedule', mentoringSchedule);
+            window.Alpine.data('mentoringLiveAttendance', mentoringLiveAttendance);
+            window.Alpine.data('mentoringCancelModal', mentoringCancelModal);
         }
         document.addEventListener('alpine:init', () => {
             if (window.Alpine) {
                 window.Alpine.data('mentoringSchedule', mentoringSchedule);
+                window.Alpine.data('mentoringLiveAttendance', mentoringLiveAttendance);
+                window.Alpine.data('mentoringCancelModal', mentoringCancelModal);
             }
         });
 
         window.openCancelModal = function(data) {
             if (!data) return;
-            if (window.__mentoringScope && typeof window.__mentoringScope.openCancelModal === 'function') {
-                window.__mentoringScope.openCancelModal(data);
+            if (window.__cancelModalScope && typeof window.__cancelModalScope.openModal === 'function') {
+                window.__cancelModalScope.openModal(data);
             }
+            window.dispatchEvent(new CustomEvent('open-cancel-modal', { detail: data }));
         };
 
         window.openCancelModalFromEl = function(el) {
@@ -208,9 +217,10 @@
         };
 
         window.openLiveModal = function() {
-            if (window.__mentoringScope && typeof window.__mentoringScope.openLiveModal === 'function') {
-                window.__mentoringScope.openLiveModal();
+            if (window.__liveAttendanceScope && typeof window.__liveAttendanceScope.openModal === 'function') {
+                window.__liveAttendanceScope.openModal();
             }
+            window.dispatchEvent(new CustomEvent('open-live-modal'));
         };
     </script>
 
@@ -1009,7 +1019,9 @@
 
         <!-- 3. LIVE REAL-TIME ATTENDANCE MONITOR MODAL -->
         <template x-teleport="body">
-            <div x-show="liveModalOpen" 
+            <div x-data="mentoringLiveAttendance()" 
+                 @open-live-modal.window="openModal()" 
+                 x-show="liveModalOpen" 
                  x-cloak 
                  class="fixed inset-0 overflow-y-auto" 
                  style="z-index: 99999 !important;"
@@ -1283,7 +1295,9 @@
 
         <!-- 4. MODAL KONFIRMASI PEMBATALAN JADWAL BIMBINGAN -->
         <template x-teleport="body">
-            <div x-show="cancelModalOpen" 
+            <div x-data="mentoringCancelModal()" 
+                 @open-cancel-modal.window="openModal($event.detail)" 
+                 x-show="cancelModalOpen" 
                  x-cloak 
                  class="fixed inset-0 overflow-y-auto" 
                  style="z-index: 99999 !important;"
