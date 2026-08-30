@@ -170,13 +170,26 @@
         });
 
         window.openCancelModalFromEl = function(el) {
-            if (window.__mentoringScope && window.__mentoringScope.openCancelModalFromEl) {
-                window.__mentoringScope.openCancelModalFromEl(el);
+            if (!el) return;
+            const data = {
+                id: el.getAttribute('data-session-id'),
+                student_name: el.getAttribute('data-student-name') || 'Mahasiswa',
+                student_npm: el.getAttribute('data-student-npm') || '-',
+                topic: el.getAttribute('data-topic') || '-',
+                scheduled_date: el.getAttribute('data-scheduled-date') || '-',
+                scheduled_time: el.getAttribute('data-scheduled-time') || '-',
+                is_group: el.getAttribute('data-is-group') === '1',
+                group_count: parseInt(el.getAttribute('data-group-count') || '1'),
+            };
+
+            if (window.__mentoringScope && typeof window.__mentoringScope.openCancelModal === 'function') {
+                window.__mentoringScope.openCancelModal(data);
             }
+            window.dispatchEvent(new CustomEvent('open-cancel-modal', { detail: data }));
         };
     </script>
 
-    <div class="w-full" x-data="mentoringSchedule()">
+    <div class="w-full" x-data="mentoringSchedule()" @open-cancel-modal.window="openCancelModal($event.detail)">
         
         <!-- KPI Quick Bar (4 Metrik Ringkas) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -608,11 +621,21 @@
                                             @endcan
                                             @can('delete', $session)
                                                 <button type="button" 
-                                                        @click="openCancelModalFromEl($el)"
+                                                        @click="$dispatch('open-cancel-modal', {
+                                                            id: '{{ $session->id }}',
+                                                            student_name: '{{ addslashes($session->thesis?->student?->name ?? 'Mahasiswa') }}',
+                                                            student_npm: '{{ addslashes($session->thesis?->student?->identifier ?? '-') }}',
+                                                            topic: '{{ addslashes($session->topic) }}',
+                                                            scheduled_date: '{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}',
+                                                            scheduled_time: '{{ $session->scheduled_at->format('H:i') }} WIB',
+                                                            is_group: {{ $isGroupSession ? 'true' : 'false' }},
+                                                            group_count: {{ $groupCountMap[$gKey] ?? 1 }}
+                                                        })"
+                                                        onclick="window.openCancelModalFromEl(this); return false;"
                                                         data-session-id="{{ $session->id }}"
-                                                        data-student-name="{{ $session->thesis?->student?->name ?? 'Mahasiswa' }}"
-                                                        data-student-npm="{{ $session->thesis?->student?->identifier ?? '-' }}"
-                                                        data-topic="{{ $session->topic }}"
+                                                        data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                        data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                        data-topic="{{ e($session->topic) }}"
                                                         data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
                                                         data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
                                                         data-is-group="{{ $isGroupSession ? '1' : '0' }}"
@@ -640,11 +663,21 @@
                                                 </form>
                                                 @can('delete', $session)
                                                     <button type="button" 
-                                                            @click="openCancelModalFromEl($el)"
+                                                            @click="$dispatch('open-cancel-modal', {
+                                                                id: '{{ $session->id }}',
+                                                                student_name: '{{ addslashes($session->thesis?->student?->name ?? 'Mahasiswa') }}',
+                                                                student_npm: '{{ addslashes($session->thesis?->student?->identifier ?? '-') }}',
+                                                                topic: '{{ addslashes($session->topic) }}',
+                                                                scheduled_date: '{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}',
+                                                                scheduled_time: '{{ $session->scheduled_at->format('H:i') }} WIB',
+                                                                is_group: {{ $isGroupSession ? 'true' : 'false' }},
+                                                                group_count: {{ $groupCountMap[$gKey] ?? 1 }}
+                                                            })"
+                                                            onclick="window.openCancelModalFromEl(this); return false;"
                                                             data-session-id="{{ $session->id }}"
-                                                            data-student-name="{{ $session->thesis?->student?->name ?? 'Mahasiswa' }}"
-                                                            data-student-npm="{{ $session->thesis?->student?->identifier ?? '-' }}"
-                                                            data-topic="{{ $session->topic }}"
+                                                            data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                            data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                            data-topic="{{ e($session->topic) }}"
                                                             data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
                                                             data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
                                                             data-is-group="{{ $isGroupSession ? '1' : '0' }}"
