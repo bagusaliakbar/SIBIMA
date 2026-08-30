@@ -44,12 +44,16 @@
                 </div>
             @endif
             
-            <form action="{{ route('mentoring-sessions.store') }}" method="POST" class="space-y-6" x-data="{
+            <form x-ref="mentoringForm" action="{{ route('mentoring-sessions.store') }}" method="POST" class="space-y-6" x-data="{
                 type: '{{ old('type', 'offline') }}',
                 location: '{{ old('location', '') }}',
+                topic: '{{ old('topic', '') }}',
+                notes: '{{ old('notes', '') }}',
                 meetOpened: false,
                 customTimeMode: false,
                 isLecturer: {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'true' : 'false' }},
+                showConfirmModal: false,
+                isSubmitting: false,
                 
                 // Student Selection Multi-Select State (Lecturer Only)
                 selectionMode: '{{ (is_array(old('thesis_ids')) && in_array('all', old('thesis_ids'))) ? 'all' : 'multiple' }}',
@@ -89,6 +93,46 @@
 
                 get selectedMinute() {
                     return this.selectedTime.split(':')[1] || '00';
+                },
+
+                get selectedDosenText() {
+                    const el = document.getElementById('dosen_id');
+                    if (!el || el.selectedIndex < 0) return '-';
+                    return el.options[el.selectedIndex]?.text || '-';
+                },
+
+                get formattedScheduledDate() {
+                    if (!this.scheduledDate) return '-';
+                    try {
+                        const parts = this.scheduledDate.split('-');
+                        if (parts.length === 3) {
+                            const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                            return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                        }
+                        return this.scheduledDate;
+                    } catch(e) {
+                        return this.scheduledDate;
+                    }
+                },
+
+                openConfirmModal() {
+                    const form = this.$refs.mentoringForm;
+                    if (form && !form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    if (this.isLecturer && this.selectionMode === 'multiple' && this.selectedThesisIds.length === 0) {
+                        alert('Silakan pilih minimal 1 mahasiswa bimbingan.');
+                        return;
+                    }
+
+                    this.showConfirmModal = true;
+                },
+
+                submitConfirmed() {
+                    this.isSubmitting = true;
+                    this.$refs.mentoringForm.submit();
                 },
 
                 init() {
@@ -425,7 +469,7 @@
                     
                     <div>
                         <label for="topic" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Topik Pembahasan <span class="text-orange-600">*</span></label>
-                        <input type="text" name="topic" id="topic" required placeholder="Contoh: Revisi Bab 1 & Metodologi" class="mt-2 block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                        <input type="text" name="topic" id="topic" x-model="topic" required placeholder="Contoh: Revisi Bab 1 & Metodologi" class="mt-2 block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
                     </div>
 
                     <div>
@@ -529,14 +573,15 @@
 
                 <div>
                     <label for="notes" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Catatan Tambahan (Opsional)</label>
-                    <textarea name="notes" id="notes" rows="3" class="mt-2 block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all" placeholder="Sampaikan poin yang perlu dipersiapkan mahasiswa sebelum bimbingan..."></textarea>
+                    <textarea name="notes" id="notes" x-model="notes" rows="3" class="mt-2 block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all" placeholder="Sampaikan poin yang perlu dipersiapkan mahasiswa sebelum bimbingan..."></textarea>
                 </div>
 
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
                     <a href="{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? route('mentoring-sessions.index') : route('dashboard') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-2xs">
                         Batal
                     </a>
-                    <button type="submit" 
+                    <button type="button" 
+                            @click="openConfirmModal()"
                             :disabled="isLecturer && selectionMode === 'multiple' && selectedThesisIds.length === 0"
                             :class="isLecturer && selectionMode === 'multiple' && selectedThesisIds.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01] active:scale-95 cursor-pointer'"
                             class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 rounded-xl text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-orange-500/20 transition-all border border-transparent flex items-center gap-2">
@@ -550,6 +595,151 @@
                             </template>
                         @endif
                     </button>
+                </div>
+
+                <!-- Modal Konfirmasi Rincian Jadwal Bimbingan -->
+                <div x-show="showConfirmModal" 
+                     x-cloak 
+                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     aria-labelledby="modal-title" 
+                     role="dialog" 
+                     aria-modal="true">
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <!-- Backdrop -->
+                        <div x-show="showConfirmModal" 
+                             x-transition:enter="ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" 
+                             @click="showConfirmModal = false" 
+                             aria-hidden="true"></div>
+
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                        <!-- Modal Panel -->
+                        <div x-show="showConfirmModal" 
+                             x-transition:enter="ease-out duration-300"
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave="ease-in duration-200"
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700">
+                            
+                            <div class="p-6 sm:p-8">
+                                <!-- Modal Header -->
+                                <div class="flex items-center gap-3.5 mb-5 pb-4 border-b border-slate-100 dark:border-slate-700/80">
+                                    <div class="w-11 h-11 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-xl shrink-0">
+                                        📋
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">
+                                            {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Konfirmasi Penjadwalan Bimbingan' : 'Konfirmasi Pengajuan Bimbingan' }}
+                                        </h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                            Periksa kembali rincian data bimbingan sebelum dikirimkan.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Summary Details Card -->
+                                <div class="space-y-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 text-xs">
+                                    <!-- Mahasiswa / Dosen Target -->
+                                    @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                        <div class="flex justify-between items-start gap-3 py-1">
+                                            <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Mahasiswa Sasaran:</span>
+                                            <span class="font-bold text-slate-800 dark:text-slate-200 text-right">
+                                                <template x-if="selectionMode === 'all'">
+                                                    <span>Seluruh Mahasiswa ({{ count($theses) }} Mahasiswa)</span>
+                                                </template>
+                                                <template x-if="selectionMode === 'multiple'">
+                                                    <span x-text="selectedThesisIds.length + ' Mahasiswa Terpilih'"></span>
+                                                </template>
+                                            </span>
+                                        </div>
+                                    @else
+                                        <div class="flex justify-between items-start gap-3 py-1">
+                                            <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Dosen Pembimbing:</span>
+                                            <span class="font-bold text-slate-800 dark:text-slate-200 text-right" x-text="selectedDosenText"></span>
+                                        </div>
+                                    @endif
+
+                                    <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
+
+                                    <!-- Tanggal & Waktu -->
+                                    <div class="flex justify-between items-start gap-3 py-1">
+                                        <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Waktu Sesi:</span>
+                                        <div class="text-right">
+                                            <div class="font-bold text-slate-800 dark:text-slate-200" x-text="formattedScheduledDate"></div>
+                                            <div class="text-orange-600 dark:text-orange-400 font-extrabold font-mono text-[11px] mt-0.5">
+                                                <span x-text="selectedTime"></span> WIB
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
+
+                                    <!-- Tipe & Tempat -->
+                                    <div class="flex justify-between items-start gap-3 py-1">
+                                        <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Tipe & Tempat:</span>
+                                        <div class="text-right">
+                                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold" 
+                                                  :class="type === 'offline' ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' : 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'"
+                                                  x-text="type === 'offline' ? 'Tatap Muka (Offline)' : 'Daring (Online)'"></span>
+                                            <div class="text-slate-700 dark:text-slate-300 font-medium text-[11px] mt-0.5 break-all line-clamp-2" x-text="location || '-'"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
+
+                                    <!-- Topik Pembahasan -->
+                                    <div class="flex justify-between items-start gap-3 py-1">
+                                        <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Topik:</span>
+                                        <span class="font-bold text-slate-800 dark:text-slate-200 text-right line-clamp-2" x-text="topic || '-'"></span>
+                                    </div>
+
+                                    <!-- Catatan jika ada -->
+                                    <template x-if="notes && notes.trim()">
+                                        <div class="pt-1">
+                                            <div class="h-px bg-slate-200/70 dark:bg-slate-700/70 mb-2"></div>
+                                            <div class="flex justify-between items-start gap-3">
+                                                <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Catatan:</span>
+                                                <span class="font-normal italic text-slate-600 dark:text-slate-300 text-right line-clamp-2" x-text="notes"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Info Alert -->
+                                <div class="mt-4 p-3 rounded-xl bg-orange-50/70 dark:bg-orange-500/10 border border-orange-200/80 dark:border-orange-500/20 text-orange-800 dark:text-orange-300 text-[11px] flex items-center gap-2">
+                                    <svg class="w-4 h-4 shrink-0 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>Notifikasi pengajuan bimbingan ini akan langsung dikirimkan ke dosen pembimbing melalui sistem & WhatsApp.</span>
+                                </div>
+
+                                <!-- Modal Actions -->
+                                <div class="mt-6 flex items-center justify-end gap-3">
+                                    <button type="button" 
+                                            @click="showConfirmModal = false" 
+                                            class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                                        Periksa Kembali
+                                    </button>
+                                    <button type="button" 
+                                            @click="submitConfirmed()" 
+                                            :disabled="isSubmitting"
+                                            class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-orange-500/20 hover:scale-[1.02] active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                                        <span x-show="!isSubmitting">✓ Ya, Kirim Pengajuan</span>
+                                        <span x-show="isSubmitting" class="flex items-center gap-1.5">
+                                            <svg class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            <span>Mengirim...</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
