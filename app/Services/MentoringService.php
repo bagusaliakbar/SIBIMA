@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\GeneralNotification;
 use App\Notifications\MentoringScheduledByDosenNotification;
 use App\Notifications\MentoringRescheduledNotification;
+use App\Notifications\MentoringCancelledNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -482,5 +483,88 @@ class MentoringService
             'document_path'          => null,
             'document_original_name' => null,
         ]);
+    }
+
+    /**
+     * Cancel / Delete a mentoring session (Single or Group).
+     */
+    public function cancelSession(MentoringSession $session, array $data)
+    {
+        $user = Auth::user();
+        $reason = !empty($data['reason']) ? trim($data['reason']) : 'Tidak ada alasan khusus yang dicantumkan.';
+        $applyToGroup = !empty($data['apply_to_group']);
+
+        if ($session->status === 'completed') {
+            throw new \Exception('Sesi bimbingan yang sudah selesai tidak dapat dibatalkan.');
+        }
+
+        if ($applyToGroup && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) {
+            $groupSessions = MentoringSession::where('dosen_id', $session->dosen_id)
+                ->where('scheduled_at', $session->scheduled_at)
+                ->where('status', '!=', 'completed')
+                ->with(['thesis.student', 'dosen'])
+                ->get();
+
+            if (!$groupSessions->contains('id', $session->id)) {
+                $groupSessions->push($session);
+            }
+
+            $count = $groupSessions->count();
+            $formattedDate = $session->scheduled_at->locale('id')->translatedFormat('l, d F Y H:i');
+
+            foreach ($groupSessions as $gSession) {
+                $student = $gSession->thesis?->student;
+                if ($student) {
+                    $student->notify(new MentoringCancelledNotification($gSession, $user, $reason));
+                }
+
+                ActivityLog::log(
+                    'Pembatalan Bimbingan Bersama',
+                    "{$user->name} membatalkan sesi bimbingan bersama ({$gSession->topic}) untuk {$student?->name} pada {$formattedDate} WIB. Alasan: {$reason}",
+                    'Bimbingan',
+                    $gSession
+                );
+
+                if ($gSession->document_path && !filter_var($gSession->document_path, FILTER_VALIDATE_URL) && Storage::disk('local')->exists($gSession->document_path)) {
+                    Storage::disk('local')->delete($gSession->document_path);
+                }
+
+                $gSession->delete();
+            }
+
+            return ['type' => 'group', 'count' => $count];
+        }
+
+        // Single cancellation
+        $formattedDate = $session->scheduled_at->locale('id')->translatedFormat('l, d F Y H:i');
+        $student = $session->thesis?->student;
+        $dosen = $session->dosen ?? $session->thesis?->pembimbing1;
+
+        // If cancelled by Dosen/Admin/Kaprodi -> notify Student
+        // If cancelled by Student -> notify Dosen
+        if (in_array($user->role, ['dosen', 'admin', 'kaprodi'])) {
+            if ($student) {
+                $student->notify(new MentoringCancelledNotification($session, $user, $reason));
+            }
+        } else {
+            if ($dosen) {
+                $dosen->notify(new MentoringCancelledNotification($session, $user, $reason));
+            }
+        }
+
+        ActivityLog::log(
+            'Pembatalan Bimbingan',
+            "{$user->name} membatalkan sesi bimbingan ({$session->topic}) pada {$formattedDate} WIB. Alasan: {$reason}",
+            'Bimbingan',
+            $session
+        );
+
+        if ($session->document_path && !filter_var($session->document_path, FILTER_VALIDATE_URL) && Storage::disk('local')->exists($session->document_path)) {
+            Storage::disk('local')->delete($session->document_path);
+        }
+
+        $session->delete();
+
+        return ['type' => 'single', 'count' => 1];
     }
 }

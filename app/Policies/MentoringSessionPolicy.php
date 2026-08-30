@@ -107,10 +107,24 @@ class MentoringSessionPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determine whether the user can delete / cancel the mentoring session.
      */
     public function delete(User $user, MentoringSession $mentoringSession): bool
     {
+        if ($mentoringSession->status === 'completed') {
+            return false;
+        }
+
+        if ($user->role === 'dosen') {
+            return $user->id === $mentoringSession->dosen_id 
+                || $user->id === $mentoringSession->thesis?->pembimbing1_id 
+                || $user->id === $mentoringSession->thesis?->pembimbing2_id;
+        }
+
+        if ($user->role === 'mahasiswa') {
+            return $user->id === $mentoringSession->thesis?->student_id;
+        }
+
         return false;
     }
 

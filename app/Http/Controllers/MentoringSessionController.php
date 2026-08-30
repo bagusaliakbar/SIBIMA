@@ -514,4 +514,33 @@ class MentoringSessionController extends Controller
 
         return redirect()->back()->with('success', $message);
     }
+
+    /**
+     * Cancel / Delete a mentoring session.
+     */
+    public function destroy(Request $request, MentoringSession $mentoringSession)
+    {
+        $this->authorize('delete', $mentoringSession);
+
+        $validated = $request->validate([
+            'reason' => 'nullable|string|max:500',
+            'apply_to_group' => 'nullable',
+        ]);
+
+        $validated['apply_to_group'] = $request->boolean('apply_to_group');
+
+        try {
+            $result = $this->mentoringService->cancelSession($mentoringSession, $validated);
+
+            if (($result['count'] ?? 1) > 1) {
+                return redirect()->route('mentoring-sessions.index')
+                    ->with('success', "Jadwal bimbingan bersama untuk {$result['count']} mahasiswa berhasil dibatalkan dan notifikasi telah dikirimkan.");
+            }
+
+            return redirect()->back()
+                ->with('success', 'Jadwal bimbingan berhasil dibatalkan dan notifikasi pembatalan telah dikirimkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal membatalkan jadwal bimbingan: ' . $e->getMessage());
+        }
+    }
 }
