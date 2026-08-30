@@ -275,6 +275,8 @@
                         </select>
                     </form>
                 </div>
+            </div>
+
             <!-- Inline Bulk Action Banner (Appears when >= 1 user selected) -->
             <div x-show="selectedUserIds.length > 0" 
                  x-cloak
