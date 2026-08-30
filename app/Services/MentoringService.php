@@ -203,6 +203,16 @@ class MentoringService
                     $q->where('pembimbing1_id', Auth::id())
                       ->orWhere('pembimbing2_id', Auth::id());
                 });
+            } elseif (in_array($user->role, ['admin', 'kaprodi']) && !empty($data['dosen_id'])) {
+                if ($data['dosen_id'] === 'p2') {
+                    $thesesQuery->whereNotNull('pembimbing2_id');
+                } else {
+                    $targetDosenId = $data['dosen_id'];
+                    $thesesQuery->where(function($q) use ($targetDosenId) {
+                        $q->where('pembimbing1_id', $targetDosenId)
+                          ->orWhere('pembimbing2_id', $targetDosenId);
+                    });
+                }
             }
             $theses = $thesesQuery->get();
         } else {

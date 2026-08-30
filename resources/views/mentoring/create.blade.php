@@ -177,14 +177,54 @@
                     this.validateAndAdjustTime();
                 },
 
+                get availableTheses() {
+                    if (!this.selectedDosenId || this.selectedDosenId === '') {
+                        return this.thesesList;
+                    }
+                    if (this.selectedDosenId === 'p2') {
+                        return this.thesesList.filter(t => t.p2_id && t.p2_id !== '');
+                    }
+                    // Specific lecturer ID selected: filter to only students where this lecturer is P1 or P2
+                    const dId = String(this.selectedDosenId);
+                    return this.thesesList.filter(t => String(t.p1_id) === dId || String(t.p2_id) === dId);
+                },
+
                 get filteredTheses() {
-                    if (!this.studentSearch.trim()) return this.thesesList;
+                    let list = this.availableTheses;
+                    if (!this.studentSearch.trim()) return list;
                     const q = this.studentSearch.toLowerCase();
-                    return this.thesesList.filter(t => 
+                    return list.filter(t => 
                         t.name.toLowerCase().includes(q) || 
                         t.npm.toLowerCase().includes(q) || 
-                        t.title.toLowerCase().includes(q)
+                        t.title.toLowerCase().includes(q) ||
+                        (t.p1_name && t.p1_name.toLowerCase().includes(q)) ||
+                        (t.p2_name && t.p2_name.toLowerCase().includes(q))
                     );
+                },
+
+                onDosenChange() {
+                    // Filter selected thesis IDs to only keep those available for the newly selected lecturer
+                    const availableIds = this.availableTheses.map(t => t.id);
+                    this.selectedThesisIds = this.selectedThesisIds.filter(id => availableIds.includes(id));
+                },
+
+                getStudentRoleBadge(t) {
+                    if (this.selectedDosenId && this.selectedDosenId !== '' && this.selectedDosenId !== 'p2') {
+                        const dId = String(this.selectedDosenId);
+                        if (String(t.p1_id) === dId) {
+                            return { text: 'Pembimbing 1', class: 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/20' };
+                        }
+                        if (String(t.p2_id) === dId) {
+                            return { text: 'Pembimbing 2', class: 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20' };
+                        }
+                    }
+                    if (t.is_p1) {
+                        return { text: 'Pembimbing 1', class: 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/20' };
+                    }
+                    if (t.is_p2) {
+                        return { text: 'Pembimbing 2', class: 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20' };
+                    }
+                    return { text: t.p1_name ? 'P1: ' + t.p1_name : 'Bimbingan', class: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700' };
                 },
 
                 toggleThesis(id) {
@@ -284,10 +324,10 @@
                         <label for="dosen_id" class="block text-sm font-bold text-slate-800 dark:text-slate-200">
                             Dosen Pembimbing Pelaksana <span class="text-orange-600">*</span>
                         </label>
-                        <select name="dosen_id" id="dosen_id" x-model="selectedDosenId" class="block w-full rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm font-medium transition-all">
-                            <option value="">-- Otomatis: Pembimbing 1 Masing-masing Mahasiswa --</option>
-                            <option value="p2">-- Otomatis: Pembimbing 2 Masing-masing Mahasiswa --</option>
-                            <optgroup label="Tentukan Dosen Pembimbing Spesifik">
+                        <select name="dosen_id" id="dosen_id" x-model="selectedDosenId" @change="onDosenChange()" class="block w-full rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm font-medium transition-all">
+                            <option value="">-- Tampilkan Semua / Otomatis: Pembimbing 1 Masing-masing Mahasiswa --</option>
+                            <option value="p2">-- Tampilkan Semua yang Memiliki Pembimbing 2 (Pendamping) --</option>
+                            <optgroup label="Filter Khusus Mahasiswa Dosen Tertentu">
                                 @if(isset($dosens))
                                     @foreach($dosens as $d)
                                         <option value="{{ $d->id }}">{{ $d->name }}</option>
@@ -296,7 +336,7 @@
                             </optgroup>
                         </select>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Sebagai Kaprodi/Admin, Anda dapat memilih dosen spesifik untuk melaksanakan bimbingan ini atau menggunakan Pembimbing Utama/Pendamping masing-masing mahasiswa secara otomatis.
+                            Pilih dosen tertentu untuk menyaring daftar mahasiswa bimbingan dosen tersebut secara otomatis, atau pilih "Tampilkan Semua" untuk menjadwalkan mahasiswa dari seluruh dosen.
                         </p>
                     </div>
                     @endif
@@ -323,7 +363,7 @@
                                         :class="selectionMode === 'all' ? 'bg-orange-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'"
                                         class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span>Pilih Semua ({{ count($theses) }} Mahasiswa)</span>
+                                    <span>Pilih Semua (<span x-text="availableTheses.length"></span> Mahasiswa)</span>
                                 </button>
                             </div>
                         </div>
@@ -335,8 +375,10 @@
                                     🌐
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-bold text-orange-950 dark:text-orange-200">Sesi Bimbingan Massal (Semua Mahasiswa)</h4>
-                                    <p class="text-xs text-orange-800/80 dark:text-orange-300/80 mt-0.5">Jadwal bimbingan akan dibuat dan dikirimkan untuk seluruh {{ count($theses) }} mahasiswa bimbingan aktif Anda sekaligus.</p>
+                                    <h4 class="text-sm font-bold text-orange-950 dark:text-orange-200">Sesi Bimbingan Massal</h4>
+                                    <p class="text-xs text-orange-800/80 dark:text-orange-300/80 mt-0.5">
+                                        Jadwal bimbingan akan dibuat dan dikirimkan untuk seluruh <span class="font-black underline" x-text="availableTheses.length"></span> mahasiswa bimbingan yang terfilter.
+                                    </p>
                                 </div>
                             </div>
                             <input type="hidden" name="thesis_ids[]" value="all" :disabled="selectionMode !== 'all'">
@@ -389,7 +431,7 @@
                                         <div class="pt-0.5 shrink-0">
                                             <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-colors"
                                                  :class="isSelected(t.id) ? 'bg-orange-600 border-orange-600 text-white' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'">
-                                                <svg x-show="isSelected(t.id)" class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                                                 <svg x-show="isSelected(t.id)" class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                                             </div>
                                         </div>
 
@@ -406,8 +448,8 @@
                                                     <span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700" x-text="t.npm"></span>
                                                 </div>
                                                 <span class="text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
-                                                      :class="t.is_p1 ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/20' : 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20'"
-                                                      x-text="t.role_label">
+                                                      :class="getStudentRoleBadge(t).class"
+                                                      x-text="getStudentRoleBadge(t).text">
                                                 </span>
                                             </div>
                                             <p class="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-1 mt-1 italic" x-text="'&quot;' + t.title + '&quot;'"></p>
@@ -417,8 +459,15 @@
 
                                 <!-- Empty Search Result -->
                                 <div x-show="filteredTheses.length === 0" class="p-8 text-center bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                                    <p class="font-bold">Tidak ada mahasiswa yang cocok dengan kata kunci "<span x-text="studentSearch"></span>"</p>
-                                    <button type="button" @click="studentSearch = ''" class="text-orange-600 dark:text-orange-400 hover:underline font-semibold mt-1">Hapus kata kunci pencarian</button>
+                                    <p class="font-bold">
+                                        <template x-if="studentSearch.trim()">
+                                            <span>Tidak ada mahasiswa yang cocok dengan kata kunci "<span x-text="studentSearch"></span>"</span>
+                                        </template>
+                                        <template x-if="!studentSearch.trim()">
+                                            <span>Tidak ada mahasiswa bimbingan aktif untuk dosen yang dipilih saat ini.</span>
+                                        </template>
+                                    </p>
+                                    <button type="button" x-show="studentSearch.trim()" @click="studentSearch = ''" class="text-orange-600 dark:text-orange-400 hover:underline font-semibold mt-1">Hapus kata kunci pencarian</button>
                                 </div>
                             </div>
 
@@ -714,7 +763,7 @@
                                             <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Mahasiswa Sasaran:</span>
                                             <span class="font-bold text-slate-800 dark:text-slate-200 text-right">
                                                 <template x-if="selectionMode === 'all'">
-                                                    <span>Seluruh Mahasiswa ({{ count($theses) }} Mahasiswa)</span>
+                                                    <span>Seluruh Mahasiswa (<span x-text="availableTheses.length"></span> Mahasiswa)</span>
                                                 </template>
                                                 <template x-if="selectionMode === 'multiple'">
                                                     <span x-text="selectedThesisIds.length + ' Mahasiswa Terpilih'"></span>
