@@ -35,8 +35,7 @@
                             locale: 'id',
                             events: this.events,
                             eventClick: (info) => {
-                                this.selectedEvent = info.event.extendedProps;
-                                this.eventModalOpen = true;
+                                window.dispatchEvent(new CustomEvent('open-event-modal', { detail: info.event.extendedProps }));
                             },
                             eventTimeFormat: {
                                 hour: '2-digit',
@@ -176,18 +175,35 @@
             };
         }
 
+        function mentoringEventModal() {
+            return {
+                eventModalOpen: false,
+                selectedEvent: null,
+                openModal(eventData) {
+                    this.selectedEvent = eventData;
+                    this.eventModalOpen = true;
+                },
+                init() {
+                    window.__eventModalScope = this;
+                }
+            };
+        }
+
         window.mentoringSchedule = mentoringSchedule;
+        window.mentoringEventModal = mentoringEventModal;
         window.mentoringLiveAttendance = mentoringLiveAttendance;
         window.mentoringCancelModal = mentoringCancelModal;
 
         if (window.Alpine) {
             window.Alpine.data('mentoringSchedule', mentoringSchedule);
+            window.Alpine.data('mentoringEventModal', mentoringEventModal);
             window.Alpine.data('mentoringLiveAttendance', mentoringLiveAttendance);
             window.Alpine.data('mentoringCancelModal', mentoringCancelModal);
         }
         document.addEventListener('alpine:init', () => {
             if (window.Alpine) {
                 window.Alpine.data('mentoringSchedule', mentoringSchedule);
+                window.Alpine.data('mentoringEventModal', mentoringEventModal);
                 window.Alpine.data('mentoringLiveAttendance', mentoringLiveAttendance);
                 window.Alpine.data('mentoringCancelModal', mentoringCancelModal);
             }
@@ -848,7 +864,9 @@
 
         <!-- Interactive Event Modal -->
         <template x-teleport="body">
-            <div x-show="eventModalOpen" 
+            <div x-data="mentoringEventModal()"
+                 @open-event-modal.window="openModal($event.detail)"
+                 x-show="eventModalOpen" 
                  x-cloak 
                  class="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
                  style="z-index: 99999 !important;"
