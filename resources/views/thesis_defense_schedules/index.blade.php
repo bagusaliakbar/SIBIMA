@@ -383,11 +383,14 @@
             <!-- KAPRODI / ADMIN VIEW: Advanced Management Table with Search & Status Filter -->
             <x-table-card title="Daftar Jadwal Sidang Skripsi">
                 <x-slot name="headerActions">
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
-                            <!-- Wave Filter Dropdown -->
+                    <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 w-full">
+                        <!-- Wave Filter Dropdown -->
+                        <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="relative">
+                            @if(request('search'))
+                                <input type="hidden" name="search" value="{{ request('search') }}">
+                            @endif
                             <select name="wave_id" onchange="this.form.submit()"
-                                class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
+                                class="pl-3.5 pr-9 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
                                 <option value="">Semua Gelombang</option>
                                 @foreach($waves as $wave)
                                     <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -395,30 +398,21 @@
                                     </option>
                                 @endforeach
                             </select>
-
-                            <!-- Search Input -->
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                </span>
-                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul, dosen, ruangan..."
-                                    class="pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
-                            </div>
-
-                            <button type="submit" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer" title="Cari">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <span>Cari</span>
-                            </button>
-
-                            @if(request()->hasAny(['search', 'date_from', 'date_to', 'wave_id']))
-                                <a href="{{ route('thesis-defense-schedules.index') }}" class="p-2 bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-900/20 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 rounded-xl border border-slate-200 dark:border-slate-700 transition-all" title="Reset Filter">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </a>
-                            @endif
                         </form>
 
-                        <a href="{{ route('thesis-defense-schedules.create') }}" 
-                            class="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 gap-1.5 cursor-pointer">
+                        <!-- Search Input -->
+                        <div class="w-full sm:w-64">
+                            <x-search-input 
+                                name="search" 
+                                :value="request('search', '')" 
+                                placeholder="Cari judul, dosen, ruangan..." 
+                                route="thesis-defense-schedules.index"
+                                :params="['wave_id' => request('wave_id', '')]" />
+                        </div>
+
+                        <!-- Add Button -->
+                        <a href="{{ route('thesis-defense-schedules.create', ['wave_id' => $selectedWaveId]) }}" 
+                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-lg tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
                             <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
