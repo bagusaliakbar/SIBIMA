@@ -177,10 +177,10 @@
                                     
                                     <!-- Node Circle / Icon Wrapper -->
                                     <div class="relative">
-                                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative
-                                            {{ $isCompleted ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 border-2 border-emerald-400/40 dark:border-emerald-400/30' : '' }}
-                                            {{ $isCurrent ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 border-2 border-orange-300/60 dark:border-orange-400/50 scale-105' : '' }}
-                                            {{ !$isCompleted && !$isCurrent ? 'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 group-hover/node:border-orange-400 group-hover/node:text-orange-500 dark:group-hover/node:border-orange-500' : '' }}">
+                                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 relative
+                                            {{ $isCompleted ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' : '' }}
+                                            {{ $isCurrent ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25 scale-105 ring-4 ring-orange-500/20' : '' }}
+                                            {{ !$isCompleted && !$isCurrent ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 group-hover/node:bg-orange-50 group-hover/node:text-orange-500 dark:group-hover/node:bg-slate-700' : '' }}">
                                             
                                             <!-- Step Icons -->
                                             @if($isCompleted)

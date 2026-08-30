@@ -259,7 +259,7 @@
                     </div>
                     <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Sesi terjadwal aktif minggu ini</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-slate-700/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-orange-500/20">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
@@ -279,7 +279,7 @@
                     </div>
                     <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Sesi lewat waktu belum dinilai</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-slate-700/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-amber-500/20">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </div>
             </div>
@@ -294,7 +294,7 @@
                     </div>
                     <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Mencapai syarat &ge; 4x bimbingan</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-slate-700/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-indigo-600/20">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
                 </div>
             </div>
@@ -309,7 +309,7 @@
                     </div>
                     <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Mencapai syarat &ge; 8x bimbingan</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-slate-700/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-slate-600/60 flex items-center justify-center shrink-0 shadow-2xs">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-600/20">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
