@@ -41,14 +41,18 @@
             @endphp
 
             @if($pendingConfirmations->isNotEmpty())
-                <div class="m-6 mb-0 p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200/80 dark:border-amber-500/25 text-amber-900 dark:text-amber-200 text-xs flex items-center justify-between gap-3 shadow-2xs">
-                    <div class="flex items-start sm:items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] max-w-[2.5rem] max-h-[2.5rem] aspect-square rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shrink-0 shadow-sm">
+                <div class="m-6 mb-0 p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 dark:border-amber-500/30 flex items-center justify-between gap-3 shadow-2xs transition-colors">
+                    <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+                        <div class="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] max-w-[2.5rem] max-h-[2.5rem] aspect-square rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center font-black shrink-0 shadow-2xs">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         </div>
                         <div class="min-w-0">
-                            <h4 class="font-bold text-amber-950 dark:text-amber-100 uppercase tracking-tight text-xs">Konfirmasi Kehadiran Diperlukan ({{ $pendingConfirmations->count() }} Sesi)</h4>
-                            <p class="text-[11px] text-amber-800/90 dark:text-amber-300/90 font-medium mt-0.5">Dosen pembimbing telah menjadwalkan bimbingan. Mohon konfirmasi kehadiran Anda (<b>Akan Hadir</b> atau <b>Izin</b> dengan alasan).</p>
+                            <h4 class="font-bold text-amber-900 dark:text-amber-300 uppercase tracking-tight text-xs">
+                                Konfirmasi Kehadiran Diperlukan ({{ $pendingConfirmations->count() }} Sesi)
+                            </h4>
+                            <p class="text-[11px] text-amber-800 dark:text-amber-200/90 font-medium mt-0.5 leading-relaxed">
+                                Dosen pembimbing telah menjadwalkan bimbingan. Mohon konfirmasi kehadiran Anda (<span class="font-bold text-amber-950 dark:text-white">Akan Hadir</span> atau <span class="font-bold text-amber-950 dark:text-white">Izin</span> dengan alasan).
+                            </p>
                         </div>
                     </div>
                 </div>
