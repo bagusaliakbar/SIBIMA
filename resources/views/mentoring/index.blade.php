@@ -181,6 +181,15 @@
             }
         });
 
+        window.openCancelModal = function(data) {
+            if (!data) return;
+            if (window.__mentoringScope && typeof window.__mentoringScope.openCancelModal === 'function') {
+                window.__mentoringScope.openCancelModal(data);
+            } else {
+                window.dispatchEvent(new CustomEvent('open-cancel-modal', { detail: data }));
+            }
+        };
+
         window.openCancelModalFromEl = function(el) {
             if (!el) return;
             const data = {
@@ -193,18 +202,15 @@
                 is_group: el.getAttribute('data-is-group') === '1',
                 group_count: parseInt(el.getAttribute('data-group-count') || '1'),
             };
-
-            if (window.__mentoringScope && typeof window.__mentoringScope.openCancelModal === 'function') {
-                window.__mentoringScope.openCancelModal(data);
-            }
-            window.dispatchEvent(new CustomEvent('open-cancel-modal', { detail: data }));
+            window.openCancelModal(data);
         };
 
         window.openLiveModal = function() {
             if (window.__mentoringScope && typeof window.__mentoringScope.openLiveModal === 'function') {
                 window.__mentoringScope.openLiveModal();
+            } else {
+                window.dispatchEvent(new CustomEvent('open-live-modal'));
             }
-            window.dispatchEvent(new CustomEvent('open-live-modal'));
         };
     </script>
 
@@ -353,7 +359,8 @@
                         <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
                             <button type="button" 
                                     id="btn-monitor-kehadiran"
-                                    @click="$dispatch('open-live-modal'); openLiveModal()" 
+                                    @click="openLiveModal()" 
+                                    onclick="window.openLiveModal()" 
                                     class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-95 cursor-pointer">
                                 <span class="relative flex h-2 w-2 shrink-0">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
@@ -682,17 +689,8 @@
                                             @endcan
                                             @can('delete', $session)
                                                 <button type="button" 
-                                                        @click="$dispatch('open-cancel-modal', {
-                                                            id: '{{ $session->id }}',
-                                                            student_name: '{{ addslashes($session->thesis?->student?->name ?? 'Mahasiswa') }}',
-                                                            student_npm: '{{ addslashes($session->thesis?->student?->identifier ?? '-') }}',
-                                                            topic: '{{ addslashes($session->topic) }}',
-                                                            scheduled_date: '{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}',
-                                                            scheduled_time: '{{ $session->scheduled_at->format('H:i') }} WIB',
-                                                            is_group: {{ $isGroupSession ? 'true' : 'false' }},
-                                                            group_count: {{ $groupCountMap[$gKey] ?? 1 }}
-                                                        })"
-                                                        onclick="window.openCancelModalFromEl(this); return false;"
+                                                        @click="openCancelModalFromEl($el)"
+                                                        onclick="window.openCancelModalFromEl(this)"
                                                         data-session-id="{{ $session->id }}"
                                                         data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
                                                         data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
@@ -724,18 +722,17 @@
                                                 </form>
                                                 @can('delete', $session)
                                                     <button type="button" 
-                                                            @click="$dispatch('open-cancel-modal', {
-                                                                id: '{{ $session->id }}',
-                                                                student_name: '{{ addslashes($session->thesis?->student?->name ?? 'Mahasiswa') }}',
-                                                                student_npm: '{{ addslashes($session->thesis?->student?->identifier ?? '-') }}',
-                                                                topic: '{{ addslashes($session->topic) }}',
-                                                                scheduled_date: '{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}',
-                                                                scheduled_time: '{{ $session->scheduled_at->format('H:i') }} WIB',
-                                                                is_group: {{ $isGroupSession ? 'true' : 'false' }},
-                                                                group_count: {{ $groupCountMap[$gKey] ?? 1 }}
-                                                            })"
-                                                            onclick="window.openCancelModalFromEl(this); return false;"
-                                                            class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:hover:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
+                                                            @click="openCancelModalFromEl($el)"
+                                                            onclick="window.openCancelModalFromEl(this)"
+                                                            data-session-id="{{ $session->id }}"
+                                                            data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                            data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                            data-topic="{{ e($session->topic) }}"
+                                                            data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                            data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                            data-is-group="{{ $isGroupSession ? '1' : '0' }}"
+                                                            data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
+                                                            class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
                                                             title="Batalkan Jadwal Bimbingan">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                     </button>
@@ -775,17 +772,16 @@
                                             @endcan
                                             @can('delete', $session)
                                                 <button type="button" 
-                                                        @click="$dispatch('open-cancel-modal', {
-                                                            id: '{{ $session->id }}',
-                                                            student_name: '{{ addslashes($session->thesis?->student?->name ?? 'Mahasiswa') }}',
-                                                            student_npm: '{{ addslashes($session->thesis?->student?->identifier ?? '-') }}',
-                                                            topic: '{{ addslashes($session->topic) }}',
-                                                            scheduled_date: '{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}',
-                                                            scheduled_time: '{{ $session->scheduled_at->format('H:i') }} WIB',
-                                                            is_group: {{ $isGroupSession ? 'true' : 'false' }},
-                                                            group_count: {{ $groupCountMap[$gKey] ?? 1 }}
-                                                        })"
-                                                        onclick="window.openCancelModalFromEl(this); return false;"
+                                                        @click="openCancelModalFromEl($el)"
+                                                        onclick="window.openCancelModalFromEl(this)"
+                                                        data-session-id="{{ $session->id }}"
+                                                        data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                        data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                        data-topic="{{ e($session->topic) }}"
+                                                        data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                        data-is-group="{{ $isGroupSession ? '1' : '0' }}"
+                                                        data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
                                                         class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:hover:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
                                                         title="Batalkan / Hapus Sesi Bimbingan">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
