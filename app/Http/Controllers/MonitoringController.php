@@ -241,9 +241,48 @@ class MonitoringController extends Controller implements HasMiddleware
     public function defenseScores(Request $request)
     {
         $search = $request->input('search');
+        $statusFilter = $request->input('status_filter', 'all');
         [$activeWave, $selectedWaveId] = $this->monitoringService->getActiveWave($request->input('wave_id'));
 
-        $defenseDetails = ThesisDefenseScheduleDetail::with(['thesis.student', 'thesis.pembimbing1', 'schedule', 'examiner1', 'examiner2', 'revisions'])
+        // Base query for counting filter chips
+        $baseQuery = ThesisDefenseScheduleDetail::whereHas('thesis')
+            ->when($selectedWaveId, function($q) use ($selectedWaveId) {
+                $q->whereHas('thesis.defenseApplication', function($query) use ($selectedWaveId) {
+                    $query->where('wave_id', $selectedWaveId);
+                });
+            })
+            ->when($search, function ($query, $search) {
+                $query->whereHas('thesis.student', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('identifier', 'like', "%{$search}%");
+                });
+            });
+
+        $filterCounts = [
+            'all' => (clone $baseQuery)->count(),
+            'incomplete_grades' => (clone $baseQuery)->where(function($q) {
+                $q->whereDoesntHave('revisions', function($rq) {
+                    $rq->whereNotNull('score_presentation');
+                }, '>=', 3)
+                ->orWhereHas('revisions', function($rq) {
+                    $rq->whereNull('score_presentation');
+                });
+            })->count(),
+            'pending_revisions' => (clone $baseQuery)->whereHas('revisions', function($rq) {
+                $rq->whereIn('status', ['pending', 'resubmitted'])
+                   ->orWhere(function($sq) {
+                       $sq->whereNotNull('score_presentation')->where('status', '!=', 'approved');
+                   });
+            })->count(),
+            'all_passed' => (clone $baseQuery)->whereHas('revisions', function($rq) {
+                $rq->whereNotNull('score_presentation');
+            }, '>=', 3)
+            ->whereDoesntHave('revisions', function($rq) {
+                $rq->where('status', '!=', 'approved');
+            })->count(),
+        ];
+
+        $query = ThesisDefenseScheduleDetail::with(['thesis.student', 'thesis.pembimbing1', 'schedule', 'examiner1', 'examiner2', 'revisions'])
             ->whereHas('thesis')
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('thesis.defenseApplication', function($query) use ($selectedWaveId) {
@@ -256,15 +295,42 @@ class MonitoringController extends Controller implements HasMiddleware
                       ->orWhere('identifier', 'like', "%{$search}%");
                 });
             })
+            ->when($statusFilter === 'incomplete_grades', function($q) {
+                $q->where(function($sq) {
+                    $sq->whereDoesntHave('revisions', function($rq) {
+                        $rq->whereNotNull('score_presentation');
+                    }, '>=', 3)
+                    ->orWhereHas('revisions', function($rq) {
+                        $rq->whereNull('score_presentation');
+                    });
+                });
+            })
+            ->when($statusFilter === 'pending_revisions', function($q) {
+                $q->whereHas('revisions', function($rq) {
+                    $rq->whereIn('status', ['pending', 'resubmitted'])
+                       ->orWhere(function($sq) {
+                           $sq->whereNotNull('score_presentation')->where('status', '!=', 'approved');
+                       });
+                });
+            })
+            ->when($statusFilter === 'all_passed', function($q) {
+                $q->whereHas('revisions', function($rq) {
+                    $rq->whereNotNull('score_presentation');
+                }, '>=', 3)
+                ->whereDoesntHave('revisions', function($rq) {
+                    $rq->where('status', '!=', 'approved');
+                });
+            })
             ->join('thesis_defense_schedules', 'thesis_defense_schedule_details.thesis_defense_schedule_id', '=', 'thesis_defense_schedules.id')
             ->orderBy('thesis_defense_schedules.date', 'desc')
-            ->select('thesis_defense_schedule_details.*')
-            ->paginate(15)
-            ->appends(['search' => $search, 'wave_id' => $selectedWaveId]);
+            ->select('thesis_defense_schedule_details.*');
+
+        $defenseDetails = $query->paginate(15)
+            ->appends(['search' => $search, 'wave_id' => $selectedWaveId, 'status_filter' => $statusFilter]);
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('monitoring.defense_scores', compact('defenseDetails', 'search', 'waves', 'selectedWaveId', 'activeWave'));
+        return view('monitoring.defense_scores', compact('defenseDetails', 'search', 'waves', 'selectedWaveId', 'activeWave', 'statusFilter', 'filterCounts'));
     }
 
     public function exportDefenseScoresExcel(Request $request)
