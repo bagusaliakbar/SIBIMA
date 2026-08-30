@@ -93,6 +93,8 @@ class WaTemplateController extends Controller implements HasMiddleware
             'mentoring_requested',
             'mentoring_scheduled_by_dosen',
             'mentoring_status_updated',
+            'mentoring_rescheduled',
+            'mentoring_cancelled',
             'mentoring_reminder',
             'supervisor_assigned',
             'thesis_accepted',
