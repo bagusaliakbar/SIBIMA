@@ -382,39 +382,47 @@
         @else
             <!-- KAPRODI / ADMIN VIEW: Advanced Management Table with Search & Status Filter -->
             <x-table-card title="Daftar Jadwal Seminar Proposal">
-                <x-slot name="actions">
+                <x-slot name="headerActions">
                     <div class="flex flex-wrap items-center gap-2.5">
                         <form action="{{ route('seminar-schedules.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="CARI JADWAL..."
-                                class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 uppercase placeholder:text-slate-400 focus:ring-1 focus:ring-orange-500">
-                            
+                            <!-- Wave Filter Dropdown -->
                             <select name="wave_id" onchange="this.form.submit()"
-                                class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 uppercase focus:ring-1 focus:ring-orange-500">
-                                <option value="">SEMUA GELOMBANG</option>
+                                class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer">
+                                <option value="">Semua Gelombang</option>
                                 @foreach($waves as $wave)
                                     <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
-                                        {{ strtoupper($wave->name) }} {{ $wave->is_active ? '(AKTIF)' : '' }}
+                                        {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
                                     </option>
                                 @endforeach
                             </select>
 
-                            <button type="submit" class="p-2 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700" title="Cari">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <!-- Search Input -->
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </span>
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul, dosen, ruangan..."
+                                    class="pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                            </div>
+
+                            <button type="submit" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer" title="Cari">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <span>Cari</span>
                             </button>
 
                             @if(request()->hasAny(['search', 'date_from', 'date_to', 'wave_id']))
-                                <a href="{{ route('seminar-schedules.index') }}" class="p-2 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700" title="Reset">
+                                <a href="{{ route('seminar-schedules.index') }}" class="p-2 bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-900/20 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 rounded-xl border border-slate-200 dark:border-slate-700 transition-all" title="Reset Filter">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </a>
                             @endif
                         </form>
                         
                         <a href="{{ route('seminar-schedules.create') }}"
-                            class="inline-flex items-center px-5 py-2 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                            class="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 gap-1.5 cursor-pointer">
+                            <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            Buat Jadwal
+                            <span>Tambah Jadwal Seminar</span>
                         </a>
                     </div>
                 </x-slot>

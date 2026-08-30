@@ -205,11 +205,15 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
         ));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $waves = Wave::orderBy('created_at', 'desc')->get();
         $activeWave = Wave::getCurrentActive();
-        if (!$activeWave) {
-            return redirect()->route('waves.index')->with('error', 'Silakan aktifkan gelombang terlebih dahulu.');
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $targetWave = $waves->firstWhere('id', $selectedWaveId) ?? $activeWave ?? $waves->first();
+
+        if (!$targetWave) {
+            return redirect()->route('waves.index')->with('error', 'Silakan buat gelombang terlebih dahulu.');
         }
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
@@ -220,20 +224,22 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
             ->where('acc_sidang_p1', true)
             ->where('acc_sidang_p2', true)
             ->whereNotIn('id', $scheduledThesisIds)
-            ->whereHas('defenseApplication', function($q) use ($activeWave) {
-                $q->where('wave_id', $activeWave->id);
+            ->whereHas('defenseApplication', function($q) use ($targetWave) {
+                $q->where('wave_id', $targetWave->id);
             })
             ->get();
 
-        return view('thesis_defense_schedules.create', compact('dosens', 'theses'));
+        return view('thesis_defense_schedules.create', compact('dosens', 'theses', 'waves', 'targetWave', 'selectedWaveId', 'activeWave'));
     }
 
     public function store(StoreScheduleRequest $request)
     {
-        $activeWave = Wave::getCurrentActive();
-        if (!$activeWave) return back()->with('error', 'Tidak ada gelombang aktif.');
+        $validated = $request->validated();
+        $waveId = $validated['wave_id'] ?? Wave::getCurrentActive()?->id;
 
-        $this->scheduleService->storeSchedule(ThesisDefenseSchedule::class, ThesisDefenseScheduleDetail::class, $request->validated(), $activeWave->id);
+        if (!$waveId) return back()->with('error', 'Tidak ada gelombang yang dipilih atau aktif.');
+
+        $this->scheduleService->storeSchedule(ThesisDefenseSchedule::class, ThesisDefenseScheduleDetail::class, $validated, $waveId);
 
         return redirect()->route('thesis-defense-schedules.index')->with('success', 'Jadwal sidang berhasil dibuat.');
     }

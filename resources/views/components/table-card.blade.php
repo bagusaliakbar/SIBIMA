@@ -2,11 +2,17 @@
     'title' => '',
     'subtitle' => '',
     'headerActions' => null,
+    'actions' => null,
+    'action' => null,
     'footer' => null
 ])
 
+@php
+    $actionSlot = $headerActions ?? $actions ?? $action ?? null;
+@endphp
+
 <div {{ $attributes->merge(['class' => 'bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/70 dark:border-slate-700/80 overflow-hidden transition-all']) }}>
-    @if($title || $subtitle || $headerActions)
+    @if($title || $subtitle || $actionSlot)
         <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/40 dark:bg-slate-800/40">
             <div>
                 @if($title)
@@ -17,9 +23,9 @@
                 @endif
             </div>
             
-            @if($headerActions)
+            @if($actionSlot)
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    {{ $headerActions }}
+                    {{ $actionSlot }}
                 </div>
             @endif
         </div>

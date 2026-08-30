@@ -16,10 +16,22 @@
                     <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Informasi Utama Sesi</h3>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-2">
+                    <div>
                         <x-input-label for="title" value="Judul / Sesi Seminar" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
                         <x-text-input id="title" name="title" type="text" class="mt-1 block w-full text-sm" placeholder="Contoh: SEMESTER GENAP GELOMBANG 2 TAHUN AKADEMIK 2025/2026" required />
                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="wave_id" value="Gelombang Pelaksanaan" class="text-[10px] font-black uppercase tracking-widest text-slate-500" />
+                        <select id="wave_id" name="wave_id" onchange="window.location.href = '{{ route('seminar-schedules.create') }}?wave_id=' + this.value" class="mt-1 block w-full border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 focus:border-orange-500 focus:ring-orange-500 rounded-md shadow-sm text-sm font-semibold">
+                            @foreach($waves as $wave)
+                                <option value="{{ $wave->id }}" {{ ($targetWave->id ?? null) == $wave->id ? 'selected' : '' }}>
+                                    {{ $wave->name }} {{ $wave->is_active ? '(Gelombang Aktif)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('wave_id')" class="mt-2" />
                     </div>
 
                     <div>

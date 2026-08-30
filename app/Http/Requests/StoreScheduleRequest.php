@@ -16,6 +16,7 @@ class StoreScheduleRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'wave_id' => 'nullable|exists:waves,id',
             'date' => 'required|date',
             'chairman_id' => 'nullable|exists:users,id',
             'moderator_id' => 'nullable|exists:users,id',

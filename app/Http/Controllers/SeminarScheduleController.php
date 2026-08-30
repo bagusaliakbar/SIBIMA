@@ -205,11 +205,15 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         ));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $waves = Wave::orderBy('created_at', 'desc')->get();
         $activeWave = Wave::getCurrentActive();
-        if (!$activeWave) {
-            return redirect()->route('waves.index')->with('error', 'Silakan aktifkan gelombang terlebih dahulu.');
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $targetWave = $waves->firstWhere('id', $selectedWaveId) ?? $activeWave ?? $waves->first();
+
+        if (!$targetWave) {
+            return redirect()->route('waves.index')->with('error', 'Silakan buat gelombang terlebih dahulu.');
         }
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
@@ -220,20 +224,22 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             ->where('acc_up_p1', true)
             ->where('acc_up_p2', true)
             ->whereNotIn('id', $scheduledThesisIds)
-            ->whereHas('seminarApplication', function($q) use ($activeWave) {
-                $q->where('wave_id', $activeWave->id);
+            ->whereHas('seminarApplication', function($q) use ($targetWave) {
+                $q->where('wave_id', $targetWave->id);
             })
             ->get();
 
-        return view('seminar_schedules.create', compact('dosens', 'theses'));
+        return view('seminar_schedules.create', compact('dosens', 'theses', 'waves', 'targetWave', 'selectedWaveId', 'activeWave'));
     }
 
     public function store(StoreScheduleRequest $request)
     {
-        $activeWave = Wave::getCurrentActive();
-        if (!$activeWave) return back()->with('error', 'Tidak ada gelombang aktif.');
+        $validated = $request->validated();
+        $waveId = $validated['wave_id'] ?? Wave::getCurrentActive()?->id;
 
-        $this->scheduleService->storeSchedule(SeminarSchedule::class, SeminarScheduleDetail::class, $request->validated(), $activeWave->id);
+        if (!$waveId) return back()->with('error', 'Tidak ada gelombang yang dipilih atau aktif.');
+
+        $this->scheduleService->storeSchedule(SeminarSchedule::class, SeminarScheduleDetail::class, $validated, $waveId);
 
         return redirect()->route('seminar-schedules.index')->with('success', 'Jadwal seminar berhasil dibuat.');
     }
