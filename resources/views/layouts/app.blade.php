@@ -80,14 +80,47 @@
             }
             .sidebar-link { transition: all 0.2s ease-in-out; }
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
-            .dark input[type="date"],
-            .dark input[type="time"] {
-                color-scheme: dark;
+            /* Date & Time Picker Calendar / Clock Icons */
+            input[type="date"],
+            input[type="time"],
+            input[type="datetime-local"] {
+                color-scheme: light;
             }
-            .dark input[type="date"]::-webkit-calendar-picker-indicator,
-            .dark input[type="time"]::-webkit-calendar-picker-indicator {
-                filter: invert(1) brightness(0.9);
+
+            input[type="date"]::-webkit-calendar-picker-indicator,
+            input[type="time"]::-webkit-calendar-picker-indicator,
+            input[type="datetime-local"]::-webkit-calendar-picker-indicator {
                 cursor: pointer;
+                opacity: 0.75;
+                transition: all 0.2s ease-in-out;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator:hover,
+            input[type="time"]::-webkit-calendar-picker-indicator:hover,
+            input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+                opacity: 1;
+            }
+
+            /* Dark Mode: Crisp White / Bright Calendar & Clock Icons */
+            .dark input[type="date"],
+            .dark input[type="time"],
+            .dark input[type="datetime-local"] {
+                color-scheme: dark !important;
+            }
+
+            .dark input[type="date"]::-webkit-calendar-picker-indicator,
+            .dark input[type="time"]::-webkit-calendar-picker-indicator,
+            .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+                filter: none !important;
+                opacity: 0.9 !important;
+                cursor: pointer;
+            }
+
+            .dark input[type="date"]::-webkit-calendar-picker-indicator:hover,
+            .dark input[type="time"]::-webkit-calendar-picker-indicator:hover,
+            .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+                opacity: 1 !important;
+                filter: drop-shadow(0 0 2px rgba(249, 115, 22, 0.7)) !important;
             }
 
             /* Custom Sleek Dark Scrollbar */

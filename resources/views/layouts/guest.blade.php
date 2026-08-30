@@ -59,8 +59,39 @@
                 -webkit-box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
                 box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
                 border-color: #f97316 !important;
-                outline: none !important;
-                transition: background-color 5000s ease-in-out 0s !important;
+            /* Date & Time Picker Calendar / Clock Icons */
+            input[type="date"],
+            input[type="time"],
+            input[type="datetime-local"] {
+                color-scheme: light;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator,
+            input[type="time"]::-webkit-calendar-picker-indicator,
+            input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+                cursor: pointer;
+                opacity: 0.75;
+                transition: all 0.2s ease-in-out;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator:hover,
+            input[type="time"]::-webkit-calendar-picker-indicator:hover,
+            input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+                opacity: 1;
+            }
+
+            .dark input[type="date"],
+            .dark input[type="time"],
+            .dark input[type="datetime-local"] {
+                color-scheme: dark !important;
+            }
+
+            .dark input[type="date"]::-webkit-calendar-picker-indicator,
+            .dark input[type="time"]::-webkit-calendar-picker-indicator,
+            .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+                filter: none !important;
+                opacity: 0.9 !important;
+                cursor: pointer;
             }
         </style>
     </head>
