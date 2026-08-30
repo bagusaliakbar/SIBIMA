@@ -103,15 +103,27 @@
                     this.fetchLiveAttendance(false);
                 },
                 get filteredLiveSessions() {
+                    if (!Array.isArray(this.liveSessions)) return [];
                     return this.liveSessions.filter(item => {
+                        if (!item) return false;
                         const matchesTab = (this.liveTab === 'all') || (item.attendance_status === this.liveTab);
-                        const searchLower = this.liveSearch.toLowerCase();
-                        const matchesSearch = !this.liveSearch || 
+                        const searchLower = (this.liveSearch || '').toLowerCase().trim();
+                        const matchesSearch = !searchLower || 
                             (item.student_name && item.student_name.toLowerCase().includes(searchLower)) ||
-                            (item.student_identifier && item.student_identifier.toLowerCase().includes(searchLower)) ||
+                            (item.student_identifier && String(item.student_identifier).toLowerCase().includes(searchLower)) ||
                             (item.topic && item.topic.toLowerCase().includes(searchLower));
                         return matchesTab && matchesSearch;
                     });
+                },
+                getWaLink(item) {
+                    if (!item || !item.student_phone) return '#';
+                    const phone = String(item.student_phone).replace(/^0/, '62').replace(/\D/g, '');
+                    const text = encodeURIComponent(`Halo ${item.student_name || 'Mahasiswa'}, pengingat jadwal bimbingan SIBIMA pada ${item.scheduled_date_formatted || ''} pukul ${item.scheduled_time_formatted || ''}. Topik: ${item.topic || ''}.`);
+                    return `https://wa.me/${phone}?text=${text}`;
+                },
+                getInitials(name) {
+                    if (!name) return 'MH';
+                    return name.substring(0, 2).toUpperCase();
                 },
                 initCalendar() {
                     if (this.calendarInitialized) return;
@@ -340,7 +352,8 @@
                         <!-- Real-Time Actions (Monitor & Sync) -->
                         <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
                             <button type="button" 
-                                    @click="openLiveModal()" 
+                                    id="btn-monitor-kehadiran"
+                                    @click="$dispatch('open-live-modal'); openLiveModal()" 
                                     class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-95 cursor-pointer">
                                 <span class="relative flex h-2 w-2 shrink-0">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
@@ -1009,14 +1022,28 @@
                  aria-modal="true">
                 <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <!-- Backdrop -->
-                    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" 
+                    <div x-show="liveModalOpen" 
+                         x-transition:enter="ease-out duration-300"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="ease-in duration-200"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" 
                          @click="liveModalOpen = false" 
                          aria-hidden="true"></div>
 
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                     <!-- Modal Content -->
-                    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700 relative"
+                    <div x-show="liveModalOpen" 
+                         x-transition:enter="ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave="ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700 relative"
                          style="z-index: 100000 !important;">
                     
                     <!-- Modal Header -->
@@ -1167,7 +1194,7 @@
                                                      'bg-amber-600': item.attendance_status === 'permission',
                                                      'bg-slate-700': item.attendance_status === 'pending'
                                                  }"
-                                                 x-text="item.student_name ? item.student_name.substring(0, 2).toUpperCase() : 'MH'">
+                                                 x-text="getInitials(item.student_name)">
                                             </div>
                                         </template>
                                         
@@ -1225,7 +1252,7 @@
 
                                         <!-- WhatsApp Reminder Button for Pending / Permission -->
                                         <template x-if="item.student_phone && (item.attendance_status === 'pending' || item.attendance_status === 'permission')">
-                                            <a :href="'https://wa.me/' + item.student_phone.replace(/^0/, '62') + '?text=' + encodeURIComponent('Halo ' + item.student_name + ', pengingat jadwal bimbingan SIBIMA pada ' + item.scheduled_date_formatted + ' pukul ' + item.scheduled_time_formatted + '. Topik: ' + item.topic + '.')" 
+                                            <a :href="getWaLink(item)" 
                                                target="_blank" 
                                                class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-[10px] font-bold transition-all">
                                                 <span>📲 Chat WA</span>
