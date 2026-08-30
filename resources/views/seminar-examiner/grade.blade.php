@@ -251,7 +251,7 @@
                                                    id="score_presentation" 
                                                    x-model="scores.presentation" 
                                                    min="0" max="100" 
-                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs" 
+                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-xs" 
                                                    placeholder="0">
                                             <button type="button" 
                                                     @click="adjustScore('presentation', 5)" 
@@ -312,7 +312,7 @@
                                                    id="score_explanation" 
                                                    x-model="scores.explanation" 
                                                    min="0" max="100" 
-                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs" 
+                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-xs" 
                                                    placeholder="0">
                                             <button type="button" 
                                                     @click="adjustScore('explanation', 5)" 
@@ -369,7 +369,7 @@
                                                    id="score_writing" 
                                                    x-model="scores.writing" 
                                                    min="0" max="100" 
-                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs" 
+                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-xs" 
                                                    placeholder="0">
                                             <button type="button" 
                                                     @click="adjustScore('writing', 5)" 
@@ -454,7 +454,7 @@
                                 <input type="number" 
                                        x-model="scores.presentation" 
                                        min="0" max="100" 
-                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-inner" 
+                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-inner" 
                                        placeholder="0">
                                 <button type="button" 
                                         @click="adjustScore('presentation', 5)" 
@@ -524,7 +524,7 @@
                                 <input type="number" 
                                        x-model="scores.explanation" 
                                        min="0" max="100" 
-                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-inner" 
+                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-inner" 
                                        placeholder="0">
                                 <button type="button" 
                                         @click="adjustScore('explanation', 5)" 
@@ -590,7 +590,7 @@
                                 <input type="number" 
                                        x-model="scores.writing" 
                                        min="0" max="100" 
-                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-inner" 
+                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-inner" 
                                        placeholder="0">
                                 <button type="button" 
                                         @click="adjustScore('writing', 5)" 

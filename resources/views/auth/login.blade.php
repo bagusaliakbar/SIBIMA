@@ -26,7 +26,7 @@
                     </svg>
                 </div>
                 <input id="username" type="text" name="username" value="{{ old('username') }}" required autofocus autocomplete="username" 
-                    class="block w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200" 
+                    class="block w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200" 
                     placeholder="Masukkan Username / NIDN / NPM">
             </div>
             <x-input-error :messages="$errors->get('username')" class="mt-2" />
@@ -44,7 +44,7 @@
                     </svg>
                 </div>
                 <input id="password" :type="showPassword ? 'text' : 'password'" name="password" required autocomplete="current-password" 
-                    class="block w-full pl-11 pr-11 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200" 
+                    class="block w-full pl-11 pr-11 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200" 
                     placeholder="••••••••">
                 
                 <!-- Toggle Password Button -->

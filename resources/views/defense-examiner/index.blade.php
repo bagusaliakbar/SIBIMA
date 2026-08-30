@@ -17,7 +17,7 @@
                 <div class="flex items-center gap-3">
                     <form action="{{ route('defense-examiner.index') }}" method="GET" class="relative group">
                         <select name="wave_id" onchange="this.form.submit()" 
-                                class="pl-4 pr-10 py-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm min-w-[240px] text-slate-700 dark:text-slate-300">
+                                class="pl-4 pr-10 py-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm min-w-[240px] text-slate-700 dark:text-slate-300">
                             <option value="" {{ empty($selectedWaveId) ? 'selected' : '' }}>
                                 📅 Jadwal Mendatang (Hari Ini+)
                             </option>

@@ -266,7 +266,7 @@
                             @elseif($currentStage == 5)
                                 Ujian sidang selesai! Segera selesaikan catatan <span class="text-orange-600 dark:text-orange-400 font-bold">Revisi Naskah</span> dan mintalah persetujuan (approval) dari seluruh dosen penguji.
                             @elseif($currentStage == 6)
-                                Luar biasa! Anda telah menyelesaikan seluruh rintangan skripsi dan dinyatakan <span class="text-emerald-600 dark:text-emerald-400 font-bold">LULUS / SIAP YUDISIUM</span>.
+                                Selamat! Anda telah menyelesaikan seluruh proses skripsi dan dinyatakan <span class="text-emerald-600 dark:text-emerald-400 font-bold">LULUS</span>.
                             @else
                                 Silakan ajukan judul skripsi untuk memulai perjalanan akademik skripsi Anda di SIBIMA.
                             @endif

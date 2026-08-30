@@ -131,24 +131,24 @@
                             <div>
                                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Nama Gelombang</label>
                                 <input type="text" name="name" required placeholder="Contoh: Gelombang 1 2024/2025"
-                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
                                     <input type="date" name="start_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
                                     <input type="date" name="end_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Deskripsi Singkat</label>
                                 <textarea name="description" rows="3" placeholder="Tambahkan catatan jika perlu..."
-                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm italic"></textarea>
+                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm italic"></textarea>
                             </div>
                         </div>
                     </div>
@@ -189,24 +189,24 @@
                             <div>
                                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Nama Gelombang</label>
                                 <input type="text" id="edit-name" name="name" required placeholder="Nama Gelombang"
-                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
                                     <input type="date" id="edit-start-date" name="start_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
                                     <input type="date" id="edit-end-date" name="end_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Deskripsi Singkat</label>
                                 <textarea id="edit-description" name="description" rows="3" placeholder="Deskripsi..."
-                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm italic"></textarea>
+                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm italic"></textarea>
                             </div>
                         </div>
                     </div>

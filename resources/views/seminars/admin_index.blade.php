@@ -51,7 +51,7 @@
                         <input type="hidden" name="search" value="{{ $search }}">
                     @endif
                     <select name="wave_id" onchange="this.form.submit()" 
-                            class="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-2xs min-w-[220px] cursor-pointer">
+                            class="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-2xs min-w-[220px] cursor-pointer">
                         <option value="">SEMUA GELOMBANG</option>
                         @foreach($waves as $wave)
                             <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>

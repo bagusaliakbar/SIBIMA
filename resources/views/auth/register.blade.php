@@ -41,7 +41,7 @@
         <div>
             <label for="name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
             <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                   class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                   class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                    placeholder="Masukkan nama lengkap beserta gelar">
             <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
@@ -51,7 +51,7 @@
             <div>
                 <label for="identifier" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" x-text="role === 'mahasiswa' ? 'NPM' : 'NIDN / NIP'"></label>
                 <input id="identifier" type="text" name="identifier" value="{{ old('identifier') }}" required
-                       class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                       class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                        :placeholder="role === 'mahasiswa' ? '211010001' : '0412345678'">
                 <x-input-error :messages="$errors->get('identifier')" class="mt-1" />
             </div>
@@ -60,7 +60,7 @@
             <div>
                 <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Username <span class="text-[10px] font-normal text-slate-400 normal-case">(Opsional)</span></label>
                 <input id="username" type="text" name="username" value="{{ old('username') }}"
-                       class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                       class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                        placeholder="Sama dengan NPM/NIDN jika kosong">
                 <x-input-error :messages="$errors->get('username')" class="mt-1" />
             </div>
@@ -70,7 +70,7 @@
         <div>
             <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Alamat Email</label>
             <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                   class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                   class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                    placeholder="nama@email.com">
             <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
@@ -80,7 +80,7 @@
             <div x-show="role === 'mahasiswa'" x-transition>
                 <label for="entry_year" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tahun Angkatan</label>
                 <select id="entry_year" name="entry_year" :required="role === 'mahasiswa'"
-                        class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200">
+                        class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200">
                     <option value="">Pilih Angkatan</option>
                     @for($y = date('Y'); $y >= 2018; $y--)
                         <option value="{{ $y }}" {{ old('entry_year') == $y ? 'selected' : '' }}>{{ $y }}</option>
@@ -93,7 +93,7 @@
             <div :class="role === 'mahasiswa' ? '' : 'sm:col-span-2'">
                 <label for="phone_number" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">No. WhatsApp / HP</label>
                 <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number') }}"
-                       class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                       class="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                        placeholder="081234567890">
                 <x-input-error :messages="$errors->get('phone_number')" class="mt-1" />
             </div>
@@ -105,7 +105,7 @@
                 <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
                 <div class="relative rounded-xl">
                     <input id="password" :type="showPassword ? 'text' : 'password'" name="password" required autocomplete="new-password"
-                           class="block w-full pl-4 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                           class="block w-full pl-4 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                            placeholder="••••••••">
                     <button type="button" @click="showPassword = !showPassword" 
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-orange-600 transition-colors focus:outline-none"
@@ -127,7 +127,7 @@
                 <label for="password_confirmation" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Konfirmasi</label>
                 <div class="relative rounded-xl">
                     <input id="password_confirmation" :type="showPasswordConfirm ? 'text' : 'password'" name="password_confirmation" required autocomplete="new-password"
-                           class="block w-full pl-4 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all duration-200"
+                           class="block w-full pl-4 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 transition-all duration-200"
                            placeholder="••••••••">
                     <button type="button" @click="showPasswordConfirm = !showPasswordConfirm" 
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-orange-600 transition-colors focus:outline-none"
