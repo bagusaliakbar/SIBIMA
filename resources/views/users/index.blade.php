@@ -11,7 +11,7 @@
         selectedUser: null,
         selectedUserIds: [],
         openBulkDeleteModal: false,
-        pageUserIds: {{ json_encode($users->filter(fn($u) => $u->role !== 'admin')->pluck('id')->values()) }},
+        pageUserIds: {{ json_encode($users->filter(fn($u) => $u->role !== 'admin')->pluck('id')->map(fn($id) => (int)$id)->values()) }},
         toggleSelectAll() {
             if (this.selectedUserIds.length === this.pageUserIds.length) {
                 this.selectedUserIds = [];
@@ -21,6 +21,9 @@
         },
         isAllSelected() {
             return this.pageUserIds.length > 0 && this.selectedUserIds.length === this.pageUserIds.length;
+        },
+        isSelected(id) {
+            return this.selectedUserIds.map(Number).includes(Number(id));
         }
     }">
         @if(session('skippedDetails'))
@@ -272,6 +275,29 @@
                         </select>
                     </form>
                 </div>
+            <!-- Inline Bulk Action Banner (Appears when >= 1 user selected) -->
+            <div x-show="selectedUserIds.length > 0" 
+                 x-cloak
+                 class="px-6 py-3 bg-orange-50 dark:bg-orange-950/40 border-b border-orange-200 dark:border-orange-800/60 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded-lg bg-orange-600 text-white font-black text-xs" x-text="selectedUserIds.length + ' Pengguna Dipilih'"></span>
+                    <span class="text-xs font-bold text-orange-950 dark:text-orange-200">Siap untuk aksi massal</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" 
+                            @click="selectedUserIds = []" 
+                            class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs">
+                        Batalkan Pilihan
+                    </button>
+                    <button type="button" 
+                            @click="openBulkDeleteModal = true" 
+                            class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black tracking-wide transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Hapus Massal Terpilih (<span x-text="selectedUserIds.length"></span>)</span>
+                    </button>
+                </div>
             </div>
 
             <table class="w-full text-sm text-left">
@@ -399,7 +425,7 @@
                                 'dosen' => $dosenData,
                             ];
                         @endphp
-                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group" :class="selectedUserIds.includes({{ $user->id }}) ? 'bg-orange-50/40 dark:bg-orange-950/20' : ''">
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group" :class="isSelected({{ $user->id }}) ? 'bg-orange-50/60 dark:bg-orange-950/30' : ''">
                             <td class="py-4 px-4 text-center w-10">
                                 @if($user->role !== 'admin')
                                     <input type="checkbox" 
@@ -868,14 +894,14 @@
         </div>
         <!-- Floating Bulk Action Bar -->
         <div x-show="selectedUserIds.length > 0" 
+             x-cloak
              x-transition:enter="transition ease-out duration-300 transform"
              x-transition:enter-start="translate-y-full opacity-0"
              x-transition:enter-end="translate-y-0 opacity-100"
              x-transition:leave="transition ease-in duration-200 transform"
              x-transition:leave-start="translate-y-0 opacity-100"
              x-transition:leave-end="translate-y-full opacity-0"
-             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-4 max-w-xl w-[90%] sm:w-auto"
-             style="display: none;">
+             class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-4 max-w-xl w-[90%] sm:w-auto">
             
             <div class="flex items-center gap-2.5">
                 <span class="w-7 h-7 rounded-xl bg-orange-500/20 text-orange-400 font-black text-xs flex items-center justify-center border border-orange-500/30" x-text="selectedUserIds.length"></span>
@@ -904,14 +930,14 @@
 
         <!-- Bulk Delete Confirmation Modal -->
         <div x-show="openBulkDeleteModal" 
+             x-cloak
              class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" 
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             style="display: none;">
+             x-transition:leave-end="opacity-0">
             
             <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700 shadow-2xl relative"
                  @click.away="openBulkDeleteModal = false">
