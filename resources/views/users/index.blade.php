@@ -894,41 +894,6 @@
                 </div>
             </div>
         </div>
-        <!-- Floating Bulk Action Bar -->
-        <div x-show="selectedUserIds.length > 0" 
-             x-cloak
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="translate-y-full opacity-0"
-             x-transition:enter-end="translate-y-0 opacity-100"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="translate-y-0 opacity-100"
-             x-transition:leave-end="translate-y-full opacity-0"
-             class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-4 max-w-xl w-[90%] sm:w-auto">
-            
-            <div class="flex items-center gap-2.5">
-                <span class="w-7 h-7 rounded-xl bg-orange-500/20 text-orange-400 font-black text-xs flex items-center justify-center border border-orange-500/30" x-text="selectedUserIds.length"></span>
-                <span class="text-xs font-bold tracking-tight text-slate-200">Pengguna Terpilih</span>
-            </div>
-
-            <div class="h-4 w-px bg-slate-700"></div>
-
-            <div class="flex items-center gap-2">
-                <button type="button" 
-                        @click="selectedUserIds = []" 
-                        class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                    Batal
-                </button>
-
-                <button type="button" 
-                        @click="openBulkDeleteModal = true" 
-                        class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black tracking-wide transition-all shadow-md shadow-rose-600/30 active:scale-95 cursor-pointer">
-                    <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    <span>Hapus Massal (<span x-text="selectedUserIds.length"></span>)</span>
-                </button>
-            </div>
-        </div>
 
         <!-- Bulk Delete Confirmation Modal -->
         <div x-show="openBulkDeleteModal" 
