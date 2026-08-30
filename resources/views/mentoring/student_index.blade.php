@@ -36,6 +36,15 @@
                     reason: '',
                 };
                 this.cancelModalOpen = true;
+            },
+            openCancelModalFromEl(el) {
+                this.openCancelModal({
+                    id: el.getAttribute('data-session-id'),
+                    topic: el.getAttribute('data-topic'),
+                    dosen_name: el.getAttribute('data-dosen-name'),
+                    scheduled_date: el.getAttribute('data-scheduled-date'),
+                    scheduled_time: el.getAttribute('data-scheduled-time'),
+                });
             }
         }" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors">
             @if(session('success'))
@@ -494,13 +503,12 @@
                                         @if(in_array($session->status, ['pending', 'approved']))
                                             <div class="mt-1.5">
                                                 <button type="button" 
-                                                        @click="openCancelModal({{ json_encode([
-                                                            'id' => $session->id,
-                                                            'topic' => $session->topic,
-                                                            'dosen_name' => $session->dosen?->name ?? 'Dosen Pembimbing',
-                                                            'scheduled_date' => $session->scheduled_at->locale('id')->translatedFormat('l, d F Y'),
-                                                            'scheduled_time' => $session->scheduled_at->format('H:i') . ' WIB',
-                                                        ]) }})"
+                                                        @click="openCancelModalFromEl($el)"
+                                                        data-session-id="{{ $session->id }}"
+                                                        data-topic="{{ $session->topic }}"
+                                                        data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
+                                                        data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
                                                         class="text-[10px] font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline cursor-pointer flex items-center gap-1">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                     <span>Batalkan</span>
