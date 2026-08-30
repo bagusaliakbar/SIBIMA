@@ -88,6 +88,34 @@ class UserService
     }
 
     /**
+     * Delete multiple users in bulk.
+     */
+    public function bulkDeleteUsers(array $userIds): int
+    {
+        $users = User::whereIn('id', $userIds)
+            ->where('role', '!=', 'admin')
+            ->get();
+
+        $count = $users->count();
+        if ($count === 0) {
+            return 0;
+        }
+
+        $names = $users->pluck('name')->take(5)->join(', ');
+        if ($count > 5) {
+            $names .= " dan " . ($count - 5) . " lainnya";
+        }
+
+        foreach ($users as $user) {
+            $user->delete();
+        }
+
+        ActivityLog::log('Hapus Pengguna Massal', "Menghapus {$count} pengguna secara massal ({$names}).", 'User');
+
+        return $count;
+    }
+
+    /**
      * Toggle user active status.
      */
     public function toggleStatus(User $user)

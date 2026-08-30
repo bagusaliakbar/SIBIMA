@@ -5,7 +5,24 @@
         ]" />
     </x-slot>
 
-    <div class="w-full mx-auto" x-data="{ openImportModal: false, openDetailModal: false, selectedUser: null }">
+    <div class="w-full mx-auto" x-data="{ 
+        openImportModal: false, 
+        openDetailModal: false, 
+        selectedUser: null,
+        selectedUserIds: [],
+        openBulkDeleteModal: false,
+        pageUserIds: {{ json_encode($users->filter(fn($u) => $u->role !== 'admin')->pluck('id')->values()) }},
+        toggleSelectAll() {
+            if (this.selectedUserIds.length === this.pageUserIds.length) {
+                this.selectedUserIds = [];
+            } else {
+                this.selectedUserIds = [...this.pageUserIds];
+            }
+        },
+        isAllSelected() {
+            return this.pageUserIds.length > 0 && this.selectedUserIds.length === this.pageUserIds.length;
+        }
+    }">
         @if(session('skippedDetails'))
             <div class="mb-6 p-6 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 rounded-2xl shadow-sm relative overflow-hidden transition-all duration-300">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-12 -mt-12 opacity-50"></div>
@@ -260,6 +277,13 @@
             <table class="w-full text-sm text-left">
                 <thead>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                        <th scope="col" class="py-4 px-4 text-center w-10">
+                            <input type="checkbox" 
+                                   @change="toggleSelectAll()" 
+                                   :checked="isAllSelected()"
+                                   class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer" 
+                                   title="Pilih Semua di Halaman Ini">
+                        </th>
                         <th scope="col" class="py-4 px-6">Pengguna</th>
                         <th scope="col" class="py-4 px-6 text-center">Peran</th>
                         <th scope="col" class="py-4 px-6 text-center">NPM / NIDN & Angkatan</th>
@@ -375,7 +399,17 @@
                                 'dosen' => $dosenData,
                             ];
                         @endphp
-                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group">
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group" :class="selectedUserIds.includes({{ $user->id }}) ? 'bg-orange-50/40 dark:bg-orange-950/20' : ''">
+                            <td class="py-4 px-4 text-center w-10">
+                                @if($user->role !== 'admin')
+                                    <input type="checkbox" 
+                                           value="{{ $user->id }}" 
+                                           x-model.number="selectedUserIds"
+                                           class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer">
+                                @else
+                                    <span class="w-4 h-4 inline-block text-slate-300 dark:text-slate-600 text-xs" title="Akun Admin dilindungi">-</span>
+                                @endif
+                            </td>
                             <td class="py-4 px-6">
                                 <div class="flex items-center cursor-pointer group/user" 
                                      @click="selectedUser = {{ json_encode($userData) }}; openDetailModal = true"
@@ -490,7 +524,7 @@
                             </td>
                         </tr>
                     @empty
-                        <x-empty-state colspan="7" description="Tidak ada data pengguna yang sesuai dengan filter yang dipilih." icon="user">
+                        <x-empty-state colspan="8" description="Tidak ada data pengguna yang sesuai dengan filter yang dipilih." icon="user">
                             <div class="mt-3">
                                 <a href="{{ route('users.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 text-xs font-bold hover:bg-orange-100 transition-all">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -830,6 +864,97 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+        <!-- Floating Bulk Action Bar -->
+        <div x-show="selectedUserIds.length > 0" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="translate-y-full opacity-0"
+             x-transition:enter-end="translate-y-0 opacity-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="translate-y-0 opacity-100"
+             x-transition:leave-end="translate-y-full opacity-0"
+             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-4 max-w-xl w-[90%] sm:w-auto"
+             style="display: none;">
+            
+            <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-xl bg-orange-500/20 text-orange-400 font-black text-xs flex items-center justify-center border border-orange-500/30" x-text="selectedUserIds.length"></span>
+                <span class="text-xs font-bold tracking-tight text-slate-200">Pengguna Terpilih</span>
+            </div>
+
+            <div class="h-4 w-px bg-slate-700"></div>
+
+            <div class="flex items-center gap-2">
+                <button type="button" 
+                        @click="selectedUserIds = []" 
+                        class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                    Batal
+                </button>
+
+                <button type="button" 
+                        @click="openBulkDeleteModal = true" 
+                        class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black tracking-wide transition-all shadow-md shadow-rose-600/30 active:scale-95 cursor-pointer">
+                    <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    <span>Hapus Massal (<span x-text="selectedUserIds.length"></span>)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bulk Delete Confirmation Modal -->
+        <div x-show="openBulkDeleteModal" 
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             style="display: none;">
+            
+            <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700 shadow-2xl relative"
+                 @click.away="openBulkDeleteModal = false">
+                
+                <div class="flex items-center gap-3.5 mb-4">
+                    <div class="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-slate-800 dark:text-slate-100">Konfirmasi Hapus Massal</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tindakan ini tidak dapat dibatalkan</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-rose-50/70 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/40 rounded-xl mb-5 text-xs text-rose-800 dark:text-rose-300">
+                    <p class="font-bold">
+                        Anda akan menghapus <span class="font-black text-rose-600 dark:text-rose-400" x-text="selectedUserIds.length"></span> pengguna terpilih secara permanen.
+                    </p>
+                    <p class="mt-1 text-[11px] text-rose-700/80 dark:text-rose-400/80">
+                        Data mahasiswa beserta draf skripsi terkait (jika ada) akan dihapus dari sistem. Akun administrator dilindungi dan tidak akan terhapus.
+                    </p>
+                </div>
+
+                <form action="{{ route('users.bulk-delete') }}" method="POST">
+                    @csrf
+                    <template x-for="id in selectedUserIds" :key="id">
+                        <input type="hidden" name="user_ids[]" :value="id">
+                    </template>
+
+                    <div class="flex items-center justify-end gap-2.5">
+                        <button type="button" 
+                                @click="openBulkDeleteModal = false" 
+                                class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                                class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black tracking-wide transition-all shadow-md shadow-rose-600/30 cursor-pointer">
+                            <span>Ya, Hapus Sekarang</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

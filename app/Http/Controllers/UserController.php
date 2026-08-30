@@ -230,6 +230,22 @@ class UserController extends Controller implements HasMiddleware
         return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus.');
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $data = $request->validate([
+            'user_ids' => ['required', 'array', 'min:1'],
+            'user_ids.*' => ['required', 'exists:users,id'],
+        ]);
+
+        $deletedCount = $this->userService->bulkDeleteUsers($data['user_ids']);
+
+        if ($deletedCount === 0) {
+            return redirect()->route('users.index')->with('error', 'Tidak ada pengguna yang dapat dihapus.');
+        }
+
+        return redirect()->route('users.index')->with('success', "Berhasil menghapus {$deletedCount} pengguna secara massal.");
+    }
+
     public function export(Request $request)
     {
         $search = $request->input('search');
