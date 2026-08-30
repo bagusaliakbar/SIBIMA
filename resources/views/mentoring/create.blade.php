@@ -49,8 +49,9 @@
                 location: '{{ old('location', '') }}',
                 meetOpened: false,
                 customTimeMode: false,
+                isLecturer: {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'true' : 'false' }},
                 
-                // Student Selection Multi-Select State
+                // Student Selection Multi-Select State (Lecturer Only)
                 selectionMode: '{{ (is_array(old('thesis_ids')) && in_array('all', old('thesis_ids'))) ? 'all' : 'multiple' }}',
                 selectedThesisIds: {{ json_encode(array_values(array_map('strval', array_filter((array)old('thesis_ids', []))))) }},
                 studentSearch: '',
@@ -536,8 +537,8 @@
                         Batal
                     </a>
                     <button type="submit" 
-                            :disabled="selectionMode === 'multiple' && selectedThesisIds.length === 0"
-                            :class="selectionMode === 'multiple' && selectedThesisIds.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01] active:scale-95 cursor-pointer'"
+                            :disabled="isLecturer && selectionMode === 'multiple' && selectedThesisIds.length === 0"
+                            :class="isLecturer && selectionMode === 'multiple' && selectedThesisIds.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01] active:scale-95 cursor-pointer'"
                             class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 rounded-xl text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-orange-500/20 transition-all border border-transparent flex items-center gap-2">
                         <span>{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Simpan Jadwal Bimbingan' : 'Kirim Permintaan' }}</span>
                         @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
