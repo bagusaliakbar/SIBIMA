@@ -700,6 +700,51 @@
                                                     </div>
                                                 </form>
                                             </div>
+                                        @elseif($session->is_absent)
+                                        <div class="mt-auto pt-4 border-t border-slate-50 dark:border-slate-800/50 flex items-center gap-1.5">
+                                            <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="approved">
+                                                <button type="submit" 
+                                                        class="w-full px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1"
+                                                        title="Batalkan status tidak hadir dan kembalikan ke jadwal aktif">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                                    <span>Batalkan Tidak Hadir</span>
+                                                </button>
+                                            </form>
+                                            @can('update', $session)
+                                                <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    <span>Ubah</span>
+                                                </a>
+                                            @endcan
+                                            @can('delete', $session)
+                                                <button type="button" 
+                                                        @click="$dispatch('open-cancel-modal', {
+                                                            id: '{{ $session->id }}',
+                                                            student_name: '{{ addslashes($session->thesis?->student?->name ?? 'Mahasiswa') }}',
+                                                            student_npm: '{{ addslashes($session->thesis?->student?->identifier ?? '-') }}',
+                                                            topic: '{{ addslashes($session->topic) }}',
+                                                            scheduled_date: '{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}',
+                                                            scheduled_time: '{{ $session->scheduled_at->format('H:i') }} WIB',
+                                                            is_group: {{ $isGroupSession ? 'true' : 'false' }},
+                                                            group_count: {{ $groupCountMap[$gKey] ?? 1 }}
+                                                        })"
+                                                        onclick="window.openCancelModalFromEl(this); return false;"
+                                                        data-session-id="{{ $session->id }}"
+                                                        data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                        data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                        data-topic="{{ e($session->topic) }}"
+                                                        data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                        data-is-group="{{ $isGroupSession ? '1' : '0' }}"
+                                                        data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
+                                                        class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:hover:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
+                                                        title="Batalkan / Hapus Sesi Bimbingan">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                </button>
+                                            @endcan
                                         </div>
                                         @endif
                                     </div>
@@ -884,14 +929,14 @@
                 <!-- Modal Footer -->
                 <div class="p-4 px-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
-                        <template x-if="selectedEvent?.status !== 'completed' && selectedEvent?.id">
+                        <template x-if="((selectedEvent?.status !== 'completed') || selectedEvent?.is_absent) && selectedEvent?.id">
                             <a :href="'/mentoring-sessions/' + selectedEvent.id + '/edit'" 
                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/80 rounded-xl font-bold text-xs transition-all shadow-2xs">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                 <span>Ubah / Reschedule</span>
                             </a>
                         </template>
-                        <template x-if="selectedEvent?.status !== 'completed' && selectedEvent?.id">
+                        <template x-if="((selectedEvent?.status !== 'completed') || selectedEvent?.is_absent) && selectedEvent?.id">
                             <button type="button" 
                                     @click="eventModalOpen = false; openCancelModal({
                                         id: selectedEvent.id,

@@ -417,25 +417,33 @@ class MentoringService
             ]);
             $message = 'Sesi bimbingan ditandai sebagai: Tidak Hadir.';
         } else {
+            $wasAbsent = (bool) $session->is_absent;
             $session->update([
                 'status' => $data['status'],
+                'is_absent' => false,
                 'feedback' => $data['feedback'] ?? $session->feedback,
             ]);
 
-            $session->thesis->student->notify(new GeneralNotification(
+            $session->thesis?->student?->notify(new GeneralNotification(
                 'Status Bimbingan Diperbarui',
                 "Status bimbingan Anda ({$session->topic}) diperbarui menjadi: " . strtoupper($data['status']),
                 route('mentoring-sessions.index'),
                 $data['status'] === 'approved' ? 'success' : ($data['status'] === 'rejected' ? 'danger' : 'info')
             ));
 
-            $session->thesis->student->notify(new \App\Notifications\MentoringStatusUpdatedNotification(
-                $session,
-                $data['status'],
-                $data['feedback'] ?? null
-            ));
+            if ($session->thesis?->student) {
+                $session->thesis->student->notify(new \App\Notifications\MentoringStatusUpdatedNotification(
+                    $session,
+                    $data['status'],
+                    $data['feedback'] ?? null
+                ));
+            }
 
-            $message = 'Status sesi bimbingan diperbarui menjadi: ' . ucfirst($data['status']);
+            if ($wasAbsent && $data['status'] === 'approved') {
+                $message = 'Status tidak hadir berhasil dibatalkan dan jadwal bimbingan kembali aktif.';
+            } else {
+                $message = 'Status sesi bimbingan diperbarui menjadi: ' . ucfirst($data['status']);
+            }
         }
 
         ActivityLog::log('Update Status Bimbingan', "Dosen memperbarui status bimbingan ({$session->topic}) menjadi: " . strtoupper($data['status']), 'Bimbingan', $session);

@@ -47,7 +47,7 @@ class MentoringSessionPolicy
      */
     public function update(User $user, MentoringSession $mentoringSession): bool
     {
-        if ($mentoringSession->status === 'completed') {
+        if ($mentoringSession->status === 'completed' && !$mentoringSession->is_absent) {
             return false;
         }
 
@@ -111,7 +111,7 @@ class MentoringSessionPolicy
      */
     public function delete(User $user, MentoringSession $mentoringSession): bool
     {
-        if ($mentoringSession->status === 'completed') {
+        if ($mentoringSession->status === 'completed' && !$mentoringSession->is_absent) {
             return false;
         }
 
