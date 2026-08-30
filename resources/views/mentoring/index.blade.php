@@ -187,9 +187,16 @@
             }
             window.dispatchEvent(new CustomEvent('open-cancel-modal', { detail: data }));
         };
+
+        window.openLiveModal = function() {
+            if (window.__mentoringScope && typeof window.__mentoringScope.openLiveModal === 'function') {
+                window.__mentoringScope.openLiveModal();
+            }
+            window.dispatchEvent(new CustomEvent('open-live-modal'));
+        };
     </script>
 
-    <div class="w-full" x-data="mentoringSchedule()" @open-cancel-modal.window="openCancelModal($event.detail)">
+    <div class="w-full" x-data="mentoringSchedule()" @open-cancel-modal.window="openCancelModal($event.detail)" @open-live-modal.window="openLiveModal()">
         
         <!-- KPI Quick Bar (4 Metrik Ringkas) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -334,6 +341,7 @@
                         <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
                             <button type="button" 
                                     @click="openLiveModal()" 
+                                    onclick="window.openLiveModal(); return false;"
                                     class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all active:scale-95 cursor-pointer">
                                 <span class="relative flex h-2 w-2 shrink-0">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
@@ -784,18 +792,21 @@
         </x-table-card>
 
         <!-- Interactive Event Modal -->
-        <div x-show="eventModalOpen" 
-             x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
-            
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 max-w-lg w-full overflow-hidden"
-                 @click.outside="eventModalOpen = false">
+        <template x-teleport="body">
+            <div x-show="eventModalOpen" 
+                 x-cloak 
+                 class="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+                 style="z-index: 99999 !important;"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
+                
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 max-w-lg w-full overflow-hidden relative"
+                     style="z-index: 100000 !important;"
+                     @click.outside="eventModalOpen = false">
                 
                 <!-- Modal Header -->
                 <div class="p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
@@ -949,34 +960,38 @@
                 </div>
             </div>
         </div>
+        </template>
 
         <!-- 3. LIVE REAL-TIME ATTENDANCE MONITOR MODAL -->
-        <div x-show="liveModalOpen" 
-             x-cloak 
-             class="fixed inset-0 z-50 overflow-y-auto" 
-             aria-labelledby="modal-title" 
-             role="dialog" 
-             aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div x-show="liveModalOpen" 
-                     x-transition:enter="ease-out duration-300" 
-                     x-transition:enter-start="opacity-0" 
-                     x-transition:enter-end="opacity-100" 
-                     x-transition:leave="ease-in duration-200" 
-                     x-transition:leave-start="opacity-100" 
-                     x-transition:leave-end="opacity-0" 
-                     @click="liveModalOpen = false" 
-                     class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"></div>
+        <template x-teleport="body">
+            <div x-show="liveModalOpen" 
+                 x-cloak 
+                 class="fixed inset-0 overflow-y-auto" 
+                 style="z-index: 99999 !important;"
+                 aria-labelledby="modal-title" 
+                 role="dialog" 
+                 aria-modal="true">
+                <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div x-show="liveModalOpen" 
+                         x-transition:enter="ease-out duration-300" 
+                         x-transition:enter-start="opacity-0" 
+                         x-transition:enter-end="opacity-100" 
+                         x-transition:leave="ease-in duration-200" 
+                         x-transition:leave-start="opacity-100" 
+                         x-transition:leave-end="opacity-0" 
+                         @click="liveModalOpen = false" 
+                         class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"></div>
 
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                <div x-show="liveModalOpen" 
-                     x-transition:enter="ease-out duration-300" 
-                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
-                     x-transition:leave="ease-in duration-200" 
-                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-                     class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700">
+                    <div x-show="liveModalOpen" 
+                         x-transition:enter="ease-out duration-300" 
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                         x-transition:leave="ease-in duration-200" 
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700 relative"
+                         style="z-index: 100000 !important;">
                     
                     <!-- Modal Header -->
                     <div class="p-6 bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
@@ -1215,6 +1230,7 @@
                 </div>
             </div>
         </div>
+        </template>
 
         <!-- 4. MODAL KONFIRMASI PEMBATALAN JADWAL BIMBINGAN -->
         <template x-teleport="body">
