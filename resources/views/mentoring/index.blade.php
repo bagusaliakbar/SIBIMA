@@ -13,6 +13,7 @@
                 eventModalOpen: false,
                 calendarInitialized: false,
                 events: @json($calendarEvents ?? []),
+                attendanceStats: @json($attendanceStats ?? []),
                 initCalendar() {
                     if (this.calendarInitialized) return;
                     this.$nextTick(() => {
@@ -58,6 +59,7 @@
                     }
                 },
                 init() {
+                    window.__mentoringScope = this;
                     if (this.viewMode === 'calendar') {
                         this.initCalendar();
                     }
@@ -117,6 +119,9 @@
                             if (data.summary) {
                                 this.attendanceStats = data.summary;
                                 this.lastUpdated = data.summary.last_updated || this.lastUpdated;
+                                if (window.__mentoringScope) {
+                                    window.__mentoringScope.attendanceStats = data.summary;
+                                }
                             }
                             if (data.sessions) {
                                 this.liveSessions = data.sessions;
@@ -406,7 +411,7 @@
                     </div>
 
                     @if($activeTab === 'active')
-                    <!-- Quick Attendance Filter Pills (Clean Segmented) -->
+                    <!-- Quick Attendance Filter Pills (Clean Segmented, Borderless) -->
                     <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-6">
                         <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1 flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
@@ -415,39 +420,39 @@
 
                         {{-- Semua --}}
                         <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ empty($attendanceFilter) ? 'bg-orange-500 text-white border-orange-500 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ empty($attendanceFilter) ? 'bg-orange-500 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                             <span>Semua</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ empty($attendanceFilter) ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats.total">
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ empty($attendanceFilter) ? 'bg-white/25 text-white' : 'bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-200' }}" x-text="attendanceStats?.total ?? '{{ $attendanceStats['total'] ?? 0 }}'">
                                 {{ $attendanceStats['total'] ?? 0 }}
                             </span>
                         </a>
 
                         {{-- Akan Hadir --}}
                         <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'attending']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ $attendanceFilter === 'attending' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/40' }}">
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'attending' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-emerald-50 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400' }}">
                             <span class="w-2 h-2 rounded-full {{ $attendanceFilter === 'attending' ? 'bg-white' : 'bg-emerald-500' }} shrink-0"></span>
                             <span>Akan Hadir</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $attendanceFilter === 'attending' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' }}" x-text="attendanceStats.attending">
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $attendanceFilter === 'attending' ? 'bg-white/25 text-white' : 'bg-emerald-100 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200' }}" x-text="attendanceStats?.attending ?? '{{ $attendanceStats['attending'] ?? 0 }}'">
                                 {{ $attendanceStats['attending'] ?? 0 }}
                             </span>
                         </a>
 
                         {{-- Izin / Berhalangan --}}
                         <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'permission']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ $attendanceFilter === 'permission' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 border-amber-200/80 dark:border-amber-800/80 hover:bg-amber-50 dark:hover:bg-amber-950/40' }}">
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'permission' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-amber-50 hover:bg-amber-100/80 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-400' }}">
                             <span class="w-2 h-2 rounded-full {{ $attendanceFilter === 'permission' ? 'bg-white' : 'bg-amber-500' }} shrink-0"></span>
                             <span>Izin / Berhalangan</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $attendanceFilter === 'permission' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200' }}" x-text="attendanceStats.permission">
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $attendanceFilter === 'permission' ? 'bg-white/25 text-white' : 'bg-amber-100 dark:bg-amber-900/80 text-amber-800 dark:text-amber-200' }}" x-text="attendanceStats?.permission ?? '{{ $attendanceStats['permission'] ?? 0 }}'">
                                 {{ $attendanceStats['permission'] ?? 0 }}
                             </span>
                         </a>
 
                         {{-- Belum Respon --}}
                         <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'pending']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ $attendanceFilter === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white border-slate-800 dark:border-slate-700 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'pending' ? 'bg-slate-800 dark:bg-slate-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300' }}">
                             <span class="w-2 h-2 rounded-full {{ $attendanceFilter === 'pending' ? 'bg-white' : 'bg-slate-400 dark:bg-slate-500' }} animate-pulse shrink-0"></span>
                             <span>Belum Respon</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $attendanceFilter === 'pending' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats.pending">
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $attendanceFilter === 'pending' ? 'bg-white/25 text-white' : 'bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300' }}" x-text="attendanceStats?.pending ?? '{{ $attendanceStats['pending'] ?? 0 }}'">
                                 {{ $attendanceStats['pending'] ?? 0 }}
                             </span>
                         </a>
