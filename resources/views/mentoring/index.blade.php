@@ -481,32 +481,32 @@
                             @endphp
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5 border-b border-slate-200/80 dark:border-slate-700/80 gap-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200/90 dark:border-slate-700 shadow-2xs bg-orange-50 dark:bg-orange-900/20 shrink-0">
+                                    <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-slate-100 dark:bg-slate-800 shrink-0">
                                         <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
                                     </div>
-                                    <div class="space-y-1.5 min-w-0">
+                                    <div class="space-y-2 min-w-0">
                                         <div class="flex items-center gap-3 flex-wrap">
-                                            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $studentName }}</h4>
+                                            <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $studentName }}</h4>
                                             @if($studentThesis->status === 'completed')
-                                                <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                                                <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
                                                     Lulus
                                                 </span>
                                             @endif
-                                            <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                                            <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-wider shadow-2xs">
                                                 {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
                                             </span>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-2.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                                        <div class="flex flex-wrap items-center gap-2.5 text-[11px] font-medium">
                                             @if($studentThesis->pembimbing1)
-                                                <span class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/70 px-3 py-1 rounded-xl border border-slate-200/90 dark:border-slate-700/90 text-xs shadow-2xs">
-                                                    <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-black text-[9px] rounded-md border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
-                                                    <span class="font-bold text-slate-800 dark:text-slate-200">{{ $studentThesis->pembimbing1->name }}</span>
+                                                <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
+                                                    <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-black text-[9px] rounded-md border border-indigo-200 dark:border-indigo-800 shrink-0">P1</span>
+                                                    <span class="font-bold text-slate-800 dark:text-slate-100">{{ $studentThesis->pembimbing1->name }}</span>
                                                 </span>
                                             @endif
                                             @if($studentThesis->pembimbing2)
-                                                <span class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/70 px-3 py-1 rounded-xl border border-slate-200/90 dark:border-slate-700/90 text-xs shadow-2xs">
-                                                    <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-black text-[9px] rounded-md border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
-                                                    <span class="font-bold text-slate-800 dark:text-slate-200">{{ $studentThesis->pembimbing2->name }}</span>
+                                                <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
+                                                    <span class="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-black text-[9px] rounded-md border border-purple-200 dark:border-purple-800 shrink-0">P2</span>
+                                                    <span class="font-bold text-slate-800 dark:text-slate-100">{{ $studentThesis->pembimbing2->name }}</span>
                                                 </span>
                                             @endif
                                         </div>
