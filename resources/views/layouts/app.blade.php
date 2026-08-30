@@ -21,6 +21,63 @@
         <style>
             [x-cloak] { display: none !important; }
             body { font-family: 'Inter', sans-serif; }
+
+            /* Force completely remove native browser focus ring / blue / purple outline */
+            *, *::before, *::after {
+                --tw-ring-color: rgba(249, 115, 22, 0.25) !important;
+            }
+            
+            input, textarea, select, button {
+                outline: none !important;
+                -webkit-tap-highlight-color: transparent !important;
+            }
+
+            input:focus, 
+            input:focus-visible, 
+            input:active,
+            textarea:focus, 
+            textarea:focus-visible, 
+            textarea:active,
+            select:focus, 
+            select:focus-visible, 
+            select:active {
+                outline: none !important;
+                outline-width: 0px !important;
+                outline-style: none !important;
+                outline-color: transparent !important;
+                border-color: #f97316 !important;
+                box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+            }
+
+            /* Override Browser Autofill Blue/Purple Background & Border */
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover, 
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active,
+            textarea:-webkit-autofill,
+            textarea:-webkit-autofill:hover,
+            textarea:-webkit-autofill:focus,
+            textarea:-webkit-autofill:active,
+            select:-webkit-autofill,
+            select:-webkit-autofill:hover,
+            select:-webkit-autofill:focus,
+            select:-webkit-autofill:active {
+                -webkit-text-fill-color: inherit !important;
+                -webkit-box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+                box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+                border-color: #f97316 !important;
+                outline: none !important;
+                transition: background-color 5000s ease-in-out 0s !important;
+            }
+
+            .dark input:-webkit-autofill,
+            .dark input:-webkit-autofill:hover, 
+            .dark input:-webkit-autofill:focus,
+            .dark input:-webkit-autofill:active {
+                -webkit-text-fill-color: #f8fafc !important;
+                -webkit-box-shadow: 0 0 0px 1000px #0f172a inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+                box-shadow: 0 0 0px 1000px #0f172a inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+            }
             .sidebar-link { transition: all 0.2s ease-in-out; }
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
             .dark input[type="date"],

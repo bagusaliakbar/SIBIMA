@@ -2,47 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    /* Global Orange Theme Focus Border & Ring for All Inputs in SIBIMA */
-    input:focus,
-    input:focus-visible,
-    textarea:focus,
-    textarea:focus-visible,
-    select:focus,
-    select:focus-visible {
-        outline: 2px solid transparent !important;
-        outline-offset: 2px !important;
-        border-color: #f97316 !important; /* orange-500 */
-        --tw-ring-color: rgba(249, 115, 22, 0.25) !important;
-        --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
-        --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
-        box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
-    }
+/* ==========================================================================
+   GLOBAL SIBIMA INPUT FOCUS & AUTOFILL SYSTEM (100% BRAND ORANGE)
+   ========================================================================== */
 
-    input[type='checkbox']:focus,
-    input[type='radio']:focus {
-        outline: 2px solid transparent !important;
-        --tw-ring-color: rgba(249, 115, 22, 0.3) !important;
-    }
+/* 1. Global Reset for All Form Controls */
+input,
+textarea,
+select,
+[type='text'],
+[type='email'],
+[type='url'],
+[type='password'],
+[type='number'],
+[type='date'],
+[type='datetime-local'],
+[type='month'],
+[type='search'],
+[type='tel'],
+[type='time'],
+[type='week'],
+[multiple] {
+    outline: 0 !important;
+    outline: none !important;
+    outline-offset: 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
 
-    input[type='checkbox']:checked,
-    input[type='radio']:checked {
-        background-color: #f97316 !important;
-        border-color: #f97316 !important;
-    }
+/* 2. Global Focus State: Crisp SIBIMA Orange Border & Soft Glow */
+input:focus,
+input:focus-visible,
+input:active,
+textarea:focus,
+textarea:focus-visible,
+textarea:active,
+select:focus,
+select:focus-visible,
+select:active,
+[type='text']:focus,
+[type='email']:focus,
+[type='url']:focus,
+[type='password']:focus,
+[type='number']:focus,
+[type='date']:focus,
+[type='datetime-local']:focus,
+[type='month']:focus,
+[type='search']:focus,
+[type='tel']:focus,
+[type='time']:focus,
+[type='week']:focus,
+[multiple]:focus {
+    outline: 0 !important;
+    outline: none !important;
+    outline-style: none !important;
+    border-color: #f97316 !important; /* orange-500 */
+    --tw-border-opacity: 1 !important;
+    --tw-ring-color: rgba(249, 115, 22, 0.25) !important;
+    --tw-ring-opacity: 1 !important;
+    --tw-ring-offset-width: 0px !important;
+    --tw-ring-offset-color: #ffffff !important;
+    --tw-ring-offset-shadow: var(--tw-ring-inset, ) 0 0 0 var(--tw-ring-offset-width, 0px) var(--tw-ring-offset-color, #ffffff) !important;
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+}
 
-    /* Prevent Browser Default Blue / Purple Outline and fix Chrome/Edge Autofill */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover, 
-    input:-webkit-autofill:focus, 
-    textarea:-webkit-autofill,
-    textarea:-webkit-autofill:hover,
-    textarea:-webkit-autofill:focus,
-    select:-webkit-autofill,
-    select:-webkit-autofill:hover,
-    select:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-        transition: background-color 5000s ease-in-out 0s !important;
-    }
+/* 3. Checkbox & Radio Buttons */
+input[type='checkbox']:focus,
+input[type='radio']:focus {
+    outline: none !important;
+    border-color: #f97316 !important;
+    --tw-ring-color: rgba(249, 115, 22, 0.3) !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
+}
+
+input[type='checkbox']:checked,
+input[type='radio']:checked {
+    background-color: #f97316 !important;
+    border-color: #f97316 !important;
+    color: #f97316 !important;
+}
+
+/* 4. Complete Browser Autofill Override (Chrome / Edge / Safari / Firefox) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+    -webkit-text-fill-color: #1e293b !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    border-color: #f97316 !important;
+    outline: none !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+    -webkit-text-fill-color: #f8fafc !important;
+    -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+    box-shadow: 0 0 0px 1000px #0f172a inset !important;
 }

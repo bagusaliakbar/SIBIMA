@@ -13,6 +13,56 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            /* Force completely remove native browser focus ring / blue / purple outline */
+            *, *::before, *::after {
+                --tw-ring-color: rgba(249, 115, 22, 0.25) !important;
+            }
+            
+            input, textarea, select, button {
+                outline: none !important;
+                -webkit-tap-highlight-color: transparent !important;
+            }
+
+            input:focus, 
+            input:focus-visible, 
+            input:active,
+            textarea:focus, 
+            textarea:focus-visible, 
+            textarea:active,
+            select:focus, 
+            select:focus-visible, 
+            select:active {
+                outline: none !important;
+                outline-width: 0px !important;
+                outline-style: none !important;
+                outline-color: transparent !important;
+                border-color: #f97316 !important;
+                box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+            }
+
+            /* Override Browser Autofill Blue/Purple Background & Border */
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover, 
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active,
+            textarea:-webkit-autofill,
+            textarea:-webkit-autofill:hover,
+            textarea:-webkit-autofill:focus,
+            textarea:-webkit-autofill:active,
+            select:-webkit-autofill,
+            select:-webkit-autofill:hover,
+            select:-webkit-autofill:focus,
+            select:-webkit-autofill:active {
+                -webkit-text-fill-color: #1e293b !important;
+                -webkit-box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+                box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+                border-color: #f97316 !important;
+                outline: none !important;
+                transition: background-color 5000s ease-in-out 0s !important;
+            }
+        </style>
     </head>
     <body class="font-sans text-slate-900 antialiased bg-slate-50/80 min-h-screen">
         <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 relative">
