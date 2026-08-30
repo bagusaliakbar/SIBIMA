@@ -858,14 +858,14 @@
                     <!-- Drawer Body (Scrollable) -->
                     <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
                         <!-- Judul Skripsi Diuji -->
-                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-none">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Judul Skripsi Yang Diuji:</span>
-                            <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-relaxed" x-text="data.title"></h4>
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase leading-relaxed" x-text="data.title"></h4>
                         </div>
 
                         <!-- Match Summary Banner -->
-                        <div class="flex items-center justify-between p-4 rounded-2xl border"
-                             :class="data.score >= 66 ? 'bg-rose-50 border-rose-200/80 text-rose-900 dark:bg-rose-950/60 dark:border-rose-800/50 dark:text-rose-200' : (data.score >= 35 ? 'bg-amber-50 border-amber-200/80 text-amber-900 dark:bg-amber-950/60 dark:border-amber-800/50 dark:text-amber-200' : 'bg-emerald-50 border-emerald-200/80 text-emerald-900 dark:bg-emerald-950/60 dark:border-emerald-800/50 dark:text-emerald-200')">
+                        <div class="flex items-center justify-between p-4 rounded-2xl border dark:border-none"
+                             :class="data.score >= 66 ? 'bg-rose-50 border-rose-200/80 text-rose-900 dark:bg-rose-950/60 dark:text-rose-200' : (data.score >= 35 ? 'bg-amber-50 border-amber-200/80 text-amber-900 dark:bg-amber-950/60 dark:text-amber-200' : 'bg-emerald-50 border-emerald-200/80 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-200')">
                             <div>
                                 <span class="text-[10px] font-bold uppercase tracking-widest block opacity-75">Tingkat Kemiripan:</span>
                                 <span class="text-xs font-bold uppercase tracking-tight block mt-0.5">
@@ -891,19 +891,19 @@
                             <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Rincian Judul Terkait:</h5>
                             <div class="space-y-3">
                                 <template x-for="(match, index) in data.matches" :key="index">
-                                    <div class="p-4 bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-2.5 shadow-2xs">
+                                    <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-none space-y-2.5 shadow-2xs dark:shadow-none">
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="space-y-0.5">
                                                 <span class="text-[9px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider block" x-text="match.source"></span>
                                                 <h6 class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase leading-snug" x-text="match.title"></h6>
                                             </div>
-                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold shrink-0 border" 
-                                                  :class="match.percentage >= 66 ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:border-rose-500/25 dark:text-rose-300' : (match.percentage >= 35 ? 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-500/15 dark:border-amber-500/25 dark:text-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700/50 dark:border-slate-600/50 dark:text-slate-300')"
+                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold shrink-0 border dark:border-none" 
+                                                  :class="match.percentage >= 66 ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/20 dark:text-rose-300' : (match.percentage >= 35 ? 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-500/20 dark:text-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300')"
                                                   x-text="match.percentage + '%'">
                                             </span>
                                         </div>
                                         
-                                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-700/50">
                                             <span>Oleh: <strong class="text-slate-700 dark:text-slate-300 uppercase" x-text="match.author"></strong> (<span x-text="match.year"></span>)</span>
                                             <template x-if="match.matched_words && match.matched_words.length">
                                                 <span class="text-[9px] font-medium text-slate-400">Kata Cocok: <span class="text-slate-600 dark:text-slate-300 font-semibold" x-text="match.matched_words.slice(0,4).join(', ')"></span></span>
@@ -913,7 +913,7 @@
                                 </template>
 
                                 <template x-if="!data.matches || data.matches.length === 0">
-                                    <div class="p-6 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-1">
+                                    <div class="p-6 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-none space-y-1">
                                         <svg class="w-8 h-8 text-emerald-500 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight">Tidak Ada Kemiripan Signifikan</p>
                                         <p class="text-[10px] text-slate-400">Judul ini memiliki tingkat keunikan tinggi dibanding arsip skripsi lainnya.</p>
