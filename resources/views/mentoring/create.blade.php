@@ -429,41 +429,29 @@
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tipe Bimbingan <span class="text-orange-600">*</span></label>
-                        <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <label class="relative flex items-center justify-between cursor-pointer rounded-xl border p-3.5 transition-all select-none"
+                        <div class="mt-2 grid grid-cols-2 gap-3">
+                            <label class="flex items-center justify-between cursor-pointer rounded-xl border py-2.5 px-3.5 text-sm transition-all select-none"
                                    :class="type === 'offline' 
-                                       ? 'bg-orange-50/70 dark:bg-orange-500/10 border-orange-500 ring-2 ring-orange-500/20 shadow-xs' 
-                                       : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'">
+                                       ? 'bg-orange-50/70 dark:bg-orange-500/10 border-orange-500 ring-1 ring-orange-500/20 text-orange-700 dark:text-orange-300 font-bold shadow-xs' 
+                                       : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 font-medium'">
                                 <input type="radio" name="type" value="offline" x-model="type" class="sr-only">
-                                <div class="flex items-center gap-2.5 min-w-0">
-                                    <span class="text-base shrink-0">🏢</span>
-                                    <div class="min-w-0">
-                                        <span class="block text-xs font-bold text-slate-900 dark:text-slate-100">Tatap Muka (Offline)</span>
-                                        <span class="block text-[10px] text-slate-500 dark:text-slate-400 font-medium">Bimbingan langsung di kampus</span>
-                                    </div>
-                                </div>
-                                <div class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2"
-                                     :class="type === 'offline' ? 'border-orange-600 bg-orange-600 text-white' : 'border-slate-300 dark:border-slate-600'">
+                                <span>Tatap Muka (Offline)</span>
+                                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2"
+                                      :class="type === 'offline' ? 'border-orange-600 bg-orange-600 text-white' : 'border-slate-300 dark:border-slate-600'">
                                     <svg x-show="type === 'offline'" class="w-2.5 h-2.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
+                                </span>
                             </label>
 
-                            <label class="relative flex items-center justify-between cursor-pointer rounded-xl border p-3.5 transition-all select-none"
+                            <label class="flex items-center justify-between cursor-pointer rounded-xl border py-2.5 px-3.5 text-sm transition-all select-none"
                                    :class="type === 'online' 
-                                       ? 'bg-orange-50/70 dark:bg-orange-500/10 border-orange-500 ring-2 ring-orange-500/20 shadow-xs' 
-                                       : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'">
+                                       ? 'bg-orange-50/70 dark:bg-orange-500/10 border-orange-500 ring-1 ring-orange-500/20 text-orange-700 dark:text-orange-300 font-bold shadow-xs' 
+                                       : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600 font-medium'">
                                 <input type="radio" name="type" value="online" x-model="type" class="sr-only">
-                                <div class="flex items-center gap-2.5 min-w-0">
-                                    <span class="text-base shrink-0">💻</span>
-                                    <div class="min-w-0">
-                                        <span class="block text-xs font-bold text-slate-900 dark:text-slate-100">Daring (Online)</span>
-                                        <span class="block text-[10px] text-slate-500 dark:text-slate-400 font-medium">Google Meet / Zoom</span>
-                                    </div>
-                                </div>
-                                <div class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2"
-                                     :class="type === 'online' ? 'border-orange-600 bg-orange-600 text-white' : 'border-slate-300 dark:border-slate-600'">
+                                <span>Daring (Online)</span>
+                                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2"
+                                      :class="type === 'online' ? 'border-orange-600 bg-orange-600 text-white' : 'border-slate-300 dark:border-slate-600'">
                                     <svg x-show="type === 'online'" class="w-2.5 h-2.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
+                                </span>
                             </label>
                         </div>
                     </div>
