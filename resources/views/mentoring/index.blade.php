@@ -6,6 +6,185 @@
     </x-slot>
 
     <script>
+        function mentoringSchedule() {
+            return {
+                viewMode: '{{ request('view', 'cards') }}',
+                selectedEvent: null,
+                eventModalOpen: false,
+                liveModalOpen: false,
+                liveTab: 'all',
+                liveSearch: '',
+                isSyncing: false,
+                lastUpdated: '{{ now()->locale('id')->translatedFormat('H:i:s') }} WIB',
+                attendanceStats: @json($attendanceStats ?? []),
+                liveSessions: [],
+                calendarInitialized: false,
+                events: @json($calendarEvents ?? []),
+                cancelModalOpen: false,
+                cancelData: {
+                    id: null,
+                    student_name: '',
+                    student_npm: '',
+                    topic: '',
+                    scheduled_date: '',
+                    scheduled_time: '',
+                    is_group: false,
+                    group_count: 1,
+                    reason: '',
+                    apply_to_group: true,
+                },
+                openCancelModal(data) {
+                    if (!data) return;
+                    this.cancelData = {
+                        id: data.id,
+                        student_name: data.student_name || 'Mahasiswa',
+                        student_npm: data.student_npm || '-',
+                        topic: data.topic || '-',
+                        scheduled_date: data.scheduled_date || '-',
+                        scheduled_time: data.scheduled_time || '-',
+                        is_group: !!data.is_group,
+                        group_count: data.group_count || 1,
+                        reason: '',
+                        apply_to_group: !!data.is_group,
+                    };
+                    this.cancelModalOpen = true;
+                },
+                openCancelModalFromEl(el) {
+                    if (!el) return;
+                    this.openCancelModal({
+                        id: el.getAttribute('data-session-id'),
+                        student_name: el.getAttribute('data-student-name'),
+                        student_npm: el.getAttribute('data-student-npm'),
+                        topic: el.getAttribute('data-topic'),
+                        scheduled_date: el.getAttribute('data-scheduled-date'),
+                        scheduled_time: el.getAttribute('data-scheduled-time'),
+                        is_group: el.getAttribute('data-is-group') === '1',
+                        group_count: parseInt(el.getAttribute('data-group-count') || '1'),
+                    });
+                },
+                openLiveModal() {
+                    this.liveModalOpen = true;
+                    this.fetchLiveAttendance(false);
+                },
+                get filteredLiveSessions() {
+                    if (!Array.isArray(this.liveSessions)) return [];
+                    return this.liveSessions.filter(item => {
+                        if (!item) return false;
+                        const matchesTab = (this.liveTab === 'all') || (item.attendance_status === this.liveTab);
+                        const searchLower = (this.liveSearch || '').toLowerCase().trim();
+                        const matchesSearch = !searchLower || 
+                            (item.student_name && item.student_name.toLowerCase().includes(searchLower)) ||
+                            (item.student_identifier && String(item.student_identifier).toLowerCase().includes(searchLower)) ||
+                            (item.topic && item.topic.toLowerCase().includes(searchLower));
+                        return matchesTab && matchesSearch;
+                    });
+                },
+                getWaLink(item) {
+                    if (!item || !item.student_phone) return '#';
+                    const phone = String(item.student_phone).replace(/^0/, '62').replace(/\D/g, '');
+                    const text = encodeURIComponent(`Halo ${item.student_name || 'Mahasiswa'}, pengingat jadwal bimbingan SIBIMA pada ${item.scheduled_date_formatted || ''} pukul ${item.scheduled_time_formatted || ''}. Topik: ${item.topic || ''}.`);
+                    return `https://wa.me/${phone}?text=${text}`;
+                },
+                getInitials(name) {
+                    if (!name) return 'MH';
+                    return name.substring(0, 2).toUpperCase();
+                },
+                initCalendar() {
+                    if (this.calendarInitialized) return;
+                    this.$nextTick(() => {
+                        const calendarEl = document.getElementById('mentoring-calendar');
+                        if (!calendarEl || typeof FullCalendar === 'undefined') return;
+                        
+                        const calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
+                            headerToolbar: {
+                                left: 'prev,next today',
+                                center: 'title',
+                                right: 'dayGridMonth,timeGridWeek,listMonth'
+                            },
+                            buttonText: {
+                                today: 'Hari Ini',
+                                month: 'Bulan',
+                                week: 'Minggu',
+                                list: 'Agenda'
+                            },
+                            locale: 'id',
+                            events: this.events,
+                            eventClick: (info) => {
+                                this.selectedEvent = info.event.extendedProps;
+                                this.eventModalOpen = true;
+                            },
+                            eventTimeFormat: {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                meridiem: false,
+                                hour12: false
+                            },
+                            height: 'auto',
+                            contentHeight: 650,
+                            dayMaxEvents: 3
+                        });
+                        calendar.render();
+                        this.calendarInitialized = true;
+                    });
+                },
+                switchView(mode) {
+                    this.viewMode = mode;
+                    if (mode === 'calendar') {
+                        this.initCalendar();
+                    }
+                },
+                async fetchLiveAttendance(silent = false) {
+                    if (!silent) this.isSyncing = true;
+                    try {
+                        const dosenId = '{{ $dosenId ?? '' }}';
+                        const url = '{{ route('mentoring-sessions.live-attendance') }}' + (dosenId ? '?dosen_id=' + dosenId : '');
+                        const response = await fetch(url, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.summary) {
+                                this.attendanceStats = data.summary;
+                                this.lastUpdated = data.summary.last_updated || this.lastUpdated;
+                            }
+                            if (data.sessions) {
+                                this.liveSessions = data.sessions;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Live attendance sync error:', e);
+                    } finally {
+                        if (!silent) this.isSyncing = false;
+                    }
+                },
+                init() {
+                    window.__mentoringScope = this;
+                    if (this.viewMode === 'calendar') {
+                        this.initCalendar();
+                    }
+                    this.fetchLiveAttendance(true);
+                    setInterval(() => {
+                        this.fetchLiveAttendance(true);
+                    }, 10000);
+                }
+            };
+        }
+
+        window.mentoringSchedule = mentoringSchedule;
+
+        if (window.Alpine) {
+            window.Alpine.data('mentoringSchedule', mentoringSchedule);
+        }
+        document.addEventListener('alpine:init', () => {
+            if (window.Alpine) {
+                window.Alpine.data('mentoringSchedule', mentoringSchedule);
+            }
+        });
+
         window.openCancelModal = function(data) {
             if (!data) return;
             if (window.__mentoringScope && typeof window.__mentoringScope.openCancelModal === 'function') {
@@ -35,171 +214,7 @@
         };
     </script>
 
-    <div class="w-full" x-data="{
-        viewMode: '{{ request('view', 'cards') }}',
-        selectedEvent: null,
-        eventModalOpen: false,
-        liveModalOpen: false,
-        liveTab: 'all',
-        liveSearch: '',
-        isSyncing: false,
-        lastUpdated: '{{ now()->locale('id')->translatedFormat('H:i:s') }} WIB',
-        attendanceStats: @json($attendanceStats ?? []),
-        liveSessions: [],
-        calendarInitialized: false,
-        events: @json($calendarEvents ?? []),
-        cancelModalOpen: false,
-        cancelData: {
-            id: null,
-            student_name: '',
-            student_npm: '',
-            topic: '',
-            scheduled_date: '',
-            scheduled_time: '',
-            is_group: false,
-            group_count: 1,
-            reason: '',
-            apply_to_group: true,
-        },
-        openCancelModal(data) {
-            if (!data) return;
-            this.cancelData = {
-                id: data.id,
-                student_name: data.student_name || 'Mahasiswa',
-                student_npm: data.student_npm || '-',
-                topic: data.topic || '-',
-                scheduled_date: data.scheduled_date || '-',
-                scheduled_time: data.scheduled_time || '-',
-                is_group: !!data.is_group,
-                group_count: data.group_count || 1,
-                reason: '',
-                apply_to_group: !!data.is_group,
-            };
-            this.cancelModalOpen = true;
-        },
-        openCancelModalFromEl(el) {
-            if (!el) return;
-            this.openCancelModal({
-                id: el.getAttribute('data-session-id'),
-                student_name: el.getAttribute('data-student-name'),
-                student_npm: el.getAttribute('data-student-npm'),
-                topic: el.getAttribute('data-topic'),
-                scheduled_date: el.getAttribute('data-scheduled-date'),
-                scheduled_time: el.getAttribute('data-scheduled-time'),
-                is_group: el.getAttribute('data-is-group') === '1',
-                group_count: parseInt(el.getAttribute('data-group-count') || '1'),
-            });
-        },
-        openLiveModal() {
-            this.liveModalOpen = true;
-            this.fetchLiveAttendance(false);
-        },
-        get filteredLiveSessions() {
-            if (!Array.isArray(this.liveSessions)) return [];
-            return this.liveSessions.filter(item => {
-                if (!item) return false;
-                const matchesTab = (this.liveTab === 'all') || (item.attendance_status === this.liveTab);
-                const searchLower = (this.liveSearch || '').toLowerCase().trim();
-                const matchesSearch = !searchLower || 
-                    (item.student_name && item.student_name.toLowerCase().includes(searchLower)) ||
-                    (item.student_identifier && String(item.student_identifier).toLowerCase().includes(searchLower)) ||
-                    (item.topic && item.topic.toLowerCase().includes(searchLower));
-                return matchesTab && matchesSearch;
-            });
-        },
-        getWaLink(item) {
-            if (!item || !item.student_phone) return '#';
-            const phone = String(item.student_phone).replace(/^0/, '62').replace(/\D/g, '');
-            const text = encodeURIComponent(`Halo ${item.student_name || 'Mahasiswa'}, pengingat jadwal bimbingan SIBIMA pada ${item.scheduled_date_formatted || ''} pukul ${item.scheduled_time_formatted || ''}. Topik: ${item.topic || ''}.`);
-            return `https://wa.me/${phone}?text=${text}`;
-        },
-        getInitials(name) {
-            if (!name) return 'MH';
-            return name.substring(0, 2).toUpperCase();
-        },
-        initCalendar() {
-            if (this.calendarInitialized) return;
-            this.$nextTick(() => {
-                const calendarEl = document.getElementById('mentoring-calendar');
-                if (!calendarEl || typeof FullCalendar === 'undefined') return;
-                
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,listMonth'
-                    },
-                    buttonText: {
-                        today: 'Hari Ini',
-                        month: 'Bulan',
-                        week: 'Minggu',
-                        list: 'Agenda'
-                    },
-                    locale: 'id',
-                    events: this.events,
-                    eventClick: (info) => {
-                        this.selectedEvent = info.event.extendedProps;
-                        this.eventModalOpen = true;
-                    },
-                    eventTimeFormat: {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        meridiem: false,
-                        hour12: false
-                    },
-                    height: 'auto',
-                    contentHeight: 650,
-                    dayMaxEvents: 3
-                });
-                calendar.render();
-                this.calendarInitialized = true;
-            });
-        },
-        switchView(mode) {
-            this.viewMode = mode;
-            if (mode === 'calendar') {
-                this.initCalendar();
-            }
-        },
-        async fetchLiveAttendance(silent = false) {
-            if (!silent) this.isSyncing = true;
-            try {
-                const dosenId = '{{ $dosenId ?? '' }}';
-                const url = '{{ route('mentoring-sessions.live-attendance') }}' + (dosenId ? '?dosen_id=' + dosenId : '');
-                const response = await fetch(url, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.summary) {
-                        this.attendanceStats = data.summary;
-                        this.lastUpdated = data.summary.last_updated || this.lastUpdated;
-                    }
-                    if (data.sessions) {
-                        this.liveSessions = data.sessions;
-                    }
-                }
-            } catch (e) {
-                console.error('Live attendance sync error:', e);
-            } finally {
-                if (!silent) this.isSyncing = false;
-            }
-        },
-        init() {
-            window.__mentoringScope = this;
-            if (this.viewMode === 'calendar') {
-                this.initCalendar();
-            }
-            this.fetchLiveAttendance(true);
-            setInterval(() => {
-                this.fetchLiveAttendance(true);
-            }, 10000);
-        }
-    }">
+    <div class="w-full" x-data="mentoringSchedule()">
         
         <!-- KPI Quick Bar (4 Metrik Ringkas) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
