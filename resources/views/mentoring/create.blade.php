@@ -66,15 +66,15 @@
                     'npm' => $t->student?->identifier ?? 'NPM -',
                     'avatar' => $t->student?->avatar_url,
                     'title' => $t->final_title ?? $t->title ?? 'Judul Skripsi',
-                    'p1_id' => (string)$t->pembimbing1_id,
-                    'p2_id' => (string)$t->pembimbing2_id,
+                    'p1_id' => $t->pembimbing1_id ? (string)$t->pembimbing1_id : null,
+                    'p2_id' => $t->pembimbing2_id ? (string)$t->pembimbing2_id : null,
                     'is_p1' => $t->pembimbing1_id === Auth::id(),
                     'is_p2' => $t->pembimbing2_id === Auth::id(),
                     'role_label' => (Auth::user()->role === 'dosen')
                         ? (($t->pembimbing1_id === Auth::id()) ? 'Pembimbing 1' : (($t->pembimbing2_id === Auth::id()) ? 'Pembimbing 2' : 'Dosen'))
                         : ($t->pembimbing1?->name ? 'P1: ' . $t->pembimbing1->name : 'Bimbingan'),
-                    'p1_name' => $t->pembimbing1?->name ?? 'Pembimbing 1',
-                    'p2_name' => $t->pembimbing2?->name,
+                    'p1_name' => $t->pembimbing1?->name ?? null,
+                    'p2_name' => $t->pembimbing2?->name ?? null,
                 ])->values()) }},
 
                 dosenOptions: {
@@ -182,7 +182,7 @@
                         return this.thesesList;
                     }
                     if (this.selectedDosenId === 'p2') {
-                        return this.thesesList.filter(t => t.p2_id && t.p2_id !== '');
+                        return this.thesesList.filter(t => t.p2_id && t.p2_id !== '' && t.p2_id !== 'null' && t.p2_name);
                     }
                     // Specific lecturer ID selected: filter to only students where this lecturer is P1 or P2
                     const dId = String(this.selectedDosenId);
@@ -209,7 +209,13 @@
                 },
 
                 getStudentRoleBadge(t) {
-                    if (this.selectedDosenId && this.selectedDosenId !== '' && this.selectedDosenId !== 'p2') {
+                    if (this.selectedDosenId === 'p2') {
+                        return { 
+                            text: t.p2_name ? 'P2: ' + t.p2_name : 'Pembimbing 2', 
+                            class: 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20' 
+                        };
+                    }
+                    if (this.selectedDosenId && this.selectedDosenId !== '') {
                         const dId = String(this.selectedDosenId);
                         if (String(t.p1_id) === dId) {
                             return { text: 'Pembimbing 1', class: 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/20' };
@@ -224,7 +230,10 @@
                     if (t.is_p2) {
                         return { text: 'Pembimbing 2', class: 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20' };
                     }
-                    return { text: t.p1_name ? 'P1: ' + t.p1_name : 'Bimbingan', class: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700' };
+                    return { 
+                        text: t.p1_name ? 'P1: ' + t.p1_name : 'Bimbingan', 
+                        class: 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/20' 
+                    };
                 },
 
                 toggleThesis(id) {
