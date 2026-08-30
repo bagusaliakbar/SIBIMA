@@ -73,9 +73,9 @@
     <main class="w-full max-w-3xl mx-auto px-6 py-12 flex-1 flex flex-col items-center justify-center text-center z-10">
         
         <!-- Error Code Tag Pill -->
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/80 shadow-xs mb-6">
+        <div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-100/90 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200/90 dark:border-orange-800/80 shadow-2xs mb-6">
             <span>@yield('code', 'ERROR')</span>
-            <span class="text-orange-300 dark:text-orange-700">&bull;</span>
+            <span class="text-orange-400 dark:text-orange-600 font-bold">&bull;</span>
             <span>@yield('status_badge', 'HTTP Status')</span>
         </div>
 
