@@ -49,6 +49,7 @@
                 location: '{{ old('location', '') }}',
                 topic: '{{ old('topic', '') }}',
                 notes: '{{ old('notes', '') }}',
+                selectedDosenId: '{{ old('dosen_id', '') }}',
                 meetOpened: false,
                 customTimeMode: false,
                 isLecturer: {{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'true' : 'false' }},
@@ -73,6 +74,17 @@
                     'p2_name' => $t->pembimbing2?->name,
                 ])->values()) }},
 
+                dosenOptions: {
+                    @if(isset($thesis))
+                        @if($thesis->pembimbing1)
+                            '{{ $thesis->pembimbing1->id }}': 'Pembimbing 1: {{ addslashes($thesis->pembimbing1->name) }}',
+                        @endif
+                        @if($thesis->pembimbing2)
+                            '{{ $thesis->pembimbing2->id }}': 'Pembimbing 2: {{ addslashes($thesis->pembimbing2->name) }}',
+                        @endif
+                    @endif
+                },
+
                 today: '{{ date('Y-m-d') }}',
                 scheduledDate: '{{ old('scheduled_date', date('Y-m-d')) }}',
                 selectedTime: '{{ old('scheduled_hour', '09') }}:{{ old('scheduled_minute', '00') }}',
@@ -96,9 +108,14 @@
                 },
 
                 get selectedDosenText() {
+                    if (this.selectedDosenId && this.dosenOptions[this.selectedDosenId]) {
+                        return this.dosenOptions[this.selectedDosenId];
+                    }
                     const el = document.getElementById('dosen_id');
-                    if (!el || el.selectedIndex < 0) return '-';
-                    return el.options[el.selectedIndex]?.text || '-';
+                    if (el && el.selectedIndex > 0) {
+                        return el.options[el.selectedIndex]?.text || '-';
+                    }
+                    return '-';
                 },
 
                 get formattedScheduledDate() {
@@ -120,6 +137,13 @@
                     if (form && !form.checkValidity()) {
                         form.reportValidity();
                         return;
+                    }
+
+                    if (!this.isLecturer) {
+                        const el = document.getElementById('dosen_id');
+                        if (el && el.value) {
+                            this.selectedDosenId = el.value;
+                        }
                     }
 
                     if (this.isLecturer && this.selectionMode === 'multiple' && this.selectedThesisIds.length === 0) {
@@ -371,7 +395,7 @@
                     @else
                     <div class="md:col-span-2">
                         <label for="dosen_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Pilih Dosen Pembimbing <span class="text-orange-600">*</span></label>
-                        <select name="dosen_id" id="dosen_id" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                        <select name="dosen_id" id="dosen_id" x-model="selectedDosenId" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
                             <option value="">Pilih Pembimbing...</option>
                             @if($thesis->pembimbing1)
                                 <option value="{{ $thesis->pembimbing1->id }}">Pembimbing 1: {{ $thesis->pembimbing1->name }}</option>
