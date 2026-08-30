@@ -83,33 +83,21 @@
             </div>
         </div>
 
-        <!-- Table Card with Sticky Headers & Freeze Column -->
+        <!-- Table Card -->
         <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 overflow-hidden">
-            <div class="overflow-x-auto overflow-y-auto max-h-[calc(100vh-270px)] min-h-[460px] relative">
-                <table class="w-full text-left border-collapse border-separate border-spacing-0">
-                    <thead class="sticky top-0 z-30">
-                        <tr class="bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
-                            <th class="sticky top-0 left-0 z-40 bg-slate-100 dark:bg-slate-900 py-4 px-3 w-12 min-w-[48px] text-center border-r border-b border-slate-200 dark:border-slate-700">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                            <th class="py-5 px-4 w-10 text-center border-r border-slate-200/60 dark:border-slate-700">
                                 <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 transition-all cursor-pointer">
                             </th>
-                            <th class="sticky top-0 left-[48px] z-40 bg-slate-100 dark:bg-slate-900 py-4 px-6 font-black text-[10px] border-r-2 border-b border-slate-200 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap w-72 min-w-[280px] shadow-[4px_0_12px_-2px_rgba(0,0,0,0.08)] dark:shadow-[4px_0_12px_-2px_rgba(0,0,0,0.4)]">
-                                MAHASISWA & SIDANG
-                            </th>
-                            <th class="sticky top-0 z-30 bg-slate-100 dark:bg-slate-900 py-4 px-6 font-black text-[10px] border-r border-b border-slate-200 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap min-w-[220px]">
-                                PENGUJI 1
-                            </th>
-                            <th class="sticky top-0 z-30 bg-slate-100 dark:bg-slate-900 py-4 px-6 font-black text-[10px] border-r border-b border-slate-200 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap min-w-[220px]">
-                                PENGUJI 2
-                            </th>
-                            <th class="sticky top-0 z-30 bg-slate-100 dark:bg-slate-900 py-4 px-6 font-black text-[10px] border-r border-b border-slate-200 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap min-w-[220px]">
-                                PEMBIMBING 1
-                            </th>
-                            <th class="sticky top-0 z-30 bg-slate-100 dark:bg-slate-900 py-4 px-6 font-black text-[10px] border-r border-b border-slate-200 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap text-center min-w-[160px]">
-                                SUMMARY STATUS
-                            </th>
-                            <th class="sticky top-0 z-30 bg-slate-100 dark:bg-slate-900 py-4 px-6 font-black text-[10px] border-b border-slate-200 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap text-center min-w-[120px]">
-                                AKSI
-                            </th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">MAHASISWA & SIDANG</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">PENGUJI 1</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">PENGUJI 2</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">PEMBIMBING 1</th>
+                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap text-center">SUMMARY STATUS</th>
+                            <th class="py-5 px-6 font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -123,11 +111,11 @@
                                 $grade2 = ($rev2 && $rev2->score_presentation !== null);
                                 $gradeP1 = ($revP1 && $revP1->score_presentation !== null);
                             @endphp
-                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-top group" :class="selectedIds.includes({{ $detail->id }}) ? 'bg-indigo-50/30 dark:bg-indigo-900/10' : ''">
-                                <td class="sticky left-0 z-20 bg-white dark:bg-slate-900 group-hover:bg-slate-50 dark:group-hover:bg-slate-800 py-4 px-3 text-center border-r border-b border-slate-100 dark:border-slate-700">
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-top" :class="selectedIds.includes({{ $detail->id }}) ? 'bg-indigo-50/30 dark:bg-indigo-900/10' : ''">
+                                <td class="py-4 px-4 text-center">
                                     <input type="checkbox" x-model="selectedIds" value="{{ $detail->id }}" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 cursor-pointer">
                                 </td>
-                                <td class="sticky left-[48px] z-20 bg-white dark:bg-slate-900 group-hover:bg-slate-50 dark:group-hover:bg-slate-800 py-4 px-6 border-r-2 border-b border-slate-200 dark:border-slate-700 shadow-[4px_0_12px_-2px_rgba(0,0,0,0.08)] dark:shadow-[4px_0_12px_-2px_rgba(0,0,0,0.4)]">
+                                <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $detail->thesis->student->name ?? 'N/A' }}</div>
                                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight font-bold uppercase">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
                                     @if($detail->thesis && $detail->thesis->title)
