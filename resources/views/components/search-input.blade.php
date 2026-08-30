@@ -27,7 +27,7 @@
            name="{{ $name }}" 
            value="{{ $value }}" 
            placeholder="{{ $placeholder }}" 
-           class="block w-full sm:w-64 pl-10 pr-10 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 text-xs transition-colors font-medium">
+           class="block w-full sm:w-64 pl-10 pr-10 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 text-xs transition-colors font-medium">
 
     @if($value)
         <a href="{{ $actionUrl }}?{{ http_build_query(collect($params)->forget($name)->toArray()) }}" 

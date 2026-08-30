@@ -383,14 +383,14 @@
             <!-- KAPRODI / ADMIN VIEW: Advanced Management Table with Search & Status Filter -->
             <x-table-card title="Daftar Jadwal Seminar Proposal">
                 <x-slot name="headerActions">
-                    <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 w-full">
+                    <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full">
                         <!-- Wave Filter Dropdown -->
                         <form action="{{ route('seminar-schedules.index') }}" method="GET" class="relative">
                             @if(request('search'))
                                 <input type="hidden" name="search" value="{{ request('search') }}">
                             @endif
                             <select name="wave_id" onchange="this.form.submit()"
-                                class="pl-3.5 pr-9 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
+                                class="pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
                                 <option value="">Semua Gelombang</option>
                                 @foreach($waves as $wave)
                                     <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -412,11 +412,11 @@
                         
                         <!-- Add Button -->
                         <a href="{{ route('seminar-schedules.create', ['wave_id' => $selectedWaveId]) }}"
-                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-lg tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
+                            class="inline-flex items-center gap-2 px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
                             <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <span>Tambah Jadwal Seminar</span>
+                            <span class="whitespace-nowrap">Tambah Jadwal Seminar</span>
                         </a>
                     </div>
                 </x-slot>
