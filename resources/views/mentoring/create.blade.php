@@ -66,15 +66,23 @@
                     'npm' => $t->student?->identifier ?? 'NPM -',
                     'avatar' => $t->student?->avatar_url,
                     'title' => $t->final_title ?? $t->title ?? 'Judul Skripsi',
+                    'p1_id' => (string)$t->pembimbing1_id,
+                    'p2_id' => (string)$t->pembimbing2_id,
                     'is_p1' => $t->pembimbing1_id === Auth::id(),
                     'is_p2' => $t->pembimbing2_id === Auth::id(),
-                    'role_label' => ($t->pembimbing1_id === Auth::id()) ? 'Pembimbing 1' : (($t->pembimbing2_id === Auth::id()) ? 'Pembimbing 2' : 'Dosen'),
+                    'role_label' => (Auth::user()->role === 'dosen')
+                        ? (($t->pembimbing1_id === Auth::id()) ? 'Pembimbing 1' : (($t->pembimbing2_id === Auth::id()) ? 'Pembimbing 2' : 'Dosen'))
+                        : ($t->pembimbing1?->name ? 'P1: ' . $t->pembimbing1->name : 'Bimbingan'),
                     'p1_name' => $t->pembimbing1?->name ?? 'Pembimbing 1',
-                    'p2_id' => $t->pembimbing2_id,
                     'p2_name' => $t->pembimbing2?->name,
                 ])->values()) }},
 
                 dosenOptions: {
+                    @if(isset($dosens))
+                        @foreach($dosens as $d)
+                            '{{ $d->id }}': '{{ addslashes($d->name) }}',
+                        @endforeach
+                    @endif
                     @if(isset($thesis))
                         @if($thesis->pembimbing1)
                             '{{ $thesis->pembimbing1->id }}': 'Pembimbing 1: {{ addslashes($thesis->pembimbing1->name) }}',
@@ -108,11 +116,17 @@
                 },
 
                 get selectedDosenText() {
-                    if (this.selectedDosenId && this.dosenOptions[this.selectedDosenId]) {
+                    if (!this.selectedDosenId) {
+                        return 'Otomatis: Pembimbing 1';
+                    }
+                    if (this.selectedDosenId === 'p2') {
+                        return 'Otomatis: Pembimbing 2';
+                    }
+                    if (this.dosenOptions[this.selectedDosenId]) {
                         return this.dosenOptions[this.selectedDosenId];
                     }
                     const el = document.getElementById('dosen_id');
-                    if (el && el.selectedIndex > 0) {
+                    if (el && el.selectedIndex >= 0) {
                         return el.options[el.selectedIndex]?.text || '-';
                     }
                     return '-';
@@ -264,6 +278,29 @@
                 <input type="hidden" name="scheduled_minute" :value="selectedMinute">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                    <!-- Pilihan Dosen Pembimbing untuk Kaprodi & Admin -->
+                    <div class="md:col-span-2 space-y-1.5 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+                        <label for="dosen_id" class="block text-sm font-bold text-slate-800 dark:text-slate-200">
+                            Dosen Pembimbing Pelaksana <span class="text-orange-600">*</span>
+                        </label>
+                        <select name="dosen_id" id="dosen_id" x-model="selectedDosenId" class="block w-full rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm font-medium transition-all">
+                            <option value="">-- Otomatis: Pembimbing 1 Masing-masing Mahasiswa --</option>
+                            <option value="p2">-- Otomatis: Pembimbing 2 Masing-masing Mahasiswa --</option>
+                            <optgroup label="Tentukan Dosen Pembimbing Spesifik">
+                                @if(isset($dosens))
+                                    @foreach($dosens as $d)
+                                        <option value="{{ $d->id }}">{{ $d->name }}</option>
+                                    @endforeach
+                                @endif
+                            </optgroup>
+                        </select>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Sebagai Kaprodi/Admin, Anda dapat memilih dosen spesifik untuk melaksanakan bimbingan ini atau menggunakan Pembimbing Utama/Pendamping masing-masing mahasiswa secara otomatis.
+                        </p>
+                    </div>
+                    @endif
+
                     @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                     <!-- Multi-Select Mahasiswa Bimbingan Section -->
                     <div class="md:col-span-2 space-y-3">
@@ -684,6 +721,12 @@
                                                 </template>
                                             </span>
                                         </div>
+                                        @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                            <div class="flex justify-between items-start gap-3 py-1 border-t border-slate-200/50 dark:border-slate-700/50 pt-2">
+                                                <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Dosen Pelaksana:</span>
+                                                <span class="font-bold text-slate-800 dark:text-slate-200 text-right" x-text="selectedDosenText"></span>
+                                            </div>
+                                        @endif
                                     @else
                                         <div class="flex justify-between items-start gap-3 py-1">
                                             <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Dosen Pembimbing:</span>

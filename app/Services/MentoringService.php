@@ -215,6 +215,10 @@ class MentoringService
 
         // 1. Check Dosen conflict at this time slot
         $targetDosenId = ($user->role === 'dosen') ? Auth::id() : null;
+        if (in_array($user->role, ['admin', 'kaprodi']) && !empty($data['dosen_id']) && !in_array($data['dosen_id'], ['p1', 'p2'])) {
+            $targetDosenId = $data['dosen_id'];
+        }
+
         if ($targetDosenId) {
             $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
                 ->where('scheduled_at', $scheduledAt)
@@ -222,8 +226,11 @@ class MentoringService
                 ->first();
 
             if ($existingDosenSession) {
+                $dosenName = User::find($targetDosenId)?->name ?? 'Dosen yang dipilih';
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'scheduled_at' => 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.',
+                    'scheduled_at' => ($user->role === 'dosen') 
+                        ? 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.' 
+                        : "{$dosenName} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
                 ]);
             }
         }
