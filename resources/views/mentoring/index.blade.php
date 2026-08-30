@@ -570,7 +570,7 @@
                                             </div>
                                             
                                             <div class="mb-4 space-y-3">
-                                                <h5 class="text-sm font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-tight line-clamp-2 leading-snug">
+                                                <h5 class="text-sm font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-snug">
                                                     {{ $session->topic }}
                                                 </h5>
                                                 
@@ -593,7 +593,7 @@
                                                         @endif
                                                     @else
                                                         <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider shadow-2xs">
-                                                            🏢 {{ $session->location ?? 'Offline' }}
+                                                             🏢 {{ $session->location ?? 'Offline' }}
                                                         </span>
                                                     @endif
 
@@ -607,14 +607,14 @@
                                                 @if($session->notes)
                                                     <div class="mt-3.5 p-3.5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
                                                         <p class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Catatan Mahasiswa</p>
-                                                        <p class="text-xs text-slate-600 dark:text-slate-300 italic leading-relaxed line-clamp-3">"{{ $session->notes }}"</p>
+                                                        <p class="text-xs text-slate-600 dark:text-slate-300 italic leading-relaxed">"{{ $session->notes }}"</p>
                                                     </div>
                                                 @endif
 
                                                 @if($session->feedback)
                                                     <div class="mt-3.5 p-3.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs">
                                                         <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Catatan Dosen</p>
-                                                        <p class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed line-clamp-3">{{ $session->feedback }}</p>
+                                                        <p class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ $session->feedback }}</p>
                                                     </div>
                                                 @endif
 

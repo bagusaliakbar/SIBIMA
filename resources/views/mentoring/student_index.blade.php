@@ -282,7 +282,7 @@
                                     <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">{{ $session->scheduled_at->format('H:i') }} WIB</span>
                                 </td>
                                 <td class="py-4 px-5 text-slate-700 dark:text-slate-300">
-                                    <div class="font-medium">{{ \Illuminate\Support\Str::limit($session->topic, 35) }}</div>
+                                    <div class="font-medium text-slate-800 dark:text-slate-100 leading-snug">{{ $session->topic }}</div>
                                     <div class="mt-1.5 flex items-center text-[11px]">
                                         @if($session->type === 'online')
                                             @php 
@@ -474,13 +474,13 @@
                                     @endif
                                 </td>
 
-                                <td class="py-4 px-5 max-w-xs">
+                                <td class="py-4 px-5 max-w-sm">
                                     @if($session->feedback)
-                                        <div class="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-0.5">Catatan Pembimbing:</div>
-                                        <div class="text-slate-500 dark:text-slate-400 text-xs">{{ \Illuminate\Support\Str::limit($session->feedback, 50) }}</div>
+                                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-0.5">Catatan Pembimbing:</div>
+                                        <div class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">{{ $session->feedback }}</div>
                                     @elseif($session->notes)
                                         <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 mb-0.5">Catatan Pengajuan:</div>
-                                        <div class="text-slate-500 dark:text-slate-400 text-xs italic">{{ \Illuminate\Support\Str::limit($session->notes, 50) }}</div>
+                                        <div class="text-slate-600 dark:text-slate-400 text-xs italic leading-relaxed">{{ $session->notes }}</div>
                                     @else
                                         <span class="text-slate-400 dark:text-slate-600">-</span>
                                     @endif
