@@ -6,13 +6,14 @@
     </x-slot>
 
     <div class="w-full space-y-6" x-data="{ 
+        pageLoading: true,
         rollbackModalOpen: false,
         rollbackData: { id: null, student: '', p1: '', p2: '' },
         openRollbackModal(id, student, p1, p2) {
             this.rollbackData = { id: id, student: student, p1: p1, p2: p2 };
             this.rollbackModalOpen = true;
         }
-    }">
+    }" x-init="$nextTick(() => { setTimeout(() => pageLoading = false, 150) })">
         <!-- Status Tabs Navigation -->
         <div class="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800 overflow-x-auto pb-px custom-scrollbar">
             @if(Auth::user()->role === 'dosen')
@@ -282,7 +283,16 @@
                 </div>
             </div>
 
-            <table class="w-full text-left text-sm whitespace-nowrap">
+            <!-- Table Skeleton Shimmer -->
+            <div x-show="pageLoading" x-cloak>
+                <x-skeleton type="table" :rows="6" />
+            </div>
+
+            <table x-show="!pageLoading"
+                   x-transition:enter="transition ease-out duration-200"
+                   x-transition:enter-start="opacity-0"
+                   x-transition:enter-end="opacity-100"
+                   class="w-full text-left text-sm whitespace-nowrap">
                 <thead>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                         <th class="py-4 px-6">Mahasiswa</th>

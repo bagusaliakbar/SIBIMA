@@ -6,6 +6,7 @@
     </x-slot>
 
     <div class="w-full mx-auto" x-data="{ 
+        pageLoading: true,
         openImportModal: false, 
         openDetailModal: false, 
         selectedUser: null,
@@ -25,7 +26,7 @@
         isSelected(id) {
             return this.selectedUserIds.map(Number).includes(Number(id));
         }
-    }">
+    }" x-init="$nextTick(() => { setTimeout(() => pageLoading = false, 150) })">
         @if(session('skippedDetails'))
             <div class="mb-6 p-6 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 rounded-2xl shadow-sm relative overflow-hidden transition-all duration-300">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-12 -mt-12 opacity-50"></div>
@@ -302,7 +303,16 @@
                 </div>
             </div>
 
-            <table class="w-full text-sm text-left">
+            <!-- Table Skeleton Shimmer -->
+            <div x-show="pageLoading" x-cloak>
+                <x-skeleton type="table" :rows="6" />
+            </div>
+
+            <table x-show="!pageLoading"
+                   x-transition:enter="transition ease-out duration-200"
+                   x-transition:enter-start="opacity-0"
+                   x-transition:enter-end="opacity-100"
+                   class="w-full text-sm text-left">
                 <thead>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                         <th scope="col" class="py-4 px-4 text-center w-10">

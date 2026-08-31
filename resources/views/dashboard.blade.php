@@ -14,7 +14,7 @@
         </div>
     </x-slot>
 
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ dashboardLoaded: false }" x-init="$nextTick(() => { setTimeout(() => dashboardLoaded = true, 150) })">
         <!-- WhatsApp Bot Contact Save Banner -->
         @php
             $botNumberRaw = config('services.whatsapp.bot_number') ?: env('WHATSAPP_BOT_NUMBER', '');
