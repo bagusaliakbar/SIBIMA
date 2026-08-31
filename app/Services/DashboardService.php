@@ -72,8 +72,9 @@ class DashboardService
             $lastSession = MentoringSession::where('thesis_id', $thesis->id)
                 ->where('status', 'completed')->orderBy('scheduled_at', 'desc')->first();
             
-            $data['daysSinceLastSession'] = $lastSession ? (int)now()->diffInDays($lastSession->scheduled_at) : null;
-            $data['isStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] >= 14;
+            $data['daysSinceLastSession'] = $lastSession ? (int)now()->diffInDays($lastSession->scheduled_at) : ($thesis->created_at ? (int)now()->diffInDays($thesis->created_at) : null);
+            $data['isStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] > 7;
+            $data['isCriticalStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] > 14;
 
             // Calculate Progress Data
             $data['progress'] = $this->calculateStudentProgress($thesis, $data['pastSessionsCount'], $data['seminar'], $data['defense']);
@@ -386,6 +387,54 @@ class DashboardService
             }
         }
         
+        // Early Warning System: Inactive Mentoring Students (> 7 days)
+        $inactiveThesesList = [];
+        $dosenWarningCount = 0;
+        $dosenCriticalCount = 0;
+
+        foreach ($activeTheses as $t) {
+            $days = $t->getDaysSinceLastMentoringForDosen($dosenId);
+            if ($days !== null && $days > 7 && !$t->isAccSidangFinal()) {
+                $status = $days > 14 ? 'critical' : 'warning';
+                if ($status === 'critical') {
+                    $dosenCriticalCount++;
+                } else {
+                    $dosenWarningCount++;
+                }
+
+                $student = $t->student;
+                $phone = $student ? preg_replace('/[^0-9]/', '', $student->phone_number ?? '') : '';
+                if (str_starts_with($phone, '0')) {
+                    $phone = '62' . substr($phone, 1);
+                }
+
+                $roleText = $t->pembimbing1_id == $dosenId ? 'Pembimbing 1' : 'Pembimbing 2';
+                $waMsg = "Halo {$student->name} ({$student->identifier}), saya {$user->name} sebagai {$roleText} skripsi Anda di SIBIMA. Menurut catatan sistem, Anda belum melakukan bimbingan selama {$days} hari. Sesuai standar prodi, mahasiswa wajib bimbingan minimal 1x per minggu. Silakan segera jadwalkan sesi bimbingan berikutnya.";
+
+                $inactiveThesesList[] = [
+                    'thesis_id' => $t->id,
+                    'student_id' => $student->id ?? null,
+                    'student_name' => $student->name ?? '-',
+                    'student_npm' => $student->identifier ?? '-',
+                    'title' => $t->display_title,
+                    'role_text' => $roleText,
+                    'days_inactive' => $days,
+                    'status' => $status,
+                    'phone' => $phone,
+                    'wa_link' => $phone ? "https://wa.me/{$phone}?text=" . urlencode($waMsg) : null,
+                ];
+            }
+        }
+
+        usort($inactiveThesesList, fn($a, $b) => $b['days_inactive'] <=> $a['days_inactive']);
+
+        $data['earlyWarning'] = [
+            'total_inactive' => count($inactiveThesesList),
+            'warning_count' => $dosenWarningCount,
+            'critical_count' => $dosenCriticalCount,
+            'students' => $inactiveThesesList,
+        ];
+
         $data['topicTrends'] = $topicTrendsResult;
         
         return $data;
@@ -520,7 +569,57 @@ class DashboardService
                 $topicTrendsResult['Angkatan ' . $year] = $topicTrends;
             }
         }
-        
+
+        // Early Warning System: Global Inactive Mentoring Students (> 7 days)
+        $allActiveTheses = Thesis::where('status', 'active')->with(['student', 'pembimbing1', 'pembimbing2'])->get();
+        $globalInactiveList = [];
+        $globalWarningCount = 0;
+        $globalCriticalCount = 0;
+
+        foreach ($allActiveTheses as $t) {
+            $days = $t->days_since_last_mentoring;
+            if ($days !== null && $days > 7 && !$t->isAccSidangFinal()) {
+                $status = $days > 14 ? 'critical' : 'warning';
+                if ($status === 'critical') {
+                    $globalCriticalCount++;
+                } else {
+                    $globalWarningCount++;
+                }
+
+                $student = $t->student;
+                $phone = $student ? preg_replace('/[^0-9]/', '', $student->phone_number ?? '') : '';
+                if (str_starts_with($phone, '0')) {
+                    $phone = '62' . substr($phone, 1);
+                }
+
+                $p1Name = $t->pembimbing1->name ?? 'Belum ditentukan';
+                $waMsg = "Halo {$student->name} ({$student->identifier}), saya Admin/Kaprodi SIBIMA. Berdasarkan sistem, Anda belum melakukan bimbingan skripsi selama {$days} hari. Sesuai standar prodi, mahasiswa wajib bimbingan minimal 1x per minggu. Silakan segera jadwalkan bimbingan dengan dosen pembimbing Anda ({$p1Name}).";
+
+                $globalInactiveList[] = [
+                    'thesis_id' => $t->id,
+                    'student_id' => $student->id ?? null,
+                    'student_name' => $student->name ?? '-',
+                    'student_npm' => $student->identifier ?? '-',
+                    'title' => $t->display_title,
+                    'p1_name' => $p1Name,
+                    'p2_name' => $t->pembimbing2->name ?? '-',
+                    'days_inactive' => $days,
+                    'status' => $status,
+                    'phone' => $phone,
+                    'wa_link' => $phone ? "https://wa.me/{$phone}?text=" . urlencode($waMsg) : null,
+                ];
+            }
+        }
+
+        usort($globalInactiveList, fn($a, $b) => $b['days_inactive'] <=> $a['days_inactive']);
+
+        $data['earlyWarning'] = [
+            'total_inactive' => count($globalInactiveList),
+            'warning_count' => $globalWarningCount,
+            'critical_count' => $globalCriticalCount,
+            'students' => $globalInactiveList,
+        ];
+
         $data['topicTrends'] = $topicTrendsResult;
         
         return $data;

@@ -50,6 +50,121 @@ class Thesis extends Model
             ->count();
     }
 
+    public function latestCompletedMentoringSession()
+    {
+        return $this->hasOne(MentoringSession::class)
+            ->where('status', 'completed')
+            ->where('is_absent', false)
+            ->latestOfMany('scheduled_at');
+    }
+
+    public function getDaysSinceLastMentoringAttribute(): ?int
+    {
+        if ($this->relationLoaded('latestCompletedMentoringSession') && $this->latestCompletedMentoringSession) {
+            return (int)now()->diffInDays($this->latestCompletedMentoringSession->scheduled_at);
+        }
+
+        $lastSession = $this->mentoringSessions()
+            ->where('status', 'completed')
+            ->where('is_absent', false)
+            ->orderBy('scheduled_at', 'desc')
+            ->first();
+
+        if ($lastSession && $lastSession->scheduled_at) {
+            return (int)now()->diffInDays($lastSession->scheduled_at);
+        }
+
+        return $this->created_at ? (int)now()->diffInDays($this->created_at) : null;
+    }
+
+    public function getDaysSinceLastMentoringForDosen($dosenId): ?int
+    {
+        $lastSession = $this->mentoringSessions()
+            ->where('dosen_id', $dosenId)
+            ->where('status', 'completed')
+            ->where('is_absent', false)
+            ->orderBy('scheduled_at', 'desc')
+            ->first();
+
+        if ($lastSession && $lastSession->scheduled_at) {
+            return (int)now()->diffInDays($lastSession->scheduled_at);
+        }
+
+        return $this->created_at ? (int)now()->diffInDays($this->created_at) : null;
+    }
+
+    public function getMentoringHealthStatusAttribute(): string
+    {
+        if ($this->status === 'completed' || $this->isAccSidangFinal()) {
+            return 'active';
+        }
+
+        $days = $this->days_since_last_mentoring;
+        if ($days === null) {
+            return 'active';
+        }
+
+        if ($days > 14) {
+            return 'critical'; // > 2 weeks
+        } elseif ($days > 7) {
+            return 'warning';  // > 1 week
+        }
+
+        return 'active';       // <= 7 days
+    }
+
+    public function getMentoringHealthBadgeAttribute(): array
+    {
+        $status = $this->mentoring_health_status;
+        $days = $this->days_since_last_mentoring ?? 0;
+
+        if ($this->status === 'completed') {
+            return [
+                'status' => 'completed',
+                'label' => 'Selesai / Lulus',
+                'days' => $days,
+                'color' => 'emerald',
+                'bg_class' => 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20',
+            ];
+        }
+
+        if ($this->isAccSidangFinal()) {
+            return [
+                'status' => 'acc_sidang',
+                'label' => 'Siap Sidang',
+                'days' => $days,
+                'color' => 'indigo',
+                'bg_class' => 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20',
+            ];
+        }
+
+        if ($status === 'critical') {
+            return [
+                'status' => 'critical',
+                'label' => "Macet ({$days}h)",
+                'days' => $days,
+                'color' => 'rose',
+                'bg_class' => 'bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300 border border-rose-200/80 dark:border-rose-500/30 font-black',
+            ];
+        } elseif ($status === 'warning') {
+            return [
+                'status' => 'warning',
+                'label' => "Pasif ({$days}h)",
+                'days' => $days,
+                'color' => 'amber',
+                'bg_class' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/30 font-black',
+            ];
+        }
+
+        return [
+            'status' => 'active',
+            'label' => "Lancar ({$days}h)",
+            'days' => $days,
+            'color' => 'emerald',
+            'bg_class' => 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20',
+        ];
+    }
+
     public function isAccUpFinal()
     {
         return $this->acc_up_p1 && $this->acc_up_p2;
@@ -199,6 +314,71 @@ class Thesis extends Model
         } elseif ($user->role === 'mahasiswa') {
             return $query->where('student_id', $user->id);
         }
+        return $query;
+    }
+
+    public function scopeMentoringHealth($query, $health)
+    {
+        if ($health === 'all' || empty($health)) {
+            return $query;
+        }
+
+        $sevenDaysAgo = now()->subDays(7);
+        $fourteenDaysAgo = now()->subDays(14);
+
+        if ($health === 'active') {
+            // Bimbingan dalam 7 hari terakhir
+            return $query->where('status', 'active')
+                ->where(function($q) use ($sevenDaysAgo) {
+                    $q->whereHas('mentoringSessions', function($sq) use ($sevenDaysAgo) {
+                        $sq->where('status', 'completed')
+                           ->where('is_absent', false)
+                           ->where('scheduled_at', '>=', $sevenDaysAgo);
+                    })
+                    ->orWhere(function($sq) use ($sevenDaysAgo) {
+                        $sq->whereDoesntHave('mentoringSessions', function($ssq) {
+                            $ssq->where('status', 'completed')->where('is_absent', false);
+                        })->where('created_at', '>=', $sevenDaysAgo);
+                    });
+                });
+        } elseif ($health === 'warning') {
+            // Pasif: 8 - 14 hari
+            return $query->where('status', 'active')
+                ->where(function($q) use ($sevenDaysAgo, $fourteenDaysAgo) {
+                    $q->whereHas('mentoringSessions', function($sq) use ($sevenDaysAgo, $fourteenDaysAgo) {
+                        $sq->where('status', 'completed')
+                           ->where('is_absent', false)
+                           ->whereBetween('scheduled_at', [$fourteenDaysAgo, $sevenDaysAgo]);
+                    })
+                    ->whereDoesntHave('mentoringSessions', function($sq) use ($sevenDaysAgo) {
+                        $sq->where('status', 'completed')
+                           ->where('is_absent', false)
+                           ->where('scheduled_at', '>', $sevenDaysAgo);
+                    })
+                    ->orWhere(function($sq) use ($sevenDaysAgo, $fourteenDaysAgo) {
+                        $sq->whereDoesntHave('mentoringSessions', function($ssq) {
+                            $ssq->where('status', 'completed')->where('is_absent', false);
+                        })->whereBetween('created_at', [$fourteenDaysAgo, $sevenDaysAgo]);
+                    });
+                });
+        } elseif ($health === 'critical') {
+            // Macet: > 14 hari
+            return $query->where('status', 'active')
+                ->where(function($q) use ($fourteenDaysAgo) {
+                    $q->whereDoesntHave('mentoringSessions', function($sq) use ($fourteenDaysAgo) {
+                        $sq->where('status', 'completed')
+                           ->where('is_absent', false)
+                           ->where('scheduled_at', '>=', $fourteenDaysAgo);
+                    })
+                    ->where(function($sq) use ($fourteenDaysAgo) {
+                        $sq->whereHas('mentoringSessions', function($ssq) {
+                            $ssq->where('status', 'completed')->where('is_absent', false);
+                        })
+                        ->orWhere('created_at', '<', $fourteenDaysAgo);
+                    });
+                });
+        }
+
         return $query;
     }
 

@@ -344,6 +344,12 @@ class ThesisController extends Controller
             });
         }
 
+        // Filter Mentoring Health Status (Early Warning System)
+        $mentoringHealth = $request->input('mentoring_health', 'all');
+        if (!empty($mentoringHealth) && $mentoringHealth !== 'all') {
+            $thesesQuery->mentoringHealth($mentoringHealth);
+        }
+
         $theses = $thesesQuery->orderBy('created_at', 'desc')
             ->paginate(10)
             ->appends([
@@ -351,7 +357,8 @@ class ThesisController extends Controller
                 'status' => $status, 
                 'role_filter' => $roleFilter,
                 'cohort_filter' => $cohortFilter,
-                'entry_year' => $entryYear
+                'entry_year' => $entryYear,
+                'mentoring_health' => $mentoringHealth,
             ]);
 
         // Distinct available entry years for dropdown filter
@@ -390,6 +397,13 @@ class ThesisController extends Controller
             })->count(),
         ];
 
+        $mentoringHealthCounts = [
+            'all' => (clone $baseScopeQuery)->count(),
+            'active' => (clone $baseScopeQuery)->mentoringHealth('active')->count(),
+            'warning' => (clone $baseScopeQuery)->mentoringHealth('warning')->count(),
+            'critical' => (clone $baseScopeQuery)->mentoringHealth('critical')->count(),
+        ];
+
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosens = User::where('role', 'dosen')
                 ->withCount(['thesesAsP1 as p1_count' => function($query) {
@@ -410,7 +424,8 @@ class ThesisController extends Controller
 
             return view('theses.index', compact(
                 'theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter',
-                'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts'
+                'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts',
+                'mentoringHealth', 'mentoringHealthCounts'
             ));
         }
 
@@ -422,7 +437,8 @@ class ThesisController extends Controller
 
         return view('theses.index', compact(
             'theses', 'search', 'status', 'roleFilter', 'dosenStats',
-            'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts'
+            'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts',
+            'mentoringHealth', 'mentoringHealthCounts'
         ));
     }
 
