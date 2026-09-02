@@ -137,9 +137,8 @@ class MentoringSessionController extends Controller
 
             $sessions = $query
                 ->orderBy('scheduled_at', 'desc')
-                ->with('thesis.student')
-                ->paginate(12)
-                ->appends(['search' => $search, 'tab' => $activeTab, 'attendance' => $attendanceFilter]);
+                ->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
+                ->get();
 
             $calendarQuery = MentoringSession::forUser($user)
                 ->whereHas('thesis', function($q) use ($activeTab) {
@@ -200,8 +199,7 @@ class MentoringSessionController extends Controller
             $sessions = $query
                 ->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
                 ->orderBy('scheduled_at', 'desc')
-                ->paginate(15)
-                ->appends(['search' => $search, 'tab' => $activeTab, 'dosen_id' => $dosenId, 'attendance' => $attendanceFilter]);
+                ->get();
 
             $calendarQuery = MentoringSession::query()
                 ->whereHas('thesis', function($q) use ($activeTab) {

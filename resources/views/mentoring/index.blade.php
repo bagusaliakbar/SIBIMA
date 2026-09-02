@@ -377,7 +377,7 @@
         
         <x-table-card 
             title="{{ $activeTab === 'history' ? 'Riwayat Bimbingan' : 'Jadwal Bimbingan' }}"
-            :footer="$sessions->links()">
+            :footer="method_exists($sessions, 'links') ? $sessions->links() : null">
             
             <x-slot name="headerActions">
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
