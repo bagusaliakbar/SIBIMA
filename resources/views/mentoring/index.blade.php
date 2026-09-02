@@ -673,7 +673,7 @@
                                                         : $thesis?->getCompletedMentoringCountForDosen(Auth::id());
                                                 @endphp
 
-                                                <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
+                                                <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
                                                     <div>
                                                         <!-- Top Bar Status Accent -->
                                                         <div class="absolute top-0 left-0 w-full h-1.5 
@@ -686,7 +686,7 @@
                                                         <!-- Student Avatar & Name Header -->
                                                         <div class="flex items-start justify-between gap-3 mb-3 pt-1">
                                                             <div class="flex items-center gap-3 min-w-0">
-                                                                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-slate-100 dark:bg-slate-800 shrink-0">
+                                                                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
                                                                     <img src="{{ $student?->avatar_url }}" alt="{{ $student?->name ?? 'Mhs' }}" class="w-full h-full object-cover">
                                                                 </div>
                                                                 <div class="min-w-0">
@@ -937,7 +937,7 @@
                                     @endphp
                                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5 border-b border-slate-200/80 dark:border-slate-700/80 gap-4">
                                         <div class="flex items-center gap-4">
-                                            <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-slate-100 dark:bg-slate-800 shrink-0">
+                                            <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
                                                 <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
                                             </div>
                                             <div class="space-y-2 min-w-0">
@@ -1385,7 +1385,7 @@
                 <!-- Modal Header -->
                 <div class="p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-orange-50 shrink-0">
+                        <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-orange-50 shrink-0">
                             <template x-if="selectedEvent?.student_avatar">
                                 <img :src="selectedEvent.student_avatar" class="w-full h-full object-cover">
                             </template>
