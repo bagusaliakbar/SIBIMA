@@ -73,6 +73,7 @@ class MentoringRealtimeAttendanceTest extends TestCase
             'sessions' => [
                 '*' => [
                     'id',
+                    'session_group_key',
                     'student_name',
                     'student_identifier',
                     'topic',

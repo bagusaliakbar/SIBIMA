@@ -275,6 +275,7 @@ class MentoringSessionController extends Controller
             $dosen = $s->dosen ?? $s->thesis?->pembimbing1;
             return [
                 'id' => $s->id,
+                'session_group_key' => ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d_H:i') . '_' . md5($s->topic ?? ''),
                 'student_name' => $student?->name ?? 'Mahasiswa',
                 'student_identifier' => $student?->identifier ?? '-',
                 'student_phone' => $student?->phone_number ?? null,
