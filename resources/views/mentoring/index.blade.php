@@ -9,11 +9,16 @@
         function mentoringSchedule() {
             return {
                 viewMode: '{{ request('view', 'cards') }}',
+                cardGrouping: localStorage.getItem('sibima_card_grouping') || 'session', // 'session' (default) or 'student'
                 selectedEvent: null,
                 eventModalOpen: false,
                 calendarInitialized: false,
                 events: @json($calendarEvents ?? []),
                 attendanceStats: @json($attendanceStats ?? []),
+                setGrouping(mode) {
+                    this.cardGrouping = mode;
+                    localStorage.setItem('sibima_card_grouping', mode);
+                },
                 initCalendar() {
                     if (this.calendarInitialized) return;
                     this.$nextTick(() => {
@@ -441,8 +446,28 @@
                             </a>
                         </div>
 
-                        <!-- Real-Time Actions (Monitor & Sync) -->
-                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <!-- Grouping Switcher & Real-Time Actions -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+                            <!-- Toggle Mode Grouping: Per Sesi (Default) vs Per Mahasiswa -->
+                            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                                <button type="button" 
+                                        @click="setGrouping('session')" 
+                                        :class="cardGrouping === 'session' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-bold'"
+                                        title="Kelompokkan kartu berdasarkan sesi bimbingan"
+                                        class="px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    <span>Per Sesi</span>
+                                </button>
+                                <button type="button" 
+                                        @click="setGrouping('student')" 
+                                        :class="cardGrouping === 'student' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-bold'"
+                                        title="Kelompokkan kartu berdasarkan nama mahasiswa"
+                                        class="px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    <span>Per Mahasiswa</span>
+                                </button>
+                            </div>
+
                             <button type="button" 
                                     id="btn-monitor-kehadiran"
                                     @click="openLiveModal()" 
@@ -514,11 +539,17 @@
                     </div>
                     @endif
 
-                    <div class="space-y-12">
                     @php
+                        // 1. Grouped by Mentoring Session
+                        $sessionsBySessionGroup = $sessions->groupBy(function($s) {
+                            return ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d_H:i') . '_' . md5($s->topic ?? '');
+                        });
+
+                        // 2. Grouped by Student (Original)
                         $groupedSessions = $sessions->groupBy(function($session) {
                             return $session->thesis->student->name ?? 'Mahasiswa';
                         });
+
                         $groupCountMap = [];
                         foreach($sessions as $s) {
                             $key = ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d H:i');
@@ -526,367 +557,723 @@
                         }
                     @endphp
 
-                    @forelse($groupedSessions as $studentName => $studentSessions)
-                        <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 sm:p-7 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-6 transition-all hover:border-slate-300 dark:hover:border-slate-600">
-                            @php
-                                $studentThesis = $studentSessions->first()->thesis;
-                                $mentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
-                                    ? $studentThesis->completed_mentoring_count 
-                                    : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
-                            @endphp
-                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5 border-b border-slate-200/80 dark:border-slate-700/80 gap-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-slate-100 dark:bg-slate-800 shrink-0">
-                                        <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="space-y-2 min-w-0">
-                                        <div class="flex items-center gap-3 flex-wrap">
-                                            <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $studentName }}</h4>
-                                            @if($studentThesis->status === 'completed')
-                                                <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
-                                                    Lulus
-                                                </span>
-                                            @endif
-                                            <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-wider shadow-2xs">
-                                                {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
-                                            </span>
-                                        </div>
-                                        <div class="flex flex-wrap items-center gap-2.5 text-[11px] font-medium">
-                                            @if($studentThesis->pembimbing1)
-                                                <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
-                                                    <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-black text-[9px] rounded-md border border-indigo-200 dark:border-indigo-800 shrink-0">P1</span>
-                                                    <span class="font-bold text-slate-800 dark:text-slate-100">{{ $studentThesis->pembimbing1->name }}</span>
-                                                </span>
-                                            @endif
-                                            @if($studentThesis->pembimbing2)
-                                                <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
-                                                    <span class="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-black text-[9px] rounded-md border border-purple-200 dark:border-purple-800 shrink-0">P2</span>
-                                                    <span class="font-bold text-slate-800 dark:text-slate-100">{{ $studentThesis->pembimbing2->name }}</span>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-
-                                @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                                    <div class="flex flex-wrap gap-2">
-                                        {{-- ACC UP Group --}}
-                                        @php
-                                            $isAdminOrKaprodi = in_array(Auth::user()->role, ['admin', 'kaprodi']);
-                                            $isP1 = Auth::id() === $studentThesis->pembimbing1_id;
-                                            $isP2 = Auth::id() === $studentThesis->pembimbing2_id;
-                                            $hasAccUp = $isAdminOrKaprodi ? ($studentThesis->acc_up_p1 && $studentThesis->acc_up_p2) : ($isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false));
-                                        @endphp
-                                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                            <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?')">
-                                                @csrf
-                                                @if($isAdminOrKaprodi)
-                                                    <input type="hidden" name="slot" value="all">
-                                                @endif
-                                                <button type="submit" 
-                                                    title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
-                                                    class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
-                                                    {{ $hasAccUp ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50' }}">
-                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    ACC SEMINAR
-                                                </button>
-                                            </form>
-                                            <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
-                                                <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
-                                                <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
-                                            </div>
-                                        </div>
-
-                                        {{-- ACC Sidang Group --}}
-                                        @php
-                                            $hasAccSidang = $isAdminOrKaprodi ? ($studentThesis->acc_sidang_p1 && $studentThesis->acc_sidang_p2) : ($isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false));
-                                        @endphp
-                                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                            <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?')">
-                                                @csrf
-                                                @if($isAdminOrKaprodi)
-                                                    <input type="hidden" name="slot" value="all">
-                                                @endif
-                                                <button type="submit" 
-                                                    title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
-                                                    class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
-                                                    {{ $hasAccSidang ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50' }}">
-                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    ACC SIDANG
-                                                </button>
-                                            </form>
-                                            <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
-                                                <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
-                                                <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @elseif(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
-                                    <div class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-900/60 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
-                                        Dosen Pembimbing: <span class="text-slate-700 dark:text-slate-300 font-bold">{{ $studentSessions->first()->dosen->name }}</span>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                @foreach($studentSessions as $session)
-                                    @php
-                                        $gKey = ($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i');
-                                        $isGroupSession = ($groupCountMap[$gKey] ?? 1) > 1;
-                                    @endphp
-                                    <div class="bg-slate-50/60 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 sm:p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
-                                        <div>
-                                            <!-- Status Indicator -->
-                                            <div class="absolute top-0 left-0 w-full h-1.5 
-                                                {{ $session->status === 'pending' ? 'bg-amber-400' : '' }}
-                                                {{ $session->status === 'approved' ? 'bg-orange-600' : '' }}
-                                                {{ $session->status === 'rejected' || $session->is_absent ? 'bg-red-500' : '' }}
-                                                {{ $session->status === 'completed' && !$session->is_absent ? 'bg-slate-300 dark:bg-slate-700' : '' }}
-                                            "></div>
-                                            
-                                            <div class="flex justify-between items-start gap-3 mb-4 pt-1">
-                                                <div class="space-y-0.5">
-                                                    <p class="text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</p>
-                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $session->scheduled_at->format('H:i') }} WIB</p>
-                                                </div>
-                                                <div class="shrink-0">
-                                                    @if($session->is_absent)
-                                                        <x-status-badge type="red" label="TIDAK HADIR" />
-                                                    @else
-                                                        <x-status-badge 
-                                                            :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : ($session->status === 'completed' ? 'emerald' : 'slate')))" 
-                                                            :label="$session->status === 'completed' ? 'HADIR' : strtoupper($session->status)" />
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="mb-4 space-y-3">
-                                                <h5 class="text-sm font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-snug">
-                                                    {{ $session->topic }}
-                                                </h5>
-                                                
-                                                <div class="flex items-center gap-2 flex-wrap text-[10px] font-bold">
-                                                    @if($session->type === 'online')
-                                                        @php 
-                                                            $isMeet = Str::contains($session->location ?? '', 'meet.google.com'); 
-                                                            $isZoom = Str::contains($session->location ?? '', ['zoom.us', 'zoom.com']);
-                                                            $linkUrl = Str::startsWith($session->location ?? '', 'http') ? $session->location : 'https://' . $session->location;
-                                                        @endphp
-                                                        @if($session->location)
-                                                            <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100') }} transition-all shadow-2xs font-bold text-[10px] uppercase tracking-wider">
-                                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                                <span>{{ $isMeet ? 'Buka Meet' : ($isZoom ? 'Buka Zoom' : 'Buka Link') }}</span>
-                                                            </a>
-                                                        @else
-                                                            <span class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-800 uppercase tracking-wider">
-                                                                🎥 Daring
-                                                            </span>
-                                                        @endif
-                                                    @else
-                                                        <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider shadow-2xs">
-                                                             🏢 {{ $session->location ?? 'Offline' }}
-                                                        </span>
-                                                    @endif
-
-                                                    @if($isGroupSession)
-                                                        <span class="inline-flex items-center gap-1 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800/80 uppercase tracking-wider shadow-2xs" title="Sesi Bimbingan Bersama">
-                                                            👥 Kelompok ({{ $groupCountMap[$gKey] }})
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                
-                                                @if($session->notes)
-                                                    <div class="mt-3.5 p-3.5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-                                                        <p class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Catatan Mahasiswa</p>
-                                                        <p class="text-xs text-slate-600 dark:text-slate-300 italic leading-relaxed">"{{ $session->notes }}"</p>
-                                                    </div>
-                                                @endif
-
-                                                @if($session->feedback)
-                                                    <div class="mt-3.5 p-3.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs">
-                                                        <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Catatan Dosen</p>
-                                                        <p class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ $session->feedback }}</p>
-                                                    </div>
-                                                @endif
-
-                                                @if($session->document_path)
-                                                    <div class="mt-3 pt-1">
-                                                        <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline">
-                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                                            <span>Lihat Dokumen Mahasiswa</span>
-                                                        </a>
-                                                    </div>
-                                                @endif
-
-                                                <!-- Konfirmasi Kehadiran Mahasiswa -->
-                                                @if(!in_array($session->status, ['completed', 'rejected']))
-                                                    <div class="mt-3.5 p-3 rounded-xl border space-y-1.5 {{ $session->student_attendance_status === 'attending' ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/80' : ($session->student_attendance_status === 'permission' ? 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/80' : 'bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 shadow-2xs') }}">
-                                                        <div class="flex items-center justify-between gap-2">
-                                                            <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Kehadiran Mahasiswa:</span>
-                                                            @if($session->student_attendance_status === 'attending')
-                                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[9px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700">
-                                                                    <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                                    Akan Hadir
-                                                                </span>
-                                                            @elseif($session->student_attendance_status === 'permission')
-                                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[9px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700">
-                                                                    <svg class="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path></svg>
-                                                                    Izin / Berhalangan
-                                                                </span>
-                                                            @else
-                                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
-                                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                                                    Menunggu Konfirmasi
-                                                                </span>
-                                                            @endif
-                                                        </div>
-                                                        
-                                                        @if($session->student_attendance_status === 'permission' && $session->student_attendance_reason)
-                                                            <div class="mt-1 pt-1.5 border-t border-amber-200/60 dark:border-amber-800/40">
-                                                                <span class="text-[9px] font-bold text-amber-800 dark:text-amber-300">Alasan Izin:</span>
-                                                                <p class="text-[11px] text-amber-950 dark:text-amber-200 italic font-medium leading-relaxed">"{{ $session->student_attendance_reason }}"</p>
-                                                                @if($session->student_confirmed_at)
-                                                                    <p class="text-[9px] text-amber-700/80 dark:text-amber-400/80 text-right mt-1 font-medium">{{ $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') }} WIB</p>
-                                                                @endif
-                                                            </div>
-                                                        @elseif($session->student_attendance_status === 'attending' && $session->student_confirmed_at)
-                                                            <p class="text-[9px] text-emerald-700/80 dark:text-emerald-400/80 text-right font-medium">Dikonfirmasi: {{ $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') }} WIB</p>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        
-                                        @if($session->status === 'pending')
-                                        <div class="flex items-center space-x-2 mt-5 pt-4 border-t border-slate-200/70 dark:border-slate-800">
-                                            <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="submit" class="w-full px-3 py-2 bg-orange-600 text-white hover:bg-orange-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Terima</button>
-                                            </form>
-                                            @can('update', $session)
-                                                <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                    <span>Ubah</span>
-                                                </a>
-                                            @endcan
-                                            @can('delete', $session)
-                                                <button type="button" 
-                                                        @click="openCancelModalFromEl($el)"
-                                                        onclick="window.openCancelModalFromEl(this)"
-                                                        data-session-id="{{ $session->id }}"
-                                                        data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
-                                                        data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
-                                                        data-topic="{{ e($session->topic) }}"
-                                                        data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
-                                                        data-is-group="{{ $isGroupSession ? '1' : '0' }}"
-                                                        data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
-                                                        class="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 hover:border-rose-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">
-                                                    Tolak / Batal
-                                                </button>
-                                            @endcan
-                                        </div>
-                                        @elseif($session->status === 'approved')
-                                        <div class="mt-auto pt-5 border-t border-slate-200/70 dark:border-slate-800" x-data="{ showFeedback: false }">
-                                            <div class="flex items-center gap-1.5" x-show="!showFeedback">
-                                                <button type="button" @click="showFeedback = true" class="flex-1 px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Selesai</button>
-                                                @can('update', $session)
-                                                    <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                        <span>Ubah</span>
-                                                    </a>
-                                                @endcan
-                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="absent">
-                                                    <button type="submit" class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 hover:border-red-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Absen</button>
-                                                </form>
-                                                @can('delete', $session)
-                                                    <button type="button" 
-                                                            @click="openCancelModalFromEl($el)"
-                                                            onclick="window.openCancelModalFromEl(this)"
-                                                            data-session-id="{{ $session->id }}"
-                                                            data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
-                                                            data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
-                                                            data-topic="{{ e($session->topic) }}"
-                                                            data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                            data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
-                                                            data-is-group="{{ $isGroupSession ? '1' : '0' }}"
-                                                            data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
-                                                            class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
-                                                            title="Batalkan Jadwal Bimbingan">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </button>
-                                                @endcan
-                                            </div>
-                                            <div x-show="showFeedback" x-cloak class="mt-3" x-transition>
-                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="completed">
-                                                    <textarea name="feedback" rows="3" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-3" placeholder="Catatan hasil bimbingan..."></textarea>
-                                                    <div class="flex space-x-2">
-                                                        <button type="submit" class="flex-1 px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Simpan</button>
-                                                        <button type="button" @click="showFeedback = false" class="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Batal</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        @elseif($session->is_absent)
-                                        <div class="mt-auto pt-5 border-t border-slate-200/70 dark:border-slate-800 flex items-center gap-1.5">
-                                            <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="submit" 
-                                                        class="w-full px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1"
-                                                        title="Batalkan status tidak hadir dan kembalikan ke jadwal aktif">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                                    <span>Batalkan Tidak Hadir</span>
-                                                </button>
-                                            </form>
-                                            @can('update', $session)
-                                                <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                    <span>Ubah</span>
-                                                </a>
-                                            @endcan
-                                            @can('delete', $session)
-                                                <button type="button" 
-                                                        @click="openCancelModalFromEl($el)"
-                                                        onclick="window.openCancelModalFromEl(this)"
-                                                        data-session-id="{{ $session->id }}"
-                                                        data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
-                                                        data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
-                                                        data-topic="{{ e($session->topic) }}"
-                                                        data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
-                                                        data-is-group="{{ $isGroupSession ? '1' : '0' }}"
-                                                        data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
-                                                        class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:hover:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
-                                                        title="Batalkan / Hapus Sesi Bimbingan">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                </button>
-                                            @endcan
-                                        </div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @empty
+                    @if($sessions->isEmpty())
                         @if($activeTab === 'history')
                             <x-empty-state description="Belum ada riwayat bimbingan untuk mahasiswa yang sudah lulus." icon="mentoring" />
                         @else
                             <x-empty-state description="Belum ada jadwal bimbingan aktif." icon="mentoring" />
                         @endif
-                    @endforelse
-                    </div></div>
+                    @else
+                        <!-- 1. TAMPILAN PER SESI BIMBINGAN (DEFAULT) -->
+                        <div x-show="cardGrouping === 'session'" class="space-y-8">
+                            @foreach($sessionsBySessionGroup as $groupKey => $sessionItems)
+                                @php
+                                    $firstSession = $sessionItems->first();
+                                    $sessionDosen = $firstSession->dosen ?? $firstSession->thesis?->pembimbing1;
+                                    $totalMhs = $sessionItems->count();
+                                    $attendingCount = $sessionItems->where('student_attendance_status', 'attending')->count();
+                                    $permissionCount = $sessionItems->where('student_attendance_status', 'permission')->count();
+                                    $pendingCount = $sessionItems->where('student_attendance_status', 'pending')->count();
+                                    
+                                    $isMeet = Str::contains($firstSession->location ?? '', 'meet.google.com'); 
+                                    $isZoom = Str::contains($firstSession->location ?? '', ['zoom.us', 'zoom.com']);
+                                    $linkUrl = Str::startsWith($firstSession->location ?? '', 'http') ? $firstSession->location : 'https://' . $firstSession->location;
+                                @endphp
+
+                                <div class="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 shadow-xs overflow-hidden transition-all hover:border-slate-300 dark:hover:border-slate-600">
+                                    <!-- Sesi Header Bar -->
+                                    <div class="p-5 sm:px-6 bg-slate-50/90 dark:bg-slate-800/90 border-b border-slate-200/80 dark:border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div class="space-y-2 min-w-0 flex-1">
+                                            <div class="flex items-center gap-2.5 flex-wrap">
+                                                <!-- Tanggal & Jam -->
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500 text-white text-xs font-black shadow-xs shadow-orange-500/20">
+                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    <span>{{ $firstSession->scheduled_at->locale('id')->translatedFormat('d M Y') }} • {{ $firstSession->scheduled_at->format('H:i') }} WIB</span>
+                                                </span>
+
+                                                @if($firstSession->scheduled_at->isToday())
+                                                    <span class="px-2.5 py-1 rounded-lg bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[10px] font-black uppercase tracking-wider border border-red-200 dark:border-red-800/80 animate-pulse">
+                                                        Hari Ini
+                                                    </span>
+                                                @endif
+
+                                                <!-- Lokasi / Metode -->
+                                                @if($firstSession->type === 'online')
+                                                    @if($firstSession->location)
+                                                        <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800') }} transition-all font-bold text-xs shadow-2xs">
+                                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                            <span>{{ $isMeet ? 'Buka Meet' : ($isZoom ? 'Buka Zoom' : 'Link Online') }}</span>
+                                                        </a>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-bold shadow-2xs">
+                                                            🎥 Daring
+                                                        </span>
+                                                    @endif
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold shadow-2xs">
+                                                        🏢 {{ $firstSession->location ?? 'Offline' }}
+                                                    </span>
+                                                @endif
+
+                                                <!-- Dosen -->
+                                                @if($sessionDosen)
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                                        • Dosen: <strong class="text-slate-700 dark:text-slate-200">{{ $sessionDosen->name }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <!-- Topik Sesi -->
+                                            <div class="pt-1">
+                                                <h4 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-snug">
+                                                    {{ $firstSession->topic }}
+                                                </h4>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ringkasan Sesi / Counters -->
+                                        <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                                            <span class="px-3 py-1.5 rounded-xl bg-slate-200/80 dark:bg-slate-700/80 text-slate-800 dark:text-slate-100 text-xs font-black uppercase tracking-wider shadow-2xs">
+                                                👥 {{ $totalMhs }} Mahasiswa
+                                            </span>
+                                            @if($attendingCount > 0)
+                                                <span class="px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 text-xs font-bold border border-emerald-200 dark:border-emerald-800/80 flex items-center gap-1">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                    <span>{{ $attendingCount }} Hadir</span>
+                                                </span>
+                                            @endif
+                                            @if($permissionCount > 0)
+                                                <span class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 text-xs font-bold border border-amber-200 dark:border-amber-800/80 flex items-center gap-1">
+                                                    <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01"></path></svg>
+                                                    <span>{{ $permissionCount }} Izin</span>
+                                                </span>
+                                            @endif
+                                            @if($pendingCount > 0)
+                                                <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                    <span>{{ $pendingCount }} Belum Respon</span>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Mahasiswa Grid di dalam Sesi Ini -->
+                                    <div class="p-5 sm:p-6 bg-slate-50/40 dark:bg-slate-900/40">
+                                        <div class="grid grid-cols-1 {{ $totalMhs === 1 ? '' : ($totalMhs === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3') }} gap-5">
+                                            @foreach($sessionItems as $session)
+                                                @php
+                                                    $student = $session->thesis?->student;
+                                                    $thesis = $session->thesis;
+                                                    $sMentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
+                                                        ? $thesis?->completed_mentoring_count 
+                                                        : $thesis?->getCompletedMentoringCountForDosen(Auth::id());
+                                                        
+                                                    $isAdminOrKaprodi = in_array(Auth::user()->role, ['admin', 'kaprodi']);
+                                                    $isP1 = Auth::id() === $thesis?->pembimbing1_id;
+                                                    $isP2 = Auth::id() === $thesis?->pembimbing2_id;
+                                                    $hasAccUp = $isAdminOrKaprodi ? ($thesis?->acc_up_p1 && $thesis?->acc_up_p2) : ($isP1 ? $thesis?->acc_up_p1 : ($isP2 ? $thesis?->acc_up_p2 : false));
+                                                    $hasAccSidang = $isAdminOrKaprodi ? ($thesis?->acc_sidang_p1 && $thesis?->acc_sidang_p2) : ($isP1 ? $thesis?->acc_sidang_p1 : ($isP2 ? $thesis?->acc_sidang_p2 : false));
+                                                @endphp
+
+                                                <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
+                                                    <div>
+                                                        <!-- Top Bar Status Accent -->
+                                                        <div class="absolute top-0 left-0 w-full h-1.5 
+                                                            {{ $session->status === 'pending' ? 'bg-amber-400' : '' }}
+                                                            {{ $session->status === 'approved' ? 'bg-orange-600' : '' }}
+                                                            {{ $session->status === 'rejected' || $session->is_absent ? 'bg-red-500' : '' }}
+                                                            {{ $session->status === 'completed' && !$session->is_absent ? 'bg-slate-300 dark:bg-slate-700' : '' }}
+                                                        "></div>
+
+                                                        <!-- Student Avatar & Name Header -->
+                                                        <div class="flex items-start justify-between gap-3 mb-3 pt-1">
+                                                            <div class="flex items-center gap-3 min-w-0">
+                                                                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-slate-100 dark:bg-slate-800 shrink-0">
+                                                                    <img src="{{ $student?->avatar_url }}" alt="{{ $student?->name ?? 'Mhs' }}" class="w-full h-full object-cover">
+                                                                </div>
+                                                                <div class="min-w-0">
+                                                                    <h5 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{{ $student?->name ?? 'Mahasiswa' }}</h5>
+                                                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold font-mono">{{ $student?->identifier ?? '-' }}</p>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Status Badge -->
+                                                            <div class="shrink-0">
+                                                                @if($session->is_absent)
+                                                                    <x-status-badge type="red" label="TIDAK HADIR" />
+                                                                @else
+                                                                    <x-status-badge 
+                                                                        :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : ($session->status === 'completed' ? 'emerald' : 'slate')))" 
+                                                                        :label="$session->status === 'completed' ? 'HADIR' : strtoupper($session->status)" />
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Judul Skripsi & Info Tambahan -->
+                                                        <div class="space-y-2 mb-3">
+                                                            @if($thesis?->title)
+                                                                <p class="text-[11px] text-slate-600 dark:text-slate-300 font-medium line-clamp-2 leading-relaxed" title="{{ $thesis->title }}">
+                                                                    <span class="text-slate-400 dark:text-slate-500 font-bold uppercase text-[9px] tracking-wider block">Judul Skripsi:</span>
+                                                                    {{ $thesis->title }}
+                                                                </p>
+                                                            @endif
+
+                                                            <div class="flex items-center gap-2 flex-wrap text-[10px]">
+                                                                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-bold">
+                                                                    {{ $sMentoringCount }}x Bimbingan
+                                                                </span>
+                                                                @if($thesis?->pembimbing1)
+                                                                    <span class="text-[10px] text-slate-500 dark:text-slate-400">P1: <strong class="text-slate-700 dark:text-slate-300">{{ $thesis->pembimbing1->name }}</strong></span>
+                                                                @endif
+                                                            </div>
+
+                                                            <!-- Catatan Mahasiswa -->
+                                                            @if($session->notes)
+                                                                <div class="p-2.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                                                                    <p class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">Catatan Mhs:</p>
+                                                                    <p class="text-[11px] text-slate-600 dark:text-slate-300 italic leading-relaxed">"{{ $session->notes }}"</p>
+                                                                </div>
+                                                            @endif
+
+                                                            <!-- Catatan Dosen -->
+                                                            @if($session->feedback)
+                                                                <div class="p-2.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs">
+                                                                    <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-0.5">Catatan Dosen:</p>
+                                                                    <p class="text-[11px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ $session->feedback }}</p>
+                                                                </div>
+                                                            @endif
+
+                                                            <!-- Dokumen Link -->
+                                                            @if($session->document_path)
+                                                                <div class="pt-0.5">
+                                                                    <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] text-orange-600 dark:text-orange-400 font-bold hover:underline">
+                                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                        <span>Lihat Dokumen</span>
+                                                                    </a>
+                                                                </div>
+                                                            @endif
+
+                                                            <!-- Kehadiran Mahasiswa -->
+                                                            @if(!in_array($session->status, ['completed', 'rejected']))
+                                                                <div class="mt-2.5 p-2.5 rounded-xl border space-y-1 {{ $session->student_attendance_status === 'attending' ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/80' : ($session->student_attendance_status === 'permission' ? 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/80' : 'bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 shadow-2xs') }}">
+                                                                    <div class="flex items-center justify-between gap-2">
+                                                                        <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Kehadiran:</span>
+                                                                        @if($session->student_attendance_status === 'attending')
+                                                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[9px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700">
+                                                                                <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                                                Akan Hadir
+                                                                            </span>
+                                                                        @elseif($session->student_attendance_status === 'permission')
+                                                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[9px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700">
+                                                                                <svg class="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path></svg>
+                                                                                Izin
+                                                                            </span>
+                                                                        @else
+                                                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
+                                                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                                                Menunggu
+                                                                            </span>
+                                                                        @endif
+                                                                    </div>
+                                                                    
+                                                                    @if($session->student_attendance_status === 'permission' && $session->student_attendance_reason)
+                                                                        <div class="mt-1 pt-1 border-t border-amber-200/60 dark:border-amber-800/40">
+                                                                            <p class="text-[10px] text-amber-950 dark:text-amber-200 italic font-medium leading-relaxed">"{{ $session->student_attendance_reason }}"</p>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Bottom Actions & ACC Buttons -->
+                                                    <div class="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
+                                                        <!-- Status Action Form (Pending / Approved / Absent) -->
+                                                        @if($session->status === 'pending')
+                                                            <div class="flex items-center space-x-2">
+                                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <input type="hidden" name="status" value="approved">
+                                                                    <button type="submit" class="w-full px-3 py-1.5 bg-orange-600 text-white hover:bg-orange-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Terima</button>
+                                                                </form>
+                                                                @can('update', $session)
+                                                                    <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Ubah Jadwal">Ubah</a>
+                                                                @endcan
+                                                                @can('delete', $session)
+                                                                    <button type="button" 
+                                                                            @click="openCancelModalFromEl($el)"
+                                                                            onclick="window.openCancelModalFromEl(this)"
+                                                                            data-session-id="{{ $session->id }}"
+                                                                            data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
+                                                                            data-student-npm="{{ e($student?->identifier ?? '-') }}"
+                                                                            data-topic="{{ e($session->topic) }}"
+                                                                            data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                            data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                            data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
+                                                                            data-group-count="{{ $totalMhs }}"
+                                                                            class="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Tolak</button>
+                                                                @endcan
+                                                            </div>
+                                                        @elseif($session->status === 'approved')
+                                                            <div x-data="{ showFeedback: false }">
+                                                                <div class="flex items-center gap-1.5" x-show="!showFeedback">
+                                                                    <button type="button" @click="showFeedback = true" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Selesai</button>
+                                                                    @can('update', $session)
+                                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Ubah Jadwal">Ubah</a>
+                                                                    @endcan
+                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <input type="hidden" name="status" value="absent">
+                                                                        <button type="submit" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Absen</button>
+                                                                    </form>
+                                                                    @can('delete', $session)
+                                                                        <button type="button" 
+                                                                                @click="openCancelModalFromEl($el)"
+                                                                                onclick="window.openCancelModalFromEl(this)"
+                                                                                data-session-id="{{ $session->id }}"
+                                                                                data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
+                                                                                data-student-npm="{{ e($student?->identifier ?? '-') }}"
+                                                                                data-topic="{{ e($session->topic) }}"
+                                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
+                                                                                data-group-count="{{ $totalMhs }}"
+                                                                                class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer flex items-center justify-center" 
+                                                                                title="Batalkan Jadwal Bimbingan">
+                                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                                        </button>
+                                                                    @endcan
+                                                                </div>
+                                                                <div x-show="showFeedback" x-cloak class="mt-2" x-transition>
+                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <input type="hidden" name="status" value="completed">
+                                                                        <textarea name="feedback" rows="2" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-2" placeholder="Catatan hasil bimbingan..."></textarea>
+                                                                        <div class="flex space-x-2">
+                                                                            <button type="submit" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Simpan</button>
+                                                                            <button type="button" @click="showFeedback = false" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 rounded-xl text-[10px] font-black uppercase cursor-pointer">Batal</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        @elseif($session->is_absent)
+                                                            <div class="flex items-center gap-1.5">
+                                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <input type="hidden" name="status" value="approved">
+                                                                    <button type="submit" class="w-full px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Batal Absen</button>
+                                                                </form>
+                                                                @can('update', $session)
+                                                                    <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Ubah</a>
+                                                                @endcan
+                                                            </div>
+                                                        @endif
+
+                                                        <!-- Quick ACC Buttons (Seminar & Sidang) if applicable -->
+                                                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) && $thesis)
+                                                            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                                                                {{-- ACC UP --}}
+                                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="flex-1"
+                                                                    onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $student?->name }}?')">
+                                                                    @csrf
+                                                                    @if($isAdminOrKaprodi)
+                                                                        <input type="hidden" name="slot" value="all">
+                                                                    @endif
+                                                                    <button type="submit" 
+                                                                        title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
+                                                                        class="w-full inline-flex items-center justify-center px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all
+                                                                        {{ $hasAccUp ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-200' }}">
+                                                                        <span>ACC SEMINAR</span>
+                                                                    </button>
+                                                                </form>
+
+                                                                {{-- ACC Sidang --}}
+                                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="flex-1"
+                                                                    onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $student?->name }}?')">
+                                                                    @csrf
+                                                                    @if($isAdminOrKaprodi)
+                                                                        <input type="hidden" name="slot" value="all">
+                                                                    @endif
+                                                                    <button type="submit" 
+                                                                        title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
+                                                                        class="w-full inline-flex items-center justify-center px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all
+                                                                        {{ $hasAccSidang ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-200' }}">
+                                                                        <span>ACC SIDANG</span>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- 2. TAMPILAN PER MAHASISWA -->
+                        <div x-show="cardGrouping === 'student'" class="space-y-12">
+                            @foreach($groupedSessions as $studentName => $studentSessions)
+                                <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 sm:p-7 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-6 transition-all hover:border-slate-300 dark:hover:border-slate-600">
+                                    @php
+                                        $studentThesis = $studentSessions->first()->thesis;
+                                        $mentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
+                                            ? $studentThesis->completed_mentoring_count 
+                                            : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
+                                    @endphp
+                                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5 border-b border-slate-200/80 dark:border-slate-700/80 gap-4">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-2xs bg-slate-100 dark:bg-slate-800 shrink-0">
+                                                <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
+                                            </div>
+                                            <div class="space-y-2 min-w-0">
+                                                <div class="flex items-center gap-3 flex-wrap">
+                                                    <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $studentName }}</h4>
+                                                    @if($studentThesis->status === 'completed')
+                                                        <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                                                            Lulus
+                                                        </span>
+                                                    @endif
+                                                    <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                                                        {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex flex-wrap items-center gap-2.5 text-[11px] font-medium">
+                                                    @if($studentThesis->pembimbing1)
+                                                        <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
+                                                            <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-black text-[9px] rounded-md border border-indigo-200 dark:border-indigo-800 shrink-0">P1</span>
+                                                            <span class="font-bold text-slate-800 dark:text-slate-100">{{ $studentThesis->pembimbing1->name }}</span>
+                                                        </span>
+                                                    @endif
+                                                    @if($studentThesis->pembimbing2)
+                                                        <span class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-2xs">
+                                                            <span class="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-black text-[9px] rounded-md border border-purple-200 dark:border-purple-800 shrink-0">P2</span>
+                                                            <span class="font-bold text-slate-800 dark:text-slate-100">{{ $studentThesis->pembimbing2->name }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                            <div class="flex flex-wrap gap-2">
+                                                {{-- ACC UP Group --}}
+                                                @php
+                                                    $isAdminOrKaprodi = in_array(Auth::user()->role, ['admin', 'kaprodi']);
+                                                    $isP1 = Auth::id() === $studentThesis->pembimbing1_id;
+                                                    $isP2 = Auth::id() === $studentThesis->pembimbing2_id;
+                                                    $hasAccUp = $isAdminOrKaprodi ? ($studentThesis->acc_up_p1 && $studentThesis->acc_up_p2) : ($isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false));
+                                                @endphp
+                                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                    <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?')">
+                                                        @csrf
+                                                        @if($isAdminOrKaprodi)
+                                                            <input type="hidden" name="slot" value="all">
+                                                        @endif
+                                                        <button type="submit" 
+                                                            title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
+                                                            {{ $hasAccUp ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50' }}">
+                                                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            ACC SEMINAR
+                                                        </button>
+                                                    </form>
+                                                    <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
+                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
+                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- ACC Sidang Group --}}
+                                                @php
+                                                    $hasAccSidang = $isAdminOrKaprodi ? ($studentThesis->acc_sidang_p1 && $studentThesis->acc_sidang_p2) : ($isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false));
+                                                @endphp
+                                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                    <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?')">
+                                                        @csrf
+                                                        @if($isAdminOrKaprodi)
+                                                            <input type="hidden" name="slot" value="all">
+                                                        @endif
+                                                        <button type="submit" 
+                                                            title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
+                                                            {{ $hasAccSidang ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50' }}">
+                                                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            ACC SIDANG
+                                                        </button>
+                                                    </form>
+                                                    <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
+                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
+                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @elseif(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
+                                            <div class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-900/60 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                                                Dosen Pembimbing: <span class="text-slate-700 dark:text-slate-300 font-bold">{{ $studentSessions->first()->dosen->name }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        @foreach($studentSessions as $session)
+                                            @php
+                                                $gKey = ($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i');
+                                                $isGroupSession = ($groupCountMap[$gKey] ?? 1) > 1;
+                                            @endphp
+                                            <div class="bg-slate-50/60 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 sm:p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
+                                                <div>
+                                                    <!-- Status Indicator -->
+                                                    <div class="absolute top-0 left-0 w-full h-1.5 
+                                                        {{ $session->status === 'pending' ? 'bg-amber-400' : '' }}
+                                                        {{ $session->status === 'approved' ? 'bg-orange-600' : '' }}
+                                                        {{ $session->status === 'rejected' || $session->is_absent ? 'bg-red-500' : '' }}
+                                                        {{ $session->status === 'completed' && !$session->is_absent ? 'bg-slate-300 dark:bg-slate-700' : '' }}
+                                                    "></div>
+                                                    
+                                                    <div class="flex justify-between items-start gap-3 mb-4 pt-1">
+                                                        <div class="space-y-0.5">
+                                                            <p class="text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</p>
+                                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $session->scheduled_at->format('H:i') }} WIB</p>
+                                                        </div>
+                                                        <div class="shrink-0">
+                                                            @if($session->is_absent)
+                                                                <x-status-badge type="red" label="TIDAK HADIR" />
+                                                            @else
+                                                                <x-status-badge 
+                                                                    :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : ($session->status === 'completed' ? 'emerald' : 'slate')))" 
+                                                                    :label="$session->status === 'completed' ? 'HADIR' : strtoupper($session->status)" />
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="mb-4 space-y-3">
+                                                        <h5 class="text-sm font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-snug">
+                                                            {{ $session->topic }}
+                                                        </h5>
+                                                        
+                                                        <div class="flex items-center gap-2 flex-wrap text-[10px] font-bold">
+                                                            @if($session->type === 'online')
+                                                                @php 
+                                                                    $isMeet = Str::contains($session->location ?? '', 'meet.google.com'); 
+                                                                    $isZoom = Str::contains($session->location ?? '', ['zoom.us', 'zoom.com']);
+                                                                    $linkUrl = Str::startsWith($session->location ?? '', 'http') ? $session->location : 'https://' . $session->location;
+                                                                @endphp
+                                                                @if($session->location)
+                                                                    <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100') }} transition-all shadow-2xs font-bold text-[10px] uppercase tracking-wider">
+                                                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                                        <span>{{ $isMeet ? 'Buka Meet' : ($isZoom ? 'Buka Zoom' : 'Buka Link') }}</span>
+                                                                    </a>
+                                                                @else
+                                                                    <span class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-800 uppercase tracking-wider">
+                                                                        🎥 Daring
+                                                                    </span>
+                                                                @endif
+                                                            @else
+                                                                <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider shadow-2xs">
+                                                                     🏢 {{ $session->location ?? 'Offline' }}
+                                                                </span>
+                                                            @endif
+
+                                                            @if($isGroupSession)
+                                                                <span class="inline-flex items-center gap-1 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800/80 uppercase tracking-wider shadow-2xs" title="Sesi Bimbingan Bersama">
+                                                                    👥 Kelompok ({{ $groupCountMap[$gKey] }})
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                        
+                                                        @if($session->notes)
+                                                            <div class="mt-3.5 p-3.5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                                                                <p class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Catatan Mahasiswa</p>
+                                                                <p class="text-xs text-slate-600 dark:text-slate-300 italic leading-relaxed">"{{ $session->notes }}"</p>
+                                                            </div>
+                                                        @endif
+
+                                                        @if($session->feedback)
+                                                            <div class="mt-3.5 p-3.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs">
+                                                                <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Catatan Dosen</p>
+                                                                <p class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ $session->feedback }}</p>
+                                                            </div>
+                                                        @endif
+
+                                                        @if($session->document_path)
+                                                            <div class="mt-3 pt-1">
+                                                                <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline">
+                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                    <span>Lihat Dokumen Mahasiswa</span>
+                                                                </a>
+                                                            </div>
+                                                        @endif
+
+                                                        <!-- Konfirmasi Kehadiran Mahasiswa -->
+                                                        @if(!in_array($session->status, ['completed', 'rejected']))
+                                                            <div class="mt-3.5 p-3 rounded-xl border space-y-1.5 {{ $session->student_attendance_status === 'attending' ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/80' : ($session->student_attendance_status === 'permission' ? 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/80' : 'bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 shadow-2xs') }}">
+                                                                <div class="flex items-center justify-between gap-2">
+                                                                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Kehadiran Mahasiswa:</span>
+                                                                    @if($session->student_attendance_status === 'attending')
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[9px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700">
+                                                                            <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                                            Akan Hadir
+                                                                        </span>
+                                                                    @elseif($session->student_attendance_status === 'permission')
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[9px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700">
+                                                                            <svg class="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path></svg>
+                                                                            Izin / Berhalangan
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[9px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
+                                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                                            Menunggu Konfirmasi
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                                
+                                                                @if($session->student_attendance_status === 'permission' && $session->student_attendance_reason)
+                                                                    <div class="mt-1 pt-1.5 border-t border-amber-200/60 dark:border-amber-800/40">
+                                                                        <span class="text-[9px] font-bold text-amber-800 dark:text-amber-300">Alasan Izin:</span>
+                                                                        <p class="text-[11px] text-amber-950 dark:text-amber-200 italic font-medium leading-relaxed">"{{ $session->student_attendance_reason }}"</p>
+                                                                        @if($session->student_confirmed_at)
+                                                                            <p class="text-[9px] text-amber-700/80 dark:text-amber-400/80 text-right mt-1 font-medium">{{ $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') }} WIB</p>
+                                                                        @endif
+                                                                    </div>
+                                                                @elseif($session->student_attendance_status === 'attending' && $session->student_confirmed_at)
+                                                                    <p class="text-[9px] text-emerald-700/80 dark:text-emerald-400/80 text-right font-medium">Dikonfirmasi: {{ $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') }} WIB</p>
+                                                                @endif
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                
+                                                @if($session->status === 'pending')
+                                                <div class="flex items-center space-x-2 mt-5 pt-4 border-t border-slate-200/70 dark:border-slate-800">
+                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="status" value="approved">
+                                                        <button type="submit" class="w-full px-3 py-2 bg-orange-600 text-white hover:bg-orange-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Terima</button>
+                                                    </form>
+                                                    @can('update', $session)
+                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                            <span>Ubah</span>
+                                                        </a>
+                                                    @endcan
+                                                    @can('delete', $session)
+                                                        <button type="button" 
+                                                                @click="openCancelModalFromEl($el)"
+                                                                onclick="window.openCancelModalFromEl(this)"
+                                                                data-session-id="{{ $session->id }}"
+                                                                data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                                data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                                data-topic="{{ e($session->topic) }}"
+                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                data-is-group="{{ $isGroupSession ? '1' : '0' }}"
+                                                                data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
+                                                                class="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 hover:border-rose-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">
+                                                            Tolak / Batal
+                                                        </button>
+                                                    @endcan
+                                                </div>
+                                                @elseif($session->status === 'approved')
+                                                <div class="mt-auto pt-5 border-t border-slate-200/70 dark:border-slate-800" x-data="{ showFeedback: false }">
+                                                    <div class="flex items-center gap-1.5" x-show="!showFeedback">
+                                                        <button type="button" @click="showFeedback = true" class="flex-1 px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Selesai</button>
+                                                        @can('update', $session)
+                                                            <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                            <span>Ubah</span>
+                                                        </a>
+                                                        @endcan
+                                                        <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="status" value="absent">
+                                                            <button type="submit" class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 hover:border-red-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Absen</button>
+                                                        </form>
+                                                        @can('delete', $session)
+                                                            <button type="button" 
+                                                                    @click="openCancelModalFromEl($el)"
+                                                                    onclick="window.openCancelModalFromEl(this)"
+                                                                    data-session-id="{{ $session->id }}"
+                                                                    data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                                    data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                                    data-topic="{{ e($session->topic) }}"
+                                                                    data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                    data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                    data-is-group="{{ $isGroupSession ? '1' : '0' }}"
+                                                                    data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
+                                                                    class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
+                                                                    title="Batalkan Jadwal Bimbingan">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                            </button>
+                                                        @endcan
+                                                    </div>
+                                                    <div x-show="showFeedback" x-cloak class="mt-3" x-transition>
+                                                        <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="status" value="completed">
+                                                            <textarea name="feedback" rows="3" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-3" placeholder="Catatan hasil bimbingan..."></textarea>
+                                                            <div class="flex space-x-2">
+                                                                <button type="submit" class="flex-1 px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Simpan</button>
+                                                                <button type="button" @click="showFeedback = false" class="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Batal</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                @elseif($session->is_absent)
+                                                <div class="mt-auto pt-5 border-t border-slate-200/70 dark:border-slate-800 flex items-center gap-1.5">
+                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="status" value="approved">
+                                                        <button type="submit" 
+                                                                class="w-full px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1"
+                                                                title="Batalkan status tidak hadir dan kembalikan ke jadwal aktif">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                                            <span>Batalkan Tidak Hadir</span>
+                                                        </button>
+                                                    </form>
+                                                    @can('update', $session)
+                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:border-orange-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs inline-flex items-center gap-1" title="Ubah / Reschedule Jadwal">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                            <span>Ubah</span>
+                                                        </a>
+                                                    @endcan
+                                                    @can('delete', $session)
+                                                        <button type="button" 
+                                                                @click="openCancelModalFromEl($el)"
+                                                                onclick="window.openCancelModalFromEl(this)"
+                                                                data-session-id="{{ $session->id }}"
+                                                                data-student-name="{{ e($session->thesis?->student?->name ?? 'Mahasiswa') }}"
+                                                                data-student-npm="{{ e($session->thesis?->student?->identifier ?? '-') }}"
+                                                                data-topic="{{ e($session->topic) }}"
+                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                data-is-group="{{ $isGroupSession ? '1' : '0' }}"
+                                                                data-group-count="{{ $groupCountMap[$gKey] ?? 1 }}"
+                                                                class="px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:border-rose-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
+                                                                title="Batalkan / Hapus Sesi Bimbingan">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                        </button>
+                                                    @endcan
+                                                </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <!-- 2. CALENDAR VIEW -->
