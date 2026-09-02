@@ -434,12 +434,35 @@ class MentoringService
             ]);
             $message = 'Sesi bimbingan ditandai sebagai: Tidak Hadir.';
         } else {
+            $oldStatus = $session->status;
             $wasAbsent = (bool) $session->is_absent;
             $session->update([
                 'status' => $data['status'],
                 'is_absent' => false,
-                'feedback' => $data['feedback'] ?? $session->feedback,
+                'feedback' => array_key_exists('feedback', $data) ? $data['feedback'] : $session->feedback,
             ]);
+
+            // Jika status tetap completed (revisi catatan hasil bimbingan)
+            if ($oldStatus === 'completed' && !$wasAbsent && $data['status'] === 'completed') {
+                $studentName = $session->thesis?->student?->name ?? 'Mahasiswa';
+                ActivityLog::log(
+                    'Revisi Catatan Bimbingan',
+                    "Dosen memperbarui catatan hasil bimbingan untuk {$studentName} ({$session->topic})",
+                    'Bimbingan',
+                    $session
+                );
+
+                if ($session->thesis?->student) {
+                    $session->thesis->student->notify(new GeneralNotification(
+                        'Catatan Bimbingan Diperbarui',
+                        "Dosen pembimbing telah memperbarui catatan hasil bimbingan Anda: {$session->topic}",
+                        route('mentoring-sessions.index'),
+                        'info'
+                    ));
+                }
+
+                return 'Catatan hasil bimbingan berhasil diperbarui.';
+            }
 
             $session->thesis?->student?->notify(new GeneralNotification(
                 'Status Bimbingan Diperbarui',

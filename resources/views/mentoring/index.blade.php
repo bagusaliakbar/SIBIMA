@@ -244,8 +244,12 @@
             return {
                 eventModalOpen: false,
                 selectedEvent: null,
+                editingFeedback: false,
+                feedbackText: '',
                 openModal(eventData) {
                     this.selectedEvent = eventData;
+                    this.editingFeedback = false;
+                    this.feedbackText = eventData?.feedback || '';
                     this.eventModalOpen = true;
                 },
                 init() {
@@ -735,13 +739,57 @@
                                                                 </div>
                                                             @endif
 
-                                                            <!-- Catatan Dosen -->
-                                                            @if($session->feedback)
-                                                                <div class="p-2.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs">
-                                                                    <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-0.5">Catatan Dosen:</p>
-                                                                    <p class="text-[11px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ $session->feedback }}</p>
-                                                                </div>
-                                                            @endif
+                                                            <!-- Catatan Dosen (dengan mode revisi) -->
+                                                            <div x-data="{ editingFeedback: false }">
+                                                                @if($session->feedback)
+                                                                    <div x-show="!editingFeedback" class="p-2.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs group relative">
+                                                                        <div class="flex items-center justify-between gap-2 mb-0.5">
+                                                                            <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest flex items-center gap-1">
+                                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                                                                                <span>Catatan Dosen:</span>
+                                                                            </p>
+                                                                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                                                <button type="button" 
+                                                                                        @click="editingFeedback = true" 
+                                                                                        title="Ubah catatan bimbingan" 
+                                                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 hover:bg-orange-100/60 dark:hover:bg-orange-900/40 transition-all cursor-pointer">
+                                                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                                                    <span>Ubah</span>
+                                                                                </button>
+                                                                            @endif
+                                                                        </div>
+                                                                        <p class="text-[11px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-line">{{ $session->feedback }}</p>
+                                                                    </div>
+                                                                @elseif($session->status === 'completed' && !$session->is_absent && in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                                    <div x-show="!editingFeedback" class="p-2 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-center">
+                                                                        <button type="button" 
+                                                                                @click="editingFeedback = true" 
+                                                                                class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                                                            <span>+ Tambah Catatan Bimbingan</span>
+                                                                        </button>
+                                                                    </div>
+                                                                @endif
+
+                                                                @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                                    <div x-show="editingFeedback" x-cloak class="p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-orange-300 dark:border-orange-500/50 shadow-sm" x-transition>
+                                                                        <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <input type="hidden" name="status" value="completed">
+                                                                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                                                                <label class="block text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Revisi Catatan Dosen:</label>
+                                                                                <span class="text-[9px] text-slate-400 font-medium">Bimbingan Selesai</span>
+                                                                            </div>
+                                                                            <textarea name="feedback" rows="2" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-2 leading-relaxed" placeholder="Tuliskan revisi catatan bimbingan...">{{ $session->feedback }}</textarea>
+                                                                            <div class="flex items-center justify-end gap-1.5">
+                                                                                <button type="button" @click="editingFeedback = false" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-black uppercase cursor-pointer">Batal</button>
+                                                                                <button type="submit" class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
 
                                                             <!-- Dokumen Link -->
                                                             @if($session->document_path)
@@ -1096,12 +1144,57 @@
                                                             </div>
                                                         @endif
 
-                                                        @if($session->feedback)
-                                                            <div class="mt-3.5 p-3.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs">
-                                                                <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Catatan Dosen</p>
-                                                                <p class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{{ $session->feedback }}</p>
-                                                            </div>
-                                                        @endif
+                                                        <!-- Catatan Dosen (dengan mode revisi) -->
+                                                        <div x-data="{ editingFeedback: false }" class="mt-3.5">
+                                                            @if($session->feedback)
+                                                                <div x-show="!editingFeedback" class="p-3.5 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/70 dark:border-orange-900/40 shadow-2xs group relative">
+                                                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                                                        <p class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest flex items-center gap-1">
+                                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                                                                            <span>Catatan Dosen</span>
+                                                                        </p>
+                                                                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                                            <button type="button" 
+                                                                                    @click="editingFeedback = true" 
+                                                                                    title="Ubah catatan bimbingan" 
+                                                                                    class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 hover:bg-orange-100/60 dark:hover:bg-orange-900/40 transition-all cursor-pointer">
+                                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                                                <span>Ubah</span>
+                                                                            </button>
+                                                                        @endif
+                                                                    </div>
+                                                                    <p class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-line">{{ $session->feedback }}</p>
+                                                                </div>
+                                                            @elseif($session->status === 'completed' && !$session->is_absent && in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                                <div x-show="!editingFeedback" class="p-2.5 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-center">
+                                                                    <button type="button" 
+                                                                            @click="editingFeedback = true" 
+                                                                            class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                                                        <span>+ Tambah Catatan Hasil Bimbingan</span>
+                                                                    </button>
+                                                                </div>
+                                                            @endif
+
+                                                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                                <div x-show="editingFeedback" x-cloak class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-orange-300 dark:border-orange-500/50 shadow-sm" x-transition>
+                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <input type="hidden" name="status" value="completed">
+                                                                        <div class="flex items-center justify-between gap-2 mb-1.5">
+                                                                            <label class="block text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest">Revisi Catatan Dosen:</label>
+                                                                            <span class="text-[9px] text-slate-400 font-medium">Bimbingan Selesai</span>
+                                                                        </div>
+                                                                        <textarea name="feedback" rows="3" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-2 leading-relaxed" placeholder="Tuliskan revisi catatan hasil bimbingan...">{{ $session->feedback }}</textarea>
+                                                                        <div class="flex items-center justify-end gap-1.5">
+                                                                            <button type="button" @click="editingFeedback = false" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-black uppercase cursor-pointer">Batal</button>
+                                                                            <button type="submit" class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            @endif
+                                                        </div>
 
                                                         @if($session->document_path)
                                                             <div class="mt-3 pt-1">
@@ -1437,11 +1530,42 @@
                         </div>
                     </template>
 
-                    <!-- Lecturer Feedback -->
-                    <template x-if="selectedEvent?.feedback">
-                        <div class="space-y-1 p-3 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
-                            <span class="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Hasil / Catatan Bimbingan Dosen:</span>
-                            <p class="text-emerald-900 dark:text-emerald-200 font-medium italic" x-text="'&ldquo;' + selectedEvent.feedback + '&rdquo;'"></p>
+                    <!-- Lecturer Feedback (dengan mode revisi) -->
+                    <template x-if="selectedEvent?.status === 'completed' || selectedEvent?.feedback">
+                        <div class="space-y-1.5 p-3.5 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200/80 dark:border-emerald-800">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                                    <span>Hasil / Catatan Bimbingan Dosen:</span>
+                                </span>
+                                @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                    <button type="button" 
+                                            @click="editingFeedback = !editingFeedback; feedbackText = selectedEvent?.feedback || ''" 
+                                            class="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        <span x-text="editingFeedback ? 'Batal' : (selectedEvent?.feedback ? 'Ubah' : '+ Tulis Catatan')"></span>
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div x-show="!editingFeedback">
+                                <p class="text-emerald-900 dark:text-emerald-200 font-medium leading-relaxed whitespace-pre-line" x-text="selectedEvent?.feedback ? '&ldquo;' + selectedEvent.feedback + '&rdquo;' : 'Belum ada catatan hasil bimbingan.'"></p>
+                            </div>
+
+                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                <div x-show="editingFeedback" x-cloak class="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-800" x-transition>
+                                    <form :action="'/mentoring-sessions/' + selectedEvent?.id + '/status'" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status" value="completed">
+                                        <textarea name="feedback" x-model="feedbackText" rows="2" required class="block w-full rounded-xl border-emerald-300 dark:border-emerald-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:ring-emerald-500 focus:border-emerald-500 mb-2 leading-relaxed" placeholder="Tuliskan catatan hasil bimbingan..."></textarea>
+                                        <div class="flex items-center justify-end gap-1.5">
+                                            <button type="button" @click="editingFeedback = false" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-black uppercase cursor-pointer">Batal</button>
+                                            <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     </template>
                 </div>

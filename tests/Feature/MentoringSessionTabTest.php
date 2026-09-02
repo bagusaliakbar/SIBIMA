@@ -71,4 +71,42 @@ class MentoringSessionTabTest extends TestCase
         $response->assertDontSee('Topik Bimbingan Aktif');
         $response->assertSee('Lulus');
     }
+
+    public function test_lecturer_can_revise_feedback_for_completed_mentoring_session()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Skripsi Uji Coba Feedback',
+            'pembimbing1_id' => $dosen->id,
+            'status' => 'active',
+        ]);
+
+        $session = MentoringSession::create([
+            'thesis_id' => $thesis->id,
+            'dosen_id' => $dosen->id,
+            'topic' => 'Bab 4 Pembahasan',
+            'scheduled_at' => now()->subDay(),
+            'type' => 'offline',
+            'status' => 'completed',
+            'feedback' => 'Catatan awal',
+        ]);
+
+        $response = $this->actingAs($dosen)
+            ->patch(route('mentoring-sessions.status', $session->id), [
+                'status' => 'completed',
+                'feedback' => 'Catatan revisi yang baru dan lebih detail',
+            ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success', 'Catatan hasil bimbingan berhasil diperbarui.');
+
+        $this->assertDatabaseHas('mentoring_sessions', [
+            'id' => $session->id,
+            'status' => 'completed',
+            'feedback' => 'Catatan revisi yang baru dan lebih detail',
+        ]);
+    }
 }

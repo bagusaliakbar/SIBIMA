@@ -9,7 +9,7 @@ class UpdateMentoringSessionStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Auth::user()->role === 'dosen';
+        return in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']);
     }
 
     public function rules(): array
