@@ -671,12 +671,6 @@
                                                     $sMentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
                                                         ? $thesis?->completed_mentoring_count 
                                                         : $thesis?->getCompletedMentoringCountForDosen(Auth::id());
-                                                        
-                                                    $isAdminOrKaprodi = in_array(Auth::user()->role, ['admin', 'kaprodi']);
-                                                    $isP1 = Auth::id() === $thesis?->pembimbing1_id;
-                                                    $isP2 = Auth::id() === $thesis?->pembimbing2_id;
-                                                    $hasAccUp = $isAdminOrKaprodi ? ($thesis?->acc_up_p1 && $thesis?->acc_up_p2) : ($isP1 ? $thesis?->acc_up_p1 : ($isP2 ? $thesis?->acc_up_p2 : false));
-                                                    $hasAccSidang = $isAdminOrKaprodi ? ($thesis?->acc_sidang_p1 && $thesis?->acc_sidang_p2) : ($isP1 ? $thesis?->acc_sidang_p1 : ($isP2 ? $thesis?->acc_sidang_p2 : false));
                                                 @endphp
 
                                                 <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
@@ -834,48 +828,21 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- Bottom Actions & ACC Buttons -->
-                                                    <div class="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-2">
-                                                        <!-- Status Action Form (Pending / Approved / Absent) -->
-                                                        @if($session->status === 'pending')
-                                                            <div class="flex items-center space-x-2">
-                                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" name="status" value="approved">
-                                                                    <button type="submit" class="w-full px-3 py-1.5 bg-orange-600 text-white hover:bg-orange-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Terima</button>
-                                                                </form>
-                                                                @can('update', $session)
-                                                                    <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Ubah Jadwal">Ubah</a>
-                                                                @endcan
-                                                                @can('delete', $session)
-                                                                    <button type="button" 
-                                                                            @click="openCancelModalFromEl($el)"
-                                                                            onclick="window.openCancelModalFromEl(this)"
-                                                                            data-session-id="{{ $session->id }}"
-                                                                            data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
-                                                                            data-student-npm="{{ e($student?->identifier ?? '-') }}"
-                                                                            data-topic="{{ e($session->topic) }}"
-                                                                            data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                            data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
-                                                                            data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
-                                                                            data-group-count="{{ $totalMhs }}"
-                                                                            class="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Tolak</button>
-                                                                @endcan
-                                                            </div>
-                                                        @elseif($session->status === 'approved')
-                                                            <div x-data="{ showFeedback: false }">
-                                                                <div class="flex items-center gap-1.5" x-show="!showFeedback">
-                                                                    <button type="button" @click="showFeedback = true" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Selesai</button>
-                                                                    @can('update', $session)
-                                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Ubah Jadwal">Ubah</a>
-                                                                    @endcan
-                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                    <!-- Bottom Actions -->
+                                                    @if($session->status !== 'completed' || $session->is_absent)
+                                                        <div class="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-700/80">
+                                                            <!-- Status Action Form (Pending / Approved / Absent) -->
+                                                            @if($session->status === 'pending')
+                                                                <div class="flex items-center space-x-2">
+                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
                                                                         @csrf
                                                                         @method('PATCH')
-                                                                        <input type="hidden" name="status" value="absent">
-                                                                        <button type="submit" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Absen</button>
+                                                                        <input type="hidden" name="status" value="approved">
+                                                                        <button type="submit" class="w-full px-3 py-1.5 bg-orange-600 text-white hover:bg-orange-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Terima</button>
                                                                     </form>
+                                                                    @can('update', $session)
+                                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Ubah Jadwal">Ubah</a>
+                                                                    @endcan
                                                                     @can('delete', $session)
                                                                         <button type="button" 
                                                                                 @click="openCancelModalFromEl($el)"
@@ -888,74 +855,68 @@
                                                                                 data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
                                                                                 data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
                                                                                 data-group-count="{{ $totalMhs }}"
-                                                                                class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer flex items-center justify-center" 
-                                                                                title="Batalkan Jadwal Bimbingan">
-                                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                                        </button>
+                                                                                class="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Tolak</button>
                                                                     @endcan
                                                                 </div>
-                                                                <div x-show="showFeedback" x-cloak class="mt-2" x-transition>
-                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                            @elseif($session->status === 'approved')
+                                                                <div x-data="{ showFeedback: false }">
+                                                                    <div class="flex items-center gap-1.5" x-show="!showFeedback">
+                                                                        <button type="button" @click="showFeedback = true" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">Selesai</button>
+                                                                        @can('update', $session)
+                                                                            <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Ubah Jadwal">Ubah</a>
+                                                                        @endcan
+                                                                        <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <input type="hidden" name="status" value="absent">
+                                                                            <button type="submit" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer">Absen</button>
+                                                                        </form>
+                                                                        @can('delete', $session)
+                                                                            <button type="button" 
+                                                                                    @click="openCancelModalFromEl($el)"
+                                                                                    onclick="window.openCancelModalFromEl(this)"
+                                                                                    data-session-id="{{ $session->id }}"
+                                                                                    data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
+                                                                                    data-student-npm="{{ e($student?->identifier ?? '-') }}"
+                                                                                    data-topic="{{ e($session->topic) }}"
+                                                                                    data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                                    data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                    data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
+                                                                                    data-group-count="{{ $totalMhs }}"
+                                                                                    class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer flex items-center justify-center" 
+                                                                                    title="Batalkan Jadwal Bimbingan">
+                                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                                            </button>
+                                                                        @endcan
+                                                                    </div>
+                                                                    <div x-show="showFeedback" x-cloak class="mt-2" x-transition>
+                                                                        <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <input type="hidden" name="status" value="completed">
+                                                                            <textarea name="feedback" rows="2" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-2" placeholder="Catatan hasil bimbingan..."></textarea>
+                                                                            <div class="flex space-x-2">
+                                                                                <button type="submit" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Simpan</button>
+                                                                                <button type="button" @click="showFeedback = false" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 rounded-xl text-[10px] font-black uppercase cursor-pointer">Batal</button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            @elseif($session->is_absent)
+                                                                <div class="flex items-center gap-1.5">
+                                                                    <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
                                                                         @csrf
                                                                         @method('PATCH')
-                                                                        <input type="hidden" name="status" value="completed">
-                                                                        <textarea name="feedback" rows="2" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-orange-500 focus:border-orange-500 mb-2" placeholder="Catatan hasil bimbingan..."></textarea>
-                                                                        <div class="flex space-x-2">
-                                                                            <button type="submit" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Simpan</button>
-                                                                            <button type="button" @click="showFeedback = false" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 rounded-xl text-[10px] font-black uppercase cursor-pointer">Batal</button>
-                                                                        </div>
+                                                                        <input type="hidden" name="status" value="approved">
+                                                                        <button type="submit" class="w-full px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Batal Absen</button>
                                                                     </form>
+                                                                    @can('update', $session)
+                                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Ubah</a>
+                                                                    @endcan
                                                                 </div>
-                                                            </div>
-                                                        @elseif($session->is_absent)
-                                                            <div class="flex items-center gap-1.5">
-                                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="flex-1">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" name="status" value="approved">
-                                                                    <button type="submit" class="w-full px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Batal Absen</button>
-                                                                </form>
-                                                                @can('update', $session)
-                                                                    <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Ubah</a>
-                                                                @endcan
-                                                            </div>
-                                                        @endif
-
-                                                        <!-- Quick ACC Buttons (Seminar & Sidang) if applicable -->
-                                                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) && $thesis)
-                                                            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60">
-                                                                {{-- ACC UP --}}
-                                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="flex-1"
-                                                                    onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $student?->name }}?')">
-                                                                    @csrf
-                                                                    @if($isAdminOrKaprodi)
-                                                                        <input type="hidden" name="slot" value="all">
-                                                                    @endif
-                                                                    <button type="submit" 
-                                                                        title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
-                                                                        class="w-full inline-flex items-center justify-center px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all
-                                                                        {{ $hasAccUp ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-200' }}">
-                                                                        <span>ACC SEMINAR</span>
-                                                                    </button>
-                                                                </form>
-
-                                                                {{-- ACC Sidang --}}
-                                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="flex-1"
-                                                                    onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $student?->name }}?')">
-                                                                    @csrf
-                                                                    @if($isAdminOrKaprodi)
-                                                                        <input type="hidden" name="slot" value="all">
-                                                                    @endif
-                                                                    <button type="submit" 
-                                                                        title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
-                                                                        class="w-full inline-flex items-center justify-center px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all
-                                                                        {{ $hasAccSidang ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-200' }}">
-                                                                        <span>ACC SIDANG</span>
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        @endif
-                                                    </div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @endforeach
                                         </div>
