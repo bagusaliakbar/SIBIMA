@@ -611,7 +611,7 @@
                                     </template>
                                 </button>
 
-                                <!-- Dropdown Panel (Responsive: Full-width on mobile with 12px margins, centered under bell on desktop) -->
+                                <!-- Dropdown Panel (Mobile: fixed full-width floating modal with 12px margins; Desktop: absolute aligned to right of bell) -->
                                 <div x-show="isOpen" 
                                      @click.away="isOpen = false"
                                      x-transition:enter="transition ease-out duration-200"
@@ -620,7 +620,7 @@
                                      x-transition:leave="transition ease-in duration-150"
                                      x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                      x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                     class="fixed inset-x-3 top-20 sm:absolute sm:inset-x-auto sm:top-full sm:mt-2.5 sm:left-1/2 sm:-translate-x-1/2 sm:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
+                                     class="fixed inset-x-3 top-20 md:absolute md:inset-x-auto md:top-full md:mt-2.5 md:-right-12 lg:-right-16 md:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
                                      style="display: none;">
                                     
                                     <!-- Header & Filter Tabs -->
