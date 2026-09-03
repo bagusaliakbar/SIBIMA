@@ -44,8 +44,9 @@ class NotificationController extends Controller
 
         $unreadCount = $user->unreadNotifications->count();
         $totalCount = $user->notifications()->count();
+        $readCount = max(0, $totalCount - $unreadCount);
 
-        return view('notifications.index', compact('notifications', 'unreadCount', 'totalCount', 'search', 'activeTab'));
+        return view('notifications.index', compact('notifications', 'unreadCount', 'totalCount', 'readCount', 'search', 'activeTab'));
     }
 
     public function markAsRead($id)

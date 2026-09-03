@@ -42,36 +42,53 @@
             </div>
 
             {{-- Filter Tabs and Search Bar --}}
-            <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700/60 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                 {{-- Status Tabs --}}
-                <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl w-full md:w-auto">
+                <div class="inline-flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 overflow-x-auto">
+                    {{-- Tab: Semua --}}
                     <a href="{{ route('notifications.index', ['tab' => 'all', 'search' => $search]) }}" 
-                       class="flex-1 md:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-center {{ $activeTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}">
-                        Semua ({{ $totalCount }})
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $activeTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-black' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/40 dark:hover:bg-slate-800/40' }}">
+                        <span>Semua</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                            {{ $totalCount }}
+                        </span>
                     </a>
+
+                    {{-- Tab: Belum Dibaca --}}
                     <a href="{{ route('notifications.index', ['tab' => 'unread', 'search' => $search]) }}" 
-                       class="flex-1 md:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 {{ $activeTab === 'unread' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}">
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $activeTab === 'unread' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/40 dark:hover:bg-slate-800/40' }}">
                         <span>Belum Dibaca</span>
                         @if($unreadCount > 0)
-                            <span class="px-1.5 py-0.5 rounded-full bg-orange-600 text-white text-[9px] font-black leading-none">{{ $unreadCount }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'unread' ? 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300' : 'bg-orange-500 text-white shadow-2xs' }}">
+                                {{ $unreadCount }}
+                            </span>
+                        @else
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                                0
+                            </span>
                         @endif
                     </a>
+
+                    {{-- Tab: Sudah Dibaca --}}
                     <a href="{{ route('notifications.index', ['tab' => 'read', 'search' => $search]) }}" 
-                       class="flex-1 md:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-center {{ $activeTab === 'read' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200' }}">
-                        Sudah Dibaca
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $activeTab === 'read' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-black' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/40 dark:hover:bg-slate-800/40' }}">
+                        <span>Sudah Dibaca</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'read' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                            {{ $readCount ?? max(0, $totalCount - $unreadCount) }}
+                        </span>
                     </a>
                 </div>
 
                 {{-- Search Box --}}
-                <form method="GET" action="{{ route('notifications.index') }}" class="w-full md:w-72 relative">
+                <form method="GET" action="{{ route('notifications.index') }}" class="relative w-full sm:w-72 group">
                     <input type="hidden" name="tab" value="{{ $activeTab }}">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                     <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari isi notifikasi..." 
-                           class="block w-full pl-9 pr-10 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs transition-all">
+                           class="block w-full pl-10 pr-10 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-medium transition-all shadow-2xs">
                     @if(!empty($search))
-                        <a href="{{ route('notifications.index', ['tab' => $activeTab]) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <a href="{{ route('notifications.index', ['tab' => $activeTab]) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Bersihkan pencarian">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
                     @endif
