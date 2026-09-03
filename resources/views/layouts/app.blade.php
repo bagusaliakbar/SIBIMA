@@ -611,74 +611,48 @@
                                     </template>
                                 </button>
 
-                                <!-- Dropdown Panel (Strictly centered directly underneath the bell icon) -->
+                                <!-- Dropdown Panel (Clean, Spacious, Beautiful Original Layout) -->
                                 <div x-show="isOpen" 
                                      @click.away="isOpen = false"
                                      x-transition:enter="transition ease-out duration-200"
-                                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
-                                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                     x-transition:enter-start="opacity-0 translate-y-1"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
                                      x-transition:leave="transition ease-in duration-150"
-                                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                     class="absolute top-full mt-2.5 right-[-80px] sm:right-auto sm:left-1/2 sm:-translate-x-1/2 w-[340px] sm:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
+                                     x-transition:leave-start="opacity-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 translate-y-1"
+                                     class="absolute right-0 mt-3 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden text-left"
                                      style="display: none;">
                                     
-                                    <!-- Header & Filter Tabs (Compact) -->
-                                    <div class="px-3.5 pt-3 pb-2.5 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/60">
-                                        <div class="flex justify-between items-center mb-2.5">
-                                            <div class="flex items-center gap-2">
-                                                <h3 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Notifikasi</h3>
-                                                <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[9px] font-black" x-text="unreadCount + ' Baru'"></span>
-                                            </div>
-                                            <div>
-                                                <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
-                                                    Tandai semua dibaca
-                                                </button>
-                                                <span x-show="unreadCount === 0" class="text-[10px] text-slate-400 font-medium">Semua telah dibaca</span>
-                                            </div>
+                                    <!-- Header -->
+                                    <div class="p-4 border-b border-slate-50 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Notifikasi</h3>
+                                            <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black" x-text="unreadCount + ' Baru'"></span>
                                         </div>
-
-                                        <!-- Filter Tabs (Semua & Belum Dibaca) -->
-                                        <div class="grid grid-cols-2 gap-1 p-0.5 bg-slate-200/60 dark:bg-slate-800 rounded-xl text-xs">
-                                            <button type="button" 
-                                                    @click="activeTab = 'all'" 
-                                                    class="py-1 px-2.5 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                                                    :class="activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
-                                                <span>Semua</span>
-                                                <span class="text-[10px] py-0.5 px-1.5 rounded-full font-bold" 
-                                                      :class="activeTab === 'all' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'bg-slate-300/50 dark:bg-slate-700 text-slate-500'" 
-                                                      x-text="notifications.length"></span>
-                                            </button>
-                                            <button type="button" 
-                                                    @click="activeTab = 'unread'" 
-                                                    class="py-1 px-2.5 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                                                    :class="activeTab === 'unread' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
-                                                <span>Belum Dibaca</span>
-                                                <span x-show="unreadCount > 0" class="text-[9px] font-black px-1.5 py-0.5 bg-orange-600 text-white rounded-full" x-text="unreadCount"></span>
-                                            </button>
-                                        </div>
+                                        <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                            Tandai semua dibaca
+                                        </button>
                                     </div>
 
-                                    <!-- Notification List (Compact height: strictly capped at 260px) -->
-                                    <div class="overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700/60"
-                                         style="max-height: 260px;">
-                                        <template x-if="filteredNotifications.length === 0">
-                                            <div class="p-6 text-center">
-                                                <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-2.5">
-                                                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                    <!-- Notification List -->
+                                    <div class="max-h-96 overflow-y-auto custom-scrollbar divide-y divide-slate-50 dark:divide-slate-700/60">
+                                        <template x-if="notifications.length === 0">
+                                            <div class="p-8 text-center">
+                                                <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                    <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                                 </div>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium" x-text="activeTab === 'unread' ? 'Semua notifikasi sudah Anda baca' : 'Belum ada notifikasi'"></p>
+                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Tidak ada notifikasi baru</p>
                                             </div>
                                         </template>
 
-                                        <template x-for="notif in filteredNotifications" :key="notif.id">
+                                        <template x-for="notif in notifications" :key="notif.id">
                                             <div @click="markAsRead(notif.id, getUrl(notif))" 
-                                                 class="px-3.5 py-2.5 hover:bg-slate-50/90 dark:hover:bg-slate-700/40 transition-colors cursor-pointer relative group flex items-start gap-3"
-                                                 :class="notif.read_at ? 'opacity-70' : 'bg-orange-50/30 dark:bg-orange-950/20'">
+                                                 class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors cursor-pointer relative group flex items-start gap-3.5"
+                                                 :class="notif.read_at ? 'opacity-60' : 'bg-orange-50/20 dark:bg-orange-900/10'">
                                                 
-                                                <!-- Category Semantic Icon -->
-                                                <div class="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center border shadow-2xs transition-transform group-hover:scale-105"
-                                                     style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; flex-shrink: 0;"
+                                                <!-- Category Semantic Icon (Square 40x40 with rounded-xl, perfectly proportioned) -->
+                                                <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center border shadow-xs"
+                                                     style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;"
                                                      :class="{
                                                         'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200/80 dark:border-blue-700/50': getCategory(notif) === 'schedule',
                                                         'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-700/50': getCategory(notif) === 'success',
@@ -689,71 +663,46 @@
                                                         'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700': getCategory(notif) === 'info'
                                                      }">
                                                     
-                                                    <!-- 📅 Schedule / Kalender -->
-                                                    <svg x-show="getCategory(notif) === 'schedule'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                    </svg>
+                                                    <!-- 📅 Schedule -->
+                                                    <svg x-show="getCategory(notif) === 'schedule'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 
-                                                    <!-- ✅ Success / ACC / Selesai (Clean checkmark) -->
-                                                    <svg x-show="getCategory(notif) === 'success'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
+                                                    <!-- ✅ Success / ACC -->
+                                                    <svg x-show="getCategory(notif) === 'success'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
 
-                                                    <!-- ⏰ Reminder / Alarm / Bell -->
-                                                    <svg x-show="getCategory(notif) === 'reminder'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                                                    </svg>
+                                                    <!-- ⏰ Reminder -->
+                                                    <svg x-show="getCategory(notif) === 'reminder'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
 
-                                                    <!-- 📝 Revision / Catatan Revisi -->
-                                                    <svg x-show="getCategory(notif) === 'revision'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                    </svg>
+                                                    <!-- 📝 Revision -->
+                                                    <svg x-show="getCategory(notif) === 'revision'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
 
-                                                    <!-- 🚫 Cancelled / Ditolak -->
-                                                    <svg x-show="getCategory(notif) === 'cancelled'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                    </svg>
+                                                    <!-- 🚫 Cancelled -->
+                                                    <svg x-show="getCategory(notif) === 'cancelled'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
 
-                                                    <!-- 💬 Chat Message -->
-                                                    <svg x-show="getCategory(notif) === 'message'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                                                    </svg>
+                                                    <!-- 💬 Message -->
+                                                    <svg x-show="getCategory(notif) === 'message'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
 
-                                                    <!-- ℹ️ Info / Default -->
-                                                    <svg x-show="getCategory(notif) === 'info'" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
+                                                    <!-- ℹ️ Default Info -->
+                                                    <svg x-show="getCategory(notif) === 'info'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                                 </div>
 
-                                                <!-- Content -->
-                                                <div class="flex-1 min-w-0 pr-1">
-                                                    <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug mb-0.5 truncate" x-text="getTitle(notif)"></p>
-                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-relaxed" x-text="notif.data.message || ''"></p>
-                                                    <div class="flex items-center gap-2 mt-1">
+                                                <!-- Message Body -->
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="getTitle(notif)"></p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed line-clamp-2" x-text="notif.data.message || ''"></p>
+                                                    <div class="flex items-center gap-2 mt-1.5">
                                                         <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
                                                         <span x-show="!notif.read_at" class="text-[9px] font-black text-orange-600 dark:text-orange-400">• Baru</span>
                                                     </div>
                                                 </div>
 
-                                                <!-- Hover Action: Single Mark as Read / Unread Indicator -->
-                                                <div class="flex items-center gap-1.5 shrink-0 self-center">
-                                                    <!-- Quick Mark as Read on Hover -->
-                                                    <button type="button" 
-                                                            x-show="!notif.read_at"
-                                                            @click.stop="markSingleRead(notif.id)" 
-                                                            class="opacity-0 group-hover:opacity-100 p-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-emerald-600 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all shadow-xs cursor-pointer"
-                                                            title="Tandai sudah dibaca">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                                    </button>
-
-                                                    <!-- Pulsing Unread Indicator -->
-                                                    <div x-show="!notif.read_at" class="w-2.5 h-2.5 rounded-full bg-orange-600 ring-4 ring-orange-100 dark:ring-orange-950/60 group-hover:hidden transition-all"></div>
-                                                </div>
+                                                <!-- Unread Indicator Dot -->
+                                                <div x-show="!notif.read_at" class="w-2.5 h-2.5 rounded-full bg-orange-600 flex-shrink-0 self-center ring-4 ring-orange-100 dark:ring-orange-950/60"></div>
                                             </div>
                                         </template>
                                     </div>
                                     
-                                    <div class="py-2 px-3 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 text-center">
+                                    <!-- Footer -->
+                                    <div class="p-3 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-50 dark:border-slate-700 text-center">
                                         <p class="text-[10px] font-bold text-slate-400">Menampilkan 20 notifikasi terakhir</p>
                                     </div>
                                 </div>
