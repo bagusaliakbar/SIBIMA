@@ -277,8 +277,8 @@
                         <x-empty-state description="Belum ada data logbook bimbingan yang telah diselesaikan oleh dosen pembimbing." icon="logbook" />
                     @endif
                 @else
-                    <!-- Vertical Timeline Spine -->
-                    <div class="relative pl-6 sm:pl-8 before:absolute before:left-3 sm:before:left-4 before:top-4 before:bottom-6 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700 space-y-8">
+                    <!-- Daftar Kartu Sesi Logbook -->
+                    <div class="space-y-6">
                         @foreach($sessions as $session)
                             @php
                                 $seqNumber = $sessionOrderMap[$session->id] ?? $loop->iteration;
@@ -293,55 +293,51 @@
                                 $linkUrl = Str::startsWith($session->location ?? '', 'http') ? $session->location : 'https://' . $session->location;
                             @endphp
 
-                            <!-- Timeline Item Wrapper -->
-                            <div class="relative group">
-                                <!-- Timeline Node Circle -->
-                                <div class="absolute -left-6 sm:-left-8 top-5 -translate-x-1/2 w-7 h-7 rounded-full bg-white dark:bg-slate-800 border-2 border-orange-500 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-[10px] shadow-sm group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all z-10">
-                                    {{ $seqNumber }}
-                                </div>
+                            <!-- Session Card Content -->
+                            <div class="bg-white dark:bg-slate-800/95 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 transition-all hover:border-orange-300 dark:hover:border-orange-500/40 hover:shadow-md hover:shadow-slate-200/30 dark:hover:shadow-none space-y-4">
+                                <!-- Card Header: Badges & Info -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-100 dark:border-slate-700/80">
+                                    <div class="flex items-center gap-2.5 flex-wrap">
+                                        <!-- Bimbingan #N Pill -->
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500 text-white text-xs font-black shadow-xs shadow-orange-500/20">
+                                            Bimbingan #{{ $seqNumber }}
+                                        </span>
 
-                                <!-- Session Card Content -->
-                                <div class="bg-white dark:bg-slate-800/95 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 transition-all hover:border-orange-300 dark:hover:border-orange-500/40 hover:shadow-md hover:shadow-slate-200/30 dark:hover:shadow-none space-y-4">
-                                    <!-- Card Header: Badges & Info -->
-                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700/80">
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            <!-- Bimbingan #N Pill -->
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-500 text-white text-xs font-black shadow-xs shadow-orange-500/20">
-                                                <span>Bimbingan #{{ $seqNumber }}</span>
-                                                @if($dosenSeq)
-                                                    <span class="opacity-80 font-medium text-[10px]">({{ $isP1 ? 'P1' : ($isP2 ? 'P2' : 'Dosen') }} ke-{{ $dosenSeq }})</span>
-                                                @endif
+                                        @if($dosenSeq)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl {{ $isP1 ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' : 'bg-purple-50 dark:purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800' }} text-xs font-bold shadow-2xs">
+                                                {{ $isP1 ? 'P1' : ($isP2 ? 'P2' : 'Dosen') }} ke-{{ $dosenSeq }}
                                             </span>
+                                        @endif
 
-                                            <!-- Waktu Bimbingan -->
-                                            <span class="inline-flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 font-bold">
-                                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                <span>{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $session->scheduled_at->format('H:i') }} WIB</span>
-                                            </span>
+                                        <!-- Waktu Bimbingan -->
+                                        <span class="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 font-bold">
+                                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span>{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                        </span>
 
-                                            <!-- Metode & Lokasi -->
-                                            @if($session->type === 'online')
-                                                @if($session->location)
-                                                    <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800') }} transition-all font-bold text-[10px]">
-                                                        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                        <span>{{ $isMeet ? 'Google Meet' : ($isZoom ? 'Zoom Meeting' : 'Online') }}</span>
-                                                    </a>
-                                                @else
-                                                    <span class="inline-flex items-center gap-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold">
-                                                        🎥 Daring
-                                                    </span>
-                                                @endif
+                                        <!-- Metode & Lokasi -->
+                                        @if($session->type === 'online')
+                                            @if($session->location)
+                                                <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800') }} transition-all font-bold text-xs shadow-2xs">
+                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    <span>{{ $isMeet ? 'Google Meet' : ($isZoom ? 'Zoom Meeting' : 'Online') }}</span>
+                                                </a>
                                             @else
-                                                <span class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-slate-600 text-[10px] font-bold">
-                                                    🏢 {{ $session->location ?: 'Tatap Muka' }}
+                                                <span class="inline-flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-bold shadow-2xs">
+                                                    🎥 Daring
                                                 </span>
                                             @endif
-                                        </div>
-
-                                        <div class="shrink-0">
-                                            <x-status-badge type="emerald" label="SELESAI" />
-                                        </div>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-600 text-xs font-bold shadow-2xs">
+                                                🏢 {{ $session->location ?: 'Tatap Muka' }}
+                                            </span>
+                                        @endif
                                     </div>
+
+                                    <div class="shrink-0">
+                                        <x-status-badge type="emerald" label="SELESAI" />
+                                    </div>
+                                </div>
 
                                     <!-- Topik Sesi -->
                                     <div>
