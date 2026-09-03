@@ -76,9 +76,28 @@ class MentoringStatusUpdatedNotification extends Notification implements ShouldQ
      */
     public function toArray($notifiable)
     {
+        $statusText = match ($this->status) {
+            'approved'  => 'Disetujui',
+            'rejected'  => 'Ditolak',
+            'absent'    => 'Tidak Hadir',
+            'completed' => 'Selesai',
+            default     => ucfirst($this->status),
+        };
+
+        $type = match ($this->status) {
+            'approved', 'completed' => 'success',
+            'rejected', 'absent'    => 'danger',
+            default                 => 'info',
+        };
+
+        $dosenName = $this->session->dosen->name ?? 'Dosen Pembimbing';
+
         return [
             'mentoring_id' => $this->session->id,
-            'message' => "Status bimbingan ({$this->session->topic}) diperbarui menjadi: " . strtoupper($this->status),
+            'title'        => 'Status Bimbingan: ' . $statusText,
+            'message'      => "Bimbingan \"{$this->session->topic}\" bersama {$dosenName} telah {$statusText}.",
+            'url'          => route('mentoring-sessions.index'),
+            'type'         => $type,
         ];
     }
 }

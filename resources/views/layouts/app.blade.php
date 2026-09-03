@@ -602,10 +602,12 @@
                             </button>
 
                             <div x-data="notificationDropdown()" x-init="init()" class="relative">
-                                <button @click="toggle()" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative">
+                                <button @click="toggle()" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative" title="Notifikasi">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
-                                        <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-orange-600 rounded-full ring-2 ring-white"></span>
+                                        <span class="absolute -top-1 -right-1 min-w-[1.15rem] h-4.5 px-1 bg-gradient-to-r from-orange-600 to-rose-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white dark:ring-slate-800 animate-in fade-in zoom-in duration-200">
+                                            <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
+                                        </span>
                                     </template>
                                 </button>
 
@@ -613,60 +615,138 @@
                                 <div x-show="isOpen" 
                                      @click.away="isOpen = false"
                                      x-transition:enter="transition ease-out duration-200"
-                                     x-transition:enter-start="opacity-0 translate-y-1"
-                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                                      x-transition:leave="transition ease-in duration-150"
-                                     x-transition:leave-start="opacity-100 translate-y-0"
-                                     x-transition:leave-end="opacity-0 translate-y-1"
-                                     class="absolute right-0 mt-3 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden"
+                                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                     class="absolute right-0 mt-3 w-84 sm:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden text-left"
                                      style="display: none;">
                                     
-                                    <div class="p-4 border-b border-slate-50 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
-                                        <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest">Notifikasi</h3>
-                                        <button @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 hover:underline">Tandai semua dibaca</button>
+                                    <!-- Header & Filter Tabs -->
+                                    <div class="p-4 pb-3 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/50">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <div class="flex items-center gap-2">
+                                                <h3 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Notifikasi</h3>
+                                                <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[9px] font-black" x-text="unreadCount + ' Baru'"></span>
+                                            </div>
+                                            <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                                Tandai semua dibaca
+                                            </button>
+                                        </div>
+
+                                        <!-- Filter Tabs (Semua & Belum Dibaca) -->
+                                        <div class="flex items-center gap-1 p-1 bg-slate-200/60 dark:bg-slate-800/80 rounded-xl text-xs">
+                                            <button type="button" 
+                                                    @click="activeTab = 'all'" 
+                                                    class="flex-1 py-1 px-2.5 rounded-lg text-[11px] font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer"
+                                                    :class="activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
+                                                <span>Semua</span>
+                                                <span class="text-[10px] py-0.2 px-1 rounded-md" :class="activeTab === 'all' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'text-slate-400'" x-text="notifications.length"></span>
+                                            </button>
+                                            <button type="button" 
+                                                    @click="activeTab = 'unread'" 
+                                                    class="flex-1 py-1 px-2.5 rounded-lg text-[11px] font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer"
+                                                    :class="activeTab === 'unread' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
+                                                <span>Belum Dibaca</span>
+                                                <span x-show="unreadCount > 0" class="text-[9px] font-black px-1.5 py-0.2 bg-orange-600 text-white rounded-full" x-text="unreadCount"></span>
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div class="max-h-96 overflow-y-auto custom-scrollbar">
-                                        <template x-if="notifications.length === 0">
+                                    <!-- Notification List -->
+                                    <div class="max-h-96 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
+                                        <template x-if="filteredNotifications.length === 0">
                                             <div class="p-8 text-center">
                                                 <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-3">
                                                     <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                                 </div>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Tidak ada notifikasi baru</p>
+                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium" x-text="activeTab === 'unread' ? 'Tidak ada notifikasi belum dibaca' : 'Tidak ada notifikasi baru'"></p>
                                             </div>
                                         </template>
 
-                                        <template x-for="notif in notifications" :key="notif.id">
-                                            <div @click="markAsRead(notif.id, notif.data.url)" 
-                                                 class="p-4 border-b border-slate-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer relative group"
-                                                 :class="notif.read_at ? 'opacity-60' : 'bg-orange-50/20 dark:bg-orange-900/10'">
-                                                <div class="flex items-start gap-3">
-                                                    <div class="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center"
-                                                         :class="{
-                                                            'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400': notif.data.type === 'info',
-                                                            'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400': notif.data.type === 'success',
-                                                            'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400': notif.data.type === 'danger',
-                                                            'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400': notif.data.type === 'message'
-                                                         }">
-                                                        <svg x-show="notif.data.type !== 'message'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                        </svg>
-                                                        <svg x-show="notif.data.type === 'message'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                                                        </svg>
+                                        <template x-for="notif in filteredNotifications" :key="notif.id">
+                                            <div @click="markAsRead(notif.id, getUrl(notif))" 
+                                                 class="p-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer relative group flex items-start gap-3"
+                                                 :class="notif.read_at ? 'opacity-65' : 'bg-orange-50/20 dark:bg-orange-950/15'">
+                                                
+                                                <!-- Category Semantic Icon -->
+                                                <div class="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center border shadow-2xs transition-transform group-hover:scale-105"
+                                                     :class="{
+                                                        'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200/60 dark:border-blue-700/50': getCategory(notif) === 'schedule',
+                                                        'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-700/50': getCategory(notif) === 'success',
+                                                        'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-700/50': getCategory(notif) === 'reminder',
+                                                        'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-200/60 dark:border-indigo-700/50': getCategory(notif) === 'revision',
+                                                        'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border-rose-200/60 dark:border-rose-700/50': getCategory(notif) === 'cancelled',
+                                                        'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-orange-200/60 dark:border-orange-700/50': getCategory(notif) === 'message',
+                                                        'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700': getCategory(notif) === 'info'
+                                                     }">
+                                                    
+                                                    <!-- 📅 Schedule / Kalender -->
+                                                    <svg x-show="getCategory(notif) === 'schedule'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+
+                                                    <!-- ✅ Success / ACC / Selesai -->
+                                                    <svg x-show="getCategory(notif) === 'success'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+
+                                                    <!-- ⏰ Reminder / Deadline / Alarm -->
+                                                    <svg x-show="getCategory(notif) === 'reminder'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+
+                                                    <!-- 📝 Revision / Catatan Revisi -->
+                                                    <svg x-show="getCategory(notif) === 'revision'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                    </svg>
+
+                                                    <!-- 🚫 Cancelled / Ditolak -->
+                                                    <svg x-show="getCategory(notif) === 'cancelled'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+
+                                                    <!-- 💬 Chat Message -->
+                                                    <svg x-show="getCategory(notif) === 'message'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                                    </svg>
+
+                                                    <!-- ℹ️ Info / Default -->
+                                                    <svg x-show="getCategory(notif) === 'info'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </div>
+
+                                                <!-- Content -->
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-[11px] font-bold text-slate-800 dark:text-slate-100 leading-snug mb-0.5" x-text="getTitle(notif)"></p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed" x-text="notif.data.message || ''"></p>
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        <span class="text-[9px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
+                                                        <span x-show="!notif.read_at" class="text-[9px] font-black text-orange-600 dark:text-orange-400">• Baru</span>
                                                     </div>
-                                                    <div class="flex-1 min-w-0">
-                                                        <p class="text-[11px] font-black text-slate-800 dark:text-slate-200 leading-tight mb-0.5" x-text="notif.data.title"></p>
-                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2" x-text="notif.data.message"></p>
-                                                        <p class="text-[9px] text-slate-400 mt-1 font-bold" x-text="formatDate(notif.created_at)"></p>
-                                                    </div>
-                                                    <div x-show="!notif.read_at" class="w-2 h-2 bg-orange-600 rounded-full mt-1.5 ring-4 ring-orange-50 dark:ring-slate-800 group-hover:ring-white dark:group-hover:ring-slate-700 transition-all"></div>
+                                                </div>
+
+                                                <!-- Hover Action: Single Mark as Read / Unread Indicator -->
+                                                <div class="flex items-center gap-1.5 shrink-0 self-center">
+                                                    <!-- Quick Mark as Read on Hover -->
+                                                    <button type="button" 
+                                                            x-show="!notif.read_at"
+                                                            @click.stop="markSingleRead(notif.id)" 
+                                                            class="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-emerald-600 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all shadow-xs cursor-pointer"
+                                                            title="Tandai sudah dibaca">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                    </button>
+
+                                                    <!-- Pulsing Unread Indicator -->
+                                                    <div x-show="!notif.read_at" class="w-2.5 h-2.5 rounded-full bg-orange-600 ring-4 ring-orange-100 dark:ring-orange-950/60 group-hover:hidden transition-all"></div>
                                                 </div>
                                             </div>
                                         </template>
                                     </div>
                                     
-                                    <div class="p-3 bg-slate-50/50 dark:bg-slate-900/50 text-center">
+                                    <div class="p-3 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 text-center">
                                         <p class="text-[10px] font-bold text-slate-400">Menampilkan 20 notifikasi terakhir</p>
                                     </div>
                                 </div>
@@ -695,11 +775,19 @@
                                     notifications: [],
                                     unreadCount: 0,
                                     lastCount: 0,
+                                    activeTab: 'all',
+
+                                    get filteredNotifications() {
+                                        if (this.activeTab === 'unread') {
+                                            return this.notifications.filter(n => !n.read_at);
+                                        }
+                                        return this.notifications;
+                                    },
 
                                     init() {
                                         this.fetchNotifications();
                                         window.refreshNotifications = () => this.fetchNotifications();
-                                        setInterval(() => this.fetchNotifications(), 30000); // Polling reduced to 30s since we have real-time now
+                                        setInterval(() => this.fetchNotifications(), 30000); // Polling 30s
                                     },
 
                                     toggle() {
@@ -716,8 +804,8 @@
                                         })
                                             .then(res => res.json())
                                             .then(data => {
-                                                this.notifications = data.notifications;
-                                                this.unreadCount = data.unread_count;
+                                                this.notifications = data.notifications || [];
+                                                this.unreadCount = data.unread_count || 0;
                                                 
                                                 if (this.unreadCount > this.lastCount) {
                                                     this.playSound();
@@ -732,6 +820,53 @@
                                             audio.currentTime = 0;
                                             audio.play().catch(e => console.log('Audio play failed:', e));
                                         }
+                                    },
+
+                                    getCategory(notif) {
+                                        const type = notif.data?.type || '';
+                                        const title = (notif.data?.title || '').toLowerCase();
+                                        const msg = (notif.data?.message || '').toLowerCase();
+
+                                        if (type === 'danger' || title.includes('batal') || title.includes('tolak') || msg.includes('dibatalkan') || msg.includes('ditolak')) {
+                                            return 'cancelled';
+                                        }
+                                        if (type === 'success' || title.includes('acc') || title.includes('selesai') || msg.includes('completed') || msg.includes('selesai') || msg.includes('acc')) {
+                                            return 'success';
+                                        }
+                                        if (type === 'warning' || title.includes('pengingat') || title.includes('h-1') || msg.includes('pengingat') || msg.includes('h-1') || msg.includes('deadline')) {
+                                            return 'reminder';
+                                        }
+                                        if (title.includes('revisi') || msg.includes('revisi')) {
+                                            return 'revision';
+                                        }
+                                        if (type === 'message' || title.includes('pesan') || msg.includes('pesan')) {
+                                            return 'message';
+                                        }
+                                        if (type === 'info' || title.includes('jadwal') || msg.includes('menjadwalkan') || msg.includes('jadwal') || msg.includes('reschedule')) {
+                                            return 'schedule';
+                                        }
+                                        return 'info';
+                                    },
+
+                                    getTitle(notif) {
+                                        if (notif.data?.title) return notif.data.title;
+                                        const msg = notif.data?.message || '';
+                                        const lower = msg.toLowerCase();
+                                        if (lower.includes('completed') || lower.includes('selesai')) return 'Status Bimbingan Selesai';
+                                        if (lower.includes('status bimbingan')) return 'Pembaruan Status Bimbingan';
+                                        if (lower.includes('pengingat')) return 'Pengingat Jadwal Bimbingan (H-1)';
+                                        if (lower.includes('acc')) return 'Rekomendasi ACC Dosen';
+                                        if (lower.includes('menjadwalkan')) return 'Jadwal Bimbingan Baru';
+                                        if (lower.includes('batal')) return 'Jadwal Bimbingan Dibatalkan';
+                                        if (lower.includes('revisi')) return 'Pembaruan Revisi Skripsi';
+                                        return 'Pemberitahuan SIBIMA';
+                                    },
+
+                                    getUrl(notif) {
+                                        if (notif.data?.url && notif.data.url !== '#') return notif.data.url;
+                                        if (notif.data?.mentoring_id) return '{{ route("mentoring-sessions.index") }}';
+                                        if (notif.data?.thesis_id) return '{{ route("mentoring-sessions.index") }}';
+                                        return '#';
                                     },
 
                                     markAsRead(id, url) {
@@ -752,6 +887,20 @@
                                         });
                                     },
 
+                                    markSingleRead(id) {
+                                        fetch(`/notifications/${id}/read`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'Content-Type': 'application/json',
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'Accept': 'application/json'
+                                            }
+                                        }).then(() => {
+                                            this.fetchNotifications();
+                                        });
+                                    },
+
                                     markAllAsRead() {
                                         fetch('{{ route("notifications.read-all") }}', {
                                             method: 'POST',
@@ -765,13 +914,27 @@
                                     },
 
                                     formatDate(dateString) {
+                                        if (!dateString) return '';
                                         const date = new Date(dateString);
-                                        return date.toLocaleString('id-ID', { 
-                                            day: 'numeric', 
-                                            month: 'short', 
-                                            hour: '2-digit', 
-                                            minute: '2-digit' 
-                                        });
+                                        const now = new Date();
+                                        const diffSec = Math.floor((now - date) / 1000);
+                                        
+                                        if (diffSec < 60) return 'Baru saja';
+                                        const diffMin = Math.floor(diffSec / 60);
+                                        if (diffMin < 60) return `${diffMin} menit lalu`;
+                                        const diffHour = Math.floor(diffMin / 60);
+                                        if (diffHour < 24) return `${diffHour} jam lalu`;
+                                        
+                                        const isYesterday = (now.getDate() - date.getDate() === 1) && 
+                                                            (now.getMonth() === date.getMonth()) && 
+                                                            (now.getFullYear() === date.getFullYear());
+                                        const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+                                        if (isYesterday) return `Kemarin, ${timeStr}`;
+                                        
+                                        const diffDay = Math.floor(diffHour / 24);
+                                        if (diffDay < 7) return `${diffDay} hari lalu`;
+                                        
+                                        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + `, ${timeStr}`;
                                     }
                                 }
                             }

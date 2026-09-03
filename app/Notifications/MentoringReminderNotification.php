@@ -74,7 +74,10 @@ class MentoringReminderNotification extends Notification implements ShouldQueue
     {
         return [
             'mentoring_id' => $this->session->id,
-            'message' => "Pengingat H-1 bimbingan skripsi: {$this->session->topic}",
+            'title'        => 'Pengingat Jadwal Bimbingan (H-1)',
+            'message'      => "Pengingat H-1 bimbingan skripsi: {$this->session->topic}",
+            'url'          => route('mentoring-sessions.index'),
+            'type'         => 'warning',
         ];
     }
 }

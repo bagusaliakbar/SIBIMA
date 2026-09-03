@@ -71,7 +71,10 @@ class AccNotification extends Notification implements ShouldQueue
         $typeName = $this->type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
         return [
             'thesis_id' => $this->thesis->id,
-            'message' => "Selamat! Anda telah mendapatkan ACC {$typeName}.",
+            'title'     => 'Selamat! Rekomendasi ACC ' . $typeName,
+            'message'   => "Anda telah mendapatkan persetujuan ACC {$typeName} dari pembimbing.",
+            'url'       => route('mentoring-sessions.index'),
+            'type'      => 'success',
         ];
     }
 }
