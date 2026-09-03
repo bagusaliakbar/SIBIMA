@@ -511,6 +511,15 @@ class MentoringSessionController extends Controller
 
         $message = $this->mentoringService->confirmAttendance($session, $validated);
 
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'status'  => $validated['status'],
+                'session_id' => $session->id,
+            ]);
+        }
+
         return redirect()->back()->with('success', $message);
     }
 

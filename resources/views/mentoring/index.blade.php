@@ -673,7 +673,7 @@
                                                         : $thesis?->getCompletedMentoringCountForDosen(Auth::id());
                                                 @endphp
 
-                                                <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
+                                                <div id="session-{{ $session->id }}" class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
                                                     <div>
                                                         <!-- Top Bar Status Accent -->
                                                         <div class="absolute top-0 left-0 w-full h-1.5 
@@ -2228,5 +2228,24 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const highlightId = urlParams.get('highlight') || window.location.hash.replace('#session-', '');
+
+            if (highlightId) {
+                const target = document.getElementById('session-' + highlightId);
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        target.classList.add('ring-4', 'ring-orange-500', 'ring-offset-2', 'dark:ring-offset-slate-900');
+                        setTimeout(() => {
+                            target.classList.remove('ring-4', 'ring-orange-500', 'ring-offset-2', 'dark:ring-offset-slate-900');
+                        }, 4000);
+                    }, 400);
+                }
+            }
+        });
+    </script>
     @endpush
 </x-app-layout>

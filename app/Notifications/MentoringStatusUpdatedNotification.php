@@ -96,7 +96,7 @@ class MentoringStatusUpdatedNotification extends Notification implements ShouldQ
             'mentoring_id' => $this->session->id,
             'title'        => 'Status Bimbingan: ' . $statusText,
             'message'      => "Bimbingan \"{$this->session->topic}\" bersama {$dosenName} telah {$statusText}.",
-            'url'          => route('mentoring-sessions.index'),
+            'url'          => route('mentoring-sessions.index', ['highlight' => $this->session->id]) . '#session-' . $this->session->id,
             'type'         => $type,
         ];
     }

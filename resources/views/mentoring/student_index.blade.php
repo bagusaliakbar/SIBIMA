@@ -276,7 +276,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($sessions as $session)
-                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group align-top">
+                            <tr id="session-{{ $session->id }}" data-session-id="{{ $session->id }}" class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-all duration-500 group align-top">
                                 <td class="py-4 px-5 text-slate-800 dark:text-slate-200 font-medium whitespace-nowrap">
                                     {{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }} <br>
                                     <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">{{ $session->scheduled_at->format('H:i') }} WIB</span>
@@ -723,5 +723,24 @@
                 link.click();
             });
         }
+
+        // Deep link handler for mentoring session notification highlights
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const highlightId = urlParams.get('highlight') || window.location.hash.replace('#session-', '');
+
+            if (highlightId) {
+                const row = document.getElementById('session-' + highlightId);
+                if (row) {
+                    setTimeout(() => {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        row.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50', 'dark:bg-orange-950/40');
+                        setTimeout(() => {
+                            row.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50', 'dark:bg-orange-950/40');
+                        }, 4000);
+                    }, 300);
+                }
+            }
+        });
     </script>
 </x-app-layout>

@@ -47,7 +47,7 @@ class ExaminerService
 
         if (isset($detail->thesis) && isset($detail->thesis->student)) {
             $type = str_contains(get_class($detail), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
-            $detail->thesis->student->notify(new \App\Notifications\RevisionRequested($detail->thesis, $type));
+            $detail->thesis->student->notify(new \App\Notifications\RevisionRequested($detail->thesis, $type, $revision->id));
         }
 
         return $message;

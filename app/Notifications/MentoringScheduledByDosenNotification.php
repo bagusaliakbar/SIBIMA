@@ -84,8 +84,9 @@ class MentoringScheduledByDosenNotification extends Notification implements Shou
             'mentoring_id' => $this->session->id,
             'title'        => 'Jadwal Bimbingan Baru',
             'message'      => "Dosen {$dosenName} menjadwalkan bimbingan: {$this->session->topic}",
-            'url'          => route('mentoring-sessions.index'),
-            'type'         => 'info',
+            'url'          => route('mentoring-sessions.index', ['highlight' => $this->session->id]) . '#session-' . $this->session->id,
+            'actionable'   => 'attendance',
+            'type'         => 'attendance',
         ];
     }
 }

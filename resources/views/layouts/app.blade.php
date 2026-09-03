@@ -629,9 +629,26 @@
                                             <h3 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Notifikasi</h3>
                                             <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black" x-text="unreadCount + ' Baru'"></span>
                                         </div>
-                                        <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
-                                            Tandai semua dibaca
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <!-- Sound Mute/Unmute Toggle -->
+                                            <button type="button" 
+                                                    @click.stop="toggleSound()" 
+                                                    class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                    :title="soundEnabled ? 'Suara Notifikasi: Aktif (Klik untuk Mute)' : 'Suara Notifikasi: Nonaktif (Klik untuk Aktifkan)'">
+                                                <template x-if="soundEnabled">
+                                                    <!-- Speaker ON -->
+                                                    <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                                </template>
+                                                <template x-if="!soundEnabled">
+                                                    <!-- Speaker OFF -->
+                                                    <svg class="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+                                                </template>
+                                            </button>
+
+                                            <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                                Tandai semua dibaca
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Notification List -->
@@ -693,6 +710,77 @@
                                                         <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
                                                         <span x-show="!notif.read_at" class="text-[9px] font-black text-orange-600 dark:text-orange-400">• Baru</span>
                                                     </div>
+
+                                                    <!-- Actionable Attendance Confirmation (For Students) -->
+                                                    <template x-if="isAttendanceNotification(notif)">
+                                                        <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/60" @click.stop>
+                                                            <!-- If already confirmed in this session -->
+                                                            <template x-if="attendanceSuccess[notif.data.mentoring_id]">
+                                                                <div class="flex items-center gap-1.5 py-0.5 text-[11px] font-bold">
+                                                                    <template x-if="attendanceSuccess[notif.data.mentoring_id] === 'attending'">
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[10px] font-black uppercase tracking-wider">
+                                                                            <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                                            <span>Akan Hadir</span>
+                                                                        </span>
+                                                                    </template>
+                                                                    <template x-if="attendanceSuccess[notif.data.mentoring_id] === 'permission'">
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[10px] font-black uppercase tracking-wider">
+                                                                            <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"/></svg>
+                                                                            <span>Izin Diajukan</span>
+                                                                        </span>
+                                                                    </template>
+                                                                </div>
+                                                            </template>
+
+                                                            <!-- If not yet confirmed -->
+                                                            <template x-if="!attendanceSuccess[notif.data.mentoring_id]">
+                                                                <div>
+                                                                    <!-- Fast Action Buttons -->
+                                                                    <div x-show="activePermissionInput !== notif.id" class="flex items-center gap-2">
+                                                                        <button type="button" 
+                                                                                @click.stop="confirmAttendance(notif, 'attending')" 
+                                                                                :disabled="attendanceLoading[notif.data.mentoring_id]"
+                                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
+                                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                                            <span>Akan Hadir</span>
+                                                                        </button>
+
+                                                                        <button type="button" 
+                                                                                @click.stop="activePermissionInput = notif.id" 
+                                                                                :disabled="attendanceLoading[notif.data.mentoring_id]"
+                                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-600 text-[10px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
+                                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"/></svg>
+                                                                            <span>Izin</span>
+                                                                        </button>
+
+                                                                        <span x-show="attendanceLoading[notif.data.mentoring_id]" class="text-[10px] text-slate-400 animate-pulse font-medium">Menyimpan...</span>
+                                                                    </div>
+
+                                                                    <!-- Inline Reason Form for Izin -->
+                                                                    <div x-show="activePermissionInput === notif.id" class="space-y-1.5 mt-1">
+                                                                        <input type="text" 
+                                                                               x-model="permissionReason[notif.id]" 
+                                                                               placeholder="Alasan berhalangan hadir..." 
+                                                                               class="w-full text-xs px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                                                               @keydown.enter.prevent="submitPermission(notif)">
+                                                                        <div class="flex items-center gap-1.5">
+                                                                            <button type="button" 
+                                                                                    @click.stop="submitPermission(notif)"
+                                                                                    :disabled="attendanceLoading[notif.data.mentoring_id]"
+                                                                                    class="px-2.5 py-1 rounded-md bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer">
+                                                                                Kirim Izin
+                                                                            </button>
+                                                                            <button type="button" 
+                                                                                    @click.stop="activePermissionInput = null" 
+                                                                                    class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer">
+                                                                                Batal
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
                                                 </div>
 
                                                 <!-- Unread Indicator Dot -->
@@ -702,8 +790,11 @@
                                     </div>
                                     
                                     <!-- Footer -->
-                                    <div class="p-3 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-50 dark:border-slate-700 text-center">
-                                        <p class="text-[10px] font-bold text-slate-400">Menampilkan 20 notifikasi terakhir</p>
+                                    <div class="p-2.5 bg-slate-50/70 dark:bg-slate-900/70 border-t border-slate-100 dark:border-slate-700 text-center">
+                                        <a href="{{ route('notifications.index') }}" class="inline-flex items-center justify-center gap-1.5 w-full py-1.5 px-3 rounded-xl text-xs font-bold text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors">
+                                            <span>Lihat Semua Riwayat Notifikasi</span>
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -732,6 +823,12 @@
                                     unreadCount: 0,
                                     lastCount: 0,
                                     activeTab: 'all',
+                                    isStudent: {{ Auth::user()->role === 'mahasiswa' ? 'true' : 'false' }},
+                                    soundEnabled: localStorage.getItem('sibima_notif_sound_enabled') !== 'false',
+                                    attendanceLoading: {},
+                                    attendanceSuccess: {},
+                                    activePermissionInput: null,
+                                    permissionReason: {},
 
                                     get filteredNotifications() {
                                         if (this.activeTab === 'unread') {
@@ -749,6 +846,11 @@
                                     toggle() {
                                         this.isOpen = !this.isOpen;
                                         if (this.isOpen) this.fetchNotifications();
+                                    },
+
+                                    toggleSound() {
+                                        this.soundEnabled = !this.soundEnabled;
+                                        localStorage.setItem('sibima_notif_sound_enabled', this.soundEnabled);
                                     },
 
                                     fetchNotifications() {
@@ -771,11 +873,78 @@
                                     },
 
                                     playSound() {
+                                        if (!this.soundEnabled) return;
                                         const audio = document.getElementById('notif-sound');
                                         if (audio) {
                                             audio.currentTime = 0;
                                             audio.play().catch(e => console.log('Audio play failed:', e));
                                         }
+                                    },
+
+                                    isAttendanceNotification(notif) {
+                                        if (!this.isStudent) return false;
+                                        const mentoringId = notif.data?.mentoring_id;
+                                        if (!mentoringId) return false;
+                                        const actionable = notif.data?.actionable;
+                                        const type = notif.data?.type;
+                                        const title = (notif.data?.title || '').toLowerCase();
+                                        const msg = (notif.data?.message || '').toLowerCase();
+
+                                        return actionable === 'attendance' ||
+                                               type === 'attendance' ||
+                                               title.includes('jadwal bimbingan baru') ||
+                                               title.includes('menunggu konfirmasi') ||
+                                               msg.includes('menjadwalkan');
+                                    },
+
+                                    async confirmAttendance(notif, status, reason = null) {
+                                        const mentoringId = notif.data?.mentoring_id;
+                                        if (!mentoringId) return;
+
+                                        this.attendanceLoading[mentoringId] = true;
+                                        try {
+                                            const payload = {
+                                                status: status,
+                                                _token: '{{ csrf_token() }}'
+                                            };
+                                            if (status === 'permission' && reason) {
+                                                payload.reason = reason;
+                                            }
+
+                                            const res = await fetch(`/mentoring-sessions/${mentoringId}/confirm-attendance`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-Requested-With': 'XMLHttpRequest',
+                                                    'Accept': 'application/json',
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                },
+                                                body: JSON.stringify(payload)
+                                            });
+
+                                            const data = await res.json();
+                                            if (res.ok && data.success) {
+                                                this.attendanceSuccess[mentoringId] = status;
+                                                this.activePermissionInput = null;
+                                                this.markSingleRead(notif.id);
+                                            } else {
+                                                alert(data.message || 'Gagal menyimpan konfirmasi kehadiran.');
+                                            }
+                                        } catch (e) {
+                                            console.error(e);
+                                            alert('Terjadi kesalahan jaringan saat mengonfirmasi kehadiran.');
+                                        } finally {
+                                            this.attendanceLoading[mentoringId] = false;
+                                        }
+                                    },
+
+                                    submitPermission(notif) {
+                                        const reason = (this.permissionReason[notif.id] || '').trim();
+                                        if (!reason) {
+                                            alert('Mohon tuliskan alasan berhalangan hadir.');
+                                            return;
+                                        }
+                                        this.confirmAttendance(notif, 'permission', reason);
                                     },
 
                                     getCategory(notif) {
@@ -792,13 +961,13 @@
                                         if (type === 'warning' || title.includes('pengingat') || title.includes('h-1') || msg.includes('pengingat') || msg.includes('h-1') || msg.includes('deadline')) {
                                             return 'reminder';
                                         }
-                                        if (title.includes('revisi') || msg.includes('revisi')) {
+                                        if (title.includes('revisi') || msg.includes('revisi') || type === 'revision') {
                                             return 'revision';
                                         }
                                         if (type === 'message' || title.includes('pesan') || msg.includes('pesan')) {
                                             return 'message';
                                         }
-                                        if (type === 'info' || title.includes('jadwal') || msg.includes('menjadwalkan') || msg.includes('jadwal') || msg.includes('reschedule')) {
+                                        if (type === 'info' || type === 'attendance' || title.includes('jadwal') || msg.includes('menjadwalkan') || msg.includes('jadwal') || msg.includes('reschedule')) {
                                             return 'schedule';
                                         }
                                         return 'info';
@@ -819,8 +988,38 @@
                                     },
 
                                     getUrl(notif) {
-                                        if (notif.data?.url && notif.data.url !== '#') return notif.data.url;
-                                        if (notif.data?.mentoring_id) return '{{ route("mentoring-sessions.index") }}';
+                                        const url = notif.data?.url;
+                                        const title = (notif.data?.title || '').toLowerCase();
+                                        const msg = (notif.data?.message || '').toLowerCase();
+
+                                        // 1. ACC Notifications: Deep link to Seminar UP or Sidang registration
+                                        if (title.includes('acc') || msg.includes('acc')) {
+                                            if (title.includes('up') || msg.includes('seminar up') || notif.data?.acc_type === 'up') {
+                                                return '{{ route("seminar-applications.index") }}';
+                                            }
+                                            if (title.includes('sidang') || msg.includes('sidang') || notif.data?.acc_type === 'sidang') {
+                                                return '{{ route("thesis-defense-applications.index") }}';
+                                            }
+                                            return '{{ route("seminar-applications.index") }}';
+                                        }
+
+                                        // 2. Revision Notifications: Deep link to student revision reply page
+                                        if (title.includes('revisi') || msg.includes('revisi') || notif.data?.type === 'revision') {
+                                            if (url && url.includes('revision') && !url.endsWith('#')) {
+                                                return url;
+                                            }
+                                            if (title.includes('sidang') || msg.includes('sidang')) {
+                                                return '{{ route("student-defense-revisions.index") }}';
+                                            }
+                                            return '{{ route("student-seminar-revisions.index") }}';
+                                        }
+
+                                        // 3. Status Bimbingan / Jadwal: Deep link to mentoring-sessions.index with anchor/highlight
+                                        if (notif.data?.mentoring_id) {
+                                            return '{{ route("mentoring-sessions.index") }}?highlight=' + notif.data.mentoring_id + '#session-' + notif.data.mentoring_id;
+                                        }
+
+                                        if (url && url !== '#') return url;
                                         if (notif.data?.thesis_id) return '{{ route("mentoring-sessions.index") }}';
                                         return '#';
                                     },

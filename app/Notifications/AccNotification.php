@@ -69,11 +69,16 @@ class AccNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         $typeName = $this->type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
+        $targetUrl = $this->type === 'up'
+            ? route('seminar-applications.index')
+            : route('thesis-defense-applications.index');
+
         return [
             'thesis_id' => $this->thesis->id,
             'title'     => 'Selamat! Rekomendasi ACC ' . $typeName,
-            'message'   => "Anda telah mendapatkan persetujuan ACC {$typeName} dari pembimbing.",
-            'url'       => route('mentoring-sessions.index'),
+            'message'   => "Anda telah mendapatkan persetujuan ACC {$typeName} dari pembimbing. Silakan lanjutkan pendaftaran.",
+            'url'       => $targetUrl,
+            'acc_type'  => $this->type,
             'type'      => 'success',
         ];
     }
