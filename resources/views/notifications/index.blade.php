@@ -13,105 +13,79 @@
             </div>
         @endif
 
-        {{-- Single Unified Card Layout --}}
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/70 dark:border-slate-700/80 overflow-hidden transition-all">
-            
-            {{-- Header Section --}}
-            <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/40 dark:bg-slate-800/40">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 shadow-2xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Riwayat Notifikasi</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Daftar lengkap seluruh aktivitas, jadwal bimbingan, catatan revisi, dan status skripsi Anda.</p>
-                    </div>
-                </div>
+        {{-- Canonical SIBIMA Status Tabs Navigation --}}
+        <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-px custom-scrollbar">
+            {{-- Tab: Semua --}}
+            <a href="{{ route('notifications.index', ['tab' => 'all', 'search' => $search]) }}" 
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'all' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                <span>Semua Notifikasi</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'all' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
+                    {{ $totalCount }}
+                </span>
+            </a>
 
+            {{-- Tab: Belum Dibaca --}}
+            <a href="{{ route('notifications.index', ['tab' => 'unread', 'search' => $search]) }}" 
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'unread' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 @if($unreadCount > 0)
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <form method="POST" action="{{ route('notifications.read-all') }}" class="w-full sm:w-auto">
+                    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                @endif
+                <span>Belum Dibaca</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'unread' ? 'bg-orange-600 text-white shadow-2xs' : ($unreadCount > 0 ? 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400') }}">
+                    {{ $unreadCount }}
+                </span>
+            </a>
+
+            {{-- Tab: Sudah Dibaca --}}
+            <a href="{{ route('notifications.index', ['tab' => 'read', 'search' => $search]) }}" 
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'read' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                <span>Sudah Dibaca</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'read' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
+                    {{ $readCount ?? max(0, $totalCount - $unreadCount) }}
+                </span>
+            </a>
+        </div>
+
+        {{-- Canonical SIBIMA Table Card Component --}}
+        <x-table-card 
+            title="Daftar Notifikasi"
+            subtitle="Seluruh pemberitahuan jadwal bimbingan, status ACC, catatan revisi, dan aktivitas skripsi"
+            :footer="$notifications->hasPages() ? $notifications->links() : null">
+            
+            <x-slot name="headerActions">
+                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                    <x-search-input 
+                        name="search" 
+                        :value="$search ?? ''" 
+                        placeholder="Cari isi notifikasi..." 
+                        route="notifications.index"
+                        :params="['tab' => $activeTab]" />
+
+                    @if($unreadCount > 0)
+                        <form method="POST" action="{{ route('notifications.read-all') }}">
                             @csrf
-                            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+                            <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-orange-500/20 whitespace-nowrap cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 <span>Tandai Semua Dibaca</span>
                             </button>
                         </form>
-                    </div>
-                @endif
-            </div>
-
-            {{-- Toolbar: Tabs & Search --}}
-            <div class="p-3.5 sm:px-6 sm:py-3.5 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/40 dark:bg-slate-900/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                {{-- Status Tabs --}}
-                <div class="flex items-center p-1 bg-slate-100/90 dark:bg-slate-900/90 rounded-xl border border-slate-200/70 dark:border-slate-800 w-full sm:w-auto">
-                    {{-- Tab: Semua --}}
-                    <a href="{{ route('notifications.index', ['tab' => 'all', 'search' => $search]) }}" 
-                       class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs transition-all whitespace-nowrap {{ $activeTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium' }}">
-                        <span>Semua</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $activeTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
-                            {{ $totalCount }}
-                        </span>
-                    </a>
-
-                    {{-- Tab: Belum Dibaca --}}
-                    <a href="{{ route('notifications.index', ['tab' => 'unread', 'search' => $search]) }}" 
-                       class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs transition-all whitespace-nowrap {{ $activeTab === 'unread' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium' }}">
-                        <span>Belum Dibaca</span>
-                        @if($unreadCount > 0)
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-500 text-white shadow-2xs">
-                                {{ $unreadCount }}
-                            </span>
-                        @else
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $activeTab === 'unread' ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
-                                0
-                            </span>
-                        @endif
-                    </a>
-
-                    {{-- Tab: Sudah Dibaca --}}
-                    <a href="{{ route('notifications.index', ['tab' => 'read', 'search' => $search]) }}" 
-                       class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs transition-all whitespace-nowrap {{ $activeTab === 'read' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium' }}">
-                        <span>Sudah Dibaca</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $activeTab === 'read' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
-                            {{ $readCount ?? max(0, $totalCount - $unreadCount) }}
-                        </span>
-                    </a>
-                </div>
-
-                {{-- Search Box --}}
-                <form method="GET" action="{{ route('notifications.index') }}" class="relative w-full sm:w-72">
-                    <input type="hidden" name="tab" value="{{ $activeTab }}">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                    <input type="text" 
-                           name="search" 
-                           value="{{ $search ?? '' }}" 
-                           placeholder="Cari notifikasi..." 
-                           style="padding-left: 2.75rem !important; padding-right: 2.5rem !important;"
-                           class="block w-full py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-medium transition-all shadow-2xs">
-                    @if(!empty($search))
-                        <a href="{{ route('notifications.index', ['tab' => $activeTab]) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Bersihkan pencarian">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </a>
                     @endif
-                </form>
-            </div>
+                </div>
+            </x-slot>
 
             {{-- Notifications List / Empty State --}}
             @if($notifications->isEmpty())
-                <div class="py-14 sm:py-20 px-6 text-center">
+                <div class="py-16 text-center max-w-md mx-auto px-6">
                     @if(!empty($search))
                         {{-- Empty search state --}}
                         <div class="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-950/40 text-orange-500 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/60 flex items-center justify-center mx-auto mb-4 shadow-xs">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Pencarian Tidak Ditemukan</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Pencarian Tidak Ditemukan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                             Tidak ditemukan notifikasi yang cocok dengan kata kunci <span class="font-bold text-slate-700 dark:text-slate-300">"{{ $search }}"</span>.
                         </p>
-                        <div class="mt-4">
+                        <div class="mt-5">
                             <a href="{{ route('notifications.index', ['tab' => $activeTab]) }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all shadow-2xs">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 <span>Reset Pencarian</span>
@@ -122,28 +96,28 @@
                         <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 flex items-center justify-center mx-auto mb-4 shadow-xs">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Semua Notifikasi Telah Dibaca</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">
-                            Tidak ada notifikasi baru yang belum dibaca saat ini. Seluruh pemberitahuan telah Anda periksa.
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Semua Notifikasi Telah Dibaca</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                            Kotak masuk Anda bersih! Tidak ada pemberitahuan baru yang belum dibaca saat ini.
                         </p>
                         @if($totalCount > 0)
                             <div class="mt-5">
                                 <a href="{{ route('notifications.index', ['tab' => 'all']) }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white text-xs font-bold transition-all shadow-sm shadow-orange-500/25 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                     <span>Lihat Semua Riwayat Notifikasi ({{ $totalCount }})</span>
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </a>
                             </div>
                         @endif
                     @elseif($activeTab === 'read')
                         {{-- No read notifications yet --}}
-                        <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                         </div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Belum Ada Notifikasi yang Dibaca</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">
-                            Pemberitahuan yang telah Anda buka atau tandai selesai akan diarsipkan di tab ini.
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Belum Ada Notifikasi yang Dibaca</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                            Pemberitahuan yang telah Anda tandai selesai dibaca akan diarsipkan di tab ini.
                         </p>
-                        <div class="mt-4">
+                        <div class="mt-5">
                             <a href="{{ route('notifications.index', ['tab' => 'all']) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all shadow-2xs">
                                 <span>Lihat Semua Notifikasi</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -151,11 +125,11 @@
                         </div>
                     @else
                         {{-- Completely empty --}}
-                        <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         </div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Belum Ada Riwayat Notifikasi</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Belum Ada Riwayat Notifikasi</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                             Pemberitahuan aktivitas jadwal bimbingan, catatan revisi, dan status persetujuan skripsi Anda akan muncul di sini.
                         </p>
                     @endif
@@ -391,14 +365,7 @@
                         </div>
                     @endforeach
                 </div>
-
-                {{-- Pagination Links --}}
-                @if($notifications->hasPages())
-                    <div class="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                        {{ $notifications->links() }}
-                    </div>
-                @endif
             @endif
-        </div>
+        </x-table-card>
     </div>
 </x-app-layout>
