@@ -620,8 +620,8 @@
                                      x-transition:leave="transition ease-in duration-150"
                                      x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                      x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                     class="absolute right-0 mt-3 w-[360px] sm:w-[410px] max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
-                                     style="display: none;">
+                                     class="absolute right-0 mt-3 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
+                                     style="width: 380px; max-width: calc(100vw - 2rem); display: none;">
                                     
                                     <!-- Header & Filter Tabs -->
                                     <div class="p-4 pb-3 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/60">
@@ -629,34 +629,39 @@
                                             <div class="flex items-center gap-2">
                                                 <h3 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Notifikasi</h3>
                                                 <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[9px] font-black" x-text="unreadCount + ' Baru'"></span>
+                                            </div>
+                                            <div>
+                                                <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                                    Tandai semua dibaca
+                                                </button>
                                                 <span x-show="unreadCount === 0" class="text-[10px] text-slate-400 font-medium">Semua telah dibaca</span>
                                             </div>
-                                            <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
-                                                Tandai semua dibaca
-                                            </button>
                                         </div>
 
                                         <!-- Filter Tabs (Semua & Belum Dibaca) -->
-                                        <div class="grid grid-cols-2 gap-1 p-1 bg-slate-200/60 dark:bg-slate-800 rounded-xl text-xs">
+                                        <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/60 dark:bg-slate-800 rounded-xl text-xs">
                                             <button type="button" 
                                                     @click="activeTab = 'all'" 
                                                     class="py-1.5 px-3 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                                                     :class="activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
                                                 <span>Semua</span>
-                                                <span class="text-[10px] py-0.2 px-1.5 rounded-md font-semibold" :class="activeTab === 'all' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'text-slate-400'" x-text="notifications.length"></span>
+                                                <span class="text-[10px] py-0.5 px-1.5 rounded-full font-bold" 
+                                                      :class="activeTab === 'all' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'bg-slate-300/50 dark:bg-slate-700 text-slate-500'" 
+                                                      x-text="notifications.length"></span>
                                             </button>
                                             <button type="button" 
                                                     @click="activeTab = 'unread'" 
                                                     class="py-1.5 px-3 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                                                     :class="activeTab === 'unread' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'">
                                                 <span>Belum Dibaca</span>
-                                                <span x-show="unreadCount > 0" class="text-[9px] font-black px-1.5 py-0.2 bg-orange-600 text-white rounded-full" x-text="unreadCount"></span>
+                                                <span x-show="unreadCount > 0" class="text-[9px] font-black px-1.5 py-0.5 bg-orange-600 text-white rounded-full" x-text="unreadCount"></span>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <!-- Notification List -->
-                                    <div class="max-h-[26rem] overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700/60">
+                                    <!-- Notification List (Fixed max-height to prevent vertical stretching) -->
+                                    <div class="overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700/60"
+                                         style="max-height: 384px;">
                                         <template x-if="filteredNotifications.length === 0">
                                             <div class="p-8 text-center">
                                                 <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
