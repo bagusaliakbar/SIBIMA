@@ -611,7 +611,7 @@
                                     </template>
                                 </button>
 
-                                <!-- Dropdown Panel -->
+                                <!-- Dropdown Panel (Responsive: Full-width on mobile with 12px margins, centered under bell on desktop) -->
                                 <div x-show="isOpen" 
                                      @click.away="isOpen = false"
                                      x-transition:enter="transition ease-out duration-200"
@@ -620,8 +620,8 @@
                                      x-transition:leave="transition ease-in duration-150"
                                      x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                      x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                     class="absolute right-0 mt-3 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
-                                     style="width: 380px; max-width: calc(100vw - 2rem); display: none;">
+                                     class="fixed inset-x-3 top-20 sm:absolute sm:inset-x-auto sm:top-full sm:mt-2.5 sm:left-1/2 sm:-translate-x-1/2 sm:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
+                                     style="display: none;">
                                     
                                     <!-- Header & Filter Tabs -->
                                     <div class="p-4 pb-3 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/60">
@@ -659,9 +659,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- Notification List (Fixed max-height to prevent vertical stretching) -->
+                                    <!-- Notification List (Adaptive max-height to fit both mobile and desktop screens) -->
                                     <div class="overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-700/60"
-                                         style="max-height: 384px;">
+                                         style="max-height: min(384px, 58vh);">
                                         <template x-if="filteredNotifications.length === 0">
                                             <div class="p-8 text-center">
                                                 <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
