@@ -120,64 +120,121 @@
                     
                     <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 p-3 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded bg-orange-500"></div>
-                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Progres Sesi Bimbingan</span>
+                            <div class="w-3.5 h-2 rounded-full bg-gradient-to-r from-orange-500 to-amber-500"></div>
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Progres Sesi</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">Syarat Terpenuhi</span>
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Menunggu ACC</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sudah di-ACC Dosen Pembimbing</span>
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sudah di-ACC Dosen</span>
                         </div>
                         <div class="ml-auto text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest hidden lg:block">
                             Syarat: 4x (UP) & 8x (Sidang) Per Dosen
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {{-- Seminar UP Progress --}}
                         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                             <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Seminar Usulan Penelitian (UP)</span>
                                 @if($thesis->isAccUpFinal())
-                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
+                                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                        SUDAH DIACC KEDUA PEMBIMBING
+                                    </span>
+                                @elseif($countP1 >= 4 && $countP2 >= 4)
+                                    <span class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold border border-amber-200 dark:border-amber-500/20">
+                                        SYARAT SESI TERPENUHI
+                                    </span>
                                 @endif
                             </div>
                             
-                            <div class="space-y-5">
+                            <div class="space-y-4">
                                 {{-- P1 UP --}}
-                                <div>
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP1 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/4</span>
+                                <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 transition-colors">
+                                    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black shrink-0">
+                                                P1
+                                            </span>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate max-w-[200px]" title="Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}">
+                                                {{ $thesis->pembimbing1->name ?? '-' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            @if($countP1 >= 4 && !$thesis->acc_up_p1)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 text-[10px] font-bold animate-pulse" title="Syarat 4x bimbingan telah terpenuhi, menunggu ACC dari Dosen">
+                                                    Syarat 4x Terpenuhi ({{ $countP1 }}/4)
+                                                </span>
+                                            @else
+                                                <span class="text-[11px] font-bold {{ $countP1 >= 4 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400' }}">
+                                                    <span class="{{ $countP1 > 0 ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}">{{ $countP1 }}</span>/4 Sesi
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $upProgressP1 }}%"></div>
+                                        <div class="flex-1 bg-slate-200/70 dark:bg-slate-700/60 rounded-full h-2.5 overflow-hidden p-0.5">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $countP1 >= 4 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-orange-500 to-amber-500' }}" style="width: {{ $upProgressP1 }}%"></div>
                                         </div>
                                         <div class="shrink-0">
                                             @if($thesis->acc_up_p1)
-                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-[10px] font-bold shadow-2xs" title="Telah di-ACC oleh Dosen Pembimbing 1">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                    <span>Sudah di-ACC</span>
+                                                </span>
                                             @else
-                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] font-medium" title="Menunggu persetujuan ACC oleh Dosen Pembimbing 1">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                                    <span>Belum di-ACC</span>
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
 
                                 {{-- P2 UP --}}
-                                <div>
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP2 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/4</span>
+                                <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 transition-colors">
+                                    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black shrink-0">
+                                                P2
+                                            </span>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate max-w-[200px]" title="Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}">
+                                                {{ $thesis->pembimbing2->name ?? '-' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            @if($countP2 >= 4 && !$thesis->acc_up_p2)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 text-[10px] font-bold animate-pulse" title="Syarat 4x bimbingan telah terpenuhi, menunggu ACC dari Dosen">
+                                                    Syarat 4x Terpenuhi ({{ $countP2 }}/4)
+                                                </span>
+                                            @else
+                                                <span class="text-[11px] font-bold {{ $countP2 >= 4 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400' }}">
+                                                    <span class="{{ $countP2 > 0 ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}">{{ $countP2 }}</span>/4 Sesi
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $upProgressP2 }}%"></div>
+                                        <div class="flex-1 bg-slate-200/70 dark:bg-slate-700/60 rounded-full h-2.5 overflow-hidden p-0.5">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $countP2 >= 4 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-orange-500 to-amber-500' }}" style="width: {{ $upProgressP2 }}%"></div>
                                         </div>
                                         <div class="shrink-0">
                                             @if($thesis->acc_up_p2)
-                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-[10px] font-bold shadow-2xs" title="Telah di-ACC oleh Dosen Pembimbing 2">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                    <span>Sudah di-ACC</span>
+                                                </span>
                                             @else
-                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] font-medium" title="Menunggu persetujuan ACC oleh Dosen Pembimbing 2">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                                    <span>Belum di-ACC</span>
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
@@ -190,46 +247,99 @@
                             <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Sidang Akhir Skripsi</span>
                                 @if($thesis->isAccSidangFinal())
-                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
+                                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                        SUDAH DIACC KEDUA PEMBIMBING
+                                    </span>
+                                @elseif($countP1 >= 8 && $countP2 >= 8)
+                                    <span class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold border border-amber-200 dark:border-amber-500/20">
+                                        SYARAT SESI TERPENUHI
+                                    </span>
                                 @endif
                             </div>
 
-                            <div class="space-y-5">
+                            <div class="space-y-4">
                                 {{-- P1 Sidang --}}
-                                <div>
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP1 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/8</span>
+                                <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 transition-colors">
+                                    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black shrink-0">
+                                                P1
+                                            </span>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate max-w-[200px]" title="Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}">
+                                                {{ $thesis->pembimbing1->name ?? '-' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            @if($countP1 >= 8 && !$thesis->acc_sidang_p1)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 text-[10px] font-bold animate-pulse" title="Syarat 8x bimbingan telah terpenuhi, menunggu ACC dari Dosen">
+                                                    Syarat 8x Terpenuhi ({{ $countP1 }}/8)
+                                                </span>
+                                            @else
+                                                <span class="text-[11px] font-bold {{ $countP1 >= 8 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400' }}">
+                                                    <span class="{{ $countP1 > 0 ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}">{{ $countP1 }}</span>/8 Sesi
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $sidangProgressP1 }}%"></div>
+                                        <div class="flex-1 bg-slate-200/70 dark:bg-slate-700/60 rounded-full h-2.5 overflow-hidden p-0.5">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $countP1 >= 8 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-orange-500 to-amber-500' }}" style="width: {{ $sidangProgressP1 }}%"></div>
                                         </div>
                                         <div class="shrink-0">
                                             @if($thesis->acc_sidang_p1)
-                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-[10px] font-bold shadow-2xs" title="Telah di-ACC oleh Dosen Pembimbing 1">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                    <span>Sudah di-ACC</span>
+                                                </span>
                                             @else
-                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] font-medium" title="Menunggu persetujuan ACC oleh Dosen Pembimbing 1">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                                    <span>Belum di-ACC</span>
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
 
                                 {{-- P2 Sidang --}}
-                                <div>
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP2 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/8</span>
+                                <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 transition-colors">
+                                    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black shrink-0">
+                                                P2
+                                            </span>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate max-w-[200px]" title="Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}">
+                                                {{ $thesis->pembimbing2->name ?? '-' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            @if($countP2 >= 8 && !$thesis->acc_sidang_p2)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 text-[10px] font-bold animate-pulse" title="Syarat 8x bimbingan telah terpenuhi, menunggu ACC dari Dosen">
+                                                    Syarat 8x Terpenuhi ({{ $countP2 }}/8)
+                                                </span>
+                                            @else
+                                                <span class="text-[11px] font-bold {{ $countP2 >= 8 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400' }}">
+                                                    <span class="{{ $countP2 > 0 ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}">{{ $countP2 }}</span>/8 Sesi
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                            <div class="bg-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $sidangProgressP2 }}%"></div>
+                                        <div class="flex-1 bg-slate-200/70 dark:bg-slate-700/60 rounded-full h-2.5 overflow-hidden p-0.5">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $countP2 >= 8 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-orange-500 to-amber-500' }}" style="width: {{ $sidangProgressP2 }}%"></div>
                                         </div>
                                         <div class="shrink-0">
                                             @if($thesis->acc_sidang_p2)
-                                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-[10px] font-bold shadow-2xs" title="Telah di-ACC oleh Dosen Pembimbing 2">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                    <span>Sudah di-ACC</span>
+                                                </span>
                                             @else
-                                                <div class="w-4 h-4 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] font-medium" title="Menunggu persetujuan ACC oleh Dosen Pembimbing 2">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                                    <span>Belum di-ACC</span>
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
