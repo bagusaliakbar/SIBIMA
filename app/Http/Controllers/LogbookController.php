@@ -16,22 +16,80 @@ class LogbookController extends Controller
         $search = $request->input('search');
 
         if ($user->role === 'mahasiswa') {
-            $sessions = MentoringSession::whereHas('thesis', function ($q) {
-                    $q->where('student_id', Auth::id());
+            $thesis = Thesis::where('student_id', $user->id)
+                ->with(['pembimbing1', 'pembimbing2'])
+                ->first();
+
+            $filterDosen = $request->input('dosen', 'all');
+
+            // 1. Ambil seluruh sesi bimbingan selesai urut kronologis (asc) untuk penomoran resmi sesi
+            $allCompletedSessions = MentoringSession::whereHas('thesis', function ($q) use ($user) {
+                    $q->where('student_id', $user->id);
+                })
+                ->where('status', 'completed')
+                ->where('is_absent', false)
+                ->orderBy('scheduled_at', 'asc')
+                ->orderBy('id', 'asc')
+                ->get(['id', 'dosen_id', 'scheduled_at']);
+
+            $sessionOrderMap = [];
+            $sessionDosenOrderMap = [];
+            $dosenSessionCounts = [];
+
+            foreach ($allCompletedSessions as $index => $sess) {
+                $sessionOrderMap[$sess->id] = $index + 1;
+                $dId = $sess->dosen_id;
+                $dosenSessionCounts[$dId] = ($dosenSessionCounts[$dId] ?? 0) + 1;
+                $sessionDosenOrderMap[$sess->id] = $dosenSessionCounts[$dId];
+            }
+
+            $totalCompletedCount = $allCompletedSessions->count();
+            $countP1 = $thesis && $thesis->pembimbing1_id 
+                ? ($dosenSessionCounts[$thesis->pembimbing1_id] ?? 0) 
+                : 0;
+            $countP2 = $thesis && $thesis->pembimbing2_id 
+                ? ($dosenSessionCounts[$thesis->pembimbing2_id] ?? 0) 
+                : 0;
+
+            // 2. Query data dengan pencarian (topik, catatan mhs, dan catatan/revisi dosen) serta filter pembimbing
+            $sessionsQuery = MentoringSession::whereHas('thesis', function ($q) use ($user) {
+                    $q->where('student_id', $user->id);
                 })
                 ->where('status', 'completed')
                 ->where('is_absent', false)
                 ->when($search, function ($query, $search) {
                     $query->where(function ($q) use ($search) {
-                        $q->where('topic', 'like', "%{$search}%")->orWhere('notes', 'like', "%{$search}%");
+                        $q->where('topic', 'like', "%{$search}%")
+                          ->orWhere('notes', 'like', "%{$search}%")
+                          ->orWhere('feedback', 'like', "%{$search}%");
                     });
-                })
+                });
+
+            if ($filterDosen === 'p1' && $thesis?->pembimbing1_id) {
+                $sessionsQuery->where('dosen_id', $thesis->pembimbing1_id);
+            } elseif ($filterDosen === 'p2' && $thesis?->pembimbing2_id) {
+                $sessionsQuery->where('dosen_id', $thesis->pembimbing2_id);
+            } elseif (is_numeric($filterDosen)) {
+                $sessionsQuery->where('dosen_id', $filterDosen);
+            }
+
+            $sessions = $sessionsQuery
                 ->with('thesis.pembimbing1', 'thesis.pembimbing2', 'dosen')
                 ->orderBy('scheduled_at', 'desc')
                 ->paginate(10)
-                ->appends(['search' => $search]);
+                ->appends(array_filter(['search' => $search, 'dosen' => $filterDosen !== 'all' ? $filterDosen : null]));
 
-            return view('logbooks.index', compact('sessions', 'search'));
+            return view('logbooks.index', compact(
+                'sessions', 
+                'search', 
+                'thesis', 
+                'filterDosen', 
+                'sessionOrderMap', 
+                'sessionDosenOrderMap', 
+                'totalCompletedCount', 
+                'countP1', 
+                'countP2'
+            ));
         }
 
         if ($user->role === 'dosen') {
@@ -103,9 +161,19 @@ class LogbookController extends Controller
 
         $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
+        $filterDosen = $request->input('dosen');
         $sessions = MentoringSession::where('thesis_id', $thesis->id)
             ->when($user->role === 'dosen', function($q) use ($user) {
                 $q->where('dosen_id', $user->id);
+            })
+            ->when($filterDosen === 'p1' && $thesis->pembimbing1_id, function($q) use ($thesis) {
+                $q->where('dosen_id', $thesis->pembimbing1_id);
+            })
+            ->when($filterDosen === 'p2' && $thesis->pembimbing2_id, function($q) use ($thesis) {
+                $q->where('dosen_id', $thesis->pembimbing2_id);
+            })
+            ->when(is_numeric($filterDosen), function($q) use ($filterDosen) {
+                $q->where('dosen_id', $filterDosen);
             })
             ->where('status', 'completed')
             ->where('is_absent', false)
