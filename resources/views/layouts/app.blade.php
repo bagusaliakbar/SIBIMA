@@ -611,9 +611,8 @@
                                     </template>
                                 </button>
 
-                                <!-- Dropdown Panel (Positioned directly underneath the bell icon with pointer arrow) -->
-                                <div x-ref="panel"
-                                     x-show="isOpen" 
+                                <!-- Dropdown Panel (Strictly centered directly underneath the bell icon) -->
+                                <div x-show="isOpen" 
                                      @click.away="isOpen = false"
                                      x-transition:enter="transition ease-out duration-200"
                                      x-transition:enter-start="opacity-0 translate-y-1 scale-95"
@@ -621,18 +620,11 @@
                                      x-transition:leave="transition ease-in duration-150"
                                      x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                      x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                     class="rounded-3xl shadow-2xl text-left"
-                                     :style="panelStyle"
+                                     class="absolute top-full mt-2.5 right-[-80px] sm:right-auto sm:left-1/2 sm:-translate-x-1/2 w-[340px] sm:w-96 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700 z-50 overflow-hidden text-left"
                                      style="display: none;">
                                     
-                                    <!-- Pointer Arrow pointing directly to bell -->
-                                    <div class="absolute -top-1.5 -translate-x-1/2 w-3 h-3 bg-slate-50 dark:bg-slate-900 border-t border-l border-slate-200/80 dark:border-slate-700 rotate-45 z-20 pointer-events-none"
-                                         :style="arrowStyle"></div>
-
-                                    <!-- Main Card Container -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700 overflow-hidden relative z-10">
-                                        <!-- Header & Filter Tabs -->
-                                        <div class="p-4 pb-3 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/60">
+                                    <!-- Header & Filter Tabs -->
+                                    <div class="p-4 pb-3 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/60">
                                         <div class="flex justify-between items-center mb-3">
                                             <div class="flex items-center gap-2">
                                                 <h3 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Notifikasi</h3>
@@ -761,9 +753,8 @@
                                         </template>
                                     </div>
                                     
-                                        <div class="p-3 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 text-center">
-                                            <p class="text-[10px] font-bold text-slate-400">Menampilkan 20 notifikasi terakhir</p>
-                                        </div>
+                                    <div class="p-3 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 text-center">
+                                        <p class="text-[10px] font-bold text-slate-400">Menampilkan 20 notifikasi terakhir</p>
                                     </div>
                                 </div>
                             </div>
@@ -792,8 +783,6 @@
                                     unreadCount: 0,
                                     lastCount: 0,
                                     activeTab: 'all',
-                                    panelStyle: {},
-                                    arrowStyle: {},
 
                                     get filteredNotifications() {
                                         if (this.activeTab === 'unread') {
@@ -806,50 +795,11 @@
                                         this.fetchNotifications();
                                         window.refreshNotifications = () => this.fetchNotifications();
                                         setInterval(() => this.fetchNotifications(), 30000); // Polling 30s
-                                        window.addEventListener('resize', () => {
-                                            if (this.isOpen) this.updatePosition();
-                                        });
-                                        window.addEventListener('scroll', () => {
-                                            if (this.isOpen) this.updatePosition();
-                                        }, true);
                                     },
 
                                     toggle() {
                                         this.isOpen = !this.isOpen;
-                                        if (this.isOpen) {
-                                            this.fetchNotifications();
-                                            this.$nextTick(() => this.updatePosition());
-                                        }
-                                    },
-
-                                    updatePosition() {
-                                        const button = this.$refs.button;
-                                        if (!button) return;
-                                        const rect = button.getBoundingClientRect();
-                                        const bellCenter = rect.left + rect.width / 2;
-                                        const panelWidth = Math.min(384, window.innerWidth - 24);
-                                        
-                                        // Center directly below the bell
-                                        let left = bellCenter - panelWidth / 2;
-                                        
-                                        // Ensure panel does not overflow phone or desktop screen (12px min margins)
-                                        const minLeft = 12;
-                                        const maxLeft = window.innerWidth - panelWidth - 12;
-                                        left = Math.max(minLeft, Math.min(left, maxLeft));
-
-                                        this.panelStyle = {
-                                            position: 'fixed',
-                                            top: `${rect.bottom + 8}px`,
-                                            left: `${left}px`,
-                                            width: `${panelWidth}px`,
-                                            zIndex: 9999
-                                        };
-
-                                        // Point arrow straight up into the center of the bell icon
-                                        const arrowX = Math.max(16, Math.min(bellCenter - left, panelWidth - 16));
-                                        this.arrowStyle = {
-                                            left: `${arrowX}px`
-                                        };
+                                        if (this.isOpen) this.fetchNotifications();
                                     },
 
                                     fetchNotifications() {
