@@ -192,13 +192,13 @@
             <!-- Header Filter Bar: Title, Dropdown Angkatan, & Reset Button -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700/60">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 shadow-2xs">
+                    <div class="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 border border-orange-200/70 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20 flex items-center justify-center shrink-0 shadow-2xs">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                        <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
                             Tab Filter Cepat
                         </h3>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
@@ -232,11 +232,11 @@
                             </div>
                             <select name="entry_year" onchange="this.form.submit()" 
                                     class="pl-8 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
-                                <option value="all" {{ empty($entryYear) || $entryYear === 'all' ? 'selected' : '' }}>
+                                <option value="all" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100" {{ empty($entryYear) || $entryYear === 'all' ? 'selected' : '' }}>
                                     Semua Angkatan
                                 </option>
                                 @foreach($availableEntryYears as $year)
-                                    <option value="{{ $year }}" {{ ((string)$entryYear === (string)$year) ? 'selected' : '' }}>
+                                    <option value="{{ $year }}" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100" {{ ((string)$entryYear === (string)$year) ? 'selected' : '' }}>
                                         Angkatan {{ $year }}
                                     </option>
                                 @endforeach
@@ -247,7 +247,7 @@
                     <!-- Reset All Filters -->
                     @if($hasActiveFilters)
                         <a href="{{ route('logbooks.index', array_filter(['status' => ($status ?? 'active') !== 'active' ? $status : null])) }}" 
-                           class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 rounded-xl text-xs font-bold transition-all border border-rose-200 dark:border-rose-800/80 shadow-2xs"
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900/80 dark:text-rose-300 dark:border-rose-800 rounded-xl text-xs font-bold transition-all shadow-2xs"
                            title="Reset Semua Filter">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             <span>Reset</span>
@@ -269,27 +269,27 @@
                     @endphp
                     <!-- Semua Peran -->
                     <a href="{{ $buildQuery(['role_filter' => 'all']) }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isRoleAll ? 'bg-orange-500 text-white shadow-orange-500/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleAll ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                         <span>Semua</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleAll ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleAll ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                             {{ $stats['total'] ?? 0 }}
                         </span>
                     </a>
 
                     <!-- Sebagai Pembimbing 1 -->
                     <a href="{{ $buildQuery(['role_filter' => 'p1']) }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isRoleP1 ? 'bg-indigo-600 text-white shadow-indigo-600/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleP1 ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                         <span>Sebagai Pembimbing 1</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP1 ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP1 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                             {{ $stats['p1'] ?? 0 }}
                         </span>
                     </a>
 
                     <!-- Sebagai Pembimbing 2 -->
                     <a href="{{ $buildQuery(['role_filter' => 'p2']) }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isRoleP2 ? 'bg-purple-600 text-white shadow-purple-600/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleP2 ? 'bg-purple-600 text-white border-purple-600 shadow-purple-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                         <span>Sebagai Pembimbing 2</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP2 ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP2 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                             {{ $stats['p2'] ?? 0 }}
                         </span>
                     </a>
@@ -313,36 +313,36 @@
 
                         <!-- Semua Kategori -->
                         <a href="{{ $buildQuery(['filter' => 'all']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isProgAll ? 'bg-orange-500 text-white shadow-orange-500/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgAll ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Semua</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgAll ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgAll ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['total'] ?? 0 }}
                             </span>
                         </a>
 
                         <!-- Tahap Proposal (< 4 sesi) -->
                         <a href="{{ $buildQuery(['filter' => 'proposal']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isProgProposal ? 'bg-sky-600 text-white shadow-sky-600/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgProposal ? 'bg-sky-600 text-white border-sky-600 shadow-sky-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Tahap Proposal (&lt; 4 sesi)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgProposal ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgProposal ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['proposal'] ?? 0 }}
                             </span>
                         </a>
 
                         <!-- Siap UP (≥ 4 sesi) -->
                         <a href="{{ $buildQuery(['filter' => 'ready_up']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isProgUp ? 'bg-indigo-600 text-white shadow-indigo-600/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgUp ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Siap UP (&ge; 4 sesi)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgUp ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgUp ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['ready_up'] ?? 0 }}
                             </span>
                         </a>
 
                         <!-- Siap Sidang (≥ 8 sesi) -->
                         <a href="{{ $buildQuery(['filter' => 'ready_sidang']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isProgSidang ? 'bg-emerald-600 text-white shadow-emerald-600/20' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300' }}">
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgSidang ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Siap Sidang (&ge; 8 sesi)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgSidang ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgSidang ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['ready_sidang'] ?? 0 }}
                             </span>
                         </a>
@@ -352,12 +352,12 @@
                             $stalledCount = $stats['stalled'] ?? 0;
                         @endphp
                         <a href="{{ $buildQuery(['filter' => 'stalled']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all shadow-2xs {{ $isProgStalled ? 'bg-rose-600 text-white shadow-rose-600/20' : ($stalledCount > 0 ? 'bg-rose-50 text-rose-700 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/60' : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/70 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300') }}">
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgStalled ? 'bg-rose-600 text-white border-rose-600 shadow-rose-600/20' : ($stalledCount > 0 ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 dark:hover:bg-rose-900/60' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white') }}">
                             @if($stalledCount > 0 && !$isProgStalled)
                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                             @endif
                             <span>Macet (&gt; 14 hari)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgStalled ? 'bg-white/20 text-white' : ($stalledCount > 0 ? 'bg-rose-200/80 dark:bg-rose-900/80 text-rose-800 dark:text-rose-200' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300') }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgStalled ? 'bg-white/20 text-white' : ($stalledCount > 0 ? 'bg-rose-200 text-rose-800 dark:bg-rose-900/80 dark:text-rose-200' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700') }}">
                                 {{ $stalledCount }}
                             </span>
                         </a>
@@ -372,8 +372,8 @@
 
         <!-- ACTIVE FILTER TAGS BAR (Shown when any filter or search is active) -->
         @if($hasActiveFilters)
-            <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl text-xs">
-                <div class="flex items-center gap-2 flex-wrap text-orange-900 dark:text-orange-200 font-medium">
+            <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-orange-50/70 dark:bg-slate-900/80 border border-orange-200/80 dark:border-slate-700 rounded-2xl text-xs">
+                <div class="flex items-center gap-2 flex-wrap text-orange-900 dark:text-slate-200 font-medium">
                     <span class="font-bold flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -383,7 +383,7 @@
 
                     <!-- Role Filter Tag -->
                     @if(!empty($roleFilter) && $roleFilter !== 'all')
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-200 font-bold shadow-2xs">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-slate-700 text-orange-800 dark:text-orange-300 font-bold shadow-2xs">
                             <span>Peran: {{ $roleFilter === 'p1' ? 'Pembimbing 1' : 'Pembimbing 2' }}</span>
                             <a href="{{ $buildQuery(['role_filter' => 'all']) }}" class="text-orange-500 hover:text-orange-700 dark:hover:text-orange-300 font-black text-sm leading-none" title="Hapus filter peran">&times;</a>
                         </span>
@@ -391,7 +391,7 @@
 
                     <!-- Progress Category Tag -->
                     @if(!empty($filter) && $filter !== 'all')
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-200 font-bold shadow-2xs">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-slate-700 text-orange-800 dark:text-orange-300 font-bold shadow-2xs">
                             <span>Progres: 
                                 @if($filter === 'proposal') Tahap Proposal (&lt; 4 Sesi)
                                 @elseif($filter === 'ready_up') Siap UP (&ge; 4 Sesi)
@@ -406,7 +406,7 @@
 
                     <!-- Entry Year Tag -->
                     @if(!empty($entryYear) && $entryYear !== 'all')
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-200 font-bold shadow-2xs">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-slate-700 text-orange-800 dark:text-orange-300 font-bold shadow-2xs">
                             <span>Angkatan: {{ $entryYear }}</span>
                             <a href="{{ $buildQuery(['entry_year' => 'all']) }}" class="text-orange-500 hover:text-orange-700 dark:hover:text-orange-300 font-black text-sm leading-none" title="Hapus filter angkatan">&times;</a>
                         </span>
@@ -414,7 +414,7 @@
 
                     <!-- Search Tag -->
                     @if(!empty($search))
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-200 font-bold shadow-2xs">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-slate-700 text-orange-800 dark:text-orange-300 font-bold shadow-2xs">
                             <span>Pencarian: "{{ $search }}"</span>
                             <a href="{{ $buildQuery(['search' => null]) }}" class="text-orange-500 hover:text-orange-700 dark:hover:text-orange-300 font-black text-sm leading-none" title="Hapus pencarian">&times;</a>
                         </span>
@@ -422,7 +422,7 @@
                 </div>
 
                 <a href="{{ route('logbooks.index', array_filter(['status' => ($status ?? 'active') !== 'active' ? $status : null])) }}" 
-                   class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-300 font-bold rounded-xl border border-orange-200 dark:border-orange-700 transition-colors shadow-2xs">
+                   class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-slate-700 text-orange-700 dark:text-orange-300 font-bold rounded-xl border border-orange-200 dark:border-slate-700 transition-colors shadow-2xs">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     <span>Reset Semua</span>
                 </a>
