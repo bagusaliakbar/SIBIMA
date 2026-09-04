@@ -700,7 +700,7 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <a href="{{ route('theses.logbooks', $thesis->id) }}" 
-                                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 dark:hover:border-orange-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs group/btn">
+                                   class="inline-flex items-center gap-2 pl-5 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 dark:hover:border-orange-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs group/btn whitespace-nowrap">
                                     <span>Lihat Logbook</span>
                                     <svg class="w-3.5 h-3.5 text-slate-400 group-hover/btn:text-orange-500 group-hover/btn:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
