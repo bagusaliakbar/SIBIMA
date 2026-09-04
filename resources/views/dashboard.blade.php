@@ -417,6 +417,91 @@
             @endif
         </div>
 
+        <!-- Guidance Documents Quick Banner / Card -->
+        @php
+            $quickGuidanceDocs = \App\Models\GuidanceDocument::active()->latest()->take(3)->get();
+        @endphp
+        @if($quickGuidanceDocs->isNotEmpty())
+            <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent dark:from-orange-950/30 dark:via-slate-800/40 dark:to-slate-800/20 border border-orange-200/70 dark:border-orange-900/40 rounded-3xl p-6 mb-6 relative overflow-hidden backdrop-blur-xs">
+                <!-- Background decoration -->
+                <div class="absolute -top-16 -right-16 w-48 h-48 bg-orange-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-orange-600/20">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                                    Dokumen & Pedoman Skripsi Resmi
+                                </h3>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
+                                    Pusat Unduhan
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1 leading-relaxed max-w-2xl">
+                                Akses Buku Pedoman Penulisan Skripsi, format template Word/LaTeX, form bimbingan, dan berkas persyaratan seminar & sidang.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 self-start lg:self-center shrink-0">
+                        <a href="{{ route('guidance-documents.index') }}" 
+                           class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-orange-600/20 transition-all cursor-pointer">
+                            <span>Buka Semua Dokumen</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Featured / Pinned Documents Quick Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5 pt-5 border-t border-orange-200/50 dark:border-slate-700/60">
+                    @foreach($quickGuidanceDocs as $doc)
+                        <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl p-3.5 border border-slate-200/70 dark:border-slate-700 flex items-center justify-between gap-3 shadow-2xs hover:border-orange-400 dark:hover:border-orange-500/50 transition-all group">
+                            <div class="min-w-0 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 {{ $doc->file_extension === 'pdf' ? 'bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400' : ($doc->file_extension === 'zip' ? 'bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400' : 'bg-blue-100 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400') }}">
+                                    <span class="text-[9px] font-black uppercase">{{ $doc->file_extension }}</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" title="{{ $doc->title }}">
+                                        {{ $doc->title }}
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400 font-medium">
+                                        {{ $doc->formatted_file_size }} • {{ $doc->download_count }}x diunduh
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 shrink-0">
+                                @if($doc->file_extension === 'pdf')
+                                    <a href="{{ route('guidance-documents.view', $doc->id) }}" 
+                                       target="_blank" 
+                                       class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 rounded-lg transition-colors" 
+                                       title="Lihat PDF">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                    </a>
+                                @endif
+                                <a href="{{ route('guidance-documents.download', $doc->id) }}" 
+                                   class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 rounded-lg transition-colors" 
+                                   title="Unduh">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         @if(Auth::user()->role !== 'mahasiswa')
             @if(isset($earlyWarning) && $earlyWarning['total_inactive'] > 0)
                 <!-- Early Warning System: Deteksi Bimbingan Pasif / Macet (> 7 Hari) -->

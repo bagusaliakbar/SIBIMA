@@ -139,8 +139,19 @@ Route::middleware('auth')->group(function () {
     Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
     Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
 
+    // Guidance Documents (Accessible to all authenticated users)
+    Route::get('/guidance-documents', [App\Http\Controllers\GuidanceDocumentController::class, 'index'])->name('guidance-documents.index');
+    Route::get('/guidance-documents/{guidanceDocument}/download', [App\Http\Controllers\GuidanceDocumentController::class, 'download'])->name('guidance-documents.download');
+    Route::get('/guidance-documents/{guidanceDocument}/view', [App\Http\Controllers\GuidanceDocumentController::class, 'view'])->name('guidance-documents.view');
+
     // Admin & Kaprodi Routes
     Route::middleware(['role:admin,kaprodi'])->group(function () {
+        // Guidance Documents Management
+        Route::post('/guidance-documents', [App\Http\Controllers\GuidanceDocumentController::class, 'store'])->name('guidance-documents.store');
+        Route::match(['put', 'patch'], '/guidance-documents/{guidanceDocument}', [App\Http\Controllers\GuidanceDocumentController::class, 'update'])->name('guidance-documents.update');
+        Route::delete('/guidance-documents/{guidanceDocument}', [App\Http\Controllers\GuidanceDocumentController::class, 'destroy'])->name('guidance-documents.destroy');
+        Route::match(['post', 'patch'], '/guidance-documents/{guidanceDocument}/toggle', [App\Http\Controllers\GuidanceDocumentController::class, 'toggleStatus'])->name('guidance-documents.toggle');
+
         // Announcements
         Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
         Route::post('/announcements', [App\Http\Controllers\AnnouncementController::class, 'store'])->name('announcements.store');
