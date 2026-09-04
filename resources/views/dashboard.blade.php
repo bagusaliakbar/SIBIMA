@@ -461,7 +461,7 @@
                     <!-- Interactive Modal List of Inactive Students -->
                     <div x-show="openModal" 
                          x-cloak
-                         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" 
+                         class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5" 
                          x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="opacity-0"
                          x-transition:enter-end="opacity-100"
@@ -469,75 +469,124 @@
                          x-transition:leave-start="opacity-100"
                          x-transition:leave-end="opacity-0">
                         
-                        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-2xl relative max-h-[88vh] flex flex-col"
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-3xl w-full shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden my-auto border border-slate-200/80 dark:border-slate-700/80"
                              @click.away="openModal = false">
                             
-                            <!-- Modal Header -->
-                            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700/80">
-                                <div>
-                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
-                                        <span>⚠️ Peringatan Dini: Mahasiswa Belum Bimbingan</span>
-                                    </h3>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                        Daftar mahasiswa yang tidak melakukan bimbingan &gt; 7 hari. Klik tombol WhatsApp untuk mengirim pesan pengingat instan.
-                                    </p>
+                            <!-- Modal Header (Fixed at top) -->
+                            <div class="shrink-0 p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-700/80 flex items-start justify-between gap-4">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-rose-500/20">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                                                Mahasiswa Butuh Intervensi Bimbingan
+                                            </h3>
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300">
+                                                {{ $earlyWarning['total_inactive'] }} Mahasiswa
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                            Mahasiswa yang tidak melakukan bimbingan rutin (&gt; 7 hari). Klik <strong>Ingatkan WA</strong> untuk mengirim pesan pengingat instan.
+                                        </p>
+                                    </div>
                                 </div>
-                                <button type="button" @click="openModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                
+                                <button type="button" 
+                                        @click="openModal = false" 
+                                        class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/80 rounded-xl transition-colors cursor-pointer shrink-0"
+                                        title="Tutup Modal">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
 
-                            <!-- Filter Tabs in Modal -->
-                            <div class="flex items-center gap-2 py-3 border-b border-slate-100 dark:border-slate-700/80">
+                            <!-- Filter Tabs (Fixed at top) -->
+                            <div class="shrink-0 px-5 sm:px-6 py-3 bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700/80 flex items-center gap-2 overflow-x-auto custom-scrollbar">
                                 <button type="button" 
                                         @click="filterStatus = 'all'" 
-                                        :class="filterStatus === 'all' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300'"
-                                        class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                                    Semua ({{ $earlyWarning['total_inactive'] }})
+                                        :class="filterStatus === 'all' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 border border-slate-200 dark:border-slate-700'"
+                                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">
+                                    Semua Mahasiswa ({{ $earlyWarning['total_inactive'] }})
                                 </button>
                                 <button type="button" 
                                         @click="filterStatus = 'warning'" 
-                                        :class="filterStatus === 'warning' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60'"
-                                        class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                                    🟡 Pasif (8–14 hari): {{ $earlyWarning['warning_count'] }}
+                                        :class="filterStatus === 'warning' ? 'bg-amber-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60'"
+                                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                    <span>Pasif 8–14 Hari ({{ $earlyWarning['warning_count'] }})</span>
                                 </button>
                                 <button type="button" 
                                         @click="filterStatus = 'critical'" 
-                                        :class="filterStatus === 'critical' ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60'"
-                                        class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                                    🔴 Macet (&gt;14 hari): {{ $earlyWarning['critical_count'] }}
+                                        :class="filterStatus === 'critical' ? 'bg-rose-600 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60'"
+                                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                    <span>Macet &gt;14 Hari ({{ $earlyWarning['critical_count'] }})</span>
                                 </button>
                             </div>
 
-                            <!-- Students Table Container -->
-                            <div class="overflow-y-auto flex-1 my-3 pr-1 divide-y divide-slate-100 dark:divide-slate-700/60">
+                            <!-- Students Card List Container (Scrollable) -->
+                            <div class="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-3 custom-scrollbar">
                                 @foreach($earlyWarning['students'] as $st)
+                                    @php
+                                        $initials = collect(explode(' ', $st['student_name'] ?? ''))
+                                            ->filter()
+                                            ->take(2)
+                                            ->map(fn($part) => strtoupper(substr($part, 0, 1)))
+                                            ->implode('');
+                                        if (empty($initials)) $initials = 'M';
+                                        $hasValidTitle = !empty($st['title']) && $st['title'] !== 'Belum diketahui';
+                                    @endphp
                                     <div x-show="filterStatus === 'all' || filterStatus === '{{ $st['status'] }}'"
-                                         class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/70 dark:hover:bg-slate-700/30 px-3 rounded-2xl transition-colors">
-                                        <div class="space-y-1 max-w-xl">
-                                            <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="font-black text-xs text-slate-800 dark:text-slate-200 uppercase">{{ $st['student_name'] }}</span>
-                                                <span class="text-[10px] font-mono font-bold text-slate-400">({{ $st['student_npm'] }})</span>
-                                                
-                                                @if($st['status'] === 'critical')
-                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/25">
-                                                        🔴 Macet ({{ $st['days_inactive'] }} hari)
+                                         class="bg-slate-50/80 dark:bg-slate-900/50 hover:bg-slate-100/80 dark:hover:bg-slate-700/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 transition-all group">
+                                        <div class="min-w-0 flex items-start gap-3.5">
+                                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-200 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center font-bold text-xs text-slate-700 dark:text-slate-200 shrink-0 shadow-2xs">
+                                                {{ $initials }}
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="flex items-center gap-2 flex-wrap">
+                                                    <h4 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
+                                                        {{ ucwords(strtolower($st['student_name'])) }}
+                                                    </h4>
+                                                    <span class="text-[11px] font-mono text-slate-400 dark:text-slate-400 font-semibold">
+                                                        • {{ $st['student_npm'] }}
                                                     </span>
+                                                    
+                                                    @if(isset($st['role_text']))
+                                                        <span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+                                                            {{ $st['role_text'] }}
+                                                        </span>
+                                                    @elseif(isset($st['p1_name']))
+                                                        <span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300" title="Pembimbing 1">
+                                                            P1: {{ $st['p1_name'] }}
+                                                        </span>
+                                                    @endif
+
+                                                    @if($st['status'] === 'critical')
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                                            <span>Macet {{ $st['days_inactive'] }} hari</span>
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                            <span>Pasif {{ $st['days_inactive'] }} hari</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                
+                                                @if($hasValidTitle)
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-1 font-medium leading-relaxed" title="{{ $st['title'] }}">
+                                                        {{ $st['title'] }}
+                                                    </p>
                                                 @else
-                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/25">
-                                                        🟡 Pasif ({{ $st['days_inactive'] }} hari)
-                                                    </span>
-                                                @endif
-                                                
-                                                @if(isset($st['role_text']))
-                                                    <span class="text-[10px] text-slate-500 font-bold">[{{ $st['role_text'] }}]</span>
-                                                @elseif(isset($st['p1_name']))
-                                                    <span class="text-[10px] text-slate-500 font-bold" title="Pembimbing 1">[P1: {{ $st['p1_name'] }}]</span>
+                                                    <p class="text-xs text-slate-400 dark:text-slate-400 italic mt-1 font-medium">
+                                                        Belum ada judul skripsi diajukan
+                                                    </p>
                                                 @endif
                                             </div>
-                                            <p class="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-1 italic font-medium">
-                                                "{{ $st['title'] }}"
-                                            </p>
                                         </div>
 
                                         <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
@@ -545,27 +594,32 @@
                                                 <a href="{{ $st['wa_link'] }}" 
                                                    target="_blank" 
                                                    rel="noopener noreferrer"
-                                                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
-                                                   title="Kirim pengingat WhatsApp ke mahasiswa">
-                                                    <svg class="w-3.5 h-3.5 fill-current text-white" viewBox="0 0 24 24">
+                                                   class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+                                                   title="Kirim pesan WhatsApp ke {{ $st['student_name'] }}">
+                                                    <svg class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
                                                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                                                     </svg>
                                                     <span>Ingatkan WA</span>
                                                 </a>
                                             @else
-                                                <span class="text-[10px] text-slate-400 font-medium italic">No WA -</span>
+                                                <span class="text-[11px] text-slate-400 dark:text-slate-400 font-medium px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+                                                    No WA Tidak Tersedia
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
 
-                            <!-- Modal Footer -->
-                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
-                                <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'warning']) }}" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline">
-                                    Buka di Daftar Skripsi →
+                            <!-- Modal Footer (Fixed at bottom) -->
+                            <div class="shrink-0 px-5 sm:px-6 py-4 bg-slate-50/70 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'warning']) }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 hover:underline">
+                                    <span>Buka Semua di Daftar Monitoring Skripsi</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </a>
-                                <button type="button" @click="openModal = false" class="px-5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                                <button type="button" 
+                                        @click="openModal = false" 
+                                        class="px-5 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 rounded-xl text-xs font-bold transition-all cursor-pointer">
                                     Tutup
                                 </button>
                             </div>
