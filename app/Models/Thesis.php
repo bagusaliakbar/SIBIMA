@@ -61,7 +61,7 @@ class Thesis extends Model
     public function getDaysSinceLastMentoringAttribute(): ?int
     {
         if ($this->relationLoaded('latestCompletedMentoringSession') && $this->latestCompletedMentoringSession) {
-            return (int)now()->diffInDays($this->latestCompletedMentoringSession->scheduled_at);
+            return abs((int) now()->diffInDays($this->latestCompletedMentoringSession->scheduled_at, true));
         }
 
         $lastSession = $this->mentoringSessions()
@@ -71,10 +71,10 @@ class Thesis extends Model
             ->first();
 
         if ($lastSession && $lastSession->scheduled_at) {
-            return (int)now()->diffInDays($lastSession->scheduled_at);
+            return abs((int) now()->diffInDays($lastSession->scheduled_at, true));
         }
 
-        return $this->created_at ? (int)now()->diffInDays($this->created_at) : null;
+        return $this->created_at ? abs((int) now()->diffInDays($this->created_at, true)) : null;
     }
 
     public function getDaysSinceLastMentoringForDosen($dosenId): ?int
@@ -87,10 +87,10 @@ class Thesis extends Model
             ->first();
 
         if ($lastSession && $lastSession->scheduled_at) {
-            return (int)now()->diffInDays($lastSession->scheduled_at);
+            return abs((int) now()->diffInDays($lastSession->scheduled_at, true));
         }
 
-        return $this->created_at ? (int)now()->diffInDays($this->created_at) : null;
+        return $this->created_at ? abs((int) now()->diffInDays($this->created_at, true)) : null;
     }
 
     public function getMentoringHealthStatusAttribute(): string

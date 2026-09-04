@@ -72,7 +72,7 @@ class DashboardService
             $lastSession = MentoringSession::where('thesis_id', $thesis->id)
                 ->where('status', 'completed')->orderBy('scheduled_at', 'desc')->first();
             
-            $data['daysSinceLastSession'] = $lastSession ? (int)now()->diffInDays($lastSession->scheduled_at) : ($thesis->created_at ? (int)now()->diffInDays($thesis->created_at) : null);
+            $data['daysSinceLastSession'] = $lastSession ? abs((int)now()->diffInDays($lastSession->scheduled_at, true)) : ($thesis->created_at ? abs((int)now()->diffInDays($thesis->created_at, true)) : null);
             $data['isStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] > 7;
             $data['isCriticalStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] > 14;
 
