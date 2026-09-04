@@ -601,7 +601,7 @@
                                     <div class="space-y-1">
                                         <div class="flex items-center justify-between text-[10px] font-bold">
                                             <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $upPercent >= 100 || $hasMyAccUp ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $upPercent >= 100 || $hasMyAccUp ? 'bg-indigo-600 dark:bg-indigo-400' : ($upPercent > 0 ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-600') }}" style="background-color: {{ $upPercent >= 100 || $hasMyAccUp ? '#4f46e5' : ($upPercent > 0 ? '#6366f1' : '') }};"></span>
                                                 <span>Target UP</span>
                                             </span>
                                             <div class="flex items-center gap-1.5">
@@ -611,14 +611,15 @@
                                                         <span>ACC UP</span>
                                                     </span>
                                                 @endif
-                                                <span class="font-mono text-[10px] {{ $completedCount >= 4 || $isGraduated ? 'text-indigo-600 dark:text-indigo-400 font-black' : 'text-slate-500 dark:text-slate-400' }}">
+                                                <span class="font-mono text-[10px] {{ $completedCount >= 4 || $isGraduated ? 'text-indigo-600 dark:text-indigo-400 font-black' : ($completedCount > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
                                                     {{ $isGraduated ? '4/4' : min($completedCount, 4) . '/4' }} Sesi
+                                                    <span class="text-[9px] font-normal text-slate-400 dark:text-slate-500">({{ $upPercent }}%)</span>
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="w-full bg-slate-100 dark:bg-slate-700/70 rounded-full h-1.5 overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500 {{ $upPercent >= 100 ? 'bg-indigo-600 dark:bg-indigo-500' : ($upPercent > 0 ? 'bg-indigo-400 dark:bg-indigo-400' : 'bg-transparent') }}" 
-                                                 style="width: {{ $upPercent }}%"></div>
+                                        <div class="w-full bg-slate-100 dark:bg-slate-700/80 rounded-full h-2 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $upPercent >= 100 ? 'bg-indigo-600 dark:bg-indigo-500' : ($upPercent > 0 ? 'bg-indigo-500 dark:bg-indigo-400' : 'bg-transparent') }}" 
+                                                 style="width: {{ $upPercent }}%; background-color: {{ $upPercent >= 100 ? '#4f46e5' : ($upPercent > 0 ? '#6366f1' : 'transparent') }}; {{ $upPercent > 0 ? 'min-width: 6px;' : '' }}"></div>
                                         </div>
                                     </div>
 
@@ -626,7 +627,7 @@
                                     <div class="space-y-1">
                                         <div class="flex items-center justify-between text-[10px] font-bold">
                                             <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $sidangPercent >= 100 || $hasMyAccSidang ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $sidangPercent >= 100 || $hasMyAccSidang ? 'bg-emerald-600 dark:bg-emerald-400' : ($sidangPercent > 0 ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600') }}" style="background-color: {{ $sidangPercent >= 100 || $hasMyAccSidang ? '#059669' : ($sidangPercent > 0 ? '#10b981' : '') }};"></span>
                                                 <span>Target Sidang</span>
                                             </span>
                                             <div class="flex items-center gap-1.5">
@@ -636,14 +637,15 @@
                                                         <span>ACC Sidang</span>
                                                     </span>
                                                 @endif
-                                                <span class="font-mono text-[10px] {{ $completedCount >= 8 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-slate-500 dark:text-slate-400' }}">
+                                                <span class="font-mono text-[10px] {{ $completedCount >= 8 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : ($completedCount > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
                                                     {{ $isGraduated ? '8/8' : min($completedCount, 8) . '/8' }} Sesi
+                                                    <span class="text-[9px] font-normal text-slate-400 dark:text-slate-500">({{ $sidangPercent }}%)</span>
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="w-full bg-slate-100 dark:bg-slate-700/70 rounded-full h-1.5 overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500 {{ $sidangPercent >= 100 ? 'bg-emerald-600 dark:bg-emerald-500' : ($sidangPercent > 0 ? 'bg-emerald-400 dark:bg-emerald-400' : 'bg-transparent') }}" 
-                                                 style="width: {{ $sidangPercent }}%"></div>
+                                        <div class="w-full bg-slate-100 dark:bg-slate-700/80 rounded-full h-2 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $sidangPercent >= 100 ? 'bg-emerald-600 dark:bg-emerald-500' : ($sidangPercent > 0 ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-transparent') }}" 
+                                                 style="width: {{ $sidangPercent }}%; background-color: {{ $sidangPercent >= 100 ? '#059669' : ($sidangPercent > 0 ? '#10b981' : 'transparent') }}; {{ $sidangPercent > 0 ? 'min-width: 6px;' : '' }}"></div>
                                         </div>
                                     </div>
 
