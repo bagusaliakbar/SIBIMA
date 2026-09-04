@@ -387,12 +387,15 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6 max-w-xs whitespace-normal">
+                            <td class="py-4 px-6 max-w-sm whitespace-normal">
                                 @if($thesis->final_title)
-                                    <div class="font-bold text-slate-800 dark:text-slate-100 line-clamp-2 mb-1 uppercase text-xs leading-tight" title="{{ $thesis->final_title }}">{{ $thesis->final_title }}</div>
-                                    <div class="text-[9px] text-orange-600 dark:text-orange-400 font-bold bg-orange-50 dark:bg-orange-500/15 inline-block px-2 py-0.5 rounded-lg border border-orange-200/60 dark:border-orange-500/25 uppercase tracking-tighter italic mb-1">Rencana awal: {{ $thesis->title }}</div>
+                                    <div class="font-bold text-slate-900 dark:text-white line-clamp-2 text-xs sm:text-sm leading-snug tracking-tight" title="{{ $thesis->final_title }}">{{ $thesis->final_title }}</div>
+                                    <div class="mt-1 flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400" title="Rencana awal: {{ $thesis->title }}">
+                                        <span class="text-amber-500 shrink-0 font-bold">↳</span>
+                                        <span class="italic line-clamp-1">Awal: {{ $thesis->title }}</span>
+                                    </div>
                                 @else
-                                    <div class="font-semibold text-slate-700 dark:text-slate-300 line-clamp-2 uppercase text-[11px] leading-tight" title="{{ $thesis->title }}">{{ $thesis->title }}</div>
+                                    <div class="font-bold text-slate-900 dark:text-white line-clamp-2 text-xs sm:text-sm leading-snug tracking-tight" title="{{ $thesis->title }}">{{ $thesis->title }}</div>
                                 @endif
 
                                 @php
@@ -403,31 +406,31 @@
                                     $simMatches = $hasValidTitle ? $thesis->getDetailedSimilarityMatches() : collect();
                                 @endphp
                                 @if($hasValidTitle)
-                                    <div class="mt-1.5 inline-block">
+                                    <div class="mt-2 inline-block">
                                         <button @click='$dispatch("open-audit-modal", {
                                             student: "{{ addslashes($thesis->student->name) }}",
                                             npm: "{{ $thesis->student->identifier }}",
                                             title: "{{ addslashes($rawTitle) }}",
                                             score: {{ $simScore }},
                                             matches: {{ json_encode($simMatches->values()->toArray()) }}
-                                        })' class="group focus:outline-hidden">
+                                        })' class="group focus:outline-hidden cursor-pointer">
                                             @if($simScore >= 66)
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-tighter bg-rose-50 text-rose-700 border border-rose-200/80 dark:bg-rose-500/15 dark:border-rose-500/25 dark:text-rose-300 group-hover:bg-rose-100 dark:group-hover:bg-rose-500/25 transition-all shadow-2xs cursor-pointer" title="Klik untuk lihat rincian data kemiripan">
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 hover:bg-rose-500/20 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
-                                                    <span>🔴 {{ $simScore }}% Sangat Mirip</span>
-                                                    <svg class="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <span>{{ $simScore }}% Sangat Mirip</span>
+                                                    <svg class="w-3 h-3 opacity-60 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                 </span>
                                             @elseif($simScore >= 35)
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-tighter bg-amber-50 text-amber-800 border border-amber-200/80 dark:bg-amber-500/15 dark:border-amber-500/25 dark:text-amber-300 group-hover:bg-amber-100 dark:group-hover:bg-amber-500/25 transition-all shadow-2xs cursor-pointer" title="Klik untuk lihat rincian data kemiripan">
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 hover:bg-amber-500/20 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
-                                                    <span>🟧 {{ $simScore }}% Mirip</span>
-                                                    <svg class="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <span>{{ $simScore }}% Kemiripan</span>
+                                                    <svg class="w-3 h-3 opacity-60 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-tighter bg-emerald-50 text-emerald-800 border border-emerald-200/80 dark:bg-emerald-500/15 dark:border-emerald-500/25 dark:text-emerald-300 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/25 transition-all shadow-2xs cursor-pointer" title="Klik untuk lihat rincian data kemiripan">
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                                    <span>🟢 {{ 100 - $simScore }}% Unik</span>
-                                                    <svg class="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <span>{{ 100 - $simScore }}% Unik</span>
+                                                    <svg class="w-3 h-3 opacity-60 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                 </span>
                                             @endif
                                         </button>
@@ -437,10 +440,10 @@
                             <td class="py-4 px-6 max-w-[14rem] whitespace-normal" x-data="{ openAbstract: false }">
                                 @if($thesis->abstract)
                                     <div class="relative">
-                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed uppercase font-medium tracking-tight italic">"{{ Str::limit($thesis->abstract, 80) }}"</p>
-                                        <button @click="openAbstract = true" class="text-[9px] text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-bold uppercase tracking-wider mt-1.5 flex items-center transition-all hover:translate-x-0.5 cursor-pointer">
-                                            <span>Lihat Detail</span>
-                                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed font-normal">"{{ Str::limit($thesis->abstract, 90) }}"</p>
+                                        <button @click="openAbstract = true" class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold mt-1.5 flex items-center gap-1 group/btn transition-colors cursor-pointer">
+                                            <span>Lihat Detail Lengkap</span>
+                                            <svg class="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                         </button>
                                     </div>
 
@@ -455,7 +458,7 @@
                                                 <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
                                                     <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                                                         <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
-                                                        <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                                                        <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
                                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                         </button>
                                                     </div>
@@ -472,7 +475,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                                                        <button type="button" @click="openAbstract = false" class="px-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm">
+                                                        <button type="button" @click="openAbstract = false" class="px-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm cursor-pointer">
                                                             Tutup
                                                         </button>
                                                     </div>
@@ -485,10 +488,24 @@
                                 @endif
                             </td>
                             <td class="py-4 px-6 text-center">
-                                <div class="flex flex-col items-center gap-1.5">
-                                    <x-status-badge 
-                                        :type="$thesis->status === 'active' ? 'orange' : ($thesis->status === 'completed' ? 'emerald' : 'slate')" 
-                                        :label="$thesis->status === 'active' ? 'AKTIF' : ($thesis->status === 'completed' ? 'LULUS' : 'MENUNGGU')" />
+                                <div class="flex flex-col items-center gap-2">
+                                    <!-- Main Status Pill -->
+                                    @if($thesis->status === 'active')
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            <span>Aktif</span>
+                                        </span>
+                                    @elseif($thesis->status === 'completed')
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            <span>Lulus</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-500/10 text-slate-700 dark:text-slate-300">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                            <span>{{ ucfirst($thesis->status) }}</span>
+                                        </span>
+                                    @endif
                                     
                                     @php
                                         $hasSeminar = ($thesis->status === 'completed')
@@ -499,30 +516,46 @@
                                             || \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists()
                                             || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists();
                                     @endphp
-                                    <div class="flex flex-col gap-1 mt-1 w-full max-w-[110px]">
+                                    <!-- Milestone Chips (Inline Pills, clean & compact) -->
+                                    <div class="flex items-center justify-center gap-1 flex-wrap">
                                         @if($hasSeminar)
-                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-500/25 shadow-xs">SEMINAR: SUDAH</span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-500/10 text-teal-700 dark:text-teal-300" title="Seminar Proposal: Selesai">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                <span>Sem: Sudah</span>
+                                            </span>
                                         @else
-                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-slate-100/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/60 shadow-xs">SEMINAR: BELUM</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" title="Seminar Proposal: Belum">
+                                                Sem: Belum
+                                            </span>
                                         @endif
 
                                         @if($hasDefense)
-                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-500/25 shadow-xs">SIDANG: SUDAH</span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-700 dark:text-blue-300" title="Sidang Skripsi: Selesai">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                <span>Sidang: Sudah</span>
+                                            </span>
                                         @else
-                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-slate-100/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/60 shadow-xs">SIDANG: BELUM</span>
-                                        @endif
-
-                                        @if($thesis->status === 'active')
-                                            @php
-                                                $healthBadge = $thesis->mentoring_health_badge;
-                                            @endphp
-                                            <span class="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-tight border shadow-2xs {{ $healthBadge['bg_class'] }}"
-                                                  title="Aktivitas Bimbingan: Terakhir bimbingan {{ $thesis->days_since_last_mentoring ?? 0 }} hari lalu">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $healthBadge['color'] === 'rose' ? 'bg-rose-500 animate-pulse' : ($healthBadge['color'] === 'amber' ? 'bg-amber-500' : 'bg-emerald-500') }}"></span>
-                                                <span>{{ $healthBadge['label'] }}</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" title="Sidang Skripsi: Belum">
+                                                Sidang: Belum
                                             </span>
                                         @endif
                                     </div>
+
+                                    @if($thesis->status === 'active')
+                                        @php
+                                            $healthBadge = $thesis->mentoring_health_badge;
+                                            $healthColor = $healthBadge['color'] ?? 'emerald';
+                                            $healthBgClass = $healthColor === 'rose' 
+                                                ? 'bg-rose-500/10 text-rose-700 dark:text-rose-300' 
+                                                : ($healthColor === 'amber' ? 'bg-amber-500/10 text-amber-700 dark:text-amber-300' : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300');
+                                            $healthDotClass = $healthColor === 'rose' ? 'bg-rose-500 animate-pulse' : ($healthColor === 'amber' ? 'bg-amber-500' : 'bg-emerald-500');
+                                        @endphp
+                                        <span class="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $healthBgClass }}"
+                                              title="Aktivitas Bimbingan: Terakhir bimbingan {{ $thesis->days_since_last_mentoring ?? 0 }} hari lalu">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $healthDotClass }}"></span>
+                                            <span>{{ $healthBadge['label'] }}</span>
+                                        </span>
+                                    @endif
                                 </div>
                             </td>
                             
