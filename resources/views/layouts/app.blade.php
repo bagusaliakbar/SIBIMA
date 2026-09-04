@@ -602,15 +602,13 @@
                             </button>
 
                             <div x-data="notificationDropdown()" x-init="init()" class="relative">
-                                <button x-ref="button" @click="toggle()" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all cursor-pointer" title="Notifikasi">
-                                    <div class="relative flex items-center justify-center">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                                        <template x-if="unreadCount > 0">
-                                            <span class="absolute -top-1.5 -right-2 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-800 leading-none select-none shadow-xs">
-                                                <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
-                                            </span>
-                                        </template>
-                                    </div>
+                                <button x-ref="button" @click="toggle()" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                    <template x-if="unreadCount > 0">
+                                        <span style="top: 5px; right: 5px;" class="absolute flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white border-2 border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
+                                            <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
+                                        </span>
+                                    </template>
                                 </button>
 
                                 <!-- Dropdown Panel (Clean, Spacious, Beautiful Original Layout) -->
