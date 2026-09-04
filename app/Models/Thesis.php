@@ -341,7 +341,7 @@ class Thesis extends Model
                         })->where('created_at', '>=', $sevenDaysAgo);
                     });
                 });
-        } elseif ($health === 'warning') {
+        } elseif ($health === 'warning' || $health === 'pasif') {
             // Pasif: 8 - 14 hari
             return $query->where('status', 'active')
                 ->where(function($q) use ($sevenDaysAgo, $fourteenDaysAgo) {
@@ -361,7 +361,7 @@ class Thesis extends Model
                         })->whereBetween('created_at', [$fourteenDaysAgo, $sevenDaysAgo]);
                     });
                 });
-        } elseif ($health === 'critical') {
+        } elseif ($health === 'critical' || $health === 'stalled' || $health === 'macet') {
             // Macet: > 14 hari
             return $query->where('status', 'active')
                 ->where(function($q) use ($fourteenDaysAgo) {
