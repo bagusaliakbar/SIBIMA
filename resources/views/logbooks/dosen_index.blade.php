@@ -666,20 +666,12 @@
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
                                                     <span>🎓 Lulus</span>
                                                 </span>
-                                            @elseif($hasMyAccSidang)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
-                                                    <span>✅ ACC Sidang</span>
-                                                </span>
-                                            @elseif($completedCount >= 8)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
+                                            @elseif($completedCount >= 8 && !$hasMyAccSidang)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800" title="Mahasiswa telah menyelesaikan minimal 8 sesi bimbingan, siap untuk di-ACC Sidang">
                                                     <span>🟢 Siap Sidang</span>
                                                 </span>
-                                            @elseif($hasMyAccUp)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
-                                                    <span>✅ ACC UP</span>
-                                                </span>
-                                            @elseif($completedCount >= 4)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
+                                            @elseif($completedCount >= 4 && !$hasMyAccUp)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800" title="Mahasiswa telah menyelesaikan minimal 4 sesi bimbingan, siap untuk di-ACC Seminar">
                                                     <span>🔵 Siap UP</span>
                                                 </span>
                                             @elseif($completedCount === 0)
