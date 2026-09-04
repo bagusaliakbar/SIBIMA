@@ -129,6 +129,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/logbooks', [App\Http\Controllers\LogbookController::class, 'index'])->name('logbooks.index');
     Route::get('/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('logbooks.export-pdf');
     Route::get('/theses/{thesis}/logbooks', [App\Http\Controllers\LogbookController::class, 'show'])->name('theses.logbooks');
+    Route::get('/theses/{thesis}/logbooks/quick-preview', [App\Http\Controllers\LogbookController::class, 'quickPreview'])->name('theses.logbooks.quick-preview');
     Route::get('/theses/{thesis}/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('theses.logbooks.export-pdf');
 
     // Seminar & Defense Schedules (Accessible by Admin, Kaprodi, and Dosen)

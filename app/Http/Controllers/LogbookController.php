@@ -307,6 +307,83 @@ class LogbookController extends Controller
         return view('logbooks.show', compact('thesis', 'activeSessions', 'completedSessions'));
     }
 
+    public function quickPreview(Thesis $thesis)
+    {
+        $user = Auth::user();
+        $isAuthorized = $user->role === 'admin' 
+            || $user->role === 'kaprodi' 
+            || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id))
+            || ($user->role === 'mahasiswa' && $thesis->student_id === $user->id);
+
+        if (!$isAuthorized) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
+
+        $sessionsQuery = MentoringSession::where('thesis_id', $thesis->id)
+            ->where('status', 'completed')
+            ->where('is_absent', false);
+
+        if ($user->role === 'dosen') {
+            $sessionsQuery->where('dosen_id', $user->id);
+        }
+
+        $totalCompleted = (clone $sessionsQuery)->count();
+
+        $recentSessions = $sessionsQuery
+            ->with('dosen:id,name')
+            ->orderBy('scheduled_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        $formattedSessions = $recentSessions->map(function ($session, $index) use ($totalCompleted) {
+            $scheduledDate = $session->scheduled_at ? \Carbon\Carbon::parse($session->scheduled_at) : null;
+            $timeAgo = '-';
+            $scheduledFormatted = '-';
+
+            if ($scheduledDate) {
+                if ($scheduledDate->isToday()) {
+                    $timeAgo = 'Hari ini';
+                } elseif ($scheduledDate->isYesterday()) {
+                    $timeAgo = 'Kemarin';
+                } else {
+                    $days = (int) $scheduledDate->copy()->startOfDay()->diffInDays(now()->startOfDay());
+                    $timeAgo = "{$days} hari lalu";
+                }
+                $scheduledFormatted = $scheduledDate->isoFormat('D MMMM Y • HH:mm') . ' WIB';
+            }
+
+            return [
+                'id' => $session->id,
+                'session_number' => $totalCompleted - $index,
+                'topic' => $session->topic ?: 'Bimbingan Skripsi',
+                'scheduled_at' => $scheduledFormatted,
+                'time_ago' => $timeAgo,
+                'type' => $session->type,
+                'location' => $session->location,
+                'feedback' => $session->feedback,
+                'notes' => $session->notes,
+                'dosen_name' => $session->dosen ? $session->dosen->name : '-',
+                'has_document' => !empty($session->document_path),
+                'document_name' => $session->document_original_name,
+            ];
+        });
+
+        return response()->json([
+            'thesis_id' => $thesis->id,
+            'student_name' => $thesis->student ? $thesis->student->name : '-',
+            'student_identifier' => $thesis->student ? ($thesis->student->identifier ?? '-') : '-',
+            'student_avatar' => $thesis->student ? $thesis->student->avatar_url : null,
+            'student_phone' => $thesis->student ? $thesis->student->phone_number : null,
+            'thesis_title' => $thesis->final_title ?? $thesis->title,
+            'thesis_status' => $thesis->status,
+            'total_completed' => $totalCompleted,
+            'full_logbook_url' => route('theses.logbooks', $thesis->id),
+            'sessions' => $formattedSessions,
+        ]);
+    }
+
     public function exportPdf(Request $request, Thesis $thesis = null)
     {
         $user = Auth::user();

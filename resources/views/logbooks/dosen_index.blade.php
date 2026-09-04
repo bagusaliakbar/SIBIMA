@@ -698,14 +698,29 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6 text-right">
-                                <a href="{{ route('theses.logbooks', $thesis->id) }}" 
-                                   class="inline-flex items-center gap-2 pl-5 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 dark:hover:border-orange-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs group/btn whitespace-nowrap">
-                                    <span>Lihat Logbook</span>
-                                    <svg class="w-3.5 h-3.5 text-slate-400 group-hover/btn:text-orange-500 group-hover/btn:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
+                            <td class="py-4 px-6 text-right whitespace-nowrap">
+                                <div class="inline-flex items-center gap-1.5 justify-end">
+                                    <!-- Tombol Pintasan Intip Riwayat (Quick Preview) -->
+                                    <button type="button" 
+                                            @click="$dispatch('open-logbook-preview', { thesisId: {{ $thesis->id }} })"
+                                            class="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-orange-50 hover:text-orange-600 dark:bg-slate-800 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs group/btn cursor-pointer"
+                                            title="Intip Riwayat Bimbingan Terakhir (3-5 Sesi)">
+                                        <svg class="w-4 h-4 text-slate-400 group-hover/btn:text-orange-500 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <span class="hidden sm:inline">Intip</span>
+                                    </button>
+
+                                    <!-- Tombol Lihat Logbook Lengkap -->
+                                    <a href="{{ route('theses.logbooks', $thesis->id) }}" 
+                                       class="inline-flex items-center gap-2 pl-4 pr-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 dark:hover:border-orange-800 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs group/btn whitespace-nowrap">
+                                        <span>Logbook</span>
+                                        <svg class="w-3.5 h-3.5 text-slate-400 group-hover/btn:text-orange-500 group-hover/btn:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -740,4 +755,258 @@
             </table>
         </x-table-card>
     </div>
+
+    <!-- Quick Preview Slide-over Drawer (Alpine.js) -->
+    <div x-data="quickPreviewDrawer()" 
+         @open-logbook-preview.window="fetchPreview($event.detail.thesisId)"
+         @keydown.escape.window="if(open) closeDrawer()"
+         class="relative"
+         x-cloak>
+        <template x-teleport="body">
+            <div x-show="open" class="relative" style="z-index: 99999 !important;">
+                <!-- Backdrop -->
+                <div x-show="open"
+                     x-transition:enter="ease-in-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="ease-in-out duration-300"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     @click="closeDrawer()"
+                     class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"></div>
+
+                <!-- Slide-over Container -->
+                <div class="fixed inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
+                    <div x-show="open"
+                         x-transition:enter="transform transition ease-in-out duration-300 sm:duration-400"
+                         x-transition:enter-start="translate-x-full"
+                         x-transition:enter-end="translate-x-0"
+                         x-transition:leave="transform transition ease-in-out duration-300 sm:duration-400"
+                         x-transition:leave-start="translate-x-0"
+                         x-transition:leave-end="translate-x-full"
+                         class="w-screen max-w-md sm:max-w-lg bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col h-full relative">
+
+                        <!-- Drawer Header -->
+                        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 flex items-start justify-between shrink-0">
+                            <div class="flex items-center gap-3 min-w-0 pr-3">
+                                <div class="w-10 h-10 rounded-2xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-800 flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight">Intip Logbook</h3>
+                                        <span x-show="data && data.total_completed !== undefined" 
+                                              class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                                              x-text="(data ? data.total_completed : 0) + ' Sesi Selesai'"></span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">3–5 sesi bimbingan terakhir beserta arahan revisi</p>
+                                </div>
+                            </div>
+                            <button type="button"
+                                    @click="closeDrawer()" 
+                                    class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                                    title="Tutup (Esc)">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Student Profile Banner (When Loaded) -->
+                        <template x-if="data">
+                            <div class="px-5 py-3.5 bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200/70 dark:border-slate-700/60 flex items-center justify-between gap-3 shrink-0">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <template x-if="data.student_avatar">
+                                        <img :src="data.student_avatar" :alt="data.student_name" class="w-9 h-9 rounded-full object-cover border border-slate-300 dark:border-slate-600 shrink-0 shadow-2xs">
+                                    </template>
+                                    <template x-if="!data.student_avatar">
+                                        <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0" x-text="data.student_name ? data.student_name.charAt(0).toUpperCase() : 'M'"></div>
+                                    </template>
+                                    <div class="min-w-0">
+                                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate" x-text="data.student_name"></h4>
+                                        <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + data.student_identifier"></p>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                          :class="data.thesis_status === 'completed' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'"
+                                          x-text="data.thesis_status === 'completed' ? 'Lulus' : 'Bimbingan Aktif'"></span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Content Body (Scrollable) -->
+                        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+
+                            <!-- Skeleton Loading State -->
+                            <div x-show="loading" class="space-y-4 animate-pulse">
+                                <div class="flex items-center gap-3 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50">
+                                    <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                                    <div class="space-y-1.5 flex-1">
+                                        <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                                        <div class="h-2.5 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
+                                    </div>
+                                </div>
+                                <div class="space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800">
+                                    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                                    <div class="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+                                    <div class="h-16 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                                </div>
+                                <div class="space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800">
+                                    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                                    <div class="h-3.5 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+                                    <div class="h-16 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                                </div>
+                            </div>
+
+                            <!-- Error State -->
+                            <div x-show="!loading && error" class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs">
+                                <div class="font-bold mb-1">Gagal Memuat Data</div>
+                                <p x-text="error"></p>
+                            </div>
+
+                            <!-- Empty State (0 Sessions) -->
+                            <div x-show="!loading && !error && data && data.sessions && data.sessions.length === 0" 
+                                 class="py-12 text-center space-y-3">
+                                <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <div class="font-bold text-sm text-slate-700 dark:text-slate-300">Belum Ada Sesi Bimbingan Selesai</div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto leading-relaxed">
+                                    Mahasiswa ini belum memiliki catatan riwayat bimbingan yang telah dituntaskan dan diverifikasi.
+                                </p>
+                            </div>
+
+                            <!-- Timeline List of Sessions (Loaded) -->
+                            <div x-show="!loading && !error && data && data.sessions && data.sessions.length > 0" 
+                                 class="space-y-6">
+
+                                <!-- Thesis Title Card -->
+                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Judul Skripsi</span>
+                                    <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed" x-text="data ? data.thesis_title : ''"></p>
+                                </div>
+
+                                <div class="relative border-l-2 border-slate-200 dark:border-slate-700 ml-3 space-y-6">
+                                    <template x-for="session in (data ? data.sessions : [])" :key="session.id">
+                                        <div class="relative pl-6">
+                                            <!-- Timeline Dot -->
+                                            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-orange-500 ring-4 ring-white dark:ring-slate-900 shadow-xs"></div>
+
+                                            <!-- Session Header -->
+                                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                                                          x-text="'Sesi #' + session.session_number"></span>
+                                                    <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500" x-text="'• ' + session.time_ago"></span>
+                                                </div>
+                                                <span class="text-[10px] font-mono text-slate-500 dark:text-slate-400" x-text="session.scheduled_at"></span>
+                                            </div>
+
+                                            <!-- Topic & Type -->
+                                            <div class="space-y-1 mb-2.5">
+                                                <h5 class="text-sm font-bold text-slate-800 dark:text-slate-100" x-text="session.topic"></h5>
+                                                <div class="flex items-center gap-2 text-[10px]">
+                                                    <span class="inline-flex items-center px-1.5 py-0.2 rounded font-semibold"
+                                                          :class="session.type === 'online' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'"
+                                                          x-text="session.type === 'online' ? 'Online' : 'Offline'"></span>
+                                                    <span x-show="session.location" class="text-slate-500 dark:text-slate-400 truncate max-w-[200px]" x-text="session.location"></span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Feedback Pembimbing Box (Primary) -->
+                                            <div class="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/50 space-y-1.5">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                                                        <span>📝 Catatan & Arahan Pembimbing</span>
+                                                    </div>
+                                                    <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500" x-text="session.dosen_name"></span>
+                                                </div>
+                                                <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic whitespace-pre-wrap"
+                                                   x-text="session.feedback ? session.feedback : 'Tidak ada catatan khusus pada sesi ini.'"></p>
+                                            </div>
+
+                                            <!-- Student Notes (If Any) -->
+                                            <template x-if="session.notes">
+                                                <div class="mt-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 text-[11px] text-slate-600 dark:text-slate-400 space-y-0.5">
+                                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Catatan Mahasiswa:</span>
+                                                    <p class="italic" x-text="session.notes"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex items-center justify-between gap-3 shrink-0">
+                            <button type="button" 
+                                    @click="closeDrawer()" 
+                                    class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer">
+                                Tutup
+                            </button>
+
+                            <template x-if="data && data.full_logbook_url">
+                                <a :href="data.full_logbook_url" 
+                                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] cursor-pointer whitespace-nowrap">
+                                    <span>Buka Logbook Lengkap</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script>
+        function quickPreviewDrawer() {
+            return {
+                open: false,
+                loading: false,
+                error: null,
+                data: null,
+
+                async fetchPreview(thesisId) {
+                    this.open = true;
+                    this.loading = true;
+                    this.error = null;
+                    this.data = null;
+                    document.body.classList.add('overflow-hidden');
+
+                    try {
+                        const res = await fetch(`/theses/${thesisId}/logbooks/quick-preview`, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (!res.ok) {
+                            const errData = await res.json().catch(() => ({}));
+                            throw new Error(errData.error || 'Gagal memuat riwayat logbook.');
+                        }
+                        this.data = await res.json();
+                    } catch (e) {
+                        this.error = e.message || 'Terjadi kesalahan saat mengambil riwayat bimbingan.';
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                closeDrawer() {
+                    this.open = false;
+                    document.body.classList.remove('overflow-hidden');
+                }
+            }
+        }
+    </script>
 </x-app-layout>
