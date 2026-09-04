@@ -29,42 +29,72 @@
             
             <!-- Category Filter Tabs -->
             <div class="flex items-center gap-2.5 overflow-x-auto custom-scrollbar pb-1 md:pb-0">
+                <!-- Tab: Semua Dokumen -->
                 <a href="{{ route('guidance-documents.index', ['category' => 'all', 'search' => $search]) }}"
-                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'all' ? 'bg-slate-900 text-white dark:bg-orange-600 dark:text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/40' }}">
-                    <span>📚 Semua Dokumen</span>
-                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">
+                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'all' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20 border border-orange-500' : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 border border-slate-200/80 dark:border-slate-700' }}">
+                    @if(($category ?? 'all') === 'all')
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    @else
+                        <svg class="w-4 h-4 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    @endif
+                    <span>Semua Dokumen</span>
+                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-700' }}">
                         {{ $categoryCounts['all'] ?? 0 }}
                     </span>
                 </a>
 
+                <!-- Tab: Buku Panduan -->
                 <a href="{{ route('guidance-documents.index', ['category' => 'panduan_skripsi', 'search' => $search]) }}"
-                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'panduan_skripsi' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/40' }}">
-                    <span>📖 Buku Panduan</span>
-                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'panduan_skripsi' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">
+                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'panduan_skripsi' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 border border-indigo-500' : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 border border-slate-200/80 dark:border-slate-700' }}">
+                    @if(($category ?? 'all') === 'panduan_skripsi')
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    @else
+                        <svg class="w-4 h-4 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    @endif
+                    <span>Buku Panduan</span>
+                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'panduan_skripsi' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-700' }}">
                         {{ $categoryCounts['panduan_skripsi'] ?? 0 }}
                     </span>
                 </a>
 
+                <!-- Tab: Template Dokumen -->
                 <a href="{{ route('guidance-documents.index', ['category' => 'format_template', 'search' => $search]) }}"
-                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'format_template' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/40' }}">
-                    <span>📝 Template Dokumen</span>
-                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'format_template' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">
+                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'format_template' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 border border-emerald-500' : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 border border-slate-200/80 dark:border-slate-700' }}">
+                    @if(($category ?? 'all') === 'format_template')
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    @else
+                        <svg class="w-4 h-4 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    @endif
+                    <span>Template Dokumen</span>
+                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'format_template' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-700' }}">
                         {{ $categoryCounts['format_template'] ?? 0 }}
                     </span>
                 </a>
 
+                <!-- Tab: Pedoman Bimbingan -->
                 <a href="{{ route('guidance-documents.index', ['category' => 'pedoman_bimbingan', 'search' => $search]) }}"
-                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'pedoman_bimbingan' ? 'bg-amber-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/40' }}">
-                    <span>⚖️ Pedoman Bimbingan</span>
-                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'pedoman_bimbingan' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">
+                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'pedoman_bimbingan' ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20 border border-amber-500' : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 border border-slate-200/80 dark:border-slate-700' }}">
+                    @if(($category ?? 'all') === 'pedoman_bimbingan')
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                    @else
+                        <svg class="w-4 h-4 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                    @endif
+                    <span>Pedoman Bimbingan</span>
+                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'pedoman_bimbingan' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-700' }}">
                         {{ $categoryCounts['pedoman_bimbingan'] ?? 0 }}
                     </span>
                 </a>
 
+                <!-- Tab: Berkas Pendukung -->
                 <a href="{{ route('guidance-documents.index', ['category' => 'lainnya', 'search' => $search]) }}"
-                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'lainnya' ? 'bg-slate-700 text-white dark:bg-slate-600 dark:text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/60 dark:border-slate-600/40' }}">
-                    <span>📁 Berkas Pendukung</span>
-                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'lainnya' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">
+                   class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'lainnya' ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20 border border-blue-500' : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 border border-slate-200/80 dark:border-slate-700' }}">
+                    @if(($category ?? 'all') === 'lainnya')
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
+                    @else
+                        <svg class="w-4 h-4 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/></svg>
+                    @endif
+                    <span>Berkas Pendukung</span>
+                    <span class="ml-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold {{ ($category ?? 'all') === 'lainnya' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-700' }}">
                         {{ $categoryCounts['lainnya'] ?? 0 }}
                     </span>
                 </a>
