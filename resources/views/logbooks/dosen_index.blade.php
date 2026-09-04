@@ -887,55 +887,65 @@
                                  class="space-y-6">
 
                                 <!-- Thesis Title Card -->
-                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Judul Skripsi</span>
-                                    <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed" x-text="data ? data.thesis_title : ''"></p>
+                                <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 shadow-2xs">
+                                    <div class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                        <span>Judul Skripsi</span>
+                                    </div>
+                                    <p class="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-slate-100 leading-relaxed" x-text="data ? data.thesis_title : ''"></p>
                                 </div>
 
-                                <div class="relative border-l-2 border-slate-200 dark:border-slate-700 ml-3 space-y-6">
+                                <div class="relative border-l-2 border-slate-200 dark:border-slate-700/80 ml-3.5 sm:ml-4 space-y-8 pb-4">
                                     <template x-for="session in (data ? data.sessions : [])" :key="session.id">
-                                        <div class="relative pl-6">
+                                        <div class="relative pl-7 sm:pl-8">
                                             <!-- Timeline Dot -->
                                             <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-orange-500 ring-4 ring-white dark:ring-slate-900 shadow-xs"></div>
 
                                             <!-- Session Header -->
-                                            <div class="flex items-center justify-between gap-2 mb-1.5">
-                                                <div class="flex items-center gap-1.5">
-                                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                                            <div class="flex items-center justify-between gap-2 mb-2">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="px-2.5 py-0.5 rounded-md text-[10px] font-black bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
                                                           x-text="'Sesi #' + session.session_number"></span>
-                                                    <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500" x-text="'• ' + session.time_ago"></span>
+                                                    <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-400" x-text="'• ' + session.time_ago"></span>
                                                 </div>
-                                                <span class="text-[10px] font-mono text-slate-500 dark:text-slate-400" x-text="session.scheduled_at"></span>
+                                                <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="session.scheduled_at"></span>
                                             </div>
 
                                             <!-- Topic & Type -->
-                                            <div class="space-y-1 mb-2.5">
-                                                <h5 class="text-sm font-bold text-slate-800 dark:text-slate-100" x-text="session.topic"></h5>
-                                                <div class="flex items-center gap-2 text-[10px]">
-                                                    <span class="inline-flex items-center px-1.5 py-0.2 rounded font-semibold"
-                                                          :class="session.type === 'online' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'"
+                                            <div class="space-y-1.5 mb-3">
+                                                <h5 class="text-sm sm:text-[15px] font-bold text-slate-900 dark:text-white leading-snug" x-text="session.topic"></h5>
+                                                <div class="flex items-center gap-2 text-xs">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded font-semibold text-[10px]"
+                                                          :class="session.type === 'online' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'"
                                                           x-text="session.type === 'online' ? 'Online' : 'Offline'"></span>
-                                                    <span x-show="session.location" class="text-slate-500 dark:text-slate-400 truncate max-w-[200px]" x-text="session.location"></span>
+                                                    <span x-show="session.location" class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[220px]" x-text="session.location"></span>
                                                 </div>
                                             </div>
 
                                             <!-- Feedback Pembimbing Box (Primary) -->
-                                            <div class="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/50 space-y-1.5">
-                                                <div class="flex items-center justify-between">
-                                                    <div class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                                            <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/90 dark:border-amber-800/60 shadow-2xs space-y-3">
+                                                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-amber-200/70 dark:border-amber-800/50">
+                                                    <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-900 dark:text-amber-300">
                                                         <span>📝 Catatan & Arahan Pembimbing</span>
                                                     </div>
-                                                    <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500" x-text="session.dosen_name"></span>
+                                                    <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-900/50 px-2 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-800/40 shrink-0" x-text="session.dosen_name"></span>
                                                 </div>
-                                                <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic whitespace-pre-wrap"
+                                                <p class="text-xs sm:text-[13px] text-slate-800 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-wrap"
                                                    x-text="session.feedback ? session.feedback : 'Tidak ada catatan khusus pada sesi ini.'"></p>
                                             </div>
 
                                             <!-- Student Notes (If Any) -->
                                             <template x-if="session.notes">
-                                                <div class="mt-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 text-[11px] text-slate-600 dark:text-slate-400 space-y-0.5">
-                                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Catatan Mahasiswa:</span>
-                                                    <p class="italic" x-text="session.notes"></p>
+                                                <div class="mt-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 text-xs space-y-1.5 shadow-2xs">
+                                                    <div class="flex items-center gap-1.5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                        </svg>
+                                                        <span>Catatan Mahasiswa:</span>
+                                                    </div>
+                                                    <p class="text-xs sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-relaxed italic whitespace-pre-wrap" x-text="session.notes"></p>
                                                 </div>
                                             </template>
                                         </div>
