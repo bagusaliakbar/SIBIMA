@@ -157,7 +157,7 @@ class LogbookController extends Controller
                 } else {
                     $lastSession = $t->mentoringSessions->first();
                     if ($lastSession && $lastSession->scheduled_at) {
-                        $daysSince = (int) abs(now()->diffInDays($lastSession->scheduled_at));
+                        $daysSince = (int) \Carbon\Carbon::parse($lastSession->scheduled_at)->startOfDay()->diffInDays(now()->startOfDay());
                         if ($daysSince > 14) {
                             $stalledIds[] = $t->id;
                         }

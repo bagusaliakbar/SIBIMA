@@ -577,9 +577,23 @@
                                     $sidangPercent = $isGraduated ? 100 : min(100, round(($completedCount / $sidangTarget) * 100));
 
                                     $lastSession = $thesis->mentoringSessions ? $thesis->mentoringSessions->first() : null;
-                                    $daysSinceLast = ($lastSession && $lastSession->scheduled_at) 
-                                        ? (int) abs(now()->diffInDays($lastSession->scheduled_at)) 
-                                        : ($thesis->created_at ? (int) abs(now()->diffInDays($thesis->created_at)) : null);
+                                    $lastDate = ($lastSession && $lastSession->scheduled_at) 
+                                        ? \Carbon\Carbon::parse($lastSession->scheduled_at) 
+                                        : ($thesis->created_at ? \Carbon\Carbon::parse($thesis->created_at) : null);
+
+                                    if ($lastDate) {
+                                        $daysSinceLast = (int) $lastDate->copy()->startOfDay()->diffInDays(now()->startOfDay());
+                                        if ($lastDate->isToday()) {
+                                            $lastActivityText = 'Hari ini';
+                                        } elseif ($lastDate->isYesterday()) {
+                                            $lastActivityText = 'Kemarin';
+                                        } else {
+                                            $lastActivityText = "{$daysSinceLast}h lalu";
+                                        }
+                                    } else {
+                                        $daysSinceLast = null;
+                                        $lastActivityText = 'Aktif';
+                                    }
                                 @endphp
 
                                 <div class="inline-flex flex-col gap-2 min-w-[200px] max-w-[240px] text-left">
@@ -667,13 +681,15 @@
                                                     <span>Belum Ada Sesi</span>
                                                 </span>
                                             @elseif($daysSinceLast !== null && $daysSinceLast > 14)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800"
+                                                      title="Bimbingan terakhir: {{ $lastDate ? $lastDate->isoFormat('D MMMM Y') : '-' }}">
                                                     <span class="w-1 h-1 rounded-full bg-amber-500"></span>
                                                     <span>Pasif ({{ $daysSinceLast }}h)</span>
                                                 </span>
                                             @else
-                                                <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500">
-                                                    {{ $daysSinceLast !== null ? ($daysSinceLast == 0 ? 'Hari ini' : "{$daysSinceLast}h lalu") : 'Aktif' }}
+                                                <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500"
+                                                      title="Bimbingan terakhir: {{ $lastDate ? $lastDate->isoFormat('D MMMM Y') : '-' }}">
+                                                    Terakhir: {{ $lastActivityText }}
                                                 </span>
                                             @endif
                                         </div>
