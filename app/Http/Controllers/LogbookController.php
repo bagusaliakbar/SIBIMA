@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Thesis;
 use App\Models\MentoringSession;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -96,8 +97,10 @@ class LogbookController extends Controller
             $dosenId = $user->id;
             $status = $request->input('status', 'active');
             $filter = $request->input('filter', 'all');
+            $roleFilter = $request->input('role_filter', 'all');
+            $entryYear = $request->input('entry_year');
 
-            // 1. Ambil data mahasiswa bimbingan AKTIF untuk perhitungan Top KPI Cards
+            // 1. Ambil data mahasiswa bimbingan AKTIF untuk perhitungan Top KPI Cards & status kategori
             $activeTheses = Thesis::where(function ($q) use ($dosenId) {
                     $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
                 })
@@ -124,6 +127,7 @@ class LogbookController extends Controller
             $countP1 = $activeTheses->where('pembimbing1_id', $dosenId)->count();
             $countP2 = $activeTheses->where('pembimbing2_id', $dosenId)->count();
 
+            $proposalIds = [];
             $readyUpIds = [];
             $readySidangIds = [];
             $stalledIds = [];
@@ -131,17 +135,22 @@ class LogbookController extends Controller
             foreach ($activeTheses as $t) {
                 $completedCount = (int) $t->completed_sessions_count;
 
-                // 2. Siap Seminar Proposal (UP): >= 4 sesi bimbingan
+                // Tahap Proposal (< 4 sesi)
+                if ($completedCount < 4) {
+                    $proposalIds[] = $t->id;
+                }
+
+                // Siap Seminar Proposal (UP): >= 4 sesi bimbingan
                 if ($completedCount >= 4) {
                     $readyUpIds[] = $t->id;
                 }
 
-                // 3. Siap Sidang Akhir: >= 8 sesi bimbingan
+                // Siap Sidang Akhir: >= 8 sesi bimbingan
                 if ($completedCount >= 8) {
                     $readySidangIds[] = $t->id;
                 }
 
-                // 4. Perlu Perhatian (Pasif / Macet): 
+                // Perlu Perhatian (Pasif / Macet): 
                 // Mahasiswa belum pernah bimbingan (0 sesi) ATAU > 14 hari tidak ada aktivitas bimbingan
                 if ($completedCount === 0) {
                     $stalledIds[] = $t->id;
@@ -160,11 +169,33 @@ class LogbookController extends Controller
                 'total' => $activeTheses->count(),
                 'p1' => $countP1,
                 'p2' => $countP2,
+                'proposal' => count($proposalIds),
                 'ready_up' => count($readyUpIds),
                 'ready_sidang' => count($readySidangIds),
                 'stalled' => count($stalledIds),
                 'graduated_total' => $completedCountTotal,
             ];
+
+            // Ambil daftar tahun angkatan mahasiswa bimbingan yang tersedia
+            $availableEntryYears = Thesis::where(function ($q) use ($dosenId) {
+                    $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
+                })
+                ->whereHas('student', fn($q) => $q->whereNotNull('entry_year'))
+                ->with('student')
+                ->get()
+                ->pluck('student.entry_year')
+                ->filter()
+                ->unique()
+                ->sortDesc()
+                ->values();
+
+            if ($availableEntryYears->isEmpty()) {
+                $availableEntryYears = User::where('role', 'mahasiswa')
+                    ->whereNotNull('entry_year')
+                    ->distinct()
+                    ->orderBy('entry_year', 'desc')
+                    ->pluck('entry_year');
+            }
 
             // 2. Query paginasi daftar mahasiswa bimbingan yang ditampilkan di tabel
             $thesesQuery = Thesis::where(function ($q) use ($dosenId) {
@@ -190,13 +221,27 @@ class LogbookController extends Controller
                     $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
                 }]);
 
+            // Filter Peran: Pembimbing 1 vs Pembimbing 2
+            if ($roleFilter === 'p1') {
+                $thesesQuery->where('pembimbing1_id', $dosenId);
+            } elseif ($roleFilter === 'p2') {
+                $thesesQuery->where('pembimbing2_id', $dosenId);
+            }
+
+            // Filter Angkatan Mahasiswa
+            if (!empty($entryYear) && $entryYear !== 'all') {
+                $thesesQuery->whereHas('student', fn($q) => $q->where('entry_year', $entryYear));
+            }
+
             // Filter Status: default 'active' (hanya mahasiswa yang sedang aktif bimbingan)
             if ($status === 'completed') {
                 $thesesQuery->where('status', 'completed');
             } else {
                 $thesesQuery->where('status', '!=', 'completed')->where('status', '!=', 'rejected');
 
-                if ($filter === 'ready_up') {
+                if ($filter === 'proposal') {
+                    $thesesQuery->whereIn('id', $proposalIds);
+                } elseif ($filter === 'ready_up') {
                     $thesesQuery->whereIn('id', $readyUpIds);
                 } elseif ($filter === 'ready_sidang') {
                     $thesesQuery->whereIn('id', $readySidangIds);
@@ -207,13 +252,24 @@ class LogbookController extends Controller
 
             $theses = $thesesQuery
                 ->paginate(12)
-                ->appends([
+                ->appends(array_filter([
                     'search' => $search,
                     'status' => $status !== 'active' ? $status : null,
+                    'role_filter' => $roleFilter !== 'all' ? $roleFilter : null,
                     'filter' => $filter !== 'all' ? $filter : null,
-                ]);
+                    'entry_year' => $entryYear !== 'all' ? $entryYear : null,
+                ]));
 
-            return view('logbooks.dosen_index', compact('theses', 'search', 'stats', 'filter', 'status'));
+            return view('logbooks.dosen_index', compact(
+                'theses', 
+                'search', 
+                'stats', 
+                'filter', 
+                'status', 
+                'roleFilter', 
+                'entryYear', 
+                'availableEntryYears'
+            ));
         }
 
         abort(403);

@@ -17,8 +17,8 @@ class LecturerLogbookKpiTest extends TestCase
         $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dr. Dosen Test']);
         $dosen2 = User::factory()->create(['role' => 'dosen', 'name' => 'Dr. Partner Test']);
 
-        // Student 1: 0 sessions (stalled)
-        $mhs1 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Nol Sesi']);
+        // Student 1: 0 sessions (stalled), entry_year 2021
+        $mhs1 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Nol Sesi', 'entry_year' => 2021]);
         $thesis1 = Thesis::create([
             'student_id' => $mhs1->id,
             'title' => 'Sistem Informasi Akademik A',
@@ -28,8 +28,8 @@ class LecturerLogbookKpiTest extends TestCase
             'created_at' => now()->subDays(20),
         ]);
 
-        // Student 2: 4 sessions (ready_up)
-        $mhs2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Siap UP']);
+        // Student 2: 4 sessions (ready_up), entry_year 2022
+        $mhs2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Siap UP', 'entry_year' => 2022]);
         $thesis2 = Thesis::create([
             'student_id' => $mhs2->id,
             'title' => 'Sistem Rekomendasi B',
@@ -48,8 +48,8 @@ class LecturerLogbookKpiTest extends TestCase
             ]);
         }
 
-        // Student 3: 8 sessions (ready_sidang)
-        $mhs3 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Siap Sidang']);
+        // Student 3: 8 sessions (ready_sidang), entry_year 2022
+        $mhs3 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Siap Sidang', 'entry_year' => 2022]);
         $thesis3 = Thesis::create([
             'student_id' => $mhs3->id,
             'title' => 'Deep Learning Vision C',
@@ -68,8 +68,8 @@ class LecturerLogbookKpiTest extends TestCase
             ]);
         }
 
-        // Student 4: 2 sessions but last session was 20 days ago (stalled)
-        $mhs4 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Pasif']);
+        // Student 4: 2 sessions but last session was 20 days ago (stalled, proposal stage), entry_year 2021
+        $mhs4 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Pasif', 'entry_year' => 2021]);
         $thesis4 = Thesis::create([
             'student_id' => $mhs4->id,
             'title' => 'Blockchain IoT D',
@@ -87,7 +87,7 @@ class LecturerLogbookKpiTest extends TestCase
         ]);
 
         // Student 5: Graduated / Completed student
-        $mhs5 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Sudah Lulus']);
+        $mhs5 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Sudah Lulus', 'entry_year' => 2020]);
         $thesis5 = Thesis::create([
             'student_id' => $mhs5->id,
             'title' => 'Sistem Lama Sudah Lulus E',
@@ -106,6 +106,7 @@ class LecturerLogbookKpiTest extends TestCase
             return $stats['total'] === 4 // Only active students
                 && $stats['p1'] === 3
                 && $stats['p2'] === 1
+                && $stats['proposal'] === 2 // mhs1 (0) + mhs4 (1)
                 && $stats['ready_up'] === 2
                 && $stats['ready_sidang'] === 1
                 && $stats['stalled'] === 2
@@ -143,19 +144,59 @@ class LecturerLogbookKpiTest extends TestCase
         $searchResponse->assertSee('Mahasiswa Siap UP');
         $searchResponse->assertDontSee('Mahasiswa Siap Sidang');
 
-        // 6. View Completed / Graduated Tab: graduated student appears here
+        // 6. Filter: proposal (< 4 sessions)
+        $proposalResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['filter' => 'proposal']));
+        $proposalResponse->assertStatus(200);
+        $proposalResponse->assertSee('Mahasiswa Nol Sesi');
+        $proposalResponse->assertSee('Mahasiswa Pasif');
+        $proposalResponse->assertDontSee('Mahasiswa Siap UP');
+        $proposalResponse->assertDontSee('Mahasiswa Siap Sidang');
+
+        // 7. Filter: role_filter = p1 (Pembimbing 1)
+        $roleP1Response = $this->actingAs($dosen)->get(route('logbooks.index', ['role_filter' => 'p1']));
+        $roleP1Response->assertStatus(200);
+        $roleP1Response->assertSee('Mahasiswa Siap UP');
+        $roleP1Response->assertDontSee('Mahasiswa Siap Sidang'); // Dosen is P2 for mhs3
+
+        // 8. Filter: role_filter = p2 (Pembimbing 2)
+        $roleP2Response = $this->actingAs($dosen)->get(route('logbooks.index', ['role_filter' => 'p2']));
+        $roleP2Response->assertStatus(200);
+        $roleP2Response->assertSee('Mahasiswa Siap Sidang');
+        $roleP2Response->assertDontSee('Mahasiswa Siap UP');
+
+        // 9. Filter: entry_year = 2021
+        $entryYearResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['entry_year' => 2021]));
+        $entryYearResponse->assertStatus(200);
+        $entryYearResponse->assertSee('Mahasiswa Nol Sesi');
+        $entryYearResponse->assertSee('Mahasiswa Pasif');
+        $entryYearResponse->assertDontSee('Mahasiswa Siap UP');
+        $entryYearResponse->assertDontSee('Mahasiswa Siap Sidang');
+
+        // 10. View Completed / Graduated Tab: graduated student appears here
         $completedResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['status' => 'completed']));
         $completedResponse->assertStatus(200);
         $completedResponse->assertSee('Mahasiswa Sudah Lulus');
         $completedResponse->assertSee('Lulus');
         $completedResponse->assertDontSee('Mahasiswa Siap Sidang');
 
-        // 7. Check Dual Progress Bar rendering on active view
+        // 11. Check Dual Progress Bar and Quick Filter UI elements
         $activeResponse = $this->actingAs($dosen)->get(route('logbooks.index'));
         $activeResponse->assertSee('Target UP');
         $activeResponse->assertSee('Target Sidang');
         $activeResponse->assertSee('4/4 Sesi');
         $activeResponse->assertSee('8/8 Sesi');
         $activeResponse->assertSee('PROGRES TARGET BIMBINGAN');
+        $activeResponse->assertSee('Tab Filter Cepat');
+        $activeResponse->assertSee('Filter Peran:');
+        $activeResponse->assertSee('Sebagai Pembimbing 1');
+        $activeResponse->assertSee('Sebagai Pembimbing 2');
+        $activeResponse->assertSee('Kategori Progres:');
+        $activeResponse->assertSee('Tahap Proposal (< 4 sesi)');
+        $activeResponse->assertSee('Siap UP (≥ 4 sesi)');
+        $activeResponse->assertSee('Siap Sidang (≥ 8 sesi)');
+        $activeResponse->assertSee('Macet (> 14 hari)');
+        $activeResponse->assertSee('Semua Angkatan');
+        $activeResponse->assertSee('Angkatan 2021');
+        $activeResponse->assertSee('Angkatan 2022');
     }
 }
