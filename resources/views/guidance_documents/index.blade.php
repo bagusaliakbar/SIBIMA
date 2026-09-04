@@ -25,10 +25,10 @@
     <div x-data="guidanceDocumentManager()" class="space-y-6 pb-16">
         
         <!-- Filter Bar & Search Toolbar -->
-        <div class="bg-white dark:bg-slate-800/90 rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
             
             <!-- Category Filter Tabs -->
-            <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 lg:pb-0">
+            <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1 md:pb-0">
                 <a href="{{ route('guidance-documents.index', ['category' => 'all', 'search' => $search]) }}"
                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ ($category ?? 'all') === 'all' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
                     <span>Semua Dokumen</span>
@@ -70,25 +70,15 @@
                 </a>
             </div>
 
-            <!-- Search Bar -->
-            <form action="{{ route('guidance-documents.index') }}" method="GET" class="relative w-full lg:w-80 shrink-0">
-                <input type="hidden" name="category" value="{{ $category ?? 'all' }}">
-                <div class="relative">
-                    <input type="text" 
-                           name="search" 
-                           value="{{ $search ?? '' }}" 
-                           placeholder="Cari nama panduan / berkas..." 
-                           class="w-full pl-10 pr-9 py-2.5 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium">
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    @if(!empty($search))
-                        <a href="{{ route('guidance-documents.index', ['category' => $category ?? 'all']) }}" 
-                           class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 absolute right-3 top-2.5 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                           title="Hapus pencarian">
-                            &times;
-                        </a>
-                    @endif
-                </div>
-            </form>
+            <!-- Search Bar using x-search-input Component -->
+            <div class="w-full sm:w-72 shrink-0">
+                <x-search-input 
+                    name="search" 
+                    :value="$search ?? ''" 
+                    placeholder="Cari nama panduan / berkas..." 
+                    route="guidance-documents.index"
+                    :params="['category' => $category ?? 'all']" />
+            </div>
         </div>
 
         <!-- Document Cards Grid -->
