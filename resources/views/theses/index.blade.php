@@ -310,10 +310,10 @@
                         <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="py-4 px-6">
                                 <div class="flex items-center gap-3.5">
-                                    <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800 shrink-0 shadow-2xs">
+                                    <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800 shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-2xs">
                                         <img src="{{ $thesis->student->avatar_url }}" alt="{{ $thesis->student->name }}" class="w-full h-full object-cover">
                                     </div>
-                                    <div class="space-y-1.5">
+                                    <div class="space-y-1">
                                         <!-- Student Name & WhatsApp Shortcut -->
                                         <div class="flex items-center gap-2 flex-wrap">
                                             <span class="font-bold text-slate-900 dark:text-white tracking-tight text-xs sm:text-sm">{{ ucwords(strtolower($thesis->student->name)) }}</span>
@@ -345,37 +345,40 @@
                                         </div>
 
                                         <!-- Badges: NPM, Cohort Badge (Angkatan Baru / Lama / Kritis), Pembimbing Role -->
-                                        <div class="flex items-center gap-1.5 flex-wrap">
-                                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold font-mono tracking-wider">{{ $thesis->student->identifier ?? 'NPM -' }}</span>
+                                        <div class="flex items-center gap-2 flex-wrap text-xs text-slate-500 dark:text-slate-400">
+                                            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-semibold font-mono tracking-tight">{{ $thesis->student->identifier ?? 'NPM -' }}</span>
                                             
                                             @if($thesis->student->entry_year)
+                                                <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
                                                 @if($thesis->isOldCohort())
                                                     @if($thesis->student->is_critical_semester)
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-500/25 shadow-2xs animate-pulse" title="Masa studi kritis (Semester {{ $thesis->student->current_semester }})">
-                                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                                            ⏳ Angkatan Lama '{{ substr($thesis->student->entry_year, -2) }} (Smt {{ $thesis->student->current_semester }})
+                                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300" title="Masa studi kritis (Semester {{ $thesis->student->current_semester }})">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                                            Angkatan Lama '{{ substr($thesis->student->entry_year, -2) }} (Smt {{ $thesis->student->current_semester }})
                                                         </span>
                                                     @else
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/25 shadow-2xs" title="Angkatan Lama / Senior (Semester {{ $thesis->student->current_semester }})">
+                                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300" title="Angkatan Lama / Senior (Semester {{ $thesis->student->current_semester }})">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                            ⏳ Angkatan Lama '{{ substr($thesis->student->entry_year, -2) }} (Smt {{ $thesis->student->current_semester }})
+                                                            Angkatan Lama '{{ substr($thesis->student->entry_year, -2) }} (Smt {{ $thesis->student->current_semester }})
                                                         </span>
                                                     @endif
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/25 shadow-2xs" title="Angkatan Baru (Semester {{ $thesis->student->current_semester ?? '-' }})">
+                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" title="Angkatan Baru (Semester {{ $thesis->student->current_semester ?? '-' }})">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                        🌱 Angkatan {{ $thesis->student->entry_year }}
+                                                        Angkatan {{ $thesis->student->entry_year }}
                                                     </span>
                                                 @endif
                                             @endif
 
                                             @if(Auth::user()->role === 'dosen')
                                                 @if($thesis->pembimbing1_id === Auth::id())
-                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-500/25 shadow-2xs">
+                                                    <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">
                                                         Pembimbing 1
                                                     </span>
                                                 @elseif($thesis->pembimbing2_id === Auth::id())
-                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/25 shadow-2xs">
+                                                    <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
                                                         Pembimbing 2
                                                     </span>
                                                 @endif
