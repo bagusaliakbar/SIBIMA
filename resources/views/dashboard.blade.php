@@ -422,7 +422,7 @@
             $quickGuidanceDocs = \App\Models\GuidanceDocument::active()->latest()->take(3)->get();
         @endphp
         @if($quickGuidanceDocs->isNotEmpty())
-            <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent dark:from-orange-950/30 dark:via-slate-800/40 dark:to-slate-800/20 border border-orange-200/70 dark:border-orange-900/40 rounded-3xl p-6 mb-6 relative overflow-hidden backdrop-blur-xs">
+            <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent dark:from-orange-950/30 dark:via-slate-800/50 dark:to-slate-800/30 rounded-3xl p-6 sm:p-7 mb-6 relative overflow-hidden backdrop-blur-xs shadow-xs">
                 <!-- Background decoration -->
                 <div class="absolute -top-16 -right-16 w-48 h-48 bg-orange-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -434,15 +434,15 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <h3 class="text-sm sm:text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">
                                     Dokumen & Pedoman Skripsi Resmi
                                 </h3>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
+                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300">
                                     Pusat Unduhan
                                 </span>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1 leading-relaxed max-w-2xl">
+                            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1.5 leading-relaxed max-w-2xl">
                                 Akses Buku Pedoman Penulisan Skripsi, format template Word/LaTeX, form bimbingan, dan berkas persyaratan seminar & sidang.
                             </p>
                         </div>
@@ -450,29 +450,31 @@
 
                     <div class="flex items-center gap-3 self-start lg:self-center shrink-0">
                         <a href="{{ route('guidance-documents.index') }}" 
-                           class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-orange-600/20 transition-all cursor-pointer">
+                           class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-orange-600/20 transition-all cursor-pointer">
                             <span>Buka Semua Dokumen</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </svg>
                         </a>
                     </div>
                 </div>
 
                 <!-- Featured / Pinned Documents Quick Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5 pt-5 border-t border-orange-200/50 dark:border-slate-700/60">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-6">
                     @foreach($quickGuidanceDocs as $doc)
-                        <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl p-3.5 border border-slate-200/70 dark:border-slate-700 flex items-center justify-between gap-3 shadow-2xs hover:border-orange-400 dark:hover:border-orange-500/50 transition-all group">
+                        <div class="bg-white/90 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-800 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-2xs hover:shadow-md transition-all group">
                             <div class="min-w-0 flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 {{ $doc->file_extension === 'pdf' ? 'bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400' : ($doc->file_extension === 'zip' ? 'bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400' : 'bg-blue-100 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400') }}">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs {{ $doc->file_extension === 'pdf' ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400' : ($doc->file_extension === 'zip' ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400' : 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400') }}">
                                     <span class="text-[9px] font-black uppercase">{{ $doc->file_extension }}</span>
                                 </div>
                                 <div class="min-w-0">
-                                    <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" title="{{ $doc->title }}">
+                                    <h4 class="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" title="{{ $doc->title }}">
                                         {{ $doc->title }}
                                     </h4>
-                                    <p class="text-[10px] text-slate-400 font-medium">
-                                        {{ $doc->formatted_file_size }} • {{ $doc->download_count }}x diunduh
+                                    <p class="text-[11px] text-slate-400 dark:text-slate-400 font-medium mt-0.5 flex items-center gap-1.5">
+                                        <span>{{ $doc->formatted_file_size }}</span>
+                                        <span>•</span>
+                                        <span>{{ number_format($doc->download_count, 0, ',', '.') }}x diunduh</span>
                                     </p>
                                 </div>
                             </div>
@@ -480,7 +482,7 @@
                                 @if($doc->file_extension === 'pdf')
                                     <a href="{{ route('guidance-documents.view', $doc->id) }}" 
                                        target="_blank" 
-                                       class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 rounded-lg transition-colors" 
+                                       class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700/80 rounded-xl transition-all cursor-pointer" 
                                        title="Lihat PDF">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -489,7 +491,7 @@
                                     </a>
                                 @endif
                                 <a href="{{ route('guidance-documents.download', $doc->id) }}" 
-                                   class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 rounded-lg transition-colors" 
+                                   class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700/80 rounded-xl transition-all cursor-pointer" 
                                    title="Unduh">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -505,24 +507,24 @@
         @if(Auth::user()->role !== 'mahasiswa')
             @if(isset($earlyWarning) && $earlyWarning['total_inactive'] > 0)
                 <!-- Early Warning System: Deteksi Bimbingan Pasif / Macet (> 7 Hari) -->
-                <div x-data="{ openModal: false, filterStatus: 'all' }" class="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-orange-500/10 dark:from-amber-950/30 dark:via-rose-950/30 dark:to-orange-950/30 border border-amber-200/80 dark:border-amber-700/50 rounded-3xl p-6 shadow-xs relative overflow-hidden mb-6">
+                <div x-data="{ openModal: false, filterStatus: 'all' }" class="bg-gradient-to-r from-amber-500/10 via-rose-500/5 to-orange-500/10 dark:from-amber-950/30 dark:via-rose-950/20 dark:to-orange-950/30 rounded-3xl p-6 sm:p-7 shadow-xs relative overflow-hidden mb-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="flex items-start sm:items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500 dark:bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20 animate-pulse">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20 animate-pulse">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                                    <h3 class="text-sm sm:text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">
                                         ⏰ Early Warning System: Bimbingan Butuh Intervensi
                                     </h3>
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-2xs">
                                         {{ $earlyWarning['total_inactive'] }} Mahasiswa Pasif / Macet
                                     </span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1 leading-relaxed">
+                                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1.5 leading-relaxed">
                                     Terdapat <strong>{{ $earlyWarning['warning_count'] }} mahasiswa pasif (8–14 hari)</strong> dan <strong>{{ $earlyWarning['critical_count'] }} mahasiswa macet (&gt;14 hari)</strong> yang belum melakukan bimbingan rutin (standar prodi: min 1x/pekan).
                                 </p>
                             </div>
@@ -531,7 +533,7 @@
                         <div class="flex items-center gap-2 shrink-0">
                             <button type="button" 
                                     @click="openModal = true" 
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/20 hover:scale-105 active:scale-95 transition-all cursor-pointer">
+                                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/20 hover:scale-105 active:scale-95 transition-all cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
