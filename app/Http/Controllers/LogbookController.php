@@ -94,12 +94,15 @@ class LogbookController extends Controller
 
         if ($user->role === 'dosen') {
             $dosenId = $user->id;
+            $status = $request->input('status', 'active');
             $filter = $request->input('filter', 'all');
 
-            // Ambil semua data mahasiswa bimbingan dosen untuk perhitungan metrik statistik
-            $allDosenTheses = Thesis::where(function ($q) use ($dosenId) {
+            // 1. Ambil data mahasiswa bimbingan AKTIF untuk perhitungan Top KPI Cards
+            $activeTheses = Thesis::where(function ($q) use ($dosenId) {
                     $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
                 })
+                ->where('status', '!=', 'completed')
+                ->where('status', '!=', 'rejected')
                 ->withCount(['mentoringSessions as completed_sessions_count' => function ($q) use ($dosenId) {
                     $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
                 }])
@@ -111,56 +114,59 @@ class LogbookController extends Controller
                 }])
                 ->get();
 
-            $countP1 = $allDosenTheses->where('pembimbing1_id', $dosenId)->count();
-            $countP2 = $allDosenTheses->where('pembimbing2_id', $dosenId)->count();
+            // Total mahasiswa yang sudah lulus (untuk counter tab arsip)
+            $completedCountTotal = Thesis::where(function ($q) use ($dosenId) {
+                    $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
+                })
+                ->where('status', 'completed')
+                ->count();
+
+            $countP1 = $activeTheses->where('pembimbing1_id', $dosenId)->count();
+            $countP2 = $activeTheses->where('pembimbing2_id', $dosenId)->count();
 
             $readyUpIds = [];
             $readySidangIds = [];
             $stalledIds = [];
 
-            foreach ($allDosenTheses as $t) {
+            foreach ($activeTheses as $t) {
                 $completedCount = (int) $t->completed_sessions_count;
-                $isP1 = ($t->pembimbing1_id === $dosenId);
-                $hasAccUp = $isP1 ? (bool) $t->acc_up_p1 : (bool) $t->acc_up_p2;
-                $hasAccSidang = $isP1 ? (bool) $t->acc_sidang_p1 : (bool) $t->acc_sidang_p2;
 
-                // 2. Siap Seminar Proposal (UP): >= 4 sesi bimbingan atau sudah ACC UP
-                if ($completedCount >= 4 || $hasAccUp) {
+                // 2. Siap Seminar Proposal (UP): >= 4 sesi bimbingan
+                if ($completedCount >= 4) {
                     $readyUpIds[] = $t->id;
                 }
 
-                // 3. Siap Sidang Akhir: >= 8 sesi bimbingan atau sudah ACC Sidang
-                if ($completedCount >= 8 || $hasAccSidang) {
+                // 3. Siap Sidang Akhir: >= 8 sesi bimbingan
+                if ($completedCount >= 8) {
                     $readySidangIds[] = $t->id;
                 }
 
                 // 4. Perlu Perhatian (Pasif / Macet): 
                 // Mahasiswa belum pernah bimbingan (0 sesi) ATAU > 14 hari tidak ada aktivitas bimbingan
-                if ($t->status !== 'completed' && !$t->isAccSidangFinal()) {
-                    if ($completedCount === 0) {
-                        $stalledIds[] = $t->id;
-                    } else {
-                        $lastSession = $t->mentoringSessions->first();
-                        if ($lastSession && $lastSession->scheduled_at) {
-                            $daysSince = (int) abs(now()->diffInDays($lastSession->scheduled_at));
-                            if ($daysSince > 14) {
-                                $stalledIds[] = $t->id;
-                            }
+                if ($completedCount === 0) {
+                    $stalledIds[] = $t->id;
+                } else {
+                    $lastSession = $t->mentoringSessions->first();
+                    if ($lastSession && $lastSession->scheduled_at) {
+                        $daysSince = (int) abs(now()->diffInDays($lastSession->scheduled_at));
+                        if ($daysSince > 14) {
+                            $stalledIds[] = $t->id;
                         }
                     }
                 }
             }
 
             $stats = [
-                'total' => $allDosenTheses->count(),
+                'total' => $activeTheses->count(),
                 'p1' => $countP1,
                 'p2' => $countP2,
                 'ready_up' => count($readyUpIds),
                 'ready_sidang' => count($readySidangIds),
                 'stalled' => count($stalledIds),
+                'graduated_total' => $completedCountTotal,
             ];
 
-            // Query paginasi daftar mahasiswa bimbingan
+            // 2. Query paginasi daftar mahasiswa bimbingan yang ditampilkan di tabel
             $thesesQuery = Thesis::where(function ($q) use ($dosenId) {
                     $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
                 })
@@ -184,22 +190,30 @@ class LogbookController extends Controller
                     $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
                 }]);
 
-            if ($filter === 'ready_up') {
-                $thesesQuery->whereIn('id', $readyUpIds);
-            } elseif ($filter === 'ready_sidang') {
-                $thesesQuery->whereIn('id', $readySidangIds);
-            } elseif ($filter === 'stalled') {
-                $thesesQuery->whereIn('id', $stalledIds);
+            // Filter Status: default 'active' (hanya mahasiswa yang sedang aktif bimbingan)
+            if ($status === 'completed') {
+                $thesesQuery->where('status', 'completed');
+            } else {
+                $thesesQuery->where('status', '!=', 'completed')->where('status', '!=', 'rejected');
+
+                if ($filter === 'ready_up') {
+                    $thesesQuery->whereIn('id', $readyUpIds);
+                } elseif ($filter === 'ready_sidang') {
+                    $thesesQuery->whereIn('id', $readySidangIds);
+                } elseif ($filter === 'stalled') {
+                    $thesesQuery->whereIn('id', $stalledIds);
+                }
             }
 
             $theses = $thesesQuery
                 ->paginate(12)
                 ->appends([
                     'search' => $search,
+                    'status' => $status !== 'active' ? $status : null,
                     'filter' => $filter !== 'all' ? $filter : null,
                 ]);
 
-            return view('logbooks.dosen_index', compact('theses', 'search', 'stats', 'filter'));
+            return view('logbooks.dosen_index', compact('theses', 'search', 'stats', 'filter', 'status'));
         }
 
         abort(403);

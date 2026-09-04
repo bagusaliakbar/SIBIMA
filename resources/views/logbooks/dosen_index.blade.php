@@ -19,18 +19,18 @@
     </x-slot>
 
     <div class="w-full space-y-6">
-        <!-- TOP KPI CARDS (Interactive 4-Card Summary Grid) -->
+        <!-- TOP KPI CARDS (Interactive 4-Card Summary Grid for Active Students) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- 1. Total Mahasiswa Bimbingan -->
+            <!-- 1. Total Mahasiswa Bimbingan Aktif -->
             @php
-                $isTotalActive = empty($filter) || $filter === 'all';
+                $isTotalActive = ($status ?? 'active') === 'active' && (empty($filter) || $filter === 'all');
             @endphp
-            <a href="{{ route('logbooks.index', array_filter(['search' => $search ?? null])) }}" 
+            <a href="{{ route('logbooks.index', array_filter(['status' => 'active', 'search' => $search ?? null])) }}" 
                class="group relative p-5 bg-white dark:bg-slate-800 rounded-2xl border transition-all duration-200 flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer {{ $isTotalActive ? 'ring-2 ring-blue-500/80 border-blue-500 bg-blue-50/20 dark:bg-blue-950/20 dark:border-blue-500' : 'border-slate-200/80 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/40' }}">
                 <div class="flex items-center justify-between gap-3">
                     <div class="space-y-1">
                         <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Bimbingan</span>
+                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Bimbingan Aktif</span>
                             @if($isTotalActive)
                                 <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">Semua</span>
                             @endif
@@ -54,9 +54,9 @@
 
             <!-- 2. Siap Seminar Proposal (UP) -->
             @php
-                $isUpActive = ($filter === 'ready_up');
+                $isUpActive = ($status ?? 'active') === 'active' && ($filter === 'ready_up');
             @endphp
-            <a href="{{ route('logbooks.index', array_filter(['filter' => $isUpActive ? 'all' : 'ready_up', 'search' => $search ?? null])) }}" 
+            <a href="{{ route('logbooks.index', array_filter(['status' => 'active', 'filter' => $isUpActive ? 'all' : 'ready_up', 'search' => $search ?? null])) }}" 
                class="group relative p-5 bg-white dark:bg-slate-800 rounded-2xl border transition-all duration-200 flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer {{ $isUpActive ? 'ring-2 ring-indigo-500/80 border-indigo-500 bg-indigo-50/20 dark:bg-indigo-950/20 dark:border-indigo-500' : 'border-slate-200/80 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500/40' }}">
                 <div class="flex items-center justify-between gap-3">
                     <div class="space-y-1">
@@ -85,9 +85,9 @@
 
             <!-- 3. Siap Sidang Akhir -->
             @php
-                $isSidangActive = ($filter === 'ready_sidang');
+                $isSidangActive = ($status ?? 'active') === 'active' && ($filter === 'ready_sidang');
             @endphp
-            <a href="{{ route('logbooks.index', array_filter(['filter' => $isSidangActive ? 'all' : 'ready_sidang', 'search' => $search ?? null])) }}" 
+            <a href="{{ route('logbooks.index', array_filter(['status' => 'active', 'filter' => $isSidangActive ? 'all' : 'ready_sidang', 'search' => $search ?? null])) }}" 
                class="group relative p-5 bg-white dark:bg-slate-800 rounded-2xl border transition-all duration-200 flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer {{ $isSidangActive ? 'ring-2 ring-emerald-500/80 border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20 dark:border-emerald-500' : 'border-slate-200/80 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/40' }}">
                 <div class="flex items-center justify-between gap-3">
                     <div class="space-y-1">
@@ -116,10 +116,10 @@
 
             <!-- 4. Perlu Perhatian (Pasif / Macet) -->
             @php
-                $isStalledActive = ($filter === 'stalled');
+                $isStalledActive = ($status ?? 'active') === 'active' && ($filter === 'stalled');
                 $stalledCount = $stats['stalled'] ?? 0;
             @endphp
-            <a href="{{ route('logbooks.index', array_filter(['filter' => $isStalledActive ? 'all' : 'stalled', 'search' => $search ?? null])) }}" 
+            <a href="{{ route('logbooks.index', array_filter(['status' => 'active', 'filter' => $isStalledActive ? 'all' : 'stalled', 'search' => $search ?? null])) }}" 
                class="group relative p-5 bg-white dark:bg-slate-800 rounded-2xl border transition-all duration-200 flex flex-col justify-between shadow-xs hover:shadow-md cursor-pointer {{ $isStalledActive ? 'ring-2 ring-rose-500/80 border-rose-500 bg-rose-50/20 dark:bg-rose-950/20 dark:border-rose-500' : 'border-slate-200/80 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-500/40' }}">
                 <div class="flex items-center justify-between gap-3">
                     <div class="space-y-1">
@@ -153,8 +153,22 @@
             </a>
         </div>
 
-        <!-- ACTIVE FILTER BAR (Shown when a filter is engaged) -->
-        @if($filter && $filter !== 'all')
+        <!-- STATUS TABS NAVIGATION (Bimbingan Aktif vs Riwayat Lulus) -->
+        <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-px custom-scrollbar">
+            <a href="{{ route('logbooks.index', array_filter(['status' => 'active', 'search' => $search ?? null])) }}" 
+               class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'active') === 'active' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span>Bimbingan Aktif ({{ $stats['total'] ?? 0 }})</span>
+            </a>
+            <a href="{{ route('logbooks.index', array_filter(['status' => 'completed', 'search' => $search ?? null])) }}" 
+               class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'active') === 'completed' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Riwayat Lulus / Selesai ({{ $stats['graduated_total'] ?? 0 }})</span>
+            </a>
+        </div>
+
+        <!-- ACTIVE FILTER BAR (Shown when a KPI filter is engaged) -->
+        @if(($status ?? 'active') === 'active' && $filter && $filter !== 'all')
             <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl text-xs">
                 <div class="flex items-center gap-2 text-orange-800 dark:text-orange-200">
                     <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,7 +190,7 @@
                         ({{ $theses->total() }} Mahasiswa)
                     </span>
                 </div>
-                <a href="{{ route('logbooks.index', array_filter(['search' => $search ?? null])) }}" 
+                <a href="{{ route('logbooks.index', array_filter(['status' => 'active', 'search' => $search ?? null])) }}" 
                    class="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-300 font-bold rounded-xl border border-orange-200 dark:border-orange-700 transition-colors shadow-2xs">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     <span>Reset Filter</span>
@@ -186,14 +200,17 @@
 
         <!-- MAIN TABLE CARD -->
         <x-table-card 
-            title="Daftar Mahasiswa Bimbingan"
-            subtitle="Pilih mahasiswa untuk memantau berkas dan riwayat logbook bimbingan mereka."
+            title="{{ ($status ?? 'active') === 'completed' ? 'Riwayat Mahasiswa Lulus / Selesai' : 'Daftar Mahasiswa Bimbingan Aktif' }}"
+            subtitle="{{ ($status ?? 'active') === 'completed' ? 'Arsip berkas logbook mahasiswa bimbingan yang telah dinyatakan lulus skripsi.' : 'Pilih mahasiswa untuk memantau berkas dan aktivitas bimbingan mereka.' }}"
             :footer="$theses->hasPages() ? $theses->links() : null">
             
             <x-slot name="headerActions">
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                     <!-- Search Input Form -->
                     <form action="{{ route('logbooks.index') }}" method="GET" class="relative w-full sm:w-72">
+                        @if(($status ?? 'active') !== 'active')
+                            <input type="hidden" name="status" value="{{ $status }}">
+                        @endif
                         @if($filter && $filter !== 'all')
                             <input type="hidden" name="filter" value="{{ $filter }}">
                         @endif
@@ -206,7 +223,7 @@
                                placeholder="Cari nama, NPM, atau judul..." 
                                class="block w-full pl-10 pr-9 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs sm:text-sm transition-all shadow-2xs">
                         @if(isset($search) && $search !== '')
-                            <a href="{{ route('logbooks.index', array_filter(['filter' => $filter !== 'all' ? $filter : null])) }}" 
+                            <a href="{{ route('logbooks.index', array_filter(['status' => ($status ?? 'active') !== 'active' ? $status : null, 'filter' => $filter !== 'all' ? $filter : null])) }}" 
                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                                title="Hapus pencarian">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -292,9 +309,6 @@
                             <td class="py-4 px-6 text-center">
                                 @php
                                     $completedCount = (int) $thesis->completed_sessions_count;
-                                    $isP1 = ($thesis->pembimbing1_id === Auth::id());
-                                    $hasAccUp = $isP1 ? (bool) $thesis->acc_up_p1 : (bool) $thesis->acc_up_p2;
-                                    $hasAccSidang = $isP1 ? (bool) $thesis->acc_sidang_p1 : (bool) $thesis->acc_sidang_p2;
                                     $lastSession = $thesis->mentoringSessions ? $thesis->mentoringSessions->first() : null;
                                     $daysSinceLast = ($lastSession && $lastSession->scheduled_at) 
                                         ? (int) abs(now()->diffInDays($lastSession->scheduled_at)) 
@@ -307,12 +321,17 @@
                                     </span>
 
                                     <!-- Status Progress Badge -->
-                                    @if($completedCount >= 8 || $hasAccSidang)
+                                    @if($thesis->status === 'completed')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
+                                            <svg class="w-2.5 h-2.5 text-purple-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a10.97 10.97 0 01-.25 2.27c-.244 1.258-.87 2.37-1.802 3.197a1 1 0 00.655 1.764c2.812 0 5.12-1.353 6.147-3.282 1.027 1.929 3.335 3.282 6.147 3.282a1 1 0 00.655-1.764c-.932-.827-1.558-1.939-1.802-3.197a10.97 10.97 0 01-.25-2.27l2.644-1.131a1 1 0 000-1.84l-7-3zM7 14.5a3.5 3.5 0 007 0 3.5 3.5 0 00-7 0z"/></svg>
+                                            <span>Lulus / Selesai</span>
+                                        </span>
+                                    @elseif($completedCount >= 8)
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
                                             <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                                             <span>Siap Sidang</span>
                                         </span>
-                                    @elseif($completedCount >= 4 || $hasAccUp)
+                                    @elseif($completedCount >= 4)
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
                                             <svg class="w-2.5 h-2.5 text-indigo-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                                             <span>Siap UP</span>
@@ -354,16 +373,18 @@
                                 </div>
                                 <p class="text-sm font-bold text-slate-800 dark:text-slate-100">Tidak ada mahasiswa yang sesuai</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest font-black">
-                                    @if($filter && $filter !== 'all')
+                                    @if(($status ?? 'active') === 'completed')
+                                        Belum ada riwayat mahasiswa bimbingan yang lulus
+                                    @elseif($filter && $filter !== 'all')
                                         Tidak ditemukan mahasiswa pada kategori filter ini
                                     @else
                                         Data akan muncul setelah Anda ditugaskan sebagai pembimbing
                                     @endif
                                 </p>
-                                @if($filter && $filter !== 'all' || !empty($search))
+                                @if(($status ?? 'active') === 'completed' || ($filter && $filter !== 'all') || !empty($search))
                                     <div class="mt-4">
                                         <a href="{{ route('logbooks.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                            <span>Tampilkan Semua Mahasiswa</span>
+                                            <span>Kembali ke Bimbingan Aktif</span>
                                         </a>
                                     </div>
                                 @endif

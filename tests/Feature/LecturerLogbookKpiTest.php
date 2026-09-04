@@ -86,16 +86,30 @@ class LecturerLogbookKpiTest extends TestCase
             'scheduled_at' => now()->subDays(20),
         ]);
 
-        // 1. Visit index as dosen: check stats
+        // Student 5: Graduated / Completed student
+        $mhs5 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Sudah Lulus']);
+        $thesis5 = Thesis::create([
+            'student_id' => $mhs5->id,
+            'title' => 'Sistem Lama Sudah Lulus E',
+            'status' => 'completed',
+            'pembimbing1_id' => $dosen->id,
+            'pembimbing2_id' => $dosen2->id,
+            'acc_sidang_p1' => true,
+            'acc_sidang_p2' => true,
+        ]);
+
+        // 1. Visit index as dosen: check stats and ensure graduated student is NOT in active list
         $response = $this->actingAs($dosen)->get(route('logbooks.index'));
         $response->assertStatus(200);
+        $response->assertDontSee('Mahasiswa Sudah Lulus'); // Graduated student excluded from active logbooks!
         $response->assertViewHas('stats', function ($stats) {
-            return $stats['total'] === 4
+            return $stats['total'] === 4 // Only active students
                 && $stats['p1'] === 3
                 && $stats['p2'] === 1
                 && $stats['ready_up'] === 2
                 && $stats['ready_sidang'] === 1
-                && $stats['stalled'] === 2;
+                && $stats['stalled'] === 2
+                && $stats['graduated_total'] === 1; // 1 graduated student
         });
 
         // 2. Filter: ready_sidang
@@ -104,6 +118,7 @@ class LecturerLogbookKpiTest extends TestCase
         $sidangResponse->assertSee('Mahasiswa Siap Sidang');
         $sidangResponse->assertDontSee('Mahasiswa Nol Sesi');
         $sidangResponse->assertDontSee('Mahasiswa Pasif');
+        $sidangResponse->assertDontSee('Mahasiswa Sudah Lulus');
 
         // 3. Filter: stalled
         $stalledResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['filter' => 'stalled']));
@@ -111,6 +126,7 @@ class LecturerLogbookKpiTest extends TestCase
         $stalledResponse->assertSee('Mahasiswa Nol Sesi');
         $stalledResponse->assertSee('Mahasiswa Pasif');
         $stalledResponse->assertDontSee('Mahasiswa Siap Sidang');
+        $stalledResponse->assertDontSee('Mahasiswa Sudah Lulus');
 
         // 4. Filter: ready_up
         $upResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['filter' => 'ready_up']));
@@ -119,11 +135,19 @@ class LecturerLogbookKpiTest extends TestCase
         $upResponse->assertSee('Mahasiswa Siap Sidang');
         $upResponse->assertDontSee('Mahasiswa Nol Sesi');
         $upResponse->assertDontSee('Mahasiswa Pasif');
+        $upResponse->assertDontSee('Mahasiswa Sudah Lulus');
 
         // 5. Combined: filter ready_up + search 'Rekomendasi'
         $searchResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['filter' => 'ready_up', 'search' => 'Rekomendasi']));
         $searchResponse->assertStatus(200);
         $searchResponse->assertSee('Mahasiswa Siap UP');
         $searchResponse->assertDontSee('Mahasiswa Siap Sidang');
+
+        // 6. View Completed / Graduated Tab: graduated student appears here
+        $completedResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['status' => 'completed']));
+        $completedResponse->assertStatus(200);
+        $completedResponse->assertSee('Mahasiswa Sudah Lulus');
+        $completedResponse->assertSee('Lulus / Selesai');
+        $completedResponse->assertDontSee('Mahasiswa Siap Sidang');
     }
 }
