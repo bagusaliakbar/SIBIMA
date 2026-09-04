@@ -887,7 +887,7 @@
                                  class="space-y-6">
 
                                 <!-- Thesis Title Card -->
-                                <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 shadow-2xs">
+                                <div class="p-4 sm:p-5 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50">
                                     <div class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
                                         <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -925,12 +925,12 @@
                                             </div>
 
                                             <!-- Feedback Pembimbing Box (Primary) -->
-                                            <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/90 dark:border-amber-800/60 shadow-2xs space-y-3">
-                                                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-amber-200/70 dark:border-amber-800/50">
+                                            <div class="p-4 sm:p-5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/10 space-y-3">
+                                                <div class="flex items-center justify-between gap-2">
                                                     <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-900 dark:text-amber-300">
                                                         <span>📝 Catatan & Arahan Pembimbing</span>
                                                     </div>
-                                                    <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-900/50 px-2 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-800/40 shrink-0" x-text="session.dosen_name"></span>
+                                                    <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/20 dark:bg-amber-500/20 px-2.5 py-0.5 rounded-lg shrink-0" x-text="session.dosen_name"></span>
                                                 </div>
                                                 <p class="text-xs sm:text-[13px] text-slate-800 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-wrap"
                                                    x-text="session.feedback ? session.feedback : 'Tidak ada catatan khusus pada sesi ini.'"></p>
@@ -938,23 +938,21 @@
 
                                             <!-- Student Notes (If Any) -->
                                             <template x-if="session.notes">
-                                                <div class="mt-3.5 p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 shadow-2xs">
-                                                    <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200/80 dark:border-slate-700/70">
+                                                <div class="mt-6 sm:mt-7 p-4 sm:p-5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/60 space-y-3">
+                                                    <div class="flex items-center justify-between gap-2">
                                                         <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                                                            <div class="w-6 h-6 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300 shadow-2xs">
+                                                            <div class="w-6 h-6 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300">
                                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                                 </svg>
                                                             </div>
                                                             <span>Catatan Mahasiswa</span>
                                                         </div>
-                                                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-700/60 px-2.5 py-0.5 rounded-md border border-slate-300/40 dark:border-slate-600/40">
+                                                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/80 dark:bg-slate-700/80 px-2.5 py-0.5 rounded-lg">
                                                             Agenda / Persiapan
                                                         </span>
                                                     </div>
-                                                    <div class="px-0.5">
-                                                        <p class="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-wrap" x-text="session.notes"></p>
-                                                    </div>
+                                                    <p class="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-wrap" x-text="session.notes"></p>
                                                 </div>
                                             </template>
                                         </div>
