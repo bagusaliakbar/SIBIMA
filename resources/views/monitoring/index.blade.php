@@ -5,7 +5,7 @@
         ]" />
     </x-slot>
 
-    <div class="w-full">
+    <div class="w-full" x-data="monitoringAccModal()">
         <!-- Chart Section -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -133,94 +133,160 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
-                        <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                            <th class="py-4 px-6 font-black text-[10px] uppercase tracking-wider whitespace-nowrap">MAHASISWA</th>
-                            <th class="py-4 px-6 font-black text-[10px] uppercase tracking-wider whitespace-nowrap text-center">TOTAL BIMBINGAN</th>
-                            <th class="py-4 px-6 font-black text-[10px] uppercase tracking-wider whitespace-nowrap">PEMBIMBING</th>
-                            <th class="py-4 px-6 font-black text-[10px] uppercase tracking-wider whitespace-nowrap text-center">STATUS ACC UP</th>
-                            <th class="py-4 px-6 font-black text-[10px] uppercase tracking-wider whitespace-nowrap text-center">STATUS ACC SIDANG</th>
-                            <th class="py-4 px-6 font-black text-[10px] uppercase tracking-wider whitespace-nowrap text-right">AKSI</th>
+                        <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 text-[11px] font-bold uppercase tracking-wider">
+                            <th class="py-3.5 px-6 whitespace-nowrap">Mahasiswa</th>
+                            <th class="py-3.5 px-4 text-center whitespace-nowrap">Bimbingan</th>
+                            <th class="py-3.5 px-6 whitespace-nowrap">Dosen Pembimbing</th>
+                            <th class="py-3.5 px-4 text-center whitespace-nowrap">Status ACC UP</th>
+                            <th class="py-3.5 px-4 text-center whitespace-nowrap">Status ACC Sidang</th>
+                            <th class="py-3.5 px-6 text-right whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                         @forelse($theses as $thesis)
-                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-top group">
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors align-top group">
                                 <td class="py-4 px-6">
-                                    <div class="font-black text-sm text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{{ $thesis->student->name }}</div>
-                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tracking-widest font-black uppercase">{{ $thesis->student->identifier }}</div>
-                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 italic line-clamp-1 max-w-[250px]" title="{{ $thesis->final_title ?? $thesis->title }}">{{ $thesis->final_title ?? $thesis->title }}</div>
+                                    <div class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors tracking-tight">
+                                        {{ ucwords(strtolower($thesis->student->name)) }}
+                                    </div>
+                                    <div class="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                                        <span class="font-mono">{{ $thesis->student->identifier }}</span>
+                                        @if($thesis->student->entry_year)
+                                            <span class="text-slate-300 dark:text-slate-700">•</span>
+                                            <span>Angkatan {{ $thesis->student->entry_year }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1.5 line-clamp-2 max-w-[280px] leading-relaxed font-normal" title="{{ $thesis->final_title ?? $thesis->title }}">
+                                        {{ $thesis->final_title ?? $thesis->title }}
+                                    </p>
                                 </td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex flex-col items-center gap-2">
-                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl {{ $thesis->total_sessions >= 8 ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600' : ($thesis->total_sessions >= 4 ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500') }} font-black text-xs border {{ $thesis->total_sessions >= 8 ? 'border-emerald-200 dark:border-emerald-500/20' : ($thesis->total_sessions >= 4 ? 'border-orange-200 dark:border-orange-500/20' : 'border-slate-200 dark:border-slate-700') }}">
+                                <td class="py-4 px-4 text-center whitespace-nowrap">
+                                    <div class="flex flex-col items-center gap-1.5">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl font-bold text-xs {{ $thesis->total_sessions >= 8 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : ($thesis->total_sessions >= 4 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400') }}">
                                             {{ $thesis->total_sessions }}
                                         </span>
-                                        <div class="flex gap-1.5">
-                                            <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900/50 px-1.5 py-0.5 rounded border border-slate-100 dark:border-slate-700 uppercase" title="Bimbingan P1">P1: {{ $thesis->sessions_p1 }}x</span>
-                                            <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900/50 px-1.5 py-0.5 rounded border border-slate-100 dark:border-slate-700 uppercase" title="Bimbingan P2">P2: {{ $thesis->sessions_p2 }}x</span>
+                                        <div class="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                            <span class="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80">P1: {{ $thesis->sessions_p1 }}x</span>
+                                            <span class="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80">P2: {{ $thesis->sessions_p2 }}x</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
-                                    <div class="space-y-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-5 h-5 rounded-md bg-indigo-100 dark:bg-indigo-500/10 text-[9px] flex items-center justify-center font-black text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">1</div>
-                                            <span class="text-[11px] text-slate-700 dark:text-slate-300 font-bold uppercase tracking-tight">{{ $thesis->pembimbing1->name ?? 'Belum Ditugaskan' }}</span>
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">1</span>
+                                            <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{{ $thesis->pembimbing1 ? ($thesis->pembimbing1->name === strtoupper($thesis->pembimbing1->name) ? ucwords(strtolower($thesis->pembimbing1->name)) : $thesis->pembimbing1->name) : 'Belum Ditugaskan' }}</span>
                                         </div>
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800 text-[9px] flex items-center justify-center font-black text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">2</div>
-                                            <span class="text-[11px] text-slate-700 dark:text-slate-300 font-bold uppercase tracking-tight">{{ $thesis->pembimbing2->name ?? 'Belum Ditugaskan' }}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-400 shrink-0">2</span>
+                                            <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{{ $thesis->pembimbing2 ? ($thesis->pembimbing2->name === strtoupper($thesis->pembimbing2->name) ? ucwords(strtolower($thesis->pembimbing2->name)) : $thesis->pembimbing2->name) : 'Belum Ditugaskan' }}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-4 px-6">
-                                    <div class="flex flex-col items-center gap-2">
-                                        <div class="flex items-center gap-1">
-                                            <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_up_p1 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P1</span>
-                                            <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_up_p2 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P2</span>
+                                <td class="py-4 px-4 text-center">
+                                    <div class="flex flex-col items-center gap-1.5">
+                                        <!-- Dual Micro-Pill Status -->
+                                        <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccUpFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                <span>P1</span>
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                <span>P2</span>
+                                            </span>
+                                        </div>
+
+                                        <!-- Overall Badge & Action Trigger -->
+                                        <div class="inline-flex items-center gap-1">
+                                            @if($thesis->isAccUpFinal())
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    Siap Seminar
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                                                    <span>Progres</span>
+                                                    <span class="font-bold text-[9px]">({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)</span>
+                                                </span>
+                                            @endif
+
                                             @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline" onsubmit="return confirm('Toggle ACC Seminar UP untuk {{ $thesis->student->name ?? '' }}?')">
-                                                    @csrf
-                                                    <input type="hidden" name="slot" value="all">
-                                                    <button type="submit" title="Toggle ACC UP" class="ml-1 text-[10px] text-slate-400 hover:text-emerald-600">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                    </button>
-                                                </form>
+                                                <button type="button" 
+                                                        @click="openModal({
+                                                            thesisId: {{ $thesis->id }},
+                                                            type: 'up',
+                                                            typeName: 'Seminar UP',
+                                                            studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
+                                                            studentNpm: '{{ $thesis->student->identifier }}',
+                                                            isFinal: {{ $thesis->isAccUpFinal() ? 'true' : 'false' }},
+                                                            accP1: {{ $thesis->acc_up_p1 ? 'true' : 'false' }},
+                                                            accP2: {{ $thesis->acc_up_p2 ? 'true' : 'false' }},
+                                                            p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
+                                                            p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
+                                                        })"
+                                                        class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
+                                                        title="Aksi Cepat Kaprodi: Kelola ACC Seminar">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                </button>
                                             @endif
                                         </div>
-                                        @if($thesis->isAccUpFinal())
-                                            <x-status-badge type="emerald" label="SIAP SEMINAR" />
-                                        @else
-                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest italic">Progres...</span>
-                                        @endif
                                     </div>
                                 </td>
-                                <td class="py-4 px-6">
-                                    <div class="flex flex-col items-center gap-2">
-                                        <div class="flex items-center gap-1">
-                                            <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_sidang_p1 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P1</span>
-                                            <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase border {{ $thesis->acc_sidang_p2 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-900/50 text-slate-300 dark:text-slate-600 border-slate-100 dark:border-slate-700' }}">P2</span>
+                                <td class="py-4 px-4 text-center">
+                                    <div class="flex flex-col items-center gap-1.5">
+                                        <!-- Dual Micro-Pill Status -->
+                                        <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccSidangFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                <span>P1</span>
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                <span>P2</span>
+                                            </span>
+                                        </div>
+
+                                        <!-- Overall Badge & Action Trigger -->
+                                        <div class="inline-flex items-center gap-1">
+                                            @if($thesis->isAccSidangFinal())
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    Siap Sidang
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                                                    <span>Progres</span>
+                                                    <span class="font-bold text-[9px]">({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)</span>
+                                                </span>
+                                            @endif
+
                                             @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline" onsubmit="return confirm('Toggle ACC Sidang untuk {{ $thesis->student->name ?? '' }}?')">
-                                                    @csrf
-                                                    <input type="hidden" name="slot" value="all">
-                                                    <button type="submit" title="Toggle ACC Sidang" class="ml-1 text-[10px] text-slate-400 hover:text-emerald-600">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                    </button>
-                                                </form>
+                                                <button type="button" 
+                                                        @click="openModal({
+                                                            thesisId: {{ $thesis->id }},
+                                                            type: 'sidang',
+                                                            typeName: 'Sidang Akhir',
+                                                            studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
+                                                            studentNpm: '{{ $thesis->student->identifier }}',
+                                                            isFinal: {{ $thesis->isAccSidangFinal() ? 'true' : 'false' }},
+                                                            accP1: {{ $thesis->acc_sidang_p1 ? 'true' : 'false' }},
+                                                            accP2: {{ $thesis->acc_sidang_p2 ? 'true' : 'false' }},
+                                                            p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
+                                                            p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
+                                                        })"
+                                                        class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
+                                                        title="Aksi Cepat Kaprodi: Kelola ACC Sidang">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                </button>
                                             @endif
                                         </div>
-                                        @if($thesis->isAccSidangFinal())
-                                            <x-status-badge type="emerald" label="SIAP SIDANG" />
-                                        @else
-                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest italic">Progres...</span>
-                                        @endif
                                     </div>
                                 </td>
-                                <td class="py-4 px-6 text-right">
-                                    <a href="{{ route('theses.logbooks', $thesis->id) }}" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-indigo-600 transition-all shadow-sm">
-                                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                        Detail
+                                <td class="py-4 px-6 text-right whitespace-nowrap">
+                                    <a href="{{ route('theses.logbooks', $thesis->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 dark:hover:bg-slate-700 dark:hover:text-orange-400 transition-all shadow-2xs">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        <span>Detail</span>
                                     </a>
                                 </td>
                             </tr>
@@ -231,5 +297,150 @@
                 </table>
             </div>
         </x-table-card>
+
+        <!-- Hidden Form for Kaprodi ACC Submission -->
+        <form id="kaprodi-acc-form" method="POST" class="hidden">
+            @csrf
+            <input type="hidden" name="slot" id="kaprodi-acc-slot" value="all">
+        </form>
+
+        <!-- Centralized Kaprodi Quick ACC Modal Dialog -->
+        <div x-show="isOpen" 
+             x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @keydown.escape.window="isOpen = false">
+          
+          <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-700 w-full max-w-sm overflow-hidden"
+               @click.away="isOpen = false"
+               x-transition:enter="transition ease-out duration-200"
+               x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+               x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+               x-transition:leave="transition ease-in duration-150"
+               x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+               x-transition:leave-end="opacity-0 scale-95 translate-y-2">
+            
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-sm font-bold shadow-2xs">
+                  ⚖️
+                </span>
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100" x-text="'Kelola ACC ' + modalData.typeName"></h3>
+                  <p class="text-[11px] text-slate-400">Persetujuan Seminar & Sidang Mahasiswa</p>
+                </div>
+              </div>
+              <button @click="isOpen = false" type="button" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 text-lg font-bold transition-colors cursor-pointer">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-4 space-y-3.5">
+              <!-- Student Info Box -->
+              <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                <div class="text-xs font-bold text-slate-900 dark:text-white" x-text="modalData.studentName"></div>
+                <div class="text-[11px] text-slate-400 mt-0.5" x-text="modalData.studentNpm"></div>
+                
+                <div class="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs">
+                  <span class="text-slate-500 dark:text-slate-400 text-[11px]">Status Saat Ini:</span>
+                  <template x-if="modalData.isFinal">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Siap <span x-text="modalData.type === 'up' ? 'Seminar' : 'Sidang'"></span> (Lengkap)
+                    </span>
+                  </template>
+                  <template x-if="!modalData.isFinal">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-200/60 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                      Belum Lengkap
+                    </span>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="space-y-2 pt-1">
+                <!-- Full ACC Toggle (Primary) -->
+                <template x-if="!modalData.isFinal">
+                  <button type="button" 
+                          @click="submitAcc('all')"
+                          class="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <span>Beri ACC Penuh (P1 & P2)</span>
+                  </button>
+                </template>
+
+                <template x-if="modalData.isFinal">
+                  <button type="button" 
+                          @click="submitAcc('all')"
+                          class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <span>Batalkan Semua Persetujuan (Reset)</span>
+                  </button>
+                </template>
+
+                <!-- Secondary Actions: Individual Slots -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                  <p class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 mb-1.5">Atau Ubah per Pembimbing:</p>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" 
+                            @click="submitAcc('p1')"
+                            class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[11px] font-semibold transition-colors text-center cursor-pointer">
+                      <span x-text="modalData.accP1 ? '❌ Cabut P1' : '✅ Beri ACC P1'"></span>
+                    </button>
+                    <button type="button" 
+                            @click="submitAcc('p2')"
+                            class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[11px] font-semibold transition-colors text-center cursor-pointer">
+                      <span x-text="modalData.accP2 ? '❌ Cabut P2' : '✅ Beri ACC P2'"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-700/80 flex justify-end">
+              <button type="button" @click="isOpen = false" class="px-3 py-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer">
+                Batal
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <script>
+            function monitoringAccModal() {
+                return {
+                    isOpen: false,
+                    modalData: {
+                        thesisId: null,
+                        type: 'up',
+                        typeName: '',
+                        studentName: '',
+                        studentNpm: '',
+                        isFinal: false,
+                        accP1: false,
+                        accP2: false,
+                        p1Name: '',
+                        p2Name: ''
+                    },
+                    openModal(data) {
+                        this.modalData = data;
+                        this.isOpen = true;
+                    },
+                    submitAcc(slot) {
+                        const form = document.getElementById('kaprodi-acc-form');
+                        if (!form) return;
+                        form.action = `/theses/${this.modalData.thesisId}/toggle-acc/${this.modalData.type}`;
+                        document.getElementById('kaprodi-acc-slot').value = slot;
+                        form.submit();
+                    }
+                }
+            }
+        </script>
     </div>
 </x-app-layout>
