@@ -459,18 +459,21 @@
                     </div>
 
                     <!-- Interactive Modal List of Inactive Students -->
-                    <div x-show="openModal" 
-                         x-cloak
-                         class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0"
-                         x-transition:enter-end="opacity-100"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100"
-                         x-transition:leave-end="opacity-0">
-                        
-                        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-3xl w-full shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden my-auto border border-slate-200/80 dark:border-slate-700/80"
-                             @click.away="openModal = false">
+                    <template x-teleport="body">
+                        <div x-show="openModal" 
+                             x-cloak
+                             @click.self="openModal = false"
+                             class="fixed inset-0 overflow-y-auto bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5" 
+                             style="z-index: 99999 !important;"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0">
+                            
+                            <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-3xl w-full shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden my-auto border border-slate-200/80 dark:border-slate-700/80"
+                                 style="z-index: 100000 !important;">
                             
                             <!-- Modal Header (Fixed at top) -->
                             <div class="shrink-0 p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-700/80 flex items-start justify-between gap-4">
@@ -625,8 +628,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            @endif
+                </template>
+            </div>
+        @endif
 
             <!-- Analytical Dashboard for Admin/Dosen -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
