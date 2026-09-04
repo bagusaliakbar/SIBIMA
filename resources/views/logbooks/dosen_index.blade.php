@@ -269,27 +269,33 @@
                     @endphp
                     <!-- Semua Peran -->
                     <a href="{{ $buildQuery(['role_filter' => 'all']) }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleAll ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                       style="{{ $isRoleAll ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleAll ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                         <span>Semua</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleAll ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                        <span style="{{ $isRoleAll ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                              class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleAll ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                             {{ $stats['total'] ?? 0 }}
                         </span>
                     </a>
 
                     <!-- Sebagai Pembimbing 1 -->
                     <a href="{{ $buildQuery(['role_filter' => 'p1']) }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleP1 ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                       style="{{ $isRoleP1 ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleP1 ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                         <span>Sebagai Pembimbing 1</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP1 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                        <span style="{{ $isRoleP1 ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                              class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP1 ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                             {{ $stats['p1'] ?? 0 }}
                         </span>
                     </a>
 
                     <!-- Sebagai Pembimbing 2 -->
                     <a href="{{ $buildQuery(['role_filter' => 'p2']) }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleP2 ? 'bg-purple-600 text-white border-purple-600 shadow-purple-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                       style="{{ $isRoleP2 ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isRoleP2 ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                         <span>Sebagai Pembimbing 2</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP2 ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                        <span style="{{ $isRoleP2 ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                              class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isRoleP2 ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                             {{ $stats['p2'] ?? 0 }}
                         </span>
                     </a>
@@ -313,36 +319,44 @@
 
                         <!-- Semua Kategori -->
                         <a href="{{ $buildQuery(['filter' => 'all']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgAll ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                           style="{{ $isProgAll ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgAll ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Semua</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgAll ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                            <span style="{{ $isProgAll ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                                  class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgAll ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['total'] ?? 0 }}
                             </span>
                         </a>
 
                         <!-- Tahap Proposal (< 4 sesi) -->
                         <a href="{{ $buildQuery(['filter' => 'proposal']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgProposal ? 'bg-sky-600 text-white border-sky-600 shadow-sky-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                           style="{{ $isProgProposal ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgProposal ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Tahap Proposal (&lt; 4 sesi)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgProposal ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                            <span style="{{ $isProgProposal ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                                  class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgProposal ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['proposal'] ?? 0 }}
                             </span>
                         </a>
 
                         <!-- Siap UP (≥ 4 sesi) -->
                         <a href="{{ $buildQuery(['filter' => 'ready_up']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgUp ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                           style="{{ $isProgUp ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgUp ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Siap UP (&ge; 4 sesi)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgUp ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                            <span style="{{ $isProgUp ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                                  class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgUp ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['ready_up'] ?? 0 }}
                             </span>
                         </a>
 
                         <!-- Siap Sidang (≥ 8 sesi) -->
                         <a href="{{ $buildQuery(['filter' => 'ready_sidang']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgSidang ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-600/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
+                           style="{{ $isProgSidang ? 'background-color: #f97316; border-color: #f97316; color: #ffffff;' : '' }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgSidang ? 'filter-tab-active bg-orange-500 text-white border-orange-500 shadow-orange-500/20' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white' }}">
                             <span>Siap Sidang (&ge; 8 sesi)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgSidang ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
+                            <span style="{{ $isProgSidang ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                                  class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgSidang ? 'filter-tab-active-badge bg-white/20 text-white' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' }}">
                                 {{ $stats['ready_sidang'] ?? 0 }}
                             </span>
                         </a>
@@ -352,12 +366,14 @@
                             $stalledCount = $stats['stalled'] ?? 0;
                         @endphp
                         <a href="{{ $buildQuery(['filter' => 'stalled']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgStalled ? 'bg-rose-600 text-white border-rose-600 shadow-rose-600/20' : ($stalledCount > 0 ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 dark:hover:bg-rose-900/60' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white') }}">
+                           style="{{ $isProgStalled ? 'background-color: #e11d48; border-color: #e11d48; color: #ffffff;' : '' }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all border shadow-2xs {{ $isProgStalled ? 'filter-tab-active-rose bg-rose-600 text-white border-rose-600 shadow-rose-600/20' : ($stalledCount > 0 ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 dark:hover:bg-rose-900/60' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white') }}">
                             @if($stalledCount > 0 && !$isProgStalled)
                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                             @endif
                             <span>Macet (&gt; 14 hari)</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgStalled ? 'bg-white/20 text-white' : ($stalledCount > 0 ? 'bg-rose-200 text-rose-800 dark:bg-rose-900/80 dark:text-rose-200' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700') }}">
+                            <span style="{{ $isProgStalled ? 'background-color: rgba(255, 255, 255, 0.25); color: #ffffff;' : '' }}"
+                                  class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $isProgStalled ? 'filter-tab-active-badge bg-white/20 text-white' : ($stalledCount > 0 ? 'bg-rose-200 text-rose-800 dark:bg-rose-900/80 dark:text-rose-200' : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700') }}">
                                 {{ $stalledCount }}
                             </span>
                         </a>
