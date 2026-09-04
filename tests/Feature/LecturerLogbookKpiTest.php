@@ -147,7 +147,15 @@ class LecturerLogbookKpiTest extends TestCase
         $completedResponse = $this->actingAs($dosen)->get(route('logbooks.index', ['status' => 'completed']));
         $completedResponse->assertStatus(200);
         $completedResponse->assertSee('Mahasiswa Sudah Lulus');
-        $completedResponse->assertSee('Lulus / Selesai');
+        $completedResponse->assertSee('Lulus');
         $completedResponse->assertDontSee('Mahasiswa Siap Sidang');
+
+        // 7. Check Dual Progress Bar rendering on active view
+        $activeResponse = $this->actingAs($dosen)->get(route('logbooks.index'));
+        $activeResponse->assertSee('Target UP');
+        $activeResponse->assertSee('Target Sidang');
+        $activeResponse->assertSee('4/4 Sesi');
+        $activeResponse->assertSee('8/8 Sesi');
+        $activeResponse->assertSee('PROGRES TARGET BIMBINGAN');
     }
 }

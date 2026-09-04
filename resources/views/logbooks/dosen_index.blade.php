@@ -9,12 +9,6 @@
                     Pantau kemajuan berkas logbook dan aktivitas bimbingan mahasiswa skripsi Anda.
                 </p>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/60">
-                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                    {{ $stats['total'] ?? 0 }} Mahasiswa Aktif
-                </span>
-            </div>
         </div>
     </x-slot>
 
@@ -238,7 +232,7 @@
                     <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/50">
                         <th class="py-3.5 px-6 font-semibold text-xs tracking-wider">MAHASISWA</th>
                         <th class="py-3.5 px-6 font-semibold text-xs tracking-wider">RENCANA JUDUL SKRIPSI</th>
-                        <th class="py-3.5 px-6 font-semibold text-xs tracking-wider text-center">STATUS & TOTAL SESI</th>
+                        <th class="py-3.5 px-6 font-semibold text-xs tracking-wider text-center">PROGRES TARGET BIMBINGAN</th>
                         <th class="py-3.5 px-6 font-semibold text-xs tracking-wider text-right">AKSI</th>
                     </tr>
                 </thead>
@@ -309,48 +303,121 @@
                             <td class="py-4 px-6 text-center">
                                 @php
                                     $completedCount = (int) $thesis->completed_sessions_count;
+                                    $isP1 = ($thesis->pembimbing1_id === Auth::id());
+                                    $hasMyAccUp = $isP1 ? (bool) $thesis->acc_up_p1 : (bool) $thesis->acc_up_p2;
+                                    $hasMyAccSidang = $isP1 ? (bool) $thesis->acc_sidang_p1 : (bool) $thesis->acc_sidang_p2;
+                                    $isAccUpFinal = $thesis->acc_up_p1 && $thesis->acc_up_p2;
+                                    $isAccSidangFinal = $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2;
+
+                                    $isGraduated = ($thesis->status === 'completed');
+
+                                    $upTarget = 4;
+                                    $sidangTarget = 8;
+                                    $upPercent = $isGraduated ? 100 : min(100, round(($completedCount / $upTarget) * 100));
+                                    $sidangPercent = $isGraduated ? 100 : min(100, round(($completedCount / $sidangTarget) * 100));
+
                                     $lastSession = $thesis->mentoringSessions ? $thesis->mentoringSessions->first() : null;
                                     $daysSinceLast = ($lastSession && $lastSession->scheduled_at) 
                                         ? (int) abs(now()->diffInDays($lastSession->scheduled_at)) 
                                         : ($thesis->created_at ? (int) abs(now()->diffInDays($thesis->created_at)) : null);
                                 @endphp
 
-                                <div class="inline-flex flex-col items-center gap-1.5">
-                                    <span class="inline-flex items-center justify-center min-w-[2.2rem] px-2.5 py-1 rounded-full text-xs font-black {{ $completedCount > 0 ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
-                                        {{ $completedCount }} Sesi
-                                    </span>
+                                <div class="inline-flex flex-col gap-2 min-w-[200px] max-w-[240px] text-left">
+                                    <!-- Target UP (4 Sesi) Progress Bar -->
+                                    <div class="space-y-1">
+                                        <div class="flex items-center justify-between text-[10px] font-bold">
+                                            <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $upPercent >= 100 || $hasMyAccUp ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                <span>Target UP</span>
+                                            </span>
+                                            <div class="flex items-center gap-1.5">
+                                                @if($hasMyAccUp || $isAccUpFinal || $isGraduated)
+                                                    <span class="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800" title="Sudah di-ACC Seminar Proposal">
+                                                        <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                        <span>ACC UP</span>
+                                                    </span>
+                                                @endif
+                                                <span class="font-mono text-[10px] {{ $completedCount >= 4 || $isGraduated ? 'text-indigo-600 dark:text-indigo-400 font-black' : 'text-slate-500 dark:text-slate-400' }}">
+                                                    {{ $isGraduated ? '4/4' : min($completedCount, 4) . '/4' }} Sesi
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="w-full bg-slate-100 dark:bg-slate-700/70 rounded-full h-1.5 overflow-hidden">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $upPercent >= 100 ? 'bg-indigo-600 dark:bg-indigo-500' : ($upPercent > 0 ? 'bg-indigo-400 dark:bg-indigo-400' : 'bg-transparent') }}" 
+                                                 style="width: {{ $upPercent }}%"></div>
+                                        </div>
+                                    </div>
 
-                                    <!-- Status Progress Badge -->
-                                    @if($thesis->status === 'completed')
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
-                                            <svg class="w-2.5 h-2.5 text-purple-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a10.97 10.97 0 01-.25 2.27c-.244 1.258-.87 2.37-1.802 3.197a1 1 0 00.655 1.764c2.812 0 5.12-1.353 6.147-3.282 1.027 1.929 3.335 3.282 6.147 3.282a1 1 0 00.655-1.764c-.932-.827-1.558-1.939-1.802-3.197a10.97 10.97 0 01-.25-2.27l2.644-1.131a1 1 0 000-1.84l-7-3zM7 14.5a3.5 3.5 0 007 0 3.5 3.5 0 00-7 0z"/></svg>
-                                            <span>Lulus / Selesai</span>
-                                        </span>
-                                    @elseif($completedCount >= 8)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
-                                            <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                            <span>Siap Sidang</span>
-                                        </span>
-                                    @elseif($completedCount >= 4)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
-                                            <svg class="w-2.5 h-2.5 text-indigo-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                            <span>Siap UP</span>
-                                        </span>
-                                    @elseif($completedCount === 0)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                            <span>Belum Sesi</span>
-                                        </span>
-                                    @elseif($daysSinceLast !== null && $daysSinceLast > 14)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            <span>Pasif ({{ $daysSinceLast }}h)</span>
-                                        </span>
-                                    @else
-                                        <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500">
-                                            {{ $daysSinceLast !== null ? ($daysSinceLast == 0 ? 'Hari ini' : "{$daysSinceLast}h lalu") : 'Aktif' }}
-                                        </span>
-                                    @endif
+                                    <!-- Target Sidang (8 Sesi) Progress Bar -->
+                                    <div class="space-y-1">
+                                        <div class="flex items-center justify-between text-[10px] font-bold">
+                                            <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $sidangPercent >= 100 || $hasMyAccSidang ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                <span>Target Sidang</span>
+                                            </span>
+                                            <div class="flex items-center gap-1.5">
+                                                @if($hasMyAccSidang || $isAccSidangFinal || $isGraduated)
+                                                    <span class="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800" title="Sudah di-ACC Sidang Akhir">
+                                                        <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                        <span>ACC Sidang</span>
+                                                    </span>
+                                                @endif
+                                                <span class="font-mono text-[10px] {{ $completedCount >= 8 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-slate-500 dark:text-slate-400' }}">
+                                                    {{ $isGraduated ? '8/8' : min($completedCount, 8) . '/8' }} Sesi
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="w-full bg-slate-100 dark:bg-slate-700/70 rounded-full h-1.5 overflow-hidden">
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $sidangPercent >= 100 ? 'bg-emerald-600 dark:bg-emerald-500' : ($sidangPercent > 0 ? 'bg-emerald-400 dark:bg-emerald-400' : 'bg-transparent') }}" 
+                                                 style="width: {{ $sidangPercent }}%"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bottom Milestone Status Pill -->
+                                    <div class="flex items-center justify-between pt-0.5">
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500">Total:</span>
+                                            <span class="text-[10px] font-black {{ $completedCount > 0 ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400' }}">{{ $completedCount }} Sesi</span>
+                                        </div>
+
+                                        <div>
+                                            @if($isGraduated)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
+                                                    <span>🎓 Lulus</span>
+                                                </span>
+                                            @elseif($hasMyAccSidang)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
+                                                    <span>✅ ACC Sidang</span>
+                                                </span>
+                                            @elseif($completedCount >= 8)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
+                                                    <span>🟢 Siap Sidang</span>
+                                                </span>
+                                            @elseif($hasMyAccUp)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
+                                                    <span>✅ ACC UP</span>
+                                                </span>
+                                            @elseif($completedCount >= 4)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
+                                                    <span>🔵 Siap UP</span>
+                                                </span>
+                                            @elseif($completedCount === 0)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">
+                                                    <span class="w-1 h-1 rounded-full bg-rose-500"></span>
+                                                    <span>Belum Ada Sesi</span>
+                                                </span>
+                                            @elseif($daysSinceLast !== null && $daysSinceLast > 14)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800">
+                                                    <span class="w-1 h-1 rounded-full bg-amber-500"></span>
+                                                    <span>Pasif ({{ $daysSinceLast }}h)</span>
+                                                </span>
+                                            @else
+                                                <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                                                    {{ $daysSinceLast !== null ? ($daysSinceLast == 0 ? 'Hari ini' : "{$daysSinceLast}h lalu") : 'Aktif' }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                             <td class="py-4 px-6 text-right">
