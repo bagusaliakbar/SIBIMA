@@ -362,11 +362,20 @@
 
                                 <!-- Catatan Mahasiswa (Jika Ada) -->
                                 @if($session->notes)
-                                    <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/70 dark:border-slate-700">
-                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest block mb-1">Catatan Mahasiswa:</span>
-                                        <p class="text-xs text-slate-600 dark:text-slate-300 italic font-medium leading-relaxed">
-                                            "{{ $session->notes }}"
-                                        </p>
+                                    <div class="p-4 sm:p-5 bg-slate-50/90 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-3 shadow-2xs">
+                                        <div class="flex items-center gap-2 pb-2.5 border-b border-slate-200/70 dark:border-slate-700/70">
+                                            <div class="w-5 h-5 rounded-md bg-slate-200/80 dark:bg-slate-800 flex items-center justify-center shrink-0 text-slate-500">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Catatan Mahasiswa</span>
+                                        </div>
+                                        <div class="px-0.5">
+                                            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal whitespace-pre-line">
+                                                {{ $session->notes }}
+                                            </p>
+                                        </div>
                                     </div>
                                 @endif
 

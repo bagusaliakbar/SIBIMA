@@ -938,14 +938,23 @@
 
                                             <!-- Student Notes (If Any) -->
                                             <template x-if="session.notes">
-                                                <div class="mt-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 text-xs space-y-1.5 shadow-2xs">
-                                                    <div class="flex items-center gap-1.5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                        </svg>
-                                                        <span>Catatan Mahasiswa:</span>
+                                                <div class="mt-3.5 p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 shadow-2xs">
+                                                    <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200/80 dark:border-slate-700/70">
+                                                        <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                                                            <div class="w-6 h-6 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300 shadow-2xs">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                                </svg>
+                                                            </div>
+                                                            <span>Catatan Mahasiswa</span>
+                                                        </div>
+                                                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-700/60 px-2.5 py-0.5 rounded-md border border-slate-300/40 dark:border-slate-600/40">
+                                                            Agenda / Persiapan
+                                                        </span>
                                                     </div>
-                                                    <p class="text-xs sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-relaxed italic whitespace-pre-wrap" x-text="session.notes"></p>
+                                                    <div class="px-0.5">
+                                                        <p class="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-wrap" x-text="session.notes"></p>
+                                                    </div>
                                                 </div>
                                             </template>
                                         </div>
