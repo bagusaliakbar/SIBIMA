@@ -17,10 +17,8 @@
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
                     <button type="button" 
                             @click="openUploadModal()"
-                            class="inline-flex items-center justify-center gap-2.5 px-4.5 py-2.5 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-600/20 hover:shadow-lg hover:shadow-orange-600/30 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0">
-                        <span class="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                            <svg class="w-3.5 h-3.5 text-white stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                        </span>
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-600/25 hover:shadow-lg hover:shadow-orange-600/35 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0 whitespace-nowrap">
+                        <svg class="w-4 h-4 shrink-0 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                         <span>Unggah Dokumen Baru</span>
                     </button>
                 @endif
