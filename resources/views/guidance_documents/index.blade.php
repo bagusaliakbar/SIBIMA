@@ -16,7 +16,8 @@
 
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
                     <button type="button" 
-                            @click="openUploadModal()"
+                            @click.stop="$dispatch('open-guidance-upload-modal')"
+                            onclick="if(window.guidanceDocumentManagerInstance) { window.guidanceDocumentManagerInstance.openUploadModal(); }"
                             class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-600/25 hover:shadow-lg hover:shadow-orange-600/35 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0 whitespace-nowrap">
                         <svg class="w-4 h-4 shrink-0 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                         <span>Unggah Dokumen Baru</span>
@@ -26,7 +27,10 @@
         </div>
     </x-slot>
 
-    <div x-data="guidanceDocumentManager()" class="space-y-6 pb-16">
+    <div x-data="guidanceDocumentManager()" 
+         @open-guidance-upload-modal.window="openUploadModal()"
+         @open-upload-modal.window="openUploadModal()"
+         class="space-y-6 pb-16">
         
         <!-- Filter Bar & Search Toolbar -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
@@ -334,7 +338,8 @@
         @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
             <div x-show="showModal" 
                  x-cloak 
-                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+                 class="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+                 style="z-index: 99999 !important;"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
@@ -478,6 +483,9 @@
                     category: 'panduan_skripsi',
                     description: '',
                     is_active: true
+                },
+                init() {
+                    window.guidanceDocumentManagerInstance = this;
                 },
                 openUploadModal() {
                     this.isEditing = false;
