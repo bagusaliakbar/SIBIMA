@@ -1,24 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <x-breadcrumb />
-                <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                    <span>Arsip Panduan & Dokumen Skripsi</span>
-                </h2>
-                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium leading-relaxed">
-                    Buku pedoman resmi penulisan, format template Word/LaTeX, form bimbingan, dan berkas administrasi skripsi program studi.
-                </p>
-            </div>
+        <div class="w-full">
+            <x-breadcrumb :items="[
+                ['label' => 'Arsip Panduan & Dokumen Skripsi', 'route' => null]
+            ]" />
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                        <span>Arsip Panduan & Dokumen Skripsi</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium leading-relaxed">
+                        Buku pedoman resmi penulisan, format template Word/LaTeX, form bimbingan, dan berkas administrasi skripsi program studi.
+                    </p>
+                </div>
 
-            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                <button type="button" 
-                        @click="openUploadModal()"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-orange-600/20 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0">
-                    <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                    <span>Unggah Dokumen Baru</span>
-                </button>
-            @endif
+                @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                    <button type="button" 
+                            @click="openUploadModal()"
+                            class="inline-flex items-center justify-center gap-2.5 px-4.5 py-2.5 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-600/20 hover:shadow-lg hover:shadow-orange-600/30 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0">
+                        <span class="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                            <svg class="w-3.5 h-3.5 text-white stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        </span>
+                        <span>Unggah Dokumen Baru</span>
+                    </button>
+                @endif
+            </div>
         </div>
     </x-slot>
 
