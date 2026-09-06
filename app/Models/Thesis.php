@@ -236,9 +236,19 @@ class Thesis extends Model
         return $this->hasOne(SeminarApplication::class);
     }
 
+    public function seminarApplications()
+    {
+        return $this->hasMany(SeminarApplication::class);
+    }
+
     public function defenseApplication()
     {
         return $this->hasOne(ThesisDefenseApplication::class);
+    }
+
+    public function defenseApplications()
+    {
+        return $this->hasMany(ThesisDefenseApplication::class);
     }
 
     /**

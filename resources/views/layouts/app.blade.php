@@ -415,6 +415,16 @@
                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Monitoring</p>
                     </div>
                     <nav class="space-y-1 mb-10">
+                        <!-- Direct Link: Grafik Analitik -->
+                        <a href="{{ route('analytics.index') }}" 
+                           class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('analytics.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('analytics.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                                <span>Grafik Analitik</span>
+                            </div>
+                            <span class="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">Baru</span>
+                        </a>
+
                         <!-- Direct Link: Monitoring Bimbingan -->
                         <a href="{{ route('monitoring.index') }}" 
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
@@ -472,6 +482,10 @@
                                 <a href="{{ route('monitoring.advanced-reporting') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.advanced-reporting') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Statistik & Pelaporan
+                                </a>
+                                <a href="{{ route('analytics.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('analytics.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Grafik Analitik
                                 </a>
                             </div>
                         </div>

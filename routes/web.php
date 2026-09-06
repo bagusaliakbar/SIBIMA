@@ -163,6 +163,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
         Route::get('/admin/logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.logs');
 
+        // Analytics & Charts
+        Route::get('/analytics/export-excel', [App\Http\Controllers\AnalyticsChartController::class, 'exportExcel'])->name('analytics.export-excel');
+        Route::get('/analytics/export-pdf', [App\Http\Controllers\AnalyticsChartController::class, 'exportPdf'])->name('analytics.export-pdf');
+        Route::get('/analytics', [App\Http\Controllers\AnalyticsChartController::class, 'index'])->name('analytics.index');
+
         // Monitoring
         Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
         Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
