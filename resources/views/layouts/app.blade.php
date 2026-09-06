@@ -422,7 +422,6 @@
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('analytics.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                                 <span>Grafik Analitik</span>
                             </div>
-                            <span class="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">Baru</span>
                         </a>
 
                         <!-- Direct Link: Monitoring Bimbingan -->

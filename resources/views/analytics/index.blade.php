@@ -8,11 +8,7 @@
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center gap-3">
                     Grafik & Statistik Analitik SIBIMA
-                    <span class="px-2.5 py-0.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-black uppercase tracking-wider rounded-md shadow-sm">Visual Dashboard</span>
                 </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
-                    Visualisasi komprehensif data skripsi, progres seminar, kelulusan sidang, dan beban dosen pembimbing.
-                </p>
             </div>
 
             <!-- Export Toolbar Actions -->
