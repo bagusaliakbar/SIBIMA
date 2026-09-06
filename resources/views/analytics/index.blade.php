@@ -640,7 +640,7 @@
                         {
                             label: 'Belum Seminar',
                             data: rawCohortSem.pending,
-                            backgroundColor: '#fbbf24',
+                            backgroundColor: '#f59e0b',
                             borderRadius: 6,
                         }
                     ]
@@ -676,13 +676,15 @@
                         {
                             label: 'Belum Lulus (P2)',
                             data: rawUnfinished.p2,
-                            backgroundColor: '#f97316',
+                            backgroundColor: '#0ea5e9',
                             borderRadius: 6,
                         },
                         {
                             label: 'Batas Kuota',
                             data: rawUnfinished.quota,
-                            backgroundColor: isDark ? '#334155' : '#cbd5e1',
+                            backgroundColor: isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.4)',
+                            borderColor: isDark ? '#94a3b8' : '#64748b',
+                            borderWidth: 1.5,
                             borderRadius: 6,
                         }
                     ]
@@ -698,17 +700,19 @@
                             anchor: 'end',
                             align: 'start',
                             color: function(ctx) {
-                                if (ctx.datasetIndex === 2 && !document.documentElement.classList.contains('dark')) {
-                                    return '#1e293b';
+                                if (ctx.datasetIndex === 2) {
+                                    return document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b';
                                 }
                                 return '#ffffff';
                             },
                             textStrokeColor: function(ctx) {
-                                if (ctx.datasetIndex === 2 && !document.documentElement.classList.contains('dark')) {
-                                    return 'rgba(255, 255, 255, 0.9)';
+                                if (ctx.datasetIndex === 2) {
+                                    return document.documentElement.classList.contains('dark') ? '#0f172a' : '#ffffff';
                                 }
                                 return 'rgba(0, 0, 0, 0.45)';
-                            }
+                            },
+                            textStrokeWidth: 2,
+                            font: { weight: 'bold', size: 10 }
                         }
                     },
                     scales: {
@@ -908,7 +912,9 @@
                         {
                             label: 'Batas Kuota',
                             data: rawWorkload.quota,
-                            backgroundColor: isDark ? '#334155' : '#e2e8f0',
+                            backgroundColor: isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.4)',
+                            borderColor: isDark ? '#94a3b8' : '#64748b',
+                            borderWidth: 1.5,
                             borderRadius: 6,
                         }
                     ]
@@ -924,17 +930,19 @@
                             anchor: 'end',
                             align: 'start',
                             color: function(ctx) {
-                                if (ctx.datasetIndex === 1 && !document.documentElement.classList.contains('dark')) {
-                                    return '#1e293b';
+                                if (ctx.datasetIndex === 1) {
+                                    return document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b';
                                 }
                                 return '#ffffff';
                             },
                             textStrokeColor: function(ctx) {
-                                if (ctx.datasetIndex === 1 && !document.documentElement.classList.contains('dark')) {
-                                    return 'rgba(255, 255, 255, 0.9)';
+                                if (ctx.datasetIndex === 1) {
+                                    return document.documentElement.classList.contains('dark') ? '#0f172a' : '#ffffff';
                                 }
                                 return 'rgba(0, 0, 0, 0.45)';
-                            }
+                            },
+                            textStrokeWidth: 2,
+                            font: { weight: 'bold', size: 10 }
                         }
                     },
                     scales: {
@@ -1075,6 +1083,31 @@
         function applyThemeToAllCharts(isDark) {
             const theme = getChartThemeColors(isDark);
             Chart.defaults.color = theme.textColor;
+
+            // Update Batas Kuota dataset styling on theme change
+            if (window.sibimaCharts['chartUnfinishedByAdvisor']) {
+                const c = window.sibimaCharts['chartUnfinishedByAdvisor'];
+                if (c.data && c.data.datasets && c.data.datasets[2]) {
+                    c.data.datasets[2].backgroundColor = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.4)';
+                    c.data.datasets[2].borderColor = isDark ? '#94a3b8' : '#64748b';
+                }
+            }
+
+            if (window.sibimaCharts['chartWorkload']) {
+                const c = window.sibimaCharts['chartWorkload'];
+                if (c.data && c.data.datasets && c.data.datasets[1]) {
+                    c.data.datasets[1].backgroundColor = isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.4)';
+                    c.data.datasets[1].borderColor = isDark ? '#94a3b8' : '#64748b';
+                }
+            }
+
+            // Update border colors for doughnut & polar charts
+            ['chartStages', 'chartHealth', 'chartTopics'].forEach(id => {
+                if (window.sibimaCharts[id] && window.sibimaCharts[id].data && window.sibimaCharts[id].data.datasets && window.sibimaCharts[id].data.datasets[0]) {
+                    window.sibimaCharts[id].data.datasets[0].borderColor = isDark ? '#1e293b' : '#ffffff';
+                    window.sibimaCharts[id].data.datasets[0].borderWidth = isDark ? 2 : 1;
+                }
+            });
 
             Object.values(window.sibimaCharts).forEach(chart => {
                 if (!chart) return;
