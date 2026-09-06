@@ -234,7 +234,7 @@
     <!-- FILTER PARAMETERS -->
     <div class="filter-badges">
         <span><strong>Gelombang:</strong> {{ $filters['wave_name'] ?? 'Semua Gelombang' }}</span>
-        <span><strong>Angkatan:</strong> {{ !empty($filters['entry_year']) && $filters['entry_year'] !== 'all' ? 'Angkatan ' . $filters['entry_year'] : 'Semua Angkatan' }}</span>
+        <span><strong>Angkatan:</strong> {{ $filters['entry_year_label'] ?? 'Semua Angkatan' }}</span>
         <span><strong>Dosen Pembimbing:</strong> {{ $filters['dosen_name'] ?? 'Semua Dosen' }}</span>
         <span><strong>Status Skripsi:</strong> {{ ucfirst($filters['status'] ?? 'Semua Status') }}</span>
         <span><strong>Dicetak Pada:</strong> {{ now()->translatedFormat('d F Y H:i') }} WIB</span>

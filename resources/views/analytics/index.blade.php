@@ -53,13 +53,16 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Filter Data Analitik</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Saring visualisasi grafik berdasarkan gelombang, angkatan, dosen, status, dan tanggal.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Saring visualisasi grafik berdasarkan gelombang, rentang angkatan (misal 2020-2022), dosen, status, dan tanggal.</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    @if(!empty($filters['wave_id']) || !empty($filters['entry_year']) || !empty($filters['dosen_id']) || ($filters['status'] ?? 'all') !== 'all' || !empty($filters['date_from']) || !empty($filters['date_to']))
+                    @if(!empty($filters['wave_id']) || !empty($filters['entry_year_from']) || !empty($filters['entry_year_to']) || !empty($filters['dosen_id']) || ($filters['status'] ?? 'all') !== 'all' || !empty($filters['date_from']) || !empty($filters['date_to']))
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30">
                             Filter Aktif
+                            @if(!empty($filters['entry_year_from']) || !empty($filters['entry_year_to']))
+                                • {{ $filters['entry_year_label'] ?? '' }}
+                            @endif
                         </span>
                     @endif
                     <button type="button" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
@@ -84,17 +87,33 @@
                         </select>
                     </div>
 
-                    <!-- Filter Angkatan -->
+                    <!-- Filter Rentang Angkatan -->
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Tahun Angkatan</label>
-                        <select name="entry_year" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
-                            <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
-                            @foreach($cohortYears as $year)
-                                <option value="{{ $year }}" {{ ($filters['entry_year'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
-                                    Angkatan {{ $year }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Rentang Angkatan</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <div>
+                                <select name="entry_year_from" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0" title="Dari Tahun Angkatan">
+                                    <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Dari Thn</option>
+                                    @foreach($cohortYears as $year)
+                                        <option value="{{ $year }}" {{ ($filters['entry_year_from'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <select name="entry_year_to" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0" title="Sampai Tahun Angkatan">
+                                    <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Sampai Thn</option>
+                                    @foreach($cohortYears as $year)
+                                        <option value="{{ $year }}" {{ ($filters['entry_year_to'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Filter Dosen Pembimbing -->

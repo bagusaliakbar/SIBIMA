@@ -47,6 +47,11 @@ class AnalyticsChartController extends Controller implements HasMiddleware
             ->orderBy('entry_year', 'desc')
             ->pluck('entry_year');
 
+        if ($cohortYears->isEmpty()) {
+            $currentYear = (int) now()->year;
+            $cohortYears = collect(range($currentYear, $currentYear - 6));
+        }
+
         return view('analytics.index', array_merge($analyticsData, [
             'filters' => $filters,
             'waves' => $waves,
@@ -85,10 +90,45 @@ class AnalyticsChartController extends Controller implements HasMiddleware
     {
         $waveId = $request->input('wave_id');
         $entryYear = $request->input('entry_year');
+        $entryYearFrom = $request->input('entry_year_from');
+        $entryYearTo = $request->input('entry_year_to');
         $dosenId = $request->input('dosen_id');
         $status = $request->input('status', 'all');
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
+
+        // Backward compatibility: if single entry_year is specified without range
+        if (!empty($entryYear) && $entryYear !== 'all') {
+            if (empty($entryYearFrom) || $entryYearFrom === 'all') {
+                $entryYearFrom = $entryYear;
+            }
+            if (empty($entryYearTo) || $entryYearTo === 'all') {
+                $entryYearTo = $entryYear;
+            }
+        }
+
+        // Clean & cast numeric values
+        $entryYearFrom = (!empty($entryYearFrom) && $entryYearFrom !== 'all') ? (int) $entryYearFrom : null;
+        $entryYearTo = (!empty($entryYearTo) && $entryYearTo !== 'all') ? (int) $entryYearTo : null;
+
+        // Auto-order if both are provided and from > to
+        if ($entryYearFrom && $entryYearTo && $entryYearFrom > $entryYearTo) {
+            $temp = $entryYearFrom;
+            $entryYearFrom = $entryYearTo;
+            $entryYearTo = $temp;
+        }
+
+        // Generate human-readable label
+        $entryYearLabel = 'Semua Angkatan';
+        if ($entryYearFrom && $entryYearTo) {
+            $entryYearLabel = ($entryYearFrom === $entryYearTo)
+                ? 'Angkatan ' . $entryYearFrom
+                : 'Angkatan ' . $entryYearFrom . ' - ' . $entryYearTo;
+        } elseif ($entryYearFrom) {
+            $entryYearLabel = 'Angkatan ≥ ' . $entryYearFrom;
+        } elseif ($entryYearTo) {
+            $entryYearLabel = 'Angkatan ≤ ' . $entryYearTo;
+        }
 
         $waveName = 'Semua Gelombang';
         if (!empty($waveId) && $waveId !== 'all') {
@@ -105,7 +145,10 @@ class AnalyticsChartController extends Controller implements HasMiddleware
         return [
             'wave_id' => $waveId,
             'wave_name' => $waveName,
-            'entry_year' => $entryYear,
+            'entry_year' => ($entryYearFrom && $entryYearFrom === $entryYearTo) ? $entryYearFrom : null,
+            'entry_year_from' => $entryYearFrom,
+            'entry_year_to' => $entryYearTo,
+            'entry_year_label' => $entryYearLabel,
             'dosen_id' => $dosenId,
             'dosen_name' => $dosenName,
             'status' => $status,
@@ -130,9 +173,15 @@ class AnalyticsChartController extends Controller implements HasMiddleware
             });
         }
 
-        if (!empty($filters['entry_year']) && $filters['entry_year'] !== 'all') {
+        if (!empty($filters['entry_year_from']) || !empty($filters['entry_year_to'])) {
             $thesesQuery->whereHas('student', function ($q) use ($filters) {
-                $q->where('entry_year', $filters['entry_year']);
+                if (!empty($filters['entry_year_from']) && !empty($filters['entry_year_to'])) {
+                    $q->whereBetween('entry_year', [$filters['entry_year_from'], $filters['entry_year_to']]);
+                } elseif (!empty($filters['entry_year_from'])) {
+                    $q->where('entry_year', '>=', $filters['entry_year_from']);
+                } elseif (!empty($filters['entry_year_to'])) {
+                    $q->where('entry_year', '<=', $filters['entry_year_to']);
+                }
             });
         }
 

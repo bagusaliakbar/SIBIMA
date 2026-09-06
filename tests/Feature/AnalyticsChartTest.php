@@ -142,4 +142,63 @@ class AnalyticsChartTest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue(str_contains($response->headers->get('content-type'), 'application/pdf'));
     }
+
+    public function test_analytics_cohort_range_filter_works(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $dosen = User::factory()->create(['role' => 'dosen']);
+
+        $mhs2020 = User::factory()->create(['role' => 'mahasiswa', 'entry_year' => 2020]);
+        $mhs2021 = User::factory()->create(['role' => 'mahasiswa', 'entry_year' => 2021]);
+        $mhs2024 = User::factory()->create(['role' => 'mahasiswa', 'entry_year' => 2024]);
+
+        Thesis::create([
+            'student_id' => $mhs2020->id,
+            'pembimbing1_id' => $dosen->id,
+            'pembimbing2_id' => $dosen->id,
+            'title' => 'Skripsi Angkatan 2020',
+            'status' => 'active',
+        ]);
+
+        Thesis::create([
+            'student_id' => $mhs2021->id,
+            'pembimbing1_id' => $dosen->id,
+            'pembimbing2_id' => $dosen->id,
+            'title' => 'Skripsi Angkatan 2021',
+            'status' => 'active',
+        ]);
+
+        Thesis::create([
+            'student_id' => $mhs2024->id,
+            'pembimbing1_id' => $dosen->id,
+            'pembimbing2_id' => $dosen->id,
+            'title' => 'Skripsi Angkatan 2024',
+            'status' => 'active',
+        ]);
+
+        // Filter range: 2020 - 2022
+        $response = $this->actingAs($admin)->get(route('analytics.index', [
+            'entry_year_from' => 2020,
+            'entry_year_to' => 2022,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Angkatan 2020 - 2022');
+        $this->assertEquals(2, $response->viewData('kpi')['totalStudents']);
+
+        // Test reverse order auto-swap: 2022 to 2020
+        $responseSwap = $this->actingAs($admin)->get(route('analytics.index', [
+            'entry_year_from' => 2022,
+            'entry_year_to' => 2020,
+        ]));
+        $responseSwap->assertStatus(200);
+        $this->assertEquals(2, $responseSwap->viewData('kpi')['totalStudents']);
+
+        // Test PDF export with cohort range
+        $responsePdf = $this->actingAs($admin)->get(route('analytics.export-pdf', [
+            'entry_year_from' => 2020,
+            'entry_year_to' => 2022,
+        ]));
+        $responsePdf->assertStatus(200);
+    }
 }
