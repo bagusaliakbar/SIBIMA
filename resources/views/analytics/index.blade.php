@@ -496,8 +496,9 @@
 
     </div>
 
-    <!-- Chart.js CDN -->
+    <!-- Chart.js & Datalabels Plugin CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>
         // Global chart collection for dynamic dark/light mode updates
@@ -521,6 +522,32 @@
 
             Chart.defaults.font.family = "'Inter', sans-serif";
             Chart.defaults.color = theme.textColor;
+
+            // Register ChartDataLabels plugin and configure global 'inside end' defaults
+            if (typeof ChartDataLabels !== 'undefined') {
+                Chart.register(ChartDataLabels);
+                Chart.defaults.plugins.datalabels = {
+                    anchor: 'end',
+                    align: 'start',
+                    color: '#ffffff',
+                    font: {
+                        family: "'Inter', sans-serif",
+                        weight: 'bold',
+                        size: 10
+                    },
+                    offset: 3,
+                    clamp: true,
+                    textStrokeColor: 'rgba(0, 0, 0, 0.45)',
+                    textStrokeWidth: 2,
+                    formatter: function(value) {
+                        return (value !== null && value !== undefined && value > 0) ? value : '';
+                    },
+                    display: function(context) {
+                        const val = context.dataset.data[context.dataIndex];
+                        return val !== null && val !== undefined && val > 0;
+                    }
+                };
+            }
 
             // 1. Chart Seminar P1 (Horizontal Bar)
             const rawP1 = @json($chartSeminarP1);
@@ -666,7 +693,23 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'top', labels: { boxWidth: 12, font: { weight: '600', size: 11 } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'start',
+                            color: function(ctx) {
+                                if (ctx.datasetIndex === 2 && !document.documentElement.classList.contains('dark')) {
+                                    return '#1e293b';
+                                }
+                                return '#ffffff';
+                            },
+                            textStrokeColor: function(ctx) {
+                                if (ctx.datasetIndex === 2 && !document.documentElement.classList.contains('dark')) {
+                                    return 'rgba(255, 255, 255, 0.9)';
+                                }
+                                return 'rgba(0, 0, 0, 0.45)';
+                            }
+                        }
                     },
                     scales: {
                         x: { grid: { color: theme.gridColor }, ticks: { color: theme.textColor, stepSize: 1 } },
@@ -702,7 +745,15 @@
                     cutout: '65%',
                     plugins: {
                         legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '500' } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'center',
+                            align: 'center',
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 11 },
+                            textStrokeColor: 'rgba(0, 0, 0, 0.45)',
+                            textStrokeWidth: 2
+                        }
                     }
                 }
             });
@@ -785,7 +836,16 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'top', labels: { boxWidth: 12, font: { weight: '600', size: 11 } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            color: isDark ? '#f1f5f9' : '#1e293b',
+                            textStrokeColor: isDark ? '#0f172a' : '#ffffff',
+                            textStrokeWidth: 2,
+                            font: { weight: 'bold', size: 10 }
+                        }
                     },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: theme.textColor } },
@@ -818,7 +878,15 @@
                     cutout: '70%',
                     plugins: {
                         legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '500' } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'center',
+                            align: 'center',
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 11 },
+                            textStrokeColor: 'rgba(0, 0, 0, 0.45)',
+                            textStrokeWidth: 2
+                        }
                     }
                 }
             });
@@ -851,7 +919,23 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'top', labels: { boxWidth: 12, font: { weight: '600', size: 11 } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'start',
+                            color: function(ctx) {
+                                if (ctx.datasetIndex === 1 && !document.documentElement.classList.contains('dark')) {
+                                    return '#1e293b';
+                                }
+                                return '#ffffff';
+                            },
+                            textStrokeColor: function(ctx) {
+                                if (ctx.datasetIndex === 1 && !document.documentElement.classList.contains('dark')) {
+                                    return 'rgba(255, 255, 255, 0.9)';
+                                }
+                                return 'rgba(0, 0, 0, 0.45)';
+                            }
+                        }
                     },
                     scales: {
                         x: { grid: { color: theme.gridColor }, ticks: { color: theme.textColor, stepSize: 1 } },
@@ -920,7 +1004,15 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'center',
+                            align: 'center',
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 11 },
+                            textStrokeColor: 'rgba(0, 0, 0, 0.45)',
+                            textStrokeWidth: 2
+                        }
                     },
                     scales: {
                         r: {
@@ -950,7 +1042,14 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'top', labels: { boxWidth: 12, font: { weight: '600', size: 11 } } },
-                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                        tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'start',
+                            formatter: function(val) {
+                                return (val && val > 0) ? val + ' bln' : '';
+                            }
+                        }
                     },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: theme.textColor } },
@@ -1000,6 +1099,13 @@
 
                 if (chart.options.plugins && chart.options.plugins.tooltip) {
                     chart.options.plugins.tooltip.backgroundColor = theme.tooltipBg;
+                }
+
+                if (chart.options.plugins && chart.options.plugins.datalabels) {
+                    if (chart.canvas && chart.canvas.id === 'chartMonthlyTrends') {
+                        chart.options.plugins.datalabels.color = isDark ? '#f1f5f9' : '#1e293b';
+                        chart.options.plugins.datalabels.textStrokeColor = isDark ? '#0f172a' : '#ffffff';
+                    }
                 }
 
                 chart.update();
