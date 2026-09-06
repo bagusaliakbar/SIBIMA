@@ -89,6 +89,7 @@ class AnalyticsChartController extends Controller implements HasMiddleware
     private function extractFilters(Request $request): array
     {
         $waveId = $request->input('wave_id');
+        $cohortType = $request->input('cohort_type');
         $entryYear = $request->input('entry_year');
         $entryYearFrom = $request->input('entry_year_from');
         $entryYearTo = $request->input('entry_year_to');
@@ -97,37 +98,53 @@ class AnalyticsChartController extends Controller implements HasMiddleware
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
 
-        // Backward compatibility: if single entry_year is specified without range
-        if (!empty($entryYear) && $entryYear !== 'all') {
-            if (empty($entryYearFrom) || $entryYearFrom === 'all') {
-                $entryYearFrom = $entryYear;
-            }
-            if (empty($entryYearTo) || $entryYearTo === 'all') {
-                $entryYearTo = $entryYear;
+        // Determine active cohort filter mode
+        if (empty($cohortType)) {
+            if (!empty($entryYearFrom) || !empty($entryYearTo)) {
+                $cohortType = 'range';
+            } else {
+                $cohortType = 'single';
             }
         }
 
-        // Clean & cast numeric values
-        $entryYearFrom = (!empty($entryYearFrom) && $entryYearFrom !== 'all') ? (int) $entryYearFrom : null;
-        $entryYearTo = (!empty($entryYearTo) && $entryYearTo !== 'all') ? (int) $entryYearTo : null;
+        $entryYearSingle = null;
+        if ($cohortType === 'single') {
+            if (!empty($entryYear) && $entryYear !== 'all') {
+                $entryYearSingle = (int) $entryYear;
+                $entryYearFrom = (int) $entryYear;
+                $entryYearTo = (int) $entryYear;
+                $entryYearLabel = 'Angkatan ' . $entryYear;
+            } else {
+                $entryYearFrom = null;
+                $entryYearTo = null;
+                $entryYearLabel = 'Semua Angkatan';
+            }
+        } else {
+            // Mode: Range
+            $entryYearFrom = (!empty($entryYearFrom) && $entryYearFrom !== 'all') ? (int) $entryYearFrom : null;
+            $entryYearTo = (!empty($entryYearTo) && $entryYearTo !== 'all') ? (int) $entryYearTo : null;
 
-        // Auto-order if both are provided and from > to
-        if ($entryYearFrom && $entryYearTo && $entryYearFrom > $entryYearTo) {
-            $temp = $entryYearFrom;
-            $entryYearFrom = $entryYearTo;
-            $entryYearTo = $temp;
-        }
+            // Auto-order if both provided and from > to
+            if ($entryYearFrom && $entryYearTo && $entryYearFrom > $entryYearTo) {
+                $temp = $entryYearFrom;
+                $entryYearFrom = $entryYearTo;
+                $entryYearTo = $temp;
+            }
 
-        // Generate human-readable label
-        $entryYearLabel = 'Semua Angkatan';
-        if ($entryYearFrom && $entryYearTo) {
-            $entryYearLabel = ($entryYearFrom === $entryYearTo)
-                ? 'Angkatan ' . $entryYearFrom
-                : 'Angkatan ' . $entryYearFrom . ' - ' . $entryYearTo;
-        } elseif ($entryYearFrom) {
-            $entryYearLabel = 'Angkatan ≥ ' . $entryYearFrom;
-        } elseif ($entryYearTo) {
-            $entryYearLabel = 'Angkatan ≤ ' . $entryYearTo;
+            if ($entryYearFrom && $entryYearTo) {
+                $entryYearLabel = ($entryYearFrom === $entryYearTo)
+                    ? 'Angkatan ' . $entryYearFrom
+                    : 'Angkatan ' . $entryYearFrom . ' - ' . $entryYearTo;
+                if ($entryYearFrom === $entryYearTo) {
+                    $entryYearSingle = $entryYearFrom;
+                }
+            } elseif ($entryYearFrom) {
+                $entryYearLabel = 'Angkatan ≥ ' . $entryYearFrom;
+            } elseif ($entryYearTo) {
+                $entryYearLabel = 'Angkatan ≤ ' . $entryYearTo;
+            } else {
+                $entryYearLabel = 'Semua Angkatan';
+            }
         }
 
         $waveName = 'Semua Gelombang';
@@ -145,7 +162,8 @@ class AnalyticsChartController extends Controller implements HasMiddleware
         return [
             'wave_id' => $waveId,
             'wave_name' => $waveName,
-            'entry_year' => ($entryYearFrom && $entryYearFrom === $entryYearTo) ? $entryYearFrom : null,
+            'cohort_type' => $cohortType,
+            'entry_year' => $entryYearSingle,
             'entry_year_from' => $entryYearFrom,
             'entry_year_to' => $entryYearTo,
             'entry_year_label' => $entryYearLabel,

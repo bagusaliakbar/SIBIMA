@@ -200,5 +200,25 @@ class AnalyticsChartTest extends TestCase
             'entry_year_to' => 2022,
         ]));
         $responsePdf->assertStatus(200);
+
+        // Test single mode explicitly
+        $responseSingle = $this->actingAs($admin)->get(route('analytics.index', [
+            'cohort_type' => 'single',
+            'entry_year' => 2021,
+        ]));
+        $responseSingle->assertStatus(200);
+        $responseSingle->assertSee('Angkatan 2021');
+        $this->assertEquals(1, $responseSingle->viewData('kpi')['totalStudents']);
+        $this->assertEquals('single', $responseSingle->viewData('filters')['cohort_type']);
+
+        // Test range mode explicitly
+        $responseRange = $this->actingAs($admin)->get(route('analytics.index', [
+            'cohort_type' => 'range',
+            'entry_year_from' => 2020,
+            'entry_year_to' => 2022,
+        ]));
+        $responseRange->assertStatus(200);
+        $this->assertEquals('range', $responseRange->viewData('filters')['cohort_type']);
+        $this->assertEquals(2, $responseRange->viewData('kpi')['totalStudents']);
     }
 }

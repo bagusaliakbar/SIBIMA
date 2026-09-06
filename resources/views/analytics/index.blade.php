@@ -87,14 +87,58 @@
                         </select>
                     </div>
 
-                    <!-- Filter Rentang Angkatan -->
-                    <div>
+                    <!-- Filter Angkatan: Per Angkatan & Rentang Angkatan -->
+                    <div x-data="{ 
+                        cohortType: '{{ ($filters['cohort_type'] ?? 'single') === 'range' ? 'range' : 'single' }}' 
+                    }" class="relative">
+                        <input type="hidden" name="cohort_type" :value="cohortType">
+
                         <div class="flex items-center justify-between mb-1.5">
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Rentang Angkatan</label>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                                <span x-show="cohortType === 'single'">Per Angkatan</span>
+                                <span x-show="cohortType === 'range'">Rentang Angkatan</span>
+                            </label>
+                            
+                            <!-- Mode Switcher Tabs -->
+                            <div class="inline-flex items-center p-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-700/70 text-[9px] font-bold">
+                                <button type="button" 
+                                        @click="cohortType = 'single'"
+                                        :class="cohortType === 'single' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'"
+                                        class="px-2 py-0.5 rounded-md transition-all cursor-pointer select-none"
+                                        title="Saring satu tahun angkatan spesifik">
+                                    Per Angkatan
+                                </button>
+                                <button type="button" 
+                                        @click="cohortType = 'range'"
+                                        :class="cohortType === 'range' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'"
+                                        class="px-2 py-0.5 rounded-md transition-all cursor-pointer select-none"
+                                        title="Saring rentang beberapa angkatan">
+                                    Rentang
+                                </button>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-1.5">
+
+                        <!-- 1. Mode Per Angkatan (Single Select) -->
+                        <div x-show="cohortType === 'single'">
+                            <select name="entry_year" 
+                                    :disabled="cohortType !== 'single'"
+                                    class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
+                                <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
+                                @foreach($cohortYears as $year)
+                                    <option value="{{ $year }}" {{ ($filters['entry_year'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                                        Angkatan {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- 2. Mode Rentang Angkatan (From - To) -->
+                        <div x-show="cohortType === 'range'" class="grid grid-cols-2 gap-1.5">
                             <div>
-                                <select name="entry_year_from" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0" title="Dari Tahun Angkatan">
+                                <select name="entry_year_from" 
+                                        :disabled="cohortType !== 'range'"
+                                        class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0" 
+                                        title="Dari Tahun Angkatan">
                                     <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Dari Thn</option>
                                     @foreach($cohortYears as $year)
                                         <option value="{{ $year }}" {{ ($filters['entry_year_from'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
@@ -104,7 +148,10 @@
                                 </select>
                             </div>
                             <div>
-                                <select name="entry_year_to" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0" title="Sampai Tahun Angkatan">
+                                <select name="entry_year_to" 
+                                        :disabled="cohortType !== 'range'"
+                                        class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0" 
+                                        title="Sampai Tahun Angkatan">
                                     <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Sampai Thn</option>
                                     @foreach($cohortYears as $year)
                                         <option value="{{ $year }}" {{ ($filters['entry_year_to'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
