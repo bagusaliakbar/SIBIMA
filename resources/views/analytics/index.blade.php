@@ -15,7 +15,7 @@
                 <div class="flex items-center gap-3 flex-wrap sm:flex-nowrap shrink-0">
                     <!-- Export Excel -->
                     <a href="{{ route('analytics.export-excel', request()->query()) }}" 
-                       class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-800/60 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all"
+                       class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all"
                        title="Unduh seluruh data tabel analitik ke format Excel">
                         <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span>Export Excel</span>
@@ -23,7 +23,7 @@
 
                     <!-- Export PDF -->
                     <a href="{{ route('analytics.export-pdf', request()->query()) }}" 
-                       class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800/60 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all"
+                       class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all"
                        title="Cetak dan unduh laporan resmi berstandar PDF">
                         <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         <span>Export PDF</span>
@@ -32,7 +32,7 @@
                     <!-- Batch PNG Download Button -->
                     <button type="button" 
                             onclick="downloadAllChartsAsPng()"
-                            class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-800/60 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                            class="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
                             title="Unduh seluruh 12 grafik sebagai berkas gambar PNG">
                         <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <span>Unduh Semua PNG</span>
@@ -45,7 +45,7 @@
     <div class="space-y-8 pb-16" x-data="{ filterOpen: true }">
 
         <!-- FILTER TOOLBAR CARD -->
-        <div class="bg-white dark:bg-slate-800/90 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-all">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm transition-all">
             <div class="flex items-center justify-between cursor-pointer select-none" @click="filterOpen = !filterOpen">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center border border-orange-200/50 dark:border-orange-500/20">
@@ -69,15 +69,15 @@
             </div>
 
             <!-- Filter Inputs -->
-            <form action="{{ route('analytics.index') }}" method="GET" x-show="filterOpen" x-transition class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700/60">
+            <form action="{{ route('analytics.index') }}" method="GET" x-show="filterOpen" x-transition class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <!-- Filter Gelombang -->
                     <div>
                         <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Gelombang Pelaksanaan</label>
-                        <select name="wave_id" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-200 focus:border-orange-500 focus:ring-0">
-                            <option value="all">Semua Gelombang</option>
+                        <select name="wave_id" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
+                            <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Gelombang</option>
                             @foreach($waves as $w)
-                                <option value="{{ $w->id }}" {{ ($filters['wave_id'] ?? '') == $w->id ? 'selected' : '' }}>
+                                <option value="{{ $w->id }}" {{ ($filters['wave_id'] ?? '') == $w->id ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                     {{ $w->name }} {{ $w->is_active ? '(Aktif)' : '' }}
                                 </option>
                             @endforeach
@@ -87,10 +87,10 @@
                     <!-- Filter Angkatan -->
                     <div>
                         <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Tahun Angkatan</label>
-                        <select name="entry_year" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-200 focus:border-orange-500 focus:ring-0">
-                            <option value="all">Semua Angkatan</option>
+                        <select name="entry_year" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
+                            <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
                             @foreach($cohortYears as $year)
-                                <option value="{{ $year }}" {{ ($filters['entry_year'] ?? '') == $year ? 'selected' : '' }}>
+                                <option value="{{ $year }}" {{ ($filters['entry_year'] ?? '') == $year ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                     Angkatan {{ $year }}
                                 </option>
                             @endforeach
@@ -100,10 +100,10 @@
                     <!-- Filter Dosen Pembimbing -->
                     <div>
                         <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dosen Pembimbing</label>
-                        <select name="dosen_id" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-200 focus:border-orange-500 focus:ring-0">
-                            <option value="all">Semua Dosen</option>
+                        <select name="dosen_id" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
+                            <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Dosen</option>
                             @foreach($dosens as $d)
-                                <option value="{{ $d->id }}" {{ ($filters['dosen_id'] ?? '') == $d->id ? 'selected' : '' }}>
+                                <option value="{{ $d->id }}" {{ ($filters['dosen_id'] ?? '') == $d->id ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
                                     {{ $d->name }}
                                 </option>
                             @endforeach
@@ -113,11 +113,11 @@
                     <!-- Filter Status Skripsi -->
                     <div>
                         <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Status Skripsi</label>
-                        <select name="status" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-200 focus:border-orange-500 focus:ring-0">
-                            <option value="all" {{ ($filters['status'] ?? 'all') === 'all' ? 'selected' : '' }}>Semua Status</option>
-                            <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Skripsi Aktif</option>
-                            <option value="completed" {{ ($filters['status'] ?? '') === 'completed' ? 'selected' : '' }}>Sudah Selesai / Lulus</option>
-                            <option value="pending" {{ ($filters['status'] ?? '') === 'pending' ? 'selected' : '' }}>Pending Pengajuan</option>
+                        <select name="status" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
+                            <option value="all" {{ ($filters['status'] ?? 'all') === 'all' ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Status</option>
+                            <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Skripsi Aktif</option>
+                            <option value="completed" {{ ($filters['status'] ?? '') === 'completed' ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Sudah Selesai / Lulus</option>
+                            <option value="pending" {{ ($filters['status'] ?? '') === 'pending' ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Pending Pengajuan</option>
                         </select>
                     </div>
 
@@ -125,18 +125,18 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dari Tgl</label>
-                            <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-200 focus:border-orange-500 focus:ring-0">
+                            <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0 [color-scheme:light] dark:[color-scheme:dark]">
                         </div>
                         <div>
                             <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Sampai Tgl</label>
-                            <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-200 focus:border-orange-500 focus:ring-0">
+                            <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0 [color-scheme:light] dark:[color-scheme:dark]">
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit & Reset Buttons -->
                 <div class="flex items-center justify-end gap-2.5 mt-5">
-                    <a href="{{ route('analytics.index') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <a href="{{ route('analytics.index') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                         Reset Filter
                     </a>
                     <button type="submit" class="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md shadow-orange-600/20 hover:shadow-orange-600/30 transition-all flex items-center gap-1.5">
@@ -150,7 +150,7 @@
         <!-- TOP KPI SUMMARY CARDS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <!-- KPI 1: Total Mahasiswa -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 dark:border-slate-700/70 shadow-sm relative overflow-hidden group">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div class="absolute -right-3 -top-3 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-150"></div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Mahasiswa</span>
@@ -167,7 +167,7 @@
             </div>
 
             <!-- KPI 2: Status Seminar -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 dark:border-slate-700/70 shadow-sm relative overflow-hidden group">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div class="absolute -right-3 -top-3 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-150"></div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Progres Seminar</span>
@@ -184,7 +184,7 @@
             </div>
 
             <!-- KPI 3: Status Sidang Akhir -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 dark:border-slate-700/70 shadow-sm relative overflow-hidden group">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div class="absolute -right-3 -top-3 w-16 h-16 bg-indigo-500/10 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-150"></div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Sidang Skripsi</span>
@@ -196,12 +196,12 @@
                 <div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                     <span class="text-indigo-600 dark:text-indigo-400 font-bold">Sudah Sidang</span>
                     <span>•</span>
-                    <span class="text-slate-500 font-bold">{{ $kpi['defensePending'] }} Belum</span>
+                    <span class="text-slate-500 dark:text-slate-400 font-bold">{{ $kpi['defensePending'] }} Belum</span>
                 </div>
             </div>
 
             <!-- KPI 4: Sesi Bimbingan Selesai -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 dark:border-slate-700/70 shadow-sm relative overflow-hidden group">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div class="absolute -right-3 -top-3 w-16 h-16 bg-cyan-500/10 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-150"></div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Sesi Bimbingan</span>
@@ -216,7 +216,7 @@
             </div>
 
             <!-- KPI 5: Lulus Tepat Waktu -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 dark:border-slate-700/70 shadow-sm relative overflow-hidden group">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div class="absolute -right-3 -top-3 w-16 h-16 bg-violet-500/10 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-150"></div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Tepat Waktu</span>
@@ -231,7 +231,7 @@
             </div>
 
             <!-- KPI 6: Mahasiswa Kritis -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-5 border border-slate-200/70 dark:border-slate-700/70 shadow-sm relative overflow-hidden group">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
                 <div class="absolute -right-3 -top-3 w-16 h-16 bg-rose-500/10 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-150"></div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Perlu Perhatian</span>
@@ -241,9 +241,9 @@
                 </div>
                 <div class="text-2xl font-black text-rose-600 dark:text-rose-400 tracking-tight">{{ $kpi['criticalMentoringStudents'] + $kpi['criticalCohortStudents'] }}</div>
                 <div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                    <span class="text-rose-500 font-bold">{{ $kpi['criticalMentoringStudents'] }} Bimb. Pasif</span>
+                    <span class="text-rose-500 dark:text-rose-400 font-bold">{{ $kpi['criticalMentoringStudents'] }} Bimb. Pasif</span>
                     <span>•</span>
-                    <span class="text-amber-500 font-bold">{{ $kpi['criticalCohortStudents'] }} > 4 Thn</span>
+                    <span class="text-amber-500 dark:text-amber-400 font-bold">{{ $kpi['criticalCohortStudents'] }} > 4 Thn</span>
                 </div>
             </div>
         </div>
@@ -251,7 +251,7 @@
         <!-- ROW 1: SEMINAR STATUS BY ADVISOR (P1 & P2) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Chart 1: Seminar Status per Dosen Pembimbing 1 -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -260,7 +260,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Komparasi mahasiswa sudah vs belum seminar proposal berdasarkan Dosen Pembimbing 1.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartSeminarP1', 'grafik-seminar-pembimbing-1')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartSeminarP1', 'grafik-seminar-pembimbing-1')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -270,7 +270,7 @@
             </div>
 
             <!-- Chart 2: Seminar Status per Dosen Pembimbing 2 -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -279,7 +279,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Komparasi mahasiswa sudah vs belum seminar proposal berdasarkan Dosen Pembimbing 2.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartSeminarP2', 'grafik-seminar-pembimbing-2')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartSeminarP2', 'grafik-seminar-pembimbing-2')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -292,7 +292,7 @@
         <!-- ROW 2: COHORT PROGRESS & UNFINISHED ADVISOR BACKLOG -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Chart 3: Mahasiswa Sudah vs Belum Seminar per Angkatan -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -301,7 +301,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Distribusi mahasiswa yang sudah dan belum melaksanakan seminar proposal tiap angkatan.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartCohortSeminar', 'grafik-seminar-per-angkatan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartCohortSeminar', 'grafik-seminar-per-angkatan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -311,7 +311,7 @@
             </div>
 
             <!-- Chart 4: Mahasiswa Belum Lulus per Dosen Pembimbing -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -320,7 +320,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Jumlah mahasiswa aktif yang masih dalam proses bimbingan (belum lulus) per dosen.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartUnfinishedByAdvisor', 'grafik-belum-lulus-per-pembimbing')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartUnfinishedByAdvisor', 'grafik-belum-lulus-per-pembimbing')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -333,7 +333,7 @@
         <!-- ROW 3: OVERALL STAGES & DEFENSE PROGRESS PER COHORT -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Chart 5: Distribusi Tahapan Skripsi Keseluruhan (Donut) -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -342,7 +342,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Proporsi mahasiswa di tiap tahapan skripsi.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartStages', 'grafik-tahapan-skripsi')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartStages', 'grafik-tahapan-skripsi')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -352,7 +352,7 @@
             </div>
 
             <!-- Chart 6: Status Sidang Akhir per Angkatan -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm lg:col-span-2 flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm lg:col-span-2 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -361,7 +361,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Komparasi mahasiswa yang sudah sidang/lulus vs yang belum sidang per tahun angkatan.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartCohortDefense', 'grafik-sidang-per-angkatan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartCohortDefense', 'grafik-sidang-per-angkatan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -374,7 +374,7 @@
         <!-- ROW 4: MONTHLY MENTORING TRENDS & HEALTH MONITOR -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Chart 7: Tren Frekuensi Sesi Bimbingan per Bulan (Area Spline) -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm lg:col-span-2 flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm lg:col-span-2 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -383,7 +383,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Volume aktivitas sesi bimbingan yang terlaksana selama 6 bulan terakhir.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartMonthlyTrends', 'grafik-tren-bimbingan-bulanan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartMonthlyTrends', 'grafik-tren-bimbingan-bulanan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -393,7 +393,7 @@
             </div>
 
             <!-- Chart 8: Status Keaktifan Bimbingan (Early Warning) -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -402,7 +402,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Monitoring kontinuitas bimbingan mahasiswa aktif.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartHealth', 'grafik-keaktifan-bimbingan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartHealth', 'grafik-keaktifan-bimbingan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -415,7 +415,7 @@
         <!-- ROW 5: WORKLOAD VS QUOTA & DEFENSE GRADES -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Chart 9: Beban Bimbingan vs Kuota Maksimal Dosen -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -424,7 +424,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Kapasitas beban bimbingan dosen aktif terhadap batas kuota institusi.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartWorkload', 'grafik-beban-kuota-dosen')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartWorkload', 'grafik-beban-kuota-dosen')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -434,7 +434,7 @@
             </div>
 
             <!-- Chart 10: Distribusi Nilai Kelulusan Sidang Skripsi -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -443,7 +443,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Sebaran nilai mutu kelulusan sidang skripsi (Grade A, B, C, D, E).</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartScores', 'grafik-distribusi-nilai-sidang')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartScores', 'grafik-distribusi-nilai-sidang')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -456,7 +456,7 @@
         <!-- ROW 6: TOPIC DISTRIBUTION & WAVE DURATION -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Chart 11: Sebaran Bidang Minat / Topik Skripsi -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -465,7 +465,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Klasifikasi penelitian skripsi berdasarkan bidang konsentrasi keilmuan.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartTopics', 'grafik-topik-skripsi')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartTopics', 'grafik-topik-skripsi')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
@@ -475,7 +475,7 @@
             </div>
 
             <!-- Chart 12: Rata-rata Durasi Penyelesaian per Gelombang -->
-            <div class="bg-white dark:bg-slate-800/80 dark:backdrop-blur-xl rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -484,7 +484,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Rata-rata masa pengerjaan skripsi (dalam bulan) tiap gelombang pelaksanaan.</p>
                     </div>
-                    <button type="button" onclick="downloadChartAsPng('chartWaveDuration', 'grafik-durasi-gelombang')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
+                    <button type="button" onclick="downloadChartAsPng('chartWaveDuration', 'grafik-durasi-gelombang')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
                         <span>📸 PNG</span>
                     </button>
                 </div>
