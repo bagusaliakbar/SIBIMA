@@ -420,8 +420,42 @@
         </tbody>
     </table>
 
-    <!-- SECTION 4: DEFENSE SCORES DISTRIBUTION -->
-    <div class="section-title">4. Distribusi Nilai Kelulusan Sidang Skripsi</div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 4: STAGE DISTRIBUTION PER ADVISOR -->
+    <div class="section-title">4. Distribusi Tahapan Bimbingan Mahasiswa Belum Lulus per Dosen Pembimbing</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 30px;">No</th>
+                <th style="text-align: left;">Nama Dosen Pembimbing</th>
+                <th>Total Belum Lulus</th>
+                <th style="color: #2563eb;">Belum Seminar</th>
+                <th style="color: #d97706;">Seminar</th>
+                <th style="color: #059669;">Sidang Akhir</th>
+                <th style="color: #dc2626;">Kritikal (Sem &ge; 13)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php $noDist = 1; @endphp
+            @forelse($distributionByAdvisor as $dosenName => $info)
+                <tr>
+                    <td class="center">{{ $noDist++ }}</td>
+                    <td><strong>{{ $dosenName }}</strong></td>
+                    <td class="center font-bold">{{ $info['total'] ?? 0 }}</td>
+                    <td class="center" style="color: #2563eb; font-weight: bold;">{{ $info['belum_seminar'] ?? 0 }}</td>
+                    <td class="center" style="color: #d97706; font-weight: bold;">{{ $info['seminar'] ?? 0 }}</td>
+                    <td class="center" style="color: #059669; font-weight: bold;">{{ $info['sidang_akhir'] ?? 0 }}</td>
+                    <td class="center" style="color: #dc2626; font-weight: bold;">{{ $info['kritikal'] ?? 0 }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="7" class="center">Tidak ada data distribusi tahapan pembimbing.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <!-- SECTION 5: DEFENSE SCORES DISTRIBUTION -->
+    <div class="section-title">5. Distribusi Nilai Kelulusan Sidang Skripsi</div>
     <table class="data-table" style="width: 65%;">
         <thead>
             <tr>

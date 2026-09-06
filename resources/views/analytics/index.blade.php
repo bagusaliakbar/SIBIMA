@@ -396,6 +396,25 @@
             </div>
         </div>
 
+        <!-- ROW: DISTRIBUSI TAHAPAN BIMBINGAN PER DOSEN (FULL WIDTH) -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div>
+                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                        Grafik Distribusi Bimbingan per Dosen
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Pemetaan tahapan mahasiswa yang belum lulus (Belum Seminar, Seminar, Sidang Akhir, dan Kritikal Semester ≥ 13) per Dosen Pembimbing.</p>
+                </div>
+                <button type="button" onclick="downloadChartAsPng('chartDistributionByAdvisor', 'grafik-distribusi-bimbingan-per-dosen')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1 self-start sm:self-auto">
+                    <span>📸 PNG</span>
+                </button>
+            </div>
+            <div class="h-80 sm:h-96 relative">
+                <canvas id="chartDistributionByAdvisor"></canvas>
+            </div>
+        </div>
+
         <!-- ROW 3: OVERALL STAGES & DEFENSE PROGRESS PER COHORT -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Chart 5: Distribusi Tahapan Skripsi Keseluruhan (Donut) -->
@@ -784,6 +803,99 @@
                     scales: {
                         x: { grid: { color: theme.gridColor }, ticks: { color: theme.textColor, stepSize: 1 } },
                         y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // 4b. Chart Distribution By Advisor (Stacked Column)
+            const rawDistribution = @json($chartDistributionByAdvisor);
+            const ctxDistribution = document.getElementById('chartDistributionByAdvisor').getContext('2d');
+            window.sibimaCharts['chartDistributionByAdvisor'] = new Chart(ctxDistribution, {
+                type: 'bar',
+                data: {
+                    labels: rawDistribution.labels,
+                    datasets: [
+                        {
+                            label: 'Belum Seminar',
+                            data: rawDistribution.belum_seminar,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4,
+                        },
+                        {
+                            label: 'Seminar',
+                            data: rawDistribution.seminar,
+                            backgroundColor: '#f97316',
+                            borderRadius: 4,
+                        },
+                        {
+                            label: 'Sidang Akhir',
+                            data: rawDistribution.sidang_akhir,
+                            backgroundColor: '#10b981',
+                            borderRadius: 4,
+                        },
+                        {
+                            label: 'Kritikal (Sem >= 13)',
+                            data: rawDistribution.kritikal,
+                            backgroundColor: '#ef4444',
+                            borderRadius: 4,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { boxWidth: 12, font: { weight: '600', size: 11 } }
+                        },
+                        tooltip: {
+                            backgroundColor: theme.tooltipBg,
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                title: function(context) {
+                                    const index = context[0].dataIndex;
+                                    return (rawDistribution.full_labels && rawDistribution.full_labels[index])
+                                        ? rawDistribution.full_labels[index]
+                                        : context[0].label;
+                                },
+                                afterBody: function(context) {
+                                    const index = context[0].dataIndex;
+                                    const total = rawDistribution.totals ? rawDistribution.totals[index] : 0;
+                                    return 'Total Belum Lulus: ' + total;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'center',
+                            align: 'center',
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 10 },
+                            textStrokeColor: 'rgba(0, 0, 0, 0.45)',
+                            textStrokeWidth: 2,
+                            formatter: function(val) {
+                                return (val && val > 0) ? val : '';
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: {
+                                color: theme.textColor,
+                                font: { size: 10, weight: '600' },
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: theme.gridColor },
+                            ticks: { color: theme.textColor, stepSize: 1 }
+                        }
                     }
                 }
             });
@@ -1246,6 +1358,7 @@
                 { id: 'chartSeminarP2', name: 'grafik-seminar-pembimbing-2' },
                 { id: 'chartCohortSeminar', name: 'grafik-seminar-per-angkatan' },
                 { id: 'chartUnfinishedByAdvisor', name: 'grafik-belum-lulus-per-pembimbing' },
+                { id: 'chartDistributionByAdvisor', name: 'grafik-distribusi-bimbingan-per-dosen' },
                 { id: 'chartStages', name: 'grafik-tahapan-skripsi' },
                 { id: 'chartCohortDefense', name: 'grafik-sidang-per-angkatan' },
                 { id: 'chartMonthlyTrends', name: 'grafik-tren-bimbingan-bulanan' },

@@ -566,6 +566,61 @@ class AnalyticsChartController extends Controller implements HasMiddleware
             'data' => array_values($waveDurationStats),
         ];
 
+        // 14. CHART 13: Distribusi Tahapan Bimbingan per Dosen
+        $distributionByAdvisor = [];
+        $activeNonCompletedTheses = $theses->where('status', '!=', 'completed');
+
+        foreach ($allDosens as $d) {
+            $advisorTheses = $activeNonCompletedTheses->filter(function($t) use ($d) {
+                return $t->pembimbing1_id == $d->id || $t->pembimbing2_id == $d->id;
+            });
+
+            if ($advisorTheses->count() > 0 || (!empty($filters['dosen_id']) && $filters['dosen_id'] == $d->id)) {
+                $nameParts = explode(' ', $d->name);
+                $shortName = count($nameParts) > 2 ? $nameParts[0] . ' ' . $nameParts[1] . '...' : $d->name;
+
+                $proposal = 0;
+                $penelitian = 0;
+                $siapSidang = 0;
+                $kritikal = 0;
+
+                foreach ($advisorTheses as $thesis) {
+                    if ($thesis->student && $thesis->student->current_semester >= 13) {
+                        $kritikal++;
+                    } elseif ($thesis->isAccSidangFinal()) {
+                        $siapSidang++;
+                    } elseif ($thesis->isAccUpFinal()) {
+                        $penelitian++;
+                    } else {
+                        $proposal++;
+                    }
+                }
+
+                $distributionByAdvisor[$d->name] = [
+                    'dosen_id' => $d->id,
+                    'short_name' => $shortName,
+                    'total' => $advisorTheses->count(),
+                    'belum_seminar' => $proposal,
+                    'seminar' => $penelitian,
+                    'sidang_akhir' => $siapSidang,
+                    'kritikal' => $kritikal,
+                ];
+            }
+        }
+
+        uasort($distributionByAdvisor, fn($a, $b) => $b['total'] <=> $a['total']);
+        $topDistributionAdvisors = array_slice($distributionByAdvisor, 0, 18, true);
+
+        $chartDistributionByAdvisor = [
+            'labels' => array_column(array_values($topDistributionAdvisors), 'short_name'),
+            'full_labels' => array_keys($topDistributionAdvisors),
+            'belum_seminar' => array_column(array_values($topDistributionAdvisors), 'belum_seminar'),
+            'seminar' => array_column(array_values($topDistributionAdvisors), 'seminar'),
+            'sidang_akhir' => array_column(array_values($topDistributionAdvisors), 'sidang_akhir'),
+            'kritikal' => array_column(array_values($topDistributionAdvisors), 'kritikal'),
+            'totals' => array_column(array_values($topDistributionAdvisors), 'total'),
+        ];
+
         return [
             'kpi' => [
                 'totalStudents' => $totalStudents,
@@ -584,6 +639,7 @@ class AnalyticsChartController extends Controller implements HasMiddleware
             'seminarByAdvisor' => $seminarByAdvisor,
             'cohortProgress' => $cohortProgress,
             'unfinishedByAdvisor' => $unfinishedByAdvisor,
+            'distributionByAdvisor' => $distributionByAdvisor,
             'dosenWorkloadDetails' => $dosenWorkloadDetails,
             'scoreDistribution' => $scoreDistribution,
             'chartSeminarP1' => $chartSeminarP1,
@@ -591,6 +647,7 @@ class AnalyticsChartController extends Controller implements HasMiddleware
             'chartCohortSeminar' => $chartCohortSeminar,
             'chartCohortDefense' => $chartCohortDefense,
             'chartUnfinishedByAdvisor' => $chartUnfinishedByAdvisor,
+            'chartDistributionByAdvisor' => $chartDistributionByAdvisor,
             'chartStages' => $chartStages,
             'chartMonthlyTrends' => $chartMonthlyTrends,
             'chartHealth' => $chartHealth,

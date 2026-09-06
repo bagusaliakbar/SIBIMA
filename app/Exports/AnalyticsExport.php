@@ -32,6 +32,7 @@ class AnalyticsExport implements WithMultipleSheets
             new AnalyticsSeminarAdvisorSheet($this->data),
             new AnalyticsCohortProgressSheet($this->data),
             new AnalyticsUnfinishedByAdvisorSheet($this->data),
+            new AnalyticsAdvisorStageDistributionSheet($this->data),
             new AnalyticsWorkloadSheet($this->data),
             new AnalyticsGradesSheet($this->data),
         ];
@@ -325,6 +326,78 @@ class AnalyticsUnfinishedByAdvisorSheet implements FromArray, WithTitle, WithHea
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
                 'startColor' => ['argb' => 'FFDC2626']
+            ],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+        ]);
+
+        $highestRow = $sheet->getHighestRow();
+        if ($highestRow >= 2) {
+            $sheet->getStyle("A1:F{$highestRow}")->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => 'FFCBD5E1']
+                    ]
+                ]
+            ]);
+        }
+
+        return [];
+    }
+}
+
+class AnalyticsAdvisorStageDistributionSheet implements FromArray, WithTitle, WithHeadings, ShouldAutoSize, WithStyles
+{
+    protected $data;
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+
+    public function title(): string
+    {
+        return 'Distribusi Tahapan per Dosen';
+    }
+
+    public function headings(): array
+    {
+        return [
+            'Nama Dosen Pembimbing',
+            'Total Belum Lulus',
+            'Belum Seminar',
+            'Seminar',
+            'Sidang Akhir',
+            'Kritikal (Sem >= 13)',
+        ];
+    }
+
+    public function array(): array
+    {
+        $rows = [];
+        $distribution = $this->data['distributionByAdvisor'] ?? [];
+
+        foreach ($distribution as $dosenName => $info) {
+            $rows[] = [
+                $dosenName,
+                $info['total'] ?? 0,
+                $info['belum_seminar'] ?? 0,
+                $info['seminar'] ?? 0,
+                $info['sidang_akhir'] ?? 0,
+                $info['kritikal'] ?? 0,
+            ];
+        }
+
+        return $rows;
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        $sheet->getStyle('A1:F1')->applyFromArray([
+            'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFF97316']
             ],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
         ]);

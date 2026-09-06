@@ -75,12 +75,20 @@ class AnalyticsChartTest extends TestCase
         $responseAdmin->assertSee('Mahasiswa Seminar per Pembimbing 2 (P2)');
         $responseAdmin->assertSee('Status Seminar per Angkatan Mahasiswa');
         $responseAdmin->assertSee('Mahasiswa Belum Lulus per Pembimbing');
+        $responseAdmin->assertSee('Grafik Distribusi Bimbingan per Dosen');
+
+        $this->assertNotNull($responseAdmin->viewData('chartDistributionByAdvisor'));
+        $this->assertArrayHasKey('belum_seminar', $responseAdmin->viewData('chartDistributionByAdvisor'));
+        $this->assertArrayHasKey('seminar', $responseAdmin->viewData('chartDistributionByAdvisor'));
+        $this->assertArrayHasKey('sidang_akhir', $responseAdmin->viewData('chartDistributionByAdvisor'));
+        $this->assertArrayHasKey('kritikal', $responseAdmin->viewData('chartDistributionByAdvisor'));
 
         // Kaprodi checks
         $responseKaprodi = $this->actingAs($kaprodi)->get(route('analytics.index'));
         $responseKaprodi->assertStatus(200);
         $responseKaprodi->assertSee('Grafik Analitik');
         $responseKaprodi->assertSee('Statistik Analitik');
+        $responseKaprodi->assertSee('Grafik Distribusi Bimbingan per Dosen');
     }
 
     public function test_analytics_filter_parameters_work(): void
