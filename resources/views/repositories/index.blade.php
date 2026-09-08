@@ -277,9 +277,21 @@
                         throw new Error('Pustaka Mozilla PDF.js belum selesai dimuat di browser.');
                     }
                     
-                    // Pastikan worker selalu menggunakan origin yang sama persis (bebas Cross-Origin SecurityError)
-                    const workerRel = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}'.replace(/^https?:\/\/[^\/]+/, '');
-                    lib.GlobalWorkerOptions.workerSrc = (window.location.origin || '') + workerRel;
+                    // Pastikan worker selalu menggunakan Blob URL wrapper dengan importScripts (kompatibel 100% lokal & CDN)
+                    try {
+                        const localWorker = (window.location.origin || '') + '{{ asset('assets/pdfjs/pdf.worker.min.js') }}'.replace(/^https?:\/\/[^\/]+/, '');
+                        const workerCode = `
+                            try {
+                                importScripts('${localWorker}');
+                            } catch(e) {
+                                importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');
+                            }
+                        `;
+                        const blob = new Blob([workerCode], { type: 'application/javascript' });
+                        lib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
+                    } catch(e) {
+                        lib.GlobalWorkerOptions.workerSrc = '{{ asset('assets/pdfjs/pdf.worker.min.js') }}';
+                    }
 
                     const loadingTask = lib.getDocument({
                         url: streamUrl,
@@ -2097,15 +2109,26 @@
 </script>
 
 @push('scripts')
-<script src="{{ asset('vendor/pdfjs/pdf.min.js') }}"></script>
+<script src="{{ asset('assets/pdfjs/pdf.min.js') }}"></script>
 <script>
     if (typeof pdfjsLib === 'undefined') {
         document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>');
     }
     function initPdfJsWorker() {
-        if (window.pdfjsLib) {
-            const workerRel = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}'.replace(/^https?:\/\/[^\/]+/, '');
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = (window.location.origin || '') + workerRel;
+        if (!window.pdfjsLib) return;
+        try {
+            const localWorker = (window.location.origin || '') + '{{ asset('assets/pdfjs/pdf.worker.min.js') }}'.replace(/^https?:\/\/[^\/]+/, '');
+            const workerCode = `
+                try {
+                    importScripts('${localWorker}');
+                } catch(e) {
+                    importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');
+                }
+            `;
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
+        } catch(e) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = '{{ asset('assets/pdfjs/pdf.worker.min.js') }}';
         }
     }
     initPdfJsWorker();
