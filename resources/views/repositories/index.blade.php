@@ -508,7 +508,7 @@
                         <div>
                             <!-- Header Meta Badges & Admin Actions -->
                             <div class="flex justify-between items-center gap-2 mb-3">
-                                <div class="flex items-center gap-1.5 flex-wrap">
+                                <div class="flex items-center gap-2 flex-wrap">
                                     <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200 dark:border-slate-700">
                                         Angkatan {{ $repo->year }}
                                     </span>
@@ -670,7 +670,7 @@
                                             @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})">
                                             {{ $repo->title }}
                                         </h4>
-                                        <div class="flex items-center gap-2 flex-wrap">
+                                        <div class="flex items-center gap-2.5 flex-wrap">
                                             <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md border {{ $badge['bg'] }}">
                                                 {{ $badge['label'] }}
                                             </span>
@@ -841,12 +841,12 @@
                             </div>
                         </div>
 
-                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-2 flex-wrap">
+                        <div class="px-8 py-5 bg-slate-50/75 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-3.5 sm:gap-4 flex-wrap">
                                 <template x-if="abstractData.file_path">
                                     <a :href="'/repositories/' + abstractData.id + '/bab1'" 
                                        target="_blank" 
-                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all cursor-pointer">
+                                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm shadow-rose-600/25 hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer">
                                         <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                         <span>Buka BAB 1 (PDF)</span>
                                     </a>
@@ -854,16 +854,16 @@
                                 <template x-if="abstractData.file_path_bab2">
                                     <a :href="'/repositories/' + abstractData.id + '/bab2'" 
                                        target="_blank" 
-                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-500/20 hover:scale-[1.02] transition-all cursor-pointer">
+                                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm shadow-amber-600/25 hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer">
                                         <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                         <span>Buka BAB 2 (PDF)</span>
                                     </a>
                                 </template>
                                 <template x-if="!abstractData.file_path && !abstractData.file_path_bab2">
-                                    <span class="text-[11px] text-slate-400 italic">File naskah PDF belum terhubung</span>
+                                    <span class="text-xs text-slate-400 italic">File naskah PDF belum terhubung</span>
                                 </template>
                             </div>
-                            <button type="button" @click="abstractModalOpen = false" class="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">
+                            <button type="button" @click="abstractModalOpen = false" class="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">
                                 Tutup
                             </button>
                         </div>
