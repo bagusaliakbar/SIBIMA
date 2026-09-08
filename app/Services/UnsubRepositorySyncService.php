@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ThesisRepository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -13,10 +14,19 @@ class UnsubRepositorySyncService
     public const GDRIVE_PROXY_BASE = 'https://repository.unsub.ac.id/api/gdrive-proxy/';
 
     /**
-     * Fetch all documents from the official UNSUB repository API.
+     * Fetch all documents from the official UNSUB repository API with caching.
      */
-    public function fetchDocuments(): array
+    public function fetchDocuments(bool $forceRefresh = false): array
     {
+        $cacheKey = 'unsub_repository_all_documents';
+
+        if (!$forceRefresh && Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (is_array($cached) && !empty($cached)) {
+                return $cached;
+            }
+        }
+
         try {
             $response = Http::withHeaders([
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -29,7 +39,13 @@ class UnsubRepositorySyncService
             }
 
             $json = $response->json();
-            return is_array($json) ? ($json['data'] ?? $json) : [];
+            $data = is_array($json) ? ($json['data'] ?? $json) : [];
+
+            if (!empty($data)) {
+                Cache::put($cacheKey, $data, now()->addMinutes(15));
+            }
+
+            return $data;
         } catch (\Exception $e) {
             Log::error('UnsubRepositorySyncService Exception: ' . $e->getMessage());
             return [];
@@ -111,7 +127,7 @@ class UnsubRepositorySyncService
             $streamUrl = self::GDRIVE_PROXY_BASE . $gdriveId;
             $res = Http::withHeaders([
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-            ])->timeout(45)->withoutVerifying()->get($streamUrl);
+            ])->timeout(15)->withoutVerifying()->get($streamUrl);
 
             if ($res->successful()) {
                 $body = $res->body();

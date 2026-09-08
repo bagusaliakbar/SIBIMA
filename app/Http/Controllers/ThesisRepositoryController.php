@@ -514,8 +514,13 @@ class ThesisRepositoryController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
+        // Prevent web timeout during PDF downloads
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(120);
+        }
+
         $offset = (int) $request->input('offset', 0);
-        $limit = (int) $request->input('limit', 15);
+        $limit = (int) $request->input('limit', 4);
         $downloadPdf = filter_var($request->input('download_pdf', true), FILTER_VALIDATE_BOOLEAN);
 
         try {
@@ -532,6 +537,7 @@ class ThesisRepositoryController extends Controller
                     'created' => 0,
                     'enriched' => 0,
                     'has_bab1' => 0,
+                    'has_bab2' => 0,
                     'next_offset' => $totalFasilkom,
                 ]);
             }
@@ -544,17 +550,21 @@ class ThesisRepositoryController extends Controller
             $processed = 0;
 
             foreach ($chunk as $doc) {
-                $res = $service->syncDocument($doc, $downloadPdf);
-                if (($res['status'] ?? '') === 'created') {
-                    $created++;
-                } elseif (($res['status'] ?? '') === 'enriched') {
-                    $enriched++;
-                }
-                if (!empty($res['has_bab1'])) {
-                    $hasBab1++;
-                }
-                if (!empty($res['has_bab2'])) {
-                    $hasBab2++;
+                try {
+                    $res = $service->syncDocument($doc, $downloadPdf);
+                    if (($res['status'] ?? '') === 'created') {
+                        $created++;
+                    } elseif (($res['status'] ?? '') === 'enriched') {
+                        $enriched++;
+                    }
+                    if (!empty($res['has_bab1'])) {
+                        $hasBab1++;
+                    }
+                    if (!empty($res['has_bab2'])) {
+                        $hasBab2++;
+                    }
+                } catch (\Throwable $itemErr) {
+                    \Illuminate\Support\Facades\Log::warning('Individual doc sync error: ' . $itemErr->getMessage());
                 }
                 $processed++;
             }

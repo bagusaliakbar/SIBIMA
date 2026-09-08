@@ -1260,12 +1260,13 @@
     // UNSUB REPOSITORY SYNC JAVASCRIPT
     let isUnsubSyncing = false;
     let unsubOffset = 0;
-    const unsubLimit = 15;
+    const unsubLimit = 4; // Batasi 4 dokumen per request agar request selesai dalam beberapa detik dan aman dari Nginx 504 Timeout
     let unsubTotalFasilkom = 144;
     let unsubTotalNew = 0;
     let unsubTotalEnriched = 0;
     let unsubTotalBab1 = 0;
     let unsubTotalBab2 = 0;
+    let unsubRetryCount = 0;
 
     function openUnsubSyncModal() {
         if (isUnsubSyncing) return;
@@ -1274,6 +1275,7 @@
         modal.classList.add('flex');
 
         // Reset UI
+        unsubRetryCount = 0;
         document.getElementById('startUnsubBtn').classList.remove('hidden');
         document.getElementById('cancelUnsubBtn').classList.remove('hidden');
         document.getElementById('closeUnsubModalBtn').classList.add('hidden');
@@ -1309,6 +1311,7 @@
         unsubTotalEnriched = 0;
         unsubTotalBab1 = 0;
         unsubTotalBab2 = 0;
+        unsubRetryCount = 0;
 
         document.getElementById('startUnsubBtn').classList.add('hidden');
         document.getElementById('cancelUnsubBtn').classList.add('hidden');
@@ -1341,11 +1344,24 @@
                 })
             });
 
-            const data = await res.json();
-            if (!data.success) {
-                throw new Error(data.message || 'Gagal memproses chunk');
+            if (!res.ok) {
+                if (res.status === 504 || res.status === 502) {
+                    throw new Error('Server timeout (504 Gateway Timeout) saat mengunduh PDF');
+                }
+                throw new Error(`Server error HTTP ${res.status}`);
             }
 
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('Respons server bukan JSON (koneksi terputus atau sesi habis)');
+            }
+
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.message || 'Gagal memproses data');
+            }
+
+            unsubRetryCount = 0; // Reset counter percobaan saat sukses
             unsubTotalNew += (data.created || 0);
             unsubTotalEnriched += (data.enriched || 0);
             unsubTotalBab1 += (data.has_bab1 || 0);
@@ -1365,12 +1381,19 @@
             setTimeout(processNextUnsubChunk, 200);
 
         } catch (err) {
-            document.getElementById('unsubSyncStatus').innerText = 'Kendala: ' + err.message + '. Mencoba lanjut...';
-            unsubOffset += unsubLimit;
-            if (unsubOffset >= unsubTotalFasilkom) {
-                finishUnsubSync();
+            unsubRetryCount++;
+            if (unsubRetryCount <= 2) {
+                document.getElementById('unsubSyncStatus').innerText = `${err.message}. Mengulang chunk ${currentProgress + 1} (Percobaan ${unsubRetryCount}/2)...`;
+                setTimeout(processNextUnsubChunk, 2000);
             } else {
-                setTimeout(processNextUnsubChunk, 1000);
+                document.getElementById('unsubSyncStatus').innerText = `Melanjutkan ke dokumen berikutnya setelah kendala jaringan...`;
+                unsubRetryCount = 0;
+                unsubOffset += unsubLimit;
+                if (unsubOffset >= unsubTotalFasilkom) {
+                    finishUnsubSync();
+                } else {
+                    setTimeout(processNextUnsubChunk, 1000);
+                }
             }
         }
     }
