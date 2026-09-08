@@ -276,9 +276,10 @@
                     if (!lib) {
                         throw new Error('Pustaka Mozilla PDF.js belum selesai dimuat di browser.');
                     }
-                    if (!lib.GlobalWorkerOptions.workerSrc) {
-                        lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                    }
+                    
+                    // Pastikan worker selalu menggunakan origin yang sama persis (bebas Cross-Origin SecurityError)
+                    const workerRel = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}'.replace(/^https?:\/\/[^\/]+/, '');
+                    lib.GlobalWorkerOptions.workerSrc = (window.location.origin || '') + workerRel;
 
                     const loadingTask = lib.getDocument({
                         url: streamUrl,
@@ -288,20 +289,15 @@
                     this.pdfDoc = await loadingTask.promise;
                     this.pdfTotalPages = this.pdfDoc.numPages;
                     this.pdfCurrentPage = 1;
-                    this.pdfIsLoading = false;
 
                     await this.$nextTick();
                     await this.renderPage(this.pdfCurrentPage);
 
-                    // Background text index for instant in-chapter search
-                    setTimeout(() => {
-                        this.indexDocumentText();
-                    }, 500);
-
                 } catch (err) {
-                    console.error('Error loading PDF:', err);
-                    this.pdfIsLoading = false;
+                    console.error('[PDF Viewer] Error loading PDF:', err);
                     this.pdfLoadingError = err.message || 'Gagal memuat dokumen PDF.';
+                } finally {
+                    this.pdfIsLoading = false;
                 }
             },
 
@@ -325,13 +321,29 @@
                 try {
                     await this.$nextTick();
                     const page = await this.pdfDoc.getPage(num);
-                    const canvas = document.getElementById('pdfViewerCanvas');
+                    
+                    let canvas = document.getElementById('pdfViewerCanvas') || (this.$refs && this.$refs.pdfCanvas);
                     if (!canvas) {
+                        await this.$nextTick();
+                        canvas = document.getElementById('pdfViewerCanvas') || (this.$refs && this.$refs.pdfCanvas);
+                    }
+                    if (!canvas) {
+                        await new Promise(r => setTimeout(r, 120));
+                        canvas = document.getElementById('pdfViewerCanvas') || (this.$refs && this.$refs.pdfCanvas);
+                    }
+                    if (!canvas) {
+                        this.pdfLoadingError = 'Elemen kanvas penampil dokumen belum terpasang di browser.';
                         this.pdfIsRendering = false;
                         return;
                     }
 
                     const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        this.pdfLoadingError = 'Browser tidak mendukung 2D Canvas context.';
+                        this.pdfIsRendering = false;
+                        return;
+                    }
+
                     const dpr = window.devicePixelRatio || 1;
                     
                     // Gunakan viewport dengan skala yang dikalikan DPR langsung agar bebas distorsi matriks
@@ -341,6 +353,8 @@
                     canvas.height = Math.floor(viewport.height);
                     canvas.style.width = Math.floor(viewport.width / dpr) + 'px';
                     canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                     const renderContext = {
                         canvasContext: ctx,
@@ -360,7 +374,8 @@
                     if (err?.name === 'RenderingCancelledException') {
                         return;
                     }
-                    console.error('Error rendering page:', err);
+                    console.error('[PDF Viewer] Error rendering page:', err);
+                    this.pdfLoadingError = 'Gagal menampilkan halaman ' + num + ': ' + (err.message || err);
                 } finally {
                     this.pdfIsRendering = false;
                     if (this.pdfPagePending !== null) {
@@ -1265,7 +1280,7 @@
             <div x-show="pdfReaderOpen" 
                  id="pdfReaderModalElement"
                  class="fixed inset-0 select-none overflow-hidden" 
-                 style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 999999 !important; background-color: #0b0f19 !important; display: flex !important; flex-direction: column !important;"
+                 :style="'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 999999 !important; background-color: #0b0f19 !important;' + (pdfReaderOpen ? ' display: flex !important; flex-direction: column !important;' : ' display: none !important;')"
                  x-cloak
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"
@@ -1491,6 +1506,7 @@
                     <!-- Canvas Viewport -->
                     <div class="pb-12 pt-2 flex justify-center items-start w-full">
                         <canvas id="pdfViewerCanvas" 
+                                x-ref="pdfCanvas"
                                 style="background-color: #ffffff !important; border: 1px solid #334155 !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important; display: block !important; margin: 0 auto !important; border-radius: 2px !important; outline: none !important;"></canvas>
                     </div>
                 </div>
@@ -2081,16 +2097,19 @@
 </script>
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="{{ asset('vendor/pdfjs/pdf.min.js') }}"></script>
 <script>
     if (typeof pdfjsLib === 'undefined') {
-        document.write('<script src="{{ asset('vendor/pdfjs/pdf.min.js') }}"><\/script>');
+        document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>');
     }
-    window.addEventListener('DOMContentLoaded', () => {
+    function initPdfJsWorker() {
         if (window.pdfjsLib) {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            const workerRel = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}'.replace(/^https?:\/\/[^\/]+/, '');
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = (window.location.origin || '') + workerRel;
         }
-    });
+    }
+    initPdfJsWorker();
+    window.addEventListener('DOMContentLoaded', initPdfJsWorker);
 </script>
 @endpush
 </x-app-layout>
