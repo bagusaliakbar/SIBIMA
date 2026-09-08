@@ -160,7 +160,6 @@
                 file_path_bab2: ''
             },
             pdfChapter: 'bab1',
-            pdfDoc: null,
             pdfCurrentPage: 1,
             pdfTotalPages: 0,
             pdfScale: 1.25,
@@ -168,7 +167,6 @@
             pdfLoadingError: null,
             pdfIsRendering: false,
             pdfPagePending: null,
-            pdfCurrentRenderTask: null,
             pdfSearchQuery: '',
             pdfSearchMatches: [],
             pdfCurrentMatchIndex: -1,
@@ -193,12 +191,12 @@
                 this.pdfChapter = (chapter === 'bab2' && repo.file_path_bab2) ? 'bab2' : 'bab1';
                 this.pdfCurrentPage = 1;
                 this.pdfTotalPages = 0;
-                this.pdfDoc = null;
+                window._sibimaPdfDoc = null;
                 this.pdfIsRendering = false;
                 this.pdfPagePending = null;
-                if (this.pdfCurrentRenderTask) {
-                    try { this.pdfCurrentRenderTask.cancel(); } catch (e) {}
-                    this.pdfCurrentRenderTask = null;
+                if (window._sibimaPdfRenderTask) {
+                    try { window._sibimaPdfRenderTask.cancel(); } catch (e) {}
+                    window._sibimaPdfRenderTask = null;
                 }
                 
                 // Responsif skala pembacaan awal
@@ -226,12 +224,12 @@
             },
 
             closePdfReader() {
-                if (this.pdfCurrentRenderTask) {
-                    try { this.pdfCurrentRenderTask.cancel(); } catch (e) {}
-                    this.pdfCurrentRenderTask = null;
+                if (window._sibimaPdfRenderTask) {
+                    try { window._sibimaPdfRenderTask.cancel(); } catch (e) {}
+                    window._sibimaPdfRenderTask = null;
                 }
+                window._sibimaPdfDoc = null;
                 this.pdfReaderOpen = false;
-                this.pdfDoc = null;
                 this.pdfIsLoading = false;
                 this.pdfIsRendering = false;
                 this.pdfLoadingError = null;
@@ -245,9 +243,9 @@
                 if (chapter === 'bab1' && !this.pdfRepo.file_path) return;
                 if (chapter === 'bab2' && !this.pdfRepo.file_path_bab2) return;
 
-                if (this.pdfCurrentRenderTask) {
-                    try { this.pdfCurrentRenderTask.cancel(); } catch (e) {}
-                    this.pdfCurrentRenderTask = null;
+                if (window._sibimaPdfRenderTask) {
+                    try { window._sibimaPdfRenderTask.cancel(); } catch (e) {}
+                    window._sibimaPdfRenderTask = null;
                 }
 
                 this.pdfChapter = chapter;
@@ -264,7 +262,7 @@
             async loadPdf() {
                 this.pdfIsLoading = true;
                 this.pdfLoadingError = null;
-                this.pdfDoc = null;
+                window._sibimaPdfDoc = null;
                 this.pdfTotalPages = 0;
                 this.pdfIsRendering = false;
                 this.pdfPagePending = null;
@@ -298,8 +296,8 @@
                         withCredentials: true
                     });
 
-                    this.pdfDoc = await loadingTask.promise;
-                    this.pdfTotalPages = this.pdfDoc.numPages;
+                    window._sibimaPdfDoc = await loadingTask.promise;
+                    this.pdfTotalPages = window._sibimaPdfDoc.numPages;
                     this.pdfCurrentPage = 1;
 
                     await this.$nextTick();
@@ -314,14 +312,14 @@
             },
 
             async renderPage(num) {
-                if (!this.pdfDoc) return;
+                if (!window._sibimaPdfDoc) return;
                 
                 // Batalkan proses render sebelumnya bila masih berjalan (mencegah tabrakan render task PDF.js)
-                if (this.pdfCurrentRenderTask) {
+                if (window._sibimaPdfRenderTask) {
                     try {
-                        this.pdfCurrentRenderTask.cancel();
+                        window._sibimaPdfRenderTask.cancel();
                     } catch (e) {}
-                    this.pdfCurrentRenderTask = null;
+                    window._sibimaPdfRenderTask = null;
                 }
 
                 if (this.pdfIsRendering) {
@@ -332,7 +330,7 @@
 
                 try {
                     await this.$nextTick();
-                    const page = await this.pdfDoc.getPage(num);
+                    const page = await window._sibimaPdfDoc.getPage(num);
                     
                     let canvas = document.getElementById('pdfViewerCanvas') || (this.$refs && this.$refs.pdfCanvas);
                     if (!canvas) {
@@ -373,9 +371,9 @@
                         viewport: viewport
                     };
 
-                    this.pdfCurrentRenderTask = page.render(renderContext);
-                    await this.pdfCurrentRenderTask.promise;
-                    this.pdfCurrentRenderTask = null;
+                    window._sibimaPdfRenderTask = page.render(renderContext);
+                    await window._sibimaPdfRenderTask.promise;
+                    window._sibimaPdfRenderTask = null;
 
                     // Terapkan watermark proteksi resmi arsip digital bila mode proteksi aktif
                     if (this.pdfReadOnly) {
@@ -452,8 +450,8 @@
 
             fitWidth() {
                 const container = document.getElementById('pdfViewerContainer');
-                if (!container || !this.pdfDoc) return;
-                this.pdfDoc.getPage(this.pdfCurrentPage).then(page => {
+                if (!container || !window._sibimaPdfDoc) return;
+                window._sibimaPdfDoc.getPage(this.pdfCurrentPage).then(page => {
                     const vp = page.getViewport({ scale: 1.0 });
                     const availableWidth = container.clientWidth - 56;
                     if (availableWidth > 200 && vp.width > 0) {
@@ -484,12 +482,12 @@
             },
 
             async indexDocumentText() {
-                if (!this.pdfDoc) return;
-                const numPages = this.pdfDoc.numPages;
+                if (!window._sibimaPdfDoc) return;
+                const numPages = window._sibimaPdfDoc.numPages;
                 for (let i = 1; i <= numPages; i++) {
                     if (!this.pdfPagesTextCache[i]) {
                         try {
-                            const page = await this.pdfDoc.getPage(i);
+                            const page = await window._sibimaPdfDoc.getPage(i);
                             const textContent = await page.getTextContent();
                             const str = textContent.items.map(item => item.str).join(' ');
                             this.pdfPagesTextCache[i] = str.toLowerCase();
