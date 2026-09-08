@@ -1067,7 +1067,7 @@
     <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 dark:border-slate-700/60 overflow-hidden transform transition-all">
         <div class="p-6">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black shrink-0">
+                <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black shrink-0" style="background-color: #f3e8ff; color: #7e22ce;">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 </div>
                 <div>
@@ -1078,11 +1078,11 @@
 
             <!-- Policy & Constraints Badges -->
             <div class="flex items-center gap-2 mb-4 flex-wrap">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">
                     <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     <span>Khusus FASILKOM (144 Dokumen)</span>
                 </span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800" style="background-color: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe;">
                     <svg class="w-3 h-3 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     <span>Hanya File BAB I & II (Hemat Storage)</span>
                 </span>
@@ -1105,42 +1105,63 @@
 
             <!-- Progress Bar Track Container -->
             <div class="relative w-full bg-slate-100 dark:bg-slate-700/60 rounded-full h-4 mb-2 overflow-hidden border border-slate-200/80 dark:border-slate-600 shadow-inner">
-                <div id="unsubSyncProgress" class="bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
+                <div id="unsubSyncProgress" class="bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-300 shadow-sm" style="background: linear-gradient(to right, #9333ea, #6366f1, #10b981); width: 0%;"></div>
             </div>
             
             <div class="flex justify-between items-center text-xs font-bold text-slate-600 dark:text-slate-300 mb-5">
                 <span id="unsubSyncStatus" class="truncate">Siap untuk sinkronisasi...</span>
-                <span id="unsubSyncPercentage" class="shrink-0 ml-2 font-black text-purple-600 dark:text-purple-400">0% (0 / 144)</span>
+                <span id="unsubSyncPercentage" class="shrink-0 ml-2 font-black text-purple-600 dark:text-purple-400" style="color: #7e22ce;">0% (0 / 144)</span>
             </div>
 
             <!-- Live Statistics Cards -->
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
                     <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Fasilkom</p>
-                    <p id="statUnsubTotal" class="text-sm font-black text-slate-700 dark:text-slate-200">144</p>
+                    <p id="statUnsubTotal" class="text-sm font-black text-slate-700 dark:text-slate-200" style="color: #334155;">144</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
                     <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
-                    <p id="statUnsubNew" class="text-sm font-black text-emerald-600 dark:text-emerald-400">0</p>
+                    <p id="statUnsubNew" class="text-sm font-black text-emerald-600 dark:text-emerald-400" style="color: #059669;">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
                     <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Diperkaya</p>
-                    <p id="statUnsubEnriched" class="text-sm font-black text-indigo-600 dark:text-indigo-400">0</p>
+                    <p id="statUnsubEnriched" class="text-sm font-black text-indigo-600 dark:text-indigo-400" style="color: #4f46e5;">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
                     <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">BAB 1 PDF</p>
-                    <p id="statUnsubBab1" class="text-sm font-black text-purple-600 dark:text-purple-400">0</p>
+                    <p id="statUnsubBab1" class="text-sm font-black text-purple-600 dark:text-purple-400" style="color: #7e22ce;">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
                     <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">BAB 2 PDF</p>
-                    <p id="statUnsubBab2" class="text-sm font-black text-amber-600 dark:text-amber-400">0</p>
+                    <p id="statUnsubBab2" class="text-sm font-black text-amber-600 dark:text-amber-400" style="color: #d97706;">0</p>
                 </div>
             </div>
             
-            <div class="mt-6 flex justify-end gap-2.5">
-                <button type="button" id="cancelUnsubBtn" onclick="closeUnsubSyncModal(false)" class="px-5 py-2.5 rounded-xl font-bold text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">Batal</button>
-                <button type="button" id="startUnsubBtn" onclick="startUnsubSync()" class="bg-purple-600 hover:bg-purple-700 active:scale-95 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md shadow-purple-500/20 transition-all cursor-pointer">Mulai Sinkronisasi</button>
-                <button type="button" id="closeUnsubModalBtn" onclick="closeUnsubSyncModal(true)" class="hidden bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">Tutup & Muat Ulang</button>
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-end gap-3">
+                <button type="button" 
+                        id="cancelUnsubBtn" 
+                        onclick="closeUnsubSyncModal(false)" 
+                        style="background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;"
+                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 shadow-2xs hover:shadow-sm transition-all cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <span>Batal</span>
+                </button>
+                <button type="button" 
+                        id="startUnsubBtn" 
+                        onclick="startUnsubSync()" 
+                        style="background-color: #7e22ce !important; color: #ffffff !important; border: 1px solid #6b21a8;"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-purple-700 hover:bg-purple-800 active:scale-95 shadow-md shadow-purple-700/30 hover:shadow-lg transition-all cursor-pointer">
+                    <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>Mulai Sinkronisasi</span>
+                </button>
+                <button type="button" 
+                        id="closeUnsubModalBtn" 
+                        onclick="closeUnsubSyncModal(true)" 
+                        style="display: none; background-color: #0f172a !important; color: #ffffff !important;"
+                        class="hidden inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 shadow-md transition-all cursor-pointer">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Tutup & Muat Ulang</span>
+                </button>
             </div>
         </div>
     </div>
@@ -1276,9 +1297,9 @@
 
         // Reset UI
         unsubRetryCount = 0;
-        document.getElementById('startUnsubBtn').classList.remove('hidden');
-        document.getElementById('cancelUnsubBtn').classList.remove('hidden');
-        document.getElementById('closeUnsubModalBtn').classList.add('hidden');
+        document.getElementById('startUnsubBtn').style.display = 'inline-flex';
+        document.getElementById('cancelUnsubBtn').style.display = 'inline-flex';
+        document.getElementById('closeUnsubModalBtn').style.display = 'none';
         document.getElementById('unsubOptionsContainer').classList.remove('hidden');
         document.getElementById('unsubSyncProgress').style.width = '0%';
         document.getElementById('unsubSyncPercentage').innerText = '0%';
@@ -1313,8 +1334,9 @@
         unsubTotalBab2 = 0;
         unsubRetryCount = 0;
 
-        document.getElementById('startUnsubBtn').classList.add('hidden');
-        document.getElementById('cancelUnsubBtn').classList.add('hidden');
+        document.getElementById('startUnsubBtn').style.display = 'none';
+        document.getElementById('cancelUnsubBtn').style.display = 'none';
+        document.getElementById('closeUnsubModalBtn').style.display = 'none';
         document.getElementById('unsubOptionsContainer').classList.add('hidden');
 
         await processNextUnsubChunk();
@@ -1403,7 +1425,9 @@
         document.getElementById('unsubSyncPercentage').innerText = '100% (Selesai)';
         document.getElementById('unsubSyncStatus').innerText = `Sinkronisasi Selesai! ${unsubTotalNew} skripsi baru, ${unsubTotalEnriched} diperkaya, ${unsubTotalBab1} BAB 1 & ${unsubTotalBab2} BAB 2 PDF terhubung.`;
         document.getElementById('unsubSyncStatus').classList.add('text-emerald-600', 'dark:text-emerald-400');
-        document.getElementById('closeUnsubModalBtn').classList.remove('hidden');
+        document.getElementById('startUnsubBtn').style.display = 'none';
+        document.getElementById('cancelUnsubBtn').style.display = 'none';
+        document.getElementById('closeUnsubModalBtn').style.display = 'inline-flex';
         isUnsubSyncing = false;
     }
 
