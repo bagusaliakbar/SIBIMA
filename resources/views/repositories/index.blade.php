@@ -178,6 +178,7 @@
             pdfPagesTextCache: {},
 
             async openPdfReader(repo, chapter = 'bab1') {
+                this.abstractModalOpen = false; // Langsung tutup modal abstrak agar viewer naskah tampil penuh tanpa terhalang
                 this.pdfRepo = {
                     id: repo.id,
                     name: repo.name || '',
@@ -191,7 +192,19 @@
                 this.pdfCurrentPage = 1;
                 this.pdfTotalPages = 0;
                 this.pdfDoc = null;
-                this.pdfScale = 1.15;
+                
+                // Responsif skala pembacaan awal
+                const screenW = window.innerWidth || 1200;
+                if (screenW >= 1440) {
+                    this.pdfScale = 1.45; // ~860px tampilan kertas pas & terbaca jelas di desktop
+                } else if (screenW >= 1024) {
+                    this.pdfScale = 1.3;
+                } else if (screenW >= 768) {
+                    this.pdfScale = 1.1;
+                } else {
+                    this.pdfScale = Math.max(0.6, Math.min(1.0, Math.round(((screenW - 32) / 595) * 100) / 100));
+                }
+
                 this.pdfSearchQuery = '';
                 this.pdfSearchMatches = [];
                 this.pdfCurrentMatchIndex = -1;
@@ -1093,7 +1106,7 @@
 
         <!-- Modal Detail Abstrak Pustaka -->
         <template x-teleport="body">
-            <div x-show="abstractModalOpen" 
+            <div x-show="abstractModalOpen && !pdfReaderOpen" 
                  class="fixed inset-0 overflow-y-auto text-left" 
                  style="z-index: 99999 !important;" 
                  x-cloak 
@@ -1167,7 +1180,7 @@
                                 <template x-if="abstractData.file_path">
                                     <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
                                         <button type="button" 
-                                                @click="openPdfReader(abstractData, 'bab1')" 
+                                                @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab1')" 
                                                 class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
                                                 title="Baca Naskah BAB 1 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -1184,7 +1197,7 @@
                                 <template x-if="abstractData.file_path_bab2">
                                     <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
                                         <button type="button" 
-                                                @click="openPdfReader(abstractData, 'bab2')" 
+                                                @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab2')" 
                                                 class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
                                                 title="Baca Naskah BAB 2 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
