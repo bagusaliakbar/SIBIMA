@@ -148,6 +148,327 @@
                 this.deleteModalOpen = true;
             },
 
+            // In-App PDF Reader Modal State
+            pdfReaderOpen: false,
+            pdfRepo: {
+                id: null,
+                name: '',
+                identifier: '',
+                year: '',
+                title: '',
+                file_path: '',
+                file_path_bab2: ''
+            },
+            pdfChapter: 'bab1',
+            pdfDoc: null,
+            pdfCurrentPage: 1,
+            pdfTotalPages: 0,
+            pdfScale: 1.15,
+            pdfIsLoading: false,
+            pdfLoadingError: null,
+            pdfIsRendering: false,
+            pdfPagePending: null,
+            pdfSearchQuery: '',
+            pdfSearchMatches: [],
+            pdfCurrentMatchIndex: -1,
+            pdfIsSearching: false,
+            pdfSearchStatus: '',
+            pdfReadOnly: true,
+            pdfFullscreen: false,
+            pdfPagesTextCache: {},
+
+            async openPdfReader(repo, chapter = 'bab1') {
+                this.pdfRepo = {
+                    id: repo.id,
+                    name: repo.name || '',
+                    identifier: repo.identifier || '-',
+                    year: repo.year || '',
+                    title: repo.title || '',
+                    file_path: repo.file_path || '',
+                    file_path_bab2: repo.file_path_bab2 || ''
+                };
+                this.pdfChapter = (chapter === 'bab2' && repo.file_path_bab2) ? 'bab2' : 'bab1';
+                this.pdfCurrentPage = 1;
+                this.pdfTotalPages = 0;
+                this.pdfDoc = null;
+                this.pdfScale = 1.15;
+                this.pdfSearchQuery = '';
+                this.pdfSearchMatches = [];
+                this.pdfCurrentMatchIndex = -1;
+                this.pdfSearchStatus = '';
+                this.pdfPagesTextCache = {};
+                this.pdfReaderOpen = true;
+
+                await this.$nextTick();
+                this.loadPdf();
+            },
+
+            closePdfReader() {
+                this.pdfReaderOpen = false;
+                this.pdfDoc = null;
+                this.pdfIsLoading = false;
+                this.pdfLoadingError = null;
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            },
+
+            async switchChapter(chapter) {
+                if (this.pdfChapter === chapter) return;
+                if (chapter === 'bab1' && !this.pdfRepo.file_path) return;
+                if (chapter === 'bab2' && !this.pdfRepo.file_path_bab2) return;
+
+                this.pdfChapter = chapter;
+                this.pdfCurrentPage = 1;
+                this.pdfSearchQuery = '';
+                this.pdfSearchMatches = [];
+                this.pdfCurrentMatchIndex = -1;
+                this.pdfSearchStatus = '';
+                this.pdfPagesTextCache = {};
+                await this.loadPdf();
+            },
+
+            async loadPdf() {
+                this.pdfIsLoading = true;
+                this.pdfLoadingError = null;
+                this.pdfDoc = null;
+                this.pdfTotalPages = 0;
+
+                const streamUrl = `/repositories/${this.pdfRepo.id}/${this.pdfChapter}`;
+
+                try {
+                    const lib = window.pdfjsLib || (typeof pdfjsLib !== 'undefined' ? pdfjsLib : null);
+                    if (!lib) {
+                        throw new Error('Pustaka Mozilla PDF.js belum selesai dimuat di browser.');
+                    }
+                    if (!lib.GlobalWorkerOptions.workerSrc) {
+                        lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                    }
+
+                    const loadingTask = lib.getDocument({
+                        url: streamUrl,
+                        withCredentials: true
+                    });
+
+                    this.pdfDoc = await loadingTask.promise;
+                    this.pdfTotalPages = this.pdfDoc.numPages;
+                    this.pdfCurrentPage = 1;
+                    this.pdfIsLoading = false;
+
+                    await this.renderPage(this.pdfCurrentPage);
+
+                    // Background text index for instant in-chapter search
+                    this.indexDocumentText();
+
+                } catch (err) {
+                    console.error('Error loading PDF:', err);
+                    this.pdfIsLoading = false;
+                    this.pdfLoadingError = err.message || 'Gagal memuat dokumen PDF.';
+                }
+            },
+
+            async renderPage(num) {
+                if (!this.pdfDoc) return;
+                if (this.pdfIsRendering) {
+                    this.pdfPagePending = num;
+                    return;
+                }
+                this.pdfIsRendering = true;
+
+                try {
+                    const page = await this.pdfDoc.getPage(num);
+                    const canvas = document.getElementById('pdfViewerCanvas');
+                    if (!canvas) {
+                        this.pdfIsRendering = false;
+                        return;
+                    }
+
+                    const ctx = canvas.getContext('2d');
+                    const viewport = page.getViewport({ scale: this.pdfScale });
+
+                    const dpr = window.devicePixelRatio || 1;
+                    canvas.width = Math.floor(viewport.width * dpr);
+                    canvas.height = Math.floor(viewport.height * dpr);
+                    canvas.style.width = Math.floor(viewport.width) + 'px';
+                    canvas.style.height = Math.floor(viewport.height) + 'px';
+
+                    const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        transform: transform,
+                        viewport: viewport
+                    };
+
+                    await page.render(renderContext).promise;
+
+                    // Apply anti-copy / anti-screenshot diagonal watermark if Read-Only mode is active
+                    if (this.pdfReadOnly) {
+                        this.drawWatermark(ctx, viewport.width, viewport.height, dpr);
+                    }
+
+                } catch (err) {
+                    console.error('Error rendering page:', err);
+                } finally {
+                    this.pdfIsRendering = false;
+                    if (this.pdfPagePending !== null) {
+                        const next = this.pdfPagePending;
+                        this.pdfPagePending = null;
+                        this.renderPage(next);
+                    }
+                }
+            },
+
+            drawWatermark(ctx, width, height, dpr) {
+                ctx.save();
+                if (dpr !== 1) {
+                    ctx.scale(dpr, dpr);
+                }
+                ctx.globalAlpha = 0.12;
+                ctx.fillStyle = '#dc2626';
+                ctx.font = 'bold ' + Math.max(13, Math.round(17 * this.pdfScale)) + 'px sans-serif';
+                ctx.textAlign = 'center';
+
+                const stepY = 190 * this.pdfScale;
+                const stepX = 320 * this.pdfScale;
+
+                for (let y = 50; y < height + 200; y += stepY) {
+                    for (let x = -80; x < width + 200; x += stepX) {
+                        ctx.save();
+                        ctx.translate(x, y);
+                        ctx.rotate(-32 * Math.PI / 180);
+                        ctx.fillText('SIBIMA FASILKOM UNSUB • ARSIP DIGITAL RESMI', 0, 0);
+                        ctx.restore();
+                    }
+                }
+                ctx.restore();
+            },
+
+            changePage(delta) {
+                const target = this.pdfCurrentPage + delta;
+                if (target >= 1 && target <= this.pdfTotalPages) {
+                    this.pdfCurrentPage = target;
+                    this.renderPage(this.pdfCurrentPage);
+                }
+            },
+
+            goToPage(num) {
+                let p = parseInt(num);
+                if (isNaN(p)) p = 1;
+                p = Math.max(1, Math.min(p, this.pdfTotalPages));
+                this.pdfCurrentPage = p;
+                this.renderPage(this.pdfCurrentPage);
+            },
+
+            zoomIn() {
+                if (this.pdfScale < 2.4) {
+                    this.pdfScale = Math.round((this.pdfScale + 0.15) * 100) / 100;
+                    this.renderPage(this.pdfCurrentPage);
+                }
+            },
+
+            zoomOut() {
+                if (this.pdfScale > 0.6) {
+                    this.pdfScale = Math.round((this.pdfScale - 0.15) * 100) / 100;
+                    this.renderPage(this.pdfCurrentPage);
+                }
+            },
+
+            fitWidth() {
+                const container = document.getElementById('pdfViewerContainer');
+                if (!container || !this.pdfDoc) return;
+                this.pdfDoc.getPage(this.pdfCurrentPage).then(page => {
+                    const vp = page.getViewport({ scale: 1.0 });
+                    const availableWidth = container.clientWidth - 56;
+                    if (availableWidth > 200 && vp.width > 0) {
+                        this.pdfScale = Math.round((availableWidth / vp.width) * 100) / 100;
+                        this.pdfScale = Math.max(0.6, Math.min(this.pdfScale, 2.3));
+                        this.renderPage(this.pdfCurrentPage);
+                    }
+                });
+            },
+
+            toggleReadOnly() {
+                this.pdfReadOnly = !this.pdfReadOnly;
+                this.renderPage(this.pdfCurrentPage);
+            },
+
+            toggleFullscreen() {
+                const modalEl = document.getElementById('pdfReaderModalElement');
+                if (!modalEl) return;
+                if (!document.fullscreenElement) {
+                    modalEl.requestFullscreen().then(() => {
+                        this.pdfFullscreen = true;
+                    }).catch(() => {});
+                } else {
+                    document.exitFullscreen().then(() => {
+                        this.pdfFullscreen = false;
+                    }).catch(() => {});
+                }
+            },
+
+            async indexDocumentText() {
+                if (!this.pdfDoc) return;
+                const numPages = this.pdfDoc.numPages;
+                for (let i = 1; i <= numPages; i++) {
+                    if (!this.pdfPagesTextCache[i]) {
+                        try {
+                            const page = await this.pdfDoc.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const str = textContent.items.map(item => item.str).join(' ');
+                            this.pdfPagesTextCache[i] = str.toLowerCase();
+                        } catch (e) {}
+                    }
+                }
+            },
+
+            async searchInPdf() {
+                const q = (this.pdfSearchQuery || '').trim().toLowerCase();
+                if (!q) {
+                    this.pdfSearchMatches = [];
+                    this.pdfCurrentMatchIndex = -1;
+                    this.pdfSearchStatus = '';
+                    return;
+                }
+
+                this.pdfIsSearching = true;
+                this.pdfSearchMatches = [];
+                this.pdfCurrentMatchIndex = -1;
+
+                await this.indexDocumentText();
+
+                for (let i = 1; i <= this.pdfTotalPages; i++) {
+                    const pageText = this.pdfPagesTextCache[i] || '';
+                    if (pageText.includes(q)) {
+                        this.pdfSearchMatches.push(i);
+                    }
+                }
+
+                this.pdfIsSearching = false;
+
+                if (this.pdfSearchMatches.length > 0) {
+                    this.pdfCurrentMatchIndex = 0;
+                    this.pdfSearchStatus = `${this.pdfSearchMatches.length} hal cocok`;
+                    this.goToPage(this.pdfSearchMatches[0]);
+                } else {
+                    this.pdfSearchStatus = '0 cocok';
+                }
+            },
+
+            nextSearchMatch() {
+                if (this.pdfSearchMatches.length === 0) return;
+                this.pdfCurrentMatchIndex = (this.pdfCurrentMatchIndex + 1) % this.pdfSearchMatches.length;
+                this.goToPage(this.pdfSearchMatches[this.pdfCurrentMatchIndex]);
+                this.pdfSearchStatus = `Hal ${this.pdfSearchMatches[this.pdfCurrentMatchIndex]} (${this.pdfCurrentMatchIndex + 1}/${this.pdfSearchMatches.length})`;
+            },
+
+            prevSearchMatch() {
+                if (this.pdfSearchMatches.length === 0) return;
+                this.pdfCurrentMatchIndex = (this.pdfCurrentMatchIndex - 1 + this.pdfSearchMatches.length) % this.pdfSearchMatches.length;
+                this.goToPage(this.pdfSearchMatches[this.pdfCurrentMatchIndex]);
+                this.pdfSearchStatus = `Hal ${this.pdfSearchMatches[this.pdfCurrentMatchIndex]} (${this.pdfCurrentMatchIndex + 1}/${this.pdfSearchMatches.length})`;
+            },
+
             async runTitleCheck() {
                 const cleaned = this.testTitle.trim();
                 if (!cleaned || cleaned.length < 10) {
@@ -518,23 +839,23 @@
                                     </span>
 
                                     @if($repo->file_path)
-                                        <a href="{{ route('repositories.bab1', $repo) }}" 
-                                           target="_blank" 
-                                           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors shadow-2xs" 
-                                           title="Buka Naskah BAB 1 (PDF)">
+                                        <button type="button" 
+                                                @click="openPdfReader({{ json_encode($repo) }}, 'bab1')" 
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                title="Baca Naskah BAB 1 di Web (In-App Reader)">
                                             <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                             <span>BAB 1 PDF</span>
-                                        </a>
+                                        </button>
                                     @endif
 
                                     @if($repo->file_path_bab2)
-                                        <a href="{{ route('repositories.bab2', $repo) }}" 
-                                           target="_blank" 
-                                           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors shadow-2xs" 
-                                           title="Buka Naskah BAB 2 (PDF)">
+                                        <button type="button" 
+                                                @click="openPdfReader({{ json_encode($repo) }}, 'bab2')" 
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                title="Baca Naskah BAB 2 di Web (In-App Reader)">
                                             <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                             <span>BAB 2 PDF</span>
-                                        </a>
+                                        </button>
                                     @endif
                                 </div>
 
@@ -675,22 +996,22 @@
                                                 {{ $badge['label'] }}
                                             </span>
                                             @if($repo->file_path)
-                                                <a href="{{ route('repositories.bab1', $repo) }}" 
-                                                   target="_blank" 
-                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors" 
-                                                   title="Buka Naskah BAB 1 (PDF)">
+                                                <button type="button" 
+                                                        @click="openPdfReader({{ json_encode($repo) }}, 'bab1')" 
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                        title="Baca Naskah BAB 1 di Web (In-App Reader)">
                                                     <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                     <span>BAB 1 PDF</span>
-                                                </a>
+                                                </button>
                                             @endif
                                             @if($repo->file_path_bab2)
-                                                <a href="{{ route('repositories.bab2', $repo) }}" 
-                                                   target="_blank" 
-                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors" 
-                                                   title="Buka Naskah BAB 2 (PDF)">
+                                                <button type="button" 
+                                                        @click="openPdfReader({{ json_encode($repo) }}, 'bab2')" 
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                        title="Baca Naskah BAB 2 di Web (In-App Reader)">
                                                     <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                     <span>BAB 2 PDF</span>
-                                                </a>
+                                                </button>
                                             @endif
                                             @if($repo->abstract)
                                                 <button type="button" 
@@ -844,20 +1165,38 @@
                         <div class="px-8 py-5 bg-slate-50/75 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-3.5 sm:gap-4 flex-wrap">
                                 <template x-if="abstractData.file_path">
-                                    <a :href="'/repositories/' + abstractData.id + '/bab1'" 
-                                       target="_blank" 
-                                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm shadow-rose-600/25 hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer">
-                                        <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                        <span>Buka BAB 1 (PDF)</span>
-                                    </a>
+                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                        <button type="button" 
+                                                @click="openPdfReader(abstractData, 'bab1')" 
+                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                title="Baca Naskah BAB 1 di Web (In-App Reader)">
+                                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            <span>Baca BAB 1</span>
+                                        </button>
+                                        <a :href="'/repositories/' + abstractData.id + '/bab1'" 
+                                           target="_blank" 
+                                           class="px-2.5 py-2.5 bg-rose-700 hover:bg-rose-800 text-rose-100 hover:text-white transition-colors" 
+                                           title="Buka File di Tab Baru">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab2">
-                                    <a :href="'/repositories/' + abstractData.id + '/bab2'" 
-                                       target="_blank" 
-                                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-sm shadow-amber-600/25 hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer">
-                                        <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                        <span>Buka BAB 2 (PDF)</span>
-                                    </a>
+                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                        <button type="button" 
+                                                @click="openPdfReader(abstractData, 'bab2')" 
+                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                title="Baca Naskah BAB 2 di Web (In-App Reader)">
+                                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            <span>Baca BAB 2</span>
+                                        </button>
+                                        <a :href="'/repositories/' + abstractData.id + '/bab2'" 
+                                           target="_blank" 
+                                           class="px-2.5 py-2.5 bg-amber-700 hover:bg-amber-800 text-amber-100 hover:text-white transition-colors" 
+                                           title="Buka File di Tab Baru">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    </div>
                                 </template>
                                 <template x-if="!abstractData.file_path && !abstractData.file_path_bab2">
                                     <span class="text-xs text-slate-400 italic">File naskah PDF belum terhubung</span>
@@ -869,6 +1208,239 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </template>
+
+        <!-- MODAL IN-APP PDF READER -->
+        <template x-teleport="body">
+            <div x-show="pdfReaderOpen" 
+                 id="pdfReaderModalElement"
+                 class="fixed inset-0 flex flex-col bg-slate-950/95 text-slate-100 select-none overflow-hidden" 
+                 style="z-index: 999999 !important;"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 @keydown.window.escape="if (pdfReaderOpen) closePdfReader()"
+                 @keydown.window.left="if (pdfReaderOpen && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) changePage(-1)"
+                 @keydown.window.right="if (pdfReaderOpen && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) changePage(1)">
+                
+                <!-- TOP HEADER TOOLBAR -->
+                <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-5 py-2.5 shadow-xl flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5 z-30 shrink-0">
+                    
+                    <!-- LEFT: Doc Info & Chapter Switcher -->
+                    <div class="flex items-center gap-3 min-w-0">
+                        <!-- Chapter Switcher Segmented Control -->
+                        <div class="inline-flex p-1 bg-slate-950/70 border border-slate-800 rounded-xl shrink-0">
+                            <button type="button" 
+                                    @click="switchChapter('bab1')" 
+                                    :disabled="!pdfRepo.file_path"
+                                    :class="pdfChapter === 'bab1' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                    class="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <span>BAB 1</span>
+                            </button>
+                            <button type="button" 
+                                    @click="switchChapter('bab2')" 
+                                    :disabled="!pdfRepo.file_path_bab2"
+                                    :class="pdfChapter === 'bab2' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                                    class="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                <span>BAB 2</span>
+                            </button>
+                        </div>
+
+                        <!-- Thesis Metadata Summary -->
+                        <div class="hidden md:block truncate max-w-xs lg:max-w-md">
+                            <h4 class="text-xs font-black text-slate-100 truncate tracking-tight" :title="pdfRepo.title" x-text="pdfRepo.title"></h4>
+                            <p class="text-[10px] text-slate-400 font-medium truncate mt-0.5">
+                                <span class="font-bold text-orange-400" x-text="pdfRepo.name"></span>
+                                <span class="mx-1">•</span>
+                                <span x-text="'NIM: ' + pdfRepo.identifier"></span>
+                                <span class="mx-1">•</span>
+                                <span x-text="'Angkatan ' + pdfRepo.year"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- CENTER: Navigation & Zoom -->
+                    <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                        <!-- Page Controls -->
+                        <div class="flex items-center gap-1 bg-slate-950/70 border border-slate-800 rounded-xl px-2 py-1">
+                            <button type="button" 
+                                    @click="changePage(-1)" 
+                                    :disabled="pdfCurrentPage <= 1"
+                                    class="p-1 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded transition-colors cursor-pointer" 
+                                    title="Halaman Sebelumnya (←)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <div class="flex items-center gap-1 text-xs font-bold text-slate-200 px-1">
+                                <input type="number" 
+                                       :value="pdfCurrentPage" 
+                                       @change="goToPage($event.target.value)" 
+                                       min="1" 
+                                       :max="pdfTotalPages || 1" 
+                                       class="w-10 text-center bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-xs text-white font-mono focus:outline-none focus:ring-1 focus:ring-orange-500">
+                                <span class="text-slate-500">/</span>
+                                <span x-text="pdfTotalPages || '-'" class="font-mono text-slate-300 min-w-[16px] text-center"></span>
+                            </div>
+                            <button type="button" 
+                                    @click="changePage(1)" 
+                                    :disabled="pdfCurrentPage >= pdfTotalPages"
+                                    class="p-1 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded transition-colors cursor-pointer" 
+                                    title="Halaman Berikutnya (→)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+
+                        <!-- Zoom Controls -->
+                        <div class="flex items-center gap-1 bg-slate-950/70 border border-slate-800 rounded-xl px-2 py-1">
+                            <button type="button" 
+                                    @click="zoomOut()" 
+                                    class="p-1 text-slate-300 hover:text-white rounded transition-colors cursor-pointer" 
+                                    title="Perkecil Zoom (-)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
+                            </button>
+                            <span x-text="Math.round(pdfScale * 100) + '%'" class="text-[11px] font-mono font-bold text-slate-200 min-w-[40px] text-center"></span>
+                            <button type="button" 
+                                    @click="zoomIn()" 
+                                    class="p-1 text-slate-300 hover:text-white rounded transition-colors cursor-pointer" 
+                                    title="Perbesar Zoom (+)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                            <button type="button" 
+                                    @click="fitWidth()" 
+                                    class="px-1.5 py-0.5 text-[10px] font-bold bg-slate-800 hover:bg-slate-700 rounded text-slate-200 transition-colors cursor-pointer" 
+                                    title="Sesuaikan Lebar Layar">
+                                Fit
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Search, Protection Toggle, Actions -->
+                    <div class="flex items-center gap-2 shrink-0">
+                        <!-- In-Document Search Input -->
+                        <div class="relative flex items-center">
+                            <input type="text" 
+                                   x-model="pdfSearchQuery" 
+                                   @keydown.enter="searchInPdf()" 
+                                   placeholder="Cari teks di bab..." 
+                                   class="w-32 sm:w-44 pl-7 pr-14 py-1 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+                            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            
+                            <div class="absolute right-1 flex items-center gap-0.5">
+                                <button type="button" 
+                                        @click="searchInPdf()" 
+                                        class="p-0.5 text-slate-400 hover:text-orange-400 rounded transition-colors" 
+                                        title="Mulai Cari">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                                <template x-if="pdfSearchMatches.length > 0">
+                                    <div class="flex items-center border-l border-slate-700 pl-0.5">
+                                        <button type="button" @click="prevSearchMatch()" class="p-0.5 text-slate-300 hover:text-white rounded" title="Hasil Sebelumnya">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                        <button type="button" @click="nextSearchMatch()" class="p-0.5 text-slate-300 hover:text-white rounded" title="Hasil Berikutnya">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Read-Only Mode Toggle -->
+                        <button type="button" 
+                                @click="toggleReadOnly()" 
+                                :class="pdfReadOnly ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80' : 'bg-slate-900 text-slate-400 border-slate-800'"
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs" 
+                                :title="pdfReadOnly ? 'Mode Proteksi Aktif (Anti-Copy & Watermark Digital)' : 'Mode Proteksi Nonaktif'">
+                            <svg class="w-3.5 h-3.5" :class="pdfReadOnly ? 'text-emerald-400' : 'text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            <span class="hidden sm:inline" x-text="pdfReadOnly ? 'Read-Only' : 'Standar'"></span>
+                        </button>
+
+                        <!-- Open in External Tab -->
+                        <a :href="'/repositories/' + pdfRepo.id + '/' + pdfChapter" 
+                           target="_blank" 
+                           class="p-1.5 bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 transition-colors" 
+                           title="Buka File di Tab Baru Browser">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+
+                        <!-- Fullscreen Toggle -->
+                        <button type="button" 
+                                @click="toggleFullscreen()" 
+                                class="p-1.5 bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 transition-colors cursor-pointer" 
+                                title="Layar Penuh (Fullscreen)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                        </button>
+
+                        <!-- Close Button -->
+                        <button type="button" 
+                                @click="closePdfReader()" 
+                                class="px-3 py-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm shadow-rose-600/30" 
+                                title="Tutup Viewer (Esc)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <span class="hidden sm:inline">Tutup</span>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- SEARCH STATUS SUB-BAR (IF ACTIVE) -->
+                <div x-show="pdfSearchStatus" 
+                     class="bg-amber-950/80 border-b border-amber-800/60 px-4 py-1 text-center text-xs font-bold text-amber-300 flex items-center justify-center gap-2 shrink-0">
+                    <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Hasil Pencarian: </span>
+                    <span x-text="pdfSearchStatus" class="underline"></span>
+                    <button type="button" @click="pdfSearchQuery = ''; pdfSearchStatus = ''; pdfSearchMatches = [];" class="ml-2 text-amber-400 hover:text-white text-[10px] uppercase font-bold">&times; Bersihkan</button>
+                </div>
+
+                <!-- DOCUMENT CANVAS BODY -->
+                <div id="pdfViewerContainer" 
+                     class="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center bg-slate-950/90 relative"
+                     :style="pdfReadOnly ? 'user-select: none; -webkit-user-select: none;' : ''"
+                     @contextmenu="if (pdfReadOnly) { $event.preventDefault(); return false; }"
+                     @copy="if (pdfReadOnly) { $event.preventDefault(); return false; }">
+                    
+                    <!-- Loading State -->
+                    <div x-show="pdfIsLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 z-20">
+                        <div class="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-3"></div>
+                        <p class="text-sm font-bold text-slate-100">Memuat Naskah PDF...</p>
+                        <p class="text-xs text-slate-400 mt-1" x-text="pdfChapter === 'bab1' ? 'Menyiapkan BAB 1 (Pendahuluan)' : 'Menyiapkan BAB 2 (Tinjauan Pustaka)'"></p>
+                    </div>
+
+                    <!-- Error State -->
+                    <div x-show="pdfLoadingError" class="max-w-md mx-auto my-16 p-6 bg-slate-900 rounded-3xl border border-rose-800/80 text-center z-20 shadow-2xl">
+                        <div class="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <h4 class="text-base font-bold text-white mb-1">Gagal Membuka Naskah</h4>
+                        <p class="text-xs text-slate-400 mb-5" x-text="pdfLoadingError"></p>
+                        <div class="flex items-center justify-center gap-3">
+                            <button type="button" @click="loadPdf()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold border border-slate-700 transition-colors">Coba Lagi</button>
+                            <a :href="'/repositories/' + pdfRepo.id + '/' + pdfChapter" target="_blank" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors">Buka di Tab Baru</a>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Viewport -->
+                    <div x-show="!pdfIsLoading && !pdfLoadingError" class="relative inline-block transition-all duration-150 pb-8">
+                        <canvas id="pdfViewerCanvas" class="bg-white rounded-sm shadow-2xl ring-1 ring-slate-800 block max-w-none mx-auto"></canvas>
+                    </div>
+                </div>
+
+                <!-- BOTTOM STATUS BAR -->
+                <footer class="bg-slate-900/90 border-t border-slate-800 px-4 py-1.5 flex items-center justify-between text-[10px] text-slate-400 shrink-0">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 rounded-full" :class="pdfReadOnly ? 'bg-emerald-400' : 'bg-slate-400'"></span>
+                        <span x-text="pdfReadOnly ? 'Mode Proteksi Aktif: Klik kanan & seleksi dinonaktifkan, watermark resmi aktif.' : 'Mode Standar.'"></span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="hidden sm:inline">Gunakan <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono text-slate-300">←</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono text-slate-300">→</kbd> untuk ganti halaman, <kbd class="px-1.5 py-0.5 bg-slate-800 rounded font-mono text-slate-300">Esc</kbd> untuk tutup.</span>
+                        <span class="font-mono text-slate-300" x-text="'Hal ' + pdfCurrentPage + ' dari ' + (pdfTotalPages || 1)"></span>
+                    </div>
+                </footer>
             </div>
         </template>
 
@@ -1441,4 +2013,18 @@
         }
     }
 </script>
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    if (typeof pdfjsLib === 'undefined') {
+        document.write('<script src="{{ asset('vendor/pdfjs/pdf.min.js') }}"><\/script>');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    });
+</script>
+@endpush
 </x-app-layout>

@@ -299,4 +299,27 @@ class UnsubRepositorySyncTest extends TestCase
             'ignored_count' => 1
         ]);
     }
+
+    public function test_repository_index_renders_in_app_pdf_reader_modal(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        ThesisRepository::create([
+            'title' => 'Sistem Informasi Skripsi PDF Reader',
+            'name' => 'Mahasiswa Test',
+            'identifier' => 'D1A200001',
+            'year' => 2024,
+            'file_path' => 'theses_bab1/test_bab1.pdf',
+            'file_path_bab2' => 'theses_bab2/test_bab2.pdf',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('repositories.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('pdfReaderModalElement', false);
+        $response->assertSee('openPdfReader', false);
+        $response->assertSee('switchChapter', false);
+        $response->assertSee('drawWatermark', false);
+        $response->assertSee('pdf.min.js', false);
+    }
 }
