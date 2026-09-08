@@ -105,7 +105,7 @@
                                 @click="addStudentModalOpen = true; selectedThesesToAdd = []; addStudentSearch = '';" 
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer self-start sm:self-auto">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                            <span>+ Tambah Mahasiswa Terlewat</span>
+                            <span>Tambah Mahasiswa Terlewat</span>
                         </button>
                     </div>
                 @endif
@@ -134,7 +134,7 @@
                                     @click="addStudentModalOpen = true; selectedThesesToAdd = []; addStudentSearch = '';" 
                                     class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-xs font-bold transition-all shadow-xs cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                <span>+ Tambah Mahasiswa</span>
+                                <span>Tambah Mahasiswa</span>
                             </button>
                         </div>
                     </div>
