@@ -86,6 +86,7 @@
                 pembimbing2: '',
                 abstract: '',
                 file_path: '',
+                file_path_bab2: '',
                 badge: {}
             },
             openAbstractModal(repo, badge) {
@@ -99,6 +100,7 @@
                     pembimbing2: repo.pembimbing2 || '',
                     abstract: repo.abstract || '',
                     file_path: repo.file_path || '',
+                    file_path_bab2: repo.file_path_bab2 || '',
                     badge: badge || {}
                 };
                 this.abstractModalOpen = true;
@@ -524,6 +526,16 @@
                                             <span>BAB 1 PDF</span>
                                         </a>
                                     @endif
+
+                                    @if($repo->file_path_bab2)
+                                        <a href="{{ route('repositories.bab2', $repo) }}" 
+                                           target="_blank" 
+                                           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors shadow-2xs" 
+                                           title="Buka Naskah BAB 2 (PDF)">
+                                            <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            <span>BAB 2 PDF</span>
+                                        </a>
+                                    @endif
                                 </div>
 
                                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
@@ -669,6 +681,15 @@
                                                    title="Buka Naskah BAB 1 (PDF)">
                                                     <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                     <span>BAB 1 PDF</span>
+                                                </a>
+                                            @endif
+                                            @if($repo->file_path_bab2)
+                                                <a href="{{ route('repositories.bab2', $repo) }}" 
+                                                   target="_blank" 
+                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors" 
+                                                   title="Buka Naskah BAB 2 (PDF)">
+                                                    <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    <span>BAB 2 PDF</span>
                                                 </a>
                                             @endif
                                             @if($repo->abstract)
@@ -820,18 +841,26 @@
                             </div>
                         </div>
 
-                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
-                            <div>
+                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <template x-if="abstractData.file_path">
                                     <a :href="'/repositories/' + abstractData.id + '/bab1'" 
                                        target="_blank" 
-                                       class="inline-flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all cursor-pointer">
+                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all cursor-pointer">
                                         <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                        <span>Buka Naskah BAB 1 (PDF)</span>
+                                        <span>Buka BAB 1 (PDF)</span>
                                     </a>
                                 </template>
-                                <template x-if="!abstractData.file_path">
-                                    <span class="text-[11px] text-slate-400 italic">File PDF BAB 1 belum terhubung</span>
+                                <template x-if="abstractData.file_path_bab2">
+                                    <a :href="'/repositories/' + abstractData.id + '/bab2'" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-500/20 hover:scale-[1.02] transition-all cursor-pointer">
+                                        <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                        <span>Buka BAB 2 (PDF)</span>
+                                    </a>
+                                </template>
+                                <template x-if="!abstractData.file_path && !abstractData.file_path_bab2">
+                                    <span class="text-[11px] text-slate-400 italic">File naskah PDF belum terhubung</span>
                                 </template>
                             </div>
                             <button type="button" @click="abstractModalOpen = false" class="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">
@@ -1043,7 +1072,7 @@
                 </div>
                 <div>
                     <h3 class="text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">Sync Repositori UNSUB</h3>
-                    <p class="text-[11px] font-medium text-slate-400">Sinkronisasi Pustaka & Naskah BAB I</p>
+                    <p class="text-[11px] font-medium text-slate-400">Sinkronisasi Pustaka & Naskah BAB I & II</p>
                 </div>
             </div>
 
@@ -1055,12 +1084,12 @@
                 </span>
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                     <svg class="w-3 h-3 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    <span>Hanya File BAB I (Hemat Storage)</span>
+                    <span>Hanya File BAB I & II (Hemat Storage)</span>
                 </span>
             </div>
 
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-                Sistem akan memindai repositori Universitas Subang, memfilter secara ketat dokumen Fakultas Ilmu Komputer, memperkaya data skripsi dengan teks abstrak lengkap, dan menghubungkan file naskah BAB I (PDF).
+                Sistem akan memindai repositori Universitas Subang, memfilter secara ketat dokumen Fakultas Ilmu Komputer, memperkaya data skripsi dengan teks abstrak lengkap, dan menghubungkan file naskah BAB I & BAB II (PDF).
             </p>
 
             <!-- Download PDF option toggle -->
@@ -1068,8 +1097,8 @@
                 <label class="flex items-start gap-2.5 cursor-pointer">
                     <input type="checkbox" id="unsubDownloadPdf" checked class="mt-0.5 rounded text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
                     <div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200 block">Unduh Fisik File BAB 1 ke Server (Storage)</span>
-                        <span class="text-[11px] text-slate-400 block mt-0.5">Disarankan. Membutuhkan ~110 MB total untuk 144 dokumen, tersimpan aman di server lokal.</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200 block">Unduh Fisik File BAB 1 & BAB 2 ke Server (Storage)</span>
+                        <span class="text-[11px] text-slate-400 block mt-0.5">Disarankan. Membutuhkan ~200–230 MB total untuk 144 dokumen, tersimpan aman di server lokal.</span>
                     </div>
                 </label>
             </div>
@@ -1085,7 +1114,7 @@
             </div>
 
             <!-- Live Statistics Cards -->
-            <div class="grid grid-cols-4 gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
                     <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Fasilkom</p>
                     <p id="statUnsubTotal" class="text-sm font-black text-slate-700 dark:text-slate-200">144</p>
@@ -1099,8 +1128,12 @@
                     <p id="statUnsubEnriched" class="text-sm font-black text-indigo-600 dark:text-indigo-400">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">File BAB 1</p>
+                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">BAB 1 PDF</p>
                     <p id="statUnsubBab1" class="text-sm font-black text-purple-600 dark:text-purple-400">0</p>
+                </div>
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">BAB 2 PDF</p>
+                    <p id="statUnsubBab2" class="text-sm font-black text-amber-600 dark:text-amber-400">0</p>
                 </div>
             </div>
             
@@ -1232,6 +1265,7 @@
     let unsubTotalNew = 0;
     let unsubTotalEnriched = 0;
     let unsubTotalBab1 = 0;
+    let unsubTotalBab2 = 0;
 
     function openUnsubSyncModal() {
         if (isUnsubSyncing) return;
@@ -1250,6 +1284,7 @@
         document.getElementById('statUnsubNew').innerText = '0';
         document.getElementById('statUnsubEnriched').innerText = '0';
         document.getElementById('statUnsubBab1').innerText = '0';
+        document.getElementById('statUnsubBab2').innerText = '0';
 
         // Pre-fetch info
         fetch('{{ route('repositories.unsub-info') }}')
@@ -1273,6 +1308,7 @@
         unsubTotalNew = 0;
         unsubTotalEnriched = 0;
         unsubTotalBab1 = 0;
+        unsubTotalBab2 = 0;
 
         document.getElementById('startUnsubBtn').classList.add('hidden');
         document.getElementById('cancelUnsubBtn').classList.add('hidden');
@@ -1313,10 +1349,12 @@
             unsubTotalNew += (data.created || 0);
             unsubTotalEnriched += (data.enriched || 0);
             unsubTotalBab1 += (data.has_bab1 || 0);
+            unsubTotalBab2 += (data.has_bab2 || 0);
 
             document.getElementById('statUnsubNew').innerText = unsubTotalNew;
             document.getElementById('statUnsubEnriched').innerText = unsubTotalEnriched;
             document.getElementById('statUnsubBab1').innerText = unsubTotalBab1;
+            document.getElementById('statUnsubBab2').innerText = unsubTotalBab2;
 
             if (data.is_finished || data.next_offset >= unsubTotalFasilkom) {
                 finishUnsubSync();
@@ -1340,7 +1378,7 @@
     function finishUnsubSync() {
         document.getElementById('unsubSyncProgress').style.width = '100%';
         document.getElementById('unsubSyncPercentage').innerText = '100% (Selesai)';
-        document.getElementById('unsubSyncStatus').innerText = `Sinkronisasi Selesai! ${unsubTotalNew} skripsi baru, ${unsubTotalEnriched} diperkaya, ${unsubTotalBab1} BAB 1 PDF terhubung.`;
+        document.getElementById('unsubSyncStatus').innerText = `Sinkronisasi Selesai! ${unsubTotalNew} skripsi baru, ${unsubTotalEnriched} diperkaya, ${unsubTotalBab1} BAB 1 & ${unsubTotalBab2} BAB 2 PDF terhubung.`;
         document.getElementById('unsubSyncStatus').classList.add('text-emerald-600', 'dark:text-emerald-400');
         document.getElementById('closeUnsubModalBtn').classList.remove('hidden');
         isUnsubSyncing = false;

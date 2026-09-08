@@ -540,6 +540,7 @@ class ThesisRepositoryController extends Controller
             $created = 0;
             $enriched = 0;
             $hasBab1 = 0;
+            $hasBab2 = 0;
             $processed = 0;
 
             foreach ($chunk as $doc) {
@@ -551,6 +552,9 @@ class ThesisRepositoryController extends Controller
                 }
                 if (!empty($res['has_bab1'])) {
                     $hasBab1++;
+                }
+                if (!empty($res['has_bab2'])) {
+                    $hasBab2++;
                 }
                 $processed++;
             }
@@ -566,6 +570,7 @@ class ThesisRepositoryController extends Controller
                 'created' => $created,
                 'enriched' => $enriched,
                 'has_bab1' => $hasBab1,
+                'has_bab2' => $hasBab2,
                 'next_offset' => $nextOffset,
             ]);
         } catch (\Exception $e) {
@@ -601,5 +606,35 @@ class ThesisRepositoryController extends Controller
         }
 
         abort(404, 'File naskah BAB 1 tidak ditemukan di server penyimpanan.');
+    }
+
+    /**
+     * Stream or redirect to BAB 2 PDF file.
+     */
+    public function streamBab2(ThesisRepository $repository)
+    {
+        if (empty($repository->file_path_bab2)) {
+            abort(404, 'Naskah BAB 2 belum tersedia untuk arsip skripsi ini.');
+        }
+
+        $filePath = $repository->file_path_bab2;
+
+        // If it's a remote URL
+        if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
+            return redirect()->away($filePath);
+        }
+
+        // If it's stored in public disk
+        if (Storage::disk('public')->exists($filePath)) {
+            $fullPath = Storage::disk('public')->path($filePath);
+            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: 'BAB2') . '_BAB2.pdf';
+
+            return response()->file($fullPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
+            ]);
+        }
+
+        abort(404, 'File naskah BAB 2 tidak ditemukan di server penyimpanan.');
     }
 }

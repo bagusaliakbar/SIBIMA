@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
     Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');
     Route::get('/repositories/{repository}/bab1', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab1'])->name('repositories.bab1');
+    Route::get('/repositories/{repository}/bab2', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab2'])->name('repositories.bab2');
     Route::get('/repositories', [\App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
     Route::middleware(['role:admin,kaprodi'])->group(function () {
         Route::get('/repositories/unsub-info', [\App\Http\Controllers\ThesisRepositoryController::class, 'unsubInfo'])->name('repositories.unsub-info');

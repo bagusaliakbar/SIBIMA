@@ -19,7 +19,7 @@ class SyncUnsubRepositoryCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Sinkronisasi data katalog pustaka SIBIMA dari repositori UNSUB (Khusus Fakultas Ilmu Komputer & File BAB I)';
+    protected $description = 'Sinkronisasi data katalog pustaka SIBIMA dari repositori UNSUB (Khusus Fakultas Ilmu Komputer & File BAB I & BAB II)';
 
     /**
      * Execute the console command.
@@ -29,12 +29,12 @@ class SyncUnsubRepositoryCommand extends Command
         $this->info('===============================================================');
         $this->info(' SINKRONISASI REPOSITORI UNIVERSITAS SUBANG -> SIBIMA');
         $this->info(' Khusus: Fakultas Ilmu Komputer (FASILKOM)');
-        $this->info(' Filter Naskah: HANYA BAB I (PDF) untuk efisiensi penyimpanan');
+        $this->info(' Filter Naskah: BAB I & BAB II (PDF) untuk efisiensi penyimpanan');
         $this->info('===============================================================');
 
         $downloadPdf = !$this->option('no-download');
         if ($downloadPdf) {
-            $this->comment('Mode: Download file fisik BAB 1 ke public storage (theses_bab1/)');
+            $this->comment('Mode: Download file fisik BAB 1 & BAB 2 ke public storage (theses_bab1/ & theses_bab2/)');
         } else {
             $this->comment('Mode: Hanya simpan URL proxy streaming (0 bytes local storage)');
         }
@@ -66,7 +66,7 @@ class SyncUnsubRepositoryCommand extends Command
         }
 
         $this->newLine();
-        $this->info('3. Memulai sinkronisasi data & ekstraksi file BAB I...');
+        $this->info('3. Memulai sinkronisasi data & ekstraksi file BAB I & BAB II...');
         $bar = $this->output->createProgressBar($totalFasilkom);
         $bar->start();
 
@@ -75,6 +75,7 @@ class SyncUnsubRepositoryCommand extends Command
             'enriched' => 0,
             'skipped' => 0,
             'has_bab1' => 0,
+            'has_bab2' => 0,
         ];
 
         foreach ($fasilkomDocs as $doc) {
@@ -85,6 +86,9 @@ class SyncUnsubRepositoryCommand extends Command
             }
             if (!empty($res['has_bab1'])) {
                 $stats['has_bab1']++;
+            }
+            if (!empty($res['has_bab2'])) {
+                $stats['has_bab2']++;
             }
             $bar->advance();
         }
@@ -104,6 +108,7 @@ class SyncUnsubRepositoryCommand extends Command
                 ['Data Baru Ditambahkan (Created)', $stats['created']],
                 ['Data Eksisting Diperkaya (Enriched)', $stats['enriched']],
                 ['Dokumen dengan File BAB I', $stats['has_bab1']],
+                ['Dokumen dengan File BAB II', $stats['has_bab2']],
             ]
         );
 

@@ -67,7 +67,6 @@ class UnsubRepositorySyncService
 
     /**
      * Strictly extract ONLY file BAB I.
-     * Ignores BAB II, III, IV, V, VI and any other file.
      */
     public function extractBab1File(array $files): ?array
     {
@@ -82,11 +81,26 @@ class UnsubRepositorySyncService
     }
 
     /**
-     * Download BAB 1 PDF to local storage, or return proxy URL on failure.
+     * Strictly extract ONLY file BAB II.
      */
-    public function downloadBab1Pdf(string $gdriveId, string $localFilename): ?string
+    public function extractBab2File(array $files): ?array
     {
-        $relativePath = 'theses_bab1/' . $localFilename;
+        foreach ($files as $file) {
+            $name = $file['file_name'] ?? '';
+            // Match BAB II, BAB 2, BAB_2, BAB-II with word boundary
+            if (preg_match('/bab\s*[\-_]?(?:ii|2)\b/i', $name)) {
+                return $file;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generic download for chapter PDF to local public storage disk.
+     */
+    public function downloadChapterPdf(string $folder, string $gdriveId, string $localFilename): ?string
+    {
+        $relativePath = $folder . '/' . $localFilename;
 
         // If already downloaded locally, return path immediately
         if (Storage::disk('public')->exists($relativePath)) {
@@ -115,6 +129,22 @@ class UnsubRepositorySyncService
             Log::warning("UnsubRepositorySyncService: Download timeout/error for {$gdriveId}: " . $e->getMessage());
             return self::GDRIVE_PROXY_BASE . $gdriveId;
         }
+    }
+
+    /**
+     * Download BAB 1 PDF to local storage, or return proxy URL on failure.
+     */
+    public function downloadBab1Pdf(string $gdriveId, string $localFilename): ?string
+    {
+        return $this->downloadChapterPdf('theses_bab1', $gdriveId, $localFilename);
+    }
+
+    /**
+     * Download BAB 2 PDF to local storage, or return proxy URL on failure.
+     */
+    public function downloadBab2Pdf(string $gdriveId, string $localFilename): ?string
+    {
+        return $this->downloadChapterPdf('theses_bab2', $gdriveId, $localFilename);
     }
 
     /**
@@ -149,20 +179,32 @@ class UnsubRepositorySyncService
             ];
         }
 
-        // Strictly extract BAB 1
+        // Clean filename prefix
+        $cleanNpm = preg_replace('/[^a-zA-Z0-9]/', '', $npm);
+        $cleanName = substr(preg_replace('/[^a-zA-Z0-9]/', '', $name), 0, 20);
+        $fileIdentifier = $cleanNpm ?: ($cleanName ?: substr(md5($title), 0, 10));
+
+        // Extract BAB 1 & BAB 2
         $bab1 = $this->extractBab1File($doc['files'] ?? []);
-        $filePath = null;
+        $bab2 = $this->extractBab2File($doc['files'] ?? []);
+        $filePathBab1 = null;
+        $filePathBab2 = null;
 
         if ($bab1 && !empty($bab1['file_path'])) {
-            $gdriveId = $bab1['file_path'];
+            $gdriveId1 = $bab1['file_path'];
             if ($downloadPdf) {
-                $cleanNpm = preg_replace('/[^a-zA-Z0-9]/', '', $npm);
-                $cleanName = substr(preg_replace('/[^a-zA-Z0-9]/', '', $name), 0, 20);
-                $fileIdentifier = $cleanNpm ?: ($cleanName ?: substr(md5($title), 0, 10));
-                $localFilename = "{$fileIdentifier}_BAB1.pdf";
-                $filePath = $this->downloadBab1Pdf($gdriveId, $localFilename);
+                $filePathBab1 = $this->downloadBab1Pdf($gdriveId1, "{$fileIdentifier}_BAB1.pdf");
             } else {
-                $filePath = self::GDRIVE_PROXY_BASE . $gdriveId;
+                $filePathBab1 = self::GDRIVE_PROXY_BASE . $gdriveId1;
+            }
+        }
+
+        if ($bab2 && !empty($bab2['file_path'])) {
+            $gdriveId2 = $bab2['file_path'];
+            if ($downloadPdf) {
+                $filePathBab2 = $this->downloadBab2Pdf($gdriveId2, "{$fileIdentifier}_BAB2.pdf");
+            } else {
+                $filePathBab2 = self::GDRIVE_PROXY_BASE . $gdriveId2;
             }
         }
 
@@ -176,13 +218,16 @@ class UnsubRepositorySyncService
         }
 
         if ($existing) {
-            // Smart Enrichment: update missing abstract, file_path, and advisors
+            // Smart Enrichment: update missing abstract, file_path, file_path_bab2, and advisors
             $updates = [];
             if (empty($existing->abstract) && !empty($abstract)) {
                 $updates['abstract'] = $abstract;
             }
-            if (empty($existing->file_path) && !empty($filePath)) {
-                $updates['file_path'] = $filePath;
+            if (!empty($filePathBab1) && (empty($existing->file_path) || $existing->file_path !== $filePathBab1)) {
+                $updates['file_path'] = $filePathBab1;
+            }
+            if (!empty($filePathBab2) && (empty($existing->file_path_bab2) || $existing->file_path_bab2 !== $filePathBab2)) {
+                $updates['file_path_bab2'] = $filePathBab2;
             }
             if (empty($existing->pembimbing1) && !empty($p1)) {
                 $updates['pembimbing1'] = $p1;
@@ -206,7 +251,8 @@ class UnsubRepositorySyncService
                 'title' => $title,
                 'name' => $name,
                 'npm' => $npm,
-                'has_bab1' => !empty($filePath),
+                'has_bab1' => !empty($filePathBab1),
+                'has_bab2' => !empty($filePathBab2),
                 'repo' => $existing
             ];
         }
@@ -220,7 +266,8 @@ class UnsubRepositorySyncService
             'abstract' => $abstract ?: null,
             'pembimbing1' => $p1,
             'pembimbing2' => $p2,
-            'file_path' => $filePath,
+            'file_path' => $filePathBab1,
+            'file_path_bab2' => $filePathBab2,
         ]);
 
         return [
@@ -228,7 +275,8 @@ class UnsubRepositorySyncService
             'title' => $title,
             'name' => $name,
             'npm' => $npm,
-            'has_bab1' => !empty($filePath),
+            'has_bab1' => !empty($filePathBab1),
+            'has_bab2' => !empty($filePathBab2),
             'repo' => $repo
         ];
     }

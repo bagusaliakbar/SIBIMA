@@ -65,7 +65,7 @@ class UnsubRepositorySyncTest extends TestCase
         $this->assertEquals('Aplikasi Mobile B', $filtered[1]['judul']);
     }
 
-    public function test_service_strictly_extracts_only_bab_1_file(): void
+    public function test_service_strictly_extracts_bab_1_and_bab_2_files(): void
     {
         $service = new UnsubRepositorySyncService();
 
@@ -83,7 +83,12 @@ class UnsubRepositorySyncTest extends TestCase
         $this->assertEquals('BAB I.pdf', $bab1['file_name']);
         $this->assertEquals('bab1_gdrive_id', $bab1['file_path']);
 
-        // Test with different naming style e.g. Bab 1 or BAB_1
+        $bab2 = $service->extractBab2File($files);
+        $this->assertNotNull($bab2);
+        $this->assertEquals('BAB II.pdf', $bab2['file_name']);
+        $this->assertEquals('bab2_gdrive_id', $bab2['file_path']);
+
+        // Test with different naming style e.g. Bab 1, Bab 2, BAB_2
         $filesAlt = [
             ['file_name' => 'Bab 1 Pendahuluan.pdf', 'file_path' => 'alt_bab1'],
             ['file_name' => 'Bab 2 Tinjauan Pustaka.pdf', 'file_path' => 'alt_bab2'],
@@ -91,6 +96,10 @@ class UnsubRepositorySyncTest extends TestCase
         $bab1Alt = $service->extractBab1File($filesAlt);
         $this->assertNotNull($bab1Alt);
         $this->assertEquals('Bab 1 Pendahuluan.pdf', $bab1Alt['file_name']);
+
+        $bab2Alt = $service->extractBab2File($filesAlt);
+        $this->assertNotNull($bab2Alt);
+        $this->assertEquals('Bab 2 Tinjauan Pustaka.pdf', $bab2Alt['file_name']);
     }
 
     public function test_service_creates_new_record_or_enriches_existing(): void
@@ -109,12 +118,15 @@ class UnsubRepositorySyncTest extends TestCase
             'dosen_pembimbing' => '1. Dr. Hendra, M.Kom',
             'dosen_pembimbing_2' => '2. Ir. Maya, M.T',
             'files' => [
-                ['file_name' => 'BAB I.pdf', 'file_path' => 'gdrive_bab1_123']
+                ['file_name' => 'BAB I.pdf', 'file_path' => 'gdrive_bab1_123'],
+                ['file_name' => 'BAB II.pdf', 'file_path' => 'gdrive_bab2_123'],
             ]
         ];
 
         $result = $service->syncDocument($doc, false); // false = store proxy stream URL
         $this->assertEquals('created', $result['status']);
+        $this->assertTrue($result['has_bab1']);
+        $this->assertTrue($result['has_bab2']);
         $this->assertDatabaseHas('thesis_repositories', [
             'identifier' => 'D1A180999',
             'title' => 'SISTEM INFORMASI AKADEMIK BERBASIS CLOUD',
@@ -131,6 +143,7 @@ class UnsubRepositorySyncTest extends TestCase
             'title' => 'PENGEMBANGAN SISTEM REPOSITORI DIGITAL',
             'abstract' => null,
             'file_path' => null,
+            'file_path_bab2' => null,
             'pembimbing1' => null,
             'pembimbing2' => null,
         ]);
@@ -146,16 +159,20 @@ class UnsubRepositorySyncTest extends TestCase
             'dosen_pembimbing' => 'Prof. Dr. Ir. Gunawan',
             'dosen_pembimbing_2' => 'Dewi Lestari, M.Kom',
             'files' => [
-                ['file_name' => 'BAB I.pdf', 'file_path' => 'enrich_gdrive_bab1']
+                ['file_name' => 'BAB I.pdf', 'file_path' => 'enrich_gdrive_bab1'],
+                ['file_name' => 'BAB II.pdf', 'file_path' => 'enrich_gdrive_bab2'],
             ]
         ];
 
         $enrichResult = $service->syncDocument($enrichDoc, false);
         $this->assertEquals('enriched', $enrichResult['status']);
+        $this->assertTrue($enrichResult['has_bab1']);
+        $this->assertTrue($enrichResult['has_bab2']);
 
         $existing->refresh();
         $this->assertEquals('Abstrak baru yang diperkaya dari repositori universitas.', $existing->abstract);
         $this->assertStringContainsString('enrich_gdrive_bab1', $existing->file_path);
+        $this->assertStringContainsString('enrich_gdrive_bab2', $existing->file_path_bab2);
         $this->assertEquals('Prof. Dr. Ir. Gunawan', $existing->pembimbing1);
 
         // Verify total count in DB is exactly 2 (no duplicates)
@@ -201,6 +218,48 @@ class UnsubRepositorySyncTest extends TestCase
         ]);
 
         $responseEmpty = $this->actingAs($student)->get(route('repositories.bab1', $repoEmpty));
+        $responseEmpty->assertStatus(404);
+    }
+
+    public function test_stream_bab2_handles_remote_and_local_files(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        // Remote URL repository record
+        $repoRemote = ThesisRepository::create([
+            'title' => 'Skripsi Remote Bab 2',
+            'name' => 'Mahasiswa Bab 2',
+            'year' => 2023,
+            'file_path_bab2' => 'https://repository.unsub.ac.id/api/gdrive-proxy/test_remote_id_bab2',
+        ]);
+
+        $responseRemote = $this->actingAs($student)->get(route('repositories.bab2', $repoRemote));
+        $responseRemote->assertRedirect('https://repository.unsub.ac.id/api/gdrive-proxy/test_remote_id_bab2');
+
+        // Local file repository record
+        Storage::fake('public');
+        Storage::disk('public')->put('theses_bab2/test_local_BAB2.pdf', '%PDF-1.4 dummy content');
+
+        $repoLocal = ThesisRepository::create([
+            'title' => 'Skripsi Local Bab 2',
+            'name' => 'Mahasiswa Local Bab 2',
+            'year' => 2023,
+            'file_path_bab2' => 'theses_bab2/test_local_BAB2.pdf',
+        ]);
+
+        $responseLocal = $this->actingAs($student)->get(route('repositories.bab2', $repoLocal));
+        $responseLocal->assertStatus(200);
+        $responseLocal->assertHeader('Content-Type', 'application/pdf');
+
+        // Empty file_path_bab2 record
+        $repoEmpty = ThesisRepository::create([
+            'title' => 'Skripsi No File Bab 2',
+            'name' => 'Mahasiswa No File',
+            'year' => 2023,
+            'file_path_bab2' => null,
+        ]);
+
+        $responseEmpty = $this->actingAs($student)->get(route('repositories.bab2', $repoEmpty));
         $responseEmpty->assertStatus(404);
     }
 
