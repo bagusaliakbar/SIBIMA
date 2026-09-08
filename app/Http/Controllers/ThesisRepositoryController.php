@@ -9,6 +9,8 @@ use App\Exports\RepositoryCatalogExport;
 use App\Imports\ThesisRepositoriesImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Services\UnsubRepositorySyncService;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -467,5 +469,137 @@ class ThesisRepositoryController extends Controller
         }
 
         return redirect()->back()->with('success', "Arsip '{$title}' berhasil dihapus dari pustaka.");
+    }
+
+    /**
+     * Get summary info from UNSUB repository before sync.
+     */
+    public function unsubInfo(UnsubRepositorySyncService $service)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $allDocs = $service->fetchDocuments();
+            if (empty($allDocs)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghubungi API Repositori UNSUB atau endpoint tidak merespons.'
+                ], 500);
+            }
+
+            $fasilkomDocs = $service->filterFasilkom($allDocs);
+            $totalAll = count($allDocs);
+            $totalFasilkom = count($fasilkomDocs);
+            $ignoredCount = $totalAll - $totalFasilkom;
+
+            return response()->json([
+                'success' => true,
+                'total_all' => $totalAll,
+                'total_fasilkom' => $totalFasilkom,
+                'ignored_count' => $ignoredCount,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Sync chunk of UNSUB repository documents.
+     */
+    public function syncUnsubChunk(Request $request, UnsubRepositorySyncService $service)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $offset = (int) $request->input('offset', 0);
+        $limit = (int) $request->input('limit', 15);
+        $downloadPdf = filter_var($request->input('download_pdf', true), FILTER_VALIDATE_BOOLEAN);
+
+        try {
+            $allDocs = $service->fetchDocuments();
+            $fasilkomDocs = $service->filterFasilkom($allDocs);
+            $totalFasilkom = count($fasilkomDocs);
+
+            if ($offset >= $totalFasilkom) {
+                return response()->json([
+                    'success' => true,
+                    'is_finished' => true,
+                    'total' => $totalFasilkom,
+                    'processed' => 0,
+                    'created' => 0,
+                    'enriched' => 0,
+                    'has_bab1' => 0,
+                    'next_offset' => $totalFasilkom,
+                ]);
+            }
+
+            $chunk = array_slice($fasilkomDocs, $offset, $limit);
+            $created = 0;
+            $enriched = 0;
+            $hasBab1 = 0;
+            $processed = 0;
+
+            foreach ($chunk as $doc) {
+                $res = $service->syncDocument($doc, $downloadPdf);
+                if (($res['status'] ?? '') === 'created') {
+                    $created++;
+                } elseif (($res['status'] ?? '') === 'enriched') {
+                    $enriched++;
+                }
+                if (!empty($res['has_bab1'])) {
+                    $hasBab1++;
+                }
+                $processed++;
+            }
+
+            $nextOffset = $offset + $processed;
+            $isFinished = ($nextOffset >= $totalFasilkom);
+
+            return response()->json([
+                'success' => true,
+                'is_finished' => $isFinished,
+                'total' => $totalFasilkom,
+                'processed' => $processed,
+                'created' => $created,
+                'enriched' => $enriched,
+                'has_bab1' => $hasBab1,
+                'next_offset' => $nextOffset,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Stream or redirect to BAB 1 PDF file.
+     */
+    public function streamBab1(ThesisRepository $repository)
+    {
+        if (empty($repository->file_path)) {
+            abort(404, 'Naskah BAB 1 belum tersedia untuk arsip skripsi ini.');
+        }
+
+        $filePath = $repository->file_path;
+
+        // If it's a remote URL
+        if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
+            return redirect()->away($filePath);
+        }
+
+        // If it's stored in public disk
+        if (Storage::disk('public')->exists($filePath)) {
+            $fullPath = Storage::disk('public')->path($filePath);
+            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: 'BAB1') . '_BAB1.pdf';
+
+            return response()->file($fullPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
+            ]);
+        }
+
+        abort(404, 'File naskah BAB 1 tidak ditemukan di server penyimpanan.');
     }
 }

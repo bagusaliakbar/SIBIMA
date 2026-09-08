@@ -32,6 +32,15 @@
                 </button>
 
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                    <!-- Sync Repositori UNSUB (FASILKOM & BAB 1) -->
+                    <button type="button"
+                            onclick="openUnsubSyncModal()" 
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/80 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                            title="Tarik & Perkaya Skripsi Fasilkom dari Repositori Universitas Subang">
+                        <svg class="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <span>Sync Repositori UNSUB</span>
+                    </button>
+
                     <!-- Migrasi Portal (Secondary Action) -->
                     <button type="button"
                             onclick="startSync()" 
@@ -76,6 +85,7 @@
                 pembimbing1: '',
                 pembimbing2: '',
                 abstract: '',
+                file_path: '',
                 badge: {}
             },
             openAbstractModal(repo, badge) {
@@ -88,6 +98,7 @@
                     pembimbing1: repo.pembimbing1 || '',
                     pembimbing2: repo.pembimbing2 || '',
                     abstract: repo.abstract || '',
+                    file_path: repo.file_path || '',
                     badge: badge || {}
                 };
                 this.abstractModalOpen = true;
@@ -495,7 +506,7 @@
                         <div>
                             <!-- Header Meta Badges & Admin Actions -->
                             <div class="flex justify-between items-center gap-2 mb-3">
-                                <div class="flex items-center gap-1.5">
+                                <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200 dark:border-slate-700">
                                         Angkatan {{ $repo->year }}
                                     </span>
@@ -503,6 +514,16 @@
                                     <span class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border {{ $badge['bg'] }}">
                                         {{ $badge['label'] }}
                                     </span>
+
+                                    @if($repo->file_path)
+                                        <a href="{{ route('repositories.bab1', $repo) }}" 
+                                           target="_blank" 
+                                           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors shadow-2xs" 
+                                           title="Buka Naskah BAB 1 (PDF)">
+                                            <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            <span>BAB 1 PDF</span>
+                                        </a>
+                                    @endif
                                 </div>
 
                                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
@@ -637,10 +658,19 @@
                                             @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})">
                                             {{ $repo->title }}
                                         </h4>
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-2 flex-wrap">
                                             <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md border {{ $badge['bg'] }}">
                                                 {{ $badge['label'] }}
                                             </span>
+                                            @if($repo->file_path)
+                                                <a href="{{ route('repositories.bab1', $repo) }}" 
+                                                   target="_blank" 
+                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors" 
+                                                   title="Buka Naskah BAB 1 (PDF)">
+                                                    <svg class="w-3 h-3 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    <span>BAB 1 PDF</span>
+                                                </a>
+                                            @endif
                                             @if($repo->abstract)
                                                 <button type="button" 
                                                         @click="openAbstractModal({{ json_encode($repo) }}, {{ json_encode($badge) }})"
@@ -790,7 +820,20 @@
                             </div>
                         </div>
 
-                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                            <div>
+                                <template x-if="abstractData.file_path">
+                                    <a :href="'/repositories/' + abstractData.id + '/bab1'" 
+                                       target="_blank" 
+                                       class="inline-flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all cursor-pointer">
+                                        <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                        <span>Buka Naskah BAB 1 (PDF)</span>
+                                    </a>
+                                </template>
+                                <template x-if="!abstractData.file_path">
+                                    <span class="text-[11px] text-slate-400 italic">File PDF BAB 1 belum terhubung</span>
+                                </template>
+                            </div>
                             <button type="button" @click="abstractModalOpen = false" class="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">
                                 Tutup
                             </button>
@@ -990,6 +1033,86 @@
     </div>
 </div>
 
+<!-- Modal Sync Repositori UNSUB (Khusus FASILKOM & File BAB 1) -->
+<div id="unsubSyncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 dark:border-slate-700/60 overflow-hidden transform transition-all">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">Sync Repositori UNSUB</h3>
+                    <p class="text-[11px] font-medium text-slate-400">Sinkronisasi Pustaka & Naskah BAB I</p>
+                </div>
+            </div>
+
+            <!-- Policy & Constraints Badges -->
+            <div class="flex items-center gap-2 mb-4 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                    <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Khusus FASILKOM (144 Dokumen)</span>
+                </span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                    <svg class="w-3 h-3 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <span>Hanya File BAB I (Hemat Storage)</span>
+                </span>
+            </div>
+
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+                Sistem akan memindai repositori Universitas Subang, memfilter secara ketat dokumen Fakultas Ilmu Komputer, memperkaya data skripsi dengan teks abstrak lengkap, dan menghubungkan file naskah BAB I (PDF).
+            </p>
+
+            <!-- Download PDF option toggle -->
+            <div id="unsubOptionsContainer" class="p-3 mb-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+                <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="unsubDownloadPdf" checked class="mt-0.5 rounded text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                    <div>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200 block">Unduh Fisik File BAB 1 ke Server (Storage)</span>
+                        <span class="text-[11px] text-slate-400 block mt-0.5">Disarankan. Membutuhkan ~110 MB total untuk 144 dokumen, tersimpan aman di server lokal.</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Progress Bar Track Container -->
+            <div class="relative w-full bg-slate-100 dark:bg-slate-700/60 rounded-full h-4 mb-2 overflow-hidden border border-slate-200/80 dark:border-slate-600 shadow-inner">
+                <div id="unsubSyncProgress" class="bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs font-bold text-slate-600 dark:text-slate-300 mb-5">
+                <span id="unsubSyncStatus" class="truncate">Siap untuk sinkronisasi...</span>
+                <span id="unsubSyncPercentage" class="shrink-0 ml-2 font-black text-purple-600 dark:text-purple-400">0% (0 / 144)</span>
+            </div>
+
+            <!-- Live Statistics Cards -->
+            <div class="grid grid-cols-4 gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Fasilkom</p>
+                    <p id="statUnsubTotal" class="text-sm font-black text-slate-700 dark:text-slate-200">144</p>
+                </div>
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
+                    <p id="statUnsubNew" class="text-sm font-black text-emerald-600 dark:text-emerald-400">0</p>
+                </div>
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Diperkaya</p>
+                    <p id="statUnsubEnriched" class="text-sm font-black text-indigo-600 dark:text-indigo-400">0</p>
+                </div>
+                <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
+                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">File BAB 1</p>
+                    <p id="statUnsubBab1" class="text-sm font-black text-purple-600 dark:text-purple-400">0</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end gap-2.5">
+                <button type="button" id="cancelUnsubBtn" onclick="closeUnsubSyncModal(false)" class="px-5 py-2.5 rounded-xl font-bold text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">Batal</button>
+                <button type="button" id="startUnsubBtn" onclick="startUnsubSync()" class="bg-purple-600 hover:bg-purple-700 active:scale-95 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md shadow-purple-500/20 transition-all cursor-pointer">Mulai Sinkronisasi</button>
+                <button type="button" id="closeUnsubModalBtn" onclick="closeUnsubSyncModal(true)" class="hidden bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">Tutup & Muat Ulang</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let isSyncing = false;
     const totalPages = 41;
@@ -1099,6 +1222,138 @@
 
     function closeSyncModal() {
         window.location.reload();
+    }
+
+    // UNSUB REPOSITORY SYNC JAVASCRIPT
+    let isUnsubSyncing = false;
+    let unsubOffset = 0;
+    const unsubLimit = 15;
+    let unsubTotalFasilkom = 144;
+    let unsubTotalNew = 0;
+    let unsubTotalEnriched = 0;
+    let unsubTotalBab1 = 0;
+
+    function openUnsubSyncModal() {
+        if (isUnsubSyncing) return;
+        const modal = document.getElementById('unsubSyncModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // Reset UI
+        document.getElementById('startUnsubBtn').classList.remove('hidden');
+        document.getElementById('cancelUnsubBtn').classList.remove('hidden');
+        document.getElementById('closeUnsubModalBtn').classList.add('hidden');
+        document.getElementById('unsubOptionsContainer').classList.remove('hidden');
+        document.getElementById('unsubSyncProgress').style.width = '0%';
+        document.getElementById('unsubSyncPercentage').innerText = '0%';
+        document.getElementById('unsubSyncStatus').innerText = 'Menyiapkan sinkronisasi...';
+        document.getElementById('statUnsubNew').innerText = '0';
+        document.getElementById('statUnsubEnriched').innerText = '0';
+        document.getElementById('statUnsubBab1').innerText = '0';
+
+        // Pre-fetch info
+        fetch('{{ route('repositories.unsub-info') }}')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    unsubTotalFasilkom = data.total_fasilkom || 144;
+                    document.getElementById('statUnsubTotal').innerText = unsubTotalFasilkom;
+                    document.getElementById('unsubSyncStatus').innerText = `Terdeteksi ${unsubTotalFasilkom} dokumen skripsi FASILKOM (dari ${data.total_all} total).`;
+                }
+            })
+            .catch(() => {
+                document.getElementById('unsubSyncStatus').innerText = 'Siap untuk sinkronisasi FASILKOM.';
+            });
+    }
+
+    async function startUnsubSync() {
+        if (isUnsubSyncing) return;
+        isUnsubSyncing = true;
+        unsubOffset = 0;
+        unsubTotalNew = 0;
+        unsubTotalEnriched = 0;
+        unsubTotalBab1 = 0;
+
+        document.getElementById('startUnsubBtn').classList.add('hidden');
+        document.getElementById('cancelUnsubBtn').classList.add('hidden');
+        document.getElementById('unsubOptionsContainer').classList.add('hidden');
+
+        await processNextUnsubChunk();
+    }
+
+    async function processNextUnsubChunk() {
+        const downloadPdf = document.getElementById('unsubDownloadPdf').checked;
+        const currentProgress = Math.min(unsubOffset, unsubTotalFasilkom);
+        const pct = Math.round((currentProgress / unsubTotalFasilkom) * 100);
+
+        document.getElementById('unsubSyncProgress').style.width = `${pct}%`;
+        document.getElementById('unsubSyncPercentage').innerText = `${pct}% (${currentProgress} / ${unsubTotalFasilkom})`;
+        document.getElementById('unsubSyncStatus').innerText = `Memproses dokumen ${currentProgress + 1} s.d. ${Math.min(currentProgress + unsubLimit, unsubTotalFasilkom)}...`;
+
+        try {
+            const res = await fetch('{{ route('repositories.sync-unsub-chunk') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    offset: unsubOffset,
+                    limit: unsubLimit,
+                    download_pdf: downloadPdf
+                })
+            });
+
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.message || 'Gagal memproses chunk');
+            }
+
+            unsubTotalNew += (data.created || 0);
+            unsubTotalEnriched += (data.enriched || 0);
+            unsubTotalBab1 += (data.has_bab1 || 0);
+
+            document.getElementById('statUnsubNew').innerText = unsubTotalNew;
+            document.getElementById('statUnsubEnriched').innerText = unsubTotalEnriched;
+            document.getElementById('statUnsubBab1').innerText = unsubTotalBab1;
+
+            if (data.is_finished || data.next_offset >= unsubTotalFasilkom) {
+                finishUnsubSync();
+                return;
+            }
+
+            unsubOffset = data.next_offset;
+            setTimeout(processNextUnsubChunk, 200);
+
+        } catch (err) {
+            document.getElementById('unsubSyncStatus').innerText = 'Kendala: ' + err.message + '. Mencoba lanjut...';
+            unsubOffset += unsubLimit;
+            if (unsubOffset >= unsubTotalFasilkom) {
+                finishUnsubSync();
+            } else {
+                setTimeout(processNextUnsubChunk, 1000);
+            }
+        }
+    }
+
+    function finishUnsubSync() {
+        document.getElementById('unsubSyncProgress').style.width = '100%';
+        document.getElementById('unsubSyncPercentage').innerText = '100% (Selesai)';
+        document.getElementById('unsubSyncStatus').innerText = `Sinkronisasi Selesai! ${unsubTotalNew} skripsi baru, ${unsubTotalEnriched} diperkaya, ${unsubTotalBab1} BAB 1 PDF terhubung.`;
+        document.getElementById('unsubSyncStatus').classList.add('text-emerald-600', 'dark:text-emerald-400');
+        document.getElementById('closeUnsubModalBtn').classList.remove('hidden');
+        isUnsubSyncing = false;
+    }
+
+    function closeUnsubSyncModal(reload = false) {
+        const modal = document.getElementById('unsubSyncModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        isUnsubSyncing = false;
+        if (reload) {
+            window.location.reload();
+        }
     }
 </script>
 </x-app-layout>

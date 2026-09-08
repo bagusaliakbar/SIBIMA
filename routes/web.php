@@ -65,8 +65,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
     Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
     Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');
+    Route::get('/repositories/{repository}/bab1', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab1'])->name('repositories.bab1');
     Route::get('/repositories', [\App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
     Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/repositories/unsub-info', [\App\Http\Controllers\ThesisRepositoryController::class, 'unsubInfo'])->name('repositories.unsub-info');
+        Route::post('/repositories/sync-unsub-chunk', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncUnsubChunk'])->name('repositories.sync-unsub-chunk');
         Route::get('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'createImport'])->name('repositories.import.create');
         Route::post('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'storeImport'])->name('repositories.import.store');
         Route::get('/repositories/template', [App\Http\Controllers\ThesisRepositoryController::class, 'downloadTemplate'])->name('repositories.template');
