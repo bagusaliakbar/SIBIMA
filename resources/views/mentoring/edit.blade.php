@@ -737,14 +737,14 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative"
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative max-h-[90vh] flex flex-col"
                          style="z-index: 100000 !important;">
                         
-                        <form action="{{ route('mentoring-sessions.add-students', $mentoringSession->id) }}" method="POST" class="p-6 sm:p-7 space-y-4">
+                        <form action="{{ route('mentoring-sessions.add-students', $mentoringSession->id) }}" method="POST" class="flex flex-col overflow-hidden max-h-[90vh]">
                             @csrf
 
                             <!-- Header -->
-                            <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-700/80">
+                            <div class="p-6 sm:p-7 pb-4 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between shrink-0">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
@@ -763,135 +763,141 @@
                                 </button>
                             </div>
 
-                            <!-- Session Schedule Info Card -->
-                            <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-between gap-3 text-xs">
-                                <div>
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">Jadwal Sesi</span>
-                                    <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-                                        {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB
-                                    </p>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs mt-0.5">
-                                        Topik: {{ $mentoringSession->topic }}
-                                    </p>
+                            <!-- Scrollable Body Content -->
+                            <div class="p-6 sm:p-7 pt-4 space-y-4 overflow-y-auto flex-1">
+                                <!-- Session Schedule Info Card -->
+                                <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-between gap-3 text-xs">
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">Jadwal Sesi</span>
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+                                            {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB
+                                        </p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs mt-0.5">
+                                            Topik: {{ $mentoringSession->topic }}
+                                        </p>
+                                    </div>
+                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }} shrink-0">
+                                        {{ ucfirst($mentoringSession->type) }}
+                                    </span>
                                 </div>
-                                <span class="px-2 py-0.5 text-[10px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }} shrink-0">
-                                    {{ ucfirst($mentoringSession->type) }}
-                                </span>
+
+                                <!-- If No Available Theses -->
+                                <template x-if="availableTheses.length === 0">
+                                    <div class="py-8 px-4 text-center space-y-2 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                                        <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Semua Mahasiswa Telah Terdaftar</h4>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                                            Seluruh mahasiswa bimbingan aktif Anda sudah terdaftar pada sesi jadwal ini. Tidak ada mahasiswa bimbingan aktif lain yang tersedia.
+                                        </p>
+                                    </div>
+                                </template>
+
+                                <!-- If Available Theses Exist -->
+                                <template x-if="availableTheses.length > 0">
+                                    <div class="space-y-3">
+                                        <!-- Search & Quick Actions -->
+                                        <div class="flex items-center gap-2">
+                                            <div class="relative flex-1">
+                                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none z-10">
+                                                    <svg class="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                                    </svg>
+                                                </div>
+                                                <input type="text" 
+                                                       x-model="addStudentSearch" 
+                                                       placeholder="Cari nama, NPM, atau judul skripsi..." 
+                                                       style="padding-left: 2.5rem !important;"
+                                                       class="w-full pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                                            </div>
+                                            <button type="button" 
+                                                    @click="selectAllAvailable()" 
+                                                    class="px-2.5 py-1.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors shrink-0 cursor-pointer">
+                                                Pilih Semua
+                                            </button>
+                                            <button type="button" 
+                                                    @click="clearAllAvailable()" 
+                                                    x-show="selectedThesesToAdd.length > 0"
+                                                    class="px-2.5 py-1.5 text-[11px] font-bold text-slate-500 hover:text-rose-600 rounded-lg transition-colors shrink-0 cursor-pointer">
+                                                Reset
+                                            </button>
+                                        </div>
+
+                                        <!-- Student Checklist Scrollable Area -->
+                                        <div class="max-h-56 overflow-y-auto space-y-1.5 pr-1 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-2 bg-slate-50/40 dark:bg-slate-900/30">
+                                            <template x-for="t in filteredAvailableTheses" :key="t.id">
+                                                <div @click="toggleAddThesis(t.id)" 
+                                                     class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none"
+                                                     :class="selectedThesesToAdd.includes(t.id) 
+                                                         ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-400 dark:border-indigo-600 shadow-2xs' 
+                                                         : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
+                                                    
+                                                    <!-- Checkbox -->
+                                                    <input type="checkbox" 
+                                                           :value="t.id" 
+                                                           :checked="selectedThesesToAdd.includes(t.id)" 
+                                                           @click.stop="toggleAddThesis(t.id)"
+                                                           class="w-4 h-4 text-indigo-600 rounded border-slate-300 dark:border-slate-600 focus:ring-indigo-500 cursor-pointer">
+                                                    
+                                                    <!-- Avatar / Initials -->
+                                                    <template x-if="t.avatar">
+                                                        <img :src="t.avatar" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700">
+                                                    </template>
+                                                    <template x-if="!t.avatar">
+                                                        <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                                                            <span x-text="t.name.substr(0, 2)"></span>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Info -->
+                                                    <div class="min-w-0 flex-1">
+                                                        <div class="flex items-center gap-2 flex-wrap">
+                                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="t.name"></span>
+                                                            <span class="text-[10px] px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold" x-text="t.npm"></span>
+                                                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" x-text="t.role_label"></span>
+                                                        </div>
+                                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5" x-text="t.title"></p>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template x-if="filteredAvailableTheses.length === 0">
+                                                <div class="py-6 text-center text-xs text-slate-400 dark:text-slate-500">
+                                                    Tidak ditemukan mahasiswa yang cocok dengan pencarian.
+                                                </div>
+                                            </template>
+                                        </div>
+
+                                        <!-- Hidden Inputs for Form Submission -->
+                                        <template x-for="id in selectedThesesToAdd" :key="id">
+                                            <input type="hidden" name="thesis_ids[]" :value="id">
+                                        </template>
+
+                                        <!-- Notification Info -->
+                                        <div class="p-2.5 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 rounded-xl text-[11px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
+                                            <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span>Mahasiswa yang ditambahkan otomatis menerima notifikasi WhatsApp dan sistem pada jadwal yang sama.</span>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
 
-                            <!-- If No Available Theses -->
-                            <template x-if="availableTheses.length === 0">
-                                <div class="py-8 px-4 text-center space-y-2 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
-                                    <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    </div>
-                                    <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Semua Mahasiswa Telah Terdaftar</h4>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                                        Seluruh mahasiswa bimbingan aktif Anda sudah terdaftar pada sesi jadwal ini. Tidak ada mahasiswa bimbingan aktif lain yang tersedia.
-                                    </p>
-                                </div>
-                            </template>
-
-                            <!-- If Available Theses Exist -->
-                            <template x-if="availableTheses.length > 0">
-                                <div class="space-y-3">
-                                    <!-- Search & Quick Actions -->
-                                    <div class="flex items-center gap-2">
-                                        <div class="relative flex-1">
-                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none z-10">
-                                                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <input type="text" 
-                                                   x-model="addStudentSearch" 
-                                                   placeholder="Cari nama, NPM, atau judul skripsi..." 
-                                                   style="padding-left: 2.5rem !important;"
-                                                   class="w-full pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
-                                        </div>
-                                        <button type="button" 
-                                                @click="selectAllAvailable()" 
-                                                class="px-2.5 py-1.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors shrink-0 cursor-pointer">
-                                            Pilih Semua
-                                        </button>
-                                        <button type="button" 
-                                                @click="clearAllAvailable()" 
-                                                x-show="selectedThesesToAdd.length > 0"
-                                                class="px-2.5 py-1.5 text-[11px] font-bold text-slate-500 hover:text-rose-600 rounded-lg transition-colors shrink-0 cursor-pointer">
-                                            Reset
-                                        </button>
-                                    </div>
-
-                                    <!-- Student Checklist Scrollable Area -->
-                                    <div class="max-h-60 overflow-y-auto space-y-1.5 pr-1 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-2 bg-slate-50/40 dark:bg-slate-900/30">
-                                        <template x-for="t in filteredAvailableTheses" :key="t.id">
-                                            <div @click="toggleAddThesis(t.id)" 
-                                                 class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none"
-                                                 :class="selectedThesesToAdd.includes(t.id) 
-                                                     ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-400 dark:border-indigo-600 shadow-2xs' 
-                                                     : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                                
-                                                <!-- Checkbox -->
-                                                <input type="checkbox" 
-                                                       :value="t.id" 
-                                                       :checked="selectedThesesToAdd.includes(t.id)" 
-                                                       @click.stop="toggleAddThesis(t.id)"
-                                                       class="w-4 h-4 text-indigo-600 rounded border-slate-300 dark:border-slate-600 focus:ring-indigo-500 cursor-pointer">
-                                                
-                                                <!-- Avatar / Initials -->
-                                                <template x-if="t.avatar">
-                                                    <img :src="t.avatar" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700">
-                                                </template>
-                                                <template x-if="!t.avatar">
-                                                    <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                                                        <span x-text="t.name.substr(0, 2)"></span>
-                                                    </div>
-                                                </template>
-
-                                                <!-- Info -->
-                                                <div class="min-w-0 flex-1">
-                                                    <div class="flex items-center gap-2 flex-wrap">
-                                                        <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="t.name"></span>
-                                                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold" x-text="t.npm"></span>
-                                                        <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" x-text="t.role_label"></span>
-                                                    </div>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5" x-text="t.title"></p>
-                                                </div>
-                                            </div>
-                                        </template>
-
-                                        <template x-if="filteredAvailableTheses.length === 0">
-                                            <div class="py-6 text-center text-xs text-slate-400 dark:text-slate-500">
-                                                Tidak ditemukan mahasiswa yang cocok dengan pencarian.
-                                            </div>
-                                        </template>
-                                    </div>
-
-                                    <!-- Hidden Inputs for Form Submission -->
-                                    <template x-for="id in selectedThesesToAdd" :key="id">
-                                        <input type="hidden" name="thesis_ids[]" :value="id">
-                                    </template>
-
-                                    <!-- Notification Info -->
-                                    <div class="p-2.5 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 rounded-xl text-[11px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
-                                        <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span>Mahasiswa yang ditambahkan otomatis menerima notifikasi WhatsApp dan sistem pada jadwal yang sama.</span>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- Actions -->
-                            <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                            <!-- Modal Footer Actions (Pinned at Bottom) -->
+                            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-end gap-3 shrink-0 rounded-b-3xl">
                                 <button type="button" 
                                         @click="addStudentModalOpen = false" 
-                                        class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
-                                    Batal
+                                        class="px-5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                    <span x-text="availableTheses.length === 0 ? 'Tutup' : 'Batal'"></span>
                                 </button>
                                 <button type="submit" 
+                                        x-show="availableTheses.length > 0"
                                         :disabled="selectedThesesToAdd.length === 0"
-                                        :class="selectedThesesToAdd.length === 0 ? 'opacity-50 cursor-not-allowed bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700 cursor-pointer shadow-md shadow-indigo-500/20 hover:scale-[1.02] active:scale-95'"
-                                        class="px-5 py-2 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                        :class="selectedThesesToAdd.length === 0 
+                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-600 shadow-none' 
+                                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/25 cursor-pointer hover:scale-[1.02] active:scale-95'"
+                                        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                                     <span x-text="selectedThesesToAdd.length > 0 ? 'Tambahkan (' + selectedThesesToAdd.length + ') Mahasiswa' : 'Pilih Mahasiswa'"></span>
                                 </button>
                             </div>
