@@ -17,6 +17,7 @@
         cancelModalOpen: false, 
         reason: '', 
         apply_to_group: true,
+        groupExpanded: false,
         addStudentModalOpen: false,
         selectedThesesToAdd: [],
         addStudentSearch: '',
@@ -113,7 +114,7 @@
 
             <!-- Group Mentoring Detection Box -->
             @if(isset($relatedSessions) && $relatedSessions->count() > 0)
-                <div class="p-4 bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-lg space-y-3" x-data="{ expanded: false }">
+                <div class="p-4 bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-lg space-y-3">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
@@ -149,7 +150,7 @@
                             </div>
                         </div>
                         @foreach($relatedSessions as $idx => $rel)
-                            <div x-show="expanded || {{ $idx }} < 7" class="flex items-center gap-2 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xs">
+                            <div x-show="groupExpanded || {{ $idx }} < 7" class="flex items-center gap-2 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xs">
                                 <span class="w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
                                 <div class="min-w-0 flex-1">
                                     <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $rel->thesis?->student?->name }}</p>
@@ -162,10 +163,10 @@
                     @if($relatedSessions->count() > 7)
                         <div class="text-center pt-1">
                             <button type="button" 
-                                    @click="expanded = !expanded" 
+                                    @click="groupExpanded = !groupExpanded" 
                                     class="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 rounded text-xs font-bold transition-all shadow-2xs cursor-pointer">
-                                <span x-text="expanded ? 'Tampilkan Lebih Sedikit' : 'Lihat Semua ({{ $relatedSessions->count() + 1 }} Mahasiswa)'"></span>
-                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <span x-text="groupExpanded ? 'Tampilkan Lebih Sedikit' : 'Lihat Semua ({{ $relatedSessions->count() + 1 }} Mahasiswa)'"></span>
+                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="groupExpanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                         </div>
                     @endif
@@ -737,10 +738,10 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative max-h-[90vh] flex flex-col"
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative"
                          style="z-index: 100000 !important;">
                         
-                        <form action="{{ route('mentoring-sessions.add-students', $mentoringSession->id) }}" method="POST" class="flex flex-col overflow-hidden max-h-[90vh]">
+                        <form action="{{ route('mentoring-sessions.add-students', $mentoringSession->id) }}" method="POST" class="flex flex-col overflow-hidden max-h-[85vh]">
                             @csrf
 
                             <!-- Header -->
