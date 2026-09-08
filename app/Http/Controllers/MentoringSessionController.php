@@ -89,7 +89,33 @@ class MentoringSessionController extends Controller
             ->with('thesis.student')
             ->get();
 
-        return view('mentoring.edit', compact('mentoringSession', 'relatedSessions'));
+        // Identify all thesis IDs currently enrolled in this session time
+        $enrolledThesisIds = $relatedSessions->pluck('thesis_id')
+            ->push($mentoringSession->thesis_id)
+            ->filter()
+            ->unique()
+            ->toArray();
+
+        $user = Auth::user();
+        $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+            ->where('status', 'active')
+            ->whereNotIn('id', $enrolledThesisIds);
+
+        if ($user->role === 'dosen') {
+            $thesesQuery->where(function($q) use ($user) {
+                $q->where('pembimbing1_id', $user->id)
+                  ->orWhere('pembimbing2_id', $user->id);
+            });
+        } elseif (in_array($user->role, ['admin', 'kaprodi']) && $mentoringSession->dosen_id) {
+            $thesesQuery->where(function($q) use ($mentoringSession) {
+                $q->where('pembimbing1_id', $mentoringSession->dosen_id)
+                  ->orWhere('pembimbing2_id', $mentoringSession->dosen_id);
+            });
+        }
+
+        $availableTheses = $thesesQuery->get();
+
+        return view('mentoring.edit', compact('mentoringSession', 'relatedSessions', 'availableTheses'));
     }
 
     public function update(UpdateMentoringSessionRequest $request, MentoringSession $mentoringSession)
@@ -106,6 +132,30 @@ class MentoringSessionController extends Controller
 
             return redirect()->route('mentoring-sessions.index')
                 ->with('success', 'Jadwal bimbingan berhasil diperbarui dan notifikasi perubahan jadwal telah dikirim ke mahasiswa.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function addStudents(Request $request, MentoringSession $session)
+    {
+        $this->authorize('update', $session);
+
+        $request->validate([
+            'thesis_ids' => 'required|array|min:1',
+            'thesis_ids.*' => 'required|integer|exists:theses,id',
+        ], [
+            'thesis_ids.required' => 'Pilih minimal satu mahasiswa bimbingan untuk ditambahkan.',
+            'thesis_ids.min' => 'Pilih minimal satu mahasiswa bimbingan untuk ditambahkan.',
+        ]);
+
+        try {
+            $result = $this->mentoringService->addStudentsToSession($session, $request->input('thesis_ids'));
+
+            return redirect()->route('mentoring-sessions.edit', $session)
+                ->with('success', "Berhasil menambahkan {$result['count']} mahasiswa ({$result['students']}) ke jadwal bimbingan ini dan notifikasi telah dikirimkan.");
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {

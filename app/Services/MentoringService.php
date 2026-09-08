@@ -615,4 +615,102 @@ class MentoringService
 
         return ['type' => 'single', 'count' => 1];
     }
+
+    /**
+     * Add missed student(s) to an existing mentoring session.
+     */
+    public function addStudentsToSession(MentoringSession $session, array $thesisIds): array
+    {
+        $user = Auth::user();
+
+        if ($session->status === 'completed' || $session->status === 'rejected') {
+            throw new \Exception('Tidak dapat menambahkan mahasiswa ke sesi bimbingan yang sudah selesai atau dibatalkan.');
+        }
+
+        // Clean & normalize thesis IDs
+        $thesisIds = array_values(array_filter(array_map('intval', $thesisIds)));
+        if (empty($thesisIds)) {
+            throw new \Exception('Pilih minimal satu mahasiswa bimbingan.');
+        }
+
+        // Fetch sibling sessions in the exact same slot to know who is already enrolled
+        $existingSessionTheses = MentoringSession::where('dosen_id', $session->dosen_id)
+            ->where('scheduled_at', $session->scheduled_at)
+            ->where('status', '!=', 'rejected')
+            ->pluck('thesis_id')
+            ->toArray();
+
+        // Filter out any thesis IDs that are already in this session
+        $targetThesisIds = array_diff($thesisIds, $existingSessionTheses);
+        if (empty($targetThesisIds)) {
+            throw new \Exception('Semua mahasiswa yang dipilih sudah terdaftar pada jadwal bimbingan ini.');
+        }
+
+        // Query active theses
+        $thesesQuery = Thesis::with('student')->whereIn('id', $targetThesisIds)->where('status', 'active');
+        if ($user->role === 'dosen') {
+            $thesesQuery->where(function ($q) use ($user) {
+                $q->where('pembimbing1_id', $user->id)
+                  ->orWhere('pembimbing2_id', $user->id);
+            });
+        }
+        $theses = $thesesQuery->get();
+
+        if ($theses->isEmpty()) {
+            throw new \Exception('Mahasiswa yang dipilih tidak valid atau tidak aktif sebagai mahasiswa bimbingan Anda.');
+        }
+
+        // Check conflicts for each student at scheduled_at
+        foreach ($theses as $thesis) {
+            $existingStudentSession = MentoringSession::whereHas('thesis', function ($q) use ($thesis) {
+                    $q->where('student_id', $thesis->student_id);
+                })
+                ->where('scheduled_at', $session->scheduled_at)
+                ->where('status', '!=', 'rejected')
+                ->first();
+
+            if ($existingStudentSession) {
+                $studentName = $thesis->student->name ?? 'Mahasiswa';
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'thesis_ids' => "Mahasiswa {$studentName} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                ]);
+            }
+        }
+
+        $createdSessions = collect();
+
+        foreach ($theses as $thesis) {
+            $newSession = MentoringSession::create([
+                'thesis_id' => $thesis->id,
+                'dosen_id' => $session->dosen_id,
+                'scheduled_at' => $session->scheduled_at,
+                'topic' => $session->topic,
+                'type' => $session->type,
+                'location' => $session->location,
+                'notes' => $session->notes,
+                'status' => 'approved',
+                'student_attendance_status' => 'pending',
+                'student_attendance_reason' => null,
+                'student_confirmed_at' => null,
+            ]);
+
+            $createdSessions->push($newSession);
+
+            ActivityLog::log(
+                'Penambahan Peserta Bimbingan',
+                "{$user->name} menambahkan {$thesis->student->name} ke jadwal bimbingan bersama ({$session->topic})",
+                'Bimbingan',
+                $newSession
+            );
+
+            if ($thesis->student) {
+                $thesis->student->notify(new MentoringScheduledByDosenNotification($newSession));
+            }
+        }
+
+        return [
+            'count' => $createdSessions->count(),
+            'students' => $theses->map(fn($t) => $t->student->name)->implode(', '),
+        ];
+    }
 }
