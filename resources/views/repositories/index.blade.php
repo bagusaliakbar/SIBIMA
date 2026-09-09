@@ -220,6 +220,11 @@
                 this.pdfReaderOpen = true;
 
                 await this.$nextTick();
+                const container = document.getElementById('pdfViewerContainer');
+                if (container) {
+                    container.scrollTop = 0;
+                    container.scrollLeft = 0;
+                }
                 await this.loadPdf();
             },
 
@@ -256,6 +261,11 @@
                 this.pdfSearchStatus = '';
                 this.pdfPagesTextCache = {};
                 this.pdfTextIndexed = false;
+                const container = document.getElementById('pdfViewerContainer');
+                if (container) {
+                    container.scrollTop = 0;
+                    container.scrollLeft = 0;
+                }
                 await this.loadPdf();
             },
 
@@ -422,6 +432,8 @@
                 const target = this.pdfCurrentPage + delta;
                 if (target >= 1 && target <= this.pdfTotalPages) {
                     this.pdfCurrentPage = target;
+                    const container = document.getElementById('pdfViewerContainer');
+                    if (container) container.scrollTop = 0;
                     this.renderPage(this.pdfCurrentPage);
                 }
             },
@@ -431,6 +443,8 @@
                 if (isNaN(p)) p = 1;
                 p = Math.max(1, Math.min(p, this.pdfTotalPages));
                 this.pdfCurrentPage = p;
+                const container = document.getElementById('pdfViewerContainer');
+                if (container) container.scrollTop = 0;
                 this.renderPage(this.pdfCurrentPage);
             },
 
@@ -1482,42 +1496,50 @@
                     <button type="button" @click="pdfSearchQuery = ''; pdfSearchStatus = ''; pdfSearchMatches = [];" class="ml-2 text-amber-300 hover:text-white text-[10px] uppercase font-bold">&times; Bersihkan</button>
                 </div>
 
-                <!-- DOCUMENT CANVAS BODY -->
-                <div id="pdfViewerContainer" 
-                     style="background-color: #020617 !important; flex: 1 1 0% !important; min-height: 0 !important; overflow: auto !important; width: 100% !important; position: relative !important;"
-                     class="p-4 sm:p-8"
-                     :style="pdfReadOnly ? 'user-select: none; -webkit-user-select: none;' : ''"
-                     @contextmenu="if (pdfReadOnly) { $event.preventDefault(); return false; }"
-                     @copy="if (pdfReadOnly) { $event.preventDefault(); return false; }">
+                <!-- MAIN VIEWER VIEWPORT (RELATIVE, OVERFLOW HIDDEN, NON-SCROLLING WRAPPER) -->
+                <div style="position: relative !important; flex: 1 1 0% !important; min-height: 0 !important; width: 100% !important; overflow: hidden !important; display: flex !important; flex-direction: column !important;">
                     
-                    <!-- Loading State Overlay -->
+                    <!-- Loading State Overlay (Dead-Center in Screen) -->
                     <div x-show="pdfIsLoading" 
-                         style="position: absolute !important; inset: 0 !important; background-color: rgba(2, 6, 23, 0.9) !important; z-index: 50 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important;">
-                        <div class="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-3"></div>
-                        <p class="text-sm font-bold text-white">Memuat Naskah PDF...</p>
-                        <p class="text-xs text-slate-400 mt-1" x-text="pdfChapter === 'bab1' ? 'Menyiapkan BAB 1 (Pendahuluan)' : 'Menyiapkan BAB 2 (Tinjauan Pustaka)'"></p>
+                         x-cloak
+                         :style="pdfIsLoading ? 'position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(2, 6, 23, 0.88) !important; backdrop-filter: blur(4px) !important; z-index: 50 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; padding: 1.5rem !important;' : 'display: none !important;'">
+                        <div class="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-4 shrink-0 shadow-lg shadow-orange-500/20 mx-auto"></div>
+                        <p class="text-base font-bold text-white tracking-wide text-center">Memuat Naskah PDF...</p>
+                        <p class="text-xs text-slate-300 mt-1.5 font-medium text-center max-w-sm mx-auto" x-text="pdfChapter === 'bab1' ? 'Menyiapkan BAB 1 (Pendahuluan)' : 'Menyiapkan BAB 2 (Tinjauan Pustaka)'"></p>
                     </div>
 
-                    <!-- Error State -->
+                    <!-- Error State Overlay (Dead-Center in Screen) -->
                     <div x-show="pdfLoadingError" 
-                         style="background-color: #0f172a !important; border: 1px solid #991b1b !important; z-index: 50 !important;"
-                         class="max-w-md mx-auto my-16 p-6 rounded-3xl text-center shadow-2xl">
-                        <div class="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        </div>
-                        <h4 class="text-base font-bold text-white mb-1">Gagal Membuka Naskah</h4>
-                        <p class="text-xs text-slate-400 mb-5" x-text="pdfLoadingError"></p>
-                        <div class="flex items-center justify-center gap-3">
-                            <button type="button" @click="loadPdf()" style="background-color: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important;" class="px-4 py-2 hover:bg-slate-700 rounded-xl text-xs font-bold transition-colors">Coba Lagi</button>
-                            <a :href="'/repositories/' + pdfRepo.id + '/' + pdfChapter" target="_blank" style="background-color: #ea580c !important; color: #ffffff !important;" class="px-4 py-2 hover:bg-orange-700 rounded-xl text-xs font-bold transition-colors">Buka di Tab Baru</a>
+                         x-cloak
+                         :style="pdfLoadingError ? 'position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(2, 6, 23, 0.92) !important; backdrop-filter: blur(4px) !important; z-index: 50 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; padding: 1.5rem !important;' : 'display: none !important;'">
+                        <div style="background-color: #0f172a !important; border: 1px solid #991b1b !important;"
+                             class="max-w-md w-full p-6 rounded-3xl text-center shadow-2xl mx-auto">
+                            <div class="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </div>
+                            <h4 class="text-base font-bold text-white mb-1">Gagal Membuka Naskah</h4>
+                            <p class="text-xs text-slate-400 mb-5" x-text="pdfLoadingError"></p>
+                            <div class="flex items-center justify-center gap-3">
+                                <button type="button" @click="loadPdf()" style="background-color: #1e293b !important; color: #ffffff !important; border: 1px solid #334155 !important;" class="px-4 py-2 hover:bg-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer">Coba Lagi</button>
+                                <a :href="'/repositories/' + pdfRepo.id + '/' + pdfChapter" target="_blank" style="background-color: #ea580c !important; color: #ffffff !important;" class="px-4 py-2 hover:bg-orange-700 rounded-xl text-xs font-bold transition-colors">Buka di Tab Baru</a>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Canvas Viewport -->
-                    <div class="pb-12 pt-2 flex justify-center items-start w-full">
-                        <canvas id="pdfViewerCanvas" 
-                                x-ref="pdfCanvas"
-                                style="background-color: #ffffff !important; border: 1px solid #334155 !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important; display: block !important; margin: 0 auto !important; border-radius: 2px !important; outline: none !important;"></canvas>
+                    <!-- DOCUMENT CANVAS SCROLL BODY -->
+                    <div id="pdfViewerContainer" 
+                         style="background-color: #020617 !important; flex: 1 1 0% !important; min-height: 0 !important; overflow: auto !important; width: 100% !important; height: 100% !important;"
+                         class="p-4 sm:p-8"
+                         :style="pdfReadOnly ? 'user-select: none; -webkit-user-select: none;' : ''"
+                         @contextmenu="if (pdfReadOnly) { $event.preventDefault(); return false; }"
+                         @copy="if (pdfReadOnly) { $event.preventDefault(); return false; }">
+                        
+                        <!-- Canvas Viewport -->
+                        <div class="pb-12 pt-2 flex justify-center items-start w-full">
+                            <canvas id="pdfViewerCanvas" 
+                                    x-ref="pdfCanvas"
+                                    style="background-color: #ffffff !important; border: 1px solid #334155 !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important; display: block !important; margin: 0 auto !important; border-radius: 2px !important; outline: none !important;"></canvas>
+                        </div>
                     </div>
                 </div>
 
