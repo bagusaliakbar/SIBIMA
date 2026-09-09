@@ -10,6 +10,8 @@ use App\Imports\ThesisRepositoriesImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use App\Services\UnsubRepositorySyncService;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -630,20 +632,59 @@ class ThesisRepositoryController extends Controller
             abort(404, "Naskah {$chapterLabel} belum tersedia untuk arsip skripsi ini.");
         }
 
-        // If it's a remote URL
-        if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
-            return redirect()->away($filePath);
-        }
+        $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: "BAB{$chapterNumber}") . "_BAB{$chapterNumber}.pdf";
 
-        // If it's stored in public disk
+        // 1. If it's already stored in public disk
         if (Storage::disk('public')->exists($filePath)) {
             $fullPath = Storage::disk('public')->path($filePath);
-            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: "BAB{$chapterNumber}") . "_BAB{$chapterNumber}.pdf";
 
             return response()->file($fullPath, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
+                'Cache-Control' => 'public, max-age=86400',
             ]);
+        }
+
+        // 2. If it's a remote URL (e.g. from UNSUB repository proxy)
+        if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
+            $cacheKey = md5($filePath);
+            $cachedRelPath = "theses_cache/bab{$chapterNumber}/{$cacheKey}.pdf";
+
+            if (Storage::disk('public')->exists($cachedRelPath)) {
+                $cachedFullPath = Storage::disk('public')->path($cachedRelPath);
+
+                return response()->file($cachedFullPath, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
+
+            // Proxy-stream and cache through SIBIMA backend to prevent browser CORS block
+            try {
+                $remoteRes = Http::withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                ])->timeout(25)->withoutVerifying()->get($filePath);
+
+                if ($remoteRes->successful()) {
+                    $body = $remoteRes->body();
+                    if (str_starts_with($body, '%PDF')) {
+                        Storage::disk('public')->put($cachedRelPath, $body);
+                        $cachedFullPath = Storage::disk('public')->path($cachedRelPath);
+
+                        return response()->file($cachedFullPath, [
+                            'Content-Type' => 'application/pdf',
+                            'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
+                            'Cache-Control' => 'public, max-age=86400',
+                        ]);
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::warning("Proxy stream error for repository {$repository->id} chapter {$chapterNumber}: " . $e->getMessage());
+            }
+
+            // Fallback: If streaming backend failed or timed out, redirect to remote URL
+            return redirect()->away($filePath);
         }
 
         abort(404, "File naskah {$chapterLabel} tidak ditemukan di server penyimpanan.");

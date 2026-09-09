@@ -335,7 +335,7 @@
 
                     const loadingTask = lib.getDocument({
                         url: streamUrl,
-                        withCredentials: true
+                        withCredentials: false
                     });
 
                     window._sibimaPdfDoc = await loadingTask.promise;
@@ -347,7 +347,11 @@
 
                 } catch (err) {
                     console.error('[PDF Viewer] Error loading PDF:', err);
-                    this.pdfLoadingError = err.message || 'Gagal memuat dokumen PDF.';
+                    let msg = err.message || 'Gagal memuat dokumen PDF.';
+                    if (msg.includes('Failed to fetch')) {
+                        msg = 'Koneksi ke server naskah terputus atau terhambat. Silakan coba lagi atau gunakan tombol Buka di Tab Baru.';
+                    }
+                    this.pdfLoadingError = msg;
                 } finally {
                     this.pdfIsLoading = false;
                 }
