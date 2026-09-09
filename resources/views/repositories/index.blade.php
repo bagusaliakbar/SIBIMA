@@ -1303,7 +1303,7 @@
                  @keydown.window.right="if (pdfReaderOpen && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) changePage(1)">
                 
                 <!-- TOP HEADER TOOLBAR -->
-                <header style="background-color: #0f172a !important; border-bottom: 1px solid #1e293b !important; color: #f8fafc !important;" 
+                <header style="background-color: #0f172a !important; border-bottom: 1px solid #1e293b !important; color: #f8fafc !important; flex: 0 0 auto !important;" 
                         class="px-3 sm:px-5 py-2.5 shadow-2xl flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5 z-30 shrink-0">
                     
                     <!-- LEFT: Doc Info & Chapter Switcher -->
@@ -1484,7 +1484,7 @@
 
                 <!-- DOCUMENT CANVAS BODY -->
                 <div id="pdfViewerContainer" 
-                     style="background-color: #020617 !important; flex: 1 1 0% !important; overflow: auto !important; width: 100% !important; height: 100% !important; position: relative !important;"
+                     style="background-color: #020617 !important; flex: 1 1 0% !important; min-height: 0 !important; overflow: auto !important; width: 100% !important; position: relative !important;"
                      class="p-4 sm:p-8"
                      :style="pdfReadOnly ? 'user-select: none; -webkit-user-select: none;' : ''"
                      @contextmenu="if (pdfReadOnly) { $event.preventDefault(); return false; }"
@@ -1522,7 +1522,7 @@
                 </div>
 
                 <!-- BOTTOM STATUS BAR -->
-                <footer style="background-color: #0f172a !important; border-top: 1px solid #1e293b !important; color: #94a3b8 !important;" 
+                <footer style="background-color: #0f172a !important; border-top: 1px solid #1e293b !important; color: #94a3b8 !important; flex: 0 0 auto !important; z-index: 30 !important;" 
                         class="px-4 py-2 flex items-center justify-between text-[11px] shrink-0">
                     <div class="flex items-center gap-2">
                         <span class="inline-block w-2 h-2 rounded-full" :style="pdfReadOnly ? 'background-color: #34d399 !important;' : 'background-color: #94a3b8 !important;'"></span>
