@@ -1417,33 +1417,50 @@
                     <!-- RIGHT: Search, Protection Toggle, Actions -->
                     <div class="flex items-center gap-2 shrink-0">
                         <!-- In-Document Search Input -->
-                        <div class="relative flex items-center">
+                        <div style="background-color: #020617 !important; border: 1px solid #1e293b !important;" 
+                             class="flex items-center rounded-xl px-2.5 py-1 gap-1.5 focus-within:border-orange-500 transition-all shrink-0">
+                            <!-- Magnifying Glass Icon -->
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+
+                            <!-- Input Field -->
                             <input type="text" 
                                    x-model="pdfSearchQuery" 
                                    @keydown.enter="searchInPdf()" 
-                                   placeholder="Cari teks di bab..." 
-                                   style="background-color: #020617 !important; border: 1px solid #1e293b !important; color: #ffffff !important;"
-                                   class="w-32 sm:w-44 pl-7 pr-14 py-1 rounded-xl text-xs placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
-                            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            
-                            <div class="absolute right-1 flex items-center gap-0.5">
-                                <button type="button" 
-                                        @click="searchInPdf()" 
-                                        class="p-0.5 text-slate-400 hover:text-orange-400 rounded transition-colors" 
-                                        title="Mulai Cari">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </button>
-                                <template x-if="pdfSearchMatches.length > 0">
-                                    <div class="flex items-center border-l border-slate-700 pl-0.5">
-                                        <button type="button" @click="prevSearchMatch()" class="p-0.5 text-slate-300 hover:text-white rounded" title="Hasil Sebelumnya">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-                                        </button>
-                                        <button type="button" @click="nextSearchMatch()" class="p-0.5 text-slate-300 hover:text-white rounded" title="Hasil Berikutnya">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                                        </button>
-                                    </div>
-                                </template>
-                            </div>
+                                   placeholder="Cari di bab..." 
+                                   style="background: transparent !important; border: none !important; color: #ffffff !important; outline: none !important; box-shadow: none !important; padding: 0 !important;"
+                                   class="w-20 sm:w-28 text-xs placeholder-slate-500 focus:outline-none focus:ring-0">
+
+                            <!-- Clear Query Button (only visible when text entered) -->
+                            <button type="button" 
+                                    x-show="pdfSearchQuery && pdfSearchQuery.length > 0"
+                                    @click="pdfSearchQuery = ''; pdfSearchStatus = ''; pdfSearchMatches = [];"
+                                    class="p-0.5 text-slate-400 hover:text-white rounded transition-colors shrink-0 cursor-pointer" 
+                                    title="Hapus kata kunci">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+
+                            <!-- Search Trigger Button -->
+                            <button type="button" 
+                                    @click="searchInPdf()" 
+                                    style="background-color: #ea580c !important; color: #ffffff !important;"
+                                    class="px-2 py-0.5 rounded-lg text-[10px] font-bold hover:bg-orange-600 active:scale-95 transition-all shrink-0 cursor-pointer" 
+                                    title="Cari kata kunci di naskah (Enter)">
+                                Cari
+                            </button>
+
+                            <!-- Prev / Next Navigation when matches exist -->
+                            <template x-if="pdfSearchMatches.length > 0">
+                                <div class="flex items-center gap-0.5 border-l border-slate-700 pl-1.5 shrink-0">
+                                    <button type="button" @click="prevSearchMatch()" class="p-0.5 text-slate-300 hover:text-white rounded cursor-pointer" title="Hasil Sebelumnya">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                                    </button>
+                                    <button type="button" @click="nextSearchMatch()" class="p-0.5 text-slate-300 hover:text-white rounded cursor-pointer" title="Hasil Berikutnya">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                    </button>
+                                </div>
+                            </template>
                         </div>
 
                         <!-- Read-Only Mode Toggle -->
