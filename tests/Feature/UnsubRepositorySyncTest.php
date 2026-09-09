@@ -324,9 +324,10 @@ class UnsubRepositorySyncTest extends TestCase
         $response->assertSee('BAB 3', false);
         $response->assertSee('BAB 4', false);
         $response->assertSee('BAB 5', false);
+        $response->assertSee('BAB 6', false);
     }
 
-    public function test_service_extracts_bab_3_bab_4_and_bab_5_files(): void
+    public function test_service_extracts_bab_3_bab_4_bab_5_and_bab_6_files(): void
     {
         $service = new UnsubRepositorySyncService();
 
@@ -334,6 +335,7 @@ class UnsubRepositorySyncTest extends TestCase
             ['file_name' => 'BAB III.pdf', 'file_path' => 'bab3_id'],
             ['file_name' => 'BAB IV.pdf', 'file_path' => 'bab4_id'],
             ['file_name' => 'BAB V.pdf', 'file_path' => 'bab5_id'],
+            ['file_name' => 'BAB VI.pdf', 'file_path' => 'bab6_id'],
         ];
 
         $bab3 = $service->extractBab3File($files);
@@ -350,20 +352,26 @@ class UnsubRepositorySyncTest extends TestCase
         $this->assertNotNull($bab5);
         $this->assertEquals('BAB V.pdf', $bab5['file_name']);
         $this->assertEquals('bab5_id', $bab5['file_path']);
+
+        $bab6 = $service->extractBab6File($files);
+        $this->assertNotNull($bab6);
+        $this->assertEquals('BAB VI.pdf', $bab6['file_name']);
+        $this->assertEquals('bab6_id', $bab6['file_path']);
     }
 
-    public function test_repositories_bab3_bab4_bab5_streaming_routes(): void
+    public function test_repositories_bab3_bab4_bab5_bab6_streaming_routes(): void
     {
         $student = User::factory()->create(['role' => 'mahasiswa']);
 
         $repo = ThesisRepository::create([
-            'title' => 'Skripsi Bab 3 4 5 Test',
+            'title' => 'Skripsi Bab 3 4 5 6 Test',
             'name' => 'Mahasiswa Test Chapters',
             'identifier' => 'D1A200002',
             'year' => 2024,
             'file_path_bab3' => 'https://repository.unsub.ac.id/api/gdrive-proxy/fake_bab3',
             'file_path_bab4' => 'https://repository.unsub.ac.id/api/gdrive-proxy/fake_bab4',
             'file_path_bab5' => 'https://repository.unsub.ac.id/api/gdrive-proxy/fake_bab5',
+            'file_path_bab6' => 'https://repository.unsub.ac.id/api/gdrive-proxy/fake_bab6',
         ]);
 
         $res3 = $this->actingAs($student)->get(route('repositories.bab3', $repo));
@@ -374,5 +382,8 @@ class UnsubRepositorySyncTest extends TestCase
 
         $res5 = $this->actingAs($student)->get(route('repositories.bab5', $repo));
         $res5->assertRedirect('https://repository.unsub.ac.id/api/gdrive-proxy/fake_bab5');
+
+        $res6 = $this->actingAs($student)->get(route('repositories.bab6', $repo));
+        $res6->assertRedirect('https://repository.unsub.ac.id/api/gdrive-proxy/fake_bab6');
     }
 }

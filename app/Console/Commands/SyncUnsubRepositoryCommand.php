@@ -79,6 +79,7 @@ class SyncUnsubRepositoryCommand extends Command
             'has_bab3' => 0,
             'has_bab4' => 0,
             'has_bab5' => 0,
+            'has_bab6' => 0,
         ];
 
         foreach ($fasilkomDocs as $doc) {
@@ -102,6 +103,9 @@ class SyncUnsubRepositoryCommand extends Command
             if (!empty($res['has_bab5'])) {
                 $stats['has_bab5']++;
             }
+            if (!empty($res['has_bab6'])) {
+                $stats['has_bab6']++;
+            }
             $bar->advance();
         }
 
@@ -124,6 +128,7 @@ class SyncUnsubRepositoryCommand extends Command
                 ['Dokumen dengan File BAB III', $stats['has_bab3']],
                 ['Dokumen dengan File BAB IV', $stats['has_bab4']],
                 ['Dokumen dengan File BAB V', $stats['has_bab5']],
+                ['Dokumen dengan File BAB VI', $stats['has_bab6']],
             ]
         );
 

@@ -56,7 +56,7 @@ class PopulateAllChaptersCommand extends Command
         }
 
         $this->newLine();
-        $this->info('2. Memproses dan memperkaya BAB 1 s.d BAB 5...');
+        $this->info('2. Memproses dan memperkaya BAB 1 s.d BAB 6...');
         $bar = $this->output->createProgressBar($totalFasilkom);
         $bar->start();
 
@@ -69,6 +69,7 @@ class PopulateAllChaptersCommand extends Command
             'has_bab3' => 0,
             'has_bab4' => 0,
             'has_bab5' => 0,
+            'has_bab6' => 0,
         ];
 
         foreach ($fasilkomDocs as $doc) {
@@ -82,6 +83,7 @@ class PopulateAllChaptersCommand extends Command
             if (!empty($res['has_bab3'])) $stats['has_bab3']++;
             if (!empty($res['has_bab4'])) $stats['has_bab4']++;
             if (!empty($res['has_bab5'])) $stats['has_bab5']++;
+            if (!empty($res['has_bab6'])) $stats['has_bab6']++;
             $bar->advance();
         }
 
@@ -89,7 +91,7 @@ class PopulateAllChaptersCommand extends Command
         $this->newLine(2);
 
         $this->info('===============================================================');
-        $this->info(' HASIL POPULASI BAB 1 s.d BAB 5');
+        $this->info(' HASIL POPULASI BAB 1 s.d BAB 6');
         $this->info('===============================================================');
         $this->table(
             ['Metrik Bab / Data', 'Jumlah Dokumen Terhubung'],
@@ -101,7 +103,8 @@ class PopulateAllChaptersCommand extends Command
                 ['Naskah BAB 2 (Tinjauan Pustaka)', $stats['has_bab2']],
                 ['Naskah BAB 3 (Metodologi Penelitian)', $stats['has_bab3']],
                 ['Naskah BAB 4 (Hasil dan Pembahasan)', $stats['has_bab4']],
-                ['Naskah BAB 5 (Kesimpulan dan Saran)', $stats['has_bab5']],
+                ['Naskah BAB 5 (Implementasi / Kesimpulan)', $stats['has_bab5']],
+                ['Naskah BAB 6 (Kesimpulan dan Saran)', $stats['has_bab6']],
             ]
         );
 

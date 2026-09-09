@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/repositories/{repository}/bab3', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab3'])->name('repositories.bab3');
     Route::get('/repositories/{repository}/bab4', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab4'])->name('repositories.bab4');
     Route::get('/repositories/{repository}/bab5', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab5'])->name('repositories.bab5');
+    Route::get('/repositories/{repository}/bab6', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab6'])->name('repositories.bab6');
     Route::get('/repositories', [\App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
     Route::middleware(['role:admin,kaprodi'])->group(function () {
         Route::get('/repositories/unsub-info', [\App\Http\Controllers\ThesisRepositoryController::class, 'unsubInfo'])->name('repositories.unsub-info');

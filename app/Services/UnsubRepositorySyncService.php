@@ -154,6 +154,20 @@ class UnsubRepositorySyncService
     }
 
     /**
+     * Extract file BAB VI.
+     */
+    public function extractBab6File(array $files): ?array
+    {
+        foreach ($files as $file) {
+            $name = $file['file_name'] ?? '';
+            if (preg_match('/bab\s*[\-_]?(?:vi|6)\b/i', $name)) {
+                return $file;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Generic download for chapter PDF to local public storage disk.
      */
     public function downloadChapterPdf(string $folder, string $gdriveId, string $localFilename): ?string
@@ -230,6 +244,14 @@ class UnsubRepositorySyncService
     }
 
     /**
+     * Download BAB 6 PDF to local storage, or return proxy URL on failure.
+     */
+    public function downloadBab6Pdf(string $gdriveId, string $localFilename): ?string
+    {
+        return $this->downloadChapterPdf('theses_bab6', $gdriveId, $localFilename);
+    }
+
+    /**
      * Process and sync a single document record.
      */
     public function syncDocument(array $doc, bool $downloadPdf = true): array
@@ -267,17 +289,19 @@ class UnsubRepositorySyncService
         $cleanName = substr(preg_replace('/[^a-zA-Z0-9]/', '', $name), 0, 20);
         $fileIdentifier = $cleanNpm ?: ($cleanName ?: substr(md5($title), 0, 10));
 
-        // Extract BAB 1 through BAB 5
+        // Extract BAB 1 through BAB 6
         $bab1 = $this->extractBab1File($doc['files'] ?? []);
         $bab2 = $this->extractBab2File($doc['files'] ?? []);
         $bab3 = $this->extractBab3File($doc['files'] ?? []);
         $bab4 = $this->extractBab4File($doc['files'] ?? []);
         $bab5 = $this->extractBab5File($doc['files'] ?? []);
+        $bab6 = $this->extractBab6File($doc['files'] ?? []);
         $filePathBab1 = null;
         $filePathBab2 = null;
         $filePathBab3 = null;
         $filePathBab4 = null;
         $filePathBab5 = null;
+        $filePathBab6 = null;
 
         if ($bab1 && !empty($bab1['file_path'])) {
             $gdriveId1 = $bab1['file_path'];
@@ -324,6 +348,15 @@ class UnsubRepositorySyncService
             }
         }
 
+        if ($bab6 && !empty($bab6['file_path'])) {
+            $gdriveId6 = $bab6['file_path'];
+            if ($downloadPdf) {
+                $filePathBab6 = $this->downloadBab6Pdf($gdriveId6, "{$fileIdentifier}_BAB6.pdf");
+            } else {
+                $filePathBab6 = self::GDRIVE_PROXY_BASE . $gdriveId6;
+            }
+        }
+
         // Lookup existing record by NPM or exact Title
         $existing = null;
         if (!empty($npm) && strlen($npm) >= 5) {
@@ -354,6 +387,9 @@ class UnsubRepositorySyncService
             if (!empty($filePathBab5) && (empty($existing->file_path_bab5) || $existing->file_path_bab5 !== $filePathBab5)) {
                 $updates['file_path_bab5'] = $filePathBab5;
             }
+            if (!empty($filePathBab6) && (empty($existing->file_path_bab6) || $existing->file_path_bab6 !== $filePathBab6)) {
+                $updates['file_path_bab6'] = $filePathBab6;
+            }
             if (empty($existing->pembimbing1) && !empty($p1)) {
                 $updates['pembimbing1'] = $p1;
             }
@@ -383,6 +419,7 @@ class UnsubRepositorySyncService
                 'has_bab3' => !empty($filePathBab3),
                 'has_bab4' => !empty($filePathBab4),
                 'has_bab5' => !empty($filePathBab5),
+                'has_bab6' => !empty($filePathBab6),
                 'repo' => $existing
             ];
         }
@@ -401,6 +438,7 @@ class UnsubRepositorySyncService
             'file_path_bab3' => $filePathBab3,
             'file_path_bab4' => $filePathBab4,
             'file_path_bab5' => $filePathBab5,
+            'file_path_bab6' => $filePathBab6,
         ]);
 
         return [
@@ -413,6 +451,7 @@ class UnsubRepositorySyncService
             'has_bab3' => !empty($filePathBab3),
             'has_bab4' => !empty($filePathBab4),
             'has_bab5' => !empty($filePathBab5),
+            'has_bab6' => !empty($filePathBab6),
             'repo' => $repo
         ];
     }

@@ -437,6 +437,7 @@ class ThesisRepositoryController extends Controller
             'file_path_bab3' => 'nullable|string',
             'file_path_bab4' => 'nullable|string',
             'file_path_bab5' => 'nullable|string',
+            'file_path_bab6' => 'nullable|string',
         ]);
 
         if (!empty($validated['pembimbing1'])) {
@@ -548,6 +549,7 @@ class ThesisRepositoryController extends Controller
                     'has_bab3' => 0,
                     'has_bab4' => 0,
                     'has_bab5' => 0,
+                    'has_bab6' => 0,
                     'next_offset' => $totalFasilkom,
                 ]);
             }
@@ -560,6 +562,7 @@ class ThesisRepositoryController extends Controller
             $hasBab3 = 0;
             $hasBab4 = 0;
             $hasBab5 = 0;
+            $hasBab6 = 0;
             $processed = 0;
 
             foreach ($chunk as $doc) {
@@ -585,6 +588,9 @@ class ThesisRepositoryController extends Controller
                     if (!empty($res['has_bab5'])) {
                         $hasBab5++;
                     }
+                    if (!empty($res['has_bab6'])) {
+                        $hasBab6++;
+                    }
                 } catch (\Throwable $itemErr) {
                     \Illuminate\Support\Facades\Log::warning('Individual doc sync error: ' . $itemErr->getMessage());
                 }
@@ -606,6 +612,7 @@ class ThesisRepositoryController extends Controller
                 'has_bab3' => $hasBab3,
                 'has_bab4' => $hasBab4,
                 'has_bab5' => $hasBab5,
+                'has_bab6' => $hasBab6,
                 'next_offset' => $nextOffset,
             ]);
         } catch (\Exception $e) {
@@ -680,5 +687,13 @@ class ThesisRepositoryController extends Controller
     public function streamBab5(ThesisRepository $repository)
     {
         return $this->streamChapter($repository, 5, $repository->file_path_bab5);
+    }
+
+    /**
+     * Stream or redirect to BAB 6 PDF file.
+     */
+    public function streamBab6(ThesisRepository $repository)
+    {
+        return $this->streamChapter($repository, 6, $repository->file_path_bab6);
     }
 }
