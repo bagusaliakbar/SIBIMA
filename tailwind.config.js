@@ -20,5 +20,12 @@ export default {
         },
     },
 
+    safelist: [
+        {
+            pattern: /(bg|text|border)-(rose|amber|indigo|emerald|purple|cyan)-(50|100|200|300|400|500|600|700|800|900|950)/,
+            variants: ['hover', 'dark', 'dark:hover'],
+        },
+    ],
+
     plugins: [forms],
 };

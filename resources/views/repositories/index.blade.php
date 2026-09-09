@@ -1365,104 +1365,110 @@
                         <div class="px-8 py-5 bg-slate-50/75 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-3.5 sm:gap-4 flex-wrap">
                                 <template x-if="abstractData.file_path">
-                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                    <div style="background-color: #e11d48;" 
+                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab1')" 
-                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2.5 text-white text-xs font-bold active:scale-95 transition-transform cursor-pointer"
                                                 title="Baca Naskah BAB 1 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             <span>Baca BAB 1</span>
                                         </button>
                                         <a :href="'/repositories/' + abstractData.id + '/bab1'" 
                                            target="_blank" 
-                                           class="px-2.5 py-2.5 bg-rose-700 hover:bg-rose-800 text-rose-100 hover:text-white transition-colors" 
+                                           class="p-2.5 border-l border-white/25 hover:bg-black/15 text-white transition-colors flex items-center justify-center cursor-pointer" 
                                            title="Buka File di Tab Baru">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab2">
-                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                    <div style="background-color: #d97706;" 
+                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab2')" 
-                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2.5 text-white text-xs font-bold active:scale-95 transition-transform cursor-pointer"
                                                 title="Baca Naskah BAB 2 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             <span>Baca BAB 2</span>
                                         </button>
                                         <a :href="'/repositories/' + abstractData.id + '/bab2'" 
                                            target="_blank" 
-                                           class="px-2.5 py-2.5 bg-amber-700 hover:bg-amber-800 text-amber-100 hover:text-white transition-colors" 
+                                           class="p-2.5 border-l border-white/25 hover:bg-black/15 text-white transition-colors flex items-center justify-center cursor-pointer" 
                                            title="Buka File di Tab Baru">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab3">
-                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                    <div style="background-color: #4f46e5;" 
+                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab3')" 
-                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2.5 text-white text-xs font-bold active:scale-95 transition-transform cursor-pointer"
                                                 title="Baca Naskah BAB 3 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             <span>Baca BAB 3</span>
                                         </button>
                                         <a :href="'/repositories/' + abstractData.id + '/bab3'" 
                                            target="_blank" 
-                                           class="px-2.5 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-indigo-100 hover:text-white transition-colors" 
+                                           class="p-2.5 border-l border-white/25 hover:bg-black/15 text-white transition-colors flex items-center justify-center cursor-pointer" 
                                            title="Buka File di Tab Baru">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab4">
-                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                    <div style="background-color: #059669;" 
+                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab4')" 
-                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2.5 text-white text-xs font-bold active:scale-95 transition-transform cursor-pointer"
                                                 title="Baca Naskah BAB 4 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             <span>Baca BAB 4</span>
                                         </button>
                                         <a :href="'/repositories/' + abstractData.id + '/bab4'" 
                                            target="_blank" 
-                                           class="px-2.5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-emerald-100 hover:text-white transition-colors" 
+                                           class="p-2.5 border-l border-white/25 hover:bg-black/15 text-white transition-colors flex items-center justify-center cursor-pointer" 
                                            title="Buka File di Tab Baru">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab5">
-                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                    <div style="background-color: #7c3aed;" 
+                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab5')" 
-                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2.5 text-white text-xs font-bold active:scale-95 transition-transform cursor-pointer"
                                                 title="Baca Naskah BAB 5 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             <span>Baca BAB 5</span>
                                         </button>
                                         <a :href="'/repositories/' + abstractData.id + '/bab5'" 
                                            target="_blank" 
-                                           class="px-2.5 py-2.5 bg-purple-700 hover:bg-purple-800 text-purple-100 hover:text-white transition-colors" 
+                                           class="p-2.5 border-l border-white/25 hover:bg-black/15 text-white transition-colors flex items-center justify-center cursor-pointer" 
                                            title="Buka File di Tab Baru">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab6">
-                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                    <div style="background-color: #0891b2;" 
+                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-700 dark:hover:bg-cyan-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab6')" 
-                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2.5 text-white text-xs font-bold active:scale-95 transition-transform cursor-pointer"
                                                 title="Baca Naskah BAB 6 di Web (In-App Reader)">
                                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             <span>Baca BAB 6</span>
                                         </button>
                                         <a :href="'/repositories/' + abstractData.id + '/bab6'" 
                                            target="_blank" 
-                                           class="px-2.5 py-2.5 bg-cyan-700 hover:bg-cyan-800 text-cyan-100 hover:text-white transition-colors" 
+                                           class="p-2.5 border-l border-white/25 hover:bg-black/15 text-white transition-colors flex items-center justify-center cursor-pointer" 
                                            title="Buka File di Tab Baru">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
                                 </template>
