@@ -22,6 +22,58 @@ class ThesisRepository extends Model
     ];
 
     /**
+     * Bootstrap model events.
+     */
+    protected static function booted()
+    {
+        static::saving(function ($repo) {
+            if (!empty($repo->identifier)) {
+                $extracted = self::extractYearFromIdentifier($repo->identifier);
+                if ($extracted) {
+                    if (empty($repo->year) || $repo->isDirty('identifier')) {
+                        $repo->year = $extracted;
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Ekstrak tahun angkatan mahasiswa secara akurat dari NPM / Identifier.
+     * Contoh:
+     * - D1A170017 / D1A.17.0037 => 2017
+     * - D1A180004 => 2018
+     * - D1A200022 => 2020
+     */
+    public static function extractYearFromIdentifier(?string $identifier): ?int
+    {
+        if (empty($identifier)) {
+            return null;
+        }
+
+        $id = trim($identifier);
+
+        // 1. Pola standar UNSUB: 3 karakter kode prodi (misal D1A, D1B), pemisah opsional, 2 digit angkatan, diikuti nomor urut
+        if (preg_match('/^[A-Za-z0-9]{3}[\.\-_\s]*(\d{2})[\.\-_\s]*\d+/i', $id, $m)) {
+            $yy = (int) $m[1];
+            return ($yy >= 70) ? (1900 + $yy) : (2000 + $yy);
+        }
+
+        // 2. Pola umum: awalan huruf prodi apa saja diikuti 2 digit angkatan dan angka
+        if (preg_match('/^[A-Za-z]+[\.\-_\s]*(\d{2})[\.\-_\s]*\d+/i', $id, $m)) {
+            $yy = (int) $m[1];
+            return ($yy >= 70) ? (1900 + $yy) : (2000 + $yy);
+        }
+
+        // 3. Pola 4 digit tahun (misal 2017xxxx)
+        if (preg_match('/(19\d{2}|20\d{2})/', $id, $m)) {
+            return (int) $m[1];
+        }
+
+        return null;
+    }
+
+    /**
      * Topic definitions with regex word boundaries and matching keywords.
      */
     public static function getTopicDefinitions(): array

@@ -22,7 +22,7 @@ class ThesisRepositoriesImport implements ToCollection, WithHeadingRow
                 ThesisRepository::create([
                     'identifier' => $row['npm'] ?? null,
                     'name' => $row['nama_mahasiswa'],
-                    'year' => $row['angkatan'],
+                    'year' => (!empty($row['npm']) ? ThesisRepository::extractYearFromIdentifier($row['npm']) : null) ?: $row['angkatan'],
                     'title' => $row['judul_skripsi'],
                     'abstract' => $row['abstrak'] ?? null,
                     'pembimbing1' => $row['pembimbing_1'] ?? null,

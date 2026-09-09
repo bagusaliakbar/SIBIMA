@@ -360,16 +360,18 @@ class ThesisRepositoryController extends Controller
                 // Meta: .student-meta
                 $metaNode = $xpath->query(".//*[contains(@class, 'student-meta')]", $row);
                 $npm = null;
-                $year = date('Y');
+                $year = null;
                 if ($metaNode->length > 0) {
                     $metaText = $metaNode->item(0)->textContent;
-                    if (preg_match('/NPM:\s*([A-Za-z0-9]+)/i', $metaText, $matches)) {
+                    if (preg_match('/NPM:\s*([A-Za-z0-9\.\-_]+)/i', $metaText, $matches)) {
                         $npm = $matches[1];
                     }
                     if (preg_match('/Angkatan\s*(\d{4})/i', $metaText, $matches)) {
-                        $year = $matches[1];
+                        $year = (int) $matches[1];
                     }
                 }
+                $extractedYear = ThesisRepository::extractYearFromIdentifier($npm);
+                $year = $extractedYear ?: ($year ?: (int) date('Y'));
                 
                 // Title: .thesis-title-premium
                 $titleNode = $xpath->query(".//*[contains(@class, 'thesis-title-premium')]", $row);

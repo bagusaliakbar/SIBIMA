@@ -178,7 +178,8 @@ class UnsubRepositorySyncService
         $title = trim($doc['judul'] ?? '');
         $name = trim($doc['penulis'] ?? '');
         $npm = trim($doc['npm'] ?? '');
-        $year = (int) ($doc['tahun'] ?? date('Y'));
+        $extractedYear = ThesisRepository::extractYearFromIdentifier($npm);
+        $year = $extractedYear ?: (int) ($doc['tahun'] ?? date('Y'));
         $abstract = trim($doc['abstrak'] ?? '');
         
         $p1 = !empty($doc['dosen_pembimbing']) 
@@ -254,7 +255,9 @@ class UnsubRepositorySyncService
             if (empty($existing->identifier) && !empty($npm)) {
                 $updates['identifier'] = $npm;
             }
-            if (empty($existing->year) && !empty($year)) {
+            if ($extractedYear && $existing->year !== $extractedYear) {
+                $updates['year'] = $extractedYear;
+            } elseif (empty($existing->year) && !empty($year)) {
                 $updates['year'] = $year;
             }
 
