@@ -87,6 +87,9 @@
                 abstract: '',
                 file_path: '',
                 file_path_bab2: '',
+                file_path_bab3: '',
+                file_path_bab4: '',
+                file_path_bab5: '',
                 badge: {}
             },
             openAbstractModal(repo, badge) {
@@ -101,6 +104,9 @@
                     abstract: repo.abstract || '',
                     file_path: repo.file_path || '',
                     file_path_bab2: repo.file_path_bab2 || '',
+                    file_path_bab3: repo.file_path_bab3 || '',
+                    file_path_bab4: repo.file_path_bab4 || '',
+                    file_path_bab5: repo.file_path_bab5 || '',
                     badge: badge || {}
                 };
                 this.abstractModalOpen = true;
@@ -157,7 +163,10 @@
                 year: '',
                 title: '',
                 file_path: '',
-                file_path_bab2: ''
+                file_path_bab2: '',
+                file_path_bab3: '',
+                file_path_bab4: '',
+                file_path_bab5: ''
             },
             pdfChapter: 'bab1',
             pdfCurrentPage: 1,
@@ -186,9 +195,22 @@
                     year: repo.year || '',
                     title: repo.title || '',
                     file_path: repo.file_path || '',
-                    file_path_bab2: repo.file_path_bab2 || ''
+                    file_path_bab2: repo.file_path_bab2 || '',
+                    file_path_bab3: repo.file_path_bab3 || '',
+                    file_path_bab4: repo.file_path_bab4 || '',
+                    file_path_bab5: repo.file_path_bab5 || ''
                 };
-                this.pdfChapter = (chapter === 'bab2' && repo.file_path_bab2) ? 'bab2' : 'bab1';
+                if (chapter === 'bab5' && repo.file_path_bab5) {
+                    this.pdfChapter = 'bab5';
+                } else if (chapter === 'bab4' && repo.file_path_bab4) {
+                    this.pdfChapter = 'bab4';
+                } else if (chapter === 'bab3' && repo.file_path_bab3) {
+                    this.pdfChapter = 'bab3';
+                } else if (chapter === 'bab2' && repo.file_path_bab2) {
+                    this.pdfChapter = 'bab2';
+                } else {
+                    this.pdfChapter = 'bab1';
+                }
                 this.pdfCurrentPage = 1;
                 this.pdfTotalPages = 0;
                 window._sibimaPdfDoc = null;
@@ -247,6 +269,9 @@
                 if (this.pdfChapter === chapter) return;
                 if (chapter === 'bab1' && !this.pdfRepo.file_path) return;
                 if (chapter === 'bab2' && !this.pdfRepo.file_path_bab2) return;
+                if (chapter === 'bab3' && !this.pdfRepo.file_path_bab3) return;
+                if (chapter === 'bab4' && !this.pdfRepo.file_path_bab4) return;
+                if (chapter === 'bab5' && !this.pdfRepo.file_path_bab5) return;
 
                 if (window._sibimaPdfRenderTask) {
                     try { window._sibimaPdfRenderTask.cancel(); } catch (e) {}
@@ -945,6 +970,36 @@
                                             <span>BAB 2 PDF</span>
                                         </button>
                                     @endif
+
+                                    @if($repo->file_path_bab3)
+                                        <button type="button" 
+                                                @click="openPdfReader({{ json_encode($repo) }}, 'bab3')" 
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                title="Baca Naskah BAB 3 di Web (In-App Reader)">
+                                            <svg class="w-3 h-3 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            <span>BAB 3 PDF</span>
+                                        </button>
+                                    @endif
+
+                                    @if($repo->file_path_bab4)
+                                        <button type="button" 
+                                                @click="openPdfReader({{ json_encode($repo) }}, 'bab4')" 
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                title="Baca Naskah BAB 4 di Web (In-App Reader)">
+                                            <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            <span>BAB 4 PDF</span>
+                                        </button>
+                                    @endif
+
+                                    @if($repo->file_path_bab5)
+                                        <button type="button" 
+                                                @click="openPdfReader({{ json_encode($repo) }}, 'bab5')" 
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/80 hover:bg-purple-100 dark:hover:bg-purple-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                title="Baca Naskah BAB 5 di Web (In-App Reader)">
+                                            <svg class="w-3 h-3 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            <span>BAB 5 PDF</span>
+                                        </button>
+                                    @endif
                                 </div>
 
                                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
@@ -1099,6 +1154,33 @@
                                                         title="Baca Naskah BAB 2 di Web (In-App Reader)">
                                                     <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                     <span>BAB 2 PDF</span>
+                                                </button>
+                                            @endif
+                                            @if($repo->file_path_bab3)
+                                                <button type="button" 
+                                                        @click="openPdfReader({{ json_encode($repo) }}, 'bab3')" 
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/80 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                        title="Baca Naskah BAB 3 di Web (In-App Reader)">
+                                                    <svg class="w-3 h-3 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    <span>BAB 3 PDF</span>
+                                                </button>
+                                            @endif
+                                            @if($repo->file_path_bab4)
+                                                <button type="button" 
+                                                        @click="openPdfReader({{ json_encode($repo) }}, 'bab4')" 
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                        title="Baca Naskah BAB 4 di Web (In-App Reader)">
+                                                    <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    <span>BAB 4 PDF</span>
+                                                </button>
+                                            @endif
+                                            @if($repo->file_path_bab5)
+                                                <button type="button" 
+                                                        @click="openPdfReader({{ json_encode($repo) }}, 'bab5')" 
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/80 hover:bg-purple-100 dark:hover:bg-purple-900/60 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" 
+                                                        title="Baca Naskah BAB 5 di Web (In-App Reader)">
+                                                    <svg class="w-3 h-3 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    <span>BAB 5 PDF</span>
                                                 </button>
                                             @endif
                                             @if($repo->abstract)
@@ -1286,7 +1368,58 @@
                                         </a>
                                     </div>
                                 </template>
-                                <template x-if="!abstractData.file_path && !abstractData.file_path_bab2">
+                                <template x-if="abstractData.file_path_bab3">
+                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                        <button type="button" 
+                                                @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab3')" 
+                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                title="Baca Naskah BAB 3 di Web (In-App Reader)">
+                                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            <span>Baca BAB 3</span>
+                                        </button>
+                                        <a :href="'/repositories/' + abstractData.id + '/bab3'" 
+                                           target="_blank" 
+                                           class="px-2.5 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-indigo-100 hover:text-white transition-colors" 
+                                           title="Buka File di Tab Baru">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    </div>
+                                </template>
+                                <template x-if="abstractData.file_path_bab4">
+                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                        <button type="button" 
+                                                @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab4')" 
+                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                title="Baca Naskah BAB 4 di Web (In-App Reader)">
+                                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            <span>Baca BAB 4</span>
+                                        </button>
+                                        <a :href="'/repositories/' + abstractData.id + '/bab4'" 
+                                           target="_blank" 
+                                           class="px-2.5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-emerald-100 hover:text-white transition-colors" 
+                                           title="Buka File di Tab Baru">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    </div>
+                                </template>
+                                <template x-if="abstractData.file_path_bab5">
+                                    <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden">
+                                        <button type="button" 
+                                                @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab5')" 
+                                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-bold transition-all cursor-pointer"
+                                                title="Baca Naskah BAB 5 di Web (In-App Reader)">
+                                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                            <span>Baca BAB 5</span>
+                                        </button>
+                                        <a :href="'/repositories/' + abstractData.id + '/bab5'" 
+                                           target="_blank" 
+                                           class="px-2.5 py-2.5 bg-purple-700 hover:bg-purple-800 text-purple-100 hover:text-white transition-colors" 
+                                           title="Buka File di Tab Baru">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    </div>
+                                </template>
+                                <template x-if="!abstractData.file_path && !abstractData.file_path_bab2 && !abstractData.file_path_bab3 && !abstractData.file_path_bab4 && !abstractData.file_path_bab5">
                                     <span class="text-xs text-slate-400 italic">File naskah PDF belum terhubung</span>
                                 </template>
                             </div>
@@ -1324,22 +1457,46 @@
                     <div class="flex items-center gap-3 min-w-0">
                         <!-- Chapter Switcher Segmented Control -->
                         <div style="background-color: #020617 !important; border: 1px solid #1e293b !important;" 
-                             class="inline-flex p-1 rounded-xl shrink-0">
+                             class="inline-flex p-1 rounded-xl shrink-0 gap-0.5">
                             <button type="button" 
                                     @click="switchChapter('bab1')" 
                                     :disabled="!pdfRepo.file_path"
                                     :style="pdfChapter === 'bab1' ? 'background-color: #e11d48 !important; color: #ffffff !important;' : 'color: #94a3b8 !important;'"
-                                    class="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
-                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    class="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                    title="BAB 1 (Pendahuluan)">
                                 <span>BAB 1</span>
                             </button>
                             <button type="button" 
                                     @click="switchChapter('bab2')" 
                                     :disabled="!pdfRepo.file_path_bab2"
                                     :style="pdfChapter === 'bab2' ? 'background-color: #d97706 !important; color: #ffffff !important;' : 'color: #94a3b8 !important;'"
-                                    class="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
-                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    class="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                    title="BAB 2 (Tinjauan Pustaka)">
                                 <span>BAB 2</span>
+                            </button>
+                            <button type="button" 
+                                    @click="switchChapter('bab3')" 
+                                    :disabled="!pdfRepo.file_path_bab3"
+                                    :style="pdfChapter === 'bab3' ? 'background-color: #4f46e5 !important; color: #ffffff !important;' : 'color: #94a3b8 !important;'"
+                                    class="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                    title="BAB 3 (Metodologi Penelitian)">
+                                <span>BAB 3</span>
+                            </button>
+                            <button type="button" 
+                                    @click="switchChapter('bab4')" 
+                                    :disabled="!pdfRepo.file_path_bab4"
+                                    :style="pdfChapter === 'bab4' ? 'background-color: #059669 !important; color: #ffffff !important;' : 'color: #94a3b8 !important;'"
+                                    class="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                    title="BAB 4 (Hasil dan Pembahasan)">
+                                <span>BAB 4</span>
+                            </button>
+                            <button type="button" 
+                                    @click="switchChapter('bab5')" 
+                                    :disabled="!pdfRepo.file_path_bab5"
+                                    :style="pdfChapter === 'bab5' ? 'background-color: #7c3aed !important; color: #ffffff !important;' : 'color: #94a3b8 !important;'"
+                                    class="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                    title="BAB 5 (Kesimpulan dan Saran)">
+                                <span>BAB 5</span>
                             </button>
                         </div>
 
@@ -1521,8 +1678,8 @@
                          x-cloak
                          :style="pdfIsLoading ? 'position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(2, 6, 23, 0.88) !important; backdrop-filter: blur(4px) !important; z-index: 50 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; padding: 1.5rem !important;' : 'display: none !important;'">
                         <div class="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-4 shrink-0 shadow-lg shadow-orange-500/20 mx-auto"></div>
-                        <p class="text-base font-bold text-white tracking-wide text-center">Memuat Naskah PDF...</p>
-                        <p class="text-xs text-slate-300 mt-1.5 font-medium text-center max-w-sm mx-auto" x-text="pdfChapter === 'bab1' ? 'Menyiapkan BAB 1 (Pendahuluan)' : 'Menyiapkan BAB 2 (Tinjauan Pustaka)'"></p>
+                        <p class="text-xs text-slate-300 mt-1.5 font-medium text-center max-w-sm mx-auto" 
+                           x-text="({'bab1':'Menyiapkan BAB 1 (Pendahuluan)','bab2':'Menyiapkan BAB 2 (Tinjauan Pustaka)','bab3':'Menyiapkan BAB 3 (Metodologi Penelitian)','bab4':'Menyiapkan BAB 4 (Hasil dan Pembahasan)','bab5':'Menyiapkan BAB 5 (Kesimpulan dan Saran)'})[pdfChapter] || 'Menyiapkan Naskah PDF'"></p>
                     </div>
 
                     <!-- Error State Overlay (Dead-Center in Screen) -->

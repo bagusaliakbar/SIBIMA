@@ -19,6 +19,9 @@ class ThesisRepository extends Model
         'pembimbing2',
         'file_path',
         'file_path_bab2',
+        'file_path_bab3',
+        'file_path_bab4',
+        'file_path_bab5',
     ];
 
     /**

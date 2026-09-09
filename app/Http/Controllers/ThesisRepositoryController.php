@@ -432,6 +432,11 @@ class ThesisRepositoryController extends Controller
             'pembimbing1' => 'nullable|string|max:255',
             'pembimbing2' => 'nullable|string|max:255',
             'abstract' => 'nullable|string',
+            'file_path' => 'nullable|string',
+            'file_path_bab2' => 'nullable|string',
+            'file_path_bab3' => 'nullable|string',
+            'file_path_bab4' => 'nullable|string',
+            'file_path_bab5' => 'nullable|string',
         ]);
 
         if (!empty($validated['pembimbing1'])) {
@@ -540,6 +545,9 @@ class ThesisRepositoryController extends Controller
                     'enriched' => 0,
                     'has_bab1' => 0,
                     'has_bab2' => 0,
+                    'has_bab3' => 0,
+                    'has_bab4' => 0,
+                    'has_bab5' => 0,
                     'next_offset' => $totalFasilkom,
                 ]);
             }
@@ -549,6 +557,9 @@ class ThesisRepositoryController extends Controller
             $enriched = 0;
             $hasBab1 = 0;
             $hasBab2 = 0;
+            $hasBab3 = 0;
+            $hasBab4 = 0;
+            $hasBab5 = 0;
             $processed = 0;
 
             foreach ($chunk as $doc) {
@@ -564,6 +575,15 @@ class ThesisRepositoryController extends Controller
                     }
                     if (!empty($res['has_bab2'])) {
                         $hasBab2++;
+                    }
+                    if (!empty($res['has_bab3'])) {
+                        $hasBab3++;
+                    }
+                    if (!empty($res['has_bab4'])) {
+                        $hasBab4++;
+                    }
+                    if (!empty($res['has_bab5'])) {
+                        $hasBab5++;
                     }
                 } catch (\Throwable $itemErr) {
                     \Illuminate\Support\Facades\Log::warning('Individual doc sync error: ' . $itemErr->getMessage());
@@ -583,6 +603,9 @@ class ThesisRepositoryController extends Controller
                 'enriched' => $enriched,
                 'has_bab1' => $hasBab1,
                 'has_bab2' => $hasBab2,
+                'has_bab3' => $hasBab3,
+                'has_bab4' => $hasBab4,
+                'has_bab5' => $hasBab5,
                 'next_offset' => $nextOffset,
             ]);
         } catch (\Exception $e) {
@@ -591,15 +614,14 @@ class ThesisRepositoryController extends Controller
     }
 
     /**
-     * Stream or redirect to BAB 1 PDF file.
+     * Stream or redirect to a specific chapter PDF file.
      */
-    public function streamBab1(ThesisRepository $repository)
+    protected function streamChapter(ThesisRepository $repository, int $chapterNumber, ?string $filePath)
     {
-        if (empty($repository->file_path)) {
-            abort(404, 'Naskah BAB 1 belum tersedia untuk arsip skripsi ini.');
+        $chapterLabel = "BAB {$chapterNumber}";
+        if (empty($filePath)) {
+            abort(404, "Naskah {$chapterLabel} belum tersedia untuk arsip skripsi ini.");
         }
-
-        $filePath = $repository->file_path;
 
         // If it's a remote URL
         if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
@@ -609,7 +631,7 @@ class ThesisRepositoryController extends Controller
         // If it's stored in public disk
         if (Storage::disk('public')->exists($filePath)) {
             $fullPath = Storage::disk('public')->path($filePath);
-            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: 'BAB1') . '_BAB1.pdf';
+            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: "BAB{$chapterNumber}") . "_BAB{$chapterNumber}.pdf";
 
             return response()->file($fullPath, [
                 'Content-Type' => 'application/pdf',
@@ -617,7 +639,15 @@ class ThesisRepositoryController extends Controller
             ]);
         }
 
-        abort(404, 'File naskah BAB 1 tidak ditemukan di server penyimpanan.');
+        abort(404, "File naskah {$chapterLabel} tidak ditemukan di server penyimpanan.");
+    }
+
+    /**
+     * Stream or redirect to BAB 1 PDF file.
+     */
+    public function streamBab1(ThesisRepository $repository)
+    {
+        return $this->streamChapter($repository, 1, $repository->file_path);
     }
 
     /**
@@ -625,28 +655,30 @@ class ThesisRepositoryController extends Controller
      */
     public function streamBab2(ThesisRepository $repository)
     {
-        if (empty($repository->file_path_bab2)) {
-            abort(404, 'Naskah BAB 2 belum tersedia untuk arsip skripsi ini.');
-        }
+        return $this->streamChapter($repository, 2, $repository->file_path_bab2);
+    }
 
-        $filePath = $repository->file_path_bab2;
+    /**
+     * Stream or redirect to BAB 3 PDF file.
+     */
+    public function streamBab3(ThesisRepository $repository)
+    {
+        return $this->streamChapter($repository, 3, $repository->file_path_bab3);
+    }
 
-        // If it's a remote URL
-        if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
-            return redirect()->away($filePath);
-        }
+    /**
+     * Stream or redirect to BAB 4 PDF file.
+     */
+    public function streamBab4(ThesisRepository $repository)
+    {
+        return $this->streamChapter($repository, 4, $repository->file_path_bab4);
+    }
 
-        // If it's stored in public disk
-        if (Storage::disk('public')->exists($filePath)) {
-            $fullPath = Storage::disk('public')->path($filePath);
-            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $repository->identifier ?: 'BAB2') . '_BAB2.pdf';
-
-            return response()->file($fullPath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
-            ]);
-        }
-
-        abort(404, 'File naskah BAB 2 tidak ditemukan di server penyimpanan.');
+    /**
+     * Stream or redirect to BAB 5 PDF file.
+     */
+    public function streamBab5(ThesisRepository $repository)
+    {
+        return $this->streamChapter($repository, 5, $repository->file_path_bab5);
     }
 }

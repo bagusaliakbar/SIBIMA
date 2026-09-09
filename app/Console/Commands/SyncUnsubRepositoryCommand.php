@@ -76,6 +76,9 @@ class SyncUnsubRepositoryCommand extends Command
             'skipped' => 0,
             'has_bab1' => 0,
             'has_bab2' => 0,
+            'has_bab3' => 0,
+            'has_bab4' => 0,
+            'has_bab5' => 0,
         ];
 
         foreach ($fasilkomDocs as $doc) {
@@ -89,6 +92,15 @@ class SyncUnsubRepositoryCommand extends Command
             }
             if (!empty($res['has_bab2'])) {
                 $stats['has_bab2']++;
+            }
+            if (!empty($res['has_bab3'])) {
+                $stats['has_bab3']++;
+            }
+            if (!empty($res['has_bab4'])) {
+                $stats['has_bab4']++;
+            }
+            if (!empty($res['has_bab5'])) {
+                $stats['has_bab5']++;
             }
             $bar->advance();
         }
@@ -109,6 +121,9 @@ class SyncUnsubRepositoryCommand extends Command
                 ['Data Eksisting Diperkaya (Enriched)', $stats['enriched']],
                 ['Dokumen dengan File BAB I', $stats['has_bab1']],
                 ['Dokumen dengan File BAB II', $stats['has_bab2']],
+                ['Dokumen dengan File BAB III', $stats['has_bab3']],
+                ['Dokumen dengan File BAB IV', $stats['has_bab4']],
+                ['Dokumen dengan File BAB V', $stats['has_bab5']],
             ]
         );
 
