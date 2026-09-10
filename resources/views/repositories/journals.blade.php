@@ -97,11 +97,11 @@
                             <button type="button" 
                                     x-show="searchQuery" 
                                     x-cloak
-                                    @click="searchQuery = ''; document.getElementById('journal-search-input').focus();"
-                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer z-10"
-                                    title="Hapus pencarian">
-                                <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    @click="searchQuery = ''; @if(!empty($query)) window.location.href = '{{ route('repositories.journals', ['source' => $source]) }}'; @else document.getElementById('journal-search-input').focus(); @endif"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
+                                    title="Hapus / Reset pencarian">
+                                <div class="w-6 h-6 rounded-full bg-slate-100 hover:bg-rose-100 dark:bg-slate-800 dark:hover:bg-rose-950/60 flex items-center justify-center transition-colors">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </div>
@@ -114,11 +114,36 @@
                         <input type="hidden" name="sort" value="{{ $sort }}">
                         <input type="hidden" name="oa_only" value="{{ $openAccessOnly ? '1' : '0' }}">
 
-                        <button type="submit" 
-                                class="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-2xl text-sm sm:text-base font-bold shadow-md shadow-orange-500/25 transition-all flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-95 cursor-pointer shrink-0 whitespace-nowrap">
-                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <span class="tracking-wide">Cari Jurnal</span>
-                        </button>
+                        <div class="flex flex-col sm:flex-row items-center gap-2.5 shrink-0">
+                            <button type="submit" 
+                                    class="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-2xl text-sm sm:text-base font-bold shadow-md shadow-orange-500/25 transition-all flex items-center justify-center gap-2.5 hover:scale-[1.01] active:scale-95 cursor-pointer shrink-0 whitespace-nowrap">
+                                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <span class="tracking-wide">Cari Jurnal</span>
+                            </button>
+
+                            @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly)
+                                <a href="{{ route('repositories.journals', ['source' => $source]) }}" 
+                                   class="w-full sm:w-auto px-5 sm:px-6 py-3.5 sm:py-4 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-2xl text-sm sm:text-base font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 shrink-0 whitespace-nowrap shadow-xs"
+                                   title="Reset pencarian dan kembalikan ke awal">
+                                    <svg class="w-4 h-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    <span>Reset Pencarian</span>
+                                </a>
+                            @else
+                                <button type="button" 
+                                        x-show="searchQuery" 
+                                        x-cloak
+                                        @click="searchQuery = ''; document.getElementById('journal-search-input').focus();"
+                                        class="w-full sm:w-auto px-5 sm:px-6 py-3.5 sm:py-4 bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-950/40 text-slate-700 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800/80 rounded-2xl text-sm sm:text-base font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 shrink-0 whitespace-nowrap shadow-xs cursor-pointer"
+                                        title="Reset kata kunci pencarian">
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    <span>Reset</span>
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </form>
 
@@ -191,8 +216,8 @@
                     </div>
                 </div>
 
-                <!-- Open Access Indicator / Toggle -->
-                <div class="flex items-center gap-2">
+                <!-- Open Access Indicator & Reset Filters -->
+                <div class="flex items-center gap-3 flex-wrap">
                     <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
                         <input type="checkbox" 
                                name="oa_only" 
@@ -202,6 +227,15 @@
                                class="rounded border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-orange-600 focus:ring-orange-500 w-4 h-4">
                         <span>Hanya Open Access (PDF Langsung)</span>
                     </label>
+
+                    @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly)
+                        <a href="{{ route('repositories.journals', ['source' => $source]) }}" 
+                           class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline"
+                           title="Reset filter dan pencarian">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            <span>Reset Filter</span>
+                        </a>
+                    @endif
                 </div>
             </form>
         </div>
@@ -261,8 +295,9 @@
                     @endif
                 </p>
                 <div class="pt-2">
-                    <a href="{{ route('repositories.journals', ['source' => $source]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-orange-700 transition-colors">
-                        Reset Kata Kunci
+                    <a href="{{ route('repositories.journals', ['source' => $source]) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold shadow-sm shadow-orange-500/25 transition-all hover:scale-[1.02] active:scale-95">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Reset Pencarian</span>
                     </a>
                 </div>
             </div>
@@ -279,9 +314,20 @@
                     @endif
                     (Halaman {{ $results['current_page'] }} dari {{ $results['total_pages'] }})
                 </div>
-                <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Tersimpan di Cache Cepat SIBIMA</span>
+                <div class="flex items-center gap-3 text-xs flex-wrap">
+                    @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly)
+                        <a href="{{ route('repositories.journals', ['source' => $source]) }}" 
+                           class="inline-flex items-center gap-1.5 font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline"
+                           title="Reset pencarian dan kembali ke awal">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            <span>Reset Pencarian</span>
+                        </a>
+                        <span class="text-slate-300 dark:text-slate-600">•</span>
+                    @endif
+                    <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Tersimpan di Cache Cepat SIBIMA</span>
+                    </div>
                 </div>
             </div>
 

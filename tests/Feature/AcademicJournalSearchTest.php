@@ -474,4 +474,42 @@ HTML;
         $response->assertSee('Deep Learning Advances in Computer Vision');
         $response->assertSee('Academic Global');
     }
+
+    public function test_journal_search_displays_reset_button_when_filtered_or_searched()
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        // 1. Initial clean state (no query)
+        $resClean = $this->actingAs($student)->get(route('repositories.journals'));
+        $resClean->assertStatus(200);
+        $resClean->assertSee('Cari Jurnal');
+        $resClean->assertDontSee('title="Reset pencarian dan kembalikan ke awal"', false);
+
+        // 2. Active search state: should show 'Reset Pencarian' button beside 'Cari Jurnal'
+        Http::fake([
+            'api.openalex.org/works*' => Http::response([
+                'meta' => ['count' => 0, 'page' => 1, 'per_page' => 12],
+                'results' => []
+            ], 200),
+        ]);
+
+        $resFiltered = $this->actingAs($student)->get(route('repositories.journals', [
+            'q' => 'Machine Learning',
+            'source' => 'all',
+        ]));
+        $resFiltered->assertStatus(200);
+        $resFiltered->assertSee('Cari Jurnal');
+        $resFiltered->assertSee('Reset Pencarian');
+        $resFiltered->assertSee(route('repositories.journals', ['source' => 'all']));
+
+        // 3. Garuda source with filter: should retain source in reset link
+        $resGaruda = $this->actingAs($student)->get(route('repositories.journals', [
+            'q' => 'Sistem Informasi',
+            'source' => 'garuda',
+        ]));
+        $resGaruda->assertStatus(200);
+        $resGaruda->assertSee('Reset Pencarian');
+        $resGaruda->assertSee(route('repositories.journals', ['source' => 'garuda']));
+    }
 }
+
