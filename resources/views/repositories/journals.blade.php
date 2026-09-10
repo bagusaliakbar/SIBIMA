@@ -58,6 +58,15 @@
                             </span>
                         </a>
 
+                        <!-- Jurnal Nasional GARUDA (SINTA) -->
+                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'garuda', 'page' => 1])) }}"
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'garuda' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                            <svg class="w-4 h-4 shrink-0 {{ $source === 'garuda' ? 'text-white' : 'text-rose-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <span>Jurnal Nasional (GARUDA / SINTA)</span>
+                        </a>
+
                         <!-- OpenAlex Global -->
                         <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'openalex', 'page' => 1])) }}"
                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'openalex' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
@@ -82,7 +91,7 @@
                                    name="q" 
                                    id="journal-search-input"
                                    x-model="searchQuery"
-                                   placeholder="{{ $source === 'fasilkom' ? 'Cari judul, penulis, atau topik di Jurnal GLOBAL FASILKOM UNSUB...' : 'Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)...' }}"
+                                   placeholder="{{ $source === 'fasilkom' ? 'Cari judul, penulis, atau topik di Jurnal GLOBAL FASILKOM UNSUB...' : ($source === 'garuda' ? 'Cari judul, penulis, atau topik di Jurnal Nasional GARUDA (SINTA)...' : 'Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)...') }}"
                                    style="padding-left: 3.5rem !important; padding-right: 3.25rem !important;"
                                    class="block w-full py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
                             <button type="button" 
@@ -236,6 +245,8 @@
                 <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">
                     @if($source === 'fasilkom')
                         Tidak ditemukan artikel di Jurnal GLOBAL FASILKOM{{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
+                    @elseif($source === 'garuda')
+                        Tidak ditemukan artikel di Jurnal Nasional GARUDA (SINTA){{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
                     @else
                         Tidak ditemukan jurnal untuk kata kunci "{{ $query }}"
                     @endif
@@ -243,6 +254,8 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
                     @if($source === 'fasilkom')
                         Coba gunakan kata kunci yang lebih umum seperti nama metode atau topik (misal: "SPK", "Android", "Web", "Keamanan").
+                    @elseif($source === 'garuda')
+                        Coba gunakan kata kunci bahasa Indonesia atau istilah yang lebih umum (misal: "sistem informasi", "klasifikasi", "metode").
                     @else
                         Coba gunakan kata kunci bahasa Inggris atau istilah yang lebih umum (misalnya gunakan "Sentiment Analysis" daripada kalimat panjang).
                     @endif
@@ -259,6 +272,8 @@
                 <div class="text-xs text-slate-600 dark:text-slate-300">
                     @if(empty($query) && $source === 'fasilkom')
                         Menampilkan <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel dari <span class="font-bold text-orange-600 dark:text-orange-400">Jurnal GLOBAL FASILKOM UNSUB</span>
+                    @elseif($source === 'garuda')
+                        Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel di <span class="font-bold text-rose-600 dark:text-rose-400">Jurnal Nasional GARUDA (SINTA)</span> untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
                     @else
                         Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
                     @endif
@@ -286,6 +301,14 @@
                                         <span>Jurnal GLOBAL FASILKOM UNSUB</span>
                                         @if(!empty($item['volume']))
                                             <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-300">Vol. {{ $item['volume'] }}{{ !empty($item['issue']) ? ' No. ' . $item['issue'] : '' }}</span>
+                                        @endif
+                                    </span>
+                                @elseif(($item['source'] ?? '') === 'garuda')
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800/70 shadow-2xs">
+                                        <svg class="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                        <span>Jurnal Nasional GARUDA (SINTA)</span>
+                                        @if(!empty($item['publisher']))
+                                            <span class="text-[10px] font-semibold text-rose-700 dark:text-rose-300">({{ $item['publisher'] }})</span>
                                         @endif
                                     </span>
                                 @else
@@ -393,7 +416,17 @@
                                        rel="noopener noreferrer"
                                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all shadow-2xs">
                                         <svg class="w-4 h-4 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                        <span>{{ ($item['source'] ?? '') === 'fasilkom' ? 'Buka di OJS FASILKOM' : 'Lihat di Penerbit' }}</span>
+                                        <span>{{ ($item['source'] ?? '') === 'fasilkom' ? 'Buka di OJS FASILKOM' : (($item['source'] ?? '') === 'garuda' ? 'Detail di Portal GARUDA' : 'Lihat di Penerbit') }}</span>
+                                    </a>
+                                @endif
+
+                                @if(!empty($item['source_url']) && ($item['source'] ?? '') === 'garuda')
+                                    <a href="{{ $item['source_url'] }}" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all shadow-2xs">
+                                        <svg class="w-4 h-4 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                        <span>Sumber Asli Kampus</span>
                                     </a>
                                 @endif
                             </div>

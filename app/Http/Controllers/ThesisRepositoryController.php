@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\UnsubRepositorySyncService;
 use App\Services\OpenAlexService;
 use App\Services\FasilkomJournalService;
+use App\Services\GarudaJournalService;
 use App\Models\FasilkomJournal;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -742,10 +743,14 @@ class ThesisRepositoryController extends Controller
      }
 
     /**
-     * Search and view academic open-access journals (OpenAlex & Jurnal GLOBAL FASILKOM UNSUB).
+     * Search and view academic open-access journals (OpenAlex, Jurnal GLOBAL FASILKOM, and Jurnal Nasional GARUDA/SINTA).
      */
-    public function journals(Request $request, OpenAlexService $openAlexService, FasilkomJournalService $fasilkomService)
-    {
+    public function journals(
+        Request $request, 
+        OpenAlexService $openAlexService, 
+        FasilkomJournalService $fasilkomService,
+        GarudaJournalService $garudaService
+    ) {
         $query = $request->input('q', '');
         $page = max(1, (int) $request->input('page', 1));
         $yearFilter = $request->input('year_filter', 'all');
@@ -773,6 +778,15 @@ class ThesisRepositoryController extends Controller
                 'year_filter' => $yearFilter,
                 'sort' => $sort,
             ]);
+        } elseif ($source === 'garuda') {
+            // Source: GARUDA (Garba Rujukan Digital - Kemdiktisaintek / SINTA)
+            if (trim($query) !== '') {
+                $results = $garudaService->search($query, [
+                    'page' => $page,
+                    'year_filter' => $yearFilter,
+                    'open_access_only' => $openAccessOnly,
+                ]);
+            }
         } elseif ($source === 'openalex') {
             // Source: OpenAlex only
             if (trim($query) !== '') {
@@ -785,46 +799,65 @@ class ThesisRepositoryController extends Controller
                 ]);
             }
         } else {
-            // Source: All (FASILKOM + OpenAlex)
+            // Source: All (FASILKOM + GARUDA + OpenAlex)
             if (trim($query) !== '') {
                 // 1. Fetch matching FASILKOM papers
                 $fasilkomMatch = $fasilkomService->search($query, [
                     'page' => 1,
-                    'per_page' => 10,
+                    'per_page' => 5,
                     'year_filter' => $yearFilter,
                     'sort' => $sort,
                 ]);
 
-                // 2. Fetch OpenAlex papers
+                // 2. Fetch GARUDA papers (National SINTA)
+                $garudaResults = $garudaService->search($query, [
+                    'page' => $page,
+                    'year_filter' => $yearFilter,
+                    'open_access_only' => $openAccessOnly,
+                ]);
+
+                // 3. Fetch OpenAlex papers (Global Academic)
                 $openAlexResults = $openAlexService->search($query, [
                     'page' => $page,
-                    'per_page' => 12,
+                    'per_page' => 10,
                     'year_filter' => $yearFilter,
                     'open_access_only' => $openAccessOnly,
                     'sort' => $sort,
                 ]);
 
-                if (!empty($openAlexResults['error'])) {
-                    // Fallback to FASILKOM if OpenAlex fails
-                    $results = $fasilkomMatch['count'] > 0 ? $fasilkomMatch : $openAlexResults;
-                } else {
-                    $combinedData = $openAlexResults['data'] ?? [];
-                    // Prepend FASILKOM matches on first page
-                    if ($page === 1 && !empty($fasilkomMatch['data'])) {
-                        $combinedData = array_merge($fasilkomMatch['data'], $combinedData);
-                    }
-
-                    $results = [
-                        'success' => true,
-                        'count' => ($openAlexResults['count'] ?? 0) + ($fasilkomMatch['count'] ?? 0),
-                        'total_pages' => $openAlexResults['total_pages'] ?? 1,
-                        'current_page' => $page,
-                        'per_page' => 12,
-                        'data' => $combinedData,
-                        'error' => null,
-                        'fasilkom_count' => $fasilkomMatch['count'] ?? 0,
-                    ];
+                $combinedData = [];
+                // Prepend FASILKOM matches on first page
+                if ($page === 1 && !empty($fasilkomMatch['data'])) {
+                    $combinedData = array_merge($combinedData, $fasilkomMatch['data']);
                 }
+                // Add GARUDA national journals
+                if (!empty($garudaResults['data'])) {
+                    $combinedData = array_merge($combinedData, $garudaResults['data']);
+                }
+                // Add OpenAlex global journals
+                if (!empty($openAlexResults['data'])) {
+                    $combinedData = array_merge($combinedData, $openAlexResults['data']);
+                }
+
+                $totalCount = ($openAlexResults['count'] ?? 0) + ($garudaResults['count'] ?? 0) + ($fasilkomMatch['count'] ?? 0);
+                $maxPages = max($openAlexResults['total_pages'] ?? 1, $garudaResults['total_pages'] ?? 1);
+
+                $error = null;
+                if (empty($combinedData) && (!empty($openAlexResults['error']) || !empty($garudaResults['error']))) {
+                    $error = $garudaResults['error'] ?? ($openAlexResults['error'] ?? null);
+                }
+
+                $results = [
+                    'success' => true,
+                    'count' => $totalCount,
+                    'total_pages' => $maxPages,
+                    'current_page' => $page,
+                    'per_page' => 12,
+                    'data' => $combinedData,
+                    'error' => $error,
+                    'fasilkom_count' => $fasilkomMatch['count'] ?? 0,
+                    'garuda_count' => $garudaResults['count'] ?? 0,
+                ];
             }
         }
 

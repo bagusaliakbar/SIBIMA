@@ -299,4 +299,179 @@ XML;
             'issue' => '1',
         ]);
     }
+
+    public function test_garuda_journal_service_html_parsing_and_citations()
+    {
+        $service = new \App\Services\GarudaJournalService();
+
+        $fakeHtml = <<<'HTML'
+<div class="search-result">
+  Found 15 documents
+  <div class="article-item">
+    <a class="title-article" href="/documents/detail/87654321">Sistem Pendukung Keputusan Penentuan Penerima Beasiswa Metode AHP</a>
+    <div class="author-block">
+      <a class="author-article" href="#">Andi Pratama</a>
+      <a class="author-article" href="#">Rina Wati</a>
+    </div>
+    <div class="content-block">
+      <i>Publisher : </i> <xmp class="subtitle-article">Universitas Subang</xmp>
+      <xmp class="subtitle-article">Jurnal Nasional Informatika Vol. 5 No. 2 (2023)</xmp>
+      <xmp class="abstract-article">Penelitian ini menerapkan metode AHP untuk seleksi beasiswa mahasiswa berprestasi.</xmp>
+    </div>
+    <div class="action-article">
+      <a href="https://download.garuda.kemdiktisaintek.go.id/article.php?article=87654321&val=123&title=beasiswa.pdf">Download PDF</a>
+      <a href="https://ejournal.unsub.ac.id/index.php/jurnal/article/view/87654321">Original Source</a>
+      <a href="https://doi.org/10.1234/garuda.2023.05">DOI Link</a>
+    </div>
+  </div>
+</div>
+HTML;
+
+        $result = $service->parseHtml($fakeHtml, 1, 10);
+
+        $this->assertTrue($result['success']);
+        $this->assertEquals(15, $result['count']);
+        $this->assertCount(1, $result['data']);
+
+        $item = $result['data'][0];
+        $this->assertEquals('garuda', $item['source']);
+        $this->assertEquals('Jurnal Nasional GARUDA (SINTA)', $item['source_label']);
+        $this->assertEquals('Sistem Pendukung Keputusan Penentuan Penerima Beasiswa Metode AHP', $item['title']);
+        $this->assertEquals(['Andi Pratama', 'Rina Wati'], $item['authors']);
+        $this->assertEquals(2023, $item['year']);
+        $this->assertEquals('Universitas Subang', $item['publisher']);
+        $this->assertStringContainsString('https://download.garuda.kemdiktisaintek.go.id', $item['pdf_url']);
+        $this->assertStringContainsString('Original Source', $item['source_url'] ? 'Original Source' : '');
+        $this->assertEquals('https://doi.org/10.1234/garuda.2023.05', $item['doi']);
+
+        // Check citations
+        $this->assertArrayHasKey('apa', $item['citations']);
+        $this->assertArrayHasKey('ieee', $item['citations']);
+        $this->assertArrayHasKey('bibtex', $item['citations']);
+        $this->assertStringContainsString('Pratama, A. & Wati, R.', $item['citations']['apa']);
+        $this->assertStringContainsString('A. Pratama, R. Wati', $item['citations']['ieee']);
+        $this->assertStringContainsString('@article{pratama2023garuda', $item['citations']['bibtex']);
+    }
+
+    public function test_garuda_journal_search_source_with_http_mock()
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $fakeHtml = <<<'HTML'
+<div>
+  Found 1 documents
+  <div class="article-item">
+    <a class="title-article" href="/documents/detail/112233">Analisis Sentimen Algoritma Naive Bayes Pada Ulasan Aplikasi</a>
+    <a class="author-article">Eko Prasetyo</a>
+    <xmp class="subtitle-article">Jurnal Teknologi Nasional Vol. 4 (2024)</xmp>
+    <i>Publisher : </i> <xmp class="subtitle-article">Universitas Komputer</xmp>
+    <xmp class="abstract-article">Penelitian klasifikasi opini pengguna aplikasi mobile.</xmp>
+    <a href="https://download.garuda.kemdiktisaintek.go.id/article.php?article=112233">Unduh</a>
+  </div>
+</div>
+HTML;
+
+        Http::fake([
+            'garuda.kemdiktisaintek.go.id/documents*' => Http::response($fakeHtml, 200),
+        ]);
+
+        $response = $this->actingAs($student)->get(route('repositories.journals', [
+            'q' => 'Naive Bayes',
+            'source' => 'garuda',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Analisis Sentimen Algoritma Naive Bayes Pada Ulasan Aplikasi');
+        $response->assertSee('Eko Prasetyo');
+        $response->assertSee('Jurnal Nasional GARUDA (SINTA)');
+        $response->assertSee('Universitas Komputer');
+        $response->assertSee('Detail di Portal GARUDA');
+        $response->assertSee('Buka PDF Full-Text');
+        $response->assertSee('https://download.garuda.kemdiktisaintek.go.id/article.php?article=112233');
+    }
+
+    public function test_garuda_graceful_handling_on_server_error()
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        Http::fake([
+            'garuda.kemdiktisaintek.go.id/documents*' => Http::response('Server Error', 503),
+        ]);
+
+        $response = $this->actingAs($student)->get(route('repositories.journals', [
+            'q' => 'Jaringan Syaraf Tiruan',
+            'source' => 'garuda',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Peladen GARUDA Kemdiktisaintek sedang sibuk');
+    }
+
+    public function test_all_sources_aggregates_fasilkom_garuda_and_openalex()
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        // 1. Seed FASILKOM match
+        \App\Models\FasilkomJournal::create([
+            'identifier' => 'oai:ojs.pkp.sfu.ca:article/777',
+            'article_id' => '777',
+            'title' => 'Implementasi Deep Learning Pada Deteksi Hama',
+            'authors' => ['Dosen Fasilkom'],
+            'authors_string' => 'Dosen Fasilkom',
+            'year' => 2024,
+            'landing_page_url' => 'https://ejournal.unsub.ac.id/index.php/FASILKOM/article/view/777',
+            'pdf_url' => 'https://ejournal.unsub.ac.id/index.php/FASILKOM/article/download/777/777',
+        ]);
+
+        // 2. Mock GARUDA
+        $garudaHtml = <<<'HTML'
+Found 1 documents
+<div class="article-item">
+  <a class="title-article" href="/documents/detail/888">Deep Learning untuk Klasifikasi Citra Medis</a>
+  <a class="author-article">Peneliti Nasional</a>
+  <xmp class="subtitle-article">Jurnal Informatika Nasional Vol. 2 (2024)</xmp>
+  <a href="https://download.garuda.kemdiktisaintek.go.id/article.php?article=888">PDF</a>
+</div>
+HTML;
+
+        // 3. Mock OpenAlex
+        $openAlexJson = [
+            'meta' => ['count' => 1, 'page' => 1, 'per_page' => 10],
+            'results' => [
+                [
+                    'id' => 'https://openalex.org/W999',
+                    'title' => 'Deep Learning Advances in Computer Vision',
+                    'publication_year' => 2024,
+                    'authorships' => [
+                        ['author' => ['display_name' => 'Global Researcher']]
+                    ],
+                    'primary_location' => [
+                        'source' => ['display_name' => 'IEEE Transactions'],
+                        'pdf_url' => 'https://example.com/global.pdf',
+                        'landing_page_url' => 'https://doi.org/10.999/test'
+                    ],
+                    'open_access' => ['is_oa' => true, 'oa_url' => 'https://example.com/global.pdf'],
+                ]
+            ]
+        ];
+
+        Http::fake([
+            'garuda.kemdiktisaintek.go.id/documents*' => Http::response($garudaHtml, 200),
+            'api.openalex.org/works*' => Http::response($openAlexJson, 200),
+        ]);
+
+        $response = $this->actingAs($student)->get(route('repositories.journals', [
+            'q' => 'Deep Learning',
+            'source' => 'all',
+        ]));
+
+        $response->assertStatus(200);
+        // Assert all 3 sources appear in the results
+        $response->assertSee('Implementasi Deep Learning Pada Deteksi Hama');
+        $response->assertSee('Jurnal GLOBAL FASILKOM UNSUB');
+        $response->assertSee('Deep Learning untuk Klasifikasi Citra Medis');
+        $response->assertSee('Jurnal Nasional GARUDA (SINTA)');
+        $response->assertSee('Deep Learning Advances in Computer Vision');
+        $response->assertSee('Academic Global');
+    }
 }
