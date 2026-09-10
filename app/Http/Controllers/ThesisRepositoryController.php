@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\UnsubRepositorySyncService;
 use App\Services\OpenAlexService;
+use App\Services\FasilkomJournalService;
+use App\Models\FasilkomJournal;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -740,15 +742,18 @@ class ThesisRepositoryController extends Controller
      }
 
     /**
-     * Search and view external academic open-access journals via OpenAlex.
+     * Search and view academic open-access journals (OpenAlex & Jurnal GLOBAL FASILKOM UNSUB).
      */
-    public function journals(Request $request, OpenAlexService $service)
+    public function journals(Request $request, OpenAlexService $openAlexService, FasilkomJournalService $fasilkomService)
     {
         $query = $request->input('q', '');
         $page = max(1, (int) $request->input('page', 1));
         $yearFilter = $request->input('year_filter', 'all');
         $sort = $request->input('sort', 'relevance');
         $openAccessOnly = $request->boolean('oa_only', true);
+        $source = $request->input('source', 'all');
+
+        $fasilkomTotalCount = FasilkomJournal::count();
 
         $results = [
             'success' => true,
@@ -760,14 +765,67 @@ class ThesisRepositoryController extends Controller
             'error' => null,
         ];
 
-        if (trim($query) !== '') {
-            $results = $service->search($query, [
+        if ($source === 'fasilkom') {
+            // Source: FASILKOM UNSUB only (can browse even without query)
+            $results = $fasilkomService->search($query, [
                 'page' => $page,
                 'per_page' => 12,
                 'year_filter' => $yearFilter,
-                'open_access_only' => $openAccessOnly,
                 'sort' => $sort,
             ]);
+        } elseif ($source === 'openalex') {
+            // Source: OpenAlex only
+            if (trim($query) !== '') {
+                $results = $openAlexService->search($query, [
+                    'page' => $page,
+                    'per_page' => 12,
+                    'year_filter' => $yearFilter,
+                    'open_access_only' => $openAccessOnly,
+                    'sort' => $sort,
+                ]);
+            }
+        } else {
+            // Source: All (FASILKOM + OpenAlex)
+            if (trim($query) !== '') {
+                // 1. Fetch matching FASILKOM papers
+                $fasilkomMatch = $fasilkomService->search($query, [
+                    'page' => 1,
+                    'per_page' => 10,
+                    'year_filter' => $yearFilter,
+                    'sort' => $sort,
+                ]);
+
+                // 2. Fetch OpenAlex papers
+                $openAlexResults = $openAlexService->search($query, [
+                    'page' => $page,
+                    'per_page' => 12,
+                    'year_filter' => $yearFilter,
+                    'open_access_only' => $openAccessOnly,
+                    'sort' => $sort,
+                ]);
+
+                if (!empty($openAlexResults['error'])) {
+                    // Fallback to FASILKOM if OpenAlex fails
+                    $results = $fasilkomMatch['count'] > 0 ? $fasilkomMatch : $openAlexResults;
+                } else {
+                    $combinedData = $openAlexResults['data'] ?? [];
+                    // Prepend FASILKOM matches on first page
+                    if ($page === 1 && !empty($fasilkomMatch['data'])) {
+                        $combinedData = array_merge($fasilkomMatch['data'], $combinedData);
+                    }
+
+                    $results = [
+                        'success' => true,
+                        'count' => ($openAlexResults['count'] ?? 0) + ($fasilkomMatch['count'] ?? 0),
+                        'total_pages' => $openAlexResults['total_pages'] ?? 1,
+                        'current_page' => $page,
+                        'per_page' => 12,
+                        'data' => $combinedData,
+                        'error' => null,
+                        'fasilkom_count' => $fasilkomMatch['count'] ?? 0,
+                    ];
+                }
+            }
         }
 
         return view('repositories.journals', [
@@ -776,6 +834,8 @@ class ThesisRepositoryController extends Controller
             'yearFilter' => $yearFilter,
             'sort' => $sort,
             'openAccessOnly' => $openAccessOnly,
+            'source' => $source,
+            'fasilkomTotalCount' => $fasilkomTotalCount,
             'page' => $page,
         ]);
     }

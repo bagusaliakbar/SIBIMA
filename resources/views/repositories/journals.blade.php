@@ -5,7 +5,11 @@
                 ['label' => 'Katalog Pustaka', 'route' => route('repositories.index')],
                 ['label' => 'Jurnal Ilmiah (Open Access)', 'route' => null]
             ]" />
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('repositories.journals', ['source' => 'fasilkom']) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors">
+                    <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    <span>🏛️ Jurnal GLOBAL FASILKOM ({{ $fasilkomTotalCount }} Artikel)</span>
+                </a>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                     <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -29,8 +33,28 @@
                     Cari artikel jurnal nasional & internasional langsung dari SIBIMA. Tersedia tautan unduh naskah PDF lengkap gratis (*Full-Text*) dan salin sitasi otomatis dalam format APA, IEEE, serta BibTeX untuk skripsi Anda.
                 </p>
 
+                <!-- Source Selector Tabs -->
+                <div class="pt-2 flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-600 dark:text-slate-300 mr-1">Sumber:</span>
+                    <div class="inline-flex flex-wrap rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 text-xs">
+                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'all', 'page' => 1])) }}"
+                           class="px-3.5 py-1.5 rounded-lg font-bold transition-all {{ $source === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                            🌟 Semua Sumber
+                        </a>
+                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'fasilkom', 'page' => 1])) }}"
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-bold transition-all {{ $source === 'fasilkom' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                            <span>🏛️ Jurnal GLOBAL FASILKOM UNSUB</span>
+                            <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold {{ $source === 'fasilkom' ? 'bg-white/20 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">{{ $fasilkomTotalCount }}</span>
+                        </a>
+                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'openalex', 'page' => 1])) }}"
+                           class="px-3.5 py-1.5 rounded-lg font-bold transition-all {{ $source === 'openalex' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                            🌐 OpenAlex Global
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Search Input Box -->
-                <form action="{{ route('repositories.journals') }}" method="GET" class="pt-2">
+                <form action="{{ route('repositories.journals') }}" method="GET" class="pt-1">
                     <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
                         <div class="relative flex-1 group">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
@@ -42,7 +66,7 @@
                                    name="q" 
                                    id="journal-search-input"
                                    x-model="searchQuery"
-                                   placeholder="Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)..."
+                                   placeholder="{{ $source === 'fasilkom' ? 'Cari judul, penulis, atau topik di Jurnal GLOBAL FASILKOM UNSUB...' : 'Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)...' }}"
                                    style="padding-left: 3.5rem !important; padding-right: 3.25rem !important;"
                                    class="block w-full py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
                             <button type="button" 
@@ -60,6 +84,7 @@
                         </div>
                         
                         <!-- Hidden filter fields to preserve filters -->
+                        <input type="hidden" name="source" value="{{ $source }}">
                         <input type="hidden" name="year_filter" value="{{ $yearFilter }}">
                         <input type="hidden" name="sort" value="{{ $sort }}">
                         <input type="hidden" name="oa_only" value="{{ $openAccessOnly ? '1' : '0' }}">
@@ -89,7 +114,7 @@
                         ];
                     @endphp
                     @foreach($popularTopics as $topic)
-                        <a href="{{ route('repositories.journals', ['q' => $topic, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
+                        <a href="{{ route('repositories.journals', ['q' => $topic, 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
                            class="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-50 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-white transition-colors border border-slate-200/90 dark:border-slate-700 shadow-2xs">
                             {{ $topic }}
                         </a>
@@ -102,6 +127,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
             <form action="{{ route('repositories.journals') }}" method="GET" id="journalFilterForm" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <input type="hidden" name="q" value="{{ $query }}">
+                <input type="hidden" name="source" value="{{ $source }}">
 
                 <div class="flex flex-wrap items-center gap-3">
                     <!-- Year Filter -->
@@ -168,7 +194,7 @@
                     Reset Pencarian
                 </a>
             </div>
-        @elseif(empty($query))
+        @elseif(empty($query) && $source !== 'fasilkom')
             <!-- Initial Empty State: Guidance for Students -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-200/80 dark:border-slate-700/80 text-center space-y-6">
                 <div class="w-20 h-20 rounded-3xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40 flex items-center justify-center mx-auto shadow-sm">
@@ -192,13 +218,21 @@
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">
-                    Tidak ditemukan jurnal untuk kata kunci "{{ $query }}"
+                    @if($source === 'fasilkom')
+                        Tidak ditemukan artikel di Jurnal GLOBAL FASILKOM{{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
+                    @else
+                        Tidak ditemukan jurnal untuk kata kunci "{{ $query }}"
+                    @endif
                 </h4>
                 <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-                    Coba gunakan kata kunci bahasa Inggris atau istilah yang lebih umum (misalnya gunakan "Sentiment Analysis" daripada kalimat panjang).
+                    @if($source === 'fasilkom')
+                        Coba gunakan kata kunci yang lebih umum seperti nama metode atau topik (misal: "SPK", "Android", "Web", "Keamanan").
+                    @else
+                        Coba gunakan kata kunci bahasa Inggris atau istilah yang lebih umum (misalnya gunakan "Sentiment Analysis" daripada kalimat panjang).
+                    @endif
                 </p>
                 <div class="pt-2">
-                    <a href="{{ route('repositories.journals') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-orange-700 transition-colors">
+                    <a href="{{ route('repositories.journals', ['source' => $source]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-orange-700 transition-colors">
                         Reset Kata Kunci
                     </a>
                 </div>
@@ -207,7 +241,11 @@
             <!-- Results Header Info -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
                 <div class="text-xs text-slate-600 dark:text-slate-300">
-                    Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
+                    @if(empty($query) && $source === 'fasilkom')
+                        Menampilkan <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel dari <span class="font-bold text-orange-600 dark:text-orange-400">Jurnal GLOBAL FASILKOM UNSUB</span>
+                    @else
+                        Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
+                    @endif
                     (Halaman {{ $results['current_page'] }} dari {{ $results['total_pages'] }})
                 </div>
                 <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
@@ -225,6 +263,22 @@
                         <!-- Top Metadata Badges -->
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <div class="flex flex-wrap items-center gap-2">
+                                <!-- Source Badge -->
+                                @if(($item['source'] ?? '') === 'fasilkom')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800/70 shadow-2xs">
+                                        <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                        <span>🏛️ Jurnal GLOBAL FASILKOM UNSUB</span>
+                                        @if(!empty($item['volume']))
+                                            <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-300">Vol. {{ $item['volume'] }}{{ !empty($item['issue']) ? ' No. ' . $item['issue'] : '' }}</span>
+                                        @endif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                        <span>🌐 OpenAlex Global</span>
+                                    </span>
+                                @endif
+
                                 @if($item['year'])
                                     <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
                                         {{ $item['year'] }}
@@ -323,7 +377,7 @@
                                        rel="noopener noreferrer"
                                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all shadow-2xs">
                                         <svg class="w-4 h-4 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                        <span>Lihat di Penerbit</span>
+                                        <span>{{ ($item['source'] ?? '') === 'fasilkom' ? 'Buka di OJS FASILKOM' : 'Lihat di Penerbit' }}</span>
                                     </a>
                                 @endif
                             </div>

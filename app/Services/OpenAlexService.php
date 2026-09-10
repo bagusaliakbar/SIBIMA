@@ -228,6 +228,8 @@ class OpenAlexService
             'abstract' => $abstract,
             'concepts' => $concepts,
             'citations' => $citations,
+            'source' => 'openalex',
+            'source_label' => 'OpenAlex Global Index',
         ];
     }
 
