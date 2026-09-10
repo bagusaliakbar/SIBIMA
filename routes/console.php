@@ -16,3 +16,6 @@ Schedule::command('app:send-mentoring-reminders')->dailyAt('07:15');
 
 // 3. Pengingat Mahasiswa Semester Kritis (Semester 13-14+) & Laporan Kaprodi (Setiap tanggal 1 jam 08:00 WIB)
 Schedule::command('app:send-critical-student-reminders')->monthlyOn(1, '08:00');
+
+// 4. Pembersihan Otomatis Cache PDF Repositori Skripsi (>7 hari) setiap hari Minggu jam 02:00 WIB
+Schedule::command('repositories:clean-cache --days=7')->weeklyOn(0, '02:00');

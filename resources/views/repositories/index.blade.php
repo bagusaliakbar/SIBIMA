@@ -2011,21 +2011,29 @@
                 </span>
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800" style="background-color: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe;">
                     <svg class="w-3 h-3 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    <span>Hanya File BAB I & II (Hemat Storage)</span>
+                    <span>BAB 1 s/d BAB 6 (On-Demand Ready)</span>
                 </span>
             </div>
 
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-                Sistem akan memindai repositori Universitas Subang, memfilter secara ketat dokumen Fakultas Ilmu Komputer, memperkaya data skripsi dengan teks abstrak lengkap, dan menghubungkan file naskah BAB I & BAB II (PDF).
+                Sistem akan memindai repositori Universitas Subang, memfilter secara ketat dokumen Fakultas Ilmu Komputer, memperkaya data skripsi dengan teks abstrak lengkap, dan menghubungkan seluruh file naskah BAB 1 s/d BAB 6.
             </p>
 
             <!-- Download PDF option toggle -->
-            <div id="unsubOptionsContainer" class="p-3 mb-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+            <div id="unsubOptionsContainer" class="p-3.5 mb-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
+                        <svg class="w-3 h-3 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span>Rekomendasi: On-Demand Streaming (Hemat Penyimpanan VPS)</span>
+                    </span>
+                </div>
                 <label class="flex items-start gap-2.5 cursor-pointer">
-                    <input type="checkbox" id="unsubDownloadPdf" checked class="mt-0.5 rounded text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                    <input type="checkbox" id="unsubDownloadPdf" class="mt-0.5 rounded text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
                     <div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200 block">Unduh Fisik File BAB 1 & BAB 2 ke Server (Storage)</span>
-                        <span class="text-[11px] text-slate-400 block mt-0.5">Disarankan. Membutuhkan ~200–230 MB total untuk 144 dokumen, tersimpan aman di server lokal.</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200 block">Unduh Fisik Seluruh File PDF ke Server VPS (Opsional)</span>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5 leading-relaxed">
+                            Secara default <strong>tidak dicentang</strong>. Tanpa unduh fisik, berkas di-stream on-demand saat dibuka (hemat disk VPS & sinkronisasi selesai seketika). Centang hanya bila ingin menyimpan fisik permanen di VPS.
+                        </span>
                     </div>
                 </label>
             </div>
