@@ -15,8 +15,5 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
         <span>Jurnal Ilmiah (Open Access)</span>
-        <span class="px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('repositories.journals') ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40' }}">
-            Global / 250M+
-        </span>
     </a>
 </div>

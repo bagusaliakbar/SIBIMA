@@ -10,7 +10,7 @@
                     <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <span>OpenAlex Academic Index (250M+ Karya Ilmiah)</span>
+                    <span>Academic Index (250M+ Karya Ilmiah)</span>
                 </span>
             </div>
         </div>
@@ -26,12 +26,6 @@
             <div class="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-amber-500/10 dark:bg-amber-500/5 blur-3xl pointer-events-none"></div>
 
             <div class="relative z-10 max-w-3xl space-y-3">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60">
-                    <svg class="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    <span>Pencarian Literatur & Tinjauan Pustaka Skripsi</span>
-                </div>
                 <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
                     Eksplorasi Jurnal Ilmiah <span class="text-orange-600 dark:text-orange-400 font-black">Open Access</span>
                 </h1>
@@ -41,23 +35,30 @@
 
                 <!-- Search Input Box -->
                 <form action="{{ route('repositories.journals') }}" method="GET" class="pt-2">
-                    <div class="flex flex-col sm:flex-row items-stretch gap-2 bg-white dark:bg-slate-900/90 p-2 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-md shadow-slate-200/40 dark:shadow-2xl">
-                        <div class="relative flex-1 flex items-center">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-orange-400">
+                    <div class="flex flex-col sm:flex-row items-stretch gap-2.5 w-full">
+                        <div class="relative flex-1 group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
                             <input type="text" 
                                    name="q" 
+                                   id="journal-search-input"
                                    x-model="searchQuery"
                                    placeholder="Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)..."
-                                   class="w-full pl-11 pr-10 py-3 text-sm text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 bg-transparent border-none focus:ring-0 focus:outline-none font-medium">
+                                   class="block w-full pl-12 pr-11 py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
                             <button type="button" 
                                     x-show="searchQuery" 
-                                    @click="searchQuery = ''"
-                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    x-cloak
+                                    @click="searchQuery = ''; document.getElementById('journal-search-input').focus();"
+                                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                    title="Hapus pencarian">
+                                <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </div>
                             </button>
                         </div>
                         
@@ -67,8 +68,8 @@
                         <input type="hidden" name="oa_only" value="{{ $openAccessOnly ? '1' : '0' }}">
 
                         <button type="submit" 
-                                class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 cursor-pointer">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                class="px-7 py-3.5 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl text-sm sm:text-base font-bold shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 cursor-pointer shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             <span>Cari Jurnal</span>
                         </button>
                     </div>
