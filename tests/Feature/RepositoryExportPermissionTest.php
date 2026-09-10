@@ -78,4 +78,36 @@ class RepositoryExportPermissionTest extends TestCase
         $this->actingAs($student)->get(route('repositories.export-excel'))->assertStatus(403);
         $this->actingAs($student)->get(route('repositories.export-pdf'))->assertStatus(403);
     }
+
+    public function test_repository_search_displays_reset_button_when_filtered(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        ThesisRepository::create([
+            'title' => 'Sistem Informasi Manajemen Skripsi Berbasis Web',
+            'name' => 'Budi Santoso',
+            'identifier' => 'D1A200001',
+            'year' => 2024,
+            'pembimbing1' => 'Dr. Hendra',
+            'pembimbing2' => 'Ir. Maya',
+            'abstract' => 'Abstrak skripsi sistem informasi.',
+        ]);
+
+        // When no filter, Cari is visible
+        $resNormal = $this->actingAs($student)->get(route('repositories.index'));
+        $resNormal->assertStatus(200);
+        $resNormal->assertSee('Cari');
+
+        // When search filter is active, Reset and Reset Pencarian are visible
+        $resFiltered = $this->actingAs($student)->get(route('repositories.index', ['search' => 'Budi']));
+        $resFiltered->assertStatus(200);
+        $resFiltered->assertSee('Reset');
+        $resFiltered->assertSee('Reset Pencarian');
+
+        // When no results match, empty state offers Reset Pencarian
+        $resEmpty = $this->actingAs($student)->get(route('repositories.index', ['search' => 'KataKunciYangTidakAda']));
+        $resEmpty->assertStatus(200);
+        $resEmpty->assertSee('Tidak Ada Pustaka Ditemukan');
+        $resEmpty->assertSee('Reset Pencarian');
+    }
 }
