@@ -427,8 +427,8 @@
 
                         <!-- Direct Link: Monitoring Bimbingan -->
                         <a href="{{ route('monitoring.index') }}" 
-                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
-                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') || request()->routeIs('monitoring.weekly') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') || request()->routeIs('monitoring.weekly') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             Monitoring Bimbingan
                         </a>
 

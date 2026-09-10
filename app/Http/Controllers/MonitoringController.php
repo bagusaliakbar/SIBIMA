@@ -10,6 +10,9 @@ use App\Models\ThesisDefenseScheduleDetail;
 use App\Services\MonitoringService;
 use App\Exports\MonitoringExport;
 use App\Exports\DefenseScoresExport;
+use App\Exports\WeeklyMentoringExport;
+use App\Services\WhatsAppService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -391,5 +394,116 @@ class MonitoringController extends Controller implements HasMiddleware
         }
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Display weekly mentoring monitoring page for Kaprodi and Admin.
+     */
+    public function weekly(Request $request)
+    {
+        $dateParam = $request->input('date');
+        $baseDate = $dateParam ? Carbon::parse($dateParam) : Carbon::now();
+
+        $weekOffset = (int) $request->input('week_offset', 0);
+        if ($weekOffset !== 0) {
+            $baseDate = $baseDate->copy()->addWeeks($weekOffset);
+        }
+
+        $startDate = $baseDate->copy()->startOfWeek(Carbon::MONDAY)->startOfDay();
+        $endDate = $baseDate->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+
+        $filters = [
+            'search' => $request->input('search'),
+            'pembimbing_id' => $request->input('pembimbing_id'),
+            'entry_year' => $request->input('entry_year'),
+            'compliance_status' => $request->input('compliance_status'),
+        ];
+
+        $weeklyData = $this->monitoringService->getWeeklyMentoringData($startDate, $endDate, $filters);
+
+        $theses = $weeklyData['paginated'];
+        $stats = $weeklyData['stats'];
+
+        $dosens = User::where('role', 'dosen')->orderBy('name')->get();
+        $entryYears = User::where('role', 'mahasiswa')->whereNotNull('entry_year')->distinct()->orderBy('entry_year', 'desc')->pluck('entry_year');
+
+        // Navigation dates
+        $prevWeekDate = $startDate->copy()->subWeek()->format('Y-m-d');
+        $nextWeekDate = $startDate->copy()->addWeek()->format('Y-m-d');
+        $currentWeekDate = Carbon::now()->startOfWeek(Carbon::MONDAY)->format('Y-m-d');
+        $isCurrentWeek = $startDate->isSameDay(Carbon::now()->startOfWeek(Carbon::MONDAY));
+
+        return view('monitoring.weekly', compact(
+            'theses',
+            'stats',
+            'dosens',
+            'entryYears',
+            'startDate',
+            'endDate',
+            'filters',
+            'prevWeekDate',
+            'nextWeekDate',
+            'currentWeekDate',
+            'isCurrentWeek'
+        ));
+    }
+
+    /**
+     * Send WhatsApp reminder to student who hasn't completed required weekly mentoring.
+     */
+    public function sendWeeklyReminder(Request $request, Thesis $thesis, WhatsAppService $whatsAppService)
+    {
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : Carbon::now()->startOfWeek(Carbon::MONDAY);
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : Carbon::now()->endOfWeek(Carbon::SUNDAY);
+
+        $student = $thesis->student;
+        if (!$student || empty($student->phone)) {
+            return back()->with('error', 'Nomor WhatsApp mahasiswa tidak ditemukan atau belum diatur di profil.');
+        }
+
+        // Count sessions for this week to produce accurate reminder copy
+        $weekSessions = $thesis->mentoringSessions()
+            ->where('status', 'completed')
+            ->where('is_absent', false)
+            ->whereBetween('scheduled_at', [$startDate, $endDate])
+            ->get();
+
+        $thesis->weekly_p1_count = $weekSessions->where('dosen_id', $thesis->pembimbing1_id)->count();
+        $thesis->weekly_p2_count = $weekSessions->where('dosen_id', $thesis->pembimbing2_id)->count();
+
+        $customMessage = $request->input('message');
+        $message = $customMessage ?: $this->monitoringService->generateWeeklyReminderMessage($thesis, $startDate, $endDate);
+
+        $sent = $whatsAppService->sendMessage($student->phone, $message);
+
+        if ($sent) {
+            return back()->with('success', "Pesan pengingat WhatsApp berhasil dikirim ke {$student->name} ({$student->phone}).");
+        }
+
+        return back()->with('warning', "Pesan tidak dapat terkirim otomatis melalui gateway WhatsApp (fitur WA mungkin belum aktif atau gateway sedang offline). Anda dapat menghubungi mahasiswa secara langsung melalui no: {$student->phone}.");
+    }
+
+    /**
+     * Export weekly mentoring monitoring report to Excel.
+     */
+    public function exportWeeklyExcel(Request $request)
+    {
+        $dateParam = $request->input('date');
+        $baseDate = $dateParam ? Carbon::parse($dateParam) : Carbon::now();
+
+        $startDate = $baseDate->copy()->startOfWeek(Carbon::MONDAY)->startOfDay();
+        $endDate = $baseDate->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+
+        $filters = [
+            'search' => $request->input('search'),
+            'pembimbing_id' => $request->input('pembimbing_id'),
+            'entry_year' => $request->input('entry_year'),
+            'compliance_status' => $request->input('compliance_status'),
+        ];
+
+        $weeklyData = $this->monitoringService->getWeeklyMentoringData($startDate, $endDate, $filters);
+        $fileName = 'Monitoring_Bimbingan_Mingguan_' . $startDate->format('Y-m-d') . '_sd_' . $endDate->format('Y-m-d') . '.xlsx';
+
+        return Excel::download(new WeeklyMentoringExport($weeklyData['all'], $startDate, $endDate), $fileName);
     }
 }

@@ -178,6 +178,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/analytics', [App\Http\Controllers\AnalyticsChartController::class, 'index'])->name('analytics.index');
 
         // Monitoring
+        Route::get('/monitoring/weekly/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportWeeklyExcel'])->name('monitoring.weekly.export-excel');
+        Route::post('/monitoring/weekly/{thesis}/remind', [App\Http\Controllers\MonitoringController::class, 'sendWeeklyReminder'])->name('monitoring.weekly.remind');
+        Route::get('/monitoring/weekly', [App\Http\Controllers\MonitoringController::class, 'weekly'])->name('monitoring.weekly');
         Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
         Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
         Route::get('/monitoring/defense-scores/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresExcel'])->name('monitoring.defense-scores.export-excel');

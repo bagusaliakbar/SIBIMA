@@ -48,6 +48,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Alias for phone_number
+     */
+    public function getPhoneAttribute()
+    {
+        return $this->phone_number;
+    }
+
+    /**
      * Get signature URL
      */
     public function getSignatureUrlAttribute()

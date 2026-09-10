@@ -6,6 +6,8 @@
     </x-slot>
 
     <div class="w-full" x-data="monitoringAccModal()">
+        @include('monitoring.partials.tabs')
+
         <!-- Chart Section -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
