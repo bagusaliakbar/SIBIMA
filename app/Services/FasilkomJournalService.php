@@ -15,7 +15,7 @@ class FasilkomJournalService
      * Search articles in local FASILKOM journal database.
      *
      * @param string $query
-     * @param array $options [page, per_page, year_filter, sort]
+     * @param array $options [page, per_page, year_filter, sort, author]
      * @return array
      */
     public function search(string $query, array $options = []): array
@@ -24,6 +24,7 @@ class FasilkomJournalService
         $perPage = min(25, max(5, (int) ($options['per_page'] ?? 12)));
         $yearFilter = $options['year_filter'] ?? 'all';
         $sort = $options['sort'] ?? 'relevance';
+        $author = trim($options['author'] ?? 'all');
 
         $builder = FasilkomJournal::query();
 
@@ -33,6 +34,14 @@ class FasilkomJournalService
 
         if (!empty($yearFilter) && $yearFilter !== 'all') {
             $builder->filterYear($yearFilter);
+        }
+
+        // Author / Dosen Filter
+        if (!empty($author) && $author !== 'all') {
+            $builder->where(function ($q) use ($author) {
+                $q->where('authors_string', 'like', "%{$author}%")
+                  ->orWhereJsonContains('authors', $author);
+            });
         }
 
         // Sorting
@@ -60,7 +69,96 @@ class FasilkomJournalService
             'data' => $data,
             'error' => null,
             'source' => 'fasilkom',
+            'author' => $author !== 'all' ? $author : null,
         ];
+    }
+
+    /**
+     * Get a normalized, deduplicated list of all authors in Jurnal GLOBAL FASILKOM with article counts.
+     * Sorted alphabetically A-Z.
+     *
+     * @return array array of ['name' => string, 'count' => int]
+     */
+    public function getAuthorsList(): array
+    {
+        return \Illuminate\Support\Facades\Cache::remember('fasilkom_journal_authors_list', 3600, function () {
+            $journals = FasilkomJournal::all(['id', 'authors', 'authors_string']);
+            $counts = [];
+
+            foreach ($journals as $j) {
+                $authorList = [];
+                if (is_array($j->authors) && !empty($j->authors)) {
+                    $authorList = $j->authors;
+                } elseif (!empty($j->authors_string)) {
+                    $authorList = explode(',', $j->authors_string);
+                }
+
+                $seenInArticle = [];
+                foreach ($authorList as $rawName) {
+                    $name = trim($rawName);
+                    if (empty($name) || strlen($name) < 3) {
+                        continue;
+                    }
+
+                    // Clean repeated words like "Jaja Jaja" or "jaja jaja"
+                    $words = explode(' ', $name);
+                    if (count($words) === 2 && strtolower($words[0]) === strtolower($words[1])) {
+                        $name = $words[0];
+                    }
+
+                    // Proper title-casing
+                    $name = ucwords(strtolower($name));
+
+                    $normKey = strtolower(preg_replace('/[^a-z0-9]/', '', $name));
+                    if (empty($normKey)) {
+                        continue;
+                    }
+
+                    if (isset($seenInArticle[$normKey])) {
+                        continue;
+                    }
+                    $seenInArticle[$normKey] = true;
+
+                    if (!isset($counts[$normKey])) {
+                        $counts[$normKey] = [
+                            'name' => $name,
+                            'count' => 0,
+                        ];
+                    } else {
+                        if (strlen($name) > strlen($counts[$normKey]['name'])) {
+                            $counts[$normKey]['name'] = $name;
+                        }
+                    }
+                    $counts[$normKey]['count']++;
+                }
+            }
+
+            // Sort alphabetically by name
+            uasort($counts, fn($a, $b) => strcasecmp($a['name'], $b['name']));
+
+            return array_values($counts);
+        });
+    }
+
+    /**
+     * Get top authors with the highest publication counts for quick chips.
+     *
+     * @param int $limit
+     * @return array
+     */
+    public function getTopAuthors(int $limit = 8): array
+    {
+        $all = $this->getAuthorsList();
+
+        // Sort by article count descending
+        usort($all, function ($a, $b) {
+            if ($b['count'] === $a['count']) {
+                return strcasecmp($a['name'], $b['name']);
+            }
+            return $b['count'] <=> $a['count'];
+        });
+
+        return array_slice($all, 0, $limit);
     }
 
     /**

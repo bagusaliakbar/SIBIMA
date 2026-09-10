@@ -761,8 +761,11 @@ class ThesisRepositoryController extends Controller
         $sort = $request->input('sort', 'relevance');
         $openAccessOnly = $request->boolean('oa_only', true);
         $source = $request->input('source', 'all');
+        $author = $request->input('author', 'all');
 
         $fasilkomTotalCount = FasilkomJournal::count();
+        $fasilkomAuthors = $fasilkomService->getAuthorsList();
+        $fasilkomTopAuthors = $fasilkomService->getTopAuthors(8);
 
         $results = [
             'success' => true,
@@ -781,6 +784,7 @@ class ThesisRepositoryController extends Controller
                 'per_page' => 12,
                 'year_filter' => $yearFilter,
                 'sort' => $sort,
+                'author' => $author,
             ]);
         } elseif ($source === 'garuda') {
             // Source: GARUDA (Garba Rujukan Digital - Kemdiktisaintek / SINTA)
@@ -930,7 +934,10 @@ class ThesisRepositoryController extends Controller
             'sort' => $sort,
             'openAccessOnly' => $openAccessOnly,
             'source' => $source,
+            'author' => $author,
             'fasilkomTotalCount' => $fasilkomTotalCount,
+            'fasilkomAuthors' => $fasilkomAuthors,
+            'fasilkomTopAuthors' => $fasilkomTopAuthors,
             'page' => $page,
         ]);
     }
