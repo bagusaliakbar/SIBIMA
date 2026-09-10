@@ -5,12 +5,12 @@
                 ['label' => 'Katalog Pustaka', 'route' => route('repositories.index')],
                 ['label' => 'Jurnal Ilmiah (Open Access)', 'route' => null]
             ]" />
-            <div class="flex flex-wrap items-center gap-2">
-                <a href="{{ route('repositories.journals', ['source' => 'fasilkom']) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors">
+            <div class="flex flex-wrap items-center gap-2.5">
+                <a href="{{ route('repositories.journals', ['source' => 'fasilkom']) }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors">
                     <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    <span>🏛️ Jurnal GLOBAL FASILKOM ({{ $fasilkomTotalCount }} Artikel)</span>
+                    <span>Jurnal GLOBAL FASILKOM ({{ $fasilkomTotalCount }} Artikel)</span>
                 </a>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                     <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -34,21 +34,37 @@
                 </p>
 
                 <!-- Source Selector Tabs -->
-                <div class="pt-2 flex flex-wrap items-center gap-2">
-                    <span class="text-xs font-bold text-slate-600 dark:text-slate-300 mr-1">Sumber:</span>
-                    <div class="inline-flex flex-wrap rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 text-xs">
+                <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Sumber:</span>
+                    <div class="inline-flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
+                        <!-- Semua Sumber -->
                         <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'all', 'page' => 1])) }}"
-                           class="px-3.5 py-1.5 rounded-lg font-bold transition-all {{ $source === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
-                            🌟 Semua Sumber
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'all' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                            <svg class="w-4 h-4 shrink-0 {{ $source === 'all' ? 'text-white' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                            <span>Semua Sumber</span>
                         </a>
+
+                        <!-- Jurnal GLOBAL FASILKOM UNSUB -->
                         <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'fasilkom', 'page' => 1])) }}"
-                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-bold transition-all {{ $source === 'fasilkom' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
-                            <span>🏛️ Jurnal GLOBAL FASILKOM UNSUB</span>
-                            <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold {{ $source === 'fasilkom' ? 'bg-white/20 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">{{ $fasilkomTotalCount }}</span>
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'fasilkom' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                            <svg class="w-4 h-4 shrink-0 {{ $source === 'fasilkom' ? 'text-white' : 'text-amber-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span>Jurnal GLOBAL FASILKOM</span>
+                            <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ $source === 'fasilkom' ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
+                                {{ $fasilkomTotalCount }}
+                            </span>
                         </a>
+
+                        <!-- OpenAlex Global -->
                         <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'openalex', 'page' => 1])) }}"
-                           class="px-3.5 py-1.5 rounded-lg font-bold transition-all {{ $source === 'openalex' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
-                            🌐 OpenAlex Global
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'openalex' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                            <svg class="w-4 h-4 shrink-0 {{ $source === 'openalex' ? 'text-white' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                            </svg>
+                            <span>OpenAlex Global</span>
                         </a>
                     </div>
                 </div>
@@ -133,21 +149,21 @@
                     <!-- Year Filter -->
                     <div class="flex items-center gap-1.5">
                         <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Rentang Tahun:</span>
-                        <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 text-xs">
+                        <div class="inline-flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 text-xs">
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => 'all', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all {{ $yearFilter === 'all' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === 'all' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
                                 Semua
                             </a>
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => '3_years', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all {{ $yearFilter === '3_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '3_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
                                 3 Thn Terakhir
                             </a>
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => '5_years', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all {{ $yearFilter === '5_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '5_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
                                 5 Thn Terakhir
                             </a>
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => '10_years', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all {{ $yearFilter === '10_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '10_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
                                 10 Thn Terakhir
                             </a>
                         </div>
@@ -265,17 +281,17 @@
                             <div class="flex flex-wrap items-center gap-2">
                                 <!-- Source Badge -->
                                 @if(($item['source'] ?? '') === 'fasilkom')
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800/70 shadow-2xs">
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800/70 shadow-2xs">
                                         <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                        <span>🏛️ Jurnal GLOBAL FASILKOM UNSUB</span>
+                                        <span>Jurnal GLOBAL FASILKOM UNSUB</span>
                                         @if(!empty($item['volume']))
                                             <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-300">Vol. {{ $item['volume'] }}{{ !empty($item['issue']) ? ' No. ' . $item['issue'] : '' }}</span>
                                         @endif
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
                                         <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                                        <span>🌐 OpenAlex Global</span>
+                                        <span>OpenAlex Global</span>
                                     </span>
                                 @endif
 
