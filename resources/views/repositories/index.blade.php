@@ -813,58 +813,68 @@
                 <!-- Hidden Topic Field -->
                 <input type="hidden" name="topic" id="topicInput" value="{{ $topic ?? 'all' }}">
 
-                <!-- Search & Dropdowns Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-end">
-                    <!-- Keyword Search -->
-                    <div class="md:col-span-5 min-w-0 relative" x-data="{ q: '{{ addslashes($search) }}' }">
-                        <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Kata Kunci / Judul / Nama</label>
-                        <div class="relative flex items-center">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            </div>
-                            <input type="text" 
-                                   name="search" 
-                                   id="search" 
-                                   x-model="q"
-                                   placeholder="Cari judul, topik, NPM, abstrak..." 
-                                   class="w-full pl-10 pr-9 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-2xs">
-                            <button type="button" 
-                                    x-show="q" 
-                                    x-cloak
-                                    @click="q = ''; document.getElementById('search').value = ''; document.getElementById('filterForm').submit();"
-                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
-                                    title="Reset kata kunci pencarian">
-                                <div class="w-4 h-4 rounded-full bg-slate-200 hover:bg-rose-100 dark:bg-slate-700 dark:hover:bg-rose-950/60 flex items-center justify-center text-slate-500 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-300 transition-colors">
-                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
+                <!-- Search & Filters Container (Spacious 2-Tier Layout) -->
+                <div class="space-y-3.5">
+                    <!-- Baris 1: Pencarian Utama (Full Width + Tombol Cari) -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2.5">
+                        <div class="flex-1 min-w-0 relative" x-data="{ q: '{{ addslashes($search) }}' }">
+                            <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Kata Kunci / Judul / Nama</label>
+                            <div class="relative flex items-center">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </div>
-                            </button>
+                                <input type="text" 
+                                       name="search" 
+                                       id="search" 
+                                       x-model="q"
+                                       placeholder="Cari judul skripsi, topik penelitian, nama mahasiswa, NPM, atau abstrak..." 
+                                       class="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-2xs">
+                                <button type="button" 
+                                        x-show="q" 
+                                        x-cloak
+                                        @click="q = ''; document.getElementById('search').value = ''; document.getElementById('filterForm').submit();"
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
+                                        title="Reset kata kunci pencarian">
+                                    <div class="w-4 h-4 rounded-full bg-slate-200 hover:bg-rose-100 dark:bg-slate-700 dark:hover:bg-rose-950/60 flex items-center justify-center text-slate-500 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-300 transition-colors">
+                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
+                        <button type="submit" 
+                                class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] active:scale-95 shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <span>Cari</span>
+                        </button>
                     </div>
 
-                    <!-- Angkatan Dropdown -->
-                    <div class="md:col-span-3 min-w-0">
-                        <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Tahun Angkatan</label>
-                        <select name="year" id="year" onchange="this.form.submit()" 
-                                class="w-full truncate py-2.5 pl-3 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
-                            <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
-                            @foreach($years as $y)
-                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Angkatan {{ $y }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <!-- Baris 2: Dropdowns Filter (Tahun Angkatan & Dosen Pembimbing) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-end">
+                        <!-- Angkatan Dropdown -->
+                        <div class="sm:col-span-5 lg:col-span-4 min-w-0">
+                            <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Tahun Angkatan</label>
+                            <select name="year" id="year" onchange="this.form.submit()" 
+                                    class="w-full py-2.5 pl-3.5 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
+                                <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
+                                @foreach($years as $y)
+                                    <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Angkatan {{ $y }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <!-- Dosen Pembimbing Dropdown -->
-                    <div class="md:col-span-4 min-w-0">
-                        <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</label>
-                        <select name="advisor" id="advisor" onchange="this.form.submit()" 
-                                class="w-full truncate py-2.5 pl-3 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
-                            <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Dosen Pembimbing</option>
-                            @foreach($advisors as $adv)
-                                <option value="{{ $adv }}" {{ $advisor == $adv ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">{{ $adv }}</option>
-                            @endforeach
-                        </select>
+                        <!-- Dosen Pembimbing Dropdown -->
+                        <div class="sm:col-span-7 lg:col-span-8 min-w-0">
+                            <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</label>
+                            <select name="advisor" id="advisor" onchange="this.form.submit()" 
+                                    class="w-full py-2.5 pl-3.5 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
+                                <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Dosen Pembimbing</option>
+                                @foreach($advisors as $adv)
+                                    <option value="{{ $adv }}" {{ $advisor == $adv ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">{{ $adv }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
 
