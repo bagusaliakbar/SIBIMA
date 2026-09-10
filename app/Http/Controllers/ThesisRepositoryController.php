@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\UnsubRepositorySyncService;
+use App\Services\OpenAlexService;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -733,8 +734,49 @@ class ThesisRepositoryController extends Controller
     /**
      * Stream or redirect to BAB 6 PDF file.
      */
-    public function streamBab6(ThesisRepository $repository)
+     public function streamBab6(ThesisRepository $repository)
+     {
+         return $this->streamChapter($repository, 6, $repository->file_path_bab6);
+     }
+
+    /**
+     * Search and view external academic open-access journals via OpenAlex.
+     */
+    public function journals(Request $request, OpenAlexService $service)
     {
-        return $this->streamChapter($repository, 6, $repository->file_path_bab6);
+        $query = $request->input('q', '');
+        $page = max(1, (int) $request->input('page', 1));
+        $yearFilter = $request->input('year_filter', 'all');
+        $sort = $request->input('sort', 'relevance');
+        $openAccessOnly = $request->boolean('oa_only', true);
+
+        $results = [
+            'success' => true,
+            'count' => 0,
+            'total_pages' => 0,
+            'current_page' => 1,
+            'per_page' => 12,
+            'data' => [],
+            'error' => null,
+        ];
+
+        if (trim($query) !== '') {
+            $results = $service->search($query, [
+                'page' => $page,
+                'per_page' => 12,
+                'year_filter' => $yearFilter,
+                'open_access_only' => $openAccessOnly,
+                'sort' => $sort,
+            ]);
+        }
+
+        return view('repositories.journals', [
+            'query' => $query,
+            'results' => $results,
+            'yearFilter' => $yearFilter,
+            'sort' => $sort,
+            'openAccessOnly' => $openAccessOnly,
+            'page' => $page,
+        ]);
     }
 }

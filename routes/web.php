@@ -61,7 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/seminar-applications/{application}/download-zip', [App\Http\Controllers\SeminarApplicationController::class, 'downloadZip'])->name('seminar-applications.download-zip');
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
 
-    // Digital Repository
+    // Digital Repository & External Academic Journals
+    Route::get('/repositories/journals', [\App\Http\Controllers\ThesisRepositoryController::class, 'journals'])->name('repositories.journals');
     Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
     Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
     Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');
