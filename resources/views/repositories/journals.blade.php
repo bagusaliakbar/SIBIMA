@@ -35,7 +35,7 @@
 
                 <!-- Search Input Box -->
                 <form action="{{ route('repositories.journals') }}" method="GET" class="pt-2">
-                    <div class="flex flex-col sm:flex-row items-stretch gap-2.5 w-full">
+                    <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
                         <div class="relative flex-1 group">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,12 +47,12 @@
                                    id="journal-search-input"
                                    x-model="searchQuery"
                                    placeholder="Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)..."
-                                   class="block w-full pl-12 pr-11 py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                   class="block w-full pl-12 pr-12 py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
                             <button type="button" 
                                     x-show="searchQuery" 
                                     x-cloak
                                     @click="searchQuery = ''; document.getElementById('journal-search-input').focus();"
-                                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
                                     title="Hapus pencarian">
                                 <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
                                     <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,9 +68,9 @@
                         <input type="hidden" name="oa_only" value="{{ $openAccessOnly ? '1' : '0' }}">
 
                         <button type="submit" 
-                                class="px-7 py-3.5 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl text-sm sm:text-base font-bold shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 cursor-pointer shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <span>Cari Jurnal</span>
+                                class="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white rounded-2xl text-sm sm:text-base font-bold shadow-md shadow-orange-500/25 transition-all flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-95 cursor-pointer shrink-0 whitespace-nowrap">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <span class="tracking-wide">Cari Jurnal</span>
                         </button>
                     </div>
                 </form>
