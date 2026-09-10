@@ -16,6 +16,8 @@ use App\Services\UnsubRepositorySyncService;
 use App\Services\OpenAlexService;
 use App\Services\FasilkomJournalService;
 use App\Services\GarudaJournalService;
+use App\Services\DoajJournalService;
+use App\Services\CrossrefJournalService;
 use App\Models\FasilkomJournal;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -743,13 +745,15 @@ class ThesisRepositoryController extends Controller
      }
 
     /**
-     * Search and view academic open-access journals (OpenAlex, Jurnal GLOBAL FASILKOM, and Jurnal Nasional GARUDA/SINTA).
+     * Search and view academic open-access journals (OpenAlex, Jurnal GLOBAL FASILKOM, GARUDA/SINTA, DOAJ, and Crossref).
      */
     public function journals(
         Request $request, 
         OpenAlexService $openAlexService, 
         FasilkomJournalService $fasilkomService,
-        GarudaJournalService $garudaService
+        GarudaJournalService $garudaService,
+        DoajJournalService $doajService,
+        CrossrefJournalService $crossrefService
     ) {
         $query = $request->input('q', '');
         $page = max(1, (int) $request->input('page', 1));
@@ -787,6 +791,27 @@ class ThesisRepositoryController extends Controller
                     'open_access_only' => $openAccessOnly,
                 ]);
             }
+        } elseif ($source === 'doaj') {
+            // Source: DOAJ (Directory of Open Access Journals - 100% Free OA)
+            if (trim($query) !== '') {
+                $results = $doajService->search($query, [
+                    'page' => $page,
+                    'per_page' => 12,
+                    'year_filter' => $yearFilter,
+                    'sort' => $sort,
+                ]);
+            }
+        } elseif ($source === 'crossref') {
+            // Source: Crossref (DOI Official Registry)
+            if (trim($query) !== '') {
+                $results = $crossrefService->search($query, [
+                    'page' => $page,
+                    'per_page' => 12,
+                    'year_filter' => $yearFilter,
+                    'sort' => $sort,
+                    'open_access_only' => $openAccessOnly,
+                ]);
+            }
         } elseif ($source === 'openalex') {
             // Source: OpenAlex only
             if (trim($query) !== '') {
@@ -799,12 +824,12 @@ class ThesisRepositoryController extends Controller
                 ]);
             }
         } else {
-            // Source: All (FASILKOM + GARUDA + OpenAlex)
+            // Source: All (FASILKOM + GARUDA + DOAJ + Crossref + OpenAlex)
             if (trim($query) !== '') {
                 // 1. Fetch matching FASILKOM papers
                 $fasilkomMatch = $fasilkomService->search($query, [
                     'page' => 1,
-                    'per_page' => 5,
+                    'per_page' => 4,
                     'year_filter' => $yearFilter,
                     'sort' => $sort,
                 ]);
@@ -816,10 +841,27 @@ class ThesisRepositoryController extends Controller
                     'open_access_only' => $openAccessOnly,
                 ]);
 
-                // 3. Fetch OpenAlex papers (Global Academic)
+                // 3. Fetch DOAJ papers (Pure Open Access)
+                $doajResults = $doajService->search($query, [
+                    'page' => $page,
+                    'per_page' => 6,
+                    'year_filter' => $yearFilter,
+                    'sort' => $sort,
+                ]);
+
+                // 4. Fetch Crossref papers (DOI Registry)
+                $crossrefResults = $crossrefService->search($query, [
+                    'page' => $page,
+                    'per_page' => 6,
+                    'year_filter' => $yearFilter,
+                    'sort' => $sort,
+                    'open_access_only' => $openAccessOnly,
+                ]);
+
+                // 5. Fetch OpenAlex papers (Global Academic)
                 $openAlexResults = $openAlexService->search($query, [
                     'page' => $page,
-                    'per_page' => 10,
+                    'per_page' => 6,
                     'year_filter' => $yearFilter,
                     'open_access_only' => $openAccessOnly,
                     'sort' => $sort,
@@ -832,19 +874,37 @@ class ThesisRepositoryController extends Controller
                 }
                 // Add GARUDA national journals
                 if (!empty($garudaResults['data'])) {
-                    $combinedData = array_merge($combinedData, $garudaResults['data']);
+                    $combinedData = array_merge($combinedData, array_slice($garudaResults['data'], 0, 4));
+                }
+                // Add DOAJ open access journals
+                if (!empty($doajResults['data'])) {
+                    $combinedData = array_merge($combinedData, array_slice($doajResults['data'], 0, 4));
+                }
+                // Add Crossref DOI registry journals
+                if (!empty($crossrefResults['data'])) {
+                    $combinedData = array_merge($combinedData, array_slice($crossrefResults['data'], 0, 4));
                 }
                 // Add OpenAlex global journals
                 if (!empty($openAlexResults['data'])) {
-                    $combinedData = array_merge($combinedData, $openAlexResults['data']);
+                    $combinedData = array_merge($combinedData, array_slice($openAlexResults['data'], 0, 4));
                 }
 
-                $totalCount = ($openAlexResults['count'] ?? 0) + ($garudaResults['count'] ?? 0) + ($fasilkomMatch['count'] ?? 0);
-                $maxPages = max($openAlexResults['total_pages'] ?? 1, $garudaResults['total_pages'] ?? 1);
+                $totalCount = ($openAlexResults['count'] ?? 0) 
+                    + ($garudaResults['count'] ?? 0) 
+                    + ($doajResults['count'] ?? 0) 
+                    + ($crossrefResults['count'] ?? 0) 
+                    + ($fasilkomMatch['count'] ?? 0);
+
+                $maxPages = max(
+                    $openAlexResults['total_pages'] ?? 1, 
+                    $garudaResults['total_pages'] ?? 1,
+                    $doajResults['total_pages'] ?? 1,
+                    $crossrefResults['total_pages'] ?? 1
+                );
 
                 $error = null;
-                if (empty($combinedData) && (!empty($openAlexResults['error']) || !empty($garudaResults['error']))) {
-                    $error = $garudaResults['error'] ?? ($openAlexResults['error'] ?? null);
+                if (empty($combinedData)) {
+                    $error = $doajResults['error'] ?? ($crossrefResults['error'] ?? ($garudaResults['error'] ?? ($openAlexResults['error'] ?? null)));
                 }
 
                 $results = [
@@ -857,6 +917,8 @@ class ThesisRepositoryController extends Controller
                     'error' => $error,
                     'fasilkom_count' => $fasilkomMatch['count'] ?? 0,
                     'garuda_count' => $garudaResults['count'] ?? 0,
+                    'doaj_count' => $doajResults['count'] ?? 0,
+                    'crossref_count' => $crossrefResults['count'] ?? 0,
                 ];
             }
         }

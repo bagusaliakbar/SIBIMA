@@ -158,6 +158,7 @@ class AcademicJournalSearchTest extends TestCase
 
         $response = $this->actingAs($student)->get(route('repositories.journals', [
             'q' => 'Deep Learning Error Case',
+            'source' => 'openalex',
         ]));
 
         $response->assertStatus(200);

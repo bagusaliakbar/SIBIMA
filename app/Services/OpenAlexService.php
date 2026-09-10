@@ -110,7 +110,7 @@ class OpenAlexService
                     'current_page' => $page,
                     'per_page' => $perPage,
                     'data' => [],
-                    'error' => 'Gagal mengambil data jurnal dari OpenAlex. Silakan coba kembali sesaat lagi.',
+                    'error' => 'Layanan OpenAlex API sedang mengalami gangguan sementara. Silakan coba kembali sesaat lagi.',
                 ];
             }
 

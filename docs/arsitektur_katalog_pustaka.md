@@ -203,15 +203,44 @@ Data repositori disimpan pada tabel `thesis_repositories`:
 
 ---
 
-## 9. Ringkasan File & Peran Teknis
+## 10. Eksplorasi Jurnal Ilmiah Multi-Sumber (FASILKOM, GARUDA, DOAJ, Crossref, & OpenAlex)
+
+Selain katalog skripsi internal, SIBIMA menyediakan portal terintegrasi **Eksplorasi Jurnal Ilmiah** (`/repositories/journals`) yang memadukan 5 sumber ilmiah bereputasi:
+
+| Sumber Jurnal | Cakupan & Fokus | Protokol / API | Fitur Khusus |
+| :--- | :--- | :--- | :--- |
+| **Jurnal GLOBAL FASILKOM UNSUB** | Artikel dosen & sivitas akademika FASILKOM Universitas Subang | OAI-PMH Harvester (`oai_dc`) + DB Lokal | Tautan naskah OJS resmi, volume, edisi, dan sitasi instan |
+| **GARUDA (Garba Rujukan Digital)** | Jurnal Nasional Terakreditasi (SINTA 1–6) Kemdiktisaintek RI | HTTP Parser & Search Ingestion | Filter akses terbuka, penerbit perguruan tinggi, PDF Kemdiktisaintek |
+| **DOAJ (Directory of Open Access Journals)** | Direktori global jurnal *peer-reviewed* 100% *pure open access* | REST API (`/api/search/articles/{query}`) | Kueri Lucene (`bibjson.year`), DOI naskah, tautan langsung PDF |
+| **Crossref** | Registri DOI resmi dunia dengan cakupan jutaan publikasi ilmiah | REST API (`/works`) via *Polite Pool* | Jumlah sitasi (`is-referenced-by-count`), pengenal DOI resmi |
+| **Academic Global (OpenAlex)** | Katalog bibliografi ilmiah global terlengkap (250jt+ karya) | REST API (`/works`) | Rekonstruksi abstrak *inverted index*, metrik dampak, PDF OA |
+
+### Fitur Generator Sitasi Otomatis
+Setiap artikel yang ditemukan dari kelima sumber dapat disitasi secara instan dalam 3 format akademik standar dengan satu klik salin:
+1. **APA 7th Edition** (Format standar penulisan skripsi FASILKOM)
+2. **IEEE** (Format standar publikasi bidang ilmu komputer & teknik)
+3. **BibTeX** (Format referensi untuk LaTeX / Overleaf / Mendeley)
+
+---
+
+## 11. Ringkasan File & Peran Teknis
 
 | Lokasi Berkas | Peran dalam Arsitektur |
 | :--- | :--- |
 | [`app/Services/UnsubRepositorySyncService.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Services/UnsubRepositorySyncService.php) | Ingestion API UNSUB, regex filter Fasilkom, ekstraksi bab, & deduplikasi. |
-| [`app/Http/Controllers/ThesisRepositoryController.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Http/Controllers/ThesisRepositoryController.php) | Controller katalog, streaming proxy naskah bab, & runner chunk sync. |
+| [`app/Services/FasilkomJournalService.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Services/FasilkomJournalService.php) | Layanan pencarian & filter katalog Jurnal GLOBAL FASILKOM lokal. |
+| [`app/Services/GarudaJournalService.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Services/GarudaJournalService.php) | Layanan pencarian & integrasi Portal GARUDA Kemdiktisaintek (SINTA). |
+| [`app/Services/DoajJournalService.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Services/DoajJournalService.php) | Layanan pencarian & normalisasi DOAJ REST API (Open Access global). |
+| [`app/Services/CrossrefJournalService.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Services/CrossrefJournalService.php) | Layanan pencarian Crossref REST API via polite pool & ekstraksi DOI. |
+| [`app/Services/OpenAlexService.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Services/OpenAlexService.php) | Layanan integrasi OpenAlex API global & rekonstruksi abstrak inverted index. |
+| [`app/Http/Controllers/ThesisRepositoryController.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Http/Controllers/ThesisRepositoryController.php) | Controller katalog, streaming proxy naskah bab, & federasi multi-sumber jurnal. |
+| [`app/Console/Commands/SyncFasilkomJournalsCommand.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Console/Commands/SyncFasilkomJournalsCommand.php) | Perintah artisan pemanenan artikel OAI-PMH Jurnal FASILKOM UNSUB. |
 | [`app/Console/Commands/CleanThesisCacheCommand.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/app/Console/Commands/CleanThesisCacheCommand.php) | Perintah artisan pembersih file cache PDF (>7 hari). |
 | [`routes/console.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/routes/console.php) | Penjadwalan mingguan `repositories:clean-cache`. |
-| [`routes/web.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/routes/web.php) | Routing streaming BAB 1–6 & AJAX endpoint sinkronisasi. |
+| [`routes/web.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/routes/web.php) | Routing streaming BAB 1–6, AJAX endpoint, & rute eksplorasi jurnal ilmiah. |
 | [`resources/views/repositories/index.blade.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/resources/views/repositories/index.blade.php) | Antarmuka katalog, modal abstrak, In-App PDF reader, & modal sinkronisasi. |
+| [`resources/views/repositories/journals.blade.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/resources/views/repositories/journals.blade.php) | Antarmuka penelusuran multi-sumber jurnal (GLOBAL, GARUDA, DOAJ, Crossref, OpenAlex). |
 | [`tests/Feature/UnsubRepositorySyncTest.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/tests/Feature/UnsubRepositorySyncTest.php) | Unit & feature test sinkronisasi dan streaming BAB 1–6. |
 | [`tests/Feature/CleanThesisCacheTest.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/tests/Feature/CleanThesisCacheTest.php) | Unit test pembersihan cache file PDF. |
+| [`tests/Feature/AcademicJournalSearchTest.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/tests/Feature/AcademicJournalSearchTest.php) | Feature test pencarian jurnal, OAI-PMH, GARUDA, OpenAlex, & federasi. |
+| [`tests/Feature/DoajAndCrossrefJournalSearchTest.php`](file:///c:/Users/Bagus%20Ali%20Akbar/Herd/sibima/tests/Feature/DoajAndCrossrefJournalSearchTest.php) | Feature test integrasi DOAJ dan Crossref, polite pool, filter, & federasi. |

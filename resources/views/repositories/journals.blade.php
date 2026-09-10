@@ -55,6 +55,24 @@
                             <span>Jurnal Nasional (GARUDA / SINTA)</span>
                         </a>
 
+                        <!-- DOAJ (Directory of Open Access Journals) -->
+                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'doaj', 'page' => 1])) }}"
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'doaj' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                            <svg class="w-4 h-4 shrink-0 {{ $source === 'doaj' ? 'text-white' : 'text-emerald-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <span>DOAJ (Open Access)</span>
+                        </a>
+
+                        <!-- Crossref (DOI Official Registry) -->
+                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'crossref', 'page' => 1])) }}"
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'crossref' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                            <svg class="w-4 h-4 shrink-0 {{ $source === 'crossref' ? 'text-white' : 'text-indigo-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                            <span>Crossref (DOI Registry)</span>
+                        </a>
+
                         <!-- OpenAlex Global -->
                         <a href="{{ route('repositories.journals', array_merge(request()->query(), ['source' => 'openalex', 'page' => 1])) }}"
                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $source === 'openalex' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
@@ -260,6 +278,10 @@
                         Tidak ditemukan artikel di Jurnal GLOBAL FASILKOM{{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
                     @elseif($source === 'garuda')
                         Tidak ditemukan artikel di Jurnal Nasional GARUDA (SINTA){{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
+                    @elseif($source === 'doaj')
+                        Tidak ditemukan artikel di DOAJ (Open Access){{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
+                    @elseif($source === 'crossref')
+                        Tidak ditemukan publikasi di Crossref (DOI Registry){{ $query ? ' untuk kata kunci "' . $query . '"' : '' }}
                     @else
                         Tidak ditemukan jurnal untuk kata kunci "{{ $query }}"
                     @endif
@@ -269,6 +291,10 @@
                         Coba gunakan kata kunci yang lebih umum seperti nama metode atau topik (misal: "SPK", "Android", "Web", "Keamanan").
                     @elseif($source === 'garuda')
                         Coba gunakan kata kunci bahasa Indonesia atau istilah yang lebih umum (misal: "sistem informasi", "klasifikasi", "metode").
+                    @elseif($source === 'doaj')
+                        Coba gunakan istilah riset dalam bahasa Inggris atau kata kunci yang lebih luas (misal: "machine learning", "deep learning", "iot").
+                    @elseif($source === 'crossref')
+                        Coba gunakan judul lengkap, nomor DOI resmi, atau kata kunci teknologi internasional dalam bahasa Inggris.
                     @else
                         Coba gunakan kata kunci bahasa Inggris atau istilah yang lebih umum (misalnya gunakan "Sentiment Analysis" daripada kalimat panjang).
                     @endif
@@ -288,6 +314,10 @@
                         Menampilkan <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel dari <span class="font-bold text-orange-600 dark:text-orange-400">Jurnal GLOBAL FASILKOM UNSUB</span>
                     @elseif($source === 'garuda')
                         Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel di <span class="font-bold text-rose-600 dark:text-rose-400">Jurnal Nasional GARUDA (SINTA)</span> untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
+                    @elseif($source === 'doaj')
+                        Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel di <span class="font-bold text-emerald-600 dark:text-emerald-400">DOAJ (Open Access)</span> untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
+                    @elseif($source === 'crossref')
+                        Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> publikasi di <span class="font-bold text-indigo-600 dark:text-indigo-400">Crossref (DOI Registry)</span> untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
                     @else
                         Ditemukan sekitar <span class="font-bold text-slate-900 dark:text-white">{{ number_format($results['count']) }}</span> artikel untuk kata kunci <span class="font-bold text-orange-600 dark:text-orange-400">"{{ $query }}"</span>
                     @endif
@@ -335,6 +365,16 @@
                                         @if(!empty($item['publisher']))
                                             <span class="text-[10px] font-semibold text-rose-700 dark:text-rose-300">({{ $item['publisher'] }})</span>
                                         @endif
+                                    </span>
+                                @elseif(($item['source'] ?? '') === 'doaj')
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800/70 shadow-2xs">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                        <span>DOAJ Open Access</span>
+                                    </span>
+                                @elseif(($item['source'] ?? '') === 'crossref')
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800/70 shadow-2xs">
+                                        <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                        <span>Crossref DOI Registry</span>
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
@@ -441,7 +481,7 @@
                                        rel="noopener noreferrer"
                                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all shadow-2xs">
                                         <svg class="w-4 h-4 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                        <span>{{ ($item['source'] ?? '') === 'fasilkom' ? 'Buka di OJS FASILKOM' : (($item['source'] ?? '') === 'garuda' ? 'Detail di Portal GARUDA' : 'Lihat di Penerbit') }}</span>
+                                        <span>{{ ($item['source'] ?? '') === 'fasilkom' ? 'Buka di OJS FASILKOM' : (($item['source'] ?? '') === 'garuda' ? 'Detail di Portal GARUDA' : (($item['source'] ?? '') === 'doaj' ? 'Detail di DOAJ' : (($item['source'] ?? '') === 'crossref' ? 'Detail via DOI' : 'Lihat di Penerbit'))) }}</span>
                                     </a>
                                 @endif
 
