@@ -45,20 +45,205 @@
             </div>
         @endif
         @if(!$isEligible)
-            <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 p-8 text-center">
-                <div class="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-100 dark:border-amber-800/50">
-                    <svg class="w-10 h-10 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Menu Belum Aktif</h3>
-                <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
-                    Anda dapat mengakses menu pengajuan sidang skripsi jika **kedua dosen pembimbing** sudah memberikan ACC Sidang pada jadwal bimbingan Anda.
-                </p>
-                <div class="flex justify-center gap-4">
-                    <div class="flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 rounded border {{ ($thesis->acc_sidang_p1 ?? false) ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500' }} text-xs font-bold uppercase">
-                        Pembimbing 1: {{ ($thesis->acc_sidang_p1 ?? false) ? 'Sudah ACC' : 'Belum ACC' }}
+            @php
+                $p1 = $thesis?->pembimbing1;
+                $p2 = $thesis?->pembimbing2;
+                $p1Sessions = $thesis ? $thesis->mentoringSessions()->where('dosen_id', $thesis->pembimbing1_id)->where('status', 'completed')->where('is_absent', false)->count() : 0;
+                $p2Sessions = $thesis && $thesis->pembimbing2_id ? $thesis->mentoringSessions()->where('dosen_id', $thesis->pembimbing2_id)->where('status', 'completed')->where('is_absent', false)->count() : 0;
+                $totalSessions = $p1Sessions + $p2Sessions;
+                $accSidangP1 = (bool) ($thesis?->acc_sidang_p1);
+                $accSidangP2 = (bool) ($thesis?->acc_sidang_p2);
+                $isPassedSeminar = $thesis && ($thesis->isAccUpFinal() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists());
+            @endphp
+
+            <div class="space-y-6">
+                <!-- Main Status & Hero Guidance Card -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 p-6 sm:p-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-6">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200/70 dark:border-indigo-800/40 flex items-center justify-center shrink-0">
+                            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+                                    Progres Menuju Pendaftaran Sidang Skripsi
+                                </h3>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
+                                    Belum Memenuhi Syarat
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed max-w-2xl">
+                                Formulir pendaftaran sidang skripsi akan otomatis aktif setelah Anda memperoleh persetujuan (<strong class="text-slate-700 dark:text-slate-200 font-bold">ACC Sidang Skripsi</strong>) dari <strong class="text-slate-700 dark:text-slate-200 font-bold">kedua dosen pembimbing</strong>.
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 rounded border {{ ($thesis->acc_sidang_p2 ?? false) ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500' }} text-xs font-bold uppercase">
-                        Pembimbing 2: {{ ($thesis->acc_sidang_p2 ?? false) ? 'Sudah ACC' : 'Belum ACC' }}
+
+                    <!-- Dual Supervisor Status Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/80 mb-6">
+                        <!-- Pembimbing 1 -->
+                        <div class="p-4 rounded-xl border transition-all {{ $accSidangP1 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40 flex items-center justify-center text-xs font-black shrink-0">
+                                        P1
+                                    </span>
+                                    <div>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Dosen Pembimbing 1</p>
+                                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
+                                            {{ $p1 ? $p1->name : 'Belum Ditugaskan' }}
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div>
+                                    @if($accSidangP1)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-2xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                            <span>Sudah ACC</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span>Belum ACC</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                <span>Bimbingan Selesai:</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-200">{{ $p1Sessions }} Sesi</span>
+                            </div>
+                        </div>
+
+                        <!-- Pembimbing 2 -->
+                        <div class="p-4 rounded-xl border transition-all {{ $accSidangP2 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40 flex items-center justify-center text-xs font-black shrink-0">
+                                        P2
+                                    </span>
+                                    <div>
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Dosen Pembimbing 2</p>
+                                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
+                                            {{ $p2 ? $p2->name : ($thesis?->pembimbing2_id ? '-' : 'Belum Ditugaskan') }}
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div>
+                                    @if($accSidangP2)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-2xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                            <span>Sudah ACC</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span>Belum ACC</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                <span>Bimbingan Selesai:</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-200">{{ $p2Sessions }} Sesi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checklist Prasyarat & Action CTA -->
+                    <div class="bg-slate-50/70 dark:bg-slate-900/40 rounded-xl p-5 border border-slate-200/70 dark:border-slate-700/60">
+                        <h4 class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-3.5 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Checklist Kesiapan Sidang Skripsi
+                        </h4>
+
+                        <div class="space-y-3">
+                            <!-- Item 1: Lulus Seminar Proposal -->
+                            <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-200/40 dark:border-slate-800">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-5 h-5 rounded-full {{ $isPassedSeminar ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
+                                        @if($isPassedSeminar)
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        @else
+                                            <span class="text-[9px] font-black">1</span>
+                                        @endif
+                                    </span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">Tahap Seminar Proposal Selesai</span>
+                                </div>
+                                <span class="text-[11px] font-bold {{ $isPassedSeminar ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
+                                    {{ $isPassedSeminar ? 'Terpenuhi' : 'Belum Selesai' }}
+                                </span>
+                            </div>
+
+                            <!-- Item 2: Sesi Bimbingan Minimal -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs py-1.5 border-b border-slate-200/40 dark:border-slate-800">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-5 h-5 rounded-full {{ $totalSessions >= 8 ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
+                                        @if($totalSessions >= 8)
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        @else
+                                            <span class="text-[9px] font-black">2</span>
+                                        @endif
+                                    </span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">Total Bimbingan Skripsi</span>
+                                </div>
+                                <div class="flex items-center gap-2 pl-7 sm:pl-0">
+                                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">{{ $totalSessions }} Sesi Terlaksana</span>
+                                </div>
+                            </div>
+
+                            <!-- Item 3: ACC Sidang Pembimbing 1 -->
+                            <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-200/40 dark:border-slate-800">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-5 h-5 rounded-full {{ $accSidangP1 ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
+                                        @if($accSidangP1)
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        @else
+                                            <span class="text-[9px] font-black">3</span>
+                                        @endif
+                                    </span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">ACC Sidang dari Pembimbing 1</span>
+                                </div>
+                                <span class="text-[11px] font-bold {{ $accSidangP1 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
+                                    {{ $accSidangP1 ? 'Disetujui' : 'Menunggu Dosen' }}
+                                </span>
+                            </div>
+
+                            <!-- Item 4: ACC Sidang Pembimbing 2 -->
+                            <div class="flex items-center justify-between text-xs py-1.5">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-5 h-5 rounded-full {{ $accSidangP2 ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
+                                        @if($accSidangP2)
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        @else
+                                            <span class="text-[9px] font-black">4</span>
+                                        @endif
+                                    </span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">ACC Sidang dari Pembimbing 2</span>
+                                </div>
+                                <span class="text-[11px] font-bold {{ $accSidangP2 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
+                                    {{ $accSidangP2 ? 'Disetujui' : 'Menunggu Dosen' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- CTA Action Buttons -->
+                        <div class="mt-5 pt-4 border-t border-slate-200/60 dark:border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>Segera koordinasikan dan selesaikan bimbingan naskah akhir dengan dosen pembimbing Anda.</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('mentoring.student_index') }}" 
+                                   class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-orange-500/20">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>Buka Jadwal Bimbingan</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

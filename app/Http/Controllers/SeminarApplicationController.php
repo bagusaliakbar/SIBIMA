@@ -26,7 +26,7 @@ class SeminarApplicationController extends Controller
         $user = Auth::user();
         
         if ($user->role === 'mahasiswa') {
-            $thesis = Thesis::where('student_id', $user->id)->first();
+            $thesis = Thesis::where('student_id', $user->id)->with(['pembimbing1', 'pembimbing2'])->first();
             
             $hasSeminar = $thesis ? SeminarApplication::where('thesis_id', $thesis->id)
                 ->whereIn('status', ['approved', 'completed', 'finished'])
