@@ -37,7 +37,7 @@
                 <form action="{{ route('repositories.journals') }}" method="GET" class="pt-2">
                     <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
                         <div class="relative flex-1 group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
@@ -47,12 +47,13 @@
                                    id="journal-search-input"
                                    x-model="searchQuery"
                                    placeholder="Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)..."
-                                   class="block w-full pl-12 pr-12 py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                   style="padding-left: 3.5rem !important; padding-right: 3.25rem !important;"
+                                   class="block w-full py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
                             <button type="button" 
                                     x-show="searchQuery" 
                                     x-cloak
                                     @click="searchQuery = ''; document.getElementById('journal-search-input').focus();"
-                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer z-10"
                                     title="Hapus pencarian">
                                 <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
                                     <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
