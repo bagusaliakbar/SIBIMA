@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/thesis-defense-applications/{application}', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'destroy'])->name('thesis-defense-applications.destroy');
 
     Route::resource('mentoring-sessions', App\Http\Controllers\MentoringSessionController::class);
+    Route::get('/mentoring-sessions-student', [App\Http\Controllers\MentoringSessionController::class, 'index'])->name('mentoring.student_index');
     Route::post('/mentoring-sessions/{session}/add-students', [App\Http\Controllers\MentoringSessionController::class, 'addStudents'])->name('mentoring-sessions.add-students');
     Route::get('/mentoring-sessions-live-attendance', [App\Http\Controllers\MentoringSessionController::class, 'liveAttendance'])->name('mentoring-sessions.live-attendance');
     Route::patch('/mentoring-sessions/{session}/status', [App\Http\Controllers\MentoringSessionController::class, 'updateStatus'])->name('mentoring-sessions.status');
