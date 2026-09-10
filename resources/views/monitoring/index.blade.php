@@ -26,7 +26,10 @@
                     @endif
 
                     <!-- Filter Angkatan -->
-                    <select name="entry_year" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-sm">
+                    <select name="entry_year" 
+                            onchange="this.form.submit()" 
+                            style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                            class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-sm cursor-pointer">
                         <option value="">-- Semua Angkatan --</option>
                         @foreach($entryYears as $year)
                             <option value="{{ $year }}" {{ ($entryYear ?? '') == $year ? 'selected' : '' }}>Angkatan {{ $year }}</option>
@@ -34,7 +37,10 @@
                     </select>
 
                     <!-- Filter Dosen Pembimbing -->
-                    <select name="pembimbing_id" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-sm">
+                    <select name="pembimbing_id" 
+                            onchange="this.form.submit()" 
+                            style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                            class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-sm cursor-pointer">
                         <option value="">-- Semua Dosen Pembimbing --</option>
                         @foreach($dosens as $dosen)
                             <option value="{{ $dosen->id }}" {{ ($pembimbingId ?? '') == $dosen->id ? 'selected' : '' }}>{{ $dosen->name }}</option>

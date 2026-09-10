@@ -186,19 +186,23 @@
 
                 <div class="flex flex-wrap items-center gap-2.5 flex-1">
                     <!-- Search Input -->
-                    <div class="relative flex-1 min-w-[200px] max-w-sm">
+                    <div class="relative flex-1 min-w-[220px] max-w-sm group">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
                         <input type="text" 
                                name="search" 
                                value="{{ $filters['search'] ?? '' }}" 
                                placeholder="Cari mahasiswa atau NPM..."
-                               class="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-slate-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
+                               style="padding-left: 2.6rem !important;"
+                               class="w-full pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs transition-all">
                     </div>
 
                     <!-- Filter Status Kepatuhan -->
-                    <select name="compliance_status" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs">
+                    <select name="compliance_status" 
+                            onchange="this.form.submit()" 
+                            style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                            class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs cursor-pointer">
                         <option value="">-- Semua Status Kepatuhan --</option>
                         <option value="compliant" {{ ($filters['compliance_status'] ?? '') === 'compliant' ? 'selected' : '' }}>🟢 Lengkap (>= 1x P1 & P2)</option>
                         <option value="partial" {{ ($filters['compliance_status'] ?? '') === 'partial' ? 'selected' : '' }}>🟡 Sebagian (Hanya 1 Dosen)</option>
@@ -206,7 +210,10 @@
                     </select>
 
                     <!-- Filter Dosen Pembimbing -->
-                    <select name="pembimbing_id" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs">
+                    <select name="pembimbing_id" 
+                            onchange="this.form.submit()" 
+                            style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                            class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs cursor-pointer">
                         <option value="">-- Semua Dosen Pembimbing --</option>
                         @foreach($dosens as $dosen)
                             <option value="{{ $dosen->id }}" {{ ($filters['pembimbing_id'] ?? '') == $dosen->id ? 'selected' : '' }}>{{ $dosen->name }}</option>
@@ -214,7 +221,10 @@
                     </select>
 
                     <!-- Filter Angkatan -->
-                    <select name="entry_year" onchange="this.form.submit()" class="py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs">
+                    <select name="entry_year" 
+                            onchange="this.form.submit()" 
+                            style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                            class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs cursor-pointer">
                         <option value="">-- Semua Angkatan --</option>
                         @foreach($entryYears as $year)
                             <option value="{{ $year }}" {{ ($filters['entry_year'] ?? '') == $year ? 'selected' : '' }}>Angkatan {{ $year }}</option>
