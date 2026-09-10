@@ -19,13 +19,9 @@
     <div class="w-full space-y-6" x-data="academicJournalApp()">
         @include('repositories.partials.tabs')
 
-        <!-- HERO SEARCH BANNER (Adaptive Light/Dark Theme) -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50/70 via-white to-amber-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6 sm:p-8 border border-orange-200/70 dark:border-slate-700/80 shadow-sm dark:shadow-xl space-y-4">
-            <!-- Subtle glow accents -->
-            <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-orange-500/10 dark:bg-orange-500/5 blur-3xl pointer-events-none"></div>
-            <div class="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-amber-500/10 dark:bg-amber-500/5 blur-3xl pointer-events-none"></div>
-
-            <div class="relative z-10 max-w-3xl space-y-3">
+        <!-- HERO SEARCH BANNER -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-4">
+            <div class="max-w-3xl space-y-3">
                 <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
                     Eksplorasi Jurnal Ilmiah <span class="text-orange-600 dark:text-orange-400 font-black">Open Access</span>
                 </h1>
@@ -48,7 +44,7 @@
                                    x-model="searchQuery"
                                    placeholder="Ketik topik, judul, atau kata kunci (cth: Machine Learning, Sistem Informasi, IoT)..."
                                    style="padding-left: 3.5rem !important; padding-right: 3.25rem !important;"
-                                   class="block w-full py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                   class="block w-full py-3.5 sm:py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base font-medium shadow-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
                             <button type="button" 
                                     x-show="searchQuery" 
                                     x-cloak
@@ -94,7 +90,7 @@
                     @endphp
                     @foreach($popularTopics as $topic)
                         <a href="{{ route('repositories.journals', ['q' => $topic, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
-                           class="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-white/90 dark:bg-slate-800/90 hover:bg-orange-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-white transition-colors border border-slate-200/90 dark:border-slate-700 shadow-2xs">
+                           class="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-50 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-white transition-colors border border-slate-200/90 dark:border-slate-700 shadow-2xs">
                             {{ $topic }}
                         </a>
                     @endforeach
@@ -182,7 +178,7 @@
                 </div>
                 <div class="max-w-md mx-auto space-y-2">
                     <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight">
-                        Cari & Temukan Referensi Skripsi Berkualitas
+                        Cari & Temukan Referensi Skripsi
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                         Masukkan kata kunci judul, topik riset, atau metode penelitian yang ingin Anda pelajari pada kotak pencarian di atas untuk memulai pencarian artikel jurnal.

@@ -34,7 +34,7 @@ class AcademicJournalSearchTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Eksplorasi Jurnal Ilmiah');
         $response->assertSee('Open Access');
-        $response->assertSee('Cari & Temukan Referensi Skripsi Berkualitas', false);
+        $response->assertSee('Cari & Temukan Referensi Skripsi', false);
         $response->assertSee('Machine Learning');
     }
 
