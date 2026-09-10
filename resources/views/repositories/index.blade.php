@@ -816,10 +816,11 @@
                 <!-- Search & Filters Container (Spacious 2-Tier Layout) -->
                 <div class="space-y-4.5 sm:space-y-5">
                     <!-- Baris 1: Pencarian Utama (Full Width + Tombol Cari) -->
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2.5">
-                        <div class="flex-1 min-w-0 relative" x-data="{ q: '{{ addslashes($search) }}' }">
-                            <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Kata Kunci / Judul / Nama</label>
-                            <div class="relative flex items-center">
+                    <div x-data="{ q: '{{ addslashes($search) }}' }">
+                        <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Kata Kunci / Judul / Nama</label>
+                        <div class="flex items-center gap-2">
+                            <!-- Input Wrapper -->
+                            <div class="relative flex-1 min-w-0">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </div>
@@ -842,12 +843,14 @@
                                     </div>
                                 </button>
                             </div>
+
+                            <!-- Tombol Cari -->
+                            <button type="submit" 
+                                    class="h-10 px-4 sm:px-5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm shadow-orange-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.01] active:scale-95 shrink-0">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <span>Cari</span>
+                            </button>
                         </div>
-                        <button type="submit" 
-                                class="h-10 px-4 sm:px-5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm shadow-orange-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.01] active:scale-95 shrink-0">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <span>Cari</span>
-                        </button>
                     </div>
 
                     <!-- Baris 2: Dropdowns Filter (Tahun Angkatan & Dosen Pembimbing) -->
