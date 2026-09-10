@@ -809,16 +809,16 @@
 
         <!-- ADVANCED FILTER & DISCOVERY CARD -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm space-y-5">
-            <form action="{{ route('repositories.index') }}" method="GET" id="filterForm" class="space-y-4">
+            <form action="{{ route('repositories.index') }}" method="GET" id="filterForm" class="space-y-4.5 sm:space-y-5">
                 <!-- Hidden Topic Field -->
                 <input type="hidden" name="topic" id="topicInput" value="{{ $topic ?? 'all' }}">
 
                 <!-- Search & Filters Container (Spacious 2-Tier Layout) -->
-                <div class="space-y-3.5">
+                <div class="space-y-4.5 sm:space-y-5">
                     <!-- Baris 1: Pencarian Utama (Full Width + Tombol Cari) -->
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2.5">
                         <div class="flex-1 min-w-0 relative" x-data="{ q: '{{ addslashes($search) }}' }">
-                            <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Kata Kunci / Judul / Nama</label>
+                            <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Kata Kunci / Judul / Nama</label>
                             <div class="relative flex items-center">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -851,10 +851,10 @@
                     </div>
 
                     <!-- Baris 2: Dropdowns Filter (Tahun Angkatan & Dosen Pembimbing) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-end">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 sm:gap-4 items-end">
                         <!-- Angkatan Dropdown -->
                         <div class="sm:col-span-5 lg:col-span-4 min-w-0">
-                            <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Tahun Angkatan</label>
+                            <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Tahun Angkatan</label>
                             <select name="year" id="year" onchange="this.form.submit()" 
                                     class="w-full py-2.5 pl-3.5 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
                                 <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
@@ -866,7 +866,7 @@
 
                         <!-- Dosen Pembimbing Dropdown -->
                         <div class="sm:col-span-7 lg:col-span-8 min-w-0">
-                            <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Dosen Pembimbing</label>
+                            <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Dosen Pembimbing</label>
                             <select name="advisor" id="advisor" onchange="this.form.submit()" 
                                     class="w-full py-2.5 pl-3.5 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
                                 <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Dosen Pembimbing</option>
@@ -879,7 +879,7 @@
                 </div>
 
                 <!-- Horizontal Topic Filter Pills -->
-                <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60">
                     <div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
                         <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 shrink-0 mr-1">Kategori:</span>
                         @foreach($topics as $key => $topData)
