@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
@@ -36,7 +37,7 @@ class CleanThesisCacheCommand extends Command
         $baseFolder = 'theses_cache';
         if (!$disk->exists($baseFolder)) {
             $this->info("Folder cache '{$baseFolder}' belum ada atau masih kosong.");
-            return Command::SUCCESS;
+            return SymfonyCommand::SUCCESS;
         }
 
         $this->info("Memindai cache PDF di penyimpanan '{$baseFolder}'...");
@@ -46,7 +47,7 @@ class CleanThesisCacheCommand extends Command
 
         if ($totalFiles === 0) {
             $this->info("Tidak ada file cache yang perlu dibersihkan (0 file ditemukan).");
-            return Command::SUCCESS;
+            return SymfonyCommand::SUCCESS;
         }
 
         $now = Carbon::now();
@@ -84,7 +85,7 @@ class CleanThesisCacheCommand extends Command
         $this->line(" - File dihapus        : {$deletedCount}");
         $this->line(" - Ruang disk dibebaskan: {$freedFormatted}");
 
-        return Command::SUCCESS;
+        return SymfonyCommand::SUCCESS;
     }
 
     /**

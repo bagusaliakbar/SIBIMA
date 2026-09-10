@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\UnsubRepositorySyncService;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class PopulateAllChaptersCommand extends Command
 {
@@ -43,7 +44,7 @@ class PopulateAllChaptersCommand extends Command
         $allDocs = $service->fetchDocuments();
         if (empty($allDocs)) {
             $this->error('Gagal mengambil data dari API Repositori UNSUB.');
-            return Command::FAILURE;
+            return SymfonyCommand::FAILURE;
         }
 
         $fasilkomDocs = $service->filterFasilkom($allDocs);
@@ -52,7 +53,7 @@ class PopulateAllChaptersCommand extends Command
 
         if ($totalFasilkom === 0) {
             $this->warn('Tidak ada dokumen FASILKOM yang ditemukan.');
-            return Command::SUCCESS;
+            return SymfonyCommand::SUCCESS;
         }
 
         $this->newLine();
@@ -109,6 +110,6 @@ class PopulateAllChaptersCommand extends Command
         );
 
         $this->info('Seluruh naskah bab skripsi berhasil dihubungkan ke repositori SIBIMA!');
-        return Command::SUCCESS;
+        return SymfonyCommand::SUCCESS;
     }
 }

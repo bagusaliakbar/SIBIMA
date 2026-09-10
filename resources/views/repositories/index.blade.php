@@ -2117,7 +2117,7 @@
                         id="closeUnsubModalBtn" 
                         onclick="closeUnsubSyncModal(true)" 
                         style="display: none; background-color: #0f172a !important; color: #ffffff !important;"
-                        class="hidden inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 shadow-md transition-all cursor-pointer">
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 shadow-md transition-all cursor-pointer">
                     <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     <span>Tutup & Muat Ulang</span>
                 </button>

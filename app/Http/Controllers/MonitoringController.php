@@ -13,6 +13,7 @@ use App\Exports\DefenseScoresExport;
 use App\Exports\WeeklyMentoringExport;
 use App\Services\WhatsAppService;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -409,8 +410,8 @@ class MonitoringController extends Controller implements HasMiddleware
             $baseDate = $baseDate->copy()->addWeeks($weekOffset);
         }
 
-        $startDate = $baseDate->copy()->startOfWeek(Carbon::MONDAY)->startOfDay();
-        $endDate = $baseDate->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+        $startDate = $baseDate->copy()->startOfWeek(CarbonInterface::MONDAY)->startOfDay();
+        $endDate = $baseDate->copy()->endOfWeek(CarbonInterface::SUNDAY)->endOfDay();
 
         $filters = [
             'search' => $request->input('search'),
@@ -430,8 +431,8 @@ class MonitoringController extends Controller implements HasMiddleware
         // Navigation dates
         $prevWeekDate = $startDate->copy()->subWeek()->format('Y-m-d');
         $nextWeekDate = $startDate->copy()->addWeek()->format('Y-m-d');
-        $currentWeekDate = Carbon::now()->startOfWeek(Carbon::MONDAY)->format('Y-m-d');
-        $isCurrentWeek = $startDate->isSameDay(Carbon::now()->startOfWeek(Carbon::MONDAY));
+        $currentWeekDate = Carbon::now()->startOfWeek(CarbonInterface::MONDAY)->format('Y-m-d');
+        $isCurrentWeek = $startDate->isSameDay(Carbon::now()->startOfWeek(CarbonInterface::MONDAY));
 
         return view('monitoring.weekly', compact(
             'theses',
@@ -453,8 +454,8 @@ class MonitoringController extends Controller implements HasMiddleware
      */
     public function sendWeeklyReminder(Request $request, Thesis $thesis, WhatsAppService $whatsAppService)
     {
-        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : Carbon::now()->startOfWeek(Carbon::MONDAY);
-        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : Carbon::now()->endOfWeek(Carbon::SUNDAY);
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : Carbon::now()->startOfWeek(CarbonInterface::MONDAY);
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : Carbon::now()->endOfWeek(CarbonInterface::SUNDAY);
 
         $student = $thesis->student;
         if (!$student || empty($student->phone)) {
@@ -491,8 +492,8 @@ class MonitoringController extends Controller implements HasMiddleware
         $dateParam = $request->input('date');
         $baseDate = $dateParam ? Carbon::parse($dateParam) : Carbon::now();
 
-        $startDate = $baseDate->copy()->startOfWeek(Carbon::MONDAY)->startOfDay();
-        $endDate = $baseDate->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+        $startDate = $baseDate->copy()->startOfWeek(CarbonInterface::MONDAY)->startOfDay();
+        $endDate = $baseDate->copy()->endOfWeek(CarbonInterface::SUNDAY)->endOfDay();
 
         $filters = [
             'search' => $request->input('search'),

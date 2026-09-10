@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\FasilkomJournal;
 use App\Services\FasilkomJournalService;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class SyncFasilkomJournals extends Command
 {
@@ -56,6 +57,6 @@ class SyncFasilkomJournals extends Command
         $this->info("Sinkronisasi selesai! {$result['saved']} artikel berhasil diproses.");
         $this->info("Total artikel Jurnal GLOBAL FASILKOM di database SIBIMA: {$totalInDb}");
 
-        return Command::SUCCESS;
+        return SymfonyCommand::SUCCESS;
     }
 }

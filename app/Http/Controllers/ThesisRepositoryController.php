@@ -205,7 +205,7 @@ class ThesisRepositoryController extends Controller
     {
         $p1 = ThesisRepository::whereNotNull('pembimbing1')->where('pembimbing1', '!=', '')->distinct()->pluck('pembimbing1');
         $p2 = ThesisRepository::whereNotNull('pembimbing2')->where('pembimbing2', '!=', '')->distinct()->pluck('pembimbing2');
-        $dosenUsers = \App\Models\User::where('role', 'dosen')->pluck('name');
+        $dosenUsers = User::where('role', 'dosen')->pluck('name');
 
         $rawList = $p1->concat($p2)->concat($dosenUsers);
         $groups = [];
@@ -598,7 +598,7 @@ class ThesisRepositoryController extends Controller
                         $hasBab6++;
                     }
                 } catch (\Throwable $itemErr) {
-                    \Illuminate\Support\Facades\Log::warning('Individual doc sync error: ' . $itemErr->getMessage());
+                    Log::warning('Individual doc sync error: ' . $itemErr->getMessage());
                 }
                 $processed++;
             }

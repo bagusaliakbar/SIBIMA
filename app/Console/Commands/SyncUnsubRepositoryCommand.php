@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\UnsubRepositorySyncService;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class SyncUnsubRepositoryCommand extends Command
 {
@@ -45,7 +46,7 @@ class SyncUnsubRepositoryCommand extends Command
         $allDocs = $service->fetchDocuments();
         if (empty($allDocs)) {
             $this->error('Gagal mengambil data dari API Repositori UNSUB atau endpoint tidak merespons.');
-            return Command::FAILURE;
+            return SymfonyCommand::FAILURE;
         }
 
         $totalAll = count($allDocs);
@@ -62,7 +63,7 @@ class SyncUnsubRepositoryCommand extends Command
 
         if ($totalFasilkom === 0) {
             $this->warn('Tidak ada dokumen FASILKOM yang ditemukan.');
-            return Command::SUCCESS;
+            return SymfonyCommand::SUCCESS;
         }
 
         $this->newLine();
@@ -133,6 +134,6 @@ class SyncUnsubRepositoryCommand extends Command
         );
 
         $this->info('Sinkronisasi selesai dengan sukses!');
-        return Command::SUCCESS;
+        return SymfonyCommand::SUCCESS;
     }
 }
