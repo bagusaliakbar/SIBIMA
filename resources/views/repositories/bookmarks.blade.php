@@ -17,7 +17,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="space-y-2 max-w-2xl">
                     <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
-                        Daftar Bacaan Saya <span class="text-amber-500 font-black">({{ number_format($totalBookmarksCount) }})</span>
+                        Daftar Bacaan Saya <span class="text-orange-600 dark:text-orange-400 font-black">({{ number_format($totalBookmarksCount) }})</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                         Koleksi artikel jurnal ilmiah yang Anda tandai untuk acuan skripsi. Dilengkapi catatan pribadi per artikel, unduh PDF instan, dan salin sitasi format ilmiah otomatis.
@@ -38,7 +38,7 @@
                                name="q" 
                                value="{{ $query }}" 
                                placeholder="Cari judul artikel, nama penulis, nama jurnal, atau catatan Anda..."
-                               class="w-full pl-10 pr-10 py-2.5 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 focus:border-transparent transition-all">
+                               class="w-full pl-10 pr-10 py-2.5 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-500 focus:border-transparent transition-all">
                         @if(!empty($query))
                             <a href="{{ route('repositories.bookmarks', ['source' => $sourceFilter]) }}" 
                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
@@ -56,34 +56,35 @@
                 </form>
 
                 <!-- SOURCE FILTER PILLS -->
-                <div class="flex flex-wrap items-center gap-1.5 pt-1">
-                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1.5">Filter Sumber:</span>
-                    
-                    @php
-                        $sourcesList = [
-                            'all' => ['label' => 'Semua Sumber', 'count' => $sourceCounts['all'] ?? 0],
-                            'fasilkom' => ['label' => 'GLOBAL FASILKOM', 'count' => $sourceCounts['fasilkom'] ?? 0],
-                            'garuda' => ['label' => 'GARUDA (SINTA)', 'count' => $sourceCounts['garuda'] ?? 0],
-                            'doaj' => ['label' => 'DOAJ', 'count' => $sourceCounts['doaj'] ?? 0],
-                            'crossref' => ['label' => 'Crossref', 'count' => $sourceCounts['crossref'] ?? 0],
-                            'openalex' => ['label' => 'OpenAlex', 'count' => $sourceCounts['openalex'] ?? 0],
-                        ];
-                    @endphp
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 pt-1">
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Filter Sumber:</span>
+                    <div class="inline-flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
+                        @php
+                            $sourcesList = [
+                                'all' => ['label' => 'Semua Sumber', 'count' => $sourceCounts['all'] ?? 0],
+                                'fasilkom' => ['label' => 'GLOBAL FASILKOM', 'count' => $sourceCounts['fasilkom'] ?? 0],
+                                'garuda' => ['label' => 'GARUDA (SINTA)', 'count' => $sourceCounts['garuda'] ?? 0],
+                                'doaj' => ['label' => 'DOAJ', 'count' => $sourceCounts['doaj'] ?? 0],
+                                'crossref' => ['label' => 'Crossref', 'count' => $sourceCounts['crossref'] ?? 0],
+                                'openalex' => ['label' => 'OpenAlex', 'count' => $sourceCounts['openalex'] ?? 0],
+                            ];
+                        @endphp
 
-                    @foreach($sourcesList as $sKey => $sData)
-                        @if($sKey === 'all' || $sData['count'] > 0)
-                            <a href="{{ route('repositories.bookmarks', array_merge(request()->query(), ['source' => $sKey, 'page' => 1])) }}"
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border
-                                      {{ $sourceFilter === $sKey 
-                                         ? 'bg-amber-500 text-white border-amber-500 shadow-xs' 
-                                         : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                                <span>{{ $sData['label'] }}</span>
-                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ $sourceFilter === $sKey ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
-                                    {{ $sData['count'] }}
-                                </span>
-                            </a>
-                        @endif
-                    @endforeach
+                        @foreach($sourcesList as $sKey => $sData)
+                            @if($sKey === 'all' || $sData['count'] > 0)
+                                <a href="{{ route('repositories.bookmarks', array_merge(request()->query(), ['source' => $sKey, 'page' => 1])) }}"
+                                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap
+                                          {{ $sourceFilter === $sKey 
+                                             ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' 
+                                             : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
+                                    <span>{{ $sData['label'] }}</span>
+                                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ $sourceFilter === $sKey ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
+                                        {{ $sData['count'] }}
+                                    </span>
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
