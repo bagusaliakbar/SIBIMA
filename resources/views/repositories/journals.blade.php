@@ -729,14 +729,15 @@
         @endif
 
         <!-- INTERACTIVE CITATION MODAL -->
-        <div x-show="citationModalOpen" 
-             x-cloak 
-             class="fixed inset-0 z-50 overflow-y-auto"
-             role="dialog" 
-             aria-modal="true">
-            <!-- Backdrop -->
-            <div class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm transition-opacity" 
-                 @click="citationModalOpen = false"></div>
+        <template x-teleport="body">
+            <div x-show="citationModalOpen" 
+                 x-cloak 
+                 class="fixed inset-0 z-[9999] overflow-y-auto"
+                 role="dialog" 
+                 aria-modal="true">
+                <!-- Backdrop -->
+                <div class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm transition-opacity" 
+                     @click="citationModalOpen = false"></div>
 
             <div class="flex min-h-screen items-center justify-center p-4">
                 <div class="relative bg-white dark:bg-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200/80 dark:border-slate-700 space-y-5"
@@ -822,6 +823,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 
     @push('scripts')
