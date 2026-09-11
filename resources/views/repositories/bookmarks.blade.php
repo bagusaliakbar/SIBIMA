@@ -521,10 +521,11 @@
         <template x-teleport="body">
             <div x-show="citationModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-[9999] overflow-y-auto"
-                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4">
+                 class="fixed inset-0 overflow-y-auto"
+                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="flex min-h-full items-center justify-center p-4" style="z-index: 100000 !important;">
                     <div class="relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
+                         style="z-index: 100001 !important;"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -606,10 +607,11 @@
         <template x-teleport="body">
             <div x-show="batchCitationModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-[9999] overflow-y-auto"
-                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
+                 class="fixed inset-0 overflow-y-auto"
+                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="flex min-h-full items-center justify-center p-4 sm:p-6" style="z-index: 100000 !important;">
                     <div class="relative w-full max-w-3xl sm:max-w-4xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all my-8"
+                         style="z-index: 100001 !important;"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -699,10 +701,11 @@
         <template x-teleport="body">
             <div x-show="folderModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-[9999] overflow-y-auto"
-                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4">
+                 class="fixed inset-0 overflow-y-auto"
+                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="flex min-h-full items-center justify-center p-4" style="z-index: 100000 !important;">
                     <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
+                         style="z-index: 100001 !important;"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -766,10 +769,11 @@
         <template x-teleport="body">
             <div x-show="moveModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-[9999] overflow-y-auto"
-                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4">
+                 class="fixed inset-0 overflow-y-auto"
+                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="flex min-h-full items-center justify-center p-4" style="z-index: 100000 !important;">
                     <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
+                         style="z-index: 100001 !important;"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">

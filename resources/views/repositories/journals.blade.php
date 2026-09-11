@@ -732,15 +732,18 @@
         <template x-teleport="body">
             <div x-show="citationModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-[9999] overflow-y-auto"
+                 class="fixed inset-0 overflow-y-auto"
+                 style="z-index: 99999 !important;"
                  role="dialog" 
                  aria-modal="true">
                 <!-- Backdrop -->
                 <div class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm transition-opacity" 
+                     style="z-index: 99999 !important;"
                      @click="citationModalOpen = false"></div>
 
-            <div class="flex min-h-screen items-center justify-center p-4">
+            <div class="flex min-h-screen items-center justify-center p-4" style="z-index: 100000 !important;">
                 <div class="relative bg-white dark:bg-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200/80 dark:border-slate-700 space-y-5"
+                     style="z-index: 100001 !important;"
                      @click.stop>
                     
                     <!-- Modal Header -->
