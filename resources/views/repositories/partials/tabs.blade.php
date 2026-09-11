@@ -16,4 +16,21 @@
         </svg>
         <span>Jurnal Ilmiah (Open Access)</span>
     </a>
+
+    <!-- Tab 3: Daftar Bacaan Saya (Reading List) -->
+    @php
+        $myBookmarksTotal = auth()->check() ? auth()->user()->journalBookmarks()->count() : 0;
+    @endphp
+    <a href="{{ route('repositories.bookmarks') }}" 
+       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 {{ request()->routeIs('repositories.bookmarks') ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-700/50' }}">
+        <svg class="w-4 h-4 {{ request()->routeIs('repositories.bookmarks') ? 'text-white' : 'text-amber-500' }}" fill="{{ request()->routeIs('repositories.bookmarks') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+        </svg>
+        <span>Daftar Bacaan Saya</span>
+        @if($myBookmarksTotal > 0)
+            <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ request()->routeIs('repositories.bookmarks') ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
+                {{ $myBookmarksTotal }}
+            </span>
+        @endif
+    </a>
 </div>

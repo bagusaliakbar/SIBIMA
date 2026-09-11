@@ -63,6 +63,10 @@ Route::middleware('auth')->group(function () {
 
     // Digital Repository & External Academic Journals
     Route::get('/repositories/journals', [\App\Http\Controllers\ThesisRepositoryController::class, 'journals'])->name('repositories.journals');
+    Route::get('/repositories/bookmarks', [\App\Http\Controllers\ThesisRepositoryController::class, 'bookmarks'])->name('repositories.bookmarks');
+    Route::post('/repositories/bookmarks/toggle', [\App\Http\Controllers\ThesisRepositoryController::class, 'toggleBookmark'])->name('repositories.bookmarks.toggle');
+    Route::delete('/repositories/bookmarks/{bookmark}', [\App\Http\Controllers\ThesisRepositoryController::class, 'destroyBookmark'])->name('repositories.bookmarks.destroy');
+    Route::patch('/repositories/bookmarks/{bookmark}/notes', [\App\Http\Controllers\ThesisRepositoryController::class, 'updateBookmarkNotes'])->name('repositories.bookmarks.notes');
     Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
     Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
     Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');

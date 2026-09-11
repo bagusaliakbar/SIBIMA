@@ -631,6 +631,24 @@
                                     <span>Kutip / Sitasi</span>
                                 </button>
 
+                                <!-- Bookmark / Simpan ke Bacaan Button -->
+                                <button type="button" 
+                                        @click="toggleBookmark(@js($item))"
+                                        :disabled="isSyncingBookmark['{{ $item['id'] }}']"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border shadow-xs cursor-pointer active:scale-95"
+                                        :class="isBookmarked('{{ $item['id'] }}') 
+                                            ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-500 shadow-sm shadow-amber-500/25' 
+                                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-slate-700 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-300 dark:hover:border-amber-500'"
+                                        :title="isBookmarked('{{ $item['id'] }}') ? 'Hapus dari Daftar Bacaan' : 'Simpan artikel ini ke Daftar Bacaan Saya'">
+                                    <svg class="w-4 h-4 shrink-0 transition-transform" 
+                                         :class="isSyncingBookmark['{{ $item['id'] }}'] ? 'animate-spin' : ''"
+                                         :fill="isBookmarked('{{ $item['id'] }}') ? 'currentColor' : 'none'" 
+                                         stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                    </svg>
+                                    <span x-text="isBookmarked('{{ $item['id'] }}') ? 'Tersimpan' : 'Simpan Bacaan'">Simpan Bacaan</span>
+                                </button>
+
                                 <!-- Landing page / publisher link -->
                                 @if($item['landing_page_url'])
                                     <a href="{{ $item['landing_page_url'] }}" 
@@ -814,6 +832,82 @@
                 citationModalOpen: false,
                 activeCitationFormat: 'apa',
                 copiedToast: false,
+                bookmarkedIds: {!! json_encode($userBookmarkIds ?? []) !!},
+                isSyncingBookmark: {},
+
+                isBookmarked(id) {
+                    return this.bookmarkedIds.includes(id);
+                },
+
+                toggleBookmark(paper) {
+                    const id = paper.id;
+                    if (this.isSyncingBookmark[id]) return;
+                    this.isSyncingBookmark[id] = true;
+
+                    fetch('{{ route('repositories.bookmarks.toggle') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            journal_identifier: paper.id,
+                            title: paper.title,
+                            authors: paper.authors || [],
+                            authors_string: paper.authors_string || '',
+                            year: paper.year,
+                            venue: paper.venue,
+                            publisher: paper.publisher || '',
+                            doi: paper.doi || '',
+                            landing_page_url: paper.landing_page_url || '',
+                            pdf_url: paper.pdf_url || '',
+                            abstract: paper.abstract || '',
+                            source: paper.source || 'unknown',
+                            source_label: paper.source_label || '',
+                            citations: paper.citations || {}
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        delete this.isSyncingBookmark[id];
+                        if (data.success) {
+                            if (data.is_bookmarked) {
+                                if (!this.bookmarkedIds.includes(id)) {
+                                    this.bookmarkedIds.push(id);
+                                }
+                            } else {
+                                this.bookmarkedIds = this.bookmarkedIds.filter(item => item !== id);
+                            }
+
+                            window.dispatchEvent(new CustomEvent('notify', {
+                                detail: {
+                                    title: data.is_bookmarked ? 'Tersimpan ke Bacaan' : 'Dihapus dari Bacaan',
+                                    message: data.message,
+                                    type: data.is_bookmarked ? 'success' : 'info'
+                                }
+                            }));
+                        } else {
+                            window.dispatchEvent(new CustomEvent('notify', {
+                                detail: {
+                                    title: 'Gagal Menyimpan',
+                                    message: data.message || 'Terjadi kesalahan.',
+                                    type: 'error'
+                                }
+                            }));
+                        }
+                    })
+                    .catch(err => {
+                        delete this.isSyncingBookmark[id];
+                        window.dispatchEvent(new CustomEvent('notify', {
+                            detail: {
+                                title: 'Kesalahan Jaringan',
+                                message: 'Tidak dapat menghubungkan ke peladen saat ini.',
+                                type: 'error'
+                            }
+                        }));
+                    });
+                },
                 activePaper: {
                     title: '',
                     authors_string: '',

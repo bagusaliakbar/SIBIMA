@@ -236,4 +236,13 @@ class User extends Authenticatable
     {
         return \App\Helpers\PhoneHelper::formatForWhatsApp($this->phone_number);
     }
+
+    /**
+     * Get the journal bookmarks / reading list saved by the user.
+     */
+    public function journalBookmarks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\JournalBookmark::class)->orderBy('created_at', 'desc');
+    }
 }
+

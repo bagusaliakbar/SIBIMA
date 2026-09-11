@@ -19,6 +19,7 @@ use App\Services\GarudaJournalService;
 use App\Services\DoajJournalService;
 use App\Services\CrossrefJournalService;
 use App\Models\FasilkomJournal;
+use App\Models\JournalBookmark;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -927,6 +928,11 @@ class ThesisRepositoryController extends Controller
             }
         }
 
+        $userBookmarkIds = auth()->check()
+            ? auth()->user()->journalBookmarks()->pluck('journal_identifier')->toArray()
+            : [];
+        $userBookmarkCount = count($userBookmarkIds);
+
         return view('repositories.journals', [
             'query' => $query,
             'results' => $results,
@@ -938,8 +944,166 @@ class ThesisRepositoryController extends Controller
             'fasilkomTotalCount' => $fasilkomTotalCount,
             'fasilkomAuthors' => $fasilkomAuthors,
             'fasilkomTopAuthors' => $fasilkomTopAuthors,
+            'userBookmarkIds' => $userBookmarkIds,
+            'userBookmarkCount' => $userBookmarkCount,
             'page' => $page,
         ]);
+    }
+
+    /**
+     * View the student's saved journal bookmarks (Reading List).
+     */
+    public function bookmarks(Request $request)
+    {
+        $user = auth()->user();
+        $query = trim($request->input('q', ''));
+        $sourceFilter = $request->input('source', 'all');
+
+        $bookmarkQuery = $user->journalBookmarks();
+
+        if ($query !== '') {
+            $bookmarkQuery->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('authors_string', 'like', "%{$query}%")
+                  ->orWhere('venue', 'like', "%{$query}%")
+                  ->orWhere('abstract', 'like', "%{$query}%")
+                  ->orWhere('notes', 'like', "%{$query}%");
+            });
+        }
+
+        if ($sourceFilter !== 'all' && !empty($sourceFilter)) {
+            $bookmarkQuery->where('source', $sourceFilter);
+        }
+
+        $totalBookmarksCount = $user->journalBookmarks()->count();
+        $bookmarks = $bookmarkQuery->paginate(12)->withQueryString();
+
+        // Source counts for filter pills
+        $sourceCounts = [
+            'all' => $totalBookmarksCount,
+            'fasilkom' => $user->journalBookmarks()->where('source', 'fasilkom')->count(),
+            'garuda' => $user->journalBookmarks()->where('source', 'garuda')->count(),
+            'doaj' => $user->journalBookmarks()->where('source', 'doaj')->count(),
+            'crossref' => $user->journalBookmarks()->where('source', 'crossref')->count(),
+            'openalex' => $user->journalBookmarks()->where('source', 'openalex')->count(),
+        ];
+
+        return view('repositories.bookmarks', compact(
+            'bookmarks', 'query', 'sourceFilter', 'totalBookmarksCount', 'sourceCounts'
+        ));
+    }
+
+    /**
+     * Toggle bookmark for a journal item (store or delete).
+     */
+    public function toggleBookmark(Request $request)
+    {
+        $user = auth()->user();
+        $identifier = trim($request->input('journal_identifier', ''));
+
+        if (empty($identifier)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Identifier artikel jurnal tidak valid.',
+            ], 422);
+        }
+
+        $existing = JournalBookmark::where('user_id', $user->id)
+            ->where('journal_identifier', $identifier)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $totalCount = $user->journalBookmarks()->count();
+
+            return response()->json([
+                'success' => true,
+                'status' => 'removed',
+                'is_bookmarked' => false,
+                'message' => 'Artikel berhasil dihapus dari Daftar Bacaan Anda.',
+                'total_bookmarks' => $totalCount,
+            ]);
+        }
+
+        // Validate required fields when creating bookmark
+        $request->validate([
+            'title' => 'required|string',
+        ]);
+
+        $bookmark = JournalBookmark::create([
+            'user_id' => $user->id,
+            'journal_identifier' => $identifier,
+            'title' => $request->input('title'),
+            'authors' => $request->input('authors', []),
+            'authors_string' => $request->input('authors_string'),
+            'year' => $request->filled('year') ? (int) $request->input('year') : null,
+            'venue' => $request->input('venue'),
+            'publisher' => $request->input('publisher'),
+            'doi' => $request->input('doi'),
+            'url' => $request->input('landing_page_url') ?: $request->input('url'),
+            'pdf_url' => $request->input('pdf_url'),
+            'abstract' => $request->input('abstract'),
+            'source' => $request->input('source', 'unknown'),
+            'source_label' => $request->input('source_label'),
+            'citations' => $request->input('citations', []),
+            'notes' => $request->input('notes'),
+        ]);
+
+        $totalCount = $user->journalBookmarks()->count();
+
+        return response()->json([
+            'success' => true,
+            'status' => 'added',
+            'is_bookmarked' => true,
+            'message' => 'Artikel berhasil disimpan ke Daftar Bacaan Anda.',
+            'bookmark_id' => $bookmark->id,
+            'total_bookmarks' => $totalCount,
+        ]);
+    }
+
+    /**
+     * Delete a journal bookmark.
+     */
+    public function destroyBookmark(JournalBookmark $bookmark)
+    {
+        if ($bookmark->user_id !== auth()->id()) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $bookmark->delete();
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Artikel berhasil dihapus dari Daftar Bacaan.',
+                'total_bookmarks' => auth()->user()->journalBookmarks()->count(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Artikel berhasil dihapus dari Daftar Bacaan.');
+    }
+
+    /**
+     * Update personal student notes on a bookmarked journal.
+     */
+    public function updateBookmarkNotes(Request $request, JournalBookmark $bookmark)
+    {
+        if ($bookmark->user_id !== auth()->id()) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $notes = $request->input('notes', '');
+        $bookmark->update(['notes' => $notes]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Catatan referensi skripsi berhasil diperbarui.',
+                'notes' => $bookmark->notes,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Catatan referensi skripsi berhasil diperbarui.');
     }
 
     /**
@@ -985,4 +1149,5 @@ class ThesisRepositoryController extends Controller
         }
     }
 }
+
 
