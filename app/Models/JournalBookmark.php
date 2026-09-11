@@ -14,6 +14,7 @@ class JournalBookmark extends Model
 
     protected $fillable = [
         'user_id',
+        'folder_id',
         'journal_identifier',
         'title',
         'authors',
@@ -35,6 +36,7 @@ class JournalBookmark extends Model
         'authors' => 'array',
         'citations' => 'array',
         'year' => 'integer',
+        'folder_id' => 'integer',
     ];
 
     /**
@@ -43,6 +45,14 @@ class JournalBookmark extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * The folder where this journal bookmark belongs.
+     */
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(JournalBookmarkFolder::class, 'folder_id');
     }
 
     /**
@@ -83,6 +93,9 @@ class JournalBookmark extends Model
             'is_oa' => !empty($this->pdf_url),
             'cited_by_count' => 0,
             'bookmark_id' => $this->id,
+            'folder_id' => $this->folder_id,
+            'folder_name' => $this->folder?->name,
+            'folder_color' => $this->folder?->color ?: 'orange',
             'notes' => $this->notes,
             'saved_at' => $this->created_at?->locale('id')->translatedFormat('d F Y H:i'),
         ];

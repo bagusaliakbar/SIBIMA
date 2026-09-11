@@ -20,6 +20,7 @@ use App\Services\DoajJournalService;
 use App\Services\CrossrefJournalService;
 use App\Models\FasilkomJournal;
 use App\Models\JournalBookmark;
+use App\Models\JournalBookmarkFolder;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -958,8 +959,9 @@ class ThesisRepositoryController extends Controller
         $user = auth()->user();
         $query = trim($request->input('q', ''));
         $sourceFilter = $request->input('source', 'all');
+        $folderFilter = $request->input('folder', 'all');
 
-        $bookmarkQuery = $user->journalBookmarks();
+        $bookmarkQuery = $user->journalBookmarks()->with('folder');
 
         if ($query !== '') {
             $bookmarkQuery->where(function ($q) use ($query) {
@@ -975,8 +977,18 @@ class ThesisRepositoryController extends Controller
             $bookmarkQuery->where('source', $sourceFilter);
         }
 
+        if ($folderFilter === 'uncategorized') {
+            $bookmarkQuery->whereNull('folder_id');
+        } elseif ($folderFilter !== 'all' && is_numeric($folderFilter)) {
+            $bookmarkQuery->where('folder_id', (int) $folderFilter);
+        }
+
         $totalBookmarksCount = $user->journalBookmarks()->count();
         $bookmarks = $bookmarkQuery->paginate(12)->withQueryString();
+
+        // Folders list with counts
+        $folders = $user->journalBookmarkFolders()->withCount('bookmarks')->get();
+        $uncategorizedCount = $user->journalBookmarks()->whereNull('folder_id')->count();
 
         // Source counts for filter pills
         $sourceCounts = [
@@ -989,7 +1001,7 @@ class ThesisRepositoryController extends Controller
         ];
 
         return view('repositories.bookmarks', compact(
-            'bookmarks', 'query', 'sourceFilter', 'totalBookmarksCount', 'sourceCounts'
+            'bookmarks', 'query', 'sourceFilter', 'folderFilter', 'totalBookmarksCount', 'sourceCounts', 'folders', 'uncategorizedCount'
         ));
     }
 
@@ -1104,6 +1116,219 @@ class ThesisRepositoryController extends Controller
         }
 
         return redirect()->back()->with('success', 'Catatan referensi skripsi berhasil diperbarui.');
+    }
+
+    /**
+     * Store a new bookmark folder.
+     */
+    public function storeFolder(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'color' => 'nullable|string|max:30',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $folder = JournalBookmarkFolder::create([
+            'user_id' => $user->id,
+            'name' => trim($request->input('name')),
+            'color' => $request->input('color', 'orange'),
+            'description' => $request->input('description'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Folder \"{$folder->name}\" berhasil dibuat.",
+            'folder' => $folder,
+            'total_folders' => $user->journalBookmarkFolders()->count(),
+        ]);
+    }
+
+    /**
+     * Update an existing bookmark folder.
+     */
+    public function updateFolder(Request $request, JournalBookmarkFolder $folder)
+    {
+        if ($folder->user_id !== auth()->id()) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'color' => 'nullable|string|max:30',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $folder->update([
+            'name' => trim($request->input('name')),
+            'color' => $request->input('color', $folder->color),
+            'description' => $request->input('description', $folder->description),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Folder \"{$folder->name}\" berhasil diperbarui.",
+            'folder' => $folder,
+        ]);
+    }
+
+    /**
+     * Delete a bookmark folder.
+     * Note: Associated bookmarks will have their folder_id set to null automatically.
+     */
+    public function destroyFolder(JournalBookmarkFolder $folder)
+    {
+        if ($folder->user_id !== auth()->id()) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $name = $folder->name;
+        $folder->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Folder \"{$name}\" berhasil dihapus. Artikel di dalamnya dipindahkan ke status Tanpa Folder.",
+            'total_folders' => auth()->user()->journalBookmarkFolders()->count(),
+        ]);
+    }
+
+    /**
+     * Create the 5 official FASILKOM UNSUB thesis chapter template folders.
+     */
+    public function createTemplateFolders()
+    {
+        $user = auth()->user();
+        $templates = [
+            ['name' => 'BAB I PENDAHULUAN', 'color' => 'blue'],
+            ['name' => 'BAB II LANDASAN TEORI', 'color' => 'indigo'],
+            ['name' => 'BAB III OBJEK DAN METODOLOGI PENELITIAN', 'color' => 'emerald'],
+            ['name' => 'BAB IV HASIL DAN PEMBAHASAN', 'color' => 'orange'],
+            ['name' => 'BAB V PENUTUP', 'color' => 'purple'],
+        ];
+
+        $createdCount = 0;
+        foreach ($templates as $t) {
+            $exists = JournalBookmarkFolder::where('user_id', $user->id)
+                ->where('name', $t['name'])
+                ->exists();
+            if (!$exists) {
+                JournalBookmarkFolder::create([
+                    'user_id' => $user->id,
+                    'name' => $t['name'],
+                    'color' => $t['color'],
+                ]);
+                $createdCount++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $createdCount > 0 
+                ? "Berhasil membuat {$createdCount} folder template Bab Skripsi (BAB I - BAB V)." 
+                : 'Folder template Bab Skripsi (BAB I - BAB V) sudah tersedia.',
+            'folders' => $user->journalBookmarkFolders()->withCount('bookmarks')->get(),
+        ]);
+    }
+
+    /**
+     * Assign / move a bookmark to a folder.
+     */
+    public function assignBookmarkFolder(Request $request, JournalBookmark $bookmark)
+    {
+        if ($bookmark->user_id !== auth()->id()) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $folderId = $request->input('folder_id');
+        if ($folderId !== null && $folderId !== '' && $folderId !== 'none') {
+            $folder = JournalBookmarkFolder::where('id', $folderId)
+                ->where('user_id', auth()->id())
+                ->first();
+            if (!$folder) {
+                return response()->json(['success' => false, 'message' => 'Folder tidak ditemukan.'], 404);
+            }
+            $folderId = $folder->id;
+        } else {
+            $folderId = null;
+        }
+
+        $bookmark->update(['folder_id' => $folderId]);
+        $bookmark->load('folder');
+
+        return response()->json([
+            'success' => true,
+            'message' => $folderId ? "Artikel dipindahkan ke \"{$bookmark->folder->name}\"." : 'Artikel dipindahkan ke status Tanpa Folder.',
+            'folder_id' => $folderId,
+            'folder_name' => $bookmark->folder?->name,
+            'folder_color' => $bookmark->folder?->color ?: 'orange',
+        ]);
+    }
+
+    /**
+     * Export / compile all citations for current filter or folder.
+     */
+    public function exportCitations(Request $request)
+    {
+        $user = auth()->user();
+        $query = trim($request->input('q', ''));
+        $sourceFilter = $request->input('source', 'all');
+        $folderFilter = $request->input('folder', 'all');
+
+        $bookmarkQuery = $user->journalBookmarks();
+
+        if ($query !== '') {
+            $bookmarkQuery->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('authors_string', 'like', "%{$query}%")
+                  ->orWhere('venue', 'like', "%{$query}%")
+                  ->orWhere('abstract', 'like', "%{$query}%")
+                  ->orWhere('notes', 'like', "%{$query}%");
+            });
+        }
+
+        if ($sourceFilter !== 'all' && !empty($sourceFilter)) {
+            $bookmarkQuery->where('source', $sourceFilter);
+        }
+
+        if ($folderFilter === 'uncategorized') {
+            $bookmarkQuery->whereNull('folder_id');
+        } elseif ($folderFilter !== 'all' && is_numeric($folderFilter)) {
+            $bookmarkQuery->where('folder_id', (int) $folderFilter);
+        }
+
+        $bookmarks = $bookmarkQuery->get();
+
+        $apaList = [];
+        $ieeeList = [];
+        $bibtexList = [];
+
+        foreach ($bookmarks as $index => $b) {
+            $c = $b->citations ?: [];
+            if (!empty($c['apa'])) {
+                $apaList[] = $c['apa'];
+            } else {
+                $apaList[] = "{$b->authors_string} ({$b->year}). {$b->title}. " . ($b->venue ? "{$b->venue}. " : '') . ($b->doi ?: $b->url);
+            }
+
+            if (!empty($c['ieee'])) {
+                $ieeeList[] = "[" . ($index + 1) . "] " . $c['ieee'];
+            } else {
+                $ieeeList[] = "[" . ($index + 1) . "] {$b->authors_string}, \"{$b->title},\" " . ($b->venue ? "in {$b->venue}, " : '') . "{$b->year}.";
+            }
+
+            if (!empty($c['bibtex'])) {
+                $bibtexList[] = $c['bibtex'];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'count' => $bookmarks->count(),
+            'apa' => implode("\n\n", $apaList),
+            'ieee' => implode("\n\n", $ieeeList),
+            'bibtex' => implode("\n\n", $bibtexList),
+        ]);
     }
 
     /**

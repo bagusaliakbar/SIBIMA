@@ -244,5 +244,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\JournalBookmark::class)->orderBy('created_at', 'desc');
     }
+
+    /**
+     * Get the journal bookmark folders / collections owned by the user.
+     */
+    public function journalBookmarkFolders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\JournalBookmarkFolder::class)->orderBy('name', 'asc');
+    }
 }
 

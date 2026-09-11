@@ -67,6 +67,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/repositories/bookmarks/toggle', [\App\Http\Controllers\ThesisRepositoryController::class, 'toggleBookmark'])->name('repositories.bookmarks.toggle');
     Route::delete('/repositories/bookmarks/{bookmark}', [\App\Http\Controllers\ThesisRepositoryController::class, 'destroyBookmark'])->name('repositories.bookmarks.destroy');
     Route::patch('/repositories/bookmarks/{bookmark}/notes', [\App\Http\Controllers\ThesisRepositoryController::class, 'updateBookmarkNotes'])->name('repositories.bookmarks.notes');
+    Route::post('/repositories/bookmarks/folders', [\App\Http\Controllers\ThesisRepositoryController::class, 'storeFolder'])->name('repositories.bookmarks.folders.store');
+    Route::patch('/repositories/bookmarks/folders/{folder}', [\App\Http\Controllers\ThesisRepositoryController::class, 'updateFolder'])->name('repositories.bookmarks.folders.update');
+    Route::delete('/repositories/bookmarks/folders/{folder}', [\App\Http\Controllers\ThesisRepositoryController::class, 'destroyFolder'])->name('repositories.bookmarks.folders.destroy');
+    Route::post('/repositories/bookmarks/folders/templates', [\App\Http\Controllers\ThesisRepositoryController::class, 'createTemplateFolders'])->name('repositories.bookmarks.folders.template');
+    Route::patch('/repositories/bookmarks/{bookmark}/folder', [\App\Http\Controllers\ThesisRepositoryController::class, 'assignBookmarkFolder'])->name('repositories.bookmarks.assign_folder');
+    Route::get('/repositories/bookmarks/export-citations', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportCitations'])->name('repositories.bookmarks.export_citations');
     Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
     Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
     Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');
