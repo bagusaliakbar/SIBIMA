@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
 
     // Digital Repository & External Academic Journals
     Route::get('/repositories/journals', [\App\Http\Controllers\ThesisRepositoryController::class, 'journals'])->name('repositories.journals');
+    Route::post('/repositories/journals/sync-fasilkom', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncFasilkomJournals'])->name('repositories.journals.sync-fasilkom');
     Route::get('/repositories/sync-page/{page}', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncPage'])->name('repositories.sync-page');
     Route::get('/repositories/export-excel', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportExcel'])->name('repositories.export-excel');
     Route::get('/repositories/export-pdf', [\App\Http\Controllers\ThesisRepositoryController::class, 'exportPdf'])->name('repositories.export-pdf');

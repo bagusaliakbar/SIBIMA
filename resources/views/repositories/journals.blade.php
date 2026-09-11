@@ -255,83 +255,138 @@
                 ];
             @endphp
             <div class="border-t border-slate-100 dark:border-slate-700/60 pt-4" id="fasilkom-dosen-filter">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 
-                    {{-- Label --}}
-                    <div class="flex items-center gap-2 shrink-0">
-                        <div class="w-7 h-7 rounded-lg bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
+                    <div class="flex flex-wrap items-center gap-3">
+                        {{-- Label --}}
+                        <div class="flex items-center gap-2 shrink-0">
+                            <div class="w-7 h-7 rounded-lg bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">Filter Dosen:</span>
                         </div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">Filter Dosen:</span>
-                    </div>
 
-                    {{-- Dropdown --}}
-                    <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
-                        <button type="button" @click="open = !open" id="dosen-filter-btn"
-                                class="inline-flex items-center justify-between gap-2 min-w-52 px-4 py-2 rounded-xl border text-xs font-bold transition-all
-                                       {{ ($author !== 'all' && !empty($author)) ? 'bg-orange-500 hover:bg-orange-600 text-white border-orange-500 shadow-sm shadow-orange-500/25' : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-400 dark:hover:border-orange-500' }}">
-                            <span class="flex items-center gap-2 truncate">
-                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                @if($author !== 'all' && !empty($author))
-                                    {{ $author }}
-                                @else
-                                    Semua Dosen
-                                @endif
-                            </span>
-                            <svg class="w-3.5 h-3.5 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-
-                        <div x-show="open" x-cloak @click.outside="open = false"
-                             x-transition:enter="transition ease-out duration-150"
-                             x-transition:enter-start="opacity-0 -translate-y-1 scale-[0.98]"
-                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                             x-transition:leave="transition ease-in duration-100"
-                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                             x-transition:leave-end="opacity-0 -translate-y-1 scale-[0.98]"
-                             class="absolute left-0 top-full mt-1.5 w-72 z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl overflow-hidden py-2 max-h-[75vh] overflow-y-auto overscroll-contain">
-
-                            {{-- Semua Dosen --}}
-                            <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => 'all', 'page' => 1])) }}"
-                               @click="open = false"
-                               class="flex items-center justify-between px-4 py-2.5 text-xs font-bold transition-colors
-                                      {{ ($author === 'all' || empty($author)) ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
-                                <span class="flex items-center gap-2">
-                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    <span>Semua Dosen</span>
+                        {{-- Dropdown --}}
+                        <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
+                            <button type="button" @click="open = !open" id="dosen-filter-btn"
+                                    class="inline-flex items-center justify-between gap-2 min-w-52 px-4 py-2 rounded-xl border text-xs font-bold transition-all
+                                           {{ ($author !== 'all' && !empty($author)) ? 'bg-orange-500 hover:bg-orange-600 text-white border-orange-500 shadow-sm shadow-orange-500/25' : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-400 dark:hover:border-orange-500' }}">
+                                <span class="flex items-center gap-2 truncate">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    @if($author !== 'all' && !empty($author))
+                                        {{ $author }}
+                                    @else
+                                        Semua Dosen
+                                    @endif
                                 </span>
-                                @if($author === 'all' || empty($author))
-                                    <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                                @endif
-                            </a>
+                                <svg class="w-3.5 h-3.5 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
 
-                            <div class="my-1 border-t border-slate-100 dark:border-slate-700/60"></div>
+                            <div x-show="open" x-cloak @click.outside="open = false"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 -translate-y-1 scale-[0.98]"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 -translate-y-1 scale-[0.98]"
+                                 class="absolute left-0 top-full mt-1.5 w-72 z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl overflow-hidden py-2 max-h-[75vh] overflow-y-auto overscroll-contain">
 
-                            @foreach($dosenList as $dosen)
-                                <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => $dosen, 'page' => 1])) }}"
+                                {{-- Semua Dosen --}}
+                                <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => 'all', 'page' => 1])) }}"
                                    @click="open = false"
-                                   class="flex items-center justify-between px-4 py-2.5 text-xs transition-colors
-                                          {{ $author === $dosen ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold' : 'font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
+                                   class="flex items-center justify-between px-4 py-2.5 text-xs font-bold transition-colors
+                                          {{ ($author === 'all' || empty($author)) ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
                                     <span class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 shrink-0 {{ $author === $dosen ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                        <span>{{ $dosen }}</span>
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        <span>Semua Dosen</span>
                                     </span>
-                                    @if($author === $dosen)
+                                    @if($author === 'all' || empty($author))
                                         <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                                     @endif
                                 </a>
-                            @endforeach
+
+                                <div class="my-1 border-t border-slate-100 dark:border-slate-700/60"></div>
+
+                                @foreach($dosenList as $dosen)
+                                    <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => $dosen, 'page' => 1])) }}"
+                                       @click="open = false"
+                                       class="flex items-center justify-between px-4 py-2.5 text-xs transition-colors
+                                              {{ $author === $dosen ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold' : 'font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
+                                        <span class="flex items-center gap-2">
+                                            <svg class="w-3.5 h-3.5 shrink-0 {{ $author === $dosen ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                            <span>{{ $dosen }}</span>
+                                        </span>
+                                        @if($author === $dosen)
+                                            <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
+
+                        {{-- Hapus filter --}}
+                        @if($author !== 'all' && !empty($author))
+                            <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => 'all', 'page' => 1])) }}"
+                               class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-all whitespace-nowrap">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                Hapus Filter
+                            </a>
+                        @endif
                     </div>
 
-                    {{-- Hapus filter --}}
-                    @if($author !== 'all' && !empty($author))
-                        <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => 'all', 'page' => 1])) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-all whitespace-nowrap">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            Hapus Filter
-                        </a>
+                    {{-- Tombol Sinkronisasi OJS FASILKOM --}}
+                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi', 'dosen']))
+                    <div x-data="{ syncing: false }" class="shrink-0">
+                        <button type="button" 
+                                @click="if(!syncing) {
+                                    if(confirm('Mulai sinkronisasi seluruh artikel terbaru dari Portal OJS FASILKOM UNSUB (ejournal.unsub.ac.id)?')) {
+                                        syncing = true;
+                                        fetch('{{ route('repositories.journals.sync-fasilkom') }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json'
+                                            }
+                                        })
+                                        .then(r => r.json())
+                                        .then(d => {
+                                            syncing = false;
+                                            window.dispatchEvent(new CustomEvent('notify', { 
+                                                detail: { 
+                                                    title: d.success ? 'Sinkronisasi Berhasil' : 'Gagal Sinkronisasi', 
+                                                    message: d.message, 
+                                                    type: d.success ? 'success' : 'error' 
+                                                } 
+                                            }));
+                                            if (d.success) {
+                                                setTimeout(() => window.location.reload(), 1500);
+                                            }
+                                        })
+                                        .catch(err => {
+                                            syncing = false;
+                                            window.dispatchEvent(new CustomEvent('notify', { 
+                                                detail: { 
+                                                    title: 'Kesalahan Jaringan', 
+                                                    message: 'Tidak dapat menghubungi server OJS FASILKOM UNSUB.', 
+                                                    type: 'error' 
+                                                } 
+                                            }));
+                                        });
+                                    }
+                                }"
+                                :disabled="syncing"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border shadow-2xs whitespace-nowrap cursor-pointer"
+                                :class="syncing ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-400 border-orange-200 cursor-not-allowed' : 'bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500'"
+                                title="Sinkronkan data artikel terbaru dari OJS FASILKOM UNSUB">
+                            <svg class="w-3.5 h-3.5 shrink-0 text-orange-500" :class="{ 'animate-spin': syncing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span x-text="syncing ? 'Menyinkronkan OJS...' : 'Sinkronkan Jurnal FASILKOM'">Sinkronkan Jurnal FASILKOM</span>
+                        </button>
+                    </div>
                     @endif
 
                 </div>

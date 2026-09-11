@@ -941,4 +941,48 @@ class ThesisRepositoryController extends Controller
             'page' => $page,
         ]);
     }
+
+    /**
+     * Harvest and synchronize articles from Jurnal GLOBAL FASILKOM via OAI-PMH.
+     */
+    public function syncFasilkomJournals(FasilkomJournalService $service)
+    {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'kaprodi', 'dosen'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya Pengelola Program Studi dan Dosen yang memiliki hak akses untuk menyinkronkan data jurnal.',
+            ], 403);
+        }
+
+        try {
+            $result = $service->harvestAll();
+
+            // Invalidate cached author list so new authors appear immediately in filter
+            \Illuminate\Support\Facades\Cache::forget('fasilkom_journal_authors_list');
+
+            $totalInDb = \App\Models\FasilkomJournal::count();
+
+            if (!empty($result['errors']) && $result['saved'] === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal terhubung dengan server OJS FASILKOM: ' . implode(', ', $result['errors']),
+                ], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Sinkronisasi OJS berhasil! Sebanyak {$result['saved']} artikel telah diperbarui dari ejournal.unsub.ac.id (Total saat ini: {$totalInDb} artikel).",
+                'saved' => $result['saved'],
+                'total' => $totalInDb,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('syncFasilkomJournals error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses sinkronisasi: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
+

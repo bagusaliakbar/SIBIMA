@@ -19,3 +19,7 @@ Schedule::command('app:send-critical-student-reminders')->monthlyOn(1, '08:00');
 
 // 4. Pembersihan Otomatis Cache PDF Repositori Skripsi (>7 hari) setiap hari Minggu jam 02:00 WIB
 Schedule::command('repositories:clean-cache --days=7')->weeklyOn(0, '02:00');
+
+// 5. Sinkronisasi Otomatis Artikel Jurnal GLOBAL FASILKOM UNSUB setiap hari Minggu jam 03:00 WIB
+Schedule::command('journals:sync-fasilkom')->weeklyOn(0, '03:00');
+
