@@ -259,7 +259,7 @@
 
                     {{-- Label --}}
                     <div class="flex items-center gap-2 shrink-0">
-                        <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                        <div class="w-7 h-7 rounded-lg bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
@@ -271,7 +271,7 @@
                     <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false">
                         <button type="button" @click="open = !open" id="dosen-filter-btn"
                                 class="inline-flex items-center justify-between gap-2 min-w-52 px-4 py-2 rounded-xl border text-xs font-bold transition-all
-                                       {{ ($author !== 'all' && !empty($author)) ? 'bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-500/25' : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-600' }}">
+                                       {{ ($author !== 'all' && !empty($author)) ? 'bg-orange-500 hover:bg-orange-600 text-white border-orange-500 shadow-sm shadow-orange-500/25' : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-400 dark:hover:border-orange-500' }}">
                             <span class="flex items-center gap-2 truncate">
                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 @if($author !== 'all' && !empty($author))
@@ -296,13 +296,13 @@
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => 'all', 'page' => 1])) }}"
                                @click="open = false"
                                class="flex items-center justify-between px-4 py-2.5 text-xs font-bold transition-colors
-                                      {{ ($author === 'all' || empty($author)) ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
+                                      {{ ($author === 'all' || empty($author)) ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
                                 <span class="flex items-center gap-2">
                                     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     <span>Semua Dosen</span>
                                 </span>
                                 @if($author === 'all' || empty($author))
-                                    <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                                 @endif
                             </a>
 
@@ -312,13 +312,13 @@
                                 <a href="{{ route('repositories.journals', array_merge(request()->query(), ['author' => $dosen, 'page' => 1])) }}"
                                    @click="open = false"
                                    class="flex items-center justify-between px-4 py-2.5 text-xs transition-colors
-                                          {{ $author === $dosen ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 font-bold' : 'font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
+                                          {{ $author === $dosen ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold' : 'font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60' }}">
                                     <span class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 shrink-0 {{ $author === $dosen ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <svg class="w-3.5 h-3.5 shrink-0 {{ $author === $dosen ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         <span>{{ $dosen }}</span>
                                     </span>
                                     @if($author === $dosen)
-                                        <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                                     @endif
                                 </a>
                             @endforeach
