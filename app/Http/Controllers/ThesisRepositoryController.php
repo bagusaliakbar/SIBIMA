@@ -947,10 +947,10 @@ class ThesisRepositoryController extends Controller
      */
     public function syncFasilkomJournals(FasilkomJournalService $service)
     {
-        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'kaprodi', 'dosen'])) {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'kaprodi'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Hanya Pengelola Program Studi dan Dosen yang memiliki hak akses untuk menyinkronkan data jurnal.',
+                'message' => 'Hanya Admin dan Kaprodi yang memiliki hak akses untuk menyinkronkan data jurnal.',
             ], 403);
         }
 

@@ -337,7 +337,7 @@
                     </div>
 
                     {{-- Tombol Sinkronisasi OJS FASILKOM --}}
-                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi', 'dosen']))
+                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']))
                     <div x-data="{ syncing: false }" class="shrink-0">
                         <button type="button" 
                                 @click="if(!syncing) {
