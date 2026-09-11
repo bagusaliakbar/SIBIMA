@@ -378,10 +378,10 @@
                                     }
                                 }"
                                 :disabled="syncing"
-                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border shadow-2xs whitespace-nowrap cursor-pointer"
+                                class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border shadow-xs whitespace-nowrap cursor-pointer"
                                 :class="syncing ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-400 border-orange-200 cursor-not-allowed' : 'bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500'"
                                 title="Sinkronkan data artikel terbaru dari OJS FASILKOM UNSUB">
-                            <svg class="w-3.5 h-3.5 shrink-0 text-orange-500" :class="{ 'animate-spin': syncing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 shrink-0 text-orange-500" :class="{ 'animate-spin': syncing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
                             <span x-text="syncing ? 'Menyinkronkan OJS...' : 'Sinkronkan Jurnal FASILKOM'">Sinkronkan Jurnal FASILKOM</span>
