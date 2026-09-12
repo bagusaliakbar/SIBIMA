@@ -1055,7 +1055,15 @@
                                         @if($logbook->feedback)
                                             <div class="flex items-start gap-1.5 pt-2 {{ $logbook->notes ? 'border-t border-slate-100 dark:border-slate-800/50' : '' }}">
                                                 <span class="text-[9px] font-black text-orange-500 uppercase tracking-wider select-none shrink-0 w-16">Feedback:</span>
-                                                <p class="text-slate-800 dark:text-slate-200 font-bold leading-relaxed">{{ $logbook->feedback }}</p>
+                                                <div class="space-y-1">
+                                                    <p class="text-slate-800 dark:text-slate-200 font-bold leading-relaxed">{{ $logbook->feedback }}</p>
+                                                    @if($logbook->feedback_document_url)
+                                                        <a href="{{ $logbook->feedback_document_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                            <span>Dokumen Koreksi</span>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endif
                                     </div>

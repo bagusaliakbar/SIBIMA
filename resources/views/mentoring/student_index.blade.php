@@ -482,7 +482,21 @@
                                         <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 mb-0.5">Catatan Pengajuan:</div>
                                         <div class="text-slate-600 dark:text-slate-400 text-xs italic leading-relaxed">{{ $session->notes }}</div>
                                     @else
-                                        <span class="text-slate-400 dark:text-slate-600">-</span>
+                                        @if(!$session->feedback_document_url)
+                                            <span class="text-slate-400 dark:text-slate-600">-</span>
+                                        @endif
+                                    @endif
+
+                                    @if($session->feedback_document_url)
+                                        <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                                            <a href="{{ $session->feedback_document_url }}" target="_blank" rel="noopener noreferrer" 
+                                               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors shadow-2xs">
+                                                <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                                <span>Dokumen Feedback / Koreksi Dosen</span>
+                                            </a>
+                                        </div>
                                     @endif
                                 </td>
                                 <td class="py-4 px-5 whitespace-nowrap">

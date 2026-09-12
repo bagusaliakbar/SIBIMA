@@ -436,11 +436,18 @@ class MentoringService
         } else {
             $oldStatus = $session->status;
             $wasAbsent = (bool) $session->is_absent;
-            $session->update([
+            
+            $updatePayload = [
                 'status' => $data['status'],
                 'is_absent' => false,
                 'feedback' => array_key_exists('feedback', $data) ? $data['feedback'] : $session->feedback,
-            ]);
+            ];
+
+            if (array_key_exists('feedback_document_url', $data)) {
+                $updatePayload['feedback_document_url'] = $data['feedback_document_url'] ?: null;
+            }
+
+            $session->update($updatePayload);
 
             // Jika status tetap completed (revisi catatan hasil bimbingan)
             if ($oldStatus === 'completed' && !$wasAbsent && $data['status'] === 'completed') {

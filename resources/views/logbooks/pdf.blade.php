@@ -201,6 +201,11 @@
                         <div style="margin-top: 5px;">
                             <strong>Hasil:</strong> {{ $session->feedback ?: '-' }}
                         </div>
+                        @if($session->feedback_document_url)
+                            <div style="margin-top: 3px; font-size: 10px; color: #1d4ed8;">
+                                <strong>Dokumen Feedback:</strong> <a href="{{ $session->feedback_document_url }}" target="_blank" style="color: #1d4ed8; text-decoration: underline;">{{ Str::limit($session->feedback_document_url, 45) }}</a>
+                            </div>
+                        @endif
                         @if($session->notes)
                             <div style="margin-top: 5px; color: #777; font-size: 10px; font-style: italic;">
                                 <strong>Ket. Pengajuan:</strong> {{ $session->notes }}

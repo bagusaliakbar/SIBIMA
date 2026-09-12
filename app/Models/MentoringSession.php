@@ -23,6 +23,7 @@ class MentoringSession extends Model
         'is_absent',
         'notes',
         'feedback',
+        'feedback_document_url',
         'document_path',
         'document_original_name',
     ];
@@ -45,6 +46,11 @@ class MentoringSession extends Model
     public function isStudentPermission(): bool
     {
         return $this->student_attendance_status === 'permission';
+    }
+
+    public function hasFeedbackDocument(): bool
+    {
+        return !empty($this->feedback_document_url);
     }
 
     public function thesis()

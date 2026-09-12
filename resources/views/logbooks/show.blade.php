@@ -174,6 +174,14 @@
                                         <div>
                                             <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Hasil & Catatan Pembimbing</div>
                                             <div class="font-medium text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ $session->feedback ?: 'Tidak ada catatan pembimbing untuk sesi ini.' }}</div>
+                                            @if($session->feedback_document_url)
+                                                <div class="mt-2">
+                                                    <a href="{{ $session->feedback_document_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                        <span>Dokumen Feedback / Koreksi</span>
+                                                    </a>
+                                                </div>
+                                            @endif
                                         </div>
                                         
                                         @if($session->notes)
