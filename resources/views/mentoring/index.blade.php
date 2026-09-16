@@ -16,6 +16,20 @@
                 events: @json($calendarEvents ?? []),
                 attendanceStats: @json($attendanceStats ?? []),
                 selectedSessionIds: [],
+                init() {
+                    this.$watch('selectedSessionIds', () => {
+                        this.notifySelection();
+                    });
+                    window.addEventListener('mentoring-clear-selection', () => {
+                        this.clearSelection();
+                    });
+                },
+                notifySelection() {
+                    const ids = this.selectedSessionIds ? this.selectedSessionIds.map(String) : [];
+                    window.dispatchEvent(new CustomEvent('mentoring-selection-changed', {
+                        detail: { ids: ids }
+                    }));
+                },
                 setGrouping(mode) {
                     this.cardGrouping = mode;
                     localStorage.setItem('sibima_card_grouping', mode);
@@ -28,6 +42,7 @@
                     } else {
                         this.selectedSessionIds = [...current, strId];
                     }
+                    this.notifySelection();
                 },
                 isSelected(id) {
                     if (!this.selectedSessionIds || this.selectedSessionIds.length === 0) return false;
@@ -44,6 +59,7 @@
                         const combined = Array.from(new Set([...currentStr, ...strIds]));
                         this.selectedSessionIds = combined;
                     }
+                    this.notifySelection();
                 },
                 isGroupSelected(ids) {
                     if (!Array.isArray(ids) || ids.length === 0) return false;
@@ -54,6 +70,7 @@
                 },
                 clearSelection() {
                     this.selectedSessionIds = [];
+                    this.notifySelection();
                 },
                 openBulkAbsent() {
                     if (!this.selectedSessionIds || this.selectedSessionIds.length === 0) return;
@@ -378,6 +395,28 @@
                 },
                 closeModal() {
                     this.open = false;
+                }
+            };
+        }
+
+        function mentoringBulkActionBar() {
+            return {
+                selectedIds: [],
+                init() {
+                    window.addEventListener('mentoring-selection-changed', (e) => {
+                        this.selectedIds = (e.detail && Array.isArray(e.detail.ids)) ? e.detail.ids.map(String) : [];
+                    });
+                },
+                clear() {
+                    window.dispatchEvent(new CustomEvent('mentoring-clear-selection'));
+                },
+                openBulkAbsent() {
+                    if (!this.selectedIds || this.selectedIds.length === 0) return;
+                    window.dispatchEvent(new CustomEvent('open-bulk-absent-modal', { detail: { ids: this.selectedIds } }));
+                },
+                openBulkComplete() {
+                    if (!this.selectedIds || this.selectedIds.length === 0) return;
+                    window.dispatchEvent(new CustomEvent('open-bulk-complete-modal', { detail: { ids: this.selectedIds } }));
                 }
             };
         }
@@ -781,6 +820,7 @@
                                                                         <input type="checkbox" 
                                                                                value="{{ $session->id }}"
                                                                                x-model="selectedSessionIds"
+                                                                               @change="notifySelection()"
                                                                                class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
                                                                     </span>
                                                                 @endif
@@ -1193,6 +1233,7 @@
                                                                     <input type="checkbox" 
                                                                            value="{{ $session->id }}"
                                                                            x-model="selectedSessionIds"
+                                                                           @change="notifySelection()"
                                                                            class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
                                                                 </span>
                                                             @endif
@@ -2351,44 +2392,47 @@
             </div>
         </template>
 
-        <!-- Floating Bulk Action Bar (Docked at Bottom, Direct Alpine Scope) -->
-        <div x-show="selectedSessionIds && selectedSessionIds.length > 0" 
-             x-cloak
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="translate-y-12 opacity-0 scale-95"
-             x-transition:enter-end="translate-y-0 opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-200 transform"
-             x-transition:leave-start="translate-y-0 opacity-100 scale-100"
-             x-transition:leave-end="translate-y-12 opacity-0 scale-95"
-             class="fixed bottom-6 inset-x-0 max-w-2xl mx-auto px-4 pointer-events-none"
-             style="z-index: 99998 !important;">
-            <div class="pointer-events-auto bg-slate-900/95 dark:bg-slate-800/95 text-white backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl p-3 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 shadow-orange-950/20">
-                <div class="flex items-center gap-2.5">
-                    <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-xl bg-orange-600 text-white font-black text-xs shadow-xs tracking-wider" 
-                          x-text="selectedSessionIds.length + ' Mahasiswa'"></span>
-                    <span class="text-xs font-bold text-slate-300 hidden sm:inline">Dipilih untuk aksi massal</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" 
-                            @click="clearSelection()" 
-                            class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-700 shadow-2xs">
-                        Batal
-                    </button>
-                    <button type="button" 
-                            @click="openBulkAbsent()" 
-                            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-rose-600/30 active:scale-95 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        <span>Absen Massal</span>
-                    </button>
-                    <button type="button" 
-                            @click="openBulkComplete()" 
-                            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-emerald-600/30 active:scale-95 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                        <span>Selesai Massal</span>
-                    </button>
+        <!-- Floating Bulk Action Bar (Docked at Bottom, Teleported to Body) -->
+        <template x-teleport="body">
+            <div x-data="mentoringBulkActionBar()"
+                 x-show="selectedIds && selectedIds.length > 0" 
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="translate-y-12 opacity-0 scale-95"
+                 x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+                 x-transition:leave-end="translate-y-12 opacity-0 scale-95"
+                 class="fixed bottom-6 inset-x-0 max-w-2xl mx-auto px-4 pointer-events-none"
+                 style="z-index: 99998 !important;">
+                <div class="pointer-events-auto bg-slate-900/95 dark:bg-slate-800/95 text-white backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl p-3 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 shadow-orange-950/20">
+                    <div class="flex items-center gap-2.5">
+                        <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-xl bg-orange-600 text-white font-black text-xs shadow-xs tracking-wider" 
+                              x-text="selectedIds.length + ' Mahasiswa'"></span>
+                        <span class="text-xs font-bold text-slate-300 hidden sm:inline">Dipilih untuk aksi massal</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                @click="clear()" 
+                                class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-700 shadow-2xs">
+                            Batal
+                        </button>
+                        <button type="button" 
+                                @click="openBulkAbsent()" 
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-rose-600/30 active:scale-95 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <span>Absen Massal</span>
+                        </button>
+                        <button type="button" 
+                                @click="openBulkComplete()" 
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-emerald-600/30 active:scale-95 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Selesai Massal</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </template>
 
         <!-- Modal Absen Massal (Tandai Tidak Hadir) -->
         <template x-teleport="body">
