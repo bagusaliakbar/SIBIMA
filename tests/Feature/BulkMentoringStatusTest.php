@@ -149,4 +149,29 @@ class BulkMentoringStatusTest extends TestCase
 
         $response->assertSessionHasErrors('session_ids');
     }
+
+    public function test_mentoring_sessions_view_renders_bulk_attendance_elements(): void
+    {
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $thesis = Thesis::create(['title' => 'Skripsi Test', 'student_id' => $student->id, 'pembimbing1_id' => $dosen->id, 'status' => 'active']);
+
+        $session = MentoringSession::create([
+            'thesis_id' => $thesis->id,
+            'dosen_id' => $dosen->id,
+            'topic' => 'Topik Uji',
+            'type' => 'offline',
+            'scheduled_at' => now()->addHours(2),
+            'status' => 'approved',
+            'is_absent' => false,
+        ]);
+
+        $response = $this->actingAs($dosen)->get(route('mentoring-sessions.index'));
+        $response->assertOk();
+        $response->assertSee('selectedSessionIds');
+        $response->assertSee('Pilih Sesi Ini');
+        $response->assertSee('Absen Massal');
+        $response->assertSee('Selesai Massal');
+        $response->assertSee('Dipilih untuk aksi massal');
+    }
 }
