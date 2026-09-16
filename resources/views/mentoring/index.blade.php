@@ -15,9 +15,33 @@
                 calendarInitialized: false,
                 events: @json($calendarEvents ?? []),
                 attendanceStats: @json($attendanceStats ?? []),
+                selectedSessionIds: [],
+                openBulkAbsentModal: false,
+                openBulkCompleteModal: false,
                 setGrouping(mode) {
                     this.cardGrouping = mode;
                     localStorage.setItem('sibima_card_grouping', mode);
+                },
+                toggleSelectGroup(ids) {
+                    if (!Array.isArray(ids) || ids.length === 0) return;
+                    const strIds = ids.map(id => String(id));
+                    const currentStr = this.selectedSessionIds.map(String);
+                    const allSelected = strIds.every(id => currentStr.includes(id));
+                    if (allSelected) {
+                        this.selectedSessionIds = this.selectedSessionIds.filter(id => !strIds.includes(String(id)));
+                    } else {
+                        const combined = Array.from(new Set([...currentStr, ...strIds]));
+                        this.selectedSessionIds = combined;
+                    }
+                },
+                isGroupSelected(ids) {
+                    if (!Array.isArray(ids) || ids.length === 0) return false;
+                    const strIds = ids.map(id => String(id));
+                    const currentStr = this.selectedSessionIds.map(String);
+                    return strIds.every(id => currentStr.includes(id));
+                },
+                clearSelection() {
+                    this.selectedSessionIds = [];
                 },
                 initCalendar() {
                     if (this.calendarInitialized) return;
@@ -639,6 +663,20 @@
 
                                         <!-- Ringkasan Sesi / Counters -->
                                         <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                @php
+                                                    $actionableSessionIds = $sessionItems->filter(fn($s) => $s->status !== 'completed' || $s->is_absent)->pluck('id')->values()->all();
+                                                @endphp
+                                                @if(count($actionableSessionIds) > 0)
+                                                    <button type="button" 
+                                                            @click="toggleSelectGroup(@json($actionableSessionIds))"
+                                                            :class="isGroupSelected(@json($actionableSessionIds)) ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white dark:bg-slate-700/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600 hover:border-orange-300 hover:text-orange-600 dark:hover:text-orange-400'"
+                                                            class="px-2.5 py-1.5 rounded-xl border text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                                        <span x-text="isGroupSelected(@json($actionableSessionIds)) ? 'Lepas Pilihan Sesi' : 'Pilih Sesi Ini'">Pilih Sesi Ini</span>
+                                                    </button>
+                                                @endif
+                                            @endif
                                             <span class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-black uppercase tracking-wider border border-transparent dark:border-slate-600 shadow-2xs">
                                                 👥 {{ $totalMhs }} Mahasiswa
                                             </span>
@@ -675,7 +713,9 @@
                                                         : $thesis?->getCompletedMentoringCountForDosen(Auth::id());
                                                 @endphp
 
-                                                <div id="session-{{ $session->id }}" class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
+                                                <div id="session-{{ $session->id }}" 
+                                                     :class="selectedSessionIds.map(String).includes('{{ $session->id }}') ? 'ring-2 ring-orange-500/80 border-orange-500 dark:border-orange-500 shadow-md' : 'border-slate-200/90 dark:border-slate-700/80'"
+                                                     class="bg-white dark:bg-slate-800 border rounded-2xl p-5 relative overflow-hidden group hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
                                                     <div>
                                                         <!-- Top Bar Status Accent -->
                                                         <div class="absolute top-0 left-0 w-full h-1.5 
@@ -688,6 +728,14 @@
                                                         <!-- Student Avatar & Name Header -->
                                                         <div class="flex items-start justify-between gap-3 mb-3 pt-1">
                                                             <div class="flex items-center gap-3 min-w-0">
+                                                                @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) && ($session->status !== 'completed' || $session->is_absent))
+                                                                    <div class="shrink-0 flex items-center pr-0.5">
+                                                                        <input type="checkbox" 
+                                                                               value="{{ $session->id }}" 
+                                                                               x-model="selectedSessionIds"
+                                                                               class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
+                                                                    </div>
+                                                                @endif
                                                                 <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
                                                                     <img src="{{ $student?->avatar_url }}" alt="{{ $student?->name ?? 'Mhs' }}" class="w-full h-full object-cover">
                                                                 </div>
@@ -1065,7 +1113,9 @@
                                                 $gKey = ($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i');
                                                 $isGroupSession = ($groupCountMap[$gKey] ?? 1) > 1;
                                             @endphp
-                                            <div class="bg-slate-50/60 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 sm:p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
+                                            <div id="session-{{ $session->id }}" 
+                                                 :class="selectedSessionIds.map(String).includes('{{ $session->id }}') ? 'ring-2 ring-orange-500/80 border-orange-500 dark:border-orange-500 shadow-md' : 'border-slate-200/90 dark:border-slate-700/80'"
+                                                 class="bg-slate-50/60 dark:bg-slate-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
                                                 <div>
                                                     <!-- Status Indicator -->
                                                     <div class="absolute top-0 left-0 w-full h-1.5 
@@ -1076,9 +1126,17 @@
                                                     "></div>
                                                     
                                                     <div class="flex justify-between items-start gap-3 mb-4 pt-1">
-                                                        <div class="space-y-0.5">
-                                                            <p class="text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</p>
-                                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $session->scheduled_at->format('H:i') }} WIB</p>
+                                                        <div class="flex items-center gap-2.5">
+                                                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) && ($session->status !== 'completed' || $session->is_absent))
+                                                                <input type="checkbox" 
+                                                                       value="{{ $session->id }}" 
+                                                                       x-model="selectedSessionIds"
+                                                                       class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
+                                                            @endif
+                                                            <div class="space-y-0.5">
+                                                                <p class="text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</p>
+                                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $session->scheduled_at->format('H:i') }} WIB</p>
+                                                            </div>
                                                         </div>
                                                         <div class="shrink-0">
                                                             @if($session->is_absent)
@@ -2229,6 +2287,206 @@
                 </div>
             </div>
         </template>
+
+        <!-- Floating Bulk Action Bar (Docked at Bottom) -->
+        <div x-show="selectedSessionIds.length > 0" 
+             x-cloak
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="translate-y-12 opacity-0 scale-95"
+             x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+             x-transition:leave-end="translate-y-12 opacity-0 scale-95"
+             class="fixed bottom-6 inset-x-0 z-40 max-w-2xl mx-auto px-4 pointer-events-none">
+            <div class="pointer-events-auto bg-slate-900/95 dark:bg-slate-800/95 text-white backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl p-3 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 shadow-orange-950/20">
+                <div class="flex items-center gap-2.5">
+                    <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-xl bg-orange-600 text-white font-black text-xs shadow-xs tracking-wider" 
+                          x-text="selectedSessionIds.length + ' Mahasiswa'"></span>
+                    <span class="text-xs font-bold text-slate-300 hidden sm:inline">Dipilih untuk aksi massal</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" 
+                            @click="clearSelection()" 
+                            class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-700 shadow-2xs">
+                        Batal
+                    </button>
+                    <button type="button" 
+                            @click="openBulkAbsentModal = true" 
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-rose-600/30 active:scale-95 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <span>Absen Massal</span>
+                    </button>
+                    <button type="button" 
+                            @click="openBulkCompleteModal = true" 
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-emerald-600/30 active:scale-95 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Selesai Massal</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Absen Massal (Tandai Tidak Hadir) -->
+        <div x-show="openBulkAbsentModal" 
+             x-cloak 
+             class="fixed inset-0 z-50 overflow-y-auto"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="openBulkAbsentModal = false"></div>
+
+            <div class="relative min-h-screen flex items-center justify-center p-4">
+                <div class="relative bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden"
+                     @click.away="openBulkAbsentModal = false"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="scale-95 opacity-0"
+                     x-transition:enter-end="scale-100 opacity-100">
+                    
+                    <div class="flex items-center gap-3.5 mb-4">
+                        <div class="w-11 h-11 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 shadow-sm border border-rose-200 dark:border-rose-800/80">
+                            <svg class="w-6 h-6 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Tandai Tidak Hadir (Absen Massal)</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Konfirmasi status kehadiran mahasiswa</p>
+                        </div>
+                    </div>
+
+                    <form action="{{ route('mentoring-sessions.bulk-status') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <template x-for="id in selectedSessionIds" :key="id">
+                            <input type="hidden" name="session_ids[]" :value="id">
+                        </template>
+                        <input type="hidden" name="status" value="absent">
+
+                        <div class="p-4 bg-rose-50/70 dark:bg-rose-950/20 rounded-2xl border border-rose-200/80 dark:border-rose-800/40 text-xs text-rose-900 dark:text-rose-300 space-y-1.5">
+                            <p class="font-bold">
+                                Anda akan menandai <span class="font-black text-rose-600 dark:text-rose-400" x-text="selectedSessionIds.length"></span> mahasiswa terpilih sebagai <span class="font-black underline">TIDAK HADIR (Absen)</span>.
+                            </p>
+                            <p class="text-[11px] text-rose-700/80 dark:text-rose-300/80">
+                                Sesi bimbingan akan diselesaikan dengan status tidak hadir, dan notifikasi akan dikirimkan kepada masing-masing mahasiswa.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="absent_feedback" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Catatan / Alasan Tidak Hadir (Opsional)
+                            </label>
+                            <textarea name="feedback" 
+                                      id="absent_feedback" 
+                                      rows="2" 
+                                      class="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-3 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 shadow-2xs transition-all" 
+                                      placeholder="Contoh: Mahasiswa tidak hadir tanpa keterangan pada jam yang telah ditentukan..."></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <button type="button" 
+                                    @click="openBulkAbsentModal = false" 
+                                    class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                                Batal
+                            </button>
+                            <button type="submit" 
+                                    class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
+                                Ya, Tandai Tidak Hadir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Selesai Massal (Hadir & Simpan Catatan) -->
+        <div x-show="openBulkCompleteModal" 
+             x-cloak 
+             class="fixed inset-0 z-50 overflow-y-auto"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="openBulkCompleteModal = false"></div>
+
+            <div class="relative min-h-screen flex items-center justify-center p-4">
+                <div class="relative bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden"
+                     @click.away="openBulkCompleteModal = false"
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="scale-95 opacity-0"
+                     x-transition:enter-end="scale-100 opacity-100">
+                    
+                    <div class="flex items-center gap-3.5 mb-4">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-sm border border-emerald-200 dark:border-emerald-800/80">
+                            <svg class="w-6 h-6 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Selesaikan Bimbingan Massal</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Tandai hadir dan masukkan catatan hasil bimbingan</p>
+                        </div>
+                    </div>
+
+                    <form action="{{ route('mentoring-sessions.bulk-status') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <template x-for="id in selectedSessionIds" :key="id">
+                            <input type="hidden" name="session_ids[]" :value="id">
+                        </template>
+                        <input type="hidden" name="status" value="completed">
+
+                        <div class="p-3.5 bg-emerald-50/70 dark:bg-emerald-950/20 rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 text-xs text-emerald-900 dark:text-emerald-300">
+                            <p class="font-bold">
+                                Menyelesaikan bimbingan untuk <span class="font-black text-emerald-600 dark:text-emerald-400" x-text="selectedSessionIds.length"></span> mahasiswa terpilih sekaligus.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="complete_feedback" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Catatan Hasil Bimbingan <span class="text-rose-500">*</span>
+                            </label>
+                            <textarea name="feedback" 
+                                      id="complete_feedback" 
+                                      rows="3" 
+                                      required
+                                      class="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 p-3 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-2xs transition-all" 
+                                      placeholder="Masukkan catatan hasil bimbingan (catatan ini akan dikirimkan ke seluruh mahasiswa terpilih)..."></textarea>
+                        </div>
+
+                        <div>
+                            <label for="complete_document_url" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Link Dokumen / Revisi Google Drive (Opsional)
+                            </label>
+                            <div class="relative">
+                                <input type="url" 
+                                       name="feedback_document_url" 
+                                       id="complete_document_url"
+                                       placeholder="https://drive.google.com/..." 
+                                       class="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2 pl-9 pr-3 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-2xs transition-all">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <button type="button" 
+                                    @click="openBulkCompleteModal = false" 
+                                    class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                                Batal
+                            </button>
+                            <button type="submit" 
+                                    class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-600/20 active:scale-95 cursor-pointer">
+                                Simpan & Selesaikan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     @push('styles')

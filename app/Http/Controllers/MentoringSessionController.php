@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BulkUpdateMentoringSessionStatusRequest;
 use App\Http\Requests\StoreMentoringSessionRequest;
 use App\Http\Requests\UpdateMentoringSessionRequest;
 use App\Http\Requests\UpdateMentoringSessionStatusRequest;
@@ -521,6 +522,27 @@ class MentoringSessionController extends Controller
         $message = $this->mentoringService->updateStatus($session, $request->validated());
 
         return redirect()->back()->with('success', $message);
+    }
+
+    public function bulkStatus(BulkUpdateMentoringSessionStatusRequest $request)
+    {
+        $validated = $request->validated();
+        $user = Auth::user();
+
+        $sessions = MentoringSession::whereIn('id', $validated['session_ids'])->get();
+
+        if ($sessions->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada data bimbingan yang valid untuk diproses.');
+        }
+
+        // Verify authorization for each session
+        foreach ($sessions as $session) {
+            $this->authorize('updateStatus', $session);
+        }
+
+        $result = $this->mentoringService->bulkUpdateStatus($sessions, $validated);
+
+        return redirect()->back()->with('success', $result['message']);
     }
 
     public function uploadDocument(UploadMentoringDocumentRequest $request, MentoringSession $session)

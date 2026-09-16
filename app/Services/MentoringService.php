@@ -432,6 +432,15 @@ class MentoringService
                 'is_absent' => true,
                 'feedback' => $data['feedback'] ?? null,
             ]);
+
+            if ($session->thesis?->student) {
+                $session->thesis->student->notify(new \App\Notifications\MentoringStatusUpdatedNotification(
+                    $session,
+                    'absent',
+                    $data['feedback'] ?? null
+                ));
+            }
+
             $message = 'Sesi bimbingan ditandai sebagai: Tidak Hadir.';
         } else {
             $oldStatus = $session->status;
@@ -496,6 +505,39 @@ class MentoringService
         ActivityLog::log('Update Status Bimbingan', "Dosen memperbarui status bimbingan ({$session->topic}) menjadi: " . strtoupper($data['status']), 'Bimbingan', $session);
 
         return $message;
+    }
+
+    /**
+     * Bulk update status of multiple mentoring sessions.
+     */
+    public function bulkUpdateStatus($sessions, array $data): array
+    {
+        $updatedCount = 0;
+        $status = $data['status'];
+
+        \DB::transaction(function () use ($sessions, $data, $status, &$updatedCount) {
+            foreach ($sessions as $session) {
+                $this->updateStatus($session, [
+                    'status' => $status,
+                    'feedback' => $data['feedback'] ?? null,
+                    'feedback_document_url' => $data['feedback_document_url'] ?? null,
+                ]);
+                $updatedCount++;
+            }
+        });
+
+        if ($status === 'absent') {
+            $message = "Berhasil menandai {$updatedCount} mahasiswa sebagai Tidak Hadir (Absen).";
+        } elseif ($status === 'completed') {
+            $message = "Berhasil menyelesaikan bimbingan untuk {$updatedCount} mahasiswa secara massal.";
+        } else {
+            $message = "Berhasil memperbarui status {$updatedCount} jadwal bimbingan.";
+        }
+
+        return [
+            'count' => $updatedCount,
+            'message' => $message,
+        ];
     }
 
     /**
