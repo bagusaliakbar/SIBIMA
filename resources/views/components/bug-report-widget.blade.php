@@ -24,13 +24,8 @@ window.bugReportWidget = function() {
         },
 
         init() {
-            // Restore hidden/collapse state if previously set
-            try {
-                const savedCollapsed = sessionStorage.getItem('sibima_bug_widget_collapsed');
-                if (savedCollapsed === 'true') {
-                    this.isCollapsed = true;
-                }
-            } catch (e) {}
+            this.isCollapsed = false;
+            this.isHidden = false;
         },
 
         closeAllModals() {
@@ -181,6 +176,9 @@ if (window.Alpine) {
     document.addEventListener('alpine:init', () => {
         window.Alpine.data('bugReportWidget', window.bugReportWidget);
     });
+}
+function bugReportWidget() {
+    return window.bugReportWidget();
 }
 </script>
 

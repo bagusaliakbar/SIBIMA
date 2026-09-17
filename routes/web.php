@@ -271,6 +271,10 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
         \Illuminate\Support\Facades\Artisan::call('route:clear');
         \Illuminate\Support\Facades\Artisan::call('config:clear');
 
+        if (function_exists('opcache_reset')) {
+            @opcache_reset();
+        }
+
         $clearedViews = 0;
         $viewFiles = glob(storage_path('framework/views/*.php'));
         if ($viewFiles) {
@@ -288,6 +292,14 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
             $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
         }
 
+        // Recompile all views fresh so hosting serves updated templates
+        \Illuminate\Support\Facades\Artisan::call('view:cache');
+        $viewCacheOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        if (function_exists('opcache_reset')) {
+            @opcache_reset();
+        }
+
         $appBladeContent = @file_get_contents(resource_path('views/layouts/app.blade.php'));
         $hasWidgetTag = strpos($appBladeContent, 'x-bug-report-widget') !== false;
         
@@ -296,12 +308,12 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Semua cache (view, route, config) berhasil dibersihkan' . ($migrationOutput ? ' dan migrasi database dijalankan.' : '.'),
+            'message' => 'Semua cache berhasil dibersihkan, OPcache di-reset, dan views berhasil dikompilasi ulang!',
             'has_widget_tag_in_app_blade' => $hasWidgetTag,
             'has_widget_file' => $hasWidgetFile,
             'widget_file_size' => strlen($widgetComponentContent ?: ''),
-            'cleared_views_count' => $clearedViews,
-            'artisan_output' => \Illuminate\Support\Facades\Artisan::output(),
+            'view_cache_output' => trim($viewCacheOutput),
+            'opcache_reset_executed' => function_exists('opcache_reset'),
             'migration_output' => $migrationOutput,
             'timestamp' => now()->toIso8601String(),
         ]);
