@@ -287,6 +287,11 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
             }
         }
 
+        $gitPullOutput = null;
+        if ($request->has('pull')) {
+            $gitPullOutput = shell_exec('git pull origin main 2>&1');
+        }
+
         $migrationOutput = null;
         if ($request->has('migrate')) {
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
@@ -337,6 +342,7 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
             'root_manifest_exists' => file_exists(base_path('build/manifest.json')),
             'root_manifest_content' => file_exists(base_path('build/manifest.json')) ? json_decode(file_get_contents(base_path('build/manifest.json')), true) : null,
             'rendered_check' => $renderedCheck,
+            'git_pull_output' => $gitPullOutput,
             'migration_output' => $migrationOutput,
             'timestamp' => now()->toIso8601String(),
         ]);
