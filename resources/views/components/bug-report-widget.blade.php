@@ -405,7 +405,7 @@ document.addEventListener('keydown', function(e) {
                             Lapor Kendala / Bug Sistem
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                            Laporan Anda akan otomatis diteruskan kepada Kaprodi & Tim Administrator SIBIMA.
+                            Laporan Anda akan otomatis diteruskan kepada Tim Teknis SIBIMA.
                         </p>
                     </div>
                 </div>

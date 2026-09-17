@@ -292,6 +292,21 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
             $gitPullOutput = shell_exec('git pull origin main 2>&1');
         }
 
+        if (file_exists(base_path('build/manifest.json'))) {
+            if (!file_exists(public_path('build'))) {
+                @mkdir(public_path('build'), 0755, true);
+            }
+            if (!file_exists(public_path('build/assets'))) {
+                @mkdir(public_path('build/assets'), 0755, true);
+            }
+            @copy(base_path('build/manifest.json'), public_path('build/manifest.json'));
+            foreach (glob(base_path('build/assets/*')) as $asset) {
+                if (is_file($asset)) {
+                    @copy($asset, public_path('build/assets/' . basename($asset)));
+                }
+            }
+        }
+
         $migrationOutput = null;
         if ($request->has('migrate')) {
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
