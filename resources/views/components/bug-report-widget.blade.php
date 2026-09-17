@@ -98,7 +98,7 @@ window.hideBugWidget = function() {
     const container = document.getElementById('bug-report-dock-container');
     const reopen = document.getElementById('bug-report-reopen-pill');
     if (container) container.style.setProperty('display', 'none', 'important');
-    if (reopen) reopen.style.setProperty('block', 'block', 'important');
+    if (reopen) reopen.style.setProperty('display', 'block', 'important');
     if (window._bugWidget) window._bugWidget.isHidden = true;
 };
 
