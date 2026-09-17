@@ -306,6 +306,23 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
         $widgetComponentContent = @file_get_contents(resource_path('views/components/bug-report-widget.blade.php'));
         $hasWidgetFile = !empty($widgetComponentContent);
 
+        $renderedCheck = 'none';
+        try {
+            $user = \App\Models\User::where('role', 'dosen')->first() ?: \App\Models\User::first();
+            if ($user) {
+                auth()->login($user);
+                $rendered = view('layouts.app', ['slot' => 'test-slot', 'errors' => new \Illuminate\Support\ViewErrorBag])->render();
+                $pos = strpos($rendered, 'Toolbar Pelaporan Bug');
+                $renderedCheck = [
+                    'has_dock' => $pos !== false,
+                    'user' => $user->name . ' (' . $user->role . ')',
+                    'snippet' => $pos !== false ? substr($rendered, $pos - 50, 150) : 'NOT FOUND IN RENDERED HTML',
+                ];
+            }
+        } catch (\Throwable $e) {
+            $renderedCheck = 'Render error: ' . $e->getMessage();
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Semua cache berhasil dibersihkan, OPcache di-reset, dan views berhasil dikompilasi ulang!',
@@ -314,6 +331,7 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
             'widget_file_size' => strlen($widgetComponentContent ?: ''),
             'view_cache_output' => trim($viewCacheOutput),
             'opcache_reset_executed' => function_exists('opcache_reset'),
+            'rendered_check' => $renderedCheck,
             'migration_output' => $migrationOutput,
             'timestamp' => now()->toIso8601String(),
         ]);
