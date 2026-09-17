@@ -1190,7 +1190,7 @@
         @open-audit-modal.window="data = $event.detail; open = true"
         x-show="open" 
         class="fixed inset-0 overflow-hidden"
-        style="z-index: 99999 !important;"
+        style="display: none; z-index: 99999 !important;"
         x-cloak>
             <!-- Backdrop Overlay -->
             <div x-show="open"
@@ -1204,7 +1204,7 @@
                  class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
                  style="z-index: 99999 !important;"></div>
 
-            <div class="fixed inset-y-0 right-0 max-w-full flex pl-10" style="z-index: 100000 !important;">
+            <div class="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-none" style="z-index: 100000 !important;">
                 <div x-show="open"
                      x-transition:enter="transform transition ease-in-out duration-300 sm:duration-400"
                      x-transition:enter-start="translate-x-full"
@@ -1212,7 +1212,7 @@
                      x-transition:leave="transform transition ease-in-out duration-300 sm:duration-400"
                      x-transition:leave-start="translate-x-0"
                      x-transition:leave-end="translate-x-full"
-                     class="w-screen max-w-lg bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col h-full relative">
+                     class="w-screen max-w-lg bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col h-full relative pointer-events-auto">
                     
                     <!-- Drawer Header -->
                     <div class="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between shrink-0">
