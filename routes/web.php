@@ -265,61 +265,54 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
         abort(403, 'Unauthorized access to cache clear');
     }
 
-    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-    \Illuminate\Support\Facades\Artisan::call('view:clear');
-    \Illuminate\Support\Facades\Artisan::call('route:clear');
-    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    try {
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
 
-    $clearedViews = 0;
-    $viewFiles = glob(storage_path('framework/views/*.php'));
-    if ($viewFiles) {
-        foreach ($viewFiles as $file) {
-            if (is_file($file)) {
-                @unlink($file);
-                $clearedViews++;
+        $clearedViews = 0;
+        $viewFiles = glob(storage_path('framework/views/*.php'));
+        if ($viewFiles) {
+            foreach ($viewFiles as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                    $clearedViews++;
+                }
             }
         }
-    }
 
-    $migrationOutput = null;
-    if ($request->has('migrate')) {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
-    }
-
-    $appBladeContent = @file_get_contents(resource_path('views/layouts/app.blade.php'));
-    $hasWidgetTag = strpos($appBladeContent, 'x-bug-report-widget') !== false;
-    $gitCommit = trim(@exec('git log -1 --pretty=format:"%h - %s (%ci)"') ?: 'unknown');
-    
-    // Test render layouts.app with first user
-    $renderTest = 'untested';
-    try {
-        $firstUser = \App\Models\User::first();
-        if ($firstUser) {
-            auth()->login($firstUser);
-            $rendered = view('layouts.app', ['slot' => 'test_slot', 'errors' => new \Illuminate\Support\ViewErrorBag])->render();
-            $renderTest = [
-                'user_role' => $firstUser->role,
-                'has_bugReportWidget' => strpos($rendered, 'bugReportWidget') !== false,
-                'has_fixed_dock' => strpos($rendered, 'Floating Capsule Dock') !== false,
-                'has_lapor_bug' => strpos($rendered, 'Lapor Bug') !== false,
-            ];
+        $migrationOutput = null;
+        if ($request->has('migrate')) {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
         }
-    } catch (\Throwable $e) {
-        $renderTest = 'Error: ' . $e->getMessage();
-    }
 
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Semua cache (view, route, config) berhasil dibersihkan' . ($migrationOutput ? ' dan migrasi database dijalankan.' : '.'),
-        'git_commit' => $gitCommit,
-        'has_widget_tag_in_app_blade' => $hasWidgetTag,
-        'render_test' => $renderTest,
-        'cleared_views_count' => $clearedViews,
-        'artisan_output' => \Illuminate\Support\Facades\Artisan::output(),
-        'migration_output' => $migrationOutput,
-        'timestamp' => now()->toIso8601String(),
-    ]);
+        $appBladeContent = @file_get_contents(resource_path('views/layouts/app.blade.php'));
+        $hasWidgetTag = strpos($appBladeContent, 'x-bug-report-widget') !== false;
+        
+        $widgetComponentContent = @file_get_contents(resource_path('views/components/bug-report-widget.blade.php'));
+        $hasWidgetFile = !empty($widgetComponentContent);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Semua cache (view, route, config) berhasil dibersihkan' . ($migrationOutput ? ' dan migrasi database dijalankan.' : '.'),
+            'has_widget_tag_in_app_blade' => $hasWidgetTag,
+            'has_widget_file' => $hasWidgetFile,
+            'widget_file_size' => strlen($widgetComponentContent ?: ''),
+            'cleared_views_count' => $clearedViews,
+            'artisan_output' => \Illuminate\Support\Facades\Artisan::output(),
+            'migration_output' => $migrationOutput,
+            'timestamp' => now()->toIso8601String(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
 })->name('system.clear-cache');
 
 require __DIR__ . '/auth.php';
