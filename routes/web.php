@@ -287,9 +287,34 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
         $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
     }
 
+    $appBladeContent = @file_get_contents(resource_path('views/layouts/app.blade.php'));
+    $hasWidgetTag = strpos($appBladeContent, 'x-bug-report-widget') !== false;
+    $gitCommit = trim(@exec('git log -1 --pretty=format:"%h - %s (%ci)"') ?: 'unknown');
+    
+    // Test render layouts.app with first user
+    $renderTest = 'untested';
+    try {
+        $firstUser = \App\Models\User::first();
+        if ($firstUser) {
+            auth()->login($firstUser);
+            $rendered = view('layouts.app', ['slot' => 'test_slot', 'errors' => new \Illuminate\Support\ViewErrorBag])->render();
+            $renderTest = [
+                'user_role' => $firstUser->role,
+                'has_bugReportWidget' => strpos($rendered, 'bugReportWidget') !== false,
+                'has_fixed_dock' => strpos($rendered, 'Floating Capsule Dock') !== false,
+                'has_lapor_bug' => strpos($rendered, 'Lapor Bug') !== false,
+            ];
+        }
+    } catch (\Throwable $e) {
+        $renderTest = 'Error: ' . $e->getMessage();
+    }
+
     return response()->json([
         'status' => 'success',
         'message' => 'Semua cache (view, route, config) berhasil dibersihkan' . ($migrationOutput ? ' dan migrasi database dijalankan.' : '.'),
+        'git_commit' => $gitCommit,
+        'has_widget_tag_in_app_blade' => $hasWidgetTag,
+        'render_test' => $renderTest,
         'cleared_views_count' => $clearedViews,
         'artisan_output' => \Illuminate\Support\Facades\Artisan::output(),
         'migration_output' => $migrationOutput,
