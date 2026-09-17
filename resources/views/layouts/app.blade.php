@@ -1160,6 +1160,10 @@
 
         <x-toast />
 
+        @auth
+            <x-bug-report-widget />
+        @endauth
+
         <!-- Global Slide-Over Drawer Kemiripan Judul -->
         <div x-data="{ 
             open: false, 
@@ -1413,10 +1417,6 @@
                 observer.observe(document.body, { childList: true, subtree: true });
             });
         </script>
-
-        @auth
-            <x-bug-report-widget />
-        @endauth
 
         @stack('scripts')
     </body>
