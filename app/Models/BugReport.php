@@ -116,7 +116,20 @@ class BugReport extends Model
     }
 
     /**
-     * URL Lampiran screenshot
+     * Cek apakah lampiran bertipe gambar
+     */
+    public function getIsAttachmentImageAttribute(): bool
+    {
+        if (!$this->attachment_path) {
+            return false;
+        }
+
+        $ext = strtolower(pathinfo($this->attachment_path, PATHINFO_EXTENSION));
+        return in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
+    }
+
+    /**
+     * URL Lampiran screenshot / dokumen via rute aplikasi resmi
      */
     public function getAttachmentUrlAttribute(): ?string
     {
@@ -124,6 +137,6 @@ class BugReport extends Model
             return null;
         }
 
-        return Storage::url($this->attachment_path);
+        return route('bug-reports.attachment', $this->id);
     }
 }

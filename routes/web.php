@@ -245,6 +245,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/bug-reports', [App\Http\Controllers\BugReportController::class, 'store'])->name('bug-reports.store');
     Route::get('/bug-reports/my-reports', [App\Http\Controllers\BugReportController::class, 'myReports'])->name('bug-reports.my-reports');
     Route::get('/bug-reports/{bugReport}', [App\Http\Controllers\BugReportController::class, 'show'])->name('bug-reports.show');
+    Route::get('/bug-reports/{bugReport}/attachment', [App\Http\Controllers\BugReportController::class, 'attachment'])->name('bug-reports.attachment');
 
     // Notifications
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');

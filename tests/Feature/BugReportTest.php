@@ -234,4 +234,56 @@ class BugReportTest extends TestCase
         $this->assertDatabaseMissing('bug_reports', ['id' => $bug->id]);
         Storage::disk('public')->assertMissing($path);
     }
+
+    public function test_authorized_user_can_view_attachment(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $file = UploadedFile::fake()->image('screenshot.png');
+        $path = $file->store('bug_reports', 'public');
+
+        $bug = BugReport::create([
+            'ticket_number' => 'BUG-20260917-0006',
+            'user_id' => $student->id,
+            'title' => 'Bug with attachment',
+            'category' => 'ui_ux',
+            'severity' => 'low',
+            'status' => 'open',
+            'description' => 'Test bug description',
+            'attachment_path' => $path,
+        ]);
+
+        // Student owner can access attachment
+        $responseOwner = $this->actingAs($student)->get(route('bug-reports.attachment', $bug->id));
+        $responseOwner->assertStatus(200);
+
+        // Admin can access attachment
+        $responseAdmin = $this->actingAs($admin)->get(route('bug-reports.attachment', $bug->id));
+        $responseAdmin->assertStatus(200);
+    }
+
+    public function test_unauthorized_user_cannot_view_attachment(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $otherStudent = User::factory()->create(['role' => 'mahasiswa']);
+
+        $file = UploadedFile::fake()->image('secret.png');
+        $path = $file->store('bug_reports', 'public');
+
+        $bug = BugReport::create([
+            'ticket_number' => 'BUG-20260917-0007',
+            'user_id' => $student->id,
+            'title' => 'Bug with sensitive attachment',
+            'category' => 'security',
+            'severity' => 'high',
+            'status' => 'open',
+            'description' => 'Test bug description',
+            'attachment_path' => $path,
+        ]);
+
+        $response = $this->actingAs($otherStudent)->get(route('bug-reports.attachment', $bug->id));
+        $response->assertStatus(403);
+    }
 }
+

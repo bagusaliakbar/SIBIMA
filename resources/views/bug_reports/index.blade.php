@@ -324,14 +324,45 @@
                             <div id="brm-steps" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed font-mono"></div>
                         </div>
 
-                        <!-- Lampiran Screenshot -->
+                        <!-- Lampiran Screenshot / File Bukti -->
                         <div id="brm-attachment-container" style="display: none;">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Bukti Tangkapan Layar:</span>
-                            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-center">
-                                <a id="brm-attachment-link" href="" target="_blank" title="Klik untuk membuka ukuran penuh">
-                                    <img id="brm-attachment-img" src="" alt="Screenshot" class="max-h-72 mx-auto rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.01] transition-transform cursor-zoom-in">
-                                </a>
-                                <p class="text-[11px] text-slate-400 mt-2">Klik gambar untuk membuka ukuran penuh di tab baru.</p>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Tangkapan Layar / Dokumen:</span>
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-center">
+                                
+                                <!-- Image Preview Wrapper -->
+                                <div id="brm-image-wrapper" class="relative group inline-block max-w-full">
+                                    <a id="brm-attachment-link" href="" target="_blank" class="block" title="Klik untuk membuka ukuran penuh di tab baru">
+                                        <img id="brm-attachment-img" 
+                                             src="" 
+                                             alt="Screenshot" 
+                                             class="max-h-80 mx-auto rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.01] transition-transform cursor-zoom-in bg-white dark:bg-slate-900"
+                                             onerror="window.handleAttachmentImageError(this)">
+                                    </a>
+                                </div>
+
+                                <!-- PDF Document Card (If PDF) -->
+                                <div id="brm-pdf-wrapper" style="display: none;" class="py-2">
+                                    <a id="brm-pdf-link" href="" target="_blank" class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs uppercase">
+                                            PDF
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 transition-colors" id="brm-pdf-name">Dokumen Lampiran.pdf</div>
+                                            <div class="text-[11px] text-slate-400">Klik untuk membuka atau mengunduh PDF di tab baru</div>
+                                        </div>
+                                        <svg class="w-4 h-4 text-slate-400 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    </a>
+                                </div>
+
+                                <!-- Fallback if image failed to load -->
+                                <div id="brm-attachment-fallback" style="display: none;" class="py-2 text-center">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 text-xs font-medium">
+                                        <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                        <span>Preview gambar tidak dapat dimuat langsung. <a id="brm-fallback-link" href="" target="_blank" class="underline font-bold text-orange-600 dark:text-orange-400">Buka / Unduh Berkas Lampiran</a></span>
+                                    </div>
+                                </div>
+
+                                <p id="brm-image-hint" class="text-[11px] text-slate-400 mt-2">Klik gambar untuk membuka ukuran penuh di tab baru.</p>
                             </div>
                         </div>
 
@@ -473,10 +504,35 @@
                 }
 
                 const attachContainer = document.getElementById('brm-attachment-container');
+                const imgWrapper = document.getElementById('brm-image-wrapper');
+                const pdfWrapper = document.getElementById('brm-pdf-wrapper');
+                const fallbackEl = document.getElementById('brm-attachment-fallback');
+                const imgHint = document.getElementById('brm-image-hint');
+
                 if (r.attachment_url) {
                     attachContainer.style.display = 'block';
-                    document.getElementById('brm-attachment-link').href = r.attachment_url;
-                    document.getElementById('brm-attachment-img').src = r.attachment_url;
+                    if (fallbackEl) fallbackEl.style.display = 'none';
+
+                    const isPdf = r.is_attachment_image === false || (r.attachment_filename && r.attachment_filename.toLowerCase().endsWith('.pdf'));
+
+                    if (isPdf) {
+                        imgWrapper.style.display = 'none';
+                        if (imgHint) imgHint.style.display = 'none';
+                        pdfWrapper.style.display = 'block';
+                        document.getElementById('brm-pdf-link').href = r.attachment_url;
+                        document.getElementById('brm-pdf-name').innerText = r.attachment_filename || 'Dokumen Lampiran.pdf';
+                    } else {
+                        pdfWrapper.style.display = 'none';
+                        imgWrapper.style.display = 'inline-block';
+                        if (imgHint) imgHint.style.display = 'block';
+                        
+                        const imgEl = document.getElementById('brm-attachment-img');
+                        imgEl.style.display = 'block';
+                        imgEl.src = r.attachment_url;
+                        document.getElementById('brm-attachment-link').href = r.attachment_url;
+                        const fbLink = document.getElementById('brm-fallback-link');
+                        if (fbLink) fbLink.href = r.attachment_url;
+                    }
                 } else {
                     attachContainer.style.display = 'none';
                 }
@@ -497,6 +553,14 @@
             document.getElementById('brm-title').innerText = 'Gagal memuat rincian laporan';
             document.getElementById('brm-description').innerText = 'Terjadi kesalahan jaringan atau izin akses tidak mencukupi.';
         }
+    };
+
+    window.handleAttachmentImageError = function(img) {
+        if (img) img.style.display = 'none';
+        const fallback = document.getElementById('brm-attachment-fallback');
+        if (fallback) fallback.style.display = 'block';
+        const hint = document.getElementById('brm-image-hint');
+        if (hint) hint.style.display = 'none';
     };
 
     window.closeBugReviewModal = function() {

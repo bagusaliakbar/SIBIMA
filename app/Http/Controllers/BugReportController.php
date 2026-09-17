@@ -107,7 +107,10 @@ class BugReportController extends Controller
                     'page_url' => $report->page_url,
                     'description' => $report->description,
                     'steps_to_reproduce' => $report->steps_to_reproduce,
+                    'attachment_path' => $report->attachment_path,
                     'attachment_url' => $report->attachment_url,
+                    'is_attachment_image' => $report->is_attachment_image,
+                    'attachment_filename' => $report->attachment_path ? basename($report->attachment_path) : null,
                     'admin_notes' => $report->admin_notes,
                     'resolver_name' => $report->resolver ? $report->resolver->name : null,
                     'resolved_at' => $report->resolved_at ? $report->resolved_at->translatedFormat('d M Y H:i') : null,
@@ -206,7 +209,10 @@ class BugReportController extends Controller
                 'description' => $bugReport->description,
                 'steps_to_reproduce' => $bugReport->steps_to_reproduce,
                 'device_info' => $bugReport->device_info,
+                'attachment_path' => $bugReport->attachment_path,
                 'attachment_url' => $bugReport->attachment_url,
+                'is_attachment_image' => $bugReport->is_attachment_image,
+                'attachment_filename' => $bugReport->attachment_path ? basename($bugReport->attachment_path) : null,
                 'admin_notes' => $bugReport->admin_notes,
                 'user' => [
                     'name' => $bugReport->user->name,
@@ -271,6 +277,49 @@ class BugReportController extends Controller
         }
 
         return back()->with('success', 'Status laporan #' . $bugReport->ticket_number . ' berhasil diubah menjadi ' . $bugReport->status_label);
+    }
+
+    /**
+     * Stream attachment file securely (handles images & PDFs directly)
+     */
+    public function attachment(BugReport $bugReport)
+    {
+        // Authorization check: must be admin, kaprodi, or report owner
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi']) && $bugReport->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak berhak melihat lampiran ini.');
+        }
+
+        if (!$bugReport->attachment_path) {
+            abort(404, 'Lampiran tidak ditemukan.');
+        }
+
+        $candidatePaths = [
+            Storage::disk('public')->path($bugReport->attachment_path),
+            storage_path('app/public/' . $bugReport->attachment_path),
+            storage_path('app/' . $bugReport->attachment_path),
+            public_path('storage/' . $bugReport->attachment_path),
+        ];
+
+        $resolvedPath = null;
+        foreach ($candidatePaths as $path) {
+            if (file_exists($path) && is_file($path)) {
+                $resolvedPath = $path;
+                break;
+            }
+        }
+
+        if (!$resolvedPath) {
+            abort(404, 'File fisik lampiran tidak ditemukan di server.');
+        }
+
+        $mimeType = mime_content_type($resolvedPath) ?: 'application/octet-stream';
+        $filename = basename($resolvedPath);
+
+        return response()->file($resolvedPath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Cache-Control' => 'private, max-age=86400',
+        ]);
     }
 
     /**
