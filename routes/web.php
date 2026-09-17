@@ -234,8 +234,17 @@ Route::middleware('auth')->group(function () {
         Route::put('/wa-templates/{waTemplate}', [App\Http\Controllers\WaTemplateController::class, 'update'])->name('wa-templates.update');
         Route::post('/wa-templates/{waTemplate}/reset', [App\Http\Controllers\WaTemplateController::class, 'reset'])->name('wa-templates.reset');
 
+        // Bug Reports Management (Admin & Kaprodi)
+        Route::get('/admin/bug-reports', [App\Http\Controllers\BugReportController::class, 'index'])->name('admin.bug-reports.index');
+        Route::patch('/admin/bug-reports/{bugReport}/status', [App\Http\Controllers\BugReportController::class, 'updateStatus'])->name('admin.bug-reports.update-status');
+        Route::delete('/admin/bug-reports/{bugReport}', [App\Http\Controllers\BugReportController::class, 'destroy'])->name('admin.bug-reports.destroy');
 
     });
+
+    // Bug Reports Submission & My Reports (All Authenticated Users)
+    Route::post('/bug-reports', [App\Http\Controllers\BugReportController::class, 'store'])->name('bug-reports.store');
+    Route::get('/bug-reports/my-reports', [App\Http\Controllers\BugReportController::class, 'myReports'])->name('bug-reports.my-reports');
+    Route::get('/bug-reports/{bugReport}', [App\Http\Controllers\BugReportController::class, 'show'])->name('bug-reports.show');
 
     // Notifications
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');

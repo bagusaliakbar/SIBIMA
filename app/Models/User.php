@@ -252,5 +252,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\JournalBookmarkFolder::class)->orderBy('name', 'asc');
     }
+
+    /**
+     * Get the bug reports filed by the user.
+     */
+    public function bugReports(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\BugReport::class)->orderBy('created_at', 'desc');
+    }
 }
 

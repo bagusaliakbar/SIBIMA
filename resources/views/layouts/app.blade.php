@@ -542,6 +542,21 @@
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.logs') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Log Sistem
                         </a>
+
+                        <!-- Direct Link: Laporan Bug Sistem -->
+                        @php $openBugCount = \App\Models\BugReport::where('status', 'open')->count(); @endphp
+                        <a href="{{ route('admin.bug-reports.index') }}" 
+                           class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.bug-reports.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.bug-reports.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <span>Laporan Bug</span>
+                            </div>
+                            @if($openBugCount > 0)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white leading-none">
+                                    {{ $openBugCount }}
+                                </span>
+                            @endif
+                        </a>
                     </nav>
                     @endif
 
@@ -1398,6 +1413,11 @@
                 observer.observe(document.body, { childList: true, subtree: true });
             });
         </script>
+
+        @auth
+            <x-bug-report-widget />
+        @endauth
+
         @stack('scripts')
     </body>
 </html>
