@@ -94,24 +94,6 @@ window.toggleBugCollapse = function(collapse) {
     }
 };
 
-window.hideBugWidget = function() {
-    const container = document.getElementById('bug-report-dock-container');
-    const reopen = document.getElementById('bug-report-reopen-pill');
-    if (container) container.style.setProperty('display', 'none', 'important');
-    if (reopen) reopen.style.setProperty('display', 'block', 'important');
-    if (window._bugWidget) window._bugWidget.isHidden = true;
-};
-
-window.unhideBugWidget = function() {
-    const container = document.getElementById('bug-report-dock-container');
-    const reopen = document.getElementById('bug-report-reopen-pill');
-    if (container) container.style.setProperty('display', 'flex', 'important');
-    if (reopen) reopen.style.setProperty('display', 'none', 'important');
-    if (window._bugWidget) {
-        window._bugWidget.isHidden = false;
-        window._bugWidget.isCollapsed = false;
-    }
-};
 
 window.fetchMyReportsDirect = async function() {
     const listContainer = document.getElementById('bug-history-list');
@@ -299,21 +281,7 @@ document.addEventListener('keydown', function(e) {
             </span>
         </button>
 
-        <!-- Button 3: Red Circle with Cross (✕) (Tutup/Sembunyikan Sementara) -->
-        <button onclick="window.hideBugWidget(); event.stopPropagation();"
-                type="button"
-                style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; background: #ef4444; color: #ffffff; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; border: none !important; padding: 0 !important; overflow: hidden !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35); pointer-events: auto !important;"
-                class="w-10 h-10 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-90 shadow-md shadow-rose-500/25 group relative cursor-pointer"
-                title="Sembunyikan Toolbar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; min-width: 18px; min-height: 18px; max-width: 18px; max-height: 18px;">
-                <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-            <span class="absolute right-14 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md">
-                Sembunyikan
-            </span>
-        </button>
-
-        <!-- Button 4: Green Circle with Checkmark (✓) (Status Laporan Saya) -->
+        <!-- Button 3: Green Circle with Checkmark (✓) (Status Laporan Saya) -->
         <button onclick="window.openBugHistoryModal(); event.stopPropagation();"
                 type="button"
                 style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; background: #10b981; color: #ffffff; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; border: none !important; padding: 0 !important; overflow: hidden !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); pointer-events: auto !important;"
@@ -361,20 +329,6 @@ document.addEventListener('keydown', function(e) {
     </div>
 </div>
 
-<!-- Floating Re-open Trigger Pill (When completely hidden) -->
-<div id="bug-report-reopen-pill"
-     style="display: none; position: fixed !important; bottom: 24px !important; right: 24px !important; z-index: 9999999 !important; pointer-events: auto !important;">
-    <button onclick="window.unhideBugWidget(); event.stopPropagation();"
-            type="button"
-            style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: linear-gradient(135deg, #f97316, #ea580c); color: #ffffff; border-radius: 9999px; box-shadow: 0 10px 25px rgba(249, 115, 22, 0.35); border: none; cursor: pointer; pointer-events: auto !important;"
-            class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-full shadow-xl shadow-orange-500/25 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5" />
-            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-        </svg>
-        <span>Bantuan & Bug</span>
-    </button>
-</div>
 
 <!-- ========================================================================= -->
 <!-- MODAL 1: FORMULIR PELAPORAN BUG                                            -->
