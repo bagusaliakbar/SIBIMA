@@ -1180,9 +1180,7 @@
 
         <x-toast />
 
-        @auth
-            <x-bug-report-widget />
-        @endauth
+        @include('components.bug-report-widget')
 
         <!-- Global Slide-Over Drawer Kemiripan Judul -->
         <div x-data="{ 

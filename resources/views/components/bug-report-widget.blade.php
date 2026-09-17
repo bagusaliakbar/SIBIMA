@@ -189,13 +189,14 @@ function bugReportWidget() {
 
     <!-- Floating Capsule Dock (Docked at Bottom-Right Corner) -->
     <div class="fixed bottom-6 right-6 z-[99990] flex flex-col items-center select-none transition-all duration-300"
-         style="z-index: 99990 !important;"
+         style="position: fixed !important; bottom: 24px !important; right: 24px !important; z-index: 99990 !important; display: flex !important; flex-direction: column !important; align-items: center !important;"
          :class="{ 'opacity-0 pointer-events-none translate-y-4': isHidden, 'opacity-100 translate-y-0': !isHidden }">
 
         <!-- Collapsed Mini Pill / Trigger (when user clicks arrow) -->
         <template x-if="isCollapsed">
             <button @click="isCollapsed = false"
                     type="button"
+                    style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(255, 255, 255, 0.96); border-radius: 9999px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer;"
                     class="group relative flex items-center gap-2 px-3 py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-200 rounded-full shadow-2xl border border-slate-200/90 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
                     title="Buka Toolbar Pelaporan Bug">
                 <span class="flex h-3 w-3 relative">
@@ -211,13 +212,14 @@ function bugReportWidget() {
 
         <!-- Full Vertical Capsule (Exact Reference Design) -->
         <div x-show="!isCollapsed"
+             style="background: #ffffff; border-radius: 9999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); border: 1px solid #e2e8f0; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"
              x-transition:enter="transition ease-out duration-300 transform"
              x-transition:enter-start="opacity-0 scale-90 translate-y-4"
              x-transition:enter-end="opacity-100 scale-100 translate-y-0"
              x-transition:leave="transition ease-in duration-200 transform"
              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="opacity-0 scale-90 translate-y-4"
-             class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-full shadow-2xl shadow-slate-900/15 border border-slate-200/90 dark:border-slate-700/90 py-3 px-2 flex flex-col items-center gap-2.5">
+             class="bg-white dark:bg-slate-900 rounded-full shadow-2xl border border-slate-200 dark:border-slate-700 py-3 px-2 flex flex-col items-center gap-2.5">
             
             <!-- Grip Drag Indicator (6 dots) -->
             <div class="flex flex-col items-center justify-center py-1 cursor-default text-slate-400 dark:text-slate-500" title="Toolbar Pelaporan Bug">
@@ -232,12 +234,13 @@ function bugReportWidget() {
             </div>
 
             <!-- Divider Line -->
-            <div class="w-5 h-[1.5px] bg-slate-200 dark:bg-slate-700/80 rounded-full mb-0.5"></div>
+            <div style="width: 20px; height: 1.5px; background: #e2e8f0;" class="w-5 h-[1.5px] bg-slate-200 dark:bg-slate-700/80 rounded-full mb-0.5"></div>
 
             <!-- Button 1: Gray Circle with Left Arrow (Collapse/Expand) -->
             <button @click="isCollapsed = true"
                     type="button"
-                    class="w-10 h-10 rounded-full bg-slate-100/90 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group relative cursor-pointer"
+                    style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 9999px; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;"
+                    class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group relative cursor-pointer"
                     title="Perkecil Toolbar">
                 <svg class="w-4.5 h-4.5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -250,7 +253,8 @@ function bugReportWidget() {
             <!-- Button 2: Orange Circle with Info (ℹ) (Panduan Pelaporan Bug) -->
             <button @click="showGuideModal = true"
                     type="button"
-                    class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md shadow-orange-500/25 group relative cursor-pointer"
+                    style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 9999px; background: #f97316; color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.35);"
+                    class="w-10 h-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md shadow-orange-500/25 group relative cursor-pointer"
                     title="Panduan & Bantuan Pelaporan">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -263,6 +267,7 @@ function bugReportWidget() {
             <!-- Button 3: Red Circle with Cross (✕) (Tutup/Sembunyikan Sementara) -->
             <button @click="hideWidget()"
                     type="button"
+                    style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 9999px; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);"
                     class="w-10 h-10 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md shadow-rose-500/25 group relative cursor-pointer"
                     title="Sembunyikan Toolbar">
                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,6 +281,7 @@ function bugReportWidget() {
             <!-- Button 4: Green Circle with Checkmark (✓) (Status Laporan Saya) -->
             <button @click="openMyReportsModal()"
                     type="button"
+                    style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 9999px; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);"
                     class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md shadow-emerald-500/25 group relative cursor-pointer"
                     title="Status & Riwayat Laporan Saya">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,7 +295,8 @@ function bugReportWidget() {
             <!-- Button 5: Orange Circle with Edit/Pencil (📝) (Lapor Bug Baru) -->
             <button @click="openReportModal()"
                     type="button"
-                    class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-orange-500/30 group relative cursor-pointer"
+                    style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 9999px; background: #f97316; color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4);"
+                    class="w-10 h-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-orange-500/30 group relative cursor-pointer"
                     title="Laporkan Bug Baru">
                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -299,11 +306,12 @@ function bugReportWidget() {
                 </span>
             </button>
 
-            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+            @if(in_array(Auth::user()?->role, ['admin', 'kaprodi']))
             <!-- Quick Link for Admin/Kaprodi to Bug Inbox -->
-            <div class="w-5 h-[1.5px] bg-slate-200 dark:bg-slate-700/80 rounded-full my-0.5"></div>
+            <div style="width: 20px; height: 1.5px; background: #e2e8f0;" class="w-5 h-[1.5px] bg-slate-200 dark:bg-slate-700/80 rounded-full my-0.5"></div>
             <a href="{{ route('admin.bug-reports.index') }}" 
-               class="w-10 h-10 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs group relative"
+               style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 9999px; background: #eef2ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none;"
+               class="w-10 h-10 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group relative"
                title="Inbox Kelola Bug (Admin/Kaprodi)">
                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
