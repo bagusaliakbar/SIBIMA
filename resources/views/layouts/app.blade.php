@@ -544,7 +544,16 @@
                         </a>
 
                         <!-- Direct Link: Laporan Bug Sistem -->
-                        @php $openBugCount = \App\Models\BugReport::where('status', 'open')->count(); @endphp
+                        @php 
+                            $openBugCount = 0;
+                            try {
+                                if (\Illuminate\Support\Facades\Schema::hasTable('bug_reports')) {
+                                    $openBugCount = \App\Models\BugReport::where('status', 'open')->count();
+                                }
+                            } catch (\Throwable $e) {
+                                $openBugCount = 0;
+                            }
+                        @endphp
                         <a href="{{ route('admin.bug-reports.index') }}" 
                            class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.bug-reports.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <div class="flex items-center">
@@ -557,6 +566,17 @@
                                 </span>
                             @endif
                         </a>
+
+                        <!-- Clear Cache Quick Link (Admin Only) -->
+                        @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('system.clear-cache', ['migrate' => 1]) }}" 
+                           target="_blank"
+                           onclick="return confirm('Bersihkan cache sistem dan jalankan migrasi database sekarang?')"
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-amber-400 hover:bg-white/5 font-medium">
+                            <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            <span>Bersihkan Cache</span>
+                        </a>
+                        @endif
                     </nav>
                     @endif
 

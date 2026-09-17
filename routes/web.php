@@ -259,4 +259,43 @@ Route::middleware('auth')->group(function () {
     Route::post('/check-dosen-availability', [App\Http\Controllers\ScheduleConflictController::class, 'checkDosenAvailability'])->name('check-dosen-availability');
 });
 
+// Clear Cache & Migrate Endpoint (Useful for Shared Hosting / Auto-deploy without direct terminal)
+Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
+    if (!auth()->check() && $request->get('key') !== 'sibima2026') {
+        abort(403, 'Unauthorized access to cache clear');
+    }
+
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+
+    $clearedViews = 0;
+    $viewFiles = glob(storage_path('framework/views/*.php'));
+    if ($viewFiles) {
+        foreach ($viewFiles as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+                $clearedViews++;
+            }
+        }
+    }
+
+    $migrationOutput = null;
+    if ($request->has('migrate')) {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Semua cache (view, route, config) berhasil dibersihkan' . ($migrationOutput ? ' dan migrasi database dijalankan.' : '.'),
+        'cleared_views_count' => $clearedViews,
+        'artisan_output' => \Illuminate\Support\Facades\Artisan::output(),
+        'migration_output' => $migrationOutput,
+        'timestamp' => now()->toIso8601String(),
+    ]);
+})->name('system.clear-cache');
+
 require __DIR__ . '/auth.php';
+

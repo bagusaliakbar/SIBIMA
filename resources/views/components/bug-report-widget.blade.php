@@ -191,6 +191,7 @@ if (window.Alpine) {
 
     <!-- Floating Capsule Dock (Docked at Bottom-Right Corner) -->
     <div class="fixed bottom-6 right-6 z-[99990] flex flex-col items-center select-none transition-all duration-300"
+         style="z-index: 99990 !important;"
          :class="{ 'opacity-0 pointer-events-none translate-y-4': isHidden, 'opacity-100 translate-y-0': !isHidden }">
 
         <!-- Collapsed Mini Pill / Trigger (when user clicks arrow) -->

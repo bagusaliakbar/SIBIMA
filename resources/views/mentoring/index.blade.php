@@ -1,3 +1,4 @@
+{{-- Force fresh compilation for bug report floating capsule dock: v2 --}}
 <x-app-layout>
     <x-slot name="header">
         <x-breadcrumb :items="[

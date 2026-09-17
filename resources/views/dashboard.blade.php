@@ -1,3 +1,4 @@
+{{-- Force fresh compilation for bug report floating capsule dock: v2 --}}
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
