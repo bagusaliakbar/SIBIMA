@@ -6,7 +6,7 @@
         ]" />
     </x-slot>
 
-    <div x-data="bugManagement()" class="w-full space-y-6">
+    <div class="w-full space-y-6">
         
         <!-- Header Title & Quick Stats -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -219,8 +219,8 @@
                             <td class="py-4 px-6 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
                                     <button type="button" 
-                                            @click="openReviewModal({{ $report->id }})"
-                                            class="inline-flex items-center px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 text-orange-600 dark:text-orange-400 text-xs font-bold transition-all shadow-2xs">
+                                            onclick="window.openBugReviewModal({{ $report->id }}); event.stopPropagation();"
+                                            class="cursor-pointer inline-flex items-center px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 active:scale-95 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 text-orange-600 dark:text-orange-400 text-xs font-bold transition-all shadow-2xs">
                                         <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                         Tinjau & Tangani
                                     </button>
@@ -253,249 +253,324 @@
         </x-table-card>
 
         <!-- ========================================================================= -->
-        <!-- DETAIL & REVIEW MODAL (TELEPORTED TO BODY)                                -->
+        <!-- DETAIL & REVIEW MODAL                                                     -->
         <!-- ========================================================================= -->
-        <template x-teleport="body">
-            <div x-show="showModal"
-                 x-cloak
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 999999 !important;">
-                
-                <div x-show="showModal"
-                     x-transition:enter="ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     @click="showModal = false"
-                     class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs"></div>
+        <div id="bug-review-modal"
+             class="fixed inset-0 overflow-y-auto"
+             style="display: none; position: fixed !important; inset: 0 !important; z-index: 99999999 !important;">
+            
+            <!-- Backdrop -->
+            <div onclick="window.closeBugReviewModal()"
+                 class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity cursor-pointer"></div>
 
-                <div class="min-h-screen px-4 py-8 flex items-center justify-center">
-                    <div x-show="showModal"
-                         x-transition:enter="ease-out duration-300"
-                         x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                         x-transition:leave="ease-in duration-200"
-                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                         class="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative z-10 flex flex-col max-h-[90vh]">
-                        
-                        <!-- Modal Header -->
-                        <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-orange-50/60 to-transparent dark:from-orange-950/20 shrink-0">
+            <div class="min-h-screen px-4 py-8 flex items-center justify-center relative pointer-events-none">
+                <div class="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative z-10 flex flex-col max-h-[90vh] pointer-events-auto transition-all transform">
+                    
+                    <!-- Modal Header -->
+                    <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-orange-50/60 to-transparent dark:from-orange-950/20 shrink-0">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span id="brm-ticket-number" class="text-xs font-mono font-bold text-orange-600 dark:text-orange-400"></span>
+                                <span class="text-slate-300 dark:text-slate-700">•</span>
+                                <span id="brm-created-at" class="text-xs text-slate-400"></span>
+                            </div>
+                            <h3 id="brm-title" class="text-lg font-black text-slate-900 dark:text-white"></h3>
+                        </div>
+
+                        <button onclick="window.closeBugReviewModal()"
+                                type="button"
+                                class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                                title="Tutup Modal">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 sm:p-8 overflow-y-auto space-y-6 custom-scrollbar flex-1">
+                        <!-- Pelapor & Metadata Pill Row -->
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <img id="brm-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <div id="brm-user-name" class="font-bold text-xs text-slate-800 dark:text-slate-100"></div>
+                                    <div id="brm-user-meta" class="text-[11px] text-slate-400"></div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <span id="brm-category" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 shadow-2xs"></span>
+                                <span id="brm-severity" class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white"></span>
+                            </div>
+                        </div>
+
+                        <!-- URL Lokasi Bug -->
+                        <div id="brm-page-url-container" style="display: none;">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Halaman Kejadian (URL):</span>
+                            <a id="brm-page-url" href="" target="_blank" class="text-xs font-mono text-orange-600 dark:text-orange-400 hover:underline break-all bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-xl block border border-slate-100 dark:border-slate-700">
+                                <span class="page-url-text"></span>
+                                <svg class="w-3.5 h-3.5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            </a>
+                        </div>
+
+                        <!-- Uraian Masalah -->
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Uraian / Deskripsi Kendala:</span>
+                            <div id="brm-description" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed"></div>
+                        </div>
+
+                        <!-- Langkah Reproduksi -->
+                        <div id="brm-steps-container" style="display: none;">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Langkah Memicu Masalah:</span>
+                            <div id="brm-steps" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed font-mono"></div>
+                        </div>
+
+                        <!-- Lampiran Screenshot -->
+                        <div id="brm-attachment-container" style="display: none;">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Bukti Tangkapan Layar:</span>
+                            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-center">
+                                <a id="brm-attachment-link" href="" target="_blank" title="Klik untuk membuka ukuran penuh">
+                                    <img id="brm-attachment-img" src="" alt="Screenshot" class="max-h-72 mx-auto rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.01] transition-transform cursor-zoom-in">
+                                </a>
+                                <p class="text-[11px] text-slate-400 mt-2">Klik gambar untuk membuka ukuran penuh di tab baru.</p>
+                            </div>
+                        </div>
+
+                        <!-- Device Info -->
+                        <div id="brm-device-container" style="display: none;" class="text-[10px] text-slate-400 font-mono">
+                            <span class="font-bold">Info Perangkat:</span> <span id="brm-device"></span>
+                        </div>
+
+                        <!-- Form Update Status & Tanggapan Admin -->
+                        <div class="pt-6 border-t border-slate-200 dark:border-slate-700 space-y-4">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                                <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                Tindak Lanjut & Tanggapan Admin/Kaprodi
+                            </h4>
+
                             <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-xs font-mono font-bold text-orange-600 dark:text-orange-400" x-text="activeReport?.ticket_number"></span>
-                                    <span class="text-slate-300 dark:text-slate-700">•</span>
-                                    <span class="text-xs text-slate-400" x-text="activeReport?.created_at"></span>
-                                </div>
-                                <h3 class="text-lg font-black text-slate-900 dark:text-white" x-text="activeReport?.title"></h3>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                    Perbarui Status Tiket:
+                                </label>
+                                <select id="brm-status-select" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold focus:ring-2 focus:ring-orange-500">
+                                    <option value="open">🟡 Menunggu Review (Open)</option>
+                                    <option value="in_progress">🔵 Sedang Ditangani (In Progress)</option>
+                                    <option value="resolved">🟢 Selesai / Teratasi (Resolved)</option>
+                                    <option value="rejected">⚪ Ditolak / Bukan Bug (Rejected)</option>
+                                </select>
                             </div>
 
-                            <button @click="showModal = false"
-                                    type="button"
-                                    class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-
-                        <!-- Modal Body -->
-                        <div class="p-6 sm:p-8 overflow-y-auto space-y-6 custom-scrollbar flex-1">
-                            <!-- Pelapor & Metadata Pill Row -->
-                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-4">
-                                <div class="flex items-center gap-3">
-                                    <img :src="activeReport?.user?.avatar_url" alt="" class="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700">
-                                    <div>
-                                        <div class="font-bold text-xs text-slate-800 dark:text-slate-100" x-text="activeReport?.user?.name"></div>
-                                        <div class="text-[11px] text-slate-400" x-text="(activeReport?.user?.identifier || activeReport?.user?.email) + ' (' + activeReport?.user?.role + ')'"></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 shadow-2xs" x-text="'Kategori: ' + activeReport?.category_label"></span>
-                                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white"
-                                          :class="{
-                                              'bg-rose-600': activeReport?.severity === 'critical',
-                                              'bg-orange-500': activeReport?.severity === 'high',
-                                              'bg-amber-500': activeReport?.severity === 'medium',
-                                              'bg-emerald-600': activeReport?.severity === 'low',
-                                          }"
-                                          x-text="'Urgensi: ' + activeReport?.severity_label"></span>
-                                </div>
-                            </div>
-
-                            <!-- URL Lokasi Bug -->
-                            <template x-if="activeReport?.page_url">
-                                <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Halaman Kejadian (URL):</span>
-                                    <a :href="activeReport?.page_url" target="_blank" class="text-xs font-mono text-orange-600 dark:text-orange-400 hover:underline break-all bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-xl block border border-slate-100 dark:border-slate-700">
-                                        <span x-text="activeReport?.page_url"></span>
-                                        <svg class="w-3.5 h-3.5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                    </a>
-                                </div>
-                            </template>
-
-                            <!-- Uraian Masalah -->
                             <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Uraian / Deskripsi Kendala:</span>
-                                <div class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed" x-text="activeReport?.description"></div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                    Catatan Solusi / Tanggapan Balik ke Pelapor:
+                                </label>
+                                <textarea id="brm-admin-notes"
+                                          rows="3"
+                                          placeholder="Tuliskan catatan perbaikan atau petunjuk kepada pelapor (catatan ini dapat dibaca oleh mahasiswa/dosen pelapor)..."
+                                          class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-orange-500"></textarea>
                             </div>
 
-                            <!-- Langkah Reproduksi -->
-                            <template x-if="activeReport?.steps_to_reproduce">
-                                <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Langkah Memicu Masalah:</span>
-                                    <div class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed font-mono" x-text="activeReport?.steps_to_reproduce"></div>
-                                </div>
-                            </template>
-
-                            <!-- Lampiran Screenshot -->
-                            <template x-if="activeReport?.attachment_url">
-                                <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Bukti Tangkapan Layar:</span>
-                                    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-center">
-                                        <a :href="activeReport?.attachment_url" target="_blank" title="Klik untuk membuka ukuran penuh">
-                                            <img :src="activeReport?.attachment_url" alt="Screenshot" class="max-h-72 mx-auto rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-[1.01] transition-transform cursor-zoom-in">
-                                        </a>
-                                        <p class="text-[11px] text-slate-400 mt-2">Klik gambar untuk membuka ukuran penuh di tab baru.</p>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- Device Info -->
-                            <template x-if="activeReport?.device_info">
-                                <div class="text-[10px] text-slate-400 font-mono">
-                                    <span class="font-bold">Info Perangkat:</span> <span x-text="activeReport?.device_info"></span>
-                                </div>
-                            </template>
-
-                            <!-- Form Update Status & Tanggapan Admin -->
-                            <div class="pt-6 border-t border-slate-200 dark:border-slate-700 space-y-4">
-                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                    Tindak Lanjut & Tanggapan Admin/Kaprodi
-                                </h4>
-
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                                        Perbarui Status Tiket:
-                                    </label>
-                                    <select x-model="statusUpdate.status" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold focus:ring-2 focus:ring-orange-500">
-                                        <option value="open">🟡 Menunggu Review (Open)</option>
-                                        <option value="in_progress">🔵 Sedang Ditangani (In Progress)</option>
-                                        <option value="resolved">🟢 Selesai / Teratasi (Resolved)</option>
-                                        <option value="rejected">⚪ Ditolak / Bukan Bug (Rejected)</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                                        Catatan Solusi / Tanggapan Balik ke Pelapor:
-                                    </label>
-                                    <textarea x-model="statusUpdate.admin_notes"
-                                              rows="3"
-                                              placeholder="Tuliskan catatan perbaikan atau petunjuk kepada pelapor (catatan ini dapat dibaca oleh mahasiswa/dosen pelapor)..."
-                                              class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-orange-500"></textarea>
-                                </div>
-
-                                <div x-show="updateFeedback" x-cloak class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-semibold" x-text="updateFeedback"></div>
-                            </div>
+                            <div id="brm-feedback" style="display: none;" class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-semibold"></div>
                         </div>
+                    </div>
 
-                        <!-- Modal Footer Actions -->
-                        <div class="p-4 px-6 sm:px-8 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
-                            <button type="button"
-                                    @click="showModal = false"
-                                    class="px-5 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors">
-                                Tutup
-                            </button>
+                    <!-- Modal Footer Actions -->
+                    <div class="p-4 px-6 sm:px-8 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+                        <button type="button"
+                                onclick="window.closeBugReviewModal()"
+                                class="px-5 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                            Tutup
+                        </button>
 
-                            <button type="button"
-                                    @click="saveStatusUpdate()"
-                                    :disabled="isUpdating"
-                                    class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-orange-600/20 flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer">
-                                <svg x-show="isUpdating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span x-text="isUpdating ? 'Menyimpan...' : 'Simpan Perubahan'"></span>
-                            </button>
-                        </div>
+                        <button type="button"
+                                id="brm-save-btn"
+                                onclick="window.saveBugStatusUpdate()"
+                                class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-orange-600/20 flex items-center gap-2 transition-all cursor-pointer">
+                            <svg id="brm-save-spinner" style="display: none;" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span id="brm-save-text">Simpan Perubahan</span>
+                        </button>
                     </div>
                 </div>
             </div>
-        </template>
+        </div>
 
     </div>
 
     <script>
+    window._activeBugReportId = null;
+
+    window.openBugReviewModal = async function(reportId) {
+        window._activeBugReportId = reportId;
+        const modal = document.getElementById('bug-review-modal');
+        if (!modal) {
+            console.error('Modal #bug-review-modal not found');
+            return;
+        }
+
+        // Show immediately
+        modal.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+
+        const feedbackEl = document.getElementById('brm-feedback');
+        if (feedbackEl) feedbackEl.style.display = 'none';
+
+        document.getElementById('brm-ticket-number').innerText = 'Memuat...';
+        document.getElementById('brm-created-at').innerText = '';
+        document.getElementById('brm-title').innerText = 'Mengambil rincian laporan bug...';
+        document.getElementById('brm-description').innerText = 'Mohon tunggu sebentar...';
+        document.getElementById('brm-status-select').value = 'open';
+        document.getElementById('brm-admin-notes').value = '';
+
+        try {
+            const res = await fetch(`/bug-reports/${reportId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            });
+            const data = await res.json();
+            if (data.success && data.report) {
+                const r = data.report;
+                document.getElementById('brm-ticket-number').innerText = r.ticket_number || ('#' + r.id);
+                document.getElementById('brm-created-at').innerText = r.created_at || '';
+                document.getElementById('brm-title').innerText = r.title || 'Laporan Bug';
+
+                if (r.user) {
+                    document.getElementById('brm-avatar').src = r.user.avatar_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(r.user.name || 'User'));
+                    document.getElementById('brm-user-name').innerText = r.user.name || 'Pelapor';
+                    document.getElementById('brm-user-meta').innerText = (r.user.identifier || r.user.email || '') + ' (' + (r.user.role || '') + ')';
+                }
+
+                document.getElementById('brm-category').innerText = 'Kategori: ' + (r.category_label || r.category || '-');
+                
+                const sevEl = document.getElementById('brm-severity');
+                sevEl.innerText = 'Urgensi: ' + (r.severity_label || r.severity || '-');
+                sevEl.className = 'px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white ' + 
+                    (r.severity === 'critical' ? 'bg-rose-600' :
+                     r.severity === 'high' ? 'bg-orange-500' :
+                     r.severity === 'medium' ? 'bg-amber-500' : 'bg-emerald-600');
+
+                const pageUrlContainer = document.getElementById('brm-page-url-container');
+                const pageUrlLink = document.getElementById('brm-page-url');
+                if (r.page_url) {
+                    pageUrlContainer.style.display = 'block';
+                    pageUrlLink.href = r.page_url;
+                    pageUrlLink.querySelector('.page-url-text').innerText = r.page_url;
+                } else {
+                    pageUrlContainer.style.display = 'none';
+                }
+
+                document.getElementById('brm-description').innerText = r.description || '-';
+
+                const stepsContainer = document.getElementById('brm-steps-container');
+                if (r.steps_to_reproduce) {
+                    stepsContainer.style.display = 'block';
+                    document.getElementById('brm-steps').innerText = r.steps_to_reproduce;
+                } else {
+                    stepsContainer.style.display = 'none';
+                }
+
+                const attachContainer = document.getElementById('brm-attachment-container');
+                if (r.attachment_url) {
+                    attachContainer.style.display = 'block';
+                    document.getElementById('brm-attachment-link').href = r.attachment_url;
+                    document.getElementById('brm-attachment-img').src = r.attachment_url;
+                } else {
+                    attachContainer.style.display = 'none';
+                }
+
+                const deviceContainer = document.getElementById('brm-device-container');
+                if (r.device_info) {
+                    deviceContainer.style.display = 'block';
+                    document.getElementById('brm-device').innerText = r.device_info;
+                } else {
+                    deviceContainer.style.display = 'none';
+                }
+
+                document.getElementById('brm-status-select').value = r.status || 'open';
+                document.getElementById('brm-admin-notes').value = r.admin_notes || '';
+            }
+        } catch (err) {
+            console.error('Error loading bug report:', err);
+            document.getElementById('brm-title').innerText = 'Gagal memuat rincian laporan';
+            document.getElementById('brm-description').innerText = 'Terjadi kesalahan jaringan atau izin akses tidak mencukupi.';
+        }
+    };
+
+    window.closeBugReviewModal = function() {
+        const modal = document.getElementById('bug-review-modal');
+        if (modal) {
+            modal.style.setProperty('display', 'none', 'important');
+        }
+        document.body.style.overflow = '';
+    };
+
+    window.saveBugStatusUpdate = async function() {
+        if (!window._activeBugReportId) return;
+
+        const saveBtn = document.getElementById('brm-save-btn');
+        const spinner = document.getElementById('brm-save-spinner');
+        const btnText = document.getElementById('brm-save-text');
+        const feedbackEl = document.getElementById('brm-feedback');
+
+        saveBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.innerText = 'Menyimpan...';
+        feedbackEl.style.display = 'none';
+
+        try {
+            const statusVal = document.getElementById('brm-status-select').value;
+            const notesVal = document.getElementById('brm-admin-notes').value;
+
+            const res = await fetch(`/admin/bug-reports/${window._activeBugReportId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: statusVal,
+                    admin_notes: notesVal,
+                }),
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                feedbackEl.className = 'p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-semibold';
+                feedbackEl.innerText = 'Perubahan status dan tanggapan berhasil disimpan! Memuat ulang...';
+                feedbackEl.style.display = 'block';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            } else {
+                throw new Error(data.message || 'Gagal menyimpan status');
+            }
+        } catch (err) {
+            console.error('Error updating status:', err);
+            feedbackEl.className = 'p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-xs font-semibold';
+            feedbackEl.innerText = 'Gagal menyimpan perubahan: ' + (err.message || 'Terjadi kesalahan sistem.');
+            feedbackEl.style.display = 'block';
+        } finally {
+            saveBtn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.innerText = 'Simpan Perubahan';
+        }
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.closeBugReviewModal();
+        }
+    });
+
     function bugManagement() {
         return {
-            showModal: false,
-            isUpdating: false,
-            updateFeedback: '',
-            activeReport: null,
-            statusUpdate: {
-                status: 'open',
-                admin_notes: '',
-            },
-
-            async openReviewModal(reportId) {
-                this.updateFeedback = '';
-                this.showModal = true;
-                
-                try {
-                    const res = await fetch(`/bug-reports/${reportId}`, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json',
-                        }
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        this.activeReport = data.report;
-                        this.statusUpdate.status = data.report.status;
-                        this.statusUpdate.admin_notes = data.report.admin_notes || '';
-                    }
-                } catch (err) {
-                    console.error('Error fetching bug report details:', err);
-                }
-            },
-
-            async saveStatusUpdate() {
-                if (!this.activeReport) return;
-
-                this.isUpdating = true;
-                this.updateFeedback = '';
-
-                try {
-                    const res = await fetch(`/admin/bug-reports/${this.activeReport.id}/status`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            status: this.statusUpdate.status,
-                            admin_notes: this.statusUpdate.admin_notes,
-                        }),
-                    });
-
-                    const data = await res.json();
-                    if (data.success) {
-                        this.updateFeedback = 'Perubahan status dan tanggapan berhasil disimpan! Halaman akan dimuat ulang.';
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 900);
-                    }
-                } catch (err) {
-                    console.error('Error updating status:', err);
-                    alert('Gagal memperbarui status laporan.');
-                } finally {
-                    this.isUpdating = false;
-                }
+            openReviewModal(id) {
+                window.openBugReviewModal(id);
             }
         };
     }
