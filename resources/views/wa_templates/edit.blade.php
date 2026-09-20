@@ -8,7 +8,7 @@
         </div>
     </x-slot>
 
-    <div class="w-full max-w-5xl mx-auto space-y-6" x-data="templateEditor(@js($waTemplate->content), @js($waTemplate->available_variables))">
+    <div class="w-full space-y-6" x-data="templateEditor(@js($waTemplate->content), @js($waTemplate->available_variables))">
         <!-- Header Edit Card -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -192,7 +192,10 @@
                         'link_login': 'https://sibima.ac.id/login',
                         'link_mentoring': 'https://sibima.ac.id/mentoring-sessions',
                         'link_monitoring': 'https://sibima.ac.id/monitoring/critical',
-                        'link_dashboard': 'https://sibima.ac.id/dashboard'
+                        'link_dashboard': 'https://sibima.ac.id/dashboard',
+                        'usia': '22',
+                        'nama_pembimbing1': 'Dr. Irzan, M.T.',
+                        'peran_pengguna': 'Dosen'
                     };
 
                     for (const [key, val] of Object.entries(sampleValues)) {
