@@ -67,6 +67,230 @@
             </div>
         </div>
 
+        <!-- Birthday Celebration Card / Prompt -->
+        @if(Auth::user()->is_birthday)
+            <div x-data="birthdayCelebration()" 
+                 x-init="initConfetti()"
+                 x-show="!dismissed" 
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 p-0.5 sm:p-1 shadow-xl">
+                <!-- Floating Canvas for Confetti -->
+                <canvas x-ref="confettiCanvas" class="pointer-events-none fixed inset-0 z-50 h-full w-full"></canvas>
+
+                <div class="relative overflow-hidden rounded-[22px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <!-- Ambient glowing background effects -->
+                    <div class="absolute -top-24 -left-24 w-56 h-56 bg-amber-400/20 dark:bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="flex items-center gap-4 sm:gap-5 relative z-10 text-center sm:text-left flex-col sm:flex-row">
+                        <div class="relative shrink-0">
+                            <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-500 p-0.5 shadow-lg shadow-rose-500/25 flex items-center justify-center">
+                                <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center text-3xl sm:text-4xl animate-bounce">
+                                    🎂
+                                </div>
+                            </div>
+                            <span class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-white text-xs shadow-md">
+                                🎉
+                            </span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                                    Hari Spesial
+                                </span>
+                                @if(Auth::user()->age)
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                        Usia ke-{{ Auth::user()->age }} Tahun
+                                    </span>
+                                @endif
+                            </div>
+                            <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-white mt-1">
+                                Selamat Ulang Tahun, {{ Auth::user()->name }}! 🥳
+                            </h3>
+                            @if(Auth::user()->role === 'mahasiswa')
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                                    Keluarga besar SIBIMA mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya! 🎓✨
+                                </p>
+                            @else
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                                    Keluarga besar SIBIMA mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu! 🌟🤲
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end">
+                        <button type="button" 
+                                @click="burst()" 
+                                class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                            <span>Rayakan Lagi</span>
+                            <span>🎉</span>
+                        </button>
+                        <button type="button" 
+                                @click="dismiss()" 
+                                class="p-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                                title="Tutup ucapan hari ini">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function birthdayCelebration() {
+                    return {
+                        dismissed: localStorage.getItem('hide_birthday_card_{{ date('Y-m-d') }}') === 'true',
+                        canvas: null,
+                        ctx: null,
+                        particles: [],
+                        animationId: null,
+
+                        dismiss() {
+                            this.dismissed = true;
+                            localStorage.setItem('hide_birthday_card_{{ date('Y-m-d') }}', 'true');
+                            if (this.animationId) {
+                                cancelAnimationFrame(this.animationId);
+                            }
+                        },
+
+                        initConfetti() {
+                            if (this.dismissed) return;
+                            this.$nextTick(() => {
+                                this.canvas = this.$refs.confettiCanvas;
+                                if (!this.canvas) return;
+                                this.ctx = this.canvas.getContext('2d');
+                                this.resizeCanvas();
+                                window.addEventListener('resize', () => this.resizeCanvas());
+                                // Initial celebratory burst
+                                this.burst();
+                            });
+                        },
+
+                        resizeCanvas() {
+                            if (!this.canvas) return;
+                            this.canvas.width = window.innerWidth;
+                            this.canvas.height = window.innerHeight;
+                        },
+
+                        burst() {
+                            if (!this.canvas || !this.ctx) return;
+                            this.resizeCanvas();
+                            const colors = ['#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#10b981', '#3b82f6', '#facc15'];
+                            const count = 120;
+                            const newParticles = [];
+
+                            for (let i = 0; i < count; i++) {
+                                const fromLeft = i % 2 === 0;
+                                newParticles.push({
+                                    x: fromLeft ? window.innerWidth * 0.15 + (Math.random() * 60) : window.innerWidth * 0.85 - (Math.random() * 60),
+                                    y: window.innerHeight * 0.65,
+                                    vx: fromLeft ? (Math.random() * 8 + 3) : -(Math.random() * 8 + 3),
+                                    vy: -(Math.random() * 14 + 10),
+                                    size: Math.random() * 8 + 6,
+                                    color: colors[Math.floor(Math.random() * colors.length)],
+                                    rotation: Math.random() * 360,
+                                    rotationSpeed: (Math.random() - 0.5) * 12,
+                                    gravity: 0.35,
+                                    opacity: 1,
+                                    decay: Math.random() * 0.008 + 0.006,
+                                    shape: Math.random() > 0.4 ? 'rect' : 'circle'
+                                });
+                            }
+
+                            this.particles.push(...newParticles);
+
+                            if (!this.animationId) {
+                                this.loop();
+                            }
+                        },
+
+                        loop() {
+                            if (!this.ctx || !this.canvas) return;
+                            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                            for (let i = this.particles.length - 1; i >= 0; i--) {
+                                const p = this.particles[i];
+                                p.x += p.vx;
+                                p.y += p.vy;
+                                p.vy += p.gravity;
+                                p.vx *= 0.985;
+                                p.rotation += p.rotationSpeed;
+                                p.opacity -= p.decay;
+
+                                if (p.opacity <= 0 || p.y > this.canvas.height + 20) {
+                                    this.particles.splice(i, 1);
+                                    continue;
+                                }
+
+                                this.ctx.save();
+                                this.ctx.globalAlpha = Math.max(0, p.opacity);
+                                this.ctx.translate(p.x, p.y);
+                                this.ctx.rotate((p.rotation * Math.PI) / 180);
+                                this.ctx.fillStyle = p.color;
+
+                                if (p.shape === 'rect') {
+                                    this.ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+                                } else {
+                                    this.ctx.beginPath();
+                                    this.ctx.arc(0, 0, p.size / 3, 0, Math.PI * 2);
+                                    this.ctx.fill();
+                                }
+                                this.ctx.restore();
+                            }
+
+                            if (this.particles.length > 0) {
+                                this.animationId = requestAnimationFrame(() => this.loop());
+                            } else {
+                                this.animationId = null;
+                                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                            }
+                        }
+                    };
+                }
+            </script>
+        @elseif(Auth::user()->birth_date === null)
+            <div x-data="{ dismissed: localStorage.getItem('hide_birthdate_prompt') === 'true' }" 
+                 x-show="!dismissed" 
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                
+                <div class="flex items-center gap-3.5 relative z-10">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm text-lg">
+                        🎂
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h4 class="text-xs font-black tracking-wide uppercase text-rose-950 dark:text-rose-100">Lengkapi Tanggal Lahir Anda</h4>
+                            <span class="px-2 py-0.5 rounded-full bg-rose-200/80 dark:bg-rose-900/60 text-[9px] font-black uppercase tracking-wider text-rose-900 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60">Info Profil</span>
+                        </div>
+                        <p class="text-xs font-medium text-rose-800 dark:text-rose-300/90 leading-relaxed mt-0.5">
+                            Dapatkan ucapan spesial dan kejutan di hari ulang tahun Anda dari sistem SIBIMA.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 self-end sm:self-center shrink-0 relative z-10">
+                    <a href="{{ route('profile.edit') }}#birth_date" 
+                       class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                        <span>Lengkapi di Profil</span>
+                        <span>➔</span>
+                    </a>
+                    <button @click="dismissed = true; localStorage.setItem('hide_birthdate_prompt', 'true')" 
+                            type="button" 
+                            class="p-2 text-rose-600 hover:text-rose-950 hover:bg-rose-200/60 dark:text-rose-400 dark:hover:text-white dark:hover:bg-rose-900/50 rounded-xl transition-colors cursor-pointer" 
+                            title="Nanti saja">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         @if(Auth::user()->role === 'mahasiswa')
             @php
                 $isGraduated = $progress['isGraduated'];

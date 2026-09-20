@@ -40,7 +40,7 @@ class UserImportExportTest extends TestCase
 
         // Verify headings count and items
         $headings = $export->headings();
-        $this->assertCount(10, $headings);
+        $this->assertCount(11, $headings);
         $this->assertEquals([
             'Nama',
             'Email',
@@ -50,13 +50,14 @@ class UserImportExportTest extends TestCase
             'Tahun Angkatan',
             'No. WhatsApp',
             'Status WhatsApp',
+            'Tanggal Lahir',
             'Status Aktif (1=Aktif, 0=Pending)',
             'Terakhir Login',
         ], $headings);
 
         // Verify mapped data
         $studentMap = $export->map($student);
-        $this->assertCount(10, $studentMap);
+        $this->assertCount(11, $studentMap);
         $this->assertEquals('John Doe', $studentMap[0]);
         $this->assertEquals('john@sibima.com', $studentMap[1]);
         $this->assertEquals('Terverifikasi', $studentMap[2]);
@@ -65,10 +66,11 @@ class UserImportExportTest extends TestCase
         $this->assertEquals(2021, $studentMap[5]);
         $this->assertEquals('081234567890', $studentMap[6]);
         $this->assertEquals('Terhubung', $studentMap[7]);
-        $this->assertEquals(1, $studentMap[8]);
+        $this->assertNull($studentMap[8]); // birth_date is null
+        $this->assertEquals(1, $studentMap[9]);
 
         $lecturerMap = $export->map($lecturer);
-        $this->assertCount(10, $lecturerMap);
+        $this->assertCount(11, $lecturerMap);
         $this->assertEquals('Jane Smith', $lecturerMap[0]);
         $this->assertEquals('jane@sibima.com', $lecturerMap[1]);
         $this->assertEquals('Terverifikasi', $lecturerMap[2]);
@@ -77,18 +79,19 @@ class UserImportExportTest extends TestCase
         $this->assertNull($lecturerMap[5]);
         $this->assertEquals('089876543210', $lecturerMap[6]);
         $this->assertEquals('Terhubung', $lecturerMap[7]);
-        $this->assertEquals(0, $lecturerMap[8]);
+        $this->assertNull($lecturerMap[8]);
+        $this->assertEquals(0, $lecturerMap[9]);
     }
 
     public function test_users_import_correctly_saves_all_fields()
     {
         $rows = new Collection([
             // Header Row (will be skipped)
-            ['Nama', 'Email', 'Peran', 'NPM/NIDN', 'Tahun Angkatan', 'No. Telepon', 'Status Aktif'],
-            // Mahasiswa Active Row
-            ['Alice Cooper', 'alice@sibima.com', 'mahasiswa', '88881234', '2022', '08111222333', '1'],
-            // Dosen Pending Row
-            ['Bob Marley', 'bob@sibima.com', 'dosen', '99991234', '', '08222333444', '0'],
+            ['Nama', 'Email', 'Peran', 'NPM/NIDN', 'Tahun Angkatan', 'No. Telepon', 'Status Aktif', 'Tanggal Lahir'],
+            // Mahasiswa Active Row with birth_date
+            ['Alice Cooper', 'alice@sibima.com', 'mahasiswa', '88881234', '2022', '08111222333', '1', '2002-05-20'],
+            // Dosen Pending Row without birth_date
+            ['Bob Marley', 'bob@sibima.com', 'dosen', '99991234', '', '08222333444', '0', ''],
         ]);
 
         $import = new UsersImport();
@@ -105,6 +108,7 @@ class UserImportExportTest extends TestCase
         $this->assertEquals('88881234', $alice->identifier);
         $this->assertEquals(2022, $alice->entry_year);
         $this->assertEquals('08111222333', $alice->phone_number);
+        $this->assertEquals('2002-05-20', $alice->birth_date->format('Y-m-d'));
         $this->assertTrue($alice->is_active);
 
         // Check Bob Marley (dosen)

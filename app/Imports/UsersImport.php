@@ -67,6 +67,21 @@ class UsersImport implements ToCollection
                 }
             }
 
+            // Birth date field (optional, index 7)
+            $birthDate = null;
+            if (isset($row[7]) && trim($row[7]) !== '') {
+                $rawDate = trim($row[7]);
+                try {
+                    if (is_numeric($rawDate)) {
+                        $birthDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject((float) $rawDate)->format('Y-m-d');
+                    } else {
+                        $birthDate = \Carbon\Carbon::parse($rawDate)->format('Y-m-d');
+                    }
+                } catch (\Throwable $e) {
+                    $birthDate = null;
+                }
+            }
+
             if (empty($name) || empty($email) || empty($identifier) || empty($role)) {
                 $this->skippedCount++;
                 $this->skippedDetails[] = [
@@ -114,6 +129,7 @@ class UsersImport implements ToCollection
                 'identifier' => $identifier,
                 'entry_year' => $role === 'mahasiswa' ? $entryYear : null,
                 'phone_number' => $phoneNumber,
+                'birth_date' => $birthDate,
                 'is_active' => $isActive,
             ]);
 

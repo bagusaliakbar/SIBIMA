@@ -180,6 +180,7 @@ class UserController extends Controller implements HasMiddleware
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class],
             'entry_year' => ['nullable', 'integer', 'min:2000', 'max:'.(date('Y') + 1)],
             'phone_number' => ['nullable', 'string', 'max:20'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
@@ -210,6 +211,7 @@ class UserController extends Controller implements HasMiddleware
             'identifier' => ['required', 'string', 'max:50', 'unique:'.User::class.',identifier,'.$user->id],
             'entry_year' => ['nullable', 'integer', 'min:2000', 'max:'.(date('Y') + 1)],
             'phone_number' => ['nullable', 'string', 'max:20'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
             'password' => ['nullable', Password::defaults()],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);

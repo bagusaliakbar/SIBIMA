@@ -880,11 +880,12 @@
                         
                         <div class="mt-6 p-4 bg-orange-50 dark:bg-orange-500/5 rounded-xl border border-orange-100 dark:border-orange-500/10">
                             <h4 class="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest mb-2">Format Kolom:</h4>
-                            <p class="font-mono text-[9px] text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-orange-100 dark:border-orange-500/10">Nama, Email, Peran, NPM/NIDN, Tahun Angkatan, No_WhatsApp, Status Aktif (1/0)</p>
+                            <p class="font-mono text-[9px] text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-orange-100 dark:border-orange-500/10">Nama, Email, Peran, NPM/NIDN, Tahun Angkatan, No_WhatsApp, Status Aktif (1/0), Tanggal Lahir (YYYY-MM-DD)</p>
                             <div class="mt-2 space-y-1 text-[9px] text-orange-600/70 dark:text-orange-400/70 font-bold uppercase">
                                 <p>* Peran: dosen, mahasiswa, atau kaprodi</p>
                                 <p>* Tahun Angkatan: Khusus mahasiswa (cth: 2020)</p>
                                 <p>* Status Aktif: 1 untuk Aktif, 0 untuk Pending</p>
+                                <p>* Tanggal Lahir: Opsional (cth: 2002-05-15)</p>
                             </div>
                         </div>
                     </div>

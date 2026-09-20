@@ -224,7 +224,7 @@ document.addEventListener('keydown', function(e) {
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
             </span>
-            <span class="text-xs font-bold tracking-tight text-slate-800 dark:text-gray-400">Lapor Bug</span>
+            <span class="text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200">Lapor Bug</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors">
                 <path d="M5 15l7-7 7 7" />
             </svg>

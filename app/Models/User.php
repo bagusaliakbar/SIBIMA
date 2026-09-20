@@ -37,7 +37,35 @@ class User extends Authenticatable
         'research_interests',
         'max_quota',
         'last_login_at',
+        'birth_date',
+        'last_birthday_wished_year',
     ];
+
+    /**
+     * Check if today is the user's birthday
+     */
+    public function getIsBirthdayAttribute(): bool
+    {
+        return $this->birth_date !== null && $this->birth_date->format('m-d') === now()->format('m-d');
+    }
+
+    /**
+     * Get the user's current age
+     */
+    public function getAgeAttribute(): ?int
+    {
+        return $this->birth_date ? $this->birth_date->age : null;
+    }
+
+    /**
+     * Scope a query to only include users whose birthday is today
+     */
+    public function scopeBirthdayToday($query)
+    {
+        return $query->whereNotNull('birth_date')
+            ->whereMonth('birth_date', now()->month)
+            ->whereDay('birth_date', now()->day);
+    }
 
     /**
      * Check if user is online
@@ -153,6 +181,8 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'phone_number' => 'encrypted',
             'last_login_at' => 'datetime',
+            'birth_date' => 'date',
+            'last_birthday_wished_year' => 'integer',
         ];
     }
 

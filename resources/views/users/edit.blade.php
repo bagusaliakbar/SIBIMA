@@ -107,6 +107,15 @@
                             <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
                         </div>
 
+                        <!-- Tanggal Lahir -->
+                        <div>
+                            <label for="birth_date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Lahir</label>
+                            <input id="birth_date" type="date" name="birth_date" value="{{ old('birth_date', $user->birth_date?->format('Y-m-d')) }}" max="{{ date('Y-m-d') }}"
+                                class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors">
+                            <p class="mt-1 text-[10px] text-slate-500 italic">Untuk ucapan selamat ulang tahun otomatis via WhatsApp & sistem.</p>
+                            <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
+                        </div>
+
                         <!-- Password -->
                         <div class="md:col-span-2" x-data="{ showPassword: false }">
                             <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Password Baru (Opsional)</label>

@@ -28,6 +28,7 @@ class UserService
             'role' => $data['role'],
             'identifier' => $data['identifier'],
             'entry_year' => $data['entry_year'] ?? null,
+            'birth_date' => $data['birth_date'] ?? null,
             'phone_number' => $data['phone_number'] ?? null,
             'research_interests' => $data['research_interests'] ?? null,
             'avatar' => $avatarPath,
@@ -50,6 +51,7 @@ class UserService
             'role' => $data['role'] ?? $user->role,
             'identifier' => $data['identifier'] ?? $user->identifier,
             'entry_year' => $data['entry_year'] ?? $user->entry_year,
+            'birth_date' => array_key_exists('birth_date', $data) ? $data['birth_date'] : $user->birth_date,
             'phone_number' => $data['phone_number'] ?? $user->phone_number,
             'research_interests' => $data['research_interests'] ?? $user->research_interests,
         ];

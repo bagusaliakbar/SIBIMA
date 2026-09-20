@@ -87,6 +87,7 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
             'Tahun Angkatan',
             'No. WhatsApp',
             'Status WhatsApp',
+            'Tanggal Lahir',
             'Status Aktif (1=Aktif, 0=Pending)',
             'Terakhir Login',
         ];
@@ -103,6 +104,7 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
             $user->entry_year,
             $user->phone_number,
             $user->phone_number ? 'Terhubung' : 'Belum Ada',
+            $user->birth_date ? $user->birth_date->format('Y-m-d') : null,
             $user->is_active ? 1 : 0,
             $user->last_login_at ? $user->last_login_at->translatedFormat('d F Y, H:i') : 'Belum Pernah Login',
         ];

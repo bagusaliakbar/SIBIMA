@@ -11,7 +11,10 @@ Artisan::command('inspire', function () {
 // 1. Pengingat H-1 & H-3 Seminar UP / Sidang Akhir (Setiap hari jam 07:00 WIB)
 Schedule::command('app:send-schedule-reminders')->dailyAt('07:00');
 
-// 2. Pengingat H-1 Jadwal Bimbingan Skripsi (Setiap hari jam 07:15 WIB)
+// 2. Ucapan Selamat Ulang Tahun Mahasiswa Skripsi & Dosen (Setiap hari jam 07:00 WIB)
+Schedule::command('app:send-birthday-greetings')->dailyAt('07:00');
+
+// 3. Pengingat H-1 Jadwal Bimbingan Skripsi (Setiap hari jam 07:15 WIB)
 Schedule::command('app:send-mentoring-reminders')->dailyAt('07:15');
 
 // 3. Pengingat Mahasiswa Semester Kritis (Semester 13-14+) & Laporan Kaprodi (Setiap tanggal 1 jam 08:00 WIB)

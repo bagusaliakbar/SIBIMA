@@ -81,6 +81,24 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="phone_number" :value="__('Nomor WhatsApp')" />
+            <x-text-input id="phone_number" name="phone_number" type="text" class="mt-1 block w-full" :value="old('phone_number', $user->phone_number)" placeholder="Contoh: 08123456789" />
+            <p class="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                Digunakan untuk menerima notifikasi jadwal, bimbingan, dan pesan resmi SIBIMA.
+            </p>
+            <x-input-error class="mt-2" :messages="$errors->get('phone_number')" />
+        </div>
+
+        <div>
+            <x-input-label for="birth_date" :value="__('Tanggal Lahir')" />
+            <x-text-input id="birth_date" name="birth_date" type="date" max="{{ date('Y-m-d') }}" class="mt-1 block w-full" :value="old('birth_date', $user->birth_date?->format('Y-m-d'))" />
+            <p class="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                🎂 Tanggal lahir Anda digunakan untuk ucapan & kejutan spesial dari civitas akademika SIBIMA FASILKOM UNSUB.
+            </p>
+            <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
+        </div>
+
         @if($user->role === 'dosen')
             <div>
                 <x-input-label for="research_interests" :value="__('Bidang Keahlian / Research Interest')" />
