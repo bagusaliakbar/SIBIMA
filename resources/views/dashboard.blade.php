@@ -1,4 +1,4 @@
-{{-- Force fresh compilation for birthday card contrast styling: v3 --}}
+{{-- Force fresh compilation for birthday card contrast styling: v4 --}}
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -85,20 +85,23 @@
                     <div class="absolute -top-24 -left-24 w-56 h-56 bg-amber-400/20 dark:bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                    <div class="flex items-center gap-4 sm:gap-5 relative z-10 text-center sm:text-left flex-col sm:flex-row">
-                        <div class="relative shrink-0">
-                            <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl p-0.5 shadow-lg shadow-rose-500/25 flex items-center justify-center"
-                                 style="background: linear-gradient(135deg, #fbbf24, #f43f5e);">
-                                <div class="w-full h-full bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center text-3xl sm:text-4xl animate-bounce">
-                                    🎂
-                                </div>
-                            </div>
-                            <span class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-white text-xs shadow-md">
-                                🎉
-                            </span>
+                    <div class="flex items-start sm:items-center gap-4 sm:gap-5 relative z-10 text-left">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-rose-500/25 border border-white/20 dark:border-white/10 transition-transform hover:scale-105"
+                             style="background: linear-gradient(135deg, #f59e0b, #e11d48);">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/>
+                                <path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/>
+                                <path d="M2 21h20"/>
+                                <path d="M7 8v3"/>
+                                <path d="M12 8v3"/>
+                                <path d="M17 8v3"/>
+                                <path d="M7 3.8c-.5.8-.8 1.4-.8 2 0 .8.4 1.4.9 1.7.5-.3.9-.9.9-1.7 0-.6-.3-1.2-.7-2-.1-.1-.2-.1-.3 0z" fill="currentColor" stroke="none"/>
+                                <path d="M12 3.8c-.5.8-.8 1.4-.8 2 0 .8.4 1.4.9 1.7.5-.3.9-.9.9-1.7 0-.6-.3-1.2-.7-2-.1-.1-.2-.1-.3 0z" fill="currentColor" stroke="none"/>
+                                <path d="M17 3.8c-.5.8-.8 1.4-.8 2 0 .8.4 1.4.9 1.7.5-.3.9-.9.9-1.7 0-.6-.3-1.2-.7-2-.1-.1-.2-.1-.3 0z" fill="currentColor" stroke="none"/>
+                            </svg>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap mb-1">
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
                                     Hari Spesial
                                 </span>
@@ -108,16 +111,16 @@
                                     </span>
                                 @endif
                             </div>
-                            <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-1">
+                            <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
                                 Selamat Ulang Tahun, {{ Auth::user()->name }}! 🥳
                             </h3>
                             @if(Auth::user()->role === 'mahasiswa')
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                                    Keluarga besar SIBIMA mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya! 🎓✨
+                                    Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya! 🎓✨
                                 </p>
                             @else
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                                    Keluarga besar SIBIMA mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu! 🌟🤲
+                                    Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu! 🌟🤲
                                 </p>
                             @endif
                         </div>
