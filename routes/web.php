@@ -289,7 +289,15 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
 
         $gitPullOutput = null;
         if ($request->has('pull')) {
-            $gitPullOutput = shell_exec('git pull origin main 2>&1');
+            if (function_exists('shell_exec')) {
+                $gitPullOutput = @shell_exec('git pull origin main 2>&1');
+            } elseif (function_exists('exec')) {
+                $lines = [];
+                @exec('git pull origin main 2>&1', $lines);
+                $gitPullOutput = implode("\n", $lines);
+            } else {
+                $gitPullOutput = 'shell_exec & exec are disabled in php.ini on this hosting.';
+            }
         }
 
         if (file_exists(base_path('build/manifest.json'))) {
