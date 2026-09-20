@@ -1,4 +1,4 @@
-{{-- Force fresh compilation for bug report floating capsule dock: v2 --}}
+{{-- Force fresh compilation for birthday card contrast styling: v3 --}}
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -75,19 +75,21 @@
                  x-transition:leave="transition ease-in duration-300"
                  x-transition:leave-start="opacity-100 scale-100"
                  x-transition:leave-end="opacity-0 scale-95"
-                 class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 p-0.5 sm:p-1 shadow-xl">
+                 style="background: linear-gradient(135deg, #f59e0b, #f43f5e, #8b5cf6);"
+                 class="relative overflow-hidden rounded-3xl p-0.5 sm:p-1 shadow-xl">
                 <!-- Floating Canvas for Confetti -->
                 <canvas x-ref="confettiCanvas" class="pointer-events-none fixed inset-0 z-50 h-full w-full"></canvas>
 
-                <div class="relative overflow-hidden rounded-[22px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="relative overflow-hidden rounded-[22px] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                     <!-- Ambient glowing background effects -->
                     <div class="absolute -top-24 -left-24 w-56 h-56 bg-amber-400/20 dark:bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                     <div class="flex items-center gap-4 sm:gap-5 relative z-10 text-center sm:text-left flex-col sm:flex-row">
                         <div class="relative shrink-0">
-                            <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-500 p-0.5 shadow-lg shadow-rose-500/25 flex items-center justify-center">
-                                <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center text-3xl sm:text-4xl animate-bounce">
+                            <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl p-0.5 shadow-lg shadow-rose-500/25 flex items-center justify-center"
+                                 style="background: linear-gradient(135deg, #fbbf24, #f43f5e);">
+                                <div class="w-full h-full bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center text-3xl sm:text-4xl animate-bounce">
                                     🎂
                                 </div>
                             </div>
@@ -106,7 +108,7 @@
                                     </span>
                                 @endif
                             </div>
-                            <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-white mt-1">
+                            <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-1">
                                 Selamat Ulang Tahun, {{ Auth::user()->name }}! 🥳
                             </h3>
                             @if(Auth::user()->role === 'mahasiswa')
@@ -124,13 +126,14 @@
                     <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end">
                         <button type="button" 
                                 @click="burst()" 
-                                class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
-                            <span>Rayakan Lagi</span>
+                                style="background: linear-gradient(135deg, #f59e0b, #e11d48);"
+                                class="px-4 py-2.5 rounded-xl bg-rose-600 hover:opacity-90 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                            <span class="text-white font-black">Rayakan Lagi</span>
                             <span>🎉</span>
                         </button>
                         <button type="button" 
                                 @click="dismiss()" 
-                                class="p-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                                class="p-2.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
                                 title="Tutup ucapan hari ini">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
