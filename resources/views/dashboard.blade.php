@@ -1,4 +1,4 @@
-{{-- Force fresh compilation for birthday card solid white: v5 --}}
+{{-- Force fresh compilation for birthday card remove icon: v6 --}}
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -79,45 +79,29 @@
                 <!-- Floating Canvas for Confetti -->
                 <canvas x-ref="confettiCanvas" class="pointer-events-none fixed inset-0 z-50 h-full w-full"></canvas>
 
-                <div class="flex items-start sm:items-center gap-4 sm:gap-5 relative z-10 text-left">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-md shadow-rose-500/20 transition-transform hover:scale-105"
-                         style="background: linear-gradient(135deg, #f59e0b, #e11d48);">
-                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/>
-                            <path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/>
-                            <path d="M2 21h20"/>
-                            <path d="M7 8v3"/>
-                            <path d="M12 8v3"/>
-                            <path d="M17 8v3"/>
-                            <path d="M7 3.8c-.5.8-.8 1.4-.8 2 0 .8.4 1.4.9 1.7.5-.3.9-.9.9-1.7 0-.6-.3-1.2-.7-2-.1-.1-.2-.1-.3 0z" fill="currentColor" stroke="none"/>
-                            <path d="M12 3.8c-.5.8-.8 1.4-.8 2 0 .8.4 1.4.9 1.7.5-.3.9-.9.9-1.7 0-.6-.3-1.2-.7-2-.1-.1-.2-.1-.3 0z" fill="currentColor" stroke="none"/>
-                            <path d="M17 3.8c-.5.8-.8 1.4-.8 2 0 .8.4 1.4.9 1.7.5-.3.9-.9.9-1.7 0-.6-.3-1.2-.7-2-.1-.1-.2-.1-.3 0z" fill="currentColor" stroke="none"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap mb-1">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
-                                Hari Spesial
+                <div class="flex-1 min-w-0 relative z-10 text-left">
+                    <div class="flex items-center gap-2 flex-wrap mb-1.5">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                            Hari Spesial
+                        </span>
+                        @if(Auth::user()->age)
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                Usia ke-{{ Auth::user()->age }} Tahun
                             </span>
-                            @if(Auth::user()->age)
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                                    Usia ke-{{ Auth::user()->age }} Tahun
-                                </span>
-                            @endif
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
-                            Selamat Ulang Tahun, {{ Auth::user()->name }}! 🥳
-                        </h3>
-                        @if(Auth::user()->role === 'mahasiswa')
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                                Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya! 🎓✨
-                            </p>
-                        @else
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                                Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu! 🌟🤲
-                            </p>
                         @endif
                     </div>
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
+                        Selamat Ulang Tahun, {{ Auth::user()->name }}! 🥳
+                    </h3>
+                    @if(Auth::user()->role === 'mahasiswa')
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                            Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya! 🎓✨
+                        </p>
+                    @else
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                            Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu! 🌟🤲
+                        </p>
+                    @endif
                 </div>
 
                 <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end">
