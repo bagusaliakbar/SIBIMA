@@ -12,14 +12,16 @@
         @include('repositories.partials.tabs')
 
         <!-- HERO SEARCH BANNER -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-4">
-            <div class="max-w-3xl space-y-3">
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
-                    Eksplorasi Jurnal Ilmiah <span class="text-orange-600 dark:text-orange-400 font-black">Open Access</span>
-                </h1>
-                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Cari artikel jurnal nasional & internasional langsung dari SIBIMA. Tersedia tautan unduh naskah PDF lengkap gratis (*Full-Text*) dan salin sitasi otomatis dalam format APA, IEEE, serta BibTeX untuk skripsi Anda.
-                </p>
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-5 w-full">
+            <div class="w-full space-y-4">
+                <div class="space-y-2">
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
+                        Eksplorasi Jurnal Ilmiah <span class="text-orange-600 dark:text-orange-400 font-black">Open Access</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-4xl">
+                        Cari artikel jurnal nasional & internasional langsung dari SIBIMA. Tersedia tautan unduh naskah PDF lengkap gratis (*Full-Text*) dan salin sitasi otomatis dalam format APA, IEEE, serta BibTeX untuk skripsi Anda.
+                    </p>
+                </div>
 
                 <!-- Source Selector Tabs -->
                 <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
@@ -85,9 +87,9 @@
                 </div>
 
                 <!-- Search Input Box -->
-                <form action="{{ route('repositories.journals') }}" method="GET" class="pt-1">
+                <form action="{{ route('repositories.journals') }}" method="GET" class="pt-1 w-full">
                     <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
-                        <div class="relative flex-1 group">
+                        <div class="relative flex-1 group min-w-0">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
