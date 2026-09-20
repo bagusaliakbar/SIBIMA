@@ -38,8 +38,13 @@ class WaTemplateController extends Controller implements HasMiddleware
         $templates = $query->orderBy('category')->orderBy('id')->get();
         $categories = ['Bimbingan', 'Skripsi', 'Ujian', 'Pengingat', 'Ulang Tahun'];
         $isWhatsAppGloballyEnabled = Setting::isWhatsAppEnabled();
+        $totalCount = WaTemplate::count();
+        $categoryCounts = WaTemplate::groupBy('category')
+            ->selectRaw('category, count(*) as count')
+            ->pluck('count', 'category')
+            ->toArray();
 
-        return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory', 'isWhatsAppGloballyEnabled'));
+        return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory', 'isWhatsAppGloballyEnabled', 'totalCount', 'categoryCounts'));
     }
 
     /**
@@ -117,6 +122,15 @@ class WaTemplateController extends Controller implements HasMiddleware
             } catch (\Throwable $e) {
                 // Ignore if DB connection or permissions issue occurs
             }
+        }
+
+        // Ensure any birthday templates with legacy/different category are updated to 'Ulang Tahun'
+        try {
+            WaTemplate::whereIn('code', ['birthday_student', 'birthday_lecturer'])
+                ->where('category', '!=', 'Ulang Tahun')
+                ->update(['category' => 'Ulang Tahun']);
+        } catch (\Throwable $e) {
+            // Ignore
         }
     }
 

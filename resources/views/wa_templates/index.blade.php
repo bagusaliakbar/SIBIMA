@@ -61,12 +61,12 @@
         <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar border-b border-slate-200 dark:border-slate-800">
             <a href="{{ route('wa-templates.index', ['category' => 'all']) }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === 'all' ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
-                Semua Kategori ({{ $templates->count() }})
+                Semua Kategori ({{ $totalCount ?? $templates->count() }})
             </a>
             @foreach($categories as $cat)
                 <a href="{{ route('wa-templates.index', ['category' => $cat]) }}" 
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === $cat ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
-                    {{ $cat }}
+                    {{ $cat }} ({{ $categoryCounts[$cat] ?? 0 }})
                 </a>
             @endforeach
         </div>

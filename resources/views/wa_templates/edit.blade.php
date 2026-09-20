@@ -194,6 +194,8 @@
                         'link_monitoring': 'https://sibima.ac.id/monitoring/critical',
                         'link_dashboard': 'https://sibima.ac.id/dashboard',
                         'usia': '22',
+                        'umur': '22',
+                        'hari_ini': '20 September 2026',
                         'nama_pembimbing1': 'Dr. Irzan, M.T.',
                         'peran_pengguna': 'Dosen'
                     };
