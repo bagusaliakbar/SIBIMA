@@ -186,7 +186,7 @@
 
         {{-- SMART AI SKRIPSI RECOMMENDATION BANNER --}}
         @if($userThesis && !empty($thesisRecommendation['query']))
-            <div class="relative overflow-hidden bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-transparent dark:from-orange-950/40 dark:via-slate-800 dark:to-slate-800 border-2 border-orange-200 dark:border-orange-800/80 rounded-3xl p-5 sm:p-6 shadow-sm">
+            <div class="relative overflow-hidden bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xs">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                     <div class="space-y-2.5 flex-1 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
@@ -196,7 +196,7 @@
                                 </svg>
                                 <span>Rekomendasi Pintar AI</span>
                             </span>
-                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300">
                                 🎓 Judul Skripsi Anda Terdeteksi
                             </span>
                             @if(!empty($userThesis->topic))
@@ -219,7 +219,7 @@
                                 <span class="text-xs font-bold text-slate-600 dark:text-slate-400 mr-1">Kata Kunci Utama:</span>
                                 @foreach($thesisRecommendation['chips'] as $chip)
                                     <a href="{{ route('repositories.journals', ['q' => $chip, 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
-                                       class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/80 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 transition-all shadow-2xs">
+                                       class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-900 text-orange-600 dark:text-orange-400 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 transition-all shadow-2xs">
                                         #{{ $chip }}
                                     </a>
                                 @endforeach
@@ -230,7 +230,7 @@
                     <!-- 1-Click Recommendation CTA -->
                     <div class="flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-center gap-2 shrink-0">
                         <a href="{{ route('repositories.journals', ['q' => $thesisRecommendation['query'], 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
-                           class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-black bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all whitespace-nowrap cursor-pointer">
+                           class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/25 hover:scale-[1.01] active:scale-95 transition-all whitespace-nowrap cursor-pointer">
                             <svg class="w-5 h-5 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -703,9 +703,9 @@
                                  x-transition:leave="transition ease-in duration-150"
                                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                  x-transition:leave-end="opacity-0 -translate-y-2 scale-[0.99]"
-                                 class="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent dark:from-slate-900 dark:to-slate-900 border-2 border-orange-200 dark:border-orange-800/70 rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm">
+                                 class="bg-slate-50 dark:bg-slate-900/90 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
                                 
-                                <div class="flex items-center justify-between border-b border-orange-200/60 dark:border-orange-800/50 pb-2.5">
+                                <div class="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2.5">
                                     <div class="flex items-center gap-2">
                                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -721,7 +721,7 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                                     <!-- 1. Masalah / Fokus Riset -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-orange-200/60 dark:border-slate-700 space-y-1.5 shadow-2xs">
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 font-black text-[11px] uppercase tracking-wide">
                                             <span class="text-sm">🎯</span>
                                             <span>Masalah / Tujuan</span>
@@ -732,7 +732,7 @@
                                     </div>
 
                                     <!-- 2. Metode / Algoritma -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-orange-200/60 dark:border-slate-700 space-y-1.5 shadow-2xs">
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-black text-[11px] uppercase tracking-wide">
                                             <span class="text-sm">⚙️</span>
                                             <span>Metode / Algoritma</span>
@@ -743,7 +743,7 @@
                                     </div>
 
                                     <!-- 3. Hasil Utama -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-orange-200/60 dark:border-slate-700 space-y-1.5 shadow-2xs">
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-black text-[11px] uppercase tracking-wide">
                                             <span class="text-sm">📈</span>
                                             <span>Hasil Utama</span>
