@@ -18,6 +18,8 @@ use App\Services\FasilkomJournalService;
 use App\Services\GarudaJournalService;
 use App\Services\DoajJournalService;
 use App\Services\CrossrefJournalService;
+use App\Services\JournalAiService;
+use App\Models\Thesis;
 use App\Models\FasilkomJournal;
 use App\Models\JournalBookmark;
 use App\Models\JournalBookmarkFolder;
@@ -755,7 +757,8 @@ class ThesisRepositoryController extends Controller
         FasilkomJournalService $fasilkomService,
         GarudaJournalService $garudaService,
         DoajJournalService $doajService,
-        CrossrefJournalService $crossrefService
+        CrossrefJournalService $crossrefService,
+        JournalAiService $journalAiService
     ) {
         $query = $request->input('q', '');
         $page = max(1, (int) $request->input('page', 1));
@@ -929,10 +932,29 @@ class ThesisRepositoryController extends Controller
             }
         }
 
+        // Attach AI Quick Summary (TL;DR) and Similar Paper Query to results
+        if (!empty($results['data']) && is_array($results['data'])) {
+            foreach ($results['data'] as &$item) {
+                $item['tldr'] = $journalAiService->generateTldr($item['abstract'] ?? null, $item['title'] ?? '');
+                $item['similar_query'] = $journalAiService->extractSimilarQuery($item);
+            }
+            unset($item);
+        }
+
         $userBookmarkIds = auth()->check()
             ? auth()->user()->journalBookmarks()->pluck('journal_identifier')->toArray()
             : [];
         $userBookmarkCount = count($userBookmarkIds);
+
+        // Detect student thesis and generate smart keyword recommendation
+        $userThesis = null;
+        $thesisRecommendation = null;
+        if (auth()->check() && auth()->user()->role === 'mahasiswa') {
+            $userThesis = Thesis::where('student_id', auth()->id())->first();
+            if ($userThesis && !empty($userThesis->display_title)) {
+                $thesisRecommendation = $journalAiService->extractKeywords($userThesis->display_title);
+            }
+        }
 
         return view('repositories.journals', [
             'query' => $query,
@@ -947,6 +969,8 @@ class ThesisRepositoryController extends Controller
             'fasilkomTopAuthors' => $fasilkomTopAuthors,
             'userBookmarkIds' => $userBookmarkIds,
             'userBookmarkCount' => $userBookmarkCount,
+            'userThesis' => $userThesis,
+            'thesisRecommendation' => $thesisRecommendation,
             'page' => $page,
         ]);
     }

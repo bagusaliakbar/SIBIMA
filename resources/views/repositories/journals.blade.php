@@ -184,6 +184,66 @@
             </div>
         </div>
 
+        {{-- SMART AI SKRIPSI RECOMMENDATION BANNER --}}
+        @if($userThesis && !empty($thesisRecommendation['query']))
+            <div class="relative overflow-hidden bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-transparent dark:from-orange-950/40 dark:via-slate-800 dark:to-slate-800 border-2 border-orange-200 dark:border-orange-800/80 rounded-3xl p-5 sm:p-6 shadow-sm">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                    <div class="space-y-2.5 flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-orange-500 text-white shadow-xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                <span>Rekomendasi Pintar AI</span>
+                            </span>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800">
+                                🎓 Judul Skripsi Anda Terdeteksi
+                            </span>
+                            @if(!empty($userThesis->topic))
+                                <span class="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                    Bidang: {{ ucfirst($userThesis->topic) }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Judul Penelitian Skripsi:</h4>
+                            <p class="text-sm sm:text-base font-bold text-slate-900 dark:text-white line-clamp-2 mt-0.5">
+                                "{{ $userThesis->display_title }}"
+                            </p>
+                        </div>
+
+                        <!-- Extracted Keyword Chips -->
+                        @if(!empty($thesisRecommendation['chips']))
+                            <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                <span class="text-xs font-bold text-slate-600 dark:text-slate-400 mr-1">Kata Kunci Utama:</span>
+                                @foreach($thesisRecommendation['chips'] as $chip)
+                                    <a href="{{ route('repositories.journals', ['q' => $chip, 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
+                                       class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/80 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 transition-all shadow-2xs">
+                                        #{{ $chip }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- 1-Click Recommendation CTA -->
+                    <div class="flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-center gap-2 shrink-0">
+                        <a href="{{ route('repositories.journals', ['q' => $thesisRecommendation['query'], 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
+                           class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-black bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all whitespace-nowrap cursor-pointer">
+                            <svg class="w-5 h-5 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <span>Cari Rujukan untuk Skripsiku</span>
+                        </a>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400 text-center lg:text-right font-medium">
+                            1-Klik langsung menemukan jurnal pendukung Bab 2
+                        </span>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- FILTER & SORT CONTROLS BAR -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-4">
             <form action="{{ route('repositories.journals') }}" method="GET" id="journalFilterForm" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -503,7 +563,7 @@
             <div class="space-y-4">
                 @foreach($results['data'] as $index => $item)
                     <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:border-orange-300 dark:hover:border-orange-500/50 hover:shadow-lg transition-all space-y-4"
-                         x-data="{ showAbstract: false }">
+                         x-data="{ showAbstract: false, showTldr: false }">
                         
                         <!-- Top Metadata Badges -->
                         <div class="flex flex-wrap items-center justify-between gap-2">
@@ -561,6 +621,21 @@
                                         <span>{{ number_format($item['cited_by_count']) }} Sitasi</span>
                                     </span>
                                 @endif
+
+                                @if(!empty($item['tldr']['has_tldr']))
+                                    <button type="button" 
+                                            @click="showTldr = !showTldr"
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold transition-all border shadow-2xs cursor-pointer"
+                                            :class="showTldr 
+                                                ? 'bg-orange-500 text-white border-orange-500 shadow-sm shadow-orange-500/25' 
+                                                : 'bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800/80 hover:bg-orange-100 dark:hover:bg-orange-900/60'"
+                                            title="Tampilkan ringkasan 3 poin kunci penelitian">
+                                        <svg class="w-3.5 h-3.5" :class="showTldr ? 'text-white' : 'text-orange-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                        </svg>
+                                        <span x-text="showTldr ? 'Tutup Ringkasan' : '✨ AI Quick Summary'"></span>
+                                    </button>
+                                @endif
                             </div>
 
                             @if($item['doi'])
@@ -600,11 +675,84 @@
                                     <span class="font-bold text-slate-700 dark:text-slate-200">Abstrak:</span>
                                     {{ $item['abstract'] }}
                                 </div>
-                                <button type="button" 
-                                        @click="showAbstract = !showAbstract" 
-                                        class="mt-1.5 text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
-                                    <span x-text="showAbstract ? 'Tutup Abstrak' : 'Baca Selengkapnya...'"></span>
-                                </button>
+                                <div class="flex items-center justify-between gap-2 mt-2">
+                                    <button type="button" 
+                                            @click="showAbstract = !showAbstract" 
+                                            class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1 cursor-pointer">
+                                        <span x-text="showAbstract ? 'Tutup Abstrak' : 'Baca Selengkapnya...'"></span>
+                                    </button>
+                                    @if(!empty($item['tldr']['has_tldr']))
+                                        <button type="button" 
+                                                @click="showTldr = !showTldr" 
+                                                class="text-[11px] font-black inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                            <span x-text="showTldr ? 'Tutup Ringkasan AI' : 'Lihat Ringkasan AI (TL;DR)'"></span>
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- AI Quick Summary (TL;DR) Structured Box -->
+                        @if(!empty($item['tldr']['has_tldr']))
+                            <div x-show="showTldr" 
+                                 x-cloak
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 -translate-y-2 scale-[0.99]"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 -translate-y-2 scale-[0.99]"
+                                 class="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent dark:from-slate-900 dark:to-slate-900 border-2 border-orange-200 dark:border-orange-800/70 rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm">
+                                
+                                <div class="flex items-center justify-between border-b border-orange-200/60 dark:border-orange-800/50 pb-2.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                        </span>
+                                        <h4 class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">
+                                            AI Quick Summary <span class="text-orange-600 dark:text-orange-400 font-bold">(Poin Kunci Penelitian)</span>
+                                        </h4>
+                                    </div>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                        ⚡ Ekstraksi Instan
+                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                                    <!-- 1. Masalah / Fokus Riset -->
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-orange-200/60 dark:border-slate-700 space-y-1.5 shadow-2xs">
+                                        <div class="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 font-black text-[11px] uppercase tracking-wide">
+                                            <span class="text-sm">🎯</span>
+                                            <span>Masalah / Tujuan</span>
+                                        </div>
+                                        <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-[11px] sm:text-xs">
+                                            {{ $item['tldr']['problem'] }}
+                                        </p>
+                                    </div>
+
+                                    <!-- 2. Metode / Algoritma -->
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-orange-200/60 dark:border-slate-700 space-y-1.5 shadow-2xs">
+                                        <div class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-black text-[11px] uppercase tracking-wide">
+                                            <span class="text-sm">⚙️</span>
+                                            <span>Metode / Algoritma</span>
+                                        </div>
+                                        <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-[11px] sm:text-xs">
+                                            {{ $item['tldr']['method'] }}
+                                        </p>
+                                    </div>
+
+                                    <!-- 3. Hasil Utama -->
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-orange-200/60 dark:border-slate-700 space-y-1.5 shadow-2xs">
+                                        <div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-black text-[11px] uppercase tracking-wide">
+                                            <span class="text-sm">📈</span>
+                                            <span>Hasil Utama</span>
+                                        </div>
+                                        <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-[11px] sm:text-xs">
+                                            {{ $item['tldr']['result'] }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
@@ -650,6 +798,18 @@
                                     </svg>
                                     <span x-text="isBookmarked('{{ $item['id'] }}') ? 'Tersimpan' : 'Simpan Bacaan'">Simpan Bacaan</span>
                                 </button>
+
+                                <!-- Cari Artikel Serupa (Similar Papers) -->
+                                @if(!empty($item['similar_query']))
+                                    <a href="{{ route('repositories.journals', ['q' => $item['similar_query'], 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
+                                       class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-700 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-300 dark:hover:border-orange-500 transition-all shadow-xs cursor-pointer"
+                                       title="Temukan artikel lain dengan metodologi atau topik serupa">
+                                        <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                        </svg>
+                                        <span>Artikel Serupa</span>
+                                    </a>
+                                @endif
 
                                 <!-- Landing page / publisher link -->
                                 @if($item['landing_page_url'])
