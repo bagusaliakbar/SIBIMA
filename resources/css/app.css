@@ -186,3 +186,24 @@ select:-webkit-autofill:active {
     color: #ffffff !important;
 }
 
+/* ==========================================================================
+   AI QUICK SUMMARY (TL;DR) DARK MODE SYSTEM
+   ========================================================================== */
+.ai-tldr-container {
+    background-color: #f1f5f9; /* slate-100 */
+}
+
+.dark .ai-tldr-container {
+    background-color: #0f172a !important; /* slate-900 */
+    border-color: #1e293b !important; /* slate-800 */
+}
+
+.ai-tldr-card {
+    background-color: #ffffff;
+}
+
+.dark .ai-tldr-card {
+    background-color: #1e293b !important; /* slate-800 */
+}
+
+

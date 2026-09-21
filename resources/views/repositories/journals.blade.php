@@ -703,25 +703,25 @@
                                  x-transition:leave="transition ease-in duration-150"
                                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                                  x-transition:leave-end="opacity-0 -translate-y-2 scale-[0.99]"
-                                 class="bg-slate-50 dark:bg-slate-900/90 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
+                                 class="ai-tldr-container bg-slate-100 dark:bg-slate-900 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs border border-transparent dark:border-slate-800/80">
                                 
                                 <div class="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2.5">
                                     <div class="flex items-center gap-2">
                                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                         </span>
-                                        <h4 class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">
+                                        <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
                                             AI Quick Summary <span class="text-orange-600 dark:text-orange-400 font-bold">(Poin Kunci Penelitian)</span>
                                         </h4>
                                     </div>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80">
                                         ⚡ Ekstraksi Instan
                                     </span>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                                     <!-- 1. Masalah / Fokus Riset -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
+                                    <div class="ai-tldr-card bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 font-black text-[11px] uppercase tracking-wide">
                                             <span class="text-sm">🎯</span>
                                             <span>Masalah / Tujuan</span>
@@ -732,7 +732,7 @@
                                     </div>
 
                                     <!-- 2. Metode / Algoritma -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
+                                    <div class="ai-tldr-card bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-black text-[11px] uppercase tracking-wide">
                                             <span class="text-sm">⚙️</span>
                                             <span>Metode / Algoritma</span>
@@ -743,7 +743,7 @@
                                     </div>
 
                                     <!-- 3. Hasil Utama -->
-                                    <div class="bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
+                                    <div class="ai-tldr-card bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-black text-[11px] uppercase tracking-wide">
                                             <span class="text-sm">📈</span>
                                             <span>Hasil Utama</span>
