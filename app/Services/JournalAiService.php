@@ -259,6 +259,169 @@ class JournalAiService
     }
 
     /**
+     * Generate standard RIS (Research Information Systems) format
+     * compatible with Mendeley, Zotero, EndNote, and RefWorks.
+     *
+     * @param array $item
+     * @return string
+     */
+    public function generateRis(array $item): string
+    {
+        $lines = [];
+        $lines[] = 'TY  - JOUR';
+        $lines[] = 'TI  - ' . ($item['title'] ?? '');
+
+        $authors = $item['authors'] ?? [];
+        if (empty($authors) && !empty($item['authors_string'])) {
+            $authors = array_map('trim', explode(',', $item['authors_string']));
+        }
+
+        foreach ($authors as $author) {
+            $authorClean = trim($author);
+            if (!empty($authorClean)) {
+                if (!str_contains($authorClean, ',')) {
+                    $parts = preg_split('/\s+/', $authorClean);
+                    if (count($parts) > 1) {
+                        $last = array_pop($parts);
+                        $first = implode(' ', $parts);
+                        $authorClean = "{$last}, {$first}";
+                    }
+                }
+                $lines[] = 'AU  - ' . $authorClean;
+            }
+        }
+
+        if (!empty($item['venue'])) {
+            $lines[] = 'T2  - ' . $item['venue'];
+            $lines[] = 'JO  - ' . $item['venue'];
+        }
+
+        if (!empty($item['year'])) {
+            $lines[] = 'PY  - ' . $item['year'];
+            $lines[] = 'DA  - ' . $item['year'];
+        }
+
+        if (!empty($item['volume'])) {
+            $lines[] = 'VL  - ' . $item['volume'];
+        }
+
+        if (!empty($item['issue'])) {
+            $lines[] = 'IS  - ' . $item['issue'];
+        }
+
+        if (!empty($item['pages'])) {
+            if (str_contains($item['pages'], '-')) {
+                [$sp, $ep] = array_map('trim', explode('-', $item['pages'], 2));
+                $lines[] = 'SP  - ' . $sp;
+                $lines[] = 'EP  - ' . $ep;
+            } else {
+                $lines[] = 'SP  - ' . $item['pages'];
+            }
+        }
+
+        if (!empty($item['doi'])) {
+            $cleanDoi = str_replace(['https://doi.org/', 'http://doi.org/'], '', $item['doi']);
+            $lines[] = 'DO  - ' . $cleanDoi;
+        }
+
+        $url = $item['landing_page_url'] ?? ($item['pdf_url'] ?? ($item['doi'] ?? ''));
+        if (!empty($url)) {
+            $lines[] = 'UR  - ' . $url;
+        }
+
+        if (!empty($item['abstract'])) {
+            $lines[] = 'AB  - ' . strip_tags($item['abstract']);
+        }
+
+        if (!empty($item['publisher'])) {
+            $lines[] = 'PB  - ' . $item['publisher'];
+        }
+
+        if (!empty($item['issn'])) {
+            $lines[] = 'SN  - ' . $item['issn'];
+        }
+
+        $lines[] = 'ER  - ';
+
+        return implode("\r\n", $lines);
+    }
+
+    /**
+     * Generate citation formatted according to FASILKOM UNSUB Thesis Guidelines.
+     * Format: Penulis. (Tahun). "Judul Artikel". Nama Jurnal, Vol(No), hlm. XX-YY. URL/DOI.
+     *
+     * @param array $item
+     * @return array{plain: string, html: string}
+     */
+    public function generateFasilkomCitation(array $item): array
+    {
+        $title = rtrim($item['title'] ?? '', '. ');
+        $venue = $item['venue'] ?? 'Jurnal Ilmiah';
+        $year = $item['year'] ?? date('Y');
+
+        $authors = $item['authors'] ?? [];
+        if (empty($authors) && !empty($item['authors_string'])) {
+            $authors = array_map('trim', explode(',', $item['authors_string']));
+        }
+
+        $formattedAuthors = [];
+        foreach ($authors as $auth) {
+            $parts = preg_split('/\s+/', trim($auth));
+            if (count($parts) > 1) {
+                $last = array_pop($parts);
+                $initials = implode('. ', array_map(fn($p) => mb_substr($p, 0, 1), $parts)) . '.';
+                $formattedAuthors[] = "{$last}, {$initials}";
+            } else {
+                $formattedAuthors[] = $parts[0] ?? 'Penulis';
+            }
+        }
+
+        $authorCount = count($formattedAuthors);
+        if ($authorCount === 0) {
+            $authorString = 'Anonim';
+        } elseif ($authorCount === 1) {
+            $authorString = $formattedAuthors[0];
+        } elseif ($authorCount === 2) {
+            $authorString = $formattedAuthors[0] . ' dan ' . $formattedAuthors[1];
+        } elseif ($authorCount === 3) {
+            $authorString = $formattedAuthors[0] . ', ' . $formattedAuthors[1] . ', dan ' . $formattedAuthors[2];
+        } else {
+            $authorString = $formattedAuthors[0] . ' dkk.';
+        }
+
+        // Details: Vol, No, Pages
+        $detailParts = [];
+        if (!empty($item['volume'])) {
+            $volText = "Vol. " . $item['volume'];
+            if (!empty($item['issue'])) {
+                $volText .= "(No. " . $item['issue'] . ")";
+            }
+            $detailParts[] = $volText;
+        } elseif (!empty($item['issue'])) {
+            $detailParts[] = "No. " . $item['issue'];
+        }
+
+        if (!empty($item['pages'])) {
+            $detailParts[] = "hlm. " . $item['pages'];
+        }
+
+        $detailsString = !empty($detailParts) ? ', ' . implode(', ', $detailParts) : '';
+
+        // Target link / DOI
+        $link = $item['doi'] ?: ($item['landing_page_url'] ?: ($item['pdf_url'] ?: ''));
+        $linkPlain = $link ? " Tersedia di: {$link}." : '';
+        $linkHtml = $link ? " Tersedia di: <a href=\"{$link}\">{$link}</a>." : '';
+
+        $plain = "{$authorString} ({$year}). \"{$title}\". {$venue}{$detailsString}.{$linkPlain}";
+        $html = "{$authorString} ({$year}). &ldquo;{$title}&rdquo;. <i>{$venue}</i>{$detailsString}.{$linkHtml}";
+
+        return [
+            'plain' => $plain,
+            'html' => $html,
+        ];
+    }
+
+    /**
      * Check if text contains any of the pattern strings.
      */
     protected function matchesAny(string $text, array $patterns): bool

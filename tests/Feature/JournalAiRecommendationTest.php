@@ -146,5 +146,50 @@ class JournalAiRecommendationTest extends TestCase
         $response->assertSee('Hasil Utama');
         $response->assertSee('Artikel Serupa');
         $response->assertSee('Deep learning');
+
+        // Reference Manager Integration elements
+        $response->assertSee('FASILKOM UNSUB (Word)');
+        $response->assertSee('File .RIS');
+        $response->assertSee('Unduh .RIS');
+        $response->assertSee('Salin untuk Word');
+    }
+
+    public function test_export_citations_returns_fasilkom_and_ris_formats()
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        \App\Models\JournalBookmark::create([
+            'user_id' => $student->id,
+            'journal_identifier' => 'openalex:W12345678',
+            'title' => 'Pengembangan Sistem Cerdas Berbasis Web',
+            'authors' => ['Bagus Ali Akbar'],
+            'authors_string' => 'Bagus Ali Akbar',
+            'year' => 2024,
+            'venue' => 'Jurnal FASILKOM',
+            'doi' => 'https://doi.org/10.1234/fasilkom.2024.1',
+            'citations' => [
+                'apa' => 'Akbar, B. A. (2024). Pengembangan Sistem Cerdas Berbasis Web.',
+                'fasilkom' => 'Akbar, B. A. (2024). "Pengembangan Sistem Cerdas Berbasis Web". Jurnal FASILKOM.',
+                'ris' => "TY  - JOUR\r\nTI  - Pengembangan Sistem Cerdas Berbasis Web\r\nER  - ",
+            ],
+        ]);
+
+        $response = $this->actingAs($student)->getJson(route('repositories.bookmarks.export_citations'));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'count',
+            'fasilkom',
+            'apa',
+            'ieee',
+            'bibtex',
+            'ris',
+        ]);
+
+        $data = $response->json();
+        $this->assertEquals(1, $data['count']);
+        $this->assertStringContainsString('Pengembangan Sistem Cerdas Berbasis Web', $data['fasilkom']);
+        $this->assertStringContainsString('TY  - JOUR', $data['ris']);
     }
 }

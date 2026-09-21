@@ -932,11 +932,19 @@ class ThesisRepositoryController extends Controller
             }
         }
 
-        // Attach AI Quick Summary (TL;DR) and Similar Paper Query to results
+        // Attach AI Quick Summary (TL;DR), Similar Paper Query, and Reference Manager Citations to results
         if (!empty($results['data']) && is_array($results['data'])) {
             foreach ($results['data'] as &$item) {
                 $item['tldr'] = $journalAiService->generateTldr($item['abstract'] ?? null, $item['title'] ?? '');
                 $item['similar_query'] = $journalAiService->extractSimilarQuery($item);
+
+                if (!isset($item['citations']) || !is_array($item['citations'])) {
+                    $item['citations'] = [];
+                }
+                $fasilkomCit = $journalAiService->generateFasilkomCitation($item);
+                $item['citations']['fasilkom'] = $fasilkomCit['plain'];
+                $item['citations']['fasilkom_html'] = $fasilkomCit['html'];
+                $item['citations']['ris'] = $journalAiService->generateRis($item);
             }
             unset($item);
         }
@@ -1326,8 +1334,25 @@ class ThesisRepositoryController extends Controller
         $apaList = [];
         $ieeeList = [];
         $bibtexList = [];
+        $fasilkomList = [];
+        $risList = [];
+
+        $aiService = app(\App\Services\JournalAiService::class);
 
         foreach ($bookmarks as $index => $b) {
+            $itemArray = [
+                'title' => $b->title,
+                'authors' => $b->authors ?: [],
+                'authors_string' => $b->authors_string,
+                'year' => $b->year,
+                'venue' => $b->venue,
+                'doi' => $b->doi,
+                'landing_page_url' => $b->landing_page_url,
+                'pdf_url' => $b->pdf_url,
+                'abstract' => $b->abstract,
+                'publisher' => $b->publisher,
+            ];
+
             $c = $b->citations ?: [];
             if (!empty($c['apa'])) {
                 $apaList[] = $c['apa'];
@@ -1344,14 +1369,29 @@ class ThesisRepositoryController extends Controller
             if (!empty($c['bibtex'])) {
                 $bibtexList[] = $c['bibtex'];
             }
+
+            if (!empty($c['fasilkom'])) {
+                $fasilkomList[] = "[" . ($index + 1) . "] " . $c['fasilkom'];
+            } else {
+                $fCit = $aiService->generateFasilkomCitation($itemArray);
+                $fasilkomList[] = "[" . ($index + 1) . "] " . $fCit['plain'];
+            }
+
+            if (!empty($c['ris'])) {
+                $risList[] = $c['ris'];
+            } else {
+                $risList[] = $aiService->generateRis($itemArray);
+            }
         }
 
         return response()->json([
             'success' => true,
             'count' => $bookmarks->count(),
+            'fasilkom' => implode("\n\n", $fasilkomList),
             'apa' => implode("\n\n", $apaList),
             'ieee' => implode("\n\n", $ieeeList),
             'bibtex' => implode("\n\n", $bibtexList),
+            'ris' => implode("\r\n\r\n", $risList),
         ]);
     }
 

@@ -549,52 +549,100 @@
 
                         <!-- Format Selector Tabs -->
                         <div class="space-y-3">
-                            <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 w-full text-xs">
+                            <div class="inline-flex flex-wrap rounded-xl bg-slate-100 dark:bg-slate-900 p-1 w-full text-xs gap-1">
+                                <button type="button" 
+                                        @click="activeCitationFormat = 'fasilkom'"
+                                        class="flex-1 min-w-24 py-1.5 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
+                                        :class="activeCitationFormat === 'fasilkom' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
+                                    FASILKOM UNSUB (Word)
+                                </button>
                                 <button type="button" 
                                         @click="activeCitationFormat = 'apa'"
-                                        class="flex-1 py-1.5 text-center rounded-lg font-bold transition-all"
+                                        class="flex-1 min-w-16 py-1.5 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
                                         :class="activeCitationFormat === 'apa' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
-                                    APA 7th Edition
+                                    APA 7th
                                 </button>
                                 <button type="button" 
                                         @click="activeCitationFormat = 'ieee'"
-                                        class="flex-1 py-1.5 text-center rounded-lg font-bold transition-all"
+                                        class="flex-1 min-w-16 py-1.5 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
                                         :class="activeCitationFormat === 'ieee' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
-                                    IEEE Format
+                                    IEEE
                                 </button>
                                 <button type="button" 
                                         @click="activeCitationFormat = 'bibtex'"
-                                        class="flex-1 py-1.5 text-center rounded-lg font-bold transition-all"
+                                        class="flex-1 min-w-16 py-1.5 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
                                         :class="activeCitationFormat === 'bibtex' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
                                     BibTeX
+                                </button>
+                                <button type="button" 
+                                        @click="activeCitationFormat = 'ris'"
+                                        class="flex-1 min-w-16 py-1.5 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
+                                        :class="activeCitationFormat === 'ris' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
+                                    File .RIS
                                 </button>
                             </div>
 
                             <!-- Citation Display Box -->
                             <div class="relative">
-                                <div class="p-4 bg-slate-900 dark:bg-slate-950 border border-slate-800 text-slate-100 rounded-2xl font-mono text-xs leading-relaxed max-h-48 overflow-y-auto select-all whitespace-pre-wrap break-words"
+                                <div class="p-4 bg-slate-900 dark:bg-slate-950 text-slate-100 rounded-2xl font-mono text-xs leading-relaxed max-h-48 overflow-y-auto select-all whitespace-pre-wrap break-words"
                                      x-text="getCurrentCitationText()">
                                 </div>
+                            </div>
+
+                            <!-- Helper Tip -->
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
+                                <span x-show="activeCitationFormat === 'fasilkom'">
+                                    💡 Format resmi panduan skripsi FASILKOM UNSUB untuk lembar daftar pustaka Microsoft Word.
+                                </span>
+                                <span x-show="activeCitationFormat === 'ris'">
+                                    💡 Format metadata untuk Mendeley Desktop/Reference Manager, Zotero, dan EndNote.
+                                </span>
+                                <span x-show="activeCitationFormat === 'bibtex'">
+                                    💡 Format entri sitasi untuk LaTeX / Overleaf.
+                                </span>
+                                <span x-show="activeCitationFormat === 'apa' || activeCitationFormat === 'ieee'">
+                                    💡 Format sitasi standar akademik internasional.
+                                </span>
                             </div>
                         </div>
 
                         <!-- Modal Actions -->
-                        <div class="flex items-center justify-between pt-2">
-                            <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1" x-show="copiedToast">
-                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-bold">Sitasi berhasil disalin ke clipboard!</span>
-                            </span>
-                            <div class="ml-auto flex items-center gap-2">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/80">
+                            <div class="text-xs">
+                                <span class="text-slate-500 dark:text-slate-400 flex items-center gap-1.5" x-show="copiedToast">
+                                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="copiedToastMessage"></span>
+                                </span>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-end gap-2">
+                                <!-- Download .RIS -->
                                 <button type="button" 
-                                        @click="citationModalOpen = false" 
-                                        class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                                    Tutup
+                                        @click="downloadRis()" 
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
+                                        title="Unduh metadata artikel dalam file .RIS untuk Mendeley, Zotero, atau EndNote">
+                                    <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    <span>Unduh .RIS</span>
                                 </button>
+
+                                <!-- Copy Word (FASILKOM) -->
+                                <button type="button" 
+                                        @click="copyFasilkomWord()" 
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1.5 shadow-sm shadow-amber-500/25 transition-all hover:scale-[1.01] active:scale-95 cursor-pointer"
+                                        title="Salin daftar pustaka siap pakai untuk Microsoft Word sesuai panduan skripsi FASILKOM UNSUB">
+                                    <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span>Salin untuk Word</span>
+                                </button>
+
+                                <!-- Copy Selected Text -->
                                 <button type="button" 
                                         @click="copyCitation()" 
-                                        class="px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white flex items-center gap-1.5 shadow-sm shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-                                    <span>Salin Sitasi</span>
+                                        class="px-4 py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1.5 shadow-sm shadow-orange-500/25 transition-all hover:scale-[1.01] active:scale-95 cursor-pointer">
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                                    <span>Salin Teks</span>
                                 </button>
                             </div>
                         </div>
@@ -642,24 +690,36 @@
                         <!-- Content Box -->
                         <div x-show="!batchCitationLoading" class="space-y-4">
                             <!-- Format Tabs -->
-                            <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 w-full text-xs">
+                            <div class="inline-flex flex-wrap rounded-xl bg-slate-100 dark:bg-slate-900 p-1 w-full text-xs gap-1">
+                                <button type="button" 
+                                        @click="batchCitationActiveFormat = 'fasilkom'"
+                                        class="flex-1 min-w-28 py-2 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
+                                        :class="batchCitationActiveFormat === 'fasilkom' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
+                                    Panduan FASILKOM (Word)
+                                </button>
                                 <button type="button" 
                                         @click="batchCitationActiveFormat = 'apa'"
-                                        class="flex-1 py-2 text-center rounded-lg font-bold transition-all"
+                                        class="flex-1 min-w-20 py-2 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
                                         :class="batchCitationActiveFormat === 'apa' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
-                                    APA 7th Edition (Standar Skripsi)
+                                    APA 7th
                                 </button>
                                 <button type="button" 
                                         @click="batchCitationActiveFormat = 'ieee'"
-                                        class="flex-1 py-2 text-center rounded-lg font-bold transition-all"
+                                        class="flex-1 min-w-20 py-2 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
                                         :class="batchCitationActiveFormat === 'ieee' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
-                                    IEEE Format (Format Nomor [1], [2])
+                                    IEEE Format
                                 </button>
                                 <button type="button" 
                                         @click="batchCitationActiveFormat = 'bibtex'"
-                                        class="flex-1 py-2 text-center rounded-lg font-bold transition-all"
+                                        class="flex-1 min-w-20 py-2 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
                                         :class="batchCitationActiveFormat === 'bibtex' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
-                                    BibTeX (LaTeX / Mendeley)
+                                    BibTeX (LaTeX)
+                                </button>
+                                <button type="button" 
+                                        @click="batchCitationActiveFormat = 'ris'"
+                                        class="flex-1 min-w-20 py-2 px-2 text-center rounded-lg font-bold transition-all cursor-pointer"
+                                        :class="batchCitationActiveFormat === 'ris' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'">
+                                    File .RIS (Semua)
                                 </button>
                             </div>
 
@@ -667,28 +727,45 @@
                             <div class="relative">
                                 <textarea readonly 
                                           rows="12" 
-                                          class="w-full p-4 bg-slate-900 dark:bg-slate-950 border border-slate-800 text-slate-100 rounded-2xl font-mono text-xs leading-relaxed select-all focus:ring-0 focus:outline-hidden whitespace-pre-wrap break-words"
+                                          class="w-full p-4 bg-slate-900 dark:bg-slate-950 text-slate-100 rounded-2xl font-mono text-xs leading-relaxed select-all focus:ring-0 focus:outline-hidden whitespace-pre-wrap break-words"
                                           x-text="getBatchCitationText()"></textarea>
                             </div>
                         </div>
 
                         <!-- Modal Actions -->
-                        <div class="flex items-center justify-between pt-2">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/80">
                             <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1" x-show="batchCitationCopied">
                                 <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-bold">Seluruh daftar pustaka berhasil disalin!</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="batchCitationCopiedMessage || 'Seluruh daftar pustaka berhasil disalin!'"></span>
                             </span>
-                            <div class="ml-auto flex items-center gap-2">
+                            <div class="flex flex-wrap items-center justify-end gap-2 ml-auto">
+                                <!-- Download all .RIS -->
                                 <button type="button" 
-                                        @click="batchCitationModalOpen = false" 
-                                        class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                                    Tutup
+                                        @click="downloadBatchRis()" 
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
+                                        title="Unduh seluruh daftar pustaka sebagai file .RIS untuk Mendeley/Zotero">
+                                    <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    <span>Unduh Semua .RIS</span>
                                 </button>
+
+                                <!-- Copy Word (FASILKOM) -->
+                                <button type="button" 
+                                        @click="copyBatchFasilkomWord()" 
+                                        class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1.5 shadow-sm shadow-amber-500/25 transition-all hover:scale-[1.01] active:scale-95 cursor-pointer"
+                                        title="Salin seluruh daftar pustaka siap pakai untuk Microsoft Word">
+                                    <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span>Salin untuk Word</span>
+                                </button>
+
                                 <button type="button" 
                                         @click="copyBatchCitation()" 
-                                        class="px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white flex items-center gap-1.5 shadow-sm shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                        class="px-4 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white flex items-center gap-1.5 shadow-sm shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                    <span>Salin Seluruh Teks</span>
+                                    <span>Salin Teks</span>
                                 </button>
                             </div>
                         </div>
@@ -891,13 +968,39 @@
                 // ============ SINGLE CITATION ============
                 openCitationModal(paper) {
                     this.activePaper = paper;
+                    this.activeCitationFormat = 'fasilkom';
                     this.citationModalOpen = true;
                     this.copiedToast = false;
+                    this.copiedToastMessage = '';
                 },
 
                 getCurrentCitationText() {
-                    if (!this.activePaper || !this.activePaper.citations) return '';
-                    return this.activePaper.citations[this.activeCitationFormat] || '';
+                    if (!this.activePaper) return '';
+                    if (this.activePaper.citations && this.activePaper.citations[this.activeCitationFormat]) {
+                        return this.activePaper.citations[this.activeCitationFormat];
+                    }
+                    return this.buildFallbackCitation(this.activeCitationFormat);
+                },
+
+                buildFallbackCitation(format) {
+                    if (!this.activePaper) return '';
+                    const p = this.activePaper;
+                    const author = p.authors_string || 'Anonim';
+                    const year = p.year || new Date().getFullYear();
+                    const title = p.title || '';
+                    const venue = p.venue || 'Jurnal Ilmiah';
+                    const link = p.doi || p.landing_page_url || p.pdf_url || '';
+
+                    if (format === 'fasilkom') {
+                        return `${author} (${year}). "${title}". ${venue}.${link ? ' Tersedia di: ' + link + '.' : ''}`;
+                    } else if (format === 'ris') {
+                        return `TY  - JOUR\r\nTI  - ${title}\r\nAU  - ${author}\r\nT2  - ${venue}\r\nPY  - ${year}\r\nUR  - ${link}\r\nER  - `;
+                    } else if (format === 'ieee') {
+                        return `${author}, "${title}," ${venue}, ${year}.${link ? ' doi: ' + link : ''}`;
+                    } else if (format === 'bibtex') {
+                        return `@article{referensi${year},\n  title = {{${title}}},\n  author = {${author}},\n  journal = {{${venue}}},\n  year = {${year}}\n}`;
+                    }
+                    return `${author} (${year}). ${title}. ${venue}.${link ? ' ' + link : ''}`;
                 },
 
                 copyCitation() {
@@ -905,6 +1008,7 @@
                     if (!text) return;
 
                     navigator.clipboard.writeText(text).then(() => {
+                        this.copiedToastMessage = 'Teks sitasi berhasil disalin ke clipboard!';
                         this.copiedToast = true;
                         setTimeout(() => {
                             this.copiedToast = false;
@@ -912,11 +1016,67 @@
                     });
                 },
 
+                copyFasilkomWord() {
+                    if (!this.activePaper) return;
+                    const p = this.activePaper;
+                    const plainText = (p.citations && p.citations.fasilkom) ? p.citations.fasilkom : this.buildFallbackCitation('fasilkom');
+                    const htmlText = (p.citations && p.citations.fasilkom_html) ? p.citations.fasilkom_html : `<p>${plainText}</p>`;
+
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        const textBlob = new Blob([plainText], { type: 'text/plain' });
+                        const htmlBlob = new Blob([htmlText], { type: 'text/html' });
+                        navigator.clipboard.write([
+                            new ClipboardItem({
+                                'text/plain': textBlob,
+                                'text/html': htmlBlob
+                            })
+                        ]).then(() => {
+                            this.copiedToastMessage = 'Daftar pustaka siap pakai Word (FASILKOM) berhasil disalin!';
+                            this.copiedToast = true;
+                            setTimeout(() => { this.copiedToast = false; }, 3000);
+                        }).catch(() => {
+                            navigator.clipboard.writeText(plainText).then(() => {
+                                this.copiedToastMessage = 'Daftar pustaka FASILKOM disalin (teks biasa)!';
+                                this.copiedToast = true;
+                                setTimeout(() => { this.copiedToast = false; }, 3000);
+                            });
+                        });
+                    } else {
+                        navigator.clipboard.writeText(plainText).then(() => {
+                            this.copiedToastMessage = 'Daftar pustaka FASILKOM berhasil disalin!';
+                            this.copiedToast = true;
+                            setTimeout(() => { this.copiedToast = false; }, 3000);
+                        });
+                    }
+                },
+
+                downloadRis() {
+                    if (!this.activePaper) return;
+                    const p = this.activePaper;
+                    const risText = (p.citations && p.citations.ris) ? p.citations.ris : this.buildFallbackCitation('ris');
+
+                    const blob = new Blob([risText], { type: 'application/x-research-info-systems;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+
+                    const cleanTitle = (p.title || 'referensi').toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 35);
+                    link.setAttribute('download', `sitasi_${cleanTitle}.ris`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    this.copiedToastMessage = 'File .RIS berhasil diunduh untuk Mendeley/Zotero!';
+                    this.copiedToast = true;
+                    setTimeout(() => { this.copiedToast = false; }, 3000);
+                },
+
                 // ============ BATCH CITATIONS ============
                 openBatchCitationModal() {
                     this.batchCitationModalOpen = true;
                     this.batchCitationLoading = true;
                     this.batchCitationCopied = false;
+                    this.batchCitationCopiedMessage = '';
+                    this.batchCitationActiveFormat = 'fasilkom';
 
                     const urlParams = new URLSearchParams(window.location.search);
                     fetch(`/repositories/bookmarks/export-citations?${urlParams.toString()}`, {
@@ -949,10 +1109,43 @@
 
                     navigator.clipboard.writeText(text).then(() => {
                         this.batchCitationCopied = true;
+                        this.batchCitationCopiedMessage = 'Seluruh daftar pustaka berhasil disalin!';
                         setTimeout(() => {
                             this.batchCitationCopied = false;
                         }, 3000);
                     });
+                },
+
+                copyBatchFasilkomWord() {
+                    const text = this.batchCitationData['fasilkom'] || this.getBatchCitationText();
+                    if (!text) return;
+
+                    navigator.clipboard.writeText(text).then(() => {
+                        this.batchCitationCopied = true;
+                        this.batchCitationCopiedMessage = 'Seluruh daftar pustaka (FASILKOM Word) berhasil disalin!';
+                        setTimeout(() => {
+                            this.batchCitationCopied = false;
+                        }, 3000);
+                    });
+                },
+
+                downloadBatchRis() {
+                    const risText = this.batchCitationData['ris'] || '';
+                    if (!risText) return;
+
+                    const blob = new Blob([risText], { type: 'application/x-research-info-systems;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.setAttribute('download', 'koleksi_pustaka_sibima.ris');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    this.batchCitationCopied = true;
+                    this.batchCitationCopiedMessage = 'File .RIS (seluruh artikel) berhasil diunduh!';
+                    setTimeout(() => {
+                        this.batchCitationCopied = false;
+                    }, 3000);
                 },
 
                 // ============ FOLDER CRUD ============
