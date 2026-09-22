@@ -86,6 +86,65 @@ class FasilkomJournal extends Model
     }
 
     /**
+     * Scope query to filter by SINTA accreditation grade.
+     * Jurnal GLOBAL FASILKOM UNSUB has SINTA 4 accreditation.
+     */
+    public function scopeFilterSinta($query, ?string $filter)
+    {
+        if (empty($filter) || $filter === 'all') {
+            return $query;
+        }
+
+        // FASILKOM UNSUB is SINTA 4.
+        // It matches 's4', and range 's2_s4'.
+        if (in_array($filter, ['s4', 's2_s4'])) {
+            return $query;
+        }
+
+        // Other SINTA grades (s1, s2, s3, s1_s2, s5_s6) do not match FASILKOM
+        return $query->whereRaw('1 = 0');
+    }
+
+    /**
+     * Scope query to filter by document type (article, proceeding, review).
+     */
+    public function scopeFilterDocType($query, ?string $docType)
+    {
+        if (empty($docType) || $docType === 'all') {
+            return $query;
+        }
+
+        if ($docType === 'review') {
+            return $query->where(function ($q) {
+                $q->where('title', 'like', '%review%')
+                  ->orWhere('title', 'like', '%tinjauan%')
+                  ->orWhere('title', 'like', '%survei%')
+                  ->orWhere('title', 'like', '%survey%')
+                  ->orWhere('abstract', 'like', '%literature review%')
+                  ->orWhere('abstract', 'like', '%systematic literature review%')
+                  ->orWhere('abstract', 'like', '%tinjauan pustaka%');
+            });
+        }
+
+        if ($docType === 'proceeding') {
+            // FASILKOM is an accredited academic journal, not a conference proceeding
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($docType === 'article') {
+            // Standard research articles (exclude systematic reviews / survey papers)
+            return $query->where(function ($q) {
+                $q->where('title', 'not like', '%review%')
+                  ->where('title', 'not like', '%tinjauan%')
+                  ->where('title', 'not like', '%survei%')
+                  ->where('title', 'not like', '%survey%');
+            });
+        }
+
+        return $query;
+    }
+
+    /**
      * Transform the Eloquent model into normalized journal item array.
      */
     public function toJournalItem(): array
@@ -107,6 +166,10 @@ class FasilkomJournal extends Model
             }
         }
 
+        $isReview = (bool) preg_match('/\b(review|tinjauan|survei|survey|slr|meta-analisis)\b/i', ($this->title ?? '') . ' ' . ($this->abstract ?? ''));
+        $docType = $isReview ? 'review' : 'article';
+        $docTypeLabel = $isReview ? 'Literature Review' : 'Artikel Penelitian';
+
         return [
             'id' => 'fasilkom_' . $this->id,
             'title' => $this->title,
@@ -126,6 +189,10 @@ class FasilkomJournal extends Model
             'citations' => $citations,
             'source' => 'fasilkom',
             'source_label' => 'Jurnal GLOBAL FASILKOM UNSUB',
+            'sinta_rating' => 'S4',
+            'sinta_label' => 'SINTA 4',
+            'doc_type' => $docType,
+            'doc_type_label' => $docTypeLabel,
             'volume' => $this->volume,
             'issue' => $this->issue,
             'pages' => $this->pages,

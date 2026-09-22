@@ -767,6 +767,8 @@ class ThesisRepositoryController extends Controller
         $openAccessOnly = $request->boolean('oa_only', true);
         $source = $request->input('source', 'all');
         $author = $request->input('author', 'all');
+        $sintaFilter = $request->input('sinta', 'all');
+        $docType = $request->input('doc_type', 'all');
 
         $fasilkomTotalCount = FasilkomJournal::count();
         $fasilkomAuthors = $fasilkomService->getAuthorsList();
@@ -790,6 +792,8 @@ class ThesisRepositoryController extends Controller
                 'year_filter' => $yearFilter,
                 'sort' => $sort,
                 'author' => $author,
+                'sinta_filter' => $sintaFilter,
+                'doc_type' => $docType,
             ]);
         } elseif ($source === 'garuda') {
             // Source: GARUDA (Garba Rujukan Digital - Kemdiktisaintek / SINTA)
@@ -798,6 +802,8 @@ class ThesisRepositoryController extends Controller
                     'page' => $page,
                     'year_filter' => $yearFilter,
                     'open_access_only' => $openAccessOnly,
+                    'sinta_filter' => $sintaFilter,
+                    'doc_type' => $docType,
                 ]);
             }
         } elseif ($source === 'doaj') {
@@ -808,6 +814,7 @@ class ThesisRepositoryController extends Controller
                     'per_page' => 12,
                     'year_filter' => $yearFilter,
                     'sort' => $sort,
+                    'doc_type' => $docType,
                 ]);
             }
         } elseif ($source === 'crossref') {
@@ -819,6 +826,7 @@ class ThesisRepositoryController extends Controller
                     'year_filter' => $yearFilter,
                     'sort' => $sort,
                     'open_access_only' => $openAccessOnly,
+                    'doc_type' => $docType,
                 ]);
             }
         } elseif ($source === 'openalex') {
@@ -830,17 +838,22 @@ class ThesisRepositoryController extends Controller
                     'year_filter' => $yearFilter,
                     'open_access_only' => $openAccessOnly,
                     'sort' => $sort,
+                    'doc_type' => $docType,
                 ]);
             }
         } else {
             // Source: All (FASILKOM + GARUDA + DOAJ + Crossref + OpenAlex)
             if (trim($query) !== '') {
+                $isSintaFiltered = ($sintaFilter !== 'all' && !empty($sintaFilter));
+
                 // 1. Fetch matching FASILKOM papers
                 $fasilkomMatch = $fasilkomService->search($query, [
                     'page' => 1,
                     'per_page' => 4,
                     'year_filter' => $yearFilter,
                     'sort' => $sort,
+                    'sinta_filter' => $sintaFilter,
+                    'doc_type' => $docType,
                 ]);
 
                 // 2. Fetch GARUDA papers (National SINTA)
@@ -848,33 +861,45 @@ class ThesisRepositoryController extends Controller
                     'page' => $page,
                     'year_filter' => $yearFilter,
                     'open_access_only' => $openAccessOnly,
+                    'sinta_filter' => $sintaFilter,
+                    'doc_type' => $docType,
                 ]);
 
-                // 3. Fetch DOAJ papers (Pure Open Access)
-                $doajResults = $doajService->search($query, [
-                    'page' => $page,
-                    'per_page' => 6,
-                    'year_filter' => $yearFilter,
-                    'sort' => $sort,
-                ]);
+                // If SINTA filter is active, skip international sources (DOAJ, Crossref, OpenAlex) because they don't have SINTA
+                $doajResults = ['count' => 0, 'data' => []];
+                $crossrefResults = ['count' => 0, 'data' => []];
+                $openAlexResults = ['count' => 0, 'data' => []];
 
-                // 4. Fetch Crossref papers (DOI Registry)
-                $crossrefResults = $crossrefService->search($query, [
-                    'page' => $page,
-                    'per_page' => 6,
-                    'year_filter' => $yearFilter,
-                    'sort' => $sort,
-                    'open_access_only' => $openAccessOnly,
-                ]);
+                if (!$isSintaFiltered) {
+                    // 3. Fetch DOAJ papers (Pure Open Access)
+                    $doajResults = $doajService->search($query, [
+                        'page' => $page,
+                        'per_page' => 6,
+                        'year_filter' => $yearFilter,
+                        'sort' => $sort,
+                        'doc_type' => $docType,
+                    ]);
 
-                // 5. Fetch OpenAlex papers (Global Academic)
-                $openAlexResults = $openAlexService->search($query, [
-                    'page' => $page,
-                    'per_page' => 6,
-                    'year_filter' => $yearFilter,
-                    'open_access_only' => $openAccessOnly,
-                    'sort' => $sort,
-                ]);
+                    // 4. Fetch Crossref papers (DOI Registry)
+                    $crossrefResults = $crossrefService->search($query, [
+                        'page' => $page,
+                        'per_page' => 6,
+                        'year_filter' => $yearFilter,
+                        'sort' => $sort,
+                        'open_access_only' => $openAccessOnly,
+                        'doc_type' => $docType,
+                    ]);
+
+                    // 5. Fetch OpenAlex papers (Global Academic)
+                    $openAlexResults = $openAlexService->search($query, [
+                        'page' => $page,
+                        'per_page' => 6,
+                        'year_filter' => $yearFilter,
+                        'open_access_only' => $openAccessOnly,
+                        'sort' => $sort,
+                        'doc_type' => $docType,
+                    ]);
+                }
 
                 $combinedData = [];
                 // Prepend FASILKOM matches on first page
@@ -972,6 +997,8 @@ class ThesisRepositoryController extends Controller
             'openAccessOnly' => $openAccessOnly,
             'source' => $source,
             'author' => $author,
+            'sintaFilter' => $sintaFilter,
+            'docType' => $docType,
             'fasilkomTotalCount' => $fasilkomTotalCount,
             'fasilkomAuthors' => $fasilkomAuthors,
             'fasilkomTopAuthors' => $fasilkomTopAuthors,

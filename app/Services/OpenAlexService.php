@@ -27,6 +27,7 @@ class OpenAlexService
         $yearFilter = $options['year_filter'] ?? 'all';
         $openAccessOnly = $options['open_access_only'] ?? true;
         $sort = $options['sort'] ?? 'relevance';
+        $docType = $options['doc_type'] ?? 'all';
 
         // Cache key for 24 hours
         $cacheKey = 'openalex_search_' . md5(json_encode([
@@ -36,23 +37,32 @@ class OpenAlexService
             'year' => $yearFilter,
             'oa' => $openAccessOnly,
             'sort' => $sort,
+            'doc_type' => $docType,
         ]));
 
-        return Cache::remember($cacheKey, 86400, function () use ($query, $page, $perPage, $yearFilter, $openAccessOnly, $sort) {
-            return $this->fetchFromApi($query, $page, $perPage, $yearFilter, $openAccessOnly, $sort);
+        return Cache::remember($cacheKey, 86400, function () use ($query, $page, $perPage, $yearFilter, $openAccessOnly, $sort, $docType) {
+            return $this->fetchFromApi($query, $page, $perPage, $yearFilter, $openAccessOnly, $sort, $docType);
         });
     }
 
     /**
      * Perform the actual HTTP request to OpenAlex API.
      */
-    protected function fetchFromApi(string $query, int $page, int $perPage, string $yearFilter, bool $openAccessOnly, string $sort): array
+    protected function fetchFromApi(string $query, int $page, int $perPage, string $yearFilter, bool $openAccessOnly, string $sort, string $docType = 'all'): array
     {
         try {
             $filters = [];
 
             if ($openAccessOnly) {
                 $filters[] = 'is_oa:true';
+            }
+
+            if ($docType === 'article') {
+                $filters[] = 'type:article';
+            } elseif ($docType === 'proceeding') {
+                $filters[] = 'type:proceedings-article';
+            } elseif ($docType === 'review') {
+                $filters[] = 'type:review';
             }
 
             // Year filter handling
@@ -211,6 +221,19 @@ class OpenAlexService
         // Generated Citations
         $citations = $this->generateCitations($title, $authors, $year, $venue, $doi);
 
+        // Document Type detection
+        $workType = strtolower($work['type'] ?? 'article');
+        if (str_contains($workType, 'review') || preg_match('/\b(literature review|systematic review|meta-analysis)\b/i', $title . ' ' . ($abstract ?? ''))) {
+            $itemDocType = 'review';
+            $itemDocTypeLabel = 'Literature Review';
+        } elseif (str_contains($workType, 'proceeding') || str_contains($workType, 'conference') || $venueType === 'conference') {
+            $itemDocType = 'proceeding';
+            $itemDocTypeLabel = 'Prosiding Konferensi';
+        } else {
+            $itemDocType = 'article';
+            $itemDocTypeLabel = 'Artikel Penelitian';
+        }
+
         return [
             'id' => $id,
             'title' => $title,
@@ -230,6 +253,10 @@ class OpenAlexService
             'citations' => $citations,
             'source' => 'openalex',
             'source_label' => 'OpenAlex Global Index',
+            'sinta_rating' => null,
+            'sinta_label' => null,
+            'doc_type' => $itemDocType,
+            'doc_type_label' => $itemDocTypeLabel,
         ];
     }
 

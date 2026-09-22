@@ -25,6 +25,8 @@ class FasilkomJournalService
         $yearFilter = $options['year_filter'] ?? 'all';
         $sort = $options['sort'] ?? 'relevance';
         $author = trim($options['author'] ?? 'all');
+        $sintaFilter = $options['sinta_filter'] ?? ($options['sinta'] ?? 'all');
+        $docType = $options['doc_type'] ?? 'all';
 
         $builder = FasilkomJournal::query();
 
@@ -34,6 +36,14 @@ class FasilkomJournalService
 
         if (!empty($yearFilter) && $yearFilter !== 'all') {
             $builder->filterYear($yearFilter);
+        }
+
+        if (!empty($sintaFilter) && $sintaFilter !== 'all') {
+            $builder->filterSinta($sintaFilter);
+        }
+
+        if (!empty($docType) && $docType !== 'all') {
+            $builder->filterDocType($docType);
         }
 
         // Author / Dosen Filter

@@ -39,6 +39,20 @@ class DoajJournalService
         $perPage = min(30, max(5, (int) ($options['per_page'] ?? 12)));
         $yearFilter = $options['year_filter'] ?? 'all';
         $sort = $options['sort'] ?? 'relevance';
+        $docType = $options['doc_type'] ?? 'all';
+
+        // DOAJ only indexes journal articles, not conference proceedings
+        if ($docType === 'proceeding') {
+            return [
+                'success' => true,
+                'count' => 0,
+                'total_pages' => 0,
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'data' => [],
+                'error' => null,
+            ];
+        }
 
         $cacheKey = 'doaj_search_' . md5(json_encode([
             'q' => strtolower($query),
@@ -46,17 +60,18 @@ class DoajJournalService
             'per_page' => $perPage,
             'year' => $yearFilter,
             'sort' => $sort,
+            'doc_type' => $docType,
         ]));
 
-        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query, $page, $perPage, $yearFilter, $sort) {
-            return $this->performSearch($query, $page, $perPage, $yearFilter, $sort);
+        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query, $page, $perPage, $yearFilter, $sort, $docType) {
+            return $this->performSearch($query, $page, $perPage, $yearFilter, $sort, $docType);
         });
     }
 
     /**
      * Perform the actual HTTP request to DOAJ API.
      */
-    protected function performSearch(string $query, int $page, int $perPage, string $yearFilter, string $sort): array
+    protected function performSearch(string $query, int $page, int $perPage, string $yearFilter, string $sort, string $docType = 'all'): array
     {
         try {
             // Build query with Lucene syntax for year filter if applicable
@@ -225,6 +240,15 @@ class DoajJournalService
         // Citations
         $citations = $this->generateCitations($title, $authors, $year, $venue, $doi);
 
+        // Document Type detection
+        if (preg_match('/\b(literature review|systematic review|meta-analysis|systematic literature review|tinjauan pustaka)\b/i', $title . ' ' . ($abstract ?? ''))) {
+            $itemDocType = 'review';
+            $itemDocTypeLabel = 'Literature Review';
+        } else {
+            $itemDocType = 'article';
+            $itemDocTypeLabel = 'Artikel Penelitian';
+        }
+
         return [
             'id' => $id,
             'title' => $title,
@@ -244,6 +268,10 @@ class DoajJournalService
             'citations' => $citations,
             'source' => 'doaj',
             'source_label' => 'DOAJ Open Access',
+            'sinta_rating' => null,
+            'sinta_label' => null,
+            'doc_type' => $itemDocType,
+            'doc_type_label' => $itemDocTypeLabel,
         ];
     }
 

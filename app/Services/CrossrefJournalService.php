@@ -41,6 +41,7 @@ class CrossrefJournalService
         $yearFilter = $options['year_filter'] ?? 'all';
         $sort = $options['sort'] ?? 'relevance';
         $openAccessOnly = (bool) ($options['open_access_only'] ?? false);
+        $docType = $options['doc_type'] ?? 'all';
 
         $cacheKey = 'crossref_search_' . md5(json_encode([
             'q' => strtolower($query),
@@ -49,21 +50,28 @@ class CrossrefJournalService
             'year' => $yearFilter,
             'sort' => $sort,
             'oa' => $openAccessOnly,
+            'doc_type' => $docType,
         ]));
 
-        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query, $page, $perPage, $yearFilter, $sort, $openAccessOnly) {
-            return $this->performSearch($query, $page, $perPage, $yearFilter, $sort, $openAccessOnly);
+        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query, $page, $perPage, $yearFilter, $sort, $openAccessOnly, $docType) {
+            return $this->performSearch($query, $page, $perPage, $yearFilter, $sort, $openAccessOnly, $docType);
         });
     }
 
     /**
      * Perform the actual HTTP request to Crossref API.
      */
-    protected function performSearch(string $query, int $page, int $perPage, string $yearFilter, string $sort, bool $openAccessOnly): array
+    protected function performSearch(string $query, int $page, int $perPage, string $yearFilter, string $sort, bool $openAccessOnly, string $docType = 'all'): array
     {
         try {
             $offset = ($page - 1) * $perPage;
-            $filters = ['type:journal-article'];
+            $filters = [];
+
+            if ($docType === 'proceeding') {
+                $filters[] = 'type:proceedings-article';
+            } elseif ($docType === 'article' || $docType === 'review') {
+                $filters[] = 'type:journal-article';
+            }
 
             // Year filter
             $currentYear = (int) date('Y');
@@ -268,6 +276,19 @@ class CrossrefJournalService
         // Citations
         $citations = $this->generateCitations($title, $authors, $year, $venue, $doi);
 
+        // Document Type detection
+        $crossrefType = strtolower($item['type'] ?? '');
+        if (str_contains($crossrefType, 'review') || preg_match('/\b(literature review|systematic review|meta-analysis|systematic literature review)\b/i', $title . ' ' . ($abstract ?? ''))) {
+            $itemDocType = 'review';
+            $itemDocTypeLabel = 'Literature Review';
+        } elseif (str_contains($crossrefType, 'proceeding') || str_contains($crossrefType, 'conference') || preg_match('/\b(proceedings|conference|symposium|seminar)\b/i', $venue)) {
+            $itemDocType = 'proceeding';
+            $itemDocTypeLabel = 'Prosiding Konferensi';
+        } else {
+            $itemDocType = 'article';
+            $itemDocTypeLabel = 'Artikel Penelitian';
+        }
+
         return [
             'id' => $id,
             'title' => $title,
@@ -276,7 +297,7 @@ class CrossrefJournalService
             'year' => $year,
             'publication_date' => $publicationDate ?: ($year ? (string) $year : null),
             'venue' => $venue,
-            'venue_type' => 'journal',
+            'venue_type' => $itemDocType === 'proceeding' ? 'conference' : 'journal',
             'doi' => $doi,
             'cited_by_count' => $citedByCount,
             'is_oa' => $isOpenAccess,
@@ -287,6 +308,10 @@ class CrossrefJournalService
             'citations' => $citations,
             'source' => 'crossref',
             'source_label' => 'Crossref DOI Registry',
+            'sinta_rating' => null,
+            'sinta_label' => null,
+            'doc_type' => $itemDocType,
+            'doc_type_label' => $itemDocTypeLabel,
         ];
     }
 

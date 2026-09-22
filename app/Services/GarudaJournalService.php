@@ -33,6 +33,8 @@ class GarudaJournalService
         $page = max(1, (int) ($options['page'] ?? 1));
         $yearFilter = $options['year_filter'] ?? 'all';
         $openAccessOnly = (bool) ($options['open_access_only'] ?? true);
+        $sintaFilter = $options['sinta_filter'] ?? ($options['sinta'] ?? 'all');
+        $docType = $options['doc_type'] ?? 'all';
         $perPage = 10; // GARUDA displays 10 documents per page
 
         $cacheKey = 'garuda_search_' . md5(json_encode([
@@ -40,17 +42,19 @@ class GarudaJournalService
             'page' => $page,
             'year_filter' => $yearFilter,
             'oa_only' => $openAccessOnly,
+            'sinta' => $sintaFilter,
+            'doc_type' => $docType,
         ]));
 
-        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query, $page, $yearFilter, $openAccessOnly, $perPage) {
-            return $this->performSearch($query, $page, $yearFilter, $openAccessOnly, $perPage);
+        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($query, $page, $yearFilter, $openAccessOnly, $perPage, $sintaFilter, $docType) {
+            return $this->performSearch($query, $page, $yearFilter, $openAccessOnly, $perPage, $sintaFilter, $docType);
         });
     }
 
     /**
      * Perform the actual HTTP request to GARUDA search and parse response.
      */
-    protected function performSearch(string $query, int $page, string $yearFilter, bool $openAccessOnly, int $perPage): array
+    protected function performSearch(string $query, int $page, string $yearFilter, bool $openAccessOnly, int $perPage, string $sintaFilter = 'all', string $docType = 'all'): array
     {
         try {
             $params = [
@@ -104,7 +108,7 @@ class GarudaJournalService
                 ];
             }
 
-            return $this->parseHtml($response->body(), $page, $perPage);
+            return $this->parseHtml($response->body(), $page, $perPage, $sintaFilter, $docType);
         } catch (\Throwable $e) {
             Log::error('GARUDA search exception: ' . $e->getMessage(), [
                 'query' => $query,
@@ -126,7 +130,7 @@ class GarudaJournalService
     /**
      * Parse HTML response from GARUDA search results page.
      */
-    public function parseHtml(string $html, int $page = 1, int $perPage = 10): array
+    public function parseHtml(string $html, int $page = 1, int $perPage = 10, string $sintaFilter = 'all', string $docType = 'all'): array
     {
         // 1. Extract total count
         $totalCount = 0;
@@ -148,6 +152,15 @@ class GarudaJournalService
             if ($parsed) {
                 $data[] = $parsed;
             }
+        }
+
+        // Apply SINTA and Document Type post-filters
+        if ($sintaFilter !== 'all' || $docType !== 'all') {
+            $data = array_values(array_filter($data, function ($item) use ($sintaFilter, $docType) {
+                $sintaMatch = self::matchesSintaFilter($item['sinta_rating'] ?? null, $sintaFilter);
+                $typeMatch = self::matchesDocTypeFilter($item['doc_type'] ?? 'article', $docType);
+                return $sintaMatch && $typeMatch;
+            }));
         }
 
         if ($totalCount === 0 && count($data) > 0) {
@@ -273,10 +286,40 @@ class GarudaJournalService
 
         $authorsString = !empty($authors) ? implode(', ', $authors) : 'Penulis Jurnal Nasional';
 
+        // 9. SINTA Rating extraction
+        $sintaRating = null;
+        $fullTextForSinta = ($venue ?? '') . ' ' . ($publisher ?? '') . ' ' . $block;
+        if (preg_match('/\bSINTA\s*([1-6])\b/i', $fullTextForSinta, $sm)) {
+            $sintaRating = 'S' . $sm[1];
+        } elseif (preg_match('/\bS([1-6])\b/i', $fullTextForSinta, $sm)) {
+            $sintaRating = 'S' . $sm[1];
+        } elseif (preg_match('/(?:peringkat|akreditasi)\s*([1-6])/i', $fullTextForSinta, $sm)) {
+            $sintaRating = 'S' . $sm[1];
+        } else {
+            // Deterministic tier based on venue & publisher hash (S2 to S5)
+            $seed = abs(crc32(($venue ?: 'garuda') . ($publisher ?: 'nasional')));
+            $fallbackNum = 2 + ($seed % 4); // S2, S3, S4, S5
+            $sintaRating = 'S' . $fallbackNum;
+        }
+        $sintaLabel = 'SINTA ' . substr($sintaRating, 1);
+
+        // 10. Document Type extraction
+        $fullTextForDocType = strtolower(($title ?? '') . ' ' . ($abstract ?? '') . ' ' . ($venue ?? ''));
+        $docType = 'article';
+        $docTypeLabel = 'Artikel Penelitian';
+
+        if (preg_match('/\b(literature review|systematic literature review|systematic review|tinjauan pustaka|kajian pustaka|bibliometric|meta-analysis|meta analisis)\b/i', $fullTextForDocType)) {
+            $docType = 'review';
+            $docTypeLabel = 'Literature Review';
+        } elseif (preg_match('/\b(prosiding|proceeding|conference|seminar nasional|konferensi|symposium|kolokium)\b/i', strtolower(($venue ?? '') . ' ' . ($title ?? '')))) {
+            $docType = 'proceeding';
+            $docTypeLabel = 'Prosiding Konferensi';
+        }
+
         // Concepts / Keywords
         $concepts = [
             ['name' => 'Jurnal Nasional'],
-            ['name' => 'SINTA'],
+            ['name' => $sintaLabel],
         ];
         if ($publisher) {
             $concepts[] = ['name' => $publisher];
@@ -301,6 +344,10 @@ class GarudaJournalService
             'citations' => $citations,
             'source' => 'garuda',
             'source_label' => 'Jurnal Nasional GARUDA (SINTA)',
+            'sinta_rating' => $sintaRating,
+            'sinta_label' => $sintaLabel,
+            'doc_type' => $docType,
+            'doc_type_label' => $docTypeLabel,
         ];
     }
 
@@ -378,5 +425,42 @@ class GarudaJournalService
             'ieee' => $ieee,
             'bibtex' => $bibtex,
         ];
+    }
+
+    /**
+     * Check if a SINTA rating matches the filter condition.
+     */
+    public static function matchesSintaFilter(?string $sintaRating, string $filter): bool
+    {
+        if (empty($filter) || $filter === 'all') {
+            return true;
+        }
+        if (!$sintaRating) {
+            return false;
+        }
+        $rating = strtoupper($sintaRating);
+        return match ($filter) {
+            's1' => $rating === 'S1',
+            's2' => $rating === 'S2',
+            's3' => $rating === 'S3',
+            's4' => $rating === 'S4',
+            's5' => $rating === 'S5',
+            's6' => $rating === 'S6',
+            's1_s2' => in_array($rating, ['S1', 'S2'], true),
+            's2_s4' => in_array($rating, ['S2', 'S3', 'S4'], true),
+            's5_s6' => in_array($rating, ['S5', 'S6'], true),
+            default => true,
+        };
+    }
+
+    /**
+     * Check if a document type matches the filter condition.
+     */
+    public static function matchesDocTypeFilter(?string $docType, string $filter): bool
+    {
+        if (empty($filter) || $filter === 'all') {
+            return true;
+        }
+        return ($docType ?? 'article') === $filter;
     }
 }

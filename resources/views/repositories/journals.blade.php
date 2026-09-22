@@ -121,6 +121,8 @@
                         <input type="hidden" name="year_filter" value="{{ $yearFilter }}">
                         <input type="hidden" name="sort" value="{{ $sort }}">
                         <input type="hidden" name="oa_only" value="{{ $openAccessOnly ? '1' : '0' }}">
+                        <input type="hidden" name="sinta" value="{{ $sintaFilter }}">
+                        <input type="hidden" name="doc_type" value="{{ $docType }}">
                         @if($source === 'fasilkom')
                             <input type="hidden" name="author" value="{{ $author }}">
                         @endif
@@ -132,7 +134,7 @@
                                 <span class="tracking-wide">Cari Jurnal</span>
                             </button>
 
-                            @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly)
+                            @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly || $sintaFilter !== 'all' || $docType !== 'all')
                                 <a href="{{ route('repositories.journals', ['source' => $source]) }}" 
                                    class="w-full sm:w-auto px-5 sm:px-6 py-3.5 sm:py-4 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-2xl text-sm sm:text-base font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 shrink-0 whitespace-nowrap shadow-xs"
                                    title="Reset pencarian dan kembalikan ke awal">
@@ -245,8 +247,8 @@
         @endif
 
         <!-- FILTER & SORT CONTROLS BAR -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-4">
-            <form action="{{ route('repositories.journals') }}" method="GET" id="journalFilterForm" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+            <form action="{{ route('repositories.journals') }}" method="GET" id="journalFilterForm" class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                 <input type="hidden" name="q" value="{{ $query }}">
                 <input type="hidden" name="source" value="{{ $source }}">
                 @if($source === 'fasilkom')
@@ -256,30 +258,72 @@
                 <div class="flex flex-wrap items-center gap-3">
                     <!-- Year Filter -->
                     <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Rentang Tahun:</span>
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">Tahun:</span>
                         <div class="inline-flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-slate-900 p-1 border border-slate-200 dark:border-slate-700 text-xs">
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => 'all', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === 'all' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                               class="px-2.5 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === 'all' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
                                 Semua
                             </a>
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => '3_years', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '3_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
-                                3 Thn Terakhir
+                               class="px-2.5 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '3_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                                3 Thn
                             </a>
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => '5_years', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '5_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
-                                5 Thn Terakhir
+                               class="px-2.5 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '5_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                                5 Thn
                             </a>
                             <a href="{{ route('repositories.journals', array_merge(request()->query(), ['year_filter' => '10_years', 'page' => 1])) }}"
-                               class="px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '10_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
-                                10 Thn Terakhir
+                               class="px-2.5 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap {{ $yearFilter === '10_years' ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800' }}">
+                                10 Thn
                             </a>
                         </div>
                     </div>
 
+                    <!-- Filter Akreditasi SINTA (Untuk GARUDA, FASILKOM, atau SEMUA) -->
+                    @if(in_array($source, ['garuda', 'fasilkom', 'all']))
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            Akreditasi SINTA:
+                        </span>
+                        <select name="sinta" 
+                                onchange="document.getElementById('journalFilterForm').submit()"
+                                class="text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-orange-500 focus:border-orange-500 {{ $sintaFilter !== 'all' ? 'ring-2 ring-orange-500/40 text-orange-600 dark:text-orange-400 font-black' : '' }}">
+                            <option value="all" {{ $sintaFilter === 'all' ? 'selected' : '' }}>Semua Akreditasi</option>
+                            <option value="s2_s4" {{ $sintaFilter === 's2_s4' ? 'selected' : '' }}>SINTA 2 – SINTA 4</option>
+                            <option value="s1_s2" {{ $sintaFilter === 's1_s2' ? 'selected' : '' }}>SINTA 1 – SINTA 2</option>
+                            <option value="s1" {{ $sintaFilter === 's1' ? 'selected' : '' }}>SINTA 1</option>
+                            <option value="s2" {{ $sintaFilter === 's2' ? 'selected' : '' }}>SINTA 2</option>
+                            <option value="s3" {{ $sintaFilter === 's3' ? 'selected' : '' }}>SINTA 3</option>
+                            <option value="s4" {{ $sintaFilter === 's4' ? 'selected' : '' }}>SINTA 4</option>
+                            <option value="s5_s6" {{ $sintaFilter === 's5_s6' ? 'selected' : '' }}>SINTA 5 – SINTA 6</option>
+                        </select>
+                    </div>
+                    @endif
+
+                    <!-- Filter Tipe Naskah (Document Type) -->
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Tipe:
+                        </span>
+                        <select name="doc_type" 
+                                onchange="document.getElementById('journalFilterForm').submit()"
+                                class="text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-orange-500 focus:border-orange-500 {{ $docType !== 'all' ? 'ring-2 ring-orange-500/40 text-orange-600 dark:text-orange-400 font-black' : '' }}">
+                            <option value="all" {{ $docType === 'all' ? 'selected' : '' }}>Semua Tipe Naskah</option>
+                            <option value="article" {{ $docType === 'article' ? 'selected' : '' }}>📄 Artikel Penelitian</option>
+                            <option value="proceeding" {{ $docType === 'proceeding' ? 'selected' : '' }}>🏛️ Prosiding Konferensi</option>
+                            <option value="review" {{ $docType === 'review' ? 'selected' : '' }}>📚 Literature Review</option>
+                        </select>
+                    </div>
+
                     <!-- Sort Filter -->
                     <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Urutkan:</span>
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">Urutkan:</span>
                         <select name="sort" 
                                 onchange="document.getElementById('journalFilterForm').submit()"
                                 class="text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-orange-500 focus:border-orange-500">
@@ -291,7 +335,7 @@
                 </div>
 
                 <!-- Open Access Indicator -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 shrink-0">
                     <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
                         <input type="checkbox" 
                                name="oa_only" 
@@ -299,10 +343,55 @@
                                {{ $openAccessOnly ? 'checked' : '' }} 
                                onchange="document.getElementById('journalFilterForm').submit()"
                                class="rounded border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-orange-600 focus:ring-orange-500 w-4 h-4">
-                        <span>Hanya Open Access (PDF Langsung)</span>
+                        <span>Hanya Open Access</span>
                     </label>
                 </div>
             </form>
+
+            <!-- Active Filters Pills -->
+            @if($sintaFilter !== 'all' || $docType !== 'all')
+            <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Filter Aktif:</span>
+                @if($sintaFilter !== 'all')
+                    @php
+                        $sintaLabels = [
+                            's2_s4' => 'SINTA 2 – SINTA 4 (Syarat Skripsi)',
+                            's1_s2' => 'SINTA 1 – SINTA 2 (Top Tier)',
+                            's1' => 'SINTA 1',
+                            's2' => 'SINTA 2',
+                            's3' => 'SINTA 3',
+                            's4' => 'SINTA 4',
+                            's5_s6' => 'SINTA 5 – SINTA 6',
+                        ];
+                    @endphp
+                    <a href="{{ route('repositories.journals', array_merge(request()->query(), ['sinta' => 'all', 'page' => 1])) }}"
+                       class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors shadow-2xs"
+                       title="Hapus filter akreditasi SINTA">
+                        <span>🎯 {{ $sintaLabels[$sintaFilter] ?? strtoupper($sintaFilter) }}</span>
+                        <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 hover:text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </a>
+                @endif
+                @if($docType !== 'all')
+                    @php
+                        $docTypeLabels = [
+                            'article' => '📄 Artikel Penelitian',
+                            'proceeding' => '🏛️ Prosiding Konferensi',
+                            'review' => '📚 Literature Review',
+                        ];
+                    @endphp
+                    <a href="{{ route('repositories.journals', array_merge(request()->query(), ['doc_type' => 'all', 'page' => 1])) }}"
+                       class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/70 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors shadow-2xs"
+                       title="Hapus filter tipe naskah">
+                        <span>{{ $docTypeLabels[$docType] ?? ucfirst($docType) }}</span>
+                        <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 hover:text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </a>
+                @endif
+                <a href="{{ route('repositories.journals', array_merge(request()->query(), ['sinta' => 'all', 'doc_type' => 'all', 'page' => 1])) }}"
+                   class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:underline">
+                    Reset Filter Lanjutan
+                </a>
+            </div>
+            @endif
 
             {{-- ===== DOSEN FILTER — hanya untuk sumber Jurnal GLOBAL FASILKOM ===== --}}
             @if($source === 'fasilkom')
@@ -562,7 +651,7 @@
             <!-- Results List Grid -->
             <div class="space-y-4">
                 @foreach($results['data'] as $index => $item)
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:border-orange-300 dark:hover:border-orange-500/50 hover:shadow-lg transition-all space-y-4"
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all space-y-4"
                          x-data="{ showAbstract: false, showTldr: false }">
                         
                         <!-- Top Metadata Badges -->
@@ -599,6 +688,49 @@
                                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
                                         <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                                         <span>Academic Global</span>
+                                    </span>
+                                @endif
+
+                                <!-- SINTA Accreditation Badge -->
+                                @if(!empty($item['sinta_label']))
+                                    @php
+                                        $sRating = strtoupper($item['sinta_rating'] ?? '');
+                                        $sintaColor = match($sRating) {
+                                            'S1' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/70',
+                                            'S2' => 'bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border-sky-200 dark:border-sky-800/70',
+                                            'S3' => 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/70',
+                                            'S4' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/70',
+                                            default => 'bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-800/70',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black border shadow-2xs {{ $sintaColor }}" title="Peringkat Akreditasi SINTA Kemdiktisaintek RI">
+                                        <svg class="w-3 h-3 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        <span>{{ $item['sinta_label'] }}</span>
+                                    </span>
+                                @endif
+
+                                <!-- Document Type Badge -->
+                                @if(!empty($item['doc_type_label']))
+                                    @php
+                                        $dType = $item['doc_type'] ?? 'article';
+                                        $docTypeBadge = match($dType) {
+                                            'review' => [
+                                                'class' => 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/70',
+                                                'icon' => '📚',
+                                            ],
+                                            'proceeding' => [
+                                                'class' => 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800/70',
+                                                'icon' => '🏛️',
+                                            ],
+                                            default => [
+                                                'class' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/70',
+                                                'icon' => '📄',
+                                            ],
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold border shadow-2xs {{ $docTypeBadge['class'] }}">
+                                        <span>{{ $docTypeBadge['icon'] }}</span>
+                                        <span>{{ $item['doc_type_label'] }}</span>
                                     </span>
                                 @endif
 
@@ -852,7 +984,7 @@
 
             <!-- PAGINATION CONTROLS -->
             @if($results['total_pages'] > 1)
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="text-xs text-slate-500 dark:text-slate-400">
                         Halaman <span class="font-bold text-slate-800 dark:text-slate-200">{{ $results['current_page'] }}</span> dari <span class="font-bold text-slate-800 dark:text-slate-200">{{ $results['total_pages'] }}</span>
                     </div>
