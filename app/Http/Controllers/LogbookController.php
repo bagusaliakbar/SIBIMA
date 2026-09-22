@@ -106,15 +106,23 @@ class LogbookController extends Controller
                 })
                 ->where('status', '!=', 'completed')
                 ->where('status', '!=', 'rejected')
-                ->withCount(['mentoringSessions as completed_sessions_count' => function ($q) use ($dosenId) {
-                    $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
-                }])
-                ->with(['mentoringSessions' => function ($q) use ($dosenId) {
-                    $q->where('dosen_id', $dosenId)
-                      ->where('status', 'completed')
-                      ->where('is_absent', false)
-                      ->orderBy('scheduled_at', 'desc');
-                }])
+                ->withCount([
+                    'mentoringSessions as completed_sessions_count' => function ($q) {
+                        $q->where('status', 'completed')->where('is_absent', false);
+                    },
+                    'mentoringSessions as my_completed_sessions_count' => function ($q) use ($dosenId) {
+                        $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
+                    }
+                ])
+                ->with([
+                    'pembimbing1',
+                    'pembimbing2',
+                    'mentoringSessions' => function ($q) {
+                        $q->where('status', 'completed')
+                          ->where('is_absent', false)
+                          ->orderBy('scheduled_at', 'desc');
+                    }
+                ])
                 ->get();
 
             // Total mahasiswa yang sudah lulus (untuk counter tab arsip)
@@ -203,9 +211,10 @@ class LogbookController extends Controller
                 })
                 ->with([
                     'student',
-                    'mentoringSessions' => function ($q) use ($dosenId) {
-                        $q->where('dosen_id', $dosenId)
-                          ->where('status', 'completed')
+                    'pembimbing1',
+                    'pembimbing2',
+                    'mentoringSessions' => function ($q) {
+                        $q->where('status', 'completed')
                           ->where('is_absent', false)
                           ->orderBy('scheduled_at', 'desc');
                     }
@@ -217,9 +226,14 @@ class LogbookController extends Controller
                         })->orWhere('title', 'like', "%{$search}%");
                     });
                 })
-                ->withCount(['mentoringSessions as completed_sessions_count' => function ($q) use ($dosenId) {
-                    $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
-                }]);
+                ->withCount([
+                    'mentoringSessions as completed_sessions_count' => function ($q) {
+                        $q->where('status', 'completed')->where('is_absent', false);
+                    },
+                    'mentoringSessions as my_completed_sessions_count' => function ($q) use ($dosenId) {
+                        $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
+                    }
+                ]);
 
             // Filter Peran: Pembimbing 1 vs Pembimbing 2
             if ($roleFilter === 'p1') {
@@ -275,7 +289,7 @@ class LogbookController extends Controller
         abort(403);
     }
 
-    public function show(Thesis $thesis)
+    public function show(Request $request, Thesis $thesis)
     {
         $user = Auth::user();
         $isAuthorized = $user->role === 'admin' 
@@ -287,24 +301,70 @@ class LogbookController extends Controller
             
         $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
-        $activeSessions = MentoringSession::where('thesis_id', $thesis->id)
-            ->when($user->role === 'dosen', function($q) use ($user) {
-                $q->where('dosen_id', $user->id);
-            })
-            ->whereIn('status', ['pending', 'approved'])
+        $filterDosen = $request->input('dosen', 'all');
+
+        // Query sesi aktif / mendatang
+        $activeSessionsQuery = MentoringSession::where('thesis_id', $thesis->id)
+            ->whereIn('status', ['pending', 'approved']);
+
+        // Query sesi selesai (riwayat logbook)
+        $completedSessionsQuery = MentoringSession::where('thesis_id', $thesis->id)
+            ->where('status', 'completed')
+            ->where('is_absent', false);
+
+        // Ambil seluruh sesi selesai untuk perhitungan statistik & penomoran resmi
+        $allCompletedSessions = (clone $completedSessionsQuery)
+            ->orderBy('scheduled_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->get(['id', 'dosen_id', 'scheduled_at']);
+
+        $totalCompletedCount = $allCompletedSessions->count();
+        $p1SessionCount = $thesis->pembimbing1_id ? $allCompletedSessions->where('dosen_id', $thesis->pembimbing1_id)->count() : 0;
+        $p2SessionCount = $thesis->pembimbing2_id ? $allCompletedSessions->where('dosen_id', $thesis->pembimbing2_id)->count() : 0;
+
+        $sessionOrderMap = [];
+        $dosenSessionCounts = [];
+        $sessionDosenOrderMap = [];
+        foreach ($allCompletedSessions as $idx => $sess) {
+            $sessionOrderMap[$sess->id] = $idx + 1;
+            $dId = $sess->dosen_id;
+            $dosenSessionCounts[$dId] = ($dosenSessionCounts[$dId] ?? 0) + 1;
+            $sessionDosenOrderMap[$sess->id] = $dosenSessionCounts[$dId];
+        }
+
+        // Terapkan filter pembimbing jika dipilih 'p1', 'p2', atau dosen_id numerik
+        if ($filterDosen === 'p1' && $thesis->pembimbing1_id) {
+            $activeSessionsQuery->where('dosen_id', $thesis->pembimbing1_id);
+            $completedSessionsQuery->where('dosen_id', $thesis->pembimbing1_id);
+        } elseif ($filterDosen === 'p2' && $thesis->pembimbing2_id) {
+            $activeSessionsQuery->where('dosen_id', $thesis->pembimbing2_id);
+            $completedSessionsQuery->where('dosen_id', $thesis->pembimbing2_id);
+        } elseif (is_numeric($filterDosen)) {
+            $activeSessionsQuery->where('dosen_id', $filterDosen);
+            $completedSessionsQuery->where('dosen_id', $filterDosen);
+        }
+
+        $activeSessions = $activeSessionsQuery
+            ->with('dosen')
             ->orderBy('scheduled_at', 'asc')
             ->get();
 
-        $completedSessions = MentoringSession::where('thesis_id', $thesis->id)
-            ->when($user->role === 'dosen', function($q) use ($user) {
-                $q->where('dosen_id', $user->id);
-            })
-            ->where('status', 'completed')
-            ->where('is_absent', false)
+        $completedSessions = $completedSessionsQuery
+            ->with('dosen')
             ->orderBy('scheduled_at', 'desc')
             ->get();
 
-        return view('logbooks.show', compact('thesis', 'activeSessions', 'completedSessions'));
+        return view('logbooks.show', compact(
+            'thesis', 
+            'activeSessions', 
+            'completedSessions', 
+            'filterDosen', 
+            'totalCompletedCount', 
+            'p1SessionCount', 
+            'p2SessionCount',
+            'sessionOrderMap',
+            'sessionDosenOrderMap'
+        ));
     }
 
     public function quickPreview(Thesis $thesis)
@@ -321,23 +381,23 @@ class LogbookController extends Controller
 
         $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
+        // Hilangkan pembatasan where('dosen_id', $user->id) agar Pembimbing 1 dan 2 dapat saling melihat sesi bimbingan
         $sessionsQuery = MentoringSession::where('thesis_id', $thesis->id)
             ->where('status', 'completed')
             ->where('is_absent', false);
 
-        if ($user->role === 'dosen') {
-            $sessionsQuery->where('dosen_id', $user->id);
-        }
-
-        $totalCompleted = (clone $sessionsQuery)->count();
+        $allSessions = (clone $sessionsQuery)->get(['id', 'dosen_id']);
+        $totalCompleted = $allSessions->count();
+        $p1Completed = $thesis->pembimbing1_id ? $allSessions->where('dosen_id', $thesis->pembimbing1_id)->count() : 0;
+        $p2Completed = $thesis->pembimbing2_id ? $allSessions->where('dosen_id', $thesis->pembimbing2_id)->count() : 0;
 
         $recentSessions = $sessionsQuery
             ->with('dosen:id,name')
             ->orderBy('scheduled_at', 'desc')
-            ->limit(5)
+            ->limit(10)
             ->get();
 
-        $formattedSessions = $recentSessions->map(function ($session, $index) use ($totalCompleted) {
+        $formattedSessions = $recentSessions->map(function ($session, $index) use ($totalCompleted, $thesis, $user) {
             $scheduledDate = $session->scheduled_at ? \Carbon\Carbon::parse($session->scheduled_at) : null;
             $timeAgo = '-';
             $scheduledFormatted = '-';
@@ -354,6 +414,10 @@ class LogbookController extends Controller
                 $scheduledFormatted = $scheduledDate->isoFormat('D MMMM Y • HH:mm') . ' WIB';
             }
 
+            $dosenRole = ($session->dosen_id === $thesis->pembimbing1_id) 
+                ? 'Pembimbing 1' 
+                : (($session->dosen_id === $thesis->pembimbing2_id) ? 'Pembimbing 2' : 'Dosen');
+
             return [
                 'id' => $session->id,
                 'session_number' => $totalCompleted - $index,
@@ -364,7 +428,10 @@ class LogbookController extends Controller
                 'location' => $session->location,
                 'feedback' => $session->feedback,
                 'notes' => $session->notes,
+                'dosen_id' => $session->dosen_id,
                 'dosen_name' => $session->dosen ? $session->dosen->name : '-',
+                'dosen_role' => $dosenRole,
+                'is_my_session' => ($session->dosen_id === $user->id),
                 'has_document' => !empty($session->document_path),
                 'document_name' => $session->document_original_name,
             ];
@@ -378,6 +445,10 @@ class LogbookController extends Controller
             'student_phone' => $thesis->student ? $thesis->student->phone_number : null,
             'thesis_title' => $thesis->final_title ?? $thesis->title,
             'thesis_status' => $thesis->status,
+            'pembimbing1_name' => $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-',
+            'pembimbing2_name' => $thesis->pembimbing2 ? $thesis->pembimbing2->name : '-',
+            'p1_completed' => $p1Completed,
+            'p2_completed' => $p2Completed,
             'total_completed' => $totalCompleted,
             'full_logbook_url' => route('theses.logbooks', $thesis->id),
             'sessions' => $formattedSessions,
@@ -393,7 +464,10 @@ class LogbookController extends Controller
 
         if (!$thesis) return back()->with('error', 'Data skripsi tidak ditemukan.');
 
-        $isAuthorized = $user->role === 'admin' || $user->role === 'kaprodi' || ($user->role === 'mahasiswa' && $thesis->student_id === $user->id) || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
+        $isAuthorized = $user->role === 'admin' 
+            || $user->role === 'kaprodi' 
+            || ($user->role === 'mahasiswa' && $thesis->student_id === $user->id) 
+            || ($user->role === 'dosen' && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
 
         if (!$isAuthorized) abort(403);
 
@@ -401,9 +475,6 @@ class LogbookController extends Controller
 
         $filterDosen = $request->input('dosen');
         $sessions = MentoringSession::where('thesis_id', $thesis->id)
-            ->when($user->role === 'dosen', function($q) use ($user) {
-                $q->where('dosen_id', $user->id);
-            })
             ->when($filterDosen === 'p1' && $thesis->pembimbing1_id, function($q) use ($thesis) {
                 $q->where('dosen_id', $thesis->pembimbing1_id);
             })

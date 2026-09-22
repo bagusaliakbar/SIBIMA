@@ -212,7 +212,7 @@
                             </div>
                         @endif
                         <div style="margin-top: 5px; font-size: 10px; color: #555;">
-                            <strong>Dosen:</strong> {{ $session->dosen->name ?? '-' }}
+                            <strong>Dosen:</strong> {{ $session->dosen->name ?? '-' }} ({{ $session->dosen_id === $thesis->pembimbing1_id ? 'Pembimbing 1' : ($session->dosen_id === $thesis->pembimbing2_id ? 'Pembimbing 2' : 'Dosen') }})
                         </div>
                     </td>
                     <td class="text-center" style="vertical-align: middle;">

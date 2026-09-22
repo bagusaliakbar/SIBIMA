@@ -50,14 +50,26 @@
                 
                 <div>
                     <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Dosen Pembimbing</h3>
-                    <div class="space-y-1">
-                        <div class="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
-                            <span class="w-4 h-4 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center mr-2 text-[10px] font-bold border border-orange-200 dark:border-orange-800">1</span>
-                            {{ $thesis->pembimbing1->name ?? '-' }}
+                    <div class="space-y-1.5">
+                        <div class="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between gap-3">
+                            <div class="flex items-center">
+                                <span class="w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 flex items-center justify-center mr-2 text-[10px] font-bold border border-indigo-200 dark:border-indigo-800">1</span>
+                                <span class="{{ $thesis->pembimbing1_id === Auth::id() ? 'font-bold text-indigo-600 dark:text-indigo-400' : '' }}">{{ $thesis->pembimbing1->name ?? '-' }}</span>
+                                @if($thesis->pembimbing1_id === Auth::id())
+                                    <span class="ml-1 text-[10px] font-bold text-indigo-500">(Anda)</span>
+                                @endif
+                            </div>
+                            <span class="text-[11px] font-semibold font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ $p1SessionCount ?? 0 }} Sesi</span>
                         </div>
-                        <div class="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center">
-                            <span class="w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center mr-2 text-[10px] font-bold border border-slate-200 dark:border-slate-600">2</span>
-                            {{ $thesis->pembimbing2->name ?? '-' }}
+                        <div class="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between gap-3">
+                            <div class="flex items-center">
+                                <span class="w-4 h-4 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 flex items-center justify-center mr-2 text-[10px] font-bold border border-purple-200 dark:border-purple-800">2</span>
+                                <span class="{{ $thesis->pembimbing2_id === Auth::id() ? 'font-bold text-purple-600 dark:text-purple-400' : '' }}">{{ $thesis->pembimbing2->name ?? '-' }}</span>
+                                @if($thesis->pembimbing2_id === Auth::id())
+                                    <span class="ml-1 text-[10px] font-bold text-purple-500">(Anda)</span>
+                                @endif
+                            </div>
+                            <span class="text-[11px] font-semibold font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ $p2SessionCount ?? 0 }} Sesi</span>
                         </div>
                     </div>
                 </div>
@@ -75,6 +87,12 @@
                     
                     <div class="p-5 space-y-4">
                         @forelse($activeSessions as $session)
+                            @php
+                                $isP1Active = ($session->dosen_id === $thesis->pembimbing1_id);
+                                $isP2Active = ($session->dosen_id === $thesis->pembimbing2_id);
+                                $isMyActive = ($session->dosen_id === Auth::id());
+                                $activeRoleTag = $isP1Active ? 'Pembimbing 1' : ($isP2Active ? 'Pembimbing 2' : 'Dosen');
+                            @endphp
                             <div class="p-4 rounded border {{ $session->status === 'approved' ? 'border-orange-200 dark:border-orange-900/50 bg-orange-50/30 dark:bg-orange-900/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800' }}">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="text-xs font-bold {{ $session->status === 'approved' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400' }}">
@@ -106,10 +124,17 @@
                                 @endif
                                 
                                 @if($session->dosen)
-                                    <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center gap-1.5">
-                                        <svg class="w-3 h-3 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Dengan:</span>
-                                        <span class="text-[9px] font-bold text-slate-600 dark:text-slate-300">{{ $session->dosen->name }}</span>
+                                    <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-1.5">
+                                        <div class="flex items-center gap-1.5 text-[10px]">
+                                            <svg class="w-3 h-3 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                                            <span class="font-bold text-slate-600 dark:text-slate-300">{{ $session->dosen->name }}</span>
+                                            @if($isMyActive)
+                                                <span class="text-[9px] font-bold text-orange-500">(Anda)</span>
+                                            @endif
+                                        </div>
+                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-bold {{ $isP1Active ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' : 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800' }}">
+                                            {{ $activeRoleTag }}
+                                        </span>
                                     </div>
                                 @endif
                             </div>
@@ -123,20 +148,66 @@
             </div>
 
             <!-- Logbook (Riwayat Selesai) -->
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-2 space-y-4">
+                <!-- Filter Pembimbing Tabs -->
+                <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 p-3 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                    <div class="flex items-center gap-1.5 flex-wrap text-xs">
+                        <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mr-1">Filter:</span>
+                        
+                        <!-- Semua Pembimbing -->
+                        <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'all']) }}" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                            <span>Semua Pembimbing</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600' }}">
+                                {{ $totalCompletedCount ?? $completedSessions->count() }}
+                            </span>
+                        </a>
+
+                        <!-- Pembimbing 1 -->
+                        @if($thesis->pembimbing1)
+                            <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'p1']) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filterDosen ?? '') === 'p1' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                                <span>P1: {{ Str::limit($thesis->pembimbing1->name, 18) }}</span>
+                                @if($thesis->pembimbing1_id === Auth::id())
+                                    <span class="text-[10px] {{ ($filterDosen ?? '') === 'p1' ? 'text-indigo-200' : 'text-indigo-500' }} font-bold">(Anda)</span>
+                                @endif
+                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? '') === 'p1' ? 'bg-white/20 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600' }}">
+                                    {{ $p1SessionCount ?? 0 }}
+                                </span>
+                            </a>
+                        @endif
+
+                        <!-- Pembimbing 2 -->
+                        @if($thesis->pembimbing2)
+                            <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'p2']) }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filterDosen ?? '') === 'p2' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                <span>P2: {{ Str::limit($thesis->pembimbing2->name, 18) }}</span>
+                                @if($thesis->pembimbing2_id === Auth::id())
+                                    <span class="text-[10px] {{ ($filterDosen ?? '') === 'p2' ? 'text-purple-200' : 'text-purple-500' }} font-bold">(Anda)</span>
+                                @endif
+                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? '') === 'p2' ? 'bg-white/20 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600' }}">
+                                    {{ $p2SessionCount ?? 0 }}
+                                </span>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
                     <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/30">
                         <div>
                             <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Riwayat Logbook</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Catatan bimbingan yang telah diselesaikan.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Catatan bimbingan dari Pembimbing 1 dan Pembimbing 2.</p>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <a href="{{ route('theses.logbooks.export-pdf', $thesis->id) }}" class="px-3 py-1.5 text-xs font-medium border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm inline-flex items-center">
+                            <a href="{{ route('theses.logbooks.export-pdf', ['thesis' => $thesis->id, 'dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null]) }}" class="px-3 py-1.5 text-xs font-medium border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm inline-flex items-center">
                                 <svg class="w-3.5 h-3.5 mr-1.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 Export PDF
                             </a>
                             <span class="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800/50">
-                                {{ $completedSessions->count() }} Sesi
+                                {{ $completedSessions->count() }} Sesi Ditampilkan
                             </span>
                         </div>
                     </div>
@@ -144,15 +215,38 @@
                     <div class="p-6">
                         <div class="relative border-l-2 border-slate-100 dark:border-slate-700 ml-3 space-y-8">
                             @forelse($completedSessions as $session)
+                                @php
+                                    $isP1Session = ($session->dosen_id === $thesis->pembimbing1_id);
+                                    $isP2Session = ($session->dosen_id === $thesis->pembimbing2_id);
+                                    $isMySession = ($session->dosen_id === Auth::id());
+                                    $roleTag = $isP1Session ? 'Pembimbing 1' : ($isP2Session ? 'Pembimbing 2' : 'Dosen');
+                                    $badgeBg = $isP1Session 
+                                        ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800' 
+                                        : 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800';
+                                @endphp
                                 <div class="relative pl-6">
-                                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-white dark:ring-slate-800"></div>
+                                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $isP1Session ? 'bg-indigo-500' : 'bg-purple-500' }} ring-4 ring-white dark:ring-slate-800"></div>
                                     
-                                    <div class="flex flex-col sm:flex-row sm:items-baseline mb-2">
-                                        <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">{{ $session->topic }}</h4>
-                                        <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 sm:ml-3">
-                                            {{ $session->scheduled_at->format('d F Y • H:i') }}
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-black {{ $isP1Session ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' : 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800' }}">
+                                                Sesi #{{ $sessionOrderMap[$session->id] ?? ($loop->count - $loop->index) }}
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border {{ $badgeBg }}">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $isP1Session ? 'bg-indigo-500' : 'bg-purple-500' }}"></span>
+                                                <span>{{ $roleTag }}: {{ $session->dosen->name ?? '-' }}</span>
+                                                @if($isMySession)
+                                                    <span class="text-[9px] font-black opacity-80">(Anda)</span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <span class="text-xs font-semibold text-slate-400 dark:text-slate-500">
+                                            {{ $session->scheduled_at->format('d F Y • H:i') }} WIB
                                         </span>
                                     </div>
+
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-1.5">{{ $session->topic }}</h4>
+
                                     <div class="flex items-start text-[11px] mb-2">
                                         @if($session->type === 'online')
                                             <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold mr-2 border border-blue-100 dark:border-blue-800/50">Online</span>
@@ -171,8 +265,16 @@
                                     </div>
                                     
                                     <div class="bg-slate-50 dark:bg-slate-900 rounded-md p-4 border border-slate-100 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2 space-y-3">
+                                        <!-- Co-Supervisor Note Callout Banner if session conducted by the other supervisor -->
+                                        @if(!$isMySession && Auth::user()->role === 'dosen')
+                                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $isP1Session ? 'bg-indigo-50/80 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/80' : 'bg-purple-50/80 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80' }} text-[11px] font-bold">
+                                                <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                <span>Catatan dari {{ $roleTag }} ({{ $session->dosen->name ?? '-' }})</span>
+                                            </div>
+                                        @endif
+
                                         <div>
-                                            <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Hasil & Catatan Pembimbing</div>
+                                            <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Hasil & Catatan Bimbingan</div>
                                             <div class="font-medium text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ $session->feedback ?: 'Tidak ada catatan pembimbing untuk sesi ini.' }}</div>
                                             @if($session->feedback_document_url)
                                                 <div class="mt-2">
@@ -186,23 +288,32 @@
                                         
                                         @if($session->notes)
                                         <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
-                                            <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Catatan Tambahan Pengajuan</div>
+                                            <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Catatan Mahasiswa</div>
                                             <div class="text-xs text-slate-500 dark:text-slate-400 italic">"{{ $session->notes }}"</div>
                                         </div>
                                         @endif
 
                                         @if($session->dosen)
-                                            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-                                                <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Bimbingan dengan:</span>
-                                                <span class="text-[10px] font-bold text-slate-700 dark:text-slate-200">{{ $session->dosen->name }}</span>
+                                            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-1.5">
+                                                <div class="flex items-center gap-1.5">
+                                                    <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                                                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tight">Dosen:</span>
+                                                    <span class="text-[10px] font-bold text-slate-700 dark:text-slate-200">{{ $session->dosen->name }}</span>
+                                                </div>
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded {{ $isP1Session ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50' : 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50' }}">
+                                                    {{ $roleTag }}
+                                                </span>
                                             </div>
                                         @endif
                                     </div>
                                 </div>
                             @empty
                                 <div class="pl-6 text-slate-500 text-sm py-4">
-                                    Mahasiswa ini belum memiliki riwayat bimbingan yang selesai.
+                                    @if(($filterDosen ?? 'all') !== 'all')
+                                        Tidak ada catatan bimbingan yang selesai untuk filter pembimbing ini.
+                                    @else
+                                        Mahasiswa ini belum memiliki riwayat bimbingan yang selesai.
+                                    @endif
                                 </div>
                             @endforelse
                         </div>

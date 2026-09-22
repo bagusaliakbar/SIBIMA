@@ -564,6 +564,28 @@
                                 <div class="font-medium text-slate-700 dark:text-slate-300 line-clamp-2" title="{{ $thesis->final_title ?? $thesis->title }}">
                                     {{ $thesis->final_title ?? $thesis->title }}
                                 </div>
+                                @php
+                                    $p1Count = $thesis->mentoringSessions ? $thesis->mentoringSessions->where('dosen_id', $thesis->pembimbing1_id)->count() : 0;
+                                    $p2Count = $thesis->mentoringSessions ? $thesis->mentoringSessions->where('dosen_id', $thesis->pembimbing2_id)->count() : 0;
+                                @endphp
+                                <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex flex-col gap-1 text-[11px]">
+                                    <div class="flex items-center gap-1.5 flex-wrap {{ $thesis->pembimbing1_id === Auth::id() ? 'font-bold text-indigo-700 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-400' }}">
+                                        <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-black bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/80">P1</span>
+                                        <span class="truncate max-w-[190px]" title="{{ $thesis->pembimbing1->name ?? '-' }}">{{ $thesis->pembimbing1->name ?? '-' }}</span>
+                                        @if($thesis->pembimbing1_id === Auth::id())
+                                            <span class="text-[9px] font-bold text-indigo-500">(Anda)</span>
+                                        @endif
+                                        <span class="font-mono text-[10px] text-slate-400 dark:text-slate-500 font-normal">({{ $p1Count }} sesi)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 flex-wrap {{ $thesis->pembimbing2_id === Auth::id() ? 'font-bold text-purple-700 dark:text-purple-300' : 'text-slate-600 dark:text-slate-400' }}">
+                                        <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-black bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80">P2</span>
+                                        <span class="truncate max-w-[190px]" title="{{ $thesis->pembimbing2->name ?? '-' }}">{{ $thesis->pembimbing2->name ?? '-' }}</span>
+                                        @if($thesis->pembimbing2_id === Auth::id())
+                                            <span class="text-[9px] font-bold text-purple-500">(Anda)</span>
+                                        @endif
+                                        <span class="font-mono text-[10px] text-slate-400 dark:text-slate-500 font-normal">({{ $p2Count }} sesi)</span>
+                                    </div>
+                                </div>
                             </td>
                             <td class="py-4 px-6 text-center">
                                 @php
@@ -656,9 +678,10 @@
 
                                     <!-- Bottom Milestone Status Pill -->
                                     <div class="flex items-center justify-between pt-0.5">
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1 flex-wrap">
                                             <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500">Total:</span>
                                             <span class="text-[10px] font-black {{ $completedCount > 0 ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400' }}">{{ $completedCount }} Sesi</span>
+                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-mono">({{ $p1Count }} P1 · {{ $p2Count }} P2)</span>
                                         </div>
 
                                         <div>
@@ -814,23 +837,38 @@
 
                         <!-- Student Profile Banner (When Loaded) -->
                         <template x-if="data">
-                            <div class="px-5 py-3.5 bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200/70 dark:border-slate-700/60 flex items-center justify-between gap-3 shrink-0">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <template x-if="data.student_avatar">
-                                        <img :src="data.student_avatar" :alt="data.student_name" class="w-9 h-9 rounded-full object-cover border border-slate-300 dark:border-slate-600 shrink-0 shadow-2xs">
-                                    </template>
-                                    <template x-if="!data.student_avatar">
-                                        <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0" x-text="data.student_name ? data.student_name.charAt(0).toUpperCase() : 'M'"></div>
-                                    </template>
-                                    <div class="min-w-0">
-                                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate" x-text="data.student_name"></h4>
-                                        <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + data.student_identifier"></p>
+                            <div class="px-5 py-3.5 bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200/70 dark:border-slate-700/60 flex flex-col gap-2 shrink-0">
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <template x-if="data.student_avatar">
+                                            <img :src="data.student_avatar" :alt="data.student_name" class="w-9 h-9 rounded-full object-cover border border-slate-300 dark:border-slate-600 shrink-0 shadow-2xs">
+                                        </template>
+                                        <template x-if="!data.student_avatar">
+                                            <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0" x-text="data.student_name ? data.student_name.charAt(0).toUpperCase() : 'M'"></div>
+                                        </template>
+                                        <div class="min-w-0">
+                                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate" x-text="data.student_name"></h4>
+                                            <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + data.student_identifier"></p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                              :class="data.thesis_status === 'completed' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'"
+                                              x-text="data.thesis_status === 'completed' ? 'Lulus' : 'Bimbingan Aktif'"></span>
                                     </div>
                                 </div>
-                                <div class="text-right shrink-0">
-                                    <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                          :class="data.thesis_status === 'completed' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'"
-                                          x-text="data.thesis_status === 'completed' ? 'Lulus' : 'Bimbingan Aktif'"></span>
+                                <!-- Supervisor Breakdown Banner -->
+                                <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between gap-2 text-[11px] flex-wrap">
+                                    <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">P1</span>
+                                        <span class="font-medium truncate max-w-[140px]" x-text="data.pembimbing1_name"></span>
+                                        <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 font-mono" x-text="'(' + data.p1_completed + ' sesi)'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">P2</span>
+                                        <span class="font-medium truncate max-w-[140px]" x-text="data.pembimbing2_name"></span>
+                                        <span class="text-[10px] font-bold text-purple-600 dark:text-purple-400 font-mono" x-text="'(' + data.p2_completed + ' sesi)'"></span>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -902,9 +940,15 @@
 
                                             <!-- Session Header -->
                                             <div class="flex items-center justify-between gap-2 mb-2">
-                                                <div class="flex items-center gap-2">
+                                                <div class="flex items-center gap-2 flex-wrap">
                                                     <span class="px-2.5 py-0.5 rounded-md text-[10px] font-black bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
                                                           x-text="'Sesi #' + session.session_number"></span>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border"
+                                                          :class="session.dosen_role === 'Pembimbing 1' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800' : 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800'">
+                                                        <span class="w-1.5 h-1.5 rounded-full" :class="session.dosen_role === 'Pembimbing 1' ? 'bg-indigo-500' : 'bg-purple-500'"></span>
+                                                        <span x-text="session.dosen_role + ': ' + session.dosen_name"></span>
+                                                        <span x-show="session.is_my_session" class="text-[9px] font-black opacity-80">(Anda)</span>
+                                                    </span>
                                                     <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-400" x-text="'• ' + session.time_ago"></span>
                                                 </div>
                                                 <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="session.scheduled_at"></span>
@@ -927,7 +971,8 @@
                                                     <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-900 dark:text-amber-300">
                                                         <span>📝 Catatan & Arahan Pembimbing</span>
                                                     </div>
-                                                    <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/20 dark:bg-amber-500/20 px-2.5 py-0.5 rounded-lg shrink-0" x-text="session.dosen_name"></span>
+                                                    <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/20 dark:bg-amber-500/20 px-2.5 py-0.5 rounded-lg shrink-0" 
+                                                          x-text="session.dosen_name + ' (' + session.dosen_role + ')'"></span>
                                                 </div>
                                                 <p class="text-xs sm:text-[13px] text-slate-800 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-wrap"
                                                    x-text="session.feedback ? session.feedback : 'Tidak ada catatan khusus pada sesi ini.'"></p>
