@@ -1000,15 +1000,15 @@
                     const link = p.doi || p.landing_page_url || p.pdf_url || '';
 
                     if (format === 'fasilkom') {
-                        return `${author} (${year}). "${title}". ${venue}.${link ? ' Tersedia di: ' + link + '.' : ''}`;
+                        return author + ' (' + year + '). "' + title + '". ' + venue + '.' + (link ? ' Tersedia di: ' + link + '.' : '');
                     } else if (format === 'ris') {
-                        return `TY  - JOUR\r\nTI  - ${title}\r\nAU  - ${author}\r\nT2  - ${venue}\r\nPY  - ${year}\r\nUR  - ${link}\r\nER  - `;
+                        return 'TY  - JOUR\r\nTI  - ' + title + '\r\nAU  - ' + author + '\r\nT2  - ' + venue + '\r\nPY  - ' + year + '\r\nUR  - ' + link + '\r\nER  - ';
                     } else if (format === 'ieee') {
-                        return `${author}, "${title}," ${venue}, ${year}.${link ? ' doi: ' + link : ''}`;
+                        return author + ', "' + title + '," ' + venue + ', ' + year + '.' + (link ? ' doi: ' + link : '');
                     } else if (format === 'bibtex') {
-                        return `@article{referensi${year},\n  title = {{${title}}},\n  author = {${author}},\n  journal = {{${venue}}},\n  year = {${year}}\n}`;
+                        return '@article{referensi' + year + ',\n  title = {' + title + '},\n  author = {' + author + '},\n  journal = {' + venue + '},\n  year = {' + year + '}\n}';
                     }
-                    return `${author} (${year}). ${title}. ${venue}.${link ? ' ' + link : ''}`;
+                    return author + ' (' + year + '). ' + title + '. ' + venue + '.' + (link ? ' ' + link : '');
                 },
 
                 copyCitation() {

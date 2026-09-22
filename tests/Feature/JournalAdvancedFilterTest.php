@@ -200,4 +200,12 @@ HTML;
         $response->assertSee('SINTA 4');
         $response->assertSee('Literature Review');
     }
+
+    public function test_bookmarks_page_renders_successfully(): void
+    {
+        $response = $this->actingAs($this->student)->get(route('repositories.bookmarks'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Daftar Bacaan');
+    }
 }
