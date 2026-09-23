@@ -19,6 +19,7 @@ use App\Services\GarudaJournalService;
 use App\Services\DoajJournalService;
 use App\Services\CrossrefJournalService;
 use App\Services\JournalAiService;
+use App\Services\BookRepositoryService;
 use App\Models\Thesis;
 use App\Models\FasilkomJournal;
 use App\Models\JournalBookmark;
@@ -1011,6 +1012,40 @@ class ThesisRepositoryController extends Controller
     }
 
     /**
+     * Search and browse academic books & textbooks (Open Library, DOAB, Google Books) with Information Systems focus.
+     */
+    public function books(Request $request, BookRepositoryService $bookService)
+    {
+        $query = trim($request->input('q', ''));
+        $topic = $request->input('topic', 'all_si');
+        $source = $request->input('source', 'all');
+        $access = $request->input('access', 'all');
+        $page = max(1, (int) $request->input('page', 1));
+
+        $topics = BookRepositoryService::getInformationSystemsTopics();
+        $selectedTopic = $topics[$topic] ?? $topics['all_si'];
+
+        $results = $bookService->search($query, [
+            'topic' => $topic,
+            'source' => $source,
+            'access' => $access,
+            'page' => $page,
+            'per_page' => 12,
+        ]);
+
+        $bookmarkedIdentifiers = [];
+        if (auth()->check()) {
+            $bookmarkedIdentifiers = auth()->user()->journalBookmarks()
+                ->pluck('journal_identifier')
+                ->toArray();
+        }
+
+        return view('repositories.books', compact(
+            'results', 'topics', 'selectedTopic', 'topic', 'query', 'source', 'access', 'page', 'bookmarkedIdentifiers'
+        ));
+    }
+
+    /**
      * View the student's saved journal bookmarks (Reading List).
      */
     public function bookmarks(Request $request)
@@ -1032,7 +1067,9 @@ class ThesisRepositoryController extends Controller
             });
         }
 
-        if ($sourceFilter !== 'all' && !empty($sourceFilter)) {
+        if ($sourceFilter === 'books') {
+            $bookmarkQuery->whereIn('source', ['openlibrary', 'doab', 'googlebooks', 'books']);
+        } elseif ($sourceFilter !== 'all' && !empty($sourceFilter)) {
             $bookmarkQuery->where('source', $sourceFilter);
         }
 
@@ -1052,6 +1089,7 @@ class ThesisRepositoryController extends Controller
         // Source counts for filter pills
         $sourceCounts = [
             'all' => $totalBookmarksCount,
+            'books' => $user->journalBookmarks()->whereIn('source', ['openlibrary', 'doab', 'googlebooks', 'books'])->count(),
             'fasilkom' => $user->journalBookmarks()->where('source', 'fasilkom')->count(),
             'garuda' => $user->journalBookmarks()->where('source', 'garuda')->count(),
             'doaj' => $user->journalBookmarks()->where('source', 'doaj')->count(),

@@ -61,8 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/seminar-applications/{application}/download-zip', [App\Http\Controllers\SeminarApplicationController::class, 'downloadZip'])->name('seminar-applications.download-zip');
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
 
-    // Digital Repository & External Academic Journals
+    // Digital Repository & External Academic Journals & Books
     Route::get('/repositories/journals', [\App\Http\Controllers\ThesisRepositoryController::class, 'journals'])->name('repositories.journals');
+    Route::get('/repositories/books', [\App\Http\Controllers\ThesisRepositoryController::class, 'books'])->name('repositories.books');
     Route::get('/repositories/bookmarks', [\App\Http\Controllers\ThesisRepositoryController::class, 'bookmarks'])->name('repositories.bookmarks');
     Route::post('/repositories/bookmarks/toggle', [\App\Http\Controllers\ThesisRepositoryController::class, 'toggleBookmark'])->name('repositories.bookmarks.toggle');
     Route::delete('/repositories/bookmarks/{bookmark}', [\App\Http\Controllers\ThesisRepositoryController::class, 'destroyBookmark'])->name('repositories.bookmarks.destroy');

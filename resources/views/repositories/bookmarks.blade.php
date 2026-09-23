@@ -81,6 +81,7 @@
                         @php
                             $sourcesList = [
                                 'all' => ['label' => 'Semua Sumber', 'count' => $sourceCounts['all'] ?? 0],
+                                'books' => ['label' => 'Buku & E-Book', 'count' => $sourceCounts['books'] ?? 0],
                                 'fasilkom' => ['label' => 'GLOBAL FASILKOM', 'count' => $sourceCounts['fasilkom'] ?? 0],
                                 'garuda' => ['label' => 'GARUDA (SINTA)', 'count' => $sourceCounts['garuda'] ?? 0],
                                 'doaj' => ['label' => 'DOAJ', 'count' => $sourceCounts['doaj'] ?? 0],
@@ -310,6 +311,13 @@
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800/70 shadow-2xs">
                                         <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                         <span>Crossref DOI</span>
+                                    </span>
+                                @elseif(in_array($bookmark->source, ['openlibrary', 'doab', 'googlebooks', 'books']))
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-200 border border-sky-200 dark:border-sky-800/70 shadow-2xs">
+                                        <svg class="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                        </svg>
+                                        <span>{{ $bookmark->clean_source_label ?: 'Buku Teks / E-Book' }}</span>
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
