@@ -483,21 +483,23 @@
                             <!-- Tooltip Modal Tabel -->
                             <div role="tooltip" class="absolute top-full left-0 mt-2.5 w-64 pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible -translate-y-1 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-200 ease-out z-50">
                                 <!-- Triangle Arrow -->
-                                <div class="absolute -top-1.5 left-7 w-3 h-3 bg-slate-900 dark:bg-slate-800 rotate-45 border-t border-l border-slate-700/80 dark:border-slate-600/80"></div>
+                                <div class="absolute -top-1.5 left-7 w-3 h-3 bg-white dark:bg-slate-800 rotate-45 border-t border-l border-slate-200 dark:border-slate-700"></div>
                                 
-                                <div class="relative p-3.5 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-xl shadow-black/25 border border-slate-700/80 dark:border-slate-600/80 text-left">
+                                <div class="relative p-3.5 bg-white dark:bg-slate-800 rounded-xl shadow-xl shadow-slate-900/10 dark:shadow-black/40 border border-slate-200 dark:border-slate-700 text-left">
                                     <div class="flex items-center justify-between gap-2 mb-1.5">
-                                        <div class="flex items-center gap-1.5 text-orange-400">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <span class="text-xs font-bold text-white tracking-tight">Tampilan Tabel</span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-lg bg-orange-50 dark:bg-orange-500/15 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-100 tracking-tight">Tampilan Tabel</span>
                                         </div>
-                                        <span class="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-orange-500/20 text-orange-300 border border-orange-500/30">Ringkas</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-orange-50 dark:bg-orange-500/15 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30">Ringkas</span>
                                     </div>
-                                    <p class="text-[11px] leading-relaxed text-slate-300 dark:text-slate-300 font-normal">
-                                        Format baris data terstruktur dengan fitur <span class="text-orange-300 font-medium">expand row</span> untuk melihat riwayat, progres bimbingan, dan status tiap mahasiswa.
+                                    <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 font-normal">
+                                        Format baris data terstruktur dengan fitur <strong class="text-orange-600 dark:text-orange-400 font-semibold">expand row</strong> untuk melihat riwayat, progres bimbingan, dan status tiap mahasiswa.
                                     </p>
-                                    <div class="mt-2.5 pt-2 border-t border-slate-800 dark:border-slate-700/60 flex items-center gap-1.5 text-[10px] text-slate-400">
-                                        <svg class="w-3 h-3 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/80 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                        <svg class="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                         <span>Ideal untuk memantau banyak data mahasiswa</span>
                                     </div>
                                 </div>
@@ -518,21 +520,23 @@
                             <!-- Tooltip Modal Kartu -->
                             <div role="tooltip" class="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 w-64 pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible -translate-y-1 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-200 ease-out z-50">
                                 <!-- Triangle Arrow -->
-                                <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-slate-800 rotate-45 border-t border-l border-slate-700/80 dark:border-slate-600/80"></div>
+                                <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-slate-800 rotate-45 border-t border-l border-slate-200 dark:border-slate-700"></div>
                                 
-                                <div class="relative p-3.5 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-xl shadow-black/25 border border-slate-700/80 dark:border-slate-600/80 text-left">
+                                <div class="relative p-3.5 bg-white dark:bg-slate-800 rounded-xl shadow-xl shadow-slate-900/10 dark:shadow-black/40 border border-slate-200 dark:border-slate-700 text-left">
                                     <div class="flex items-center justify-between gap-2 mb-1.5">
-                                        <div class="flex items-center gap-1.5 text-amber-400">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                                            <span class="text-xs font-bold text-white tracking-tight">Tampilan Kartu</span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-100 tracking-tight">Tampilan Kartu</span>
                                         </div>
-                                        <span class="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Timeline</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30">Timeline</span>
                                     </div>
-                                    <p class="text-[11px] leading-relaxed text-slate-300 dark:text-slate-300 font-normal">
-                                        Sesi bimbingan disajikan dalam bentuk <span class="text-amber-300 font-medium">kartu visual interaktif</span> yang dikelompokkan berdasarkan waktu (Hari Ini, Mendatang, dan Riwayat).
+                                    <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 font-normal">
+                                        Sesi bimbingan disajikan dalam bentuk <strong class="text-amber-600 dark:text-amber-400 font-semibold">kartu visual interaktif</strong> yang dikelompokkan berdasarkan waktu (Hari Ini, Mendatang, dan Riwayat).
                                     </p>
-                                    <div class="mt-2.5 pt-2 border-t border-slate-800 dark:border-slate-700/60 flex items-center gap-1.5 text-[10px] text-slate-400">
-                                        <svg class="w-3 h-3 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/80 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                        <svg class="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                         <span>Ideal untuk fokus pada alur waktu bimbingan</span>
                                     </div>
                                 </div>
@@ -553,21 +557,23 @@
                             <!-- Tooltip Modal Kalender -->
                             <div role="tooltip" class="absolute top-full right-0 mt-2.5 w-64 pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible -translate-y-1 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-200 ease-out z-50">
                                 <!-- Triangle Arrow -->
-                                <div class="absolute -top-1.5 right-7 w-3 h-3 bg-slate-900 dark:bg-slate-800 rotate-45 border-t border-l border-slate-700/80 dark:border-slate-600/80"></div>
+                                <div class="absolute -top-1.5 right-7 w-3 h-3 bg-white dark:bg-slate-800 rotate-45 border-t border-l border-slate-200 dark:border-slate-700"></div>
                                 
-                                <div class="relative p-3.5 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-xl shadow-black/25 border border-slate-700/80 dark:border-slate-600/80 text-left">
+                                <div class="relative p-3.5 bg-white dark:bg-slate-800 rounded-xl shadow-xl shadow-slate-900/10 dark:shadow-black/40 border border-slate-200 dark:border-slate-700 text-left">
                                     <div class="flex items-center justify-between gap-2 mb-1.5">
-                                        <div class="flex items-center gap-1.5 text-sky-400">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <span class="text-xs font-bold text-white tracking-tight">Tampilan Kalender</span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-lg bg-sky-50 dark:bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-100 tracking-tight">Tampilan Kalender</span>
                                         </div>
-                                        <span class="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Agenda</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-sky-50 dark:bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/30">Agenda</span>
                                     </div>
-                                    <p class="text-[11px] leading-relaxed text-slate-300 dark:text-slate-300 font-normal">
-                                        Pemetaan jadwal bimbingan dalam <span class="text-sky-300 font-medium">kalender interaktif bulanan</span> untuk memudahkan pengelolaan waktu dan tanggal konsultasi.
+                                    <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 font-normal">
+                                        Pemetaan jadwal bimbingan dalam <strong class="text-sky-600 dark:text-sky-400 font-semibold">kalender interaktif bulanan</strong> untuk memudahkan pengelolaan waktu dan tanggal konsultasi.
                                     </p>
-                                    <div class="mt-2.5 pt-2 border-t border-slate-800 dark:border-slate-700/60 flex items-center gap-1.5 text-[10px] text-slate-400">
-                                        <svg class="w-3 h-3 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/80 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                        <svg class="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                         <span>Ideal untuk perencanaan jadwal jangka panjang</span>
                                     </div>
                                 </div>
