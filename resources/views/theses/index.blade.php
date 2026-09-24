@@ -514,11 +514,11 @@
                                             @endif
                                         </div>
 
-                                        <!-- Badges: NPM, Cohort Badge (Angkatan Baru / Lama / Kritis), Pembimbing Role -->
+                                        <!-- Badges: NPM (Angkatan hanya untuk admin/kaprodi) -->
                                         <div class="flex items-center gap-2 flex-wrap text-xs text-slate-500 dark:text-slate-400">
                                             <span class="text-[11px] text-slate-600 dark:text-slate-300 font-semibold font-mono tracking-tight">{{ $thesis->student->identifier ?? 'NPM -' }}</span>
                                             
-                                            @if($thesis->student->entry_year)
+                                            @if(Auth::user()->role !== 'dosen' && $thesis->student->entry_year)
                                                 <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
                                                 @if($thesis->isOldCohort())
                                                     @if($thesis->student->is_critical_semester)
@@ -536,20 +536,6 @@
                                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" title="Angkatan Baru (Semester {{ $thesis->student->current_semester ?? '-' }})">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                         Angkatan {{ $thesis->student->entry_year }}
-                                                    </span>
-                                                @endif
-                                            @endif
-
-                                            @if(Auth::user()->role === 'dosen')
-                                                @if($thesis->pembimbing1_id === Auth::id())
-                                                    <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">
-                                                        Pembimbing 1
-                                                    </span>
-                                                @elseif($thesis->pembimbing2_id === Auth::id())
-                                                    <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
-                                                        Pembimbing 2
                                                     </span>
                                                 @endif
                                             @endif
