@@ -9,7 +9,7 @@
     <script>
         function mentoringSchedule() {
             return {
-                viewMode: '{{ request('view', 'cards') }}',
+                viewMode: '{{ request('view', '') }}' || localStorage.getItem('sibima_mentoring_view_mode') || 'table',
                 cardGrouping: localStorage.getItem('sibima_card_grouping') || 'session', // 'session' (default) or 'student'
                 selectedEvent: null,
                 eventModalOpen: false,
@@ -17,13 +17,20 @@
                 events: @json($calendarEvents ?? []),
                 attendanceStats: @json($attendanceStats ?? []),
                 selectedSessionIds: [],
+                expandedSessions: [],
+                allSessionIds: @json($sessions->pluck('id')->map(fn($id) => (string)$id)->values()->all()),
+                
                 init() {
+                    window.__mentoringScope = this;
                     this.$watch('selectedSessionIds', () => {
                         this.notifySelection();
                     });
                     window.addEventListener('mentoring-clear-selection', () => {
                         this.clearSelection();
                     });
+                    if (this.viewMode === 'calendar') {
+                        this.initCalendar();
+                    }
                 },
                 notifySelection() {
                     const ids = this.selectedSessionIds ? this.selectedSessionIds.map(String) : [];
@@ -34,6 +41,48 @@
                 setGrouping(mode) {
                     this.cardGrouping = mode;
                     localStorage.setItem('sibima_card_grouping', mode);
+                },
+                switchView(mode) {
+                    this.viewMode = mode;
+                    localStorage.setItem('sibima_mentoring_view_mode', mode);
+                    if (mode === 'calendar') {
+                        this.initCalendar();
+                    }
+                },
+                toggleExpand(id) {
+                    const strId = String(id);
+                    if (this.expandedSessions.includes(strId)) {
+                        this.expandedSessions = this.expandedSessions.filter(i => i !== strId);
+                    } else {
+                        this.expandedSessions.push(strId);
+                    }
+                },
+                isExpanded(id) {
+                    return this.expandedSessions.includes(String(id));
+                },
+                toggleExpandAll() {
+                    if (this.expandedSessions.length > 0) {
+                        this.expandedSessions = [];
+                    } else {
+                        this.expandedSessions = [...this.allSessionIds];
+                    }
+                },
+                toggleSelectAll() {
+                    const actionableIds = @json($sessions->filter(fn($s) => $s->status !== 'completed' || $s->is_absent)->pluck('id')->map(fn($id) => (string)$id)->values()->all());
+                    const currentStr = this.selectedSessionIds.map(String);
+                    const allSelected = actionableIds.length > 0 && actionableIds.every(id => currentStr.includes(id));
+                    if (allSelected) {
+                        this.selectedSessionIds = this.selectedSessionIds.filter(id => !actionableIds.includes(String(id)));
+                    } else {
+                        this.selectedSessionIds = Array.from(new Set([...currentStr, ...actionableIds]));
+                    }
+                    this.notifySelection();
+                },
+                isAllSelected() {
+                    const actionableIds = @json($sessions->filter(fn($s) => $s->status !== 'completed' || $s->is_absent)->pluck('id')->map(fn($id) => (string)$id)->values()->all());
+                    if (actionableIds.length === 0) return false;
+                    const currentStr = this.selectedSessionIds.map(String);
+                    return actionableIds.every(id => currentStr.includes(id));
                 },
                 toggleSession(id) {
                     const strId = String(id);
@@ -118,18 +167,6 @@
                         calendar.render();
                         this.calendarInitialized = true;
                     });
-                },
-                switchView(mode) {
-                    this.viewMode = mode;
-                    if (mode === 'calendar') {
-                        this.initCalendar();
-                    }
-                },
-                init() {
-                    window.__mentoringScope = this;
-                    if (this.viewMode === 'calendar') {
-                        this.initCalendar();
-                    }
                 }
             };
         }
@@ -499,19 +536,29 @@
             
             <x-slot name="headerActions">
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    <!-- View Mode Toggle (Cards vs Calendar) -->
+                    <!-- View Mode Toggle (Table vs Cards vs Calendar) -->
                     <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                        <button type="button" 
+                                @click="switchView('table')" 
+                                :class="viewMode === 'table' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                                title="Tampilan Tabel Ringkas & Praktis">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>Tabel</span>
+                        </button>
                         <button type="button" 
                                 @click="switchView('cards')" 
                                 :class="viewMode === 'cards' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                                title="Tampilan Kartu Timeline Kronologis">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                             <span>Kartu</span>
                         </button>
                         <button type="button" 
                                 @click="switchView('calendar')" 
                                 :class="viewMode === 'calendar' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                                title="Tampilan Kalender Bulanan">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Kalender</span>
                         </button>
@@ -532,7 +579,7 @@
                         </form>
                     @endif
 
-                    <template x-if="viewMode === 'cards'">
+                    <template x-if="viewMode === 'cards' || viewMode === 'table'">
                         <x-search-input 
                             name="search" 
                             :value="$search ?? ''" 
@@ -548,7 +595,564 @@
             </x-slot>
 
             <div class="p-6">
-                <!-- 1. CARDS VIEW -->
+                    @php
+                        // 1. Grouped by Mentoring Session
+                        $sessionsBySessionGroup = $sessions->groupBy(function($s) {
+                            return ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d_H:i') . '_' . md5($s->topic ?? '');
+                        });
+
+                        // 2. Grouped by Student (Original)
+                        $groupedSessions = $sessions->groupBy(function($session) {
+                            return $session->thesis->student->name ?? 'Mahasiswa';
+                        });
+
+                        $groupCountMap = [];
+                        foreach($sessions as $s) {
+                            $key = ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d H:i');
+                            $groupCountMap[$key] = ($groupCountMap[$key] ?? 0) + 1;
+                        }
+
+                        // 3. Chronological Timeline Sections for "Per Sesi" view
+                        $timelineSections = [];
+                        if ($activeTab === 'active') {
+                            $todayGroups = collect();
+                            $tomorrowGroups = collect();
+                            $upcomingGroups = collect();
+                            $overdueGroups = collect();
+
+                            foreach($sessionsBySessionGroup as $gKey => $sessionItems) {
+                                $first = $sessionItems->first();
+                                $scheduledAt = $first->scheduled_at;
+                                $isOverdue = $scheduledAt->isPast() && !$scheduledAt->isToday() && $sessionItems->contains(fn($s) => $s->status !== 'completed' || $s->is_absent);
+
+                                if ($scheduledAt->isToday()) {
+                                    $todayGroups->put($gKey, $sessionItems);
+                                } elseif ($scheduledAt->isTomorrow()) {
+                                    $tomorrowGroups->put($gKey, $sessionItems);
+                                } elseif ($isOverdue) {
+                                    $overdueGroups->put($gKey, $sessionItems);
+                                } else {
+                                    $upcomingGroups->put($gKey, $sessionItems);
+                                }
+                            }
+
+                            // Sort chronologically
+                            $upcomingGroups = $upcomingGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
+                            $todayGroups = $todayGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
+                            $tomorrowGroups = $tomorrowGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
+                            $overdueGroups = $overdueGroups->sortByDesc(fn($items) => $items->first()->scheduled_at->timestamp);
+
+                            if ($todayGroups->isNotEmpty()) {
+                                $timelineSections[] = [
+                                    'id' => 'today',
+                                    'title' => 'Hari Ini',
+                                    'subtitle' => now()->locale('id')->translatedFormat('l, d F Y'),
+                                    'badge' => $todayGroups->count() . ' Sesi',
+                                    'badge_class' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+                                    'groups' => $todayGroups,
+                                ];
+                            }
+                            if ($tomorrowGroups->isNotEmpty()) {
+                                $timelineSections[] = [
+                                    'id' => 'tomorrow',
+                                    'title' => 'Besok',
+                                    'subtitle' => now()->addDay()->locale('id')->translatedFormat('l, d F Y'),
+                                    'badge' => $tomorrowGroups->count() . ' Sesi',
+                                    'badge_class' => 'bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+                                    'groups' => $tomorrowGroups,
+                                ];
+                            }
+                            if ($upcomingGroups->isNotEmpty()) {
+                                $timelineSections[] = [
+                                    'id' => 'upcoming',
+                                    'title' => 'Jadwal Mendatang',
+                                    'subtitle' => 'Sesi bimbingan yang akan datang',
+                                    'badge' => $upcomingGroups->count() . ' Sesi',
+                                    'badge_class' => 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+                                    'groups' => $upcomingGroups,
+                                ];
+                            }
+                            if ($overdueGroups->isNotEmpty()) {
+                                $timelineSections[] = [
+                                    'id' => 'overdue',
+                                    'title' => 'Perlu Tindakan Dosen (Melewati Jadwal)',
+                                    'subtitle' => 'Sesi telah lewat waktu dan perlu diberi catatan atau diselesaikan',
+                                    'badge' => $overdueGroups->count() . ' Sesi Perlu Ditinjau',
+                                    'badge_class' => 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+                                    'groups' => $overdueGroups,
+                                ];
+                            }
+                        } else {
+                            // Riwayat Selesai
+                            $timelineSections[] = [
+                                'id' => 'history',
+                                'title' => 'Riwayat Bimbingan Selesai',
+                                'subtitle' => 'Seluruh sesi bimbingan mahasiswa yang telah selesai',
+                                'badge' => $sessionsBySessionGroup->count() . ' Sesi Selesai',
+                                'badge_class' => 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+                                'groups' => $sessionsBySessionGroup,
+                            ];
+                        }
+                    @endphp
+
+                <!-- 1. TABLE VIEW (Ringkas, Scannable & Expandable) -->
+                <div x-show="viewMode === 'table'" x-transition class="space-y-5">
+                    <!-- Sub-Toolbar: Navigation Tabs & Real-Time Actions -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+                        <!-- Primary Tabs: Aktif vs Riwayat -->
+                        <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-2xs">
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => 'active', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                               class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'active' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/60' }}">
+                                Bimbingan Aktif
+                            </a>
+                            <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                               class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'history' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/60' }}">
+                                Riwayat Selesai
+                            </a>
+                        </div>
+
+                        <!-- Right Actions: Expand All / Collapse All & Live Attendance -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+                            @if($sessions->isNotEmpty())
+                                <button type="button" 
+                                        @click="toggleExpandAll()" 
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    <span x-text="expandedSessions.length > 0 ? 'Tutup Semua Rincian' : 'Buka Semua Rincian'">Buka Semua Rincian</span>
+                                </button>
+                            @endif
+
+                            <button type="button" 
+                                    @click="openLiveModal()" 
+                                    onclick="window.openLiveModal()" 
+                                    class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold shadow-2xs hover:shadow-xs transition-all cursor-pointer">
+                                <span class="relative flex h-2 w-2 shrink-0">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <span>Monitor Kehadiran</span>
+                            </button>
+
+                            <button type="button" 
+                                    @click="fetchLiveAttendance(false)" 
+                                    title="Segarkan data kehadiran real-time"
+                                    class="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95">
+                                <svg class="w-4 h-4 shrink-0" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    @if($activeTab === 'active')
+                    <!-- Quick Attendance Filter Chips -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-2 pt-0.5">
+                        <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            <span>Filter Kehadiran:</span>
+                        </span>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
+                           class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ empty($attendanceFilter) ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700' }}">
+                            <span>Semua</span>
+                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ empty($attendanceFilter) ? 'bg-white/20 text-white dark:bg-slate-900/20 dark:text-slate-900' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}" x-text="attendanceStats?.total ?? '{{ $attendanceStats['total'] ?? 0 }}'">
+                                {{ $attendanceStats['total'] ?? 0 }}
+                            </span>
+                        </a>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'attending']) }}" 
+                           class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'attending' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700' }}">
+                            <span class="w-2 h-2 rounded-full {{ $attendanceFilter === 'attending' ? 'bg-white' : 'bg-emerald-500' }} shrink-0"></span>
+                            <span>Akan Hadir</span>
+                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $attendanceFilter === 'attending' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300' }}" x-text="attendanceStats?.attending ?? '{{ $attendanceStats['attending'] ?? 0 }}'">
+                                {{ $attendanceStats['attending'] ?? 0 }}
+                            </span>
+                        </a>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'permission']) }}" 
+                           class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'permission' ? 'bg-amber-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700' }}">
+                            <span class="w-2 h-2 rounded-full {{ $attendanceFilter === 'permission' ? 'bg-white' : 'bg-amber-500' }} shrink-0"></span>
+                            <span>Izin</span>
+                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $attendanceFilter === 'permission' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300' }}" x-text="attendanceStats?.permission ?? '{{ $attendanceStats['permission'] ?? 0 }}'">
+                                {{ $attendanceStats['permission'] ?? 0 }}
+                            </span>
+                        </a>
+
+                        <a href="{{ route('mentoring-sessions.index', ['tab' => $activeTab, 'search' => $search, 'dosen_id' => $dosenId ?? '', 'attendance' => 'pending']) }}" 
+                           class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ $attendanceFilter === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700' }}">
+                            <span class="w-2 h-2 rounded-full {{ $attendanceFilter === 'pending' ? 'bg-white' : 'bg-slate-400 dark:bg-slate-500' }} animate-pulse shrink-0"></span>
+                            <span>Belum Respon</span>
+                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $attendanceFilter === 'pending' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}" x-text="attendanceStats?.pending ?? '{{ $attendanceStats['pending'] ?? 0 }}'">
+                                {{ $attendanceStats['pending'] ?? 0 }}
+                            </span>
+                        </a>
+                    </div>
+                    @endif
+
+                    @if($sessions->isEmpty())
+                        @if($activeTab === 'history')
+                            <x-empty-state description="Belum ada riwayat bimbingan untuk mahasiswa yang sudah lulus." icon="mentoring" />
+                        @else
+                            <x-empty-state description="Belum ada jadwal bimbingan aktif." icon="mentoring" />
+                        @endif
+                    @else
+                        <!-- The Master Table Container -->
+                        <div class="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-700/80 shadow-2xs bg-white dark:bg-slate-900">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 select-none">
+                                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                            <th class="py-3.5 px-4 w-10 text-center">
+                                                <input type="checkbox" 
+                                                       @change="toggleSelectAll()" 
+                                                       :checked="isAllSelected()"
+                                                       title="Pilih Semua Sesi yang Dapat Diproses"
+                                                       class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
+                                            </th>
+                                        @endif
+                                        <th class="py-3.5 px-4">Mahasiswa</th>
+                                        <th class="py-3.5 px-4">Jadwal & Waktu</th>
+                                        <th class="py-3.5 px-4">Topik & Judul Skripsi</th>
+                                        <th class="py-3.5 px-4 text-center">Kehadiran Mhs</th>
+                                        <th class="py-3.5 px-4 text-center">Status Sesi</th>
+                                        <th class="py-3.5 px-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                    @foreach($sessions as $session)
+                                        @php
+                                            $student = $session->thesis?->student;
+                                            $thesis = $session->thesis;
+                                            $gKey = ($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i');
+                                            $isGroup = ($groupCountMap[$gKey] ?? 1) > 1;
+                                            $sMentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
+                                                ? $thesis?->completed_mentoring_count 
+                                                : $thesis?->getCompletedMentoringCountForDosen(Auth::id());
+                                            
+                                            $isMeet = Str::contains($session->location ?? '', 'meet.google.com'); 
+                                            $isZoom = Str::contains($session->location ?? '', ['zoom.us', 'zoom.com']);
+                                            $linkUrl = Str::startsWith($session->location ?? '', 'http') ? $session->location : 'https://' . $session->location;
+                                        @endphp
+                                        
+                                        <!-- Main Session Row -->
+                                        <tr class="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50 cursor-pointer"
+                                            :class="{'bg-orange-50/40 dark:bg-orange-950/20': isSelected('{{ $session->id }}'), 'bg-slate-50/60 dark:bg-slate-800/40 font-medium': isExpanded('{{ $session->id }}')}"
+                                            @click="if (!$event.target.closest('button') && !$event.target.closest('a') && !$event.target.closest('input')) toggleExpand('{{ $session->id }}')">
+                                            
+                                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                <td class="py-3.5 px-4 text-center" @click.stop>
+                                                    @if($session->status !== 'completed' || $session->is_absent)
+                                                        <input type="checkbox" 
+                                                               value="{{ $session->id }}" 
+                                                               x-model="selectedSessionIds" 
+                                                               @change="notifySelection()"
+                                                               class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
+                                                    @else
+                                                        <span class="w-4 h-4 inline-block text-slate-300 dark:text-slate-600">•</span>
+                                                    @endif
+                                                </td>
+                                            @endif
+
+                                            <!-- Mahasiswa Column -->
+                                            <td class="py-3.5 px-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
+                                                        <img src="{{ $student?->avatar_url }}" alt="{{ $student?->name ?? 'Mhs' }}" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <div class="font-extrabold text-slate-900 dark:text-white uppercase tracking-tight text-xs flex items-center gap-1.5 flex-wrap">
+                                                            <span>{{ $student?->name ?? 'Mahasiswa' }}</span>
+                                                            @if($isGroup)
+                                                                <span class="px-1.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[9px] font-black border border-indigo-200 dark:border-indigo-800" title="Bimbingan Bersama ({{ $groupCountMap[$gKey] }} Mahasiswa)">👥 Kelompok</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                                                            <span class="font-mono">{{ $student?->identifier ?? '-' }}</span>
+                                                            <span>•</span>
+                                                            <span class="font-bold text-slate-600 dark:text-slate-300">{{ $sMentoringCount }}x Bimbingan</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Jadwal & Waktu Column -->
+                                            <td class="py-3.5 px-4 whitespace-nowrap">
+                                                <div class="space-y-1">
+                                                    <div class="flex items-center gap-1.5 font-extrabold text-slate-900 dark:text-slate-100 text-xs">
+                                                        @if($session->scheduled_at->isToday())
+                                                            <span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[9px] font-black uppercase">Hari Ini</span>
+                                                        @elseif($session->scheduled_at->isTomorrow())
+                                                            <span class="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-[9px] font-black uppercase">Besok</span>
+                                                        @endif
+                                                        <span>{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                                                        <span class="font-bold text-slate-700 dark:text-slate-300 font-mono">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                                        <span>•</span>
+                                                        @if($session->type === 'online')
+                                                            @if($session->location)
+                                                                <a href="{{ $linkUrl }}" target="_blank" @click.stop class="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
+                                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                                    <span>{{ $isMeet ? 'G-Meet' : ($isZoom ? 'Zoom' : 'Online') }}</span>
+                                                                </a>
+                                                            @else
+                                                                <span class="font-bold text-indigo-600 dark:text-indigo-400">🎥 Online</span>
+                                                            @endif
+                                                        @else
+                                                            <span class="font-bold text-slate-600 dark:text-slate-300 truncate max-w-[120px]" title="{{ $session->location ?? 'Offline' }}">🏢 {{ $session->location ?? 'Offline' }}</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Topik & Skripsi Column -->
+                                            <td class="py-3.5 px-4 min-w-[200px] max-w-xs">
+                                                <div class="space-y-0.5">
+                                                    <p class="font-extrabold text-slate-900 dark:text-white truncate text-xs" title="{{ $session->topic }}">
+                                                        {{ $session->topic }}
+                                                    </p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 italic" title="{{ $thesis?->title }}">
+                                                        "{{ $thesis?->title ?? 'Judul Skripsi' }}"
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <!-- Konfirmasi Kehadiran Column -->
+                                            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                                @if($session->status === 'completed')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[10px] font-black uppercase border border-emerald-200 dark:border-emerald-800">
+                                                        <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                        <span>Hadir</span>
+                                                    </span>
+                                                @elseif($session->student_attendance_status === 'attending')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase border border-emerald-200 dark:border-emerald-700">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        <span>Akan Hadir</span>
+                                                    </span>
+                                                @elseif($session->student_attendance_status === 'permission')
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase border border-amber-200 dark:border-amber-700" title="{{ $session->student_attendance_reason }}">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                        <span>Izin</span>
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold border border-slate-200 dark:border-slate-600">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
+                                                        <span>Belum Respon</span>
+                                                    </span>
+                                                @endif
+                                            </td>
+
+                                            <!-- Status Sesi Column -->
+                                            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                                @if($session->is_absent)
+                                                    <x-status-badge type="red" label="TIDAK HADIR" />
+                                                @else
+                                                    <x-status-badge 
+                                                        :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : ($session->status === 'completed' ? 'emerald' : 'slate')))" 
+                                                        :label="$session->status === 'completed' ? 'SELESAI' : strtoupper($session->status)" />
+                                                @endif
+                                            </td>
+
+                                            <!-- Aksi & Rincian Column -->
+                                            <td class="py-3.5 px-4 text-right whitespace-nowrap" @click.stop>
+                                                <div class="inline-flex items-center gap-1.5 justify-end">
+                                                    <!-- Expand Button -->
+                                                    <button type="button" 
+                                                            @click="toggleExpand('{{ $session->id }}')" 
+                                                            class="px-2.5 py-1.5 rounded-xl border text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1 cursor-pointer"
+                                                            :class="isExpanded('{{ $session->id }}') ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-300 hover:text-orange-600'">
+                                                        <span>Detail</span>
+                                                        <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="isExpanded('{{ $session->id }}') ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                    </button>
+
+                                                    @can('update', $session)
+                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="p-1.5 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all" title="Ubah / Reschedule">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                        </a>
+                                                    @endcan
+
+                                                    @can('delete', $session)
+                                                        <button type="button" 
+                                                                @click="openCancelModalFromEl($el)"
+                                                                onclick="window.openCancelModalFromEl(this)"
+                                                                data-session-id="{{ $session->id }}"
+                                                                data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
+                                                                data-student-npm="{{ e($student?->identifier ?? '-') }}"
+                                                                data-topic="{{ e($session->topic) }}"
+                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                data-is-group="{{ $isGroup ? '1' : '0' }}"
+                                                                data-group-count="{{ $groupCountMap[($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i')] ?? 1 }}"
+                                                                class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all cursor-pointer"
+                                                                title="Batalkan Sesi Bimbingan">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                        </button>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Expandable Detail Row (Accordion Panel) -->
+                                        <tr x-show="isExpanded('{{ $session->id }}')" x-cloak class="bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
+                                            <td colspan="{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 7 : 6 }}" class="p-4 sm:p-5">
+                                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+                                                    <!-- Panel Kiri: Informasi Bimbingan & Konfirmasi Mahasiswa -->
+                                                    <div class="space-y-3 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/90 dark:border-slate-700/80 shadow-2xs">
+                                                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+                                                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Rincian Mahasiswa</span>
+                                                            <span class="font-bold text-slate-600 dark:text-slate-300 font-mono">{{ $student?->identifier ?? '-' }}</span>
+                                                        </div>
+                                                        
+                                                        <div class="space-y-1.5 text-[11px]">
+                                                            <p class="font-bold text-slate-800 dark:text-slate-200">
+                                                                <span class="text-slate-400 font-normal">Judul Skripsi:</span><br>
+                                                                {{ $thesis?->title ?? '-' }}
+                                                            </p>
+                                                            @if($thesis?->pembimbing1)
+                                                                <p class="text-slate-600 dark:text-slate-400">
+                                                                    <span class="text-slate-400">P1:</span> <strong class="text-slate-700 dark:text-slate-300">{{ $thesis->pembimbing1->name }}</strong>
+                                                                </p>
+                                                            @endif
+                                                            @if($thesis?->pembimbing2)
+                                                                <p class="text-slate-600 dark:text-slate-400">
+                                                                    <span class="text-slate-400">P2:</span> <strong class="text-slate-700 dark:text-slate-300">{{ $thesis->pembimbing2->name }}</strong>
+                                                                </p>
+                                                            @endif
+                                                        </div>
+
+                                                        <!-- Konfirmasi Kehadiran Detail -->
+                                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 space-y-1">
+                                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Status Kehadiran Mahasiswa:</span>
+                                                            @if($session->student_attendance_status === 'attending')
+                                                                <p class="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5">
+                                                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                                    <span>Konfirmasi Hadir</span>
+                                                                    @if($session->student_confirmed_at)
+                                                                        <span class="text-[10px] font-normal text-slate-400">({{ $session->student_confirmed_at->locale('id')->translatedFormat('d M, H:i') }})</span>
+                                                                    @endif
+                                                                </p>
+                                                            @elseif($session->student_attendance_status === 'permission')
+                                                                <div class="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80">
+                                                                    <p class="text-amber-800 dark:text-amber-300 font-bold text-[11px] mb-0.5">Alasan Izin:</p>
+                                                                    <p class="text-amber-900 dark:text-amber-200 italic leading-relaxed text-[11px]">"{{ $session->student_attendance_reason }}"</p>
+                                                                </div>
+                                                            @else
+                                                                <p class="text-slate-500 dark:text-slate-400 italic text-[11px]">Mahasiswa belum melakukan konfirmasi kehadiran.</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Panel Tengah: Catatan Pengajuan Mahasiswa -->
+                                                    <div class="space-y-3 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/90 dark:border-slate-700/80 shadow-2xs flex flex-col justify-between">
+                                                        <div class="space-y-2">
+                                                            <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+                                                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Catatan Mahasiswa</span>
+                                                                <span class="text-[10px] font-bold text-slate-400">Pengajuan Bimbingan</span>
+                                                            </div>
+                                                            @if($session->notes)
+                                                                <p class="text-slate-700 dark:text-slate-300 italic leading-relaxed whitespace-pre-line text-xs">
+                                                                    "{{ $session->notes }}"
+                                                                </p>
+                                                            @else
+                                                                <p class="text-slate-400 dark:text-slate-500 italic text-xs">Tidak ada catatan pengajuan khusus dari mahasiswa.</p>
+                                                            @endif
+                                                        </div>
+
+                                                        <!-- Fast Link to Meeting / Location -->
+                                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                                            <span class="text-[10px] font-bold text-slate-400">Media Bimbingan:</span>
+                                                            @if($session->type === 'online' && $session->location)
+                                                                <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg font-bold text-[11px] hover:bg-emerald-100 transition-all">
+                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                                    <span>Buka Link Meeting</span>
+                                                                </a>
+                                                            @else
+                                                                <span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">🏢 {{ $session->location ?? 'Tatap Muka Langsung' }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Panel Kanan: Catatan Hasil Bimbingan Dosen (Feedback & Revisi Form) -->
+                                                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/90 dark:border-slate-700/80 shadow-2xs space-y-3" x-data="{ editingFeedback: false }">
+                                                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+                                                            <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                                                                <span>Hasil Bimbingan Dosen</span>
+                                                            </span>
+                                                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) && ($session->status === 'completed' || $session->feedback))
+                                                                <button type="button" 
+                                                                        @click="editingFeedback = !editingFeedback" 
+                                                                        class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                                                    <span x-text="editingFeedback ? 'Batal' : 'Ubah Catatan'">Ubah Catatan</span>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+
+                                                        @if($session->feedback && $session->status === 'completed')
+                                                            <div x-show="!editingFeedback" class="space-y-2">
+                                                                <p class="text-slate-800 dark:text-slate-200 font-medium leading-relaxed whitespace-pre-line text-xs bg-orange-50/40 dark:bg-orange-950/20 p-3 rounded-lg border border-orange-200/60 dark:border-orange-900/40">
+                                                                    {{ $session->feedback }}
+                                                                </p>
+                                                                @if($session->feedback_document_url)
+                                                                    <a href="{{ $session->feedback_document_url }}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                        <span>Dokumen Koreksi / Feedback Dosen</span>
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                        @elseif($session->status !== 'completed')
+                                                            <div x-show="!editingFeedback" class="space-y-2">
+                                                                <p class="text-slate-400 dark:text-slate-500 italic text-xs">
+                                                                    Sesi bimbingan belum diselesaikan. Anda dapat langsung mengisikan catatan hasil bimbingan di bawah ini.
+                                                                </p>
+                                                            </div>
+                                                        @endif
+
+                                                        <!-- Form Input / Edit Feedback Langsung di Tempat -->
+                                                        @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
+                                                            <div x-show="editingFeedback || {{ $session->status !== 'completed' ? 'true' : 'false' }}" class="space-y-2">
+                                                                <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="space-y-2">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <input type="hidden" name="status" value="completed">
+                                                                    <div>
+                                                                        <textarea name="feedback" 
+                                                                                  rows="2" 
+                                                                                  required 
+                                                                                  placeholder="Ketik catatan hasil bimbingan & arahan revisi..." 
+                                                                                  class="w-full text-xs rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 p-2 shadow-2xs">{{ $session->feedback }}</textarea>
+                                                                    </div>
+                                                                    <div>
+                                                                        <input type="url" 
+                                                                               name="feedback_document_url" 
+                                                                               value="{{ $session->feedback_document_url }}" 
+                                                                               placeholder="Link Dokumen Google Drive (opsional)..." 
+                                                                               class="w-full text-[11px] rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 px-2.5 py-1.5 shadow-2xs">
+                                                                    </div>
+                                                                    <div class="flex items-center justify-end gap-2 pt-1">
+                                                                        @if($session->status === 'completed')
+                                                                            <button type="button" @click="editingFeedback = false" class="px-2.5 py-1 text-slate-500 dark:text-slate-400 hover:text-slate-700 text-[10px] font-bold cursor-pointer">Batal</button>
+                                                                            <button type="submit" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
+                                                                        @else
+                                                                            <button type="submit" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5">
+                                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                                                <span>Simpan & Selesaikan Sesi</span>
+                                                                            </button>
+                                                                        @endif
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- 2. CARDS VIEW -->
                 <div x-show="viewMode === 'cards'" x-transition>
                     <!-- Sub-Toolbar: Navigation Tabs & Real-Time Actions -->
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-200 dark:border-slate-800">
@@ -656,105 +1260,6 @@
                     </div>
                     @endif
 
-                    @php
-                        // 1. Grouped by Mentoring Session
-                        $sessionsBySessionGroup = $sessions->groupBy(function($s) {
-                            return ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d_H:i') . '_' . md5($s->topic ?? '');
-                        });
-
-                        // 2. Grouped by Student (Original)
-                        $groupedSessions = $sessions->groupBy(function($session) {
-                            return $session->thesis->student->name ?? 'Mahasiswa';
-                        });
-
-                        $groupCountMap = [];
-                        foreach($sessions as $s) {
-                            $key = ($s->dosen_id ?? '0') . '_' . $s->scheduled_at->format('Y-m-d H:i');
-                            $groupCountMap[$key] = ($groupCountMap[$key] ?? 0) + 1;
-                        }
-
-                        // 3. Chronological Timeline Sections for "Per Sesi" view
-                        $timelineSections = [];
-                        if ($activeTab === 'active') {
-                            $todayGroups = collect();
-                            $tomorrowGroups = collect();
-                            $upcomingGroups = collect();
-                            $overdueGroups = collect();
-
-                            foreach($sessionsBySessionGroup as $gKey => $sessionItems) {
-                                $first = $sessionItems->first();
-                                $scheduledAt = $first->scheduled_at;
-                                $isOverdue = $scheduledAt->isPast() && !$scheduledAt->isToday() && $sessionItems->contains(fn($s) => $s->status !== 'completed' || $s->is_absent);
-
-                                if ($scheduledAt->isToday()) {
-                                    $todayGroups->put($gKey, $sessionItems);
-                                } elseif ($scheduledAt->isTomorrow()) {
-                                    $tomorrowGroups->put($gKey, $sessionItems);
-                                } elseif ($isOverdue) {
-                                    $overdueGroups->put($gKey, $sessionItems);
-                                } else {
-                                    $upcomingGroups->put($gKey, $sessionItems);
-                                }
-                            }
-
-                            // Sort chronologically
-                            $upcomingGroups = $upcomingGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
-                            $todayGroups = $todayGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
-                            $tomorrowGroups = $tomorrowGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
-                            $overdueGroups = $overdueGroups->sortByDesc(fn($items) => $items->first()->scheduled_at->timestamp);
-
-                            if ($todayGroups->isNotEmpty()) {
-                                $timelineSections[] = [
-                                    'id' => 'today',
-                                    'title' => 'Hari Ini',
-                                    'subtitle' => now()->locale('id')->translatedFormat('l, d F Y'),
-                                    'badge' => $todayGroups->count() . ' Sesi',
-                                    'badge_class' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                                    'groups' => $todayGroups,
-                                ];
-                            }
-                            if ($tomorrowGroups->isNotEmpty()) {
-                                $timelineSections[] = [
-                                    'id' => 'tomorrow',
-                                    'title' => 'Besok',
-                                    'subtitle' => now()->addDay()->locale('id')->translatedFormat('l, d F Y'),
-                                    'badge' => $tomorrowGroups->count() . ' Sesi',
-                                    'badge_class' => 'bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-                                    'groups' => $tomorrowGroups,
-                                ];
-                            }
-                            if ($upcomingGroups->isNotEmpty()) {
-                                $timelineSections[] = [
-                                    'id' => 'upcoming',
-                                    'title' => 'Jadwal Mendatang',
-                                    'subtitle' => 'Sesi bimbingan yang akan datang',
-                                    'badge' => $upcomingGroups->count() . ' Sesi',
-                                    'badge_class' => 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
-                                    'groups' => $upcomingGroups,
-                                ];
-                            }
-                            if ($overdueGroups->isNotEmpty()) {
-                                $timelineSections[] = [
-                                    'id' => 'overdue',
-                                    'title' => 'Perlu Tindakan Dosen (Melewati Jadwal)',
-                                    'subtitle' => 'Sesi telah lewat waktu dan perlu diberi catatan atau diselesaikan',
-                                    'badge' => $overdueGroups->count() . ' Sesi Perlu Ditinjau',
-                                    'badge_class' => 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-                                    'groups' => $overdueGroups,
-                                ];
-                            }
-                        } else {
-                            // Riwayat Selesai
-                            $timelineSections[] = [
-                                'id' => 'history',
-                                'title' => 'Riwayat Bimbingan Selesai',
-                                'subtitle' => 'Seluruh sesi bimbingan mahasiswa yang telah selesai',
-                                'badge' => $sessionsBySessionGroup->count() . ' Sesi Selesai',
-                                'badge_class' => 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
-                                'groups' => $sessionsBySessionGroup,
-                            ];
-                        }
-                    @endphp
 
                     @if($sessions->isEmpty())
                         @if($activeTab === 'history')
