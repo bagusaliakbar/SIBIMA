@@ -149,50 +149,167 @@
 
             <!-- Logbook (Riwayat Selesai) -->
             <div class="lg:col-span-2 space-y-4">
-                <!-- Filter Pembimbing Tabs -->
-                <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 p-3 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
-                    <div class="flex items-center gap-1.5 flex-wrap text-xs">
-                        <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mr-1">Filter:</span>
-                        
-                        <!-- Semua Pembimbing -->
-                        <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'all']) }}" 
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                            <span>Semua Pembimbing</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600' }}">
-                                {{ $totalCompletedCount ?? $completedSessions->count() }}
-                            </span>
-                        </a>
+                <!-- Filter Pembimbing Toolbar (Dropdown) -->
+                @php
+                    $isDosenFiltered = in_array($filterDosen ?? 'all', ['p1', 'p2']);
+                    $currentDosenLabel = 'Semua Pembimbing';
+                    $currentDosenBadge = $totalCompletedCount ?? $completedSessions->count();
+                    $activeColorClass = 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700';
 
-                        <!-- Pembimbing 1 -->
-                        @if($thesis->pembimbing1)
-                            <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'p1']) }}" 
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filterDosen ?? '') === 'p1' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-                                <span>P1: {{ Str::limit($thesis->pembimbing1->name, 18) }}</span>
-                                @if($thesis->pembimbing1_id === Auth::id())
-                                    <span class="text-[10px] {{ ($filterDosen ?? '') === 'p1' ? 'text-indigo-200' : 'text-indigo-500' }} font-bold">(Anda)</span>
-                                @endif
-                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? '') === 'p1' ? 'bg-white/20 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600' }}">
-                                    {{ $p1SessionCount ?? 0 }}
-                                </span>
-                            </a>
-                        @endif
+                    if (($filterDosen ?? '') === 'p1' && $thesis->pembimbing1) {
+                        $currentDosenLabel = 'P1: ' . Str::limit($thesis->pembimbing1->name, 22) . ($thesis->pembimbing1_id === Auth::id() ? ' (Anda)' : '');
+                        $currentDosenBadge = $p1SessionCount ?? 0;
+                        $activeColorClass = 'bg-indigo-50/90 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-600/60 text-indigo-700 dark:text-indigo-300 ring-2 ring-indigo-500/10';
+                    } elseif (($filterDosen ?? '') === 'p2' && $thesis->pembimbing2) {
+                        $currentDosenLabel = 'P2: ' . Str::limit($thesis->pembimbing2->name, 22) . ($thesis->pembimbing2_id === Auth::id() ? ' (Anda)' : '');
+                        $currentDosenBadge = $p2SessionCount ?? 0;
+                        $activeColorClass = 'bg-purple-50/90 dark:bg-purple-950/40 border-purple-300 dark:border-purple-600/60 text-purple-700 dark:text-purple-300 ring-2 ring-purple-500/10';
+                    }
+                @endphp
 
-                        <!-- Pembimbing 2 -->
-                        @if($thesis->pembimbing2)
-                            <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'p2']) }}" 
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filterDosen ?? '') === 'p2' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
-                                <span>P2: {{ Str::limit($thesis->pembimbing2->name, 18) }}</span>
-                                @if($thesis->pembimbing2_id === Auth::id())
-                                    <span class="text-[10px] {{ ($filterDosen ?? '') === 'p2' ? 'text-purple-200' : 'text-purple-500' }} font-bold">(Anda)</span>
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 p-3 px-4 flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap relative z-20">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 border border-orange-200/70 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20 flex items-center justify-center shrink-0 shadow-2xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                        </div>
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            Filter:
+                        </span>
+
+                        <!-- Alpine.js Dropdown Menu -->
+                        <div class="relative" x-data="{ openDosenDropdown: false }" @click.outside="openDosenDropdown = false">
+                            <button type="button" 
+                                    @click="openDosenDropdown = !openDosenDropdown"
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer shadow-2xs {{ $activeColorClass }}"
+                                    aria-haspopup="true"
+                                    :aria-expanded="openDosenDropdown">
+                                @if(($filterDosen ?? '') === 'p1')
+                                    <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
+                                @elseif(($filterDosen ?? '') === 'p2')
+                                    <span class="w-2 h-2 rounded-full bg-purple-500 shrink-0"></span>
+                                @else
+                                    <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
                                 @endif
-                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? '') === 'p2' ? 'bg-white/20 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600' }}">
-                                    {{ $p2SessionCount ?? 0 }}
+                                
+                                <span>{{ $currentDosenLabel }}</span>
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filterDosen ?? '') === 'p1' ? 'bg-indigo-200/80 dark:bg-indigo-500/30 text-indigo-800 dark:text-indigo-200' : (($filterDosen ?? '') === 'p2' ? 'bg-purple-200/80 dark:bg-purple-500/30 text-purple-800 dark:text-purple-200' : 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400') }}">
+                                    {{ $currentDosenBadge }}
                                 </span>
-                            </a>
-                        @endif
+
+                                <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="openDosenDropdown ? 'rotate-180 text-orange-600 dark:text-orange-400' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Panel -->
+                            <div x-show="openDosenDropdown"
+                                 x-cloak
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                 class="absolute left-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
+                                 style="display: none;">
+                                
+                                <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                    <span>Pilih Pembimbing</span>
+                                    @if($isDosenFiltered)
+                                        <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'all']) }}" 
+                                           class="text-orange-600 hover:text-orange-700 dark:text-orange-400 font-bold lowercase hover:underline">
+                                            Reset
+                                        </a>
+                                    @endif
+                                </div>
+
+                                <div class="py-1 space-y-0.5">
+                                    <!-- 1. Semua Pembimbing -->
+                                    <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'all']) }}"
+                                       class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2.5 h-2.5 rounded-full {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500' : 'bg-slate-300 dark:bg-slate-600' }} shrink-0"></span>
+                                            <span>Semua Pembimbing</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                {{ $totalCompletedCount ?? $completedSessions->count() }}
+                                            </span>
+                                            @if(($filterDosen ?? 'all') === 'all')
+                                                <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                            @endif
+                                        </div>
+                                    </a>
+
+                                    <!-- 2. Pembimbing 1 -->
+                                    @if($thesis->pembimbing1)
+                                        <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'p1']) }}"
+                                           class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ ($filterDosen ?? '') === 'p1' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0"></span>
+                                                <div class="truncate">
+                                                    <span class="font-bold text-indigo-600 dark:text-indigo-400">P1:</span> 
+                                                    <span>{{ $thesis->pembimbing1->name }}</span>
+                                                    @if($thesis->pembimbing1_id === Auth::id())
+                                                        <span class="ml-1 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded-md">(Anda)</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filterDosen ?? '') === 'p1' ? 'bg-indigo-200/80 dark:bg-indigo-500/30 text-indigo-800 dark:text-indigo-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                    {{ $p1SessionCount ?? 0 }}
+                                                </span>
+                                                @if(($filterDosen ?? '') === 'p1')
+                                                    <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    @endif
+
+                                    <!-- 3. Pembimbing 2 -->
+                                    @if($thesis->pembimbing2)
+                                        <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'p2']) }}"
+                                           class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ ($filterDosen ?? '') === 'p2' ? 'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shrink-0"></span>
+                                                <div class="truncate">
+                                                    <span class="font-bold text-purple-600 dark:text-purple-400">P2:</span> 
+                                                    <span>{{ $thesis->pembimbing2->name }}</span>
+                                                    @if($thesis->pembimbing2_id === Auth::id())
+                                                        <span class="ml-1 text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-950/60 px-1.5 py-0.5 rounded-md">(Anda)</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filterDosen ?? '') === 'p2' ? 'bg-purple-200/80 dark:bg-purple-500/30 text-purple-800 dark:text-purple-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                    {{ $p2SessionCount ?? 0 }}
+                                                </span>
+                                                @if(($filterDosen ?? '') === 'p2')
+                                                    <svg class="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Right Side: Reset or Filter Active Indicator -->
+                    @if($isDosenFiltered)
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 hidden sm:inline">
+                                Menampilkan: <strong class="text-slate-700 dark:text-slate-200">{{ ($filterDosen ?? '') === 'p1' ? 'Pembimbing 1' : 'Pembimbing 2' }}</strong>
+                            </span>
+                            <a href="{{ route('theses.logbooks', ['thesis' => $thesis->id, 'dosen' => 'all']) }}" 
+                               class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 transition-all shadow-2xs">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>Reset Filter</span>
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
