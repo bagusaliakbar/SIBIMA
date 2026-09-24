@@ -704,10 +704,21 @@
                                         <div class="space-y-2 min-w-0 flex-1">
                                             <div class="flex items-center gap-2.5 flex-wrap">
                                                 <!-- Tanggal & Jam -->
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500 text-white text-xs font-black shadow-xs shadow-orange-500/20">
-                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                    <span>{{ $firstSession->scheduled_at->locale('id')->translatedFormat('d M Y') }} • {{ $firstSession->scheduled_at->format('H:i') }} WIB</span>
-                                                </span>
+                                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700/80 text-slate-800 dark:text-slate-100 border border-slate-200/90 dark:border-slate-600/80 shadow-2xs text-xs">
+                                                    <div class="flex items-center gap-1.5 font-extrabold text-slate-900 dark:text-white">
+                                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        <span>{{ $firstSession->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
+                                                    </div>
+                                                    <span class="text-slate-300 dark:text-slate-500 font-light">•</span>
+                                                    <div class="flex items-center gap-1 font-semibold text-slate-600 dark:text-slate-300">
+                                                        <svg class="w-3 h-3 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                        </svg>
+                                                        <span>{{ $firstSession->scheduled_at->format('H:i') }} WIB</span>
+                                                    </div>
+                                                </div>
 
                                                 @if($firstSession->scheduled_at->isToday())
                                                     <span class="px-2.5 py-1 rounded-lg bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[10px] font-black uppercase tracking-wider border border-red-200 dark:border-red-800/80 animate-pulse">
@@ -1239,7 +1250,7 @@
                                                                 </span>
                                                             @endif
                                                             <div class="space-y-0.5">
-                                                                <p class="text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</p>
+                                                                <p class="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</p>
                                                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $session->scheduled_at->format('H:i') }} WIB</p>
                                                             </div>
                                                         </label>
@@ -1623,12 +1634,12 @@
                 <!-- Modal Body -->
                 <div class="p-6 space-y-4 text-xs">
                     <!-- Date & Time Banner -->
-                    <div class="flex items-center justify-between p-3.5 bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200/60 dark:border-orange-900/40 rounded-xl">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <div class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl">
+                        <div class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 text-slate-400 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <div>
-                                <p class="font-black text-slate-800 dark:text-slate-200" x-text="selectedEvent?.date"></p>
-                                <p class="text-[10px] text-orange-600 dark:text-orange-400 font-bold" x-text="selectedEvent?.time"></p>
+                                <p class="font-extrabold text-slate-800 dark:text-slate-200" x-text="selectedEvent?.date"></p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold" x-text="selectedEvent?.time"></p>
                             </div>
                         </div>
                         <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider"
@@ -1997,10 +2008,10 @@
                                     <div class="p-4 sm:px-5 bg-white dark:bg-slate-800/90 border-b border-slate-200/80 dark:border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div class="space-y-1.5 min-w-0 flex-1">
                                             <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 text-xs font-black border border-orange-200 dark:border-orange-800/70 shadow-2xs">
-                                                    <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs">
+                                                    <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                                     <span x-text="session.scheduled_date_formatted + ' • ' + session.scheduled_time_formatted"></span>
-                                                </span>
+                                                </div>
 
                                                 <template x-if="session.is_today">
                                                     <span class="px-2 py-0.5 rounded-md bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[10px] font-black uppercase tracking-wider border border-red-200 dark:border-red-800/80 animate-pulse">
