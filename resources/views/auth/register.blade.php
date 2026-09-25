@@ -1,14 +1,20 @@
 <x-guest-layout>
     @section('title', 'Pendaftaran Akun')
 
-    <div class="bg-white dark:bg-slate-800/95 rounded-3xl p-7 sm:p-9 border border-slate-200/80 dark:border-slate-700/80 shadow-xl shadow-slate-200/40 dark:shadow-black/40 space-y-6">
-        <!-- Header Section -->
-        <div class="space-y-1.5">
-            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Pendaftaran Akun</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">Lengkapi data diri Anda untuk mendaftar akun di SIBIMA</p>
+    <!-- Metronic Clean Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Pendaftaran Akun
+        </h1>
+        <div class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium mt-1.5">
+            Sudah memiliki akun? 
+            <a href="{{ route('login') }}" class="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-bold transition-colors">
+                Masuk ke Akun
+            </a>
         </div>
+    </div>
 
-        <form method="POST" action="{{ route('register') }}" class="space-y-4" x-data="{ role: '{{ old('role', 'mahasiswa') }}', showPassword: false, showPasswordConfirm: false }">
+    <form method="POST" action="{{ route('register') }}" class="space-y-4" x-data="{ role: '{{ old('role', 'mahasiswa') }}', showPassword: false, showPasswordConfirm: false }">
         @csrf
 
         <!-- Pilihan Role -->
@@ -163,5 +169,4 @@
             </p>
         </div>
     </form>
-</div>
 </x-guest-layout>
