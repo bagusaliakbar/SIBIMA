@@ -1,17 +1,40 @@
 <x-guest-layout>
     @section('title', 'Pendaftaran Akun')
 
-    <!-- Metronic Clean Header -->
-    <div class="mb-6">
-        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Pendaftaran Akun
-        </h1>
-        <div class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium mt-1.5">
-            Sudah memiliki akun? 
-            <a href="{{ route('login') }}" class="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-bold transition-colors">
-                Masuk ke Akun
-            </a>
+    <!-- Card Brand Header & Theme Switcher (Integrated safely inside card) -->
+    <div class="flex items-center justify-between pb-5 mb-5 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200/70 dark:border-orange-900/40 flex items-center justify-center p-1.5 shadow-xs">
+                <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h1 class="text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                    SIBIMA <span class="text-orange-600 dark:text-orange-400">FASILKOM</span>
+                </h1>
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                    Universitas Subang
+                </p>
+            </div>
         </div>
+
+        <!-- Integrated Theme Toggle (Clean, no floating, no overlapping) -->
+        <button type="button" 
+                @click="darkMode = !darkMode" 
+                class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200/80 dark:border-slate-700 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+                :title="darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'">
+            <svg x-show="darkMode" x-cloak class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg x-show="!darkMode" class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <div class="mb-5">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Pendaftaran Akun
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            Lengkapi data di bawah ini untuk membuat akun baru.
+        </p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="space-y-4" x-data="{ role: '{{ old('role', 'mahasiswa') }}', showPassword: false, showPasswordConfirm: false }">
