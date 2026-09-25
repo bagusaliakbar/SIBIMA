@@ -59,7 +59,7 @@
                                     <span class="ml-1 text-[10px] font-bold text-indigo-500">(Anda)</span>
                                 @endif
                             </div>
-                            <span class="text-[11px] font-semibold font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ $p1SessionCount ?? 0 }} Sesi</span>
+                            <span class="text-[11px] font-semibold font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ $p1SessionCount ?? 0 }} / 8 Sesi</span>
                         </div>
                         <div class="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center justify-between gap-3">
                             <div class="flex items-center">
@@ -69,7 +69,7 @@
                                     <span class="ml-1 text-[10px] font-bold text-purple-500">(Anda)</span>
                                 @endif
                             </div>
-                            <span class="text-[11px] font-semibold font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ $p2SessionCount ?? 0 }} Sesi</span>
+                            <span class="text-[11px] font-semibold font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ $p2SessionCount ?? 0 }} / 8 Sesi</span>
                         </div>
                     </div>
                 </div>

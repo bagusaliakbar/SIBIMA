@@ -34,6 +34,25 @@
                 </div>
 
                 <!-- Dosen Pembimbing & Progress Grid -->
+                @php
+                    $targetPerDosen = 8;
+                    $targetTotal = 16;
+
+                    // Perhitungan Pembimbing 1
+                    $progressP1 = min(100, round(($countP1 / $targetPerDosen) * 100));
+                    $isP1Reached = $countP1 >= $targetPerDosen;
+                    $remainingP1 = max(0, $targetPerDosen - $countP1);
+
+                    // Perhitungan Pembimbing 2
+                    $progressP2 = min(100, round(($countP2 / $targetPerDosen) * 100));
+                    $isP2Reached = $countP2 >= $targetPerDosen;
+                    $remainingP2 = max(0, $targetPerDosen - $countP2);
+
+                    // Perhitungan Total (16 sesi: 8x P1 & 8x P2)
+                    $progressPercent = min(100, round(($totalCompletedCount / $targetTotal) * 100));
+                    $isTargetReached = ($countP1 >= $targetPerDosen && $countP2 >= $targetPerDosen);
+                    $remainingTotal = max(0, $targetTotal - $totalCompletedCount);
+                @endphp
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-2">
                     <!-- Pembimbing 1 -->
                     <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700 flex flex-col justify-between gap-4">
@@ -42,13 +61,13 @@
                                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider border border-indigo-200 dark:border-indigo-800">
                                     Pembimbing 1
                                 </span>
-                                <span class="text-xs font-black text-indigo-600 dark:text-indigo-400">
-                                    {{ $countP1 }}x Bimbingan
+                                <span class="text-xs font-black {{ $isP1Reached ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400' }}">
+                                    {{ $countP1 }} / {{ $targetPerDosen }} Sesi
                                 </span>
                             </div>
 
                             @if($thesis->pembimbing1)
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 mb-3">
                                     <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
                                         <img src="{{ $thesis->pembimbing1->avatar_url }}" alt="{{ $thesis->pembimbing1->name }}" class="w-full h-full object-cover">
                                     </div>
@@ -58,8 +77,21 @@
                                     </div>
                                 </div>
                             @else
-                                <p class="text-xs text-slate-400 italic">Belum ditentukan</p>
+                                <p class="text-xs text-slate-400 italic mb-3">Belum ditentukan</p>
                             @endif
+
+                            <!-- Mini Progress Bar P1 -->
+                            <div class="space-y-1">
+                                <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: {{ $progressP1 }}%"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                    <span>Target: 8 Sesi</span>
+                                    <span class="{{ $isP1Reached ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-300 font-semibold' }}">
+                                        {{ $isP1Reached ? '✓ Target Terpenuhi' : ($remainingP1 . ' sesi lagi') }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- ACC Badges P1 -->
@@ -93,13 +125,13 @@
                                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-wider border border-purple-200 dark:border-purple-800">
                                     Pembimbing 2
                                 </span>
-                                <span class="text-xs font-black text-purple-600 dark:text-purple-400">
-                                    {{ $countP2 }}x Bimbingan
+                                <span class="text-xs font-black {{ $isP2Reached ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400' }}">
+                                    {{ $countP2 }} / {{ $targetPerDosen }} Sesi
                                 </span>
                             </div>
 
                             @if($thesis->pembimbing2)
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 mb-3">
                                     <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
                                         <img src="{{ $thesis->pembimbing2->avatar_url }}" alt="{{ $thesis->pembimbing2->name }}" class="w-full h-full object-cover">
                                     </div>
@@ -109,8 +141,21 @@
                                     </div>
                                 </div>
                             @else
-                                <p class="text-xs text-slate-400 italic">Belum ditentukan</p>
+                                <p class="text-xs text-slate-400 italic mb-3">Belum ditentukan</p>
                             @endif
+
+                            <!-- Mini Progress Bar P2 -->
+                            <div class="space-y-1">
+                                <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-purple-600 dark:bg-purple-500 h-full rounded-full transition-all duration-500" style="width: {{ $progressP2 }}%"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                    <span>Target: 8 Sesi</span>
+                                    <span class="{{ $isP2Reached ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-300 font-semibold' }}">
+                                        {{ $isP2Reached ? '✓ Target Terpenuhi' : ($remainingP2 . ' sesi lagi') }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- ACC Badges P2 -->
@@ -137,12 +182,7 @@
                         </div>
                     </div>
 
-                    <!-- Progress Keseluruhan -->
-                    @php
-                        $targetSessions = 8;
-                        $progressPercent = min(100, round(($totalCompletedCount / $targetSessions) * 100));
-                        $isTargetReached = $totalCompletedCount >= $targetSessions;
-                    @endphp
+                    <!-- Progress Keseluruhan (Target 16 Sesi) -->
                     <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-orange-200/80 dark:border-orange-900/40 flex flex-col justify-between gap-3">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-2">
@@ -150,7 +190,7 @@
                                     Total Sesi Bimbingan
                                 </span>
                                 <span class="text-xs font-black text-slate-900 dark:text-slate-100">
-                                    {{ $totalCompletedCount }} / {{ $targetSessions }} Sesi
+                                    {{ $totalCompletedCount }} / {{ $targetTotal }} Sesi
                                 </span>
                             </div>
 
@@ -165,17 +205,29 @@
                                     {{ $progressPercent }}% {{ $isTargetReached ? '(Target Terpenuhi)' : '' }}
                                 </span>
                             </div>
+
+                            <!-- Rincian P1 & P2 Badges -->
+                            <div class="grid grid-cols-2 gap-2 mt-2.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px]">
+                                <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50">
+                                    <span class="font-bold text-indigo-700 dark:text-indigo-300">P1:</span>
+                                    <span class="font-black text-indigo-900 dark:text-indigo-100">{{ $countP1 }}/8 Sesi</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-purple-50/70 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50">
+                                    <span class="font-bold text-purple-700 dark:text-purple-300">P2:</span>
+                                    <span class="font-black text-purple-900 dark:text-purple-100">{{ $countP2 }}/8 Sesi</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="pt-3 border-t border-slate-200/80 dark:border-slate-700 text-[10px] text-slate-600 dark:text-slate-300 font-medium">
+                        <div class="pt-2.5 border-t border-slate-200/80 dark:border-slate-700 text-[10px] text-slate-600 dark:text-slate-300 font-medium">
                             @if($isTargetReached)
                                 <span class="text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                    Syarat minimal bimbingan untuk mendaftar seminar/sidang telah terpenuhi.
+                                    Target 16 sesi bimbingan (8x P1 & 8x P2) telah terpenuhi.
                                 </span>
                             @else
                                 <span class="text-slate-500 dark:text-slate-400">
-                                    Tersisa <strong>{{ max(0, $targetSessions - $totalCompletedCount) }} sesi lagi</strong> untuk memenuhi target bimbingan.
+                                    Tersisa <strong>{{ $remainingTotal }} sesi lagi</strong> untuk target 16 sesi (8x P1 & 8x P2).
                                 </span>
                             @endif
                         </div>
