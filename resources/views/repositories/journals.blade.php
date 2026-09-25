@@ -18,7 +18,7 @@
                     <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
                         Eksplorasi Jurnal Ilmiah <span class="text-orange-600 dark:text-orange-400 font-black">Open Access</span>
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-4xl">
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed w-full">
                         Cari artikel jurnal nasional & internasional langsung dari SIBIMA. Tersedia tautan unduh naskah PDF lengkap gratis (*Full-Text*) dan salin sitasi otomatis dalam format APA, IEEE, serta BibTeX untuk skripsi Anda.
                     </p>
                 </div>

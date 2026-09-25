@@ -14,15 +14,10 @@
         <!-- HERO BANNER & SEARCH SECTION -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-6 w-full">
             <div class="space-y-3">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800/80 text-orange-700 dark:text-orange-300 text-xs font-bold">
-                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
                 <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-white">
                     Katalog Buku Teks & E-Book <span class="text-orange-600 dark:text-orange-400 font-black">Sistem Informasi</span>
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-4xl">
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed w-full">
                     Koleksi buku teks akademik, monograf ilmiah, dan buku referensi komprehensif untuk mahasiswa dan dosen FASILKOM. Terhubung langsung dengan <strong>Open Library (Internet Archive)</strong>, <strong>DOAB (Directory of Open Access Books)</strong>, dan <strong>Google Books</strong> untuk membaca online secara gratis serta sitasi siap pakai.
                 </p>
             </div>
