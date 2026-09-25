@@ -57,47 +57,50 @@
             }
         </style>
     </head>
-    <body class="font-sans text-slate-800 dark:text-slate-100 antialiased bg-[#f5f7fa] dark:bg-[#0f1117] min-h-screen flex flex-col justify-between transition-colors duration-200">
+    <body class="font-sans text-slate-800 dark:text-slate-100 antialiased bg-[#f5f7fa] dark:bg-[#0f1117] min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 transition-colors duration-200 relative">
         
-        <!-- Top Navigation / Brand Bar (Metronic style) -->
-        <header class="w-full px-6 py-5 flex items-center justify-between max-w-7xl mx-auto">
-            <!-- Brand Logo -->
-            <a href="{{ route('login') }}" class="flex items-center gap-3 group">
-                <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-9 h-9 object-contain group-hover:scale-105 transition-transform">
-                <div class="leading-tight">
-                    <span class="block text-sm font-extrabold tracking-tight text-slate-900 dark:text-white">SIBIMA</span>
-                    <span class="block text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">FASILKOM UNSUB</span>
-                </div>
-            </a>
-
-            <!-- Metronic Style Theme Switcher -->
+        <!-- Floating Theme Switcher at Top Right (Metronic Style) -->
+        <div class="fixed top-5 right-5 z-50">
             <button type="button" 
                     @click="darkMode = !darkMode" 
-                    class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 shadow-2xs hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all cursor-pointer flex items-center gap-1.5"
+                    class="px-3 py-2 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 shadow-sm hover:shadow transition-all cursor-pointer flex items-center gap-2"
                     :title="darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'">
                 <svg x-show="darkMode" x-cloak class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 <svg x-show="!darkMode" class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                 <span class="text-xs font-semibold" x-text="darkMode ? 'Terang' : 'Gelap'"></span>
             </button>
-        </header>
+        </div>
 
-        <!-- Center Card Container (Metronic 8 Layout Style) -->
-        <main class="w-full flex-1 flex flex-col items-center justify-center p-4 sm:p-6 my-auto">
-            <div class="w-full {{ request()->routeIs('register') ? 'max-w-[560px]' : 'max-w-[440px]' }} bg-white dark:bg-[#181a20] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none p-7 sm:p-10 transition-all">
+        <!-- Center Auth Wrapper -->
+        <div class="w-full flex flex-col items-center justify-center my-auto py-8">
+            
+            <!-- Brand Header: Centered directly above card -->
+            <div class="mb-6 text-center">
+                <a href="{{ route('login') }}" class="inline-flex flex-col items-center group">
+                    <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-14 h-14 object-contain mb-2.5 drop-shadow-sm group-hover:scale-105 transition-transform duration-200">
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">SIBIMA</span>
+                    <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-0.5">Fasilitas Bimbingan Mahasiswa &bull; Fasilkom UNSUB</span>
+                </a>
+            </div>
+
+            <!-- Auth Card (Max Width Strictly Enforced via both classes and inline style) -->
+            <div class="w-full {{ request()->routeIs('register') ? 'max-w-xl' : 'max-w-md' }} bg-white dark:bg-[#181a20] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none p-7 sm:p-9 transition-all mx-auto"
+                 style="max-width: {{ request()->routeIs('register') ? '540px' : '440px' }};">
                 {{ $slot }}
             </div>
-        </main>
 
-        <!-- Metronic Style Clean Footer -->
-        <footer class="w-full py-6 px-6 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 dark:text-slate-500 font-medium border-t border-slate-200/60 dark:border-slate-800/60 mt-auto">
-            <div>
-                &copy; {{ date('Y') }} SIBIMA — Fakultas Ilmu Komputer, Universitas Subang.
+            <!-- Compact Footer below card -->
+            <div class="mt-7 text-center text-xs text-slate-400 dark:text-slate-500 font-medium space-y-1.5">
+                <div>
+                    &copy; {{ date('Y') }} SIBIMA &mdash; Fakultas Ilmu Komputer, Universitas Subang.
+                </div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Sistem Bimbingan Akademik Aktif</span>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span class="text-slate-500 dark:text-slate-400">Sistem Akademik Aktif</span>
-            </div>
-        </footer>
+
+        </div>
 
     </body>
 </html>
