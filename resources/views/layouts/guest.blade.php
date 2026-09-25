@@ -82,16 +82,16 @@
         </div>
 
         <!-- Center Auth Wrapper -->
-        <div class="w-full flex flex-col items-center justify-center my-auto py-4 sm:py-8 px-2 sm:px-4 relative z-10">
+        <div class="w-full flex flex-col items-center justify-center my-auto py-8 sm:py-12 px-4 sm:px-6 relative z-10">
             
-            <!-- Auth Card (Clean Elevated Surface, optimized for Mobile & Desktop) -->
-            <div class="w-full {{ request()->routeIs('register') ? 'max-w-xl' : 'max-w-md' }} bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xl shadow-slate-200/60 dark:shadow-black/70 p-6 sm:p-9 pb-7 sm:pb-9 transition-all mx-auto"
-                 style="max-width: {{ request()->routeIs('register') ? '540px' : '430px' }};">
+            <!-- Auth Card (Clean Elevated Surface, comfortable & substantial) -->
+            <div class="w-full {{ request()->routeIs('register') ? 'max-w-2xl' : 'max-w-lg' }} bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-2xl shadow-slate-200/70 dark:shadow-black/70 p-7 sm:p-11 pb-8 sm:pb-11 transition-all mx-auto"
+                 style="max-width: {{ request()->routeIs('register') ? '660px' : '520px' }};">
                 {{ $slot }}
             </div>
 
             <!-- Compact Footer below card with Theme Switcher -->
-            <div class="mt-6 sm:mt-7 text-center text-xs text-slate-400 dark:text-slate-500 font-medium space-y-1.5">
+            <div class="mt-7 sm:mt-8 text-center text-xs sm:text-sm text-slate-400 dark:text-slate-500 font-medium space-y-2">
                 <div class="flex items-center justify-center gap-3 flex-wrap">
                     <span>&copy; {{ date('Y') }} SIBIMA FASILKOM &mdash; Universitas Subang</span>
                     <span>&bull;</span>
