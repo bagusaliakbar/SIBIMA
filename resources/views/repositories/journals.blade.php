@@ -147,19 +147,6 @@
                                 <span class="tracking-wide">Cari Jurnal</span>
                             </button>
 
-                            <!-- Pintasan Google Scholar -->
-                            <a :href="searchQuery ? 'https://scholar.google.com/scholar?q=' + encodeURIComponent(searchQuery) : 'https://scholar.google.com'"
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               class="w-full sm:w-auto px-4 py-3.5 sm:py-4 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 shrink-0 whitespace-nowrap shadow-xs"
-                               title="Buka pencarian kata kunci ini langsung di Google Scholar (Tab Baru)">
-                                <svg class="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 10a8 8 0 0 1 7.162 3.44L24 9.5z"/>
-                                </svg>
-                                <span>Google Scholar</span>
-                                <svg class="w-3.5 h-3.5 text-blue-500 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                            </a>
-
                             @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly || $sintaFilter !== 'all' || $docType !== 'all')
                                 <a href="{{ route('repositories.journals', ['source' => $source]) }}" 
                                    class="w-full sm:w-auto px-5 sm:px-6 py-3.5 sm:py-4 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-2xl text-sm sm:text-base font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 shrink-0 whitespace-nowrap shadow-xs"
