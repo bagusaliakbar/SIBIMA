@@ -74,6 +74,186 @@
                     </div>
                 </div>
             </div>
+
+            @php
+                $isAdminOrKaprodi = in_array(Auth::user()->role, ['admin', 'kaprodi']);
+                $isP1 = Auth::id() === $thesis->pembimbing1_id;
+                $isP2 = Auth::id() === $thesis->pembimbing2_id;
+                $canToggleAcc = $isAdminOrKaprodi || $isP1 || $isP2;
+                
+                $hasAccUp = $isAdminOrKaprodi 
+                    ? ($thesis->acc_up_p1 && $thesis->acc_up_p2) 
+                    : ($isP1 ? $thesis->acc_up_p1 : ($isP2 ? $thesis->acc_up_p2 : false));
+                    
+                $hasAccSidang = $isAdminOrKaprodi 
+                    ? ($thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) 
+                    : ($isP1 ? $thesis->acc_sidang_p1 : ($isP2 ? $thesis->acc_sidang_p2 : false));
+
+                $isFullyAccUp = $thesis->acc_up_p1 && $thesis->acc_up_p2;
+                $isFullyAccSidang = $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2;
+            @endphp
+
+            <!-- Integrated ACC & Exam Readiness Bar -->
+            <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-100 dark:border-orange-900/40">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Status Persetujuan Ujian (ACC)</h4>
+                            @if($isFullyAccUp && $isFullyAccSidang)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                    Lengkap (UP & Sidang)
+                                </span>
+                            @elseif($isFullyAccUp)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                                    ACC Seminar Lengkap
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            @if($canToggleAcc)
+                                Berikan persetujuan bimbingan agar mahasiswa dapat mendaftar Seminar Proposal atau Sidang Skripsi.
+                            @else
+                                Status persetujuan dari kedua Dosen Pembimbing untuk pendaftaran Seminar dan Sidang.
+                            @endif
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    {{-- ACC SEMINAR (UP) GROUP --}}
+                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                        @if($canToggleAcc)
+                            <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline"
+                                onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar Proposal untuk {{ addslashes($thesis->student->name) }}?')">
+                                @csrf
+                                @if($isAdminOrKaprodi)
+                                    <input type="hidden" name="slot" value="all">
+                                @endif
+                                <button type="submit" 
+                                    title="{{ $hasAccUp ? 'Klik untuk membatalkan ACC Seminar' : 'Klik untuk memberikan ACC Seminar' }}"
+                                    class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-wide transition-all shadow-xs
+                                    {{ $hasAccUp 
+                                        ? 'bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900' 
+                                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800' }}">
+                                    <svg class="w-3.5 h-3.5 mr-1.5 {{ $hasAccUp ? 'text-white' : 'text-emerald-600 dark:text-emerald-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>ACC SEMINAR</span>
+                                </button>
+                            </form>
+                        @else
+                            <div class="inline-flex items-center px-3 py-1.5 text-[11px] font-bold rounded-lg {{ $isFullyAccUp ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700' }}">
+                                <svg class="w-3.5 h-3.5 mr-1.5 {{ $isFullyAccUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>ACC SEMINAR</span>
+                            </div>
+                        @endif
+
+                        {{-- Status P1 & P2 Indicator Dots with Tooltip --}}
+                        <div class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5">
+                            @if($isAdminOrKaprodi)
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline"
+                                    onsubmit="return confirm('Toggle ACC Seminar P1 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    @csrf
+                                    <input type="hidden" name="slot" value="p1">
+                                    <button type="submit" class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P1">
+                                        <span class="text-[10px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                        <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                    </button>
+                                </form>
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline"
+                                    onsubmit="return confirm('Toggle ACC Seminar P2 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    @csrf
+                                    <input type="hidden" name="slot" value="p2">
+                                    <button type="submit" class="flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P2">
+                                        <span class="text-[10px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                        <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                    </button>
+                                </form>
+                            @else
+                                <div class="flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                    <span class="text-[10px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                    <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                </div>
+                                <div class="flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                    <span class="text-[10px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                    <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- ACC SIDANG GROUP --}}
+                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                        @if($canToggleAcc)
+                            <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline"
+                                onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang Akhir untuk {{ addslashes($thesis->student->name) }}?')">
+                                @csrf
+                                @if($isAdminOrKaprodi)
+                                    <input type="hidden" name="slot" value="all">
+                                @endif
+                                <button type="submit" 
+                                    title="{{ $hasAccSidang ? 'Klik untuk membatalkan ACC Sidang' : 'Klik untuk memberikan ACC Sidang' }}"
+                                    class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-wide transition-all shadow-xs
+                                    {{ $hasAccSidang 
+                                        ? 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900' 
+                                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 dark:hover:bg-indigo-950/40 dark:hover:border-indigo-800' }}">
+                                    <svg class="w-3.5 h-3.5 mr-1.5 {{ $hasAccSidang ? 'text-white' : 'text-indigo-600 dark:text-indigo-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>ACC SIDANG</span>
+                                </button>
+                            </form>
+                        @else
+                            <div class="inline-flex items-center px-3 py-1.5 text-[11px] font-bold rounded-lg {{ $isFullyAccSidang ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700' }}">
+                                <svg class="w-3.5 h-3.5 mr-1.5 {{ $isFullyAccSidang ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>ACC SIDANG</span>
+                            </div>
+                        @endif
+
+                        {{-- Status P1 & P2 Indicator Dots with Tooltip --}}
+                        <div class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5">
+                            @if($isAdminOrKaprodi)
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline"
+                                    onsubmit="return confirm('Toggle ACC Sidang P1 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    @csrf
+                                    <input type="hidden" name="slot" value="p1">
+                                    <button type="submit" class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P1">
+                                        <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                        <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p1 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                    </button>
+                                </form>
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline"
+                                    onsubmit="return confirm('Toggle ACC Sidang P2 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    @csrf
+                                    <input type="hidden" name="slot" value="p2">
+                                    <button type="submit" class="flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P2">
+                                        <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                        <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p2 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                    </button>
+                                </form>
+                            @else
+                                <div class="flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                    <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                    <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p1 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                </div>
+                                <div class="flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                    <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                    <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p2 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
