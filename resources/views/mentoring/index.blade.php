@@ -1061,6 +1061,22 @@
                                             <!-- Aksi & Rincian Column -->
                                             <td class="py-3.5 px-4 text-right whitespace-nowrap" @click.stop>
                                                 <div class="inline-flex items-center gap-1.5 justify-end">
+                                                    @if($session->status === 'pending')
+                                                        @can('updateStatus', $session)
+                                                            <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="inline">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <input type="hidden" name="status" value="approved">
+                                                                <button type="submit" 
+                                                                        class="px-2.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center gap-1 hover:scale-[1.02] active:scale-95" 
+                                                                        title="Terima Pengajuan Jadwal Mahasiswa">
+                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                                    <span>Terima</span>
+                                                                </button>
+                                                            </form>
+                                                        @endcan
+                                                    @endif
+
                                                     <!-- Expand Button -->
                                                     <button type="button" 
                                                             @click="toggleExpand('{{ $session->id }}')" 
@@ -1089,7 +1105,7 @@
                                                                 data-is-group="{{ $isGroup ? '1' : '0' }}"
                                                                 data-group-count="{{ $groupCountMap[($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i')] ?? 1 }}"
                                                                 class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all cursor-pointer"
-                                                                title="Batalkan Sesi Bimbingan">
+                                                                title="{{ $session->status === 'pending' ? 'Tolak Pengajuan Jadwal' : 'Batalkan Sesi Bimbingan' }}">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                         </button>
                                                     @endcan
@@ -1193,7 +1209,52 @@
                                                             @endif
                                                         </div>
 
-                                                        @if($session->feedback && $session->status === 'completed')
+                                                        @if($session->status === 'pending')
+                                                            <div class="p-3.5 bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 rounded-xl space-y-2.5">
+                                                                <div class="flex items-center justify-between gap-2">
+                                                                    <span class="text-[11px] font-black text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                                                                        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                                        <span>Pengajuan Jadwal Menunggu Persetujuan</span>
+                                                                    </span>
+                                                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-200 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 uppercase">Pending</span>
+                                                                </div>
+                                                                <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                                                                    Mahasiswa mengajukan jadwal ini. Klik <strong>Terima Jadwal</strong> untuk mengonfirmasi jadwal bimbingan atau <strong>Tolak</strong> jika waktu tidak sesuai.
+                                                                </p>
+                                                                <div class="pt-1 flex items-center gap-2 flex-wrap">
+                                                                    @can('updateStatus', $session)
+                                                                        <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="inline">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <input type="hidden" name="status" value="approved">
+                                                                            <button type="submit" class="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 hover:scale-[1.02] active:scale-95">
+                                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                                                <span>Terima Jadwal</span>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endcan
+                                                                    @can('update', $session)
+                                                                        <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs">Ubah Jadwal</a>
+                                                                    @endcan
+                                                                    @can('delete', $session)
+                                                                        <button type="button" 
+                                                                                @click="openCancelModalFromEl($el)"
+                                                                                onclick="window.openCancelModalFromEl(this)"
+                                                                                data-session-id="{{ $session->id }}"
+                                                                                data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
+                                                                                data-student-npm="{{ e($student?->identifier ?? '-') }}"
+                                                                                data-topic="{{ e($session->topic) }}"
+                                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                data-is-group="{{ $isGroup ? '1' : '0' }}"
+                                                                                data-group-count="{{ $groupCountMap[($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i')] ?? 1 }}"
+                                                                                class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer">
+                                                                            Tolak Pengajuan
+                                                                        </button>
+                                                                    @endcan
+                                                                </div>
+                                                            </div>
+                                                        @elseif($session->feedback && $session->status === 'completed')
                                                             <div x-show="!editingFeedback" class="space-y-2">
                                                                 <p class="text-slate-800 dark:text-slate-200 font-medium leading-relaxed whitespace-pre-line text-xs bg-orange-50/40 dark:bg-orange-950/20 p-3 rounded-lg border border-orange-200/60 dark:border-orange-900/40">
                                                                     {{ $session->feedback }}
@@ -1205,7 +1266,7 @@
                                                                     </a>
                                                                 @endif
                                                             </div>
-                                                        @elseif($session->status !== 'completed')
+                                                        @elseif($session->status !== 'completed' && $session->status !== 'pending')
                                                             <div x-show="!editingFeedback" class="space-y-2">
                                                                 <p class="text-slate-400 dark:text-slate-500 italic text-xs">
                                                                     Sesi bimbingan belum diselesaikan. Anda dapat langsung mengisikan catatan hasil bimbingan di bawah ini.
@@ -1215,7 +1276,7 @@
 
                                                         <!-- Form Input / Edit Feedback Langsung di Tempat -->
                                                         @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                                                            <div x-show="editingFeedback || {{ $session->status !== 'completed' ? 'true' : 'false' }}" class="space-y-2">
+                                                            <div x-show="editingFeedback || {{ ($session->status !== 'completed' && $session->status !== 'pending') ? 'true' : 'false' }}" class="space-y-2">
                                                                 <form action="{{ route('mentoring-sessions.status', $session->id) }}" method="POST" class="space-y-2">
                                                                     @csrf
                                                                     @method('PATCH')
