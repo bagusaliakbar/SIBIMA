@@ -83,6 +83,19 @@
                             </svg>
                             <span>Academic Global</span>
                         </a>
+
+                        <!-- Google Scholar (Pintasan Langsung) -->
+                        <a :href="searchQuery ? 'https://scholar.google.com/scholar?q=' + encodeURIComponent(searchQuery) : 'https://scholar.google.com'"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap text-blue-600 dark:text-blue-400 bg-blue-50/80 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-800/80 shadow-2xs"
+                           title="Buka pencarian di Google Scholar (Tab Baru)">
+                            <svg class="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 10a8 8 0 0 1 7.162 3.44L24 9.5z"/>
+                            </svg>
+                            <span>Google Scholar</span>
+                            <svg class="w-3 h-3 text-blue-500 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
                     </div>
                 </div>
 
@@ -133,6 +146,19 @@
                                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 <span class="tracking-wide">Cari Jurnal</span>
                             </button>
+
+                            <!-- Pintasan Google Scholar -->
+                            <a :href="searchQuery ? 'https://scholar.google.com/scholar?q=' + encodeURIComponent(searchQuery) : 'https://scholar.google.com'"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="w-full sm:w-auto px-4 py-3.5 sm:py-4 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 shrink-0 whitespace-nowrap shadow-xs"
+                               title="Buka pencarian kata kunci ini langsung di Google Scholar (Tab Baru)">
+                                <svg class="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 10a8 8 0 0 1 7.162 3.44L24 9.5z"/>
+                                </svg>
+                                <span>Google Scholar</span>
+                                <svg class="w-3.5 h-3.5 text-blue-500 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
 
                             @if(!empty($query) || $yearFilter !== 'all' || $sort !== 'relevance' || !$openAccessOnly || $sintaFilter !== 'all' || $docType !== 'all')
                                 <a href="{{ route('repositories.journals', ['source' => $source]) }}" 
@@ -607,11 +633,24 @@
                         Coba gunakan kata kunci bahasa Inggris atau istilah yang lebih umum (misalnya gunakan "Sentiment Analysis" daripada kalimat panjang).
                     @endif
                 </p>
-                <div class="pt-2">
+                <div class="pt-2 flex flex-wrap items-center justify-center gap-2.5">
                     <a href="{{ route('repositories.journals', ['source' => $source]) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold shadow-sm shadow-orange-500/25 transition-all hover:scale-[1.02] active:scale-95">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                         <span>Reset Pencarian</span>
                     </a>
+                    @if(!empty($query))
+                        <a href="https://scholar.google.com/scholar?q={{ urlencode($query) }}" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-xl text-xs font-bold shadow-xs transition-all hover:scale-[1.02] active:scale-95"
+                           title="Cari kata kunci ini langsung di Google Scholar">
+                            <svg class="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 10a8 8 0 0 1 7.162 3.44L24 9.5z"/>
+                            </svg>
+                            <span>Cari "{{ Str::limit($query, 25) }}" di Google Scholar</span>
+                            <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    @endif
                 </div>
             </div>
         @else
@@ -963,6 +1002,19 @@
                                         <span>Sumber Asli Kampus</span>
                                     </a>
                                 @endif
+
+                                <!-- Cek di Google Scholar -->
+                                <a href="https://scholar.google.com/scholar?q={{ urlencode($item['title']) }}" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-800 transition-all shadow-2xs"
+                                   title="Cek sitasi dan artikel terkait di Google Scholar (Tab Baru)">
+                                    <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 10a8 8 0 0 1 7.162 3.44L24 9.5z"/>
+                                    </svg>
+                                    <span>Google Scholar</span>
+                                    <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                </a>
                             </div>
 
                             <!-- PDF Download CTA -->
