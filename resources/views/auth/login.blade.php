@@ -2,14 +2,14 @@
     @section('title', 'Masuk Akun')
 
     <!-- Clean Centered Brand Header -->
-    <div class="text-center mb-7 sm:mb-8">
+    <div class="text-center mb-6 sm:mb-8">
         <div class="inline-flex items-center justify-center mb-3">
             <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-xs">
         </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+        <h1 class="auth-title text-2xl sm:text-3xl font-black tracking-tight">
             SIBIMA
         </h1>
-        <p class="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-400 mt-1">
+        <p class="auth-subtitle text-xs sm:text-sm font-semibold mt-1">
             Fakultas Ilmu Komputer &bull; Universitas Subang
         </p>
     </div>
@@ -22,7 +22,7 @@
 
         <!-- Username / NPM / NIDN -->
         <div>
-            <label for="username" class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+            <label for="username" class="auth-label block text-xs sm:text-sm font-bold uppercase tracking-wider mb-2">
                 Username / NPM / NIDN
             </label>
             <div class="relative">
@@ -32,7 +32,7 @@
                     </svg>
                 </div>
                 <input id="username" type="text" name="username" value="{{ old('username') }}" required autofocus autocomplete="username" 
-                    class="block w-full pl-11 pr-4 py-3 sm:py-3.5 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 transition-all duration-200" 
+                    class="auth-input block w-full pl-11 pr-4 py-3 sm:py-3.5 rounded-xl text-sm sm:text-base font-medium transition-all duration-200" 
                     placeholder="Masukkan NPM, NIDN, atau Username">
             </div>
             <x-input-error :messages="$errors->get('username')" class="mt-1" />
@@ -41,7 +41,7 @@
         <!-- Password -->
         <div>
             <div class="flex justify-between items-center mb-2">
-                <label for="password" class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <label for="password" class="auth-label block text-xs sm:text-sm font-bold uppercase tracking-wider">
                     Password
                 </label>
             </div>
@@ -52,7 +52,7 @@
                     </svg>
                 </div>
                 <input id="password" :type="showPassword ? 'text' : 'password'" name="password" required autocomplete="current-password" 
-                    class="block w-full pl-11 pr-12 py-3 sm:py-3.5 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 transition-all duration-200" 
+                    class="auth-input block w-full pl-11 pr-12 py-3 sm:py-3.5 rounded-xl text-sm sm:text-base font-medium transition-all duration-200" 
                     placeholder="Masukkan password Anda">
                 
                 <!-- Toggle Password Button -->
@@ -60,7 +60,7 @@
                         class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none cursor-pointer"
                         title="Tampilkan / Sembunyikan Password">
                     <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                     <svg x-show="showPassword" x-cloak class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@
             <label for="remember_me" class="inline-flex items-center gap-2 cursor-pointer select-none">
                 <input id="remember_me" type="checkbox" name="remember" 
                        class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/20 bg-slate-50 dark:bg-slate-800 transition-all cursor-pointer">
-                <span class="font-medium text-slate-600 dark:text-slate-400">Ingat saya</span>
+                <span class="auth-label font-medium">Ingat saya</span>
             </label>
         </div>
 
@@ -93,8 +93,8 @@
         </div>
 
         <!-- Card Footer -->
-        <div class="pt-5 sm:pt-6 mt-6 sm:mt-7 border-t border-slate-100 dark:border-slate-800/80 text-center">
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+        <div class="auth-footer-border pt-5 sm:pt-6 mt-6 sm:mt-7 border-t text-center">
+            <p class="auth-footer-text text-xs sm:text-sm font-medium">
                 Belum memiliki akun? 
                 <a href="{{ route('register') }}" class="font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition-colors">
                     Daftar Sekarang
