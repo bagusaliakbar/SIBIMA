@@ -57,35 +57,42 @@
             }
         </style>
     </head>
-    <body class="font-sans text-slate-800 dark:text-slate-100 antialiased bg-[#f8fafc] dark:bg-[#090d16] min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 transition-colors duration-300 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
+    <body class="font-sans text-slate-800 dark:text-slate-100 antialiased bg-[#f8fafc] dark:bg-[#090d16] min-h-screen flex flex-col justify-center items-center p-3 sm:p-6 transition-colors duration-300 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
         
-        <!-- Tech Dot-Grid & Ambient Glow Background (Linear / Vercel Style) -->
+        <!-- Tech Dot-Grid & Ambient Glow Background (Guaranteed High-Res SVG Pattern) -->
         <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
             <!-- Ambient Glow Orb 1: SIBIMA Vibrant Orange (Upper Right) -->
-            <div class="absolute top-[5%] right-[10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-orange-500/25 via-amber-500/15 to-transparent dark:from-orange-500/20 dark:via-amber-500/10 dark:to-transparent blur-[120px] transform-gpu"></div>
+            <div class="absolute -top-20 -right-20 sm:top-0 sm:right-10 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-orange-500/25 dark:bg-orange-500/20 blur-3xl transform-gpu"></div>
             
             <!-- Ambient Glow Orb 2: Deep Cyber Blue/Indigo (Lower Left) -->
-            <div class="absolute bottom-[5%] left-[10%] w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-blue-600/20 via-indigo-500/15 to-transparent dark:from-blue-600/25 dark:via-indigo-600/15 dark:to-transparent blur-[130px] transform-gpu"></div>
+            <div class="absolute -bottom-20 -left-20 sm:bottom-0 sm:left-10 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-blue-600/20 dark:bg-indigo-600/25 blur-3xl transform-gpu"></div>
             
-            <!-- Subtle Center Ambient Glow (Behind Card) -->
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-400/5 dark:bg-orange-500/5 blur-[140px] transform-gpu"></div>
+            <!-- Subtle Center Ambient Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full bg-orange-400/10 dark:bg-orange-500/5 blur-3xl transform-gpu"></div>
 
-            <!-- Tech Dot-Grid Pattern with Soft Radial Fade Mask -->
-            <div class="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(rgba(255,255,255,0.16)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_75%_75%_at_50%_50%,#000_50%,transparent_100%)]"></div>
+            <!-- Crisp Tech Dot-Grid (Native SVG pattern: 100% reliable across all browsers & devices) -->
+            <svg class="absolute inset-0 w-full h-full text-slate-300 dark:text-slate-700/50 opacity-80 dark:opacity-60" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="tech-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="1.2" fill="currentColor" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#tech-dots)" />
+            </svg>
         </div>
 
         <!-- Center Auth Wrapper -->
-        <div class="w-full flex flex-col items-center justify-center my-auto py-8 relative z-10">
+        <div class="w-full flex flex-col items-center justify-center my-auto py-4 sm:py-8 px-2 sm:px-4 relative z-10">
             
-            <!-- Auth Card (Clean Elevated Surface) -->
-            <div class="w-full {{ request()->routeIs('register') ? 'max-w-xl' : 'max-w-md' }} bg-white/95 dark:bg-[#111827]/95 backdrop-blur-xl rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xl shadow-slate-200/60 dark:shadow-black/70 p-7 sm:p-10 transition-all mx-auto"
-                 style="max-width: {{ request()->routeIs('register') ? '560px' : '440px' }};">
+            <!-- Auth Card (Clean Elevated Surface, optimized for Mobile & Desktop) -->
+            <div class="w-full {{ request()->routeIs('register') ? 'max-w-xl' : 'max-w-md' }} bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xl shadow-slate-200/60 dark:shadow-black/70 p-6 sm:p-9 pb-7 sm:pb-9 transition-all mx-auto"
+                 style="max-width: {{ request()->routeIs('register') ? '540px' : '430px' }};">
                 {{ $slot }}
             </div>
 
             <!-- Compact Footer below card with Theme Switcher -->
-            <div class="mt-8 text-center text-xs text-slate-400 dark:text-slate-500 font-medium space-y-2">
-                <div class="flex items-center justify-center gap-3">
+            <div class="mt-6 sm:mt-7 text-center text-xs text-slate-400 dark:text-slate-500 font-medium space-y-1.5">
+                <div class="flex items-center justify-center gap-3 flex-wrap">
                     <span>&copy; {{ date('Y') }} SIBIMA FASILKOM &mdash; Universitas Subang</span>
                     <span>&bull;</span>
                     <!-- Safe, non-intrusive theme toggle in footer -->
