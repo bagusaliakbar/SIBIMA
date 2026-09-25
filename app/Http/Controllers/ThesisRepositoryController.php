@@ -1017,21 +1017,37 @@ class ThesisRepositoryController extends Controller
     public function books(Request $request, BookRepositoryService $bookService)
     {
         $query = trim($request->input('q', ''));
-        $topic = $request->input('topic', 'all_si');
+        $topic = $request->input('topic', null);
         $source = $request->input('source', 'all');
         $access = $request->input('access', 'all');
         $page = max(1, (int) $request->input('page', 1));
 
         $topics = BookRepositoryService::getInformationSystemsTopics();
-        $selectedTopic = $topics[$topic] ?? $topics['all_si'];
+        $selectedTopic = !empty($topic) ? ($topics[$topic] ?? $topics['all_si']) : null;
 
-        $results = $bookService->search($query, [
-            'topic' => $topic,
-            'source' => $source,
-            'access' => $access,
-            'page' => $page,
-            'per_page' => 12,
-        ]);
+        $hasSearch = ($query !== '' || !empty($topic));
+
+        if ($hasSearch) {
+            $effectiveTopic = $topic ?: 'all_si';
+            $results = $bookService->search($query, [
+                'topic' => $effectiveTopic,
+                'source' => $source,
+                'access' => $access,
+                'page' => $page,
+                'per_page' => 12,
+            ]);
+        } else {
+            $results = [
+                'success' => true,
+                'count' => 0,
+                'total_pages' => 0,
+                'current_page' => 1,
+                'per_page' => 12,
+                'data' => [],
+                'error' => null,
+                'source' => $source,
+            ];
+        }
 
         $bookmarkedIdentifiers = [];
         if (auth()->check()) {
@@ -1041,7 +1057,7 @@ class ThesisRepositoryController extends Controller
         }
 
         return view('repositories.books', compact(
-            'results', 'topics', 'selectedTopic', 'topic', 'query', 'source', 'access', 'page', 'bookmarkedIdentifiers'
+            'results', 'topics', 'selectedTopic', 'topic', 'query', 'source', 'access', 'page', 'bookmarkedIdentifiers', 'hasSearch'
         ));
     }
 

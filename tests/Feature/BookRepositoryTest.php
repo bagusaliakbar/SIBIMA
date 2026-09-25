@@ -111,8 +111,15 @@ class BookRepositoryTest extends TestCase
         $response->assertSee('Katalog Buku Teks');
         $response->assertSee('Sistem Informasi');
         $response->assertSee('Semua Topik SI');
-        $response->assertSee('Fundamentals of Database Systems');
-        $response->assertSee('Ramez Elmasri');
+        $response->assertSee('Cari dan Temukan Buku Teks Akademik');
+
+        // When topic or search is supplied, books are loaded
+        $responseWithTopic = $this->actingAs($this->student)
+            ->get(route('repositories.books', ['topic' => 'all_si']));
+
+        $responseWithTopic->assertOk();
+        $responseWithTopic->assertSee('Fundamentals of Database Systems');
+        $responseWithTopic->assertSee('Ramez Elmasri');
     }
 
     public function test_books_page_supports_topic_filter(): void
@@ -140,7 +147,7 @@ class BookRepositoryTest extends TestCase
             ->get(route('repositories.books', ['topic' => 'analisis_desain']));
 
         $response->assertOk();
-        $response->assertSee('Analisis & Perancangan Sistem');
+        $response->assertSeeText('Analisis & Desain (UML)');
         $response->assertSee('Systems Analysis and Design Methods');
     }
 

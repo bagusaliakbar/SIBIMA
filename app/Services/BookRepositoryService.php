@@ -26,10 +26,10 @@ class BookRepositoryService
                 'short_name' => 'Semua Topik SI',
                 'icon' => '🌟',
                 'color' => 'orange',
-                'description' => 'Buku teks fundamental Sistem Informasi, Management Information Systems (MIS), dan transformasi digital organisasi.',
-                'default_query' => 'management information systems',
+                'description' => 'Buku teks fundamental Sistem Informasi, teknologi informasi, dan rekayasa perangkat lunak.',
+                'default_query' => 'information systems',
                 'openlibrary_subject' => 'information_systems',
-                'keywords' => ['information systems', 'management information systems', 'business information systems', 'digital transformation'],
+                'keywords' => ['information systems', 'computer science', 'software engineering', 'digital transformation'],
             ],
             'basis_data' => [
                 'id' => 'basis_data',
