@@ -142,19 +142,21 @@ class LogbookController extends Controller
 
             foreach ($activeTheses as $t) {
                 $completedCount = (int) $t->completed_sessions_count;
+                $p1Count = $t->mentoringSessions ? $t->mentoringSessions->where('dosen_id', $t->pembimbing1_id)->count() : 0;
+                $p2Count = $t->mentoringSessions ? $t->mentoringSessions->where('dosen_id', $t->pembimbing2_id)->count() : 0;
 
-                // Tahap Proposal (< 4 sesi)
-                if ($completedCount < 4) {
+                // Tahap Proposal (< 8 sesi bimbingan atau belum memenuhi 4x P1 & 4x P2)
+                if ($p1Count < 4 || $p2Count < 4) {
                     $proposalIds[] = $t->id;
                 }
 
-                // Siap Seminar Proposal (UP): >= 4 sesi bimbingan
-                if ($completedCount >= 4) {
+                // Siap Seminar Proposal (UP): minimal 4 sesi P1 & 4 sesi P2 (total minimal 8 sesi)
+                if ($p1Count >= 4 && $p2Count >= 4) {
                     $readyUpIds[] = $t->id;
                 }
 
-                // Siap Sidang Akhir: >= 8 sesi bimbingan
-                if ($completedCount >= 8) {
+                // Siap Sidang Akhir: minimal 8 sesi P1 & 8 sesi P2 (total minimal 16 sesi)
+                if ($p1Count >= 8 && $p2Count >= 8) {
                     $readySidangIds[] = $t->id;
                 }
 

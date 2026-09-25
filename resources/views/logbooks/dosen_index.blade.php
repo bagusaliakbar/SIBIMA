@@ -277,14 +277,14 @@
                                         </div>
                                     </a>
 
-                                    <!-- 2. Tahap Proposal (< 4 sesi) -->
+                                    <!-- 2. Tahap Proposal (< 8 sesi) -->
                                     <a href="{{ $buildQuery(['filter' => 'proposal']) }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($filter ?? '') === 'proposal' ? 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
                                         <div class="flex items-center gap-2">
                                             <span class="w-2 h-2 rounded-full {{ ($filter ?? '') === 'proposal' ? 'bg-orange-500' : 'bg-blue-500' }} shrink-0"></span>
                                             <div>
                                                 <span>Tahap Proposal</span>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&lt; 4 sesi bimbingan</p>
+                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&lt; 8 sesi (belum 4x P1 &amp; 4x P2)</p>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2">
@@ -297,14 +297,14 @@
                                         </div>
                                     </a>
 
-                                    <!-- 3. Siap UP (≥ 4 sesi) -->
+                                    <!-- 3. Siap UP (≥ 8 sesi: 4x P1 & 4x P2) -->
                                     <a href="{{ $buildQuery(['filter' => 'ready_up']) }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($filter ?? '') === 'ready_up' ? 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
                                         <div class="flex items-center gap-2">
                                             <span class="w-2 h-2 rounded-full {{ ($filter ?? '') === 'ready_up' ? 'bg-orange-500' : 'bg-emerald-500' }} shrink-0"></span>
                                             <div>
                                                 <span>Siap Seminar Proposal (UP)</span>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&ge; 4 sesi bimbingan</p>
+                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&ge; 8 sesi (4x P1 &amp; 4x P2)</p>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2">
@@ -317,14 +317,14 @@
                                         </div>
                                     </a>
 
-                                    <!-- 4. Siap Sidang (≥ 8 sesi) -->
+                                    <!-- 4. Siap Sidang (≥ 16 sesi: 8x P1 & 8x P2) -->
                                     <a href="{{ $buildQuery(['filter' => 'ready_sidang']) }}"
                                        class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($filter ?? '') === 'ready_sidang' ? 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
                                         <div class="flex items-center gap-2">
                                             <span class="w-2 h-2 rounded-full {{ ($filter ?? '') === 'ready_sidang' ? 'bg-orange-500' : 'bg-indigo-500' }} shrink-0"></span>
                                             <div>
                                                 <span>Siap Sidang Skripsi</span>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&ge; 8 sesi bimbingan</p>
+                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&ge; 16 sesi (8x P1 &amp; 8x P2)</p>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2">
@@ -473,9 +473,9 @@
                     @if(!empty($filter) && $filter !== 'all')
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-orange-200 dark:border-slate-700 text-orange-800 dark:text-orange-300 font-bold shadow-2xs">
                             <span>Progres: 
-                                @if($filter === 'proposal') Tahap Proposal (&lt; 4 Sesi)
-                                @elseif($filter === 'ready_up') Siap UP (&ge; 4 Sesi)
-                                @elseif($filter === 'ready_sidang') Siap Sidang (&ge; 8 Sesi)
+                                @if($filter === 'proposal') Tahap Proposal (&lt; 8 Sesi)
+                                @elseif($filter === 'ready_up') Siap UP (&ge; 8 Sesi)
+                                @elseif($filter === 'ready_sidang') Siap Sidang (&ge; 16 Sesi)
                                 @elseif($filter === 'stalled') Macet (&gt; 14 Hari)
                                 @else {{ ucfirst($filter) }}
                                 @endif
@@ -652,8 +652,8 @@
 
                                     $isGraduated = ($thesis->status === 'completed');
 
-                                    $upTarget = 4;
-                                    $sidangTarget = 8;
+                                    $upTarget = 8;
+                                    $sidangTarget = 16;
                                     $upPercent = $isGraduated ? 100 : min(100, round(($completedCount / $upTarget) * 100));
                                     $sidangPercent = $isGraduated ? 100 : min(100, round(($completedCount / $sidangTarget) * 100));
 
@@ -678,10 +678,10 @@
                                 @endphp
 
                                 <div class="inline-flex flex-col gap-2 min-w-[200px] max-w-[240px] text-left">
-                                    <!-- Target UP (4 Sesi) Progress Bar -->
+                                    <!-- Target UP (8 Sesi: 4x P1 & 4x P2) Progress Bar -->
                                     <div class="space-y-1">
                                         <div class="flex items-center justify-between text-[10px] font-bold">
-                                            <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                                            <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5" title="Target Seminar UP: 8 Sesi (4x P1 & 4x P2)">
                                                 <span class="w-1.5 h-1.5 rounded-full {{ $upPercent >= 100 || $hasMyAccUp ? 'bg-indigo-600 dark:bg-indigo-400' : ($upPercent > 0 ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-600') }}" style="background-color: {{ $upPercent >= 100 || $hasMyAccUp ? '#4f46e5' : ($upPercent > 0 ? '#6366f1' : '') }};"></span>
                                                 <span>Target UP</span>
                                             </span>
@@ -692,8 +692,8 @@
                                                         <span>ACC UP</span>
                                                     </span>
                                                 @endif
-                                                <span class="font-mono text-[10px] {{ $completedCount >= 4 || $isGraduated ? 'text-indigo-600 dark:text-indigo-400 font-black' : ($completedCount > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
-                                                    {{ $isGraduated ? '4/4' : min($completedCount, 4) . '/4' }} Sesi
+                                                <span class="font-mono text-[10px] {{ $completedCount >= 8 || $isGraduated ? 'text-indigo-600 dark:text-indigo-400 font-black' : ($completedCount > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
+                                                    {{ $isGraduated ? '8/8' : min($completedCount, 8) . '/8' }} Sesi
                                                     <span class="text-[9px] font-normal text-slate-400 dark:text-slate-500">({{ $upPercent }}%)</span>
                                                 </span>
                                             </div>
@@ -704,10 +704,10 @@
                                         </div>
                                     </div>
 
-                                    <!-- Target Sidang (8 Sesi) Progress Bar -->
+                                    <!-- Target Sidang (16 Sesi: 8x P1 & 8x P2) Progress Bar -->
                                     <div class="space-y-1">
                                         <div class="flex items-center justify-between text-[10px] font-bold">
-                                            <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                                            <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5" title="Target Sidang Skripsi: 16 Sesi (8x P1 & 8x P2)">
                                                 <span class="w-1.5 h-1.5 rounded-full {{ $sidangPercent >= 100 || $hasMyAccSidang ? 'bg-emerald-600 dark:bg-emerald-400' : ($sidangPercent > 0 ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600') }}" style="background-color: {{ $sidangPercent >= 100 || $hasMyAccSidang ? '#059669' : ($sidangPercent > 0 ? '#10b981' : '') }};"></span>
                                                 <span>Target Sidang</span>
                                             </span>
@@ -718,8 +718,8 @@
                                                         <span>ACC Sidang</span>
                                                     </span>
                                                 @endif
-                                                <span class="font-mono text-[10px] {{ $completedCount >= 8 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : ($completedCount > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
-                                                    {{ $isGraduated ? '8/8' : min($completedCount, 8) . '/8' }} Sesi
+                                                <span class="font-mono text-[10px] {{ $completedCount >= 16 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : ($completedCount > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
+                                                    {{ $isGraduated ? '16/16' : min($completedCount, 16) . '/16' }} Sesi
                                                     <span class="text-[9px] font-normal text-slate-400 dark:text-slate-500">({{ $sidangPercent }}%)</span>
                                                 </span>
                                             </div>
@@ -743,12 +743,12 @@
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
                                                     <span>🎓 Lulus</span>
                                                 </span>
-                                            @elseif($completedCount >= 8 && !$hasMyAccSidang)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800" title="Mahasiswa telah menyelesaikan minimal 8 sesi bimbingan, siap untuk di-ACC Sidang">
+                                            @elseif(($completedCount >= 16 || ($p1Count >= 8 && $p2Count >= 8)) && !$hasMyAccSidang)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800" title="Mahasiswa telah menyelesaikan target 16 sesi bimbingan (8x P1 & 8x P2), siap untuk di-ACC Sidang">
                                                     <span>🟢 Siap Sidang</span>
                                                 </span>
-                                            @elseif($completedCount >= 4 && !$hasMyAccUp)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800" title="Mahasiswa telah menyelesaikan minimal 4 sesi bimbingan, siap untuk di-ACC Seminar">
+                                            @elseif(($completedCount >= 8 || ($p1Count >= 4 && $p2Count >= 4)) && !$hasMyAccUp)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800" title="Mahasiswa telah menyelesaikan target 8 sesi bimbingan (4x P1 & 4x P2), siap untuk di-ACC Seminar">
                                                     <span>🔵 Siap UP</span>
                                                 </span>
                                             @elseif($completedCount === 0)
