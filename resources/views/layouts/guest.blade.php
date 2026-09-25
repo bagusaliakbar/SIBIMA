@@ -170,8 +170,8 @@
                 {{ $slot }}
             </div>
 
-            <!-- Compact Footer below card with Theme Switcher -->
-            <div class="mt-7 sm:mt-8 text-center text-xs sm:text-sm auth-footer-text font-medium space-y-2">
+            <!-- Clean Footer below card with Theme Switcher -->
+            <div class="mt-10 sm:mt-12 text-center text-xs sm:text-sm auth-footer-text font-medium">
                 <div class="flex items-center justify-center gap-3 flex-wrap">
                     <span>&copy; {{ date('Y') }} SIBIMA FASILKOM &mdash; Universitas Subang</span>
                     <span>&bull;</span>
@@ -184,10 +184,6 @@
                         <svg x-show="!darkMode" class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                         <span x-text="darkMode ? 'Mode Terang' : 'Mode Gelap'"></span>
                     </button>
-                </div>
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/60 dark:bg-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>Sistem Bimbingan Akademik Aktif</span>
                 </div>
             </div>
 
