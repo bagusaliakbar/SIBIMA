@@ -57,13 +57,47 @@
             }
         </style>
     </head>
-    <body class="font-sans text-slate-800 dark:text-slate-100 antialiased bg-[#f8fafc] dark:bg-[#0b0f19] min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 transition-colors duration-200">
+    <body class="font-sans text-slate-800 dark:text-slate-100 antialiased bg-[#f8fafc] dark:bg-[#07090e] min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 transition-colors duration-300 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
         
-        <!-- Center Auth Wrapper -->
-        <div class="w-full flex flex-col items-center justify-center my-auto py-8">
+        <!-- Abstract Gradient Mesh Background (Stripe Style) -->
+        <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+            <!-- Mesh Orb 1: SIBIMA Brand Orange (Top-Right / Behind Card) -->
+            <div class="absolute -top-[15%] -right-[10%] w-[650px] h-[650px] rounded-full bg-gradient-to-br from-orange-400/25 via-amber-500/20 to-transparent dark:from-orange-600/15 dark:via-amber-600/10 dark:to-transparent blur-[120px] transform-gpu"></div>
             
-            <!-- Auth Card (Max Width Strictly Capped via inline style and standard class) -->
-            <div class="w-full {{ request()->routeIs('register') ? 'max-w-xl' : 'max-w-md' }} bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none p-7 sm:p-10 transition-all mx-auto"
+            <!-- Mesh Orb 2: Deep Indigo / Violet (Bottom-Left) -->
+            <div class="absolute -bottom-[20%] -left-[10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-indigo-500/20 via-blue-500/15 to-transparent dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-transparent blur-[130px] transform-gpu"></div>
+            
+            <!-- Mesh Orb 3: Soft Radiant Rose (Top-Left / Center Glow) -->
+            <div class="absolute top-[25%] left-[15%] w-[450px] h-[450px] rounded-full bg-orange-300/15 dark:bg-orange-500/10 blur-[100px] transform-gpu"></div>
+
+            <!-- Stripe-style SVG Fluid Curved Mesh Wave -->
+            <svg class="absolute inset-0 w-full h-full opacity-[0.35] dark:opacity-[0.22] mix-blend-multiply dark:mix-blend-screen" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 900">
+                <defs>
+                    <linearGradient id="stripeMesh1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f97316" stop-opacity="0.35" />
+                        <stop offset="50%" stop-color="#fb923c" stop-opacity="0.15" />
+                        <stop offset="100%" stop-color="#6366f1" stop-opacity="0.25" />
+                    </linearGradient>
+                    <linearGradient id="stripeMesh2" x1="100%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#ea580c" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.1" />
+                    </linearGradient>
+                </defs>
+                <path d="M-100,200 C300,50 650,450 1100,220 C1300,120 1500,280 1600,320 L1600,900 L-100,900 Z" fill="url(#stripeMesh1)"/>
+                <path d="M-50,600 C250,420 700,750 1150,550 C1350,450 1550,620 1650,600 L1650,900 L-50,900 Z" fill="url(#stripeMesh2)"/>
+            </svg>
+
+            <!-- Subtle Grid Pattern Overlay for High-End Tactile Texture -->
+            <div class="absolute inset-0 opacity-[0.22] dark:opacity-[0.12]" 
+                 style="background-image: radial-gradient(rgba(100, 116, 139, 0.35) 1px, transparent 1px); background-size: 24px 24px;">
+            </div>
+        </div>
+
+        <!-- Center Auth Wrapper -->
+        <div class="w-full flex flex-col items-center justify-center my-auto py-8 relative z-10">
+            
+            <!-- Auth Card (Glassmorphic Elevated Surface) -->
+            <div class="w-full {{ request()->routeIs('register') ? 'max-w-xl' : 'max-w-md' }} bg-white/95 dark:bg-[#111827]/90 backdrop-blur-xl rounded-3xl border border-white/80 dark:border-slate-800/80 shadow-2xl shadow-slate-200/60 dark:shadow-black/70 p-7 sm:p-10 transition-all mx-auto"
                  style="max-width: {{ request()->routeIs('register') ? '560px' : '440px' }};">
                 {{ $slot }}
             </div>
