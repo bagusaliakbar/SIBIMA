@@ -30,9 +30,27 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
+        ];
+
+        if (config('services.turnstile.secret_key') && ! app()->environment('testing')) {
+            $rules['cf-turnstile-response'] = ['required', new \App\Rules\Turnstile];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'cf-turnstile-response.required' => 'Mohon selesaikan verifikasi keamanan Cloudflare Turnstile.',
         ];
     }
 

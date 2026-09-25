@@ -43,4 +43,9 @@ return [
         'bot_number' => env('WHATSAPP_BOT_NUMBER', ''), // Nomor WhatsApp Bot SIBIMA untuk ditampilkan di banner kontak
     ],
 
+    'turnstile' => [
+        'site_key' => env('CLOUDFLARE_TURNSTILE_SITE_KEY'),
+        'secret_key' => env('CLOUDFLARE_TURNSTILE_SECRET_KEY'),
+    ],
+
 ];

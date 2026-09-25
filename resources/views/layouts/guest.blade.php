@@ -27,6 +27,11 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Cloudflare Turnstile Script -->
+        @if(config('services.turnstile.site_key'))
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        @endif
+
         <style>
             [x-cloak] { display: none !important; }
             body { font-family: 'Inter', sans-serif; }

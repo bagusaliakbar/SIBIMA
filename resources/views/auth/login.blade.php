@@ -80,8 +80,19 @@
             </label>
         </div>
 
+        <!-- Cloudflare Turnstile Verification -->
+        @if(config('services.turnstile.site_key'))
+            <div class="pt-1 flex flex-col items-center justify-center">
+                <div class="cf-turnstile" 
+                     data-sitekey="{{ config('services.turnstile.site_key') }}" 
+                     data-theme="auto"
+                     data-size="flexible"></div>
+                <x-input-error :messages="$errors->get('cf-turnstile-response')" class="mt-1.5 text-center" />
+            </div>
+        @endif
+
         <!-- Submit Button -->
-        <div class="pt-2 sm:pt-3">
+        <div class="pt-1.5 sm:pt-2">
             <button type="submit" 
                 class="w-full py-3.5 sm:py-4 px-6 rounded-xl bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white text-sm sm:text-base font-bold tracking-wide shadow-lg shadow-orange-600/25 hover:shadow-orange-600/35 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer">
                 <span>Masuk ke Dashboard</span>
