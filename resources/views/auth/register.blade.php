@@ -1,16 +1,14 @@
 <x-guest-layout>
     @section('title', 'Pendaftaran Akun')
 
-    <!-- Header Section -->
-    <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-50 ring-8 ring-orange-50/50 mb-3 shadow-inner">
-            <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-11 h-11 object-contain">
+    <div class="bg-white dark:bg-slate-800/95 rounded-3xl p-7 sm:p-9 border border-slate-200/80 dark:border-slate-700/80 shadow-xl shadow-slate-200/40 dark:shadow-black/40 space-y-6">
+        <!-- Header Section -->
+        <div class="space-y-1.5">
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Pendaftaran Akun</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">Lengkapi data diri Anda untuk mendaftar akun di SIBIMA</p>
         </div>
-        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Pendaftaran Akun</h2>
-        <p class="text-xs text-slate-500 mt-1 font-medium">Lengkapi data diri Anda untuk mendaftar di SIBIMA</p>
-    </div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-4" x-data="{ role: '{{ old('role', 'mahasiswa') }}', showPassword: false, showPasswordConfirm: false }">
+        <form method="POST" action="{{ route('register') }}" class="space-y-4" x-data="{ role: '{{ old('role', 'mahasiswa') }}', showPassword: false, showPasswordConfirm: false }">
         @csrf
 
         <!-- Pilihan Role -->
@@ -165,4 +163,5 @@
             </p>
         </div>
     </form>
+</div>
 </x-guest-layout>
