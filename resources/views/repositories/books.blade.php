@@ -32,10 +32,7 @@
             <div class="space-y-2.5 pt-1">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Pilih Pilar Topik Sistem Informasi:
-                    </span>
-                    <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 hidden sm:inline">
-                        8 Bidang Kurikulum FASILKOM UNSUB
+                        Pilih Beberapa Topik Sistem Informasi Berikut:
                     </span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
