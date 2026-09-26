@@ -186,36 +186,101 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Submission Form -->
-                <div class="lg:col-span-2">
-                    <form action="{{ route('student.graduation.store') }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-6">
+                <!-- Right Column: Submission Form (Google Drive Links) -->
+                <div class="lg:col-span-2" x-data="{
+                    batchFolderUrl: '',
+                    thesisUrl: '{{ old('final_thesis_file', $graduation->final_thesis_file ?? '') }}',
+                    journalUrl: '{{ old('journal_article_file', $graduation->journal_article_file ?? '') }}',
+                    plagiarismUrl: '{{ old('plagiarism_file', $graduation->plagiarism_file ?? '') }}',
+                    applyBatchFolder() {
+                        if (!this.batchFolderUrl.trim()) return;
+                        const url = this.batchFolderUrl.trim();
+                        if (!this.thesisUrl) this.thesisUrl = url;
+                        if (!this.journalUrl) this.journalUrl = url;
+                        if (!this.plagiarismUrl) this.plagiarismUrl = url;
+                    }
+                }">
+                    <form action="{{ route('student.graduation.store') }}" method="POST" class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-6">
                         @csrf
 
                         <div class="border-b border-slate-100 dark:border-slate-700/60 pb-4">
-                            <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">Unggah Berkas Akhir Skripsi</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pastikan dokumen yang Anda unggah adalah versi final yang telah ditandatangani.</p>
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">Tautan Berkas Akhir Skripsi (Google Drive)</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Masukkan tautan Google Drive dokumen final yang telah ditandatangani dan disahkan.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Banner: Google Drive Share Permission -->
+                        <div class="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-800/40 text-blue-900 dark:text-blue-300 text-xs flex items-start gap-3">
+                            <div class="p-1.5 rounded-lg bg-blue-500 text-white shrink-0 mt-0.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="font-bold">Penting: Pengaturan Akses Google Drive</p>
+                                <p class="text-[11px] leading-relaxed text-blue-800 dark:text-blue-300/90">
+                                    Pastikan hak akses tautan Google Drive Anda diatur ke <strong>"Siapa saja yang memiliki link" (Anyone with the link can view)</strong> agar tim Program Studi / BAAK dapat memeriksa dokumen tanpa kendala izin akses.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Smart Batch Folder Filler Banner -->
+                        <div class="p-4 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 dark:from-slate-900 dark:via-slate-800/80 dark:to-slate-900 border border-orange-200/80 dark:border-slate-700 rounded-2xl shadow-2xs">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="p-2 bg-orange-600 text-white rounded-xl shadow-xs shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">💡 Punya 1 Folder Google Drive untuk Semua Berkas?</h5>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Tempelkan link folder Google Drive Anda untuk mengisi kolom sekaligus.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <input type="url" 
+                                           x-model="batchFolderUrl" 
+                                           placeholder="https://drive.google.com/drive/folders/..." 
+                                           class="py-1.5 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500 w-full sm:w-60 shadow-2xs">
+                                    <button type="button" 
+                                            @click="applyBatchFolder()" 
+                                            class="px-3 py-1.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-xl transition-all shadow-xs shrink-0 active:scale-95 cursor-pointer">
+                                        Terapkan
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 1. Naskah Skripsi Final -->
                         <div class="space-y-2">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                                Naskah Skripsi Lengkap Final (PDF) <span class="text-rose-500">*</span>
+                                Tautan Google Drive Naskah Skripsi Lengkap Final <span class="text-rose-500">*</span>
                             </label>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Naskah lengkap dari Cover sampai Lampiran yang sudah dibubuhi tanda tangan pengesahan (Maks. 25 MB).</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                Naskah lengkap dari Cover sampai Lampiran yang sudah dibubuhi lembar pengesahan tanda tangan asli / TTE.
+                            </p>
                             
-                            <input type="file" name="final_thesis_file" accept=".pdf" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 dark:file:bg-orange-950/40 dark:file:text-orange-400 hover:file:bg-orange-100 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900">
-                            
-                            @if($graduation && $graduation->final_thesis_file)
-                                <div class="flex items-center gap-2 pt-1 text-xs">
-                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        Sudah diunggah
-                                    </span>
-                                    <a href="{{ route('download.private', ['path' => $graduation->final_thesis_file]) }}" target="_blank" class="text-orange-600 dark:text-orange-400 font-bold hover:underline">
-                                        Lihat File Terunggah
+                            <div class="relative flex items-center">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </span>
+                                <input type="url" 
+                                       name="final_thesis_file" 
+                                       x-model="thesisUrl" 
+                                       placeholder="https://drive.google.com/file/d/... atau link folder" 
+                                       required 
+                                       class="w-full pl-9 pr-24 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
+                                
+                                <template x-if="thesisUrl">
+                                    <a :href="thesisUrl" target="_blank" class="absolute right-2 px-3 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-orange-500 hover:text-white text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold transition-all">
+                                        Tes Link
                                     </a>
-                                </div>
-                            @endif
+                                </template>
+                            </div>
+                            
                             @error('final_thesis_file')
                                 <p class="text-xs text-rose-500 font-medium">{{ $message }}</p>
                             @enderror
@@ -224,23 +289,30 @@
                         <!-- 2. Naskah Artikel Jurnal -->
                         <div class="space-y-2">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                                Artikel Jurnal Ilmiah (PDF) <span class="text-rose-500">*</span>
+                                Tautan Google Drive Artikel Jurnal Ilmiah <span class="text-rose-500">*</span>
                             </label>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Ringkasan naskah skripsi dalam format artikel jurnal ilmiah siap publikasi (Maks. 15 MB).</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                Ringkasan naskah skripsi dalam format artikel jurnal ilmiah siap publikasi (template jurnal prodi).
+                            </p>
                             
-                            <input type="file" name="journal_article_file" accept=".pdf" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 dark:file:bg-orange-950/40 dark:file:text-orange-400 hover:file:bg-orange-100 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900">
-                            
-                            @if($graduation && $graduation->journal_article_file)
-                                <div class="flex items-center gap-2 pt-1 text-xs">
-                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        Sudah diunggah
-                                    </span>
-                                    <a href="{{ route('download.private', ['path' => $graduation->journal_article_file]) }}" target="_blank" class="text-orange-600 dark:text-orange-400 font-bold hover:underline">
-                                        Lihat File Terunggah
+                            <div class="relative flex items-center">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </span>
+                                <input type="url" 
+                                       name="journal_article_file" 
+                                       x-model="journalUrl" 
+                                       placeholder="https://drive.google.com/file/d/... atau link folder" 
+                                       required 
+                                       class="w-full pl-9 pr-24 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
+                                
+                                <template x-if="journalUrl">
+                                    <a :href="journalUrl" target="_blank" class="absolute right-2 px-3 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-orange-500 hover:text-white text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold transition-all">
+                                        Tes Link
                                     </a>
-                                </div>
-                            @endif
+                                </template>
+                            </div>
+                            
                             @error('journal_article_file')
                                 <p class="text-xs text-rose-500 font-medium">{{ $message }}</p>
                             @enderror
@@ -249,23 +321,29 @@
                         <!-- 3. Bukti Uji Plagiasi / Turnitin (Opsional) -->
                         <div class="space-y-2">
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                                Bukti Hasil Uji Plagiasi / Turnitin (Opsional)
+                                Tautan Google Drive Bukti Uji Plagiasi / Turnitin (Opsional)
                             </label>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Lembar sertifikat / hasil cek similarity Turnitin resmi (Maks. 10 MB).</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                Lembar sertifikat / hasil cek similarity Turnitin resmi yang telah disetujui.
+                            </p>
                             
-                            <input type="file" name="plagiarism_file" accept=".pdf" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 dark:file:bg-orange-950/40 dark:file:text-orange-400 hover:file:bg-orange-100 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900">
-                            
-                            @if($graduation && $graduation->plagiarism_file)
-                                <div class="flex items-center gap-2 pt-1 text-xs">
-                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        Sudah diunggah
-                                    </span>
-                                    <a href="{{ route('download.private', ['path' => $graduation->plagiarism_file]) }}" target="_blank" class="text-orange-600 dark:text-orange-400 font-bold hover:underline">
-                                        Lihat File Terunggah
+                            <div class="relative flex items-center">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </span>
+                                <input type="url" 
+                                       name="plagiarism_file" 
+                                       x-model="plagiarismUrl" 
+                                       placeholder="https://drive.google.com/file/d/..." 
+                                       class="w-full pl-9 pr-24 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
+                                
+                                <template x-if="plagiarismUrl">
+                                    <a :href="plagiarismUrl" target="_blank" class="absolute right-2 px-3 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-orange-500 hover:text-white text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold transition-all">
+                                        Tes Link
                                     </a>
-                                </div>
-                            @endif
+                                </template>
+                            </div>
+                            
                             @error('plagiarism_file')
                                 <p class="text-xs text-rose-500 font-medium">{{ $message }}</p>
                             @enderror
@@ -276,7 +354,10 @@
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                                 Tautan Publikasi Jurnal / Repositori Online (Opsional)
                             </label>
-                            <input type="url" name="publication_link" value="{{ old('publication_link', $graduation->publication_link ?? '') }}" placeholder="https://ejournal.unsub.ac.id/..." class="w-full text-xs rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                Tautan artikel yang telah dipublikasikan di OJS/jurnal ilmiah atau repositori universitas.
+                            </p>
+                            <input type="url" name="publication_link" value="{{ old('publication_link', $graduation->publication_link ?? '') }}" placeholder="https://ejournal.unsub.ac.id/..." class="w-full text-xs font-mono rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500">
                             @error('publication_link')
                                 <p class="text-xs text-rose-500 font-medium">{{ $message }}</p>
                             @enderror
@@ -287,7 +368,7 @@
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                                 Catatan Tambahan (Opsional)
                             </label>
-                            <textarea name="student_notes" rows="3" placeholder="Tuliskan keterangan bila ada dokumen fisik yang sudah dititipkan di BAAK..." class="w-full text-xs rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500">{{ old('student_notes', $graduation->student_notes ?? '') }}</textarea>
+                            <textarea name="student_notes" rows="3" placeholder="Tuliskan keterangan bila ada dokumen fisik yang sudah diserahkan di BAAK / Prodi..." class="w-full text-xs rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500">{{ old('student_notes', $graduation->student_notes ?? '') }}</textarea>
                             @error('student_notes')
                                 <p class="text-xs text-rose-500 font-medium">{{ $message }}</p>
                             @enderror
@@ -296,7 +377,7 @@
                         <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-700/60">
                             <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-600/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                <span>Simpan & Ajukan Verifikasi</span>
+                                <span>Simpan Tautan & Ajukan Verifikasi</span>
                             </button>
                         </div>
                     </form>

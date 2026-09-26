@@ -112,20 +112,30 @@ class GraduationController extends Controller
 
         $thesis = Thesis::where('student_id', $user->id)->firstOrFail();
 
+        // Normalize URLs (prepend https:// if missing)
+        $urlFields = ['final_thesis_file', 'journal_article_file', 'plagiarism_file', 'publication_link'];
+        foreach ($urlFields as $field) {
+            if ($request->filled($field)) {
+                $val = trim($request->input($field));
+                if (!str_starts_with($val, 'http://') && !str_starts_with($val, 'https://')) {
+                    $request->merge([$field => 'https://' . $val]);
+                }
+            }
+        }
+
         $request->validate([
-            'final_thesis_file' => 'nullable|file|mimes:pdf|max:25600', // 25 MB
-            'journal_article_file' => 'nullable|file|mimes:pdf|max:15360', // 15 MB
-            'plagiarism_file' => 'nullable|file|mimes:pdf|max:10240', // 10 MB
-            'publication_link' => 'nullable|url|max:255',
+            'final_thesis_file' => 'required|url|max:1000',
+            'journal_article_file' => 'required|url|max:1000',
+            'plagiarism_file' => 'nullable|url|max:1000',
+            'publication_link' => 'nullable|url|max:1000',
             'student_notes' => 'nullable|string|max:1000',
         ], [
-            'final_thesis_file.mimes' => 'Naskah skripsi lengkap wajib berformat PDF.',
-            'final_thesis_file.max' => 'Ukuran naskah skripsi maksimal 25 MB.',
-            'journal_article_file.mimes' => 'Naskah artikel jurnal wajib berformat PDF.',
-            'journal_article_file.max' => 'Ukuran artikel jurnal maksimal 15 MB.',
-            'plagiarism_file.mimes' => 'Bukti uji plagiasi wajib berformat PDF.',
-            'plagiarism_file.max' => 'Ukuran bukti plagiasi maksimal 10 MB.',
-            'publication_link.url' => 'Format tautan publikasi tidak valid (gunakan http:// atau https://).',
+            'final_thesis_file.required' => 'Tautan Google Drive naskah skripsi lengkap wajib diisi.',
+            'final_thesis_file.url' => 'Format tautan naskah skripsi tidak valid (contoh: https://drive.google.com/...).',
+            'journal_article_file.required' => 'Tautan Google Drive artikel jurnal ilmiah wajib diisi.',
+            'journal_article_file.url' => 'Format tautan artikel jurnal tidak valid (contoh: https://drive.google.com/...).',
+            'plagiarism_file.url' => 'Format tautan bukti plagiasi tidak valid.',
+            'publication_link.url' => 'Format tautan publikasi tidak valid.',
         ]);
 
         $graduation = Graduation::firstOrNew([
@@ -133,35 +143,11 @@ class GraduationController extends Controller
             'student_id' => $user->id,
         ]);
 
-        // Upload files securely
-        if ($request->hasFile('final_thesis_file')) {
-            if ($graduation->final_thesis_file && Storage::exists($graduation->final_thesis_file)) {
-                Storage::delete($graduation->final_thesis_file);
-            }
-            $graduation->final_thesis_file = $request->file('final_thesis_file')->store("graduation_files/{$user->id}");
-        }
-
-        if ($request->hasFile('journal_article_file')) {
-            if ($graduation->journal_article_file && Storage::exists($graduation->journal_article_file)) {
-                Storage::delete($graduation->journal_article_file);
-            }
-            $graduation->journal_article_file = $request->file('journal_article_file')->store("graduation_files/{$user->id}");
-        }
-
-        if ($request->hasFile('plagiarism_file')) {
-            if ($graduation->plagiarism_file && Storage::exists($graduation->plagiarism_file)) {
-                Storage::delete($graduation->plagiarism_file);
-            }
-            $graduation->plagiarism_file = $request->file('plagiarism_file')->store("graduation_files/{$user->id}");
-        }
-
-        if ($request->filled('publication_link')) {
-            $graduation->publication_link = $request->publication_link;
-        }
-
-        if ($request->filled('student_notes')) {
-            $graduation->student_notes = $request->student_notes;
-        }
+        $graduation->final_thesis_file = $request->final_thesis_file;
+        $graduation->journal_article_file = $request->journal_article_file;
+        $graduation->plagiarism_file = $request->plagiarism_file;
+        $graduation->publication_link = $request->publication_link;
+        $graduation->student_notes = $request->student_notes;
 
         // Set status to pending if previously rejected or new
         if ($graduation->status !== 'approved') {

@@ -160,27 +160,30 @@
                                 </p>
                                 <div class="mt-1 flex items-center gap-1.5 flex-wrap">
                                     @if($item->final_thesis_file)
-                                        <a href="{{ route('download.private', ['path' => $item->final_thesis_file]) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 text-[10px] font-bold" title="Unduh Skripsi Final PDF">
-                                            <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
-                                            <span>Skripsi</span>
+                                        @php $thesisLink = str_starts_with($item->final_thesis_file, 'http') ? $item->final_thesis_file : route('download.private', ['path' => $item->final_thesis_file]); @endphp
+                                        <a href="{{ $thesisLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 text-[10px] font-bold border border-orange-200 dark:border-orange-800" title="Buka Naskah Skripsi di Google Drive">
+                                            <svg class="w-3 h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
+                                            <span>Skripsi G-Drive</span>
                                         </a>
                                     @endif
                                     @if($item->journal_article_file)
-                                        <a href="{{ route('download.private', ['path' => $item->journal_article_file]) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 text-[10px] font-bold" title="Unduh Jurnal PDF">
-                                            <svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
-                                            <span>Jurnal</span>
+                                        @php $journalLink = str_starts_with($item->journal_article_file, 'http') ? $item->journal_article_file : route('download.private', ['path' => $item->journal_article_file]); @endphp
+                                        <a href="{{ $journalLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 text-[10px] font-bold border border-blue-200 dark:border-blue-800" title="Buka Artikel Jurnal di Google Drive">
+                                            <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
+                                            <span>Jurnal G-Drive</span>
                                         </a>
                                     @endif
                                     @if($item->plagiarism_file)
-                                        <a href="{{ route('download.private', ['path' => $item->plagiarism_file]) }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 text-[10px] font-bold" title="Unduh Bukti Cek Plagiasi">
-                                            <svg class="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                            <span>Turnitin</span>
+                                        @php $plagLink = str_starts_with($item->plagiarism_file, 'http') ? $item->plagiarism_file : route('download.private', ['path' => $item->plagiarism_file]); @endphp
+                                        <a href="{{ $plagLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800" title="Buka Bukti Cek Plagiasi di Google Drive">
+                                            <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            <span>Turnitin G-Drive</span>
                                         </a>
                                     @endif
                                     @if($item->publication_link)
-                                        <a href="{{ $item->publication_link }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 text-[10px] font-bold hover:underline" title="Tautan Publikasi Jurnal">
+                                        <a href="{{ $item->publication_link }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 text-[10px] font-bold hover:underline border border-purple-200 dark:border-purple-800" title="Tautan Publikasi Jurnal">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                            <span>Link Jurnal</span>
+                                            <span>Link OJS</span>
                                         </a>
                                     @endif
                                 </div>
@@ -259,9 +262,9 @@
                                                 'gpa' => $item->gpa ? number_format($item->gpa, 2, '.', '') : '3.50',
                                                 'predicate' => $item->predicate ?? 'Dengan Pujian (Cum Laude)',
                                                 'rejection_reason' => $item->rejection_reason ?? '',
-                                                'final_thesis_file' => $item->final_thesis_file ? route('download.private', ['path' => $item->final_thesis_file]) : null,
-                                                'journal_article_file' => $item->journal_article_file ? route('download.private', ['path' => $item->journal_article_file]) : null,
-                                                'plagiarism_file' => $item->plagiarism_file ? route('download.private', ['path' => $item->plagiarism_file]) : null,
+                                                'final_thesis_file' => $item->final_thesis_file ? (str_starts_with($item->final_thesis_file, 'http') ? $item->final_thesis_file : route('download.private', ['path' => $item->final_thesis_file])) : null,
+                                                'journal_article_file' => $item->journal_article_file ? (str_starts_with($item->journal_article_file, 'http') ? $item->journal_article_file : route('download.private', ['path' => $item->journal_article_file])) : null,
+                                                'plagiarism_file' => $item->plagiarism_file ? (str_starts_with($item->plagiarism_file, 'http') ? $item->plagiarism_file : route('download.private', ['path' => $item->plagiarism_file])) : null,
                                                 'publication_link' => $item->publication_link ?? null,
                                                 'student_notes' => $item->student_notes ?? '',
                                                 'verify_url' => route('graduations.verify', $item)
@@ -341,41 +344,43 @@
                                     <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-relaxed" x-text="activeGraduation.thesis_title"></p>
                                 </div>
 
-                                <!-- Berkas Digital yang Diunggah Mahasiswa -->
+                                <!-- Berkas Digital Mahasiswa (Google Drive) -->
                                 <div class="space-y-3">
-                                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Berkas Digital Mahasiswa</h4>
+                                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Berkas Digital Mahasiswa (Google Drive)</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <!-- Skripsi Final -->
                                         <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-500 flex items-center justify-center font-bold text-xs">PDF</div>
+                                                <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 flex items-center justify-center font-bold text-xs">GD</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Naskah Skripsi Final</p>
-                                                    <p class="text-[10px] text-slate-400">Format PDF Lengkap</p>
+                                                    <p class="text-[10px] text-slate-400">Google Drive Document</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.final_thesis_file">
-                                                <a :href="activeGraduation.final_thesis_file" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-orange-50 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold transition-all">
-                                                    Lihat
+                                                <a :href="activeGraduation.final_thesis_file" target="_blank" class="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1">
+                                                    <span>Buka Drive</span>
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.final_thesis_file">
-                                                <span class="text-[10px] text-amber-500 font-semibold">Belum Unggah</span>
+                                                <span class="text-[10px] text-amber-500 font-semibold">Belum Diisi</span>
                                             </template>
                                         </div>
 
                                         <!-- Jurnal Final -->
                                         <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-500 flex items-center justify-center font-bold text-xs">PDF</div>
+                                                <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold text-xs">GD</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Artikel Jurnal Ilmiah</p>
-                                                    <p class="text-[10px] text-slate-400">Format Jurnal Nasional</p>
+                                                    <p class="text-[10px] text-slate-400">Google Drive Document</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.journal_article_file">
-                                                <a :href="activeGraduation.journal_article_file" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-orange-50 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold transition-all">
-                                                    Lihat
+                                                <a :href="activeGraduation.journal_article_file" target="_blank" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1">
+                                                    <span>Buka Drive</span>
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.journal_article_file">
@@ -386,15 +391,16 @@
                                         <!-- Bukti Turnitin -->
                                         <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 flex items-center justify-center font-bold text-xs">PDF</div>
+                                                <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center font-bold text-xs">GD</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Bukti Cek Plagiasi</p>
                                                     <p class="text-[10px] text-slate-400">Similarity Report</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.plagiarism_file">
-                                                <a :href="activeGraduation.plagiarism_file" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-orange-50 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold transition-all">
-                                                    Lihat
+                                                <a :href="activeGraduation.plagiarism_file" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1">
+                                                    <span>Buka Drive</span>
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.plagiarism_file">
@@ -405,15 +411,16 @@
                                         <!-- Link Jurnal -->
                                         <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-500 flex items-center justify-center font-bold text-xs">URL</div>
+                                                <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center font-bold text-xs">URL</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Tautan OJS / Jurnal</p>
                                                     <p class="text-[10px] text-slate-400">Link Publikasi Online</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.publication_link">
-                                                <a :href="activeGraduation.publication_link" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 hover:bg-purple-100 text-xs font-bold transition-all">
-                                                    Buka
+                                                <a :href="activeGraduation.publication_link" target="_blank" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1">
+                                                    <span>Buka OJS</span>
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.publication_link">
