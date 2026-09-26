@@ -253,6 +253,15 @@ Route::middleware('auth')->group(function () {
         Route::put('/wa-templates/{waTemplate}', [App\Http\Controllers\WaTemplateController::class, 'update'])->name('wa-templates.update');
         Route::post('/wa-templates/{waTemplate}/reset', [App\Http\Controllers\WaTemplateController::class, 'reset'])->name('wa-templates.reset');
 
+        // Targeted WhatsApp Broadcast (Admin & Kaprodi)
+        Route::get('/wa-broadcasts', [App\Http\Controllers\WaBroadcastController::class, 'index'])->name('wa-broadcasts.index');
+        Route::get('/wa-broadcasts/create', [App\Http\Controllers\WaBroadcastController::class, 'create'])->name('wa-broadcasts.create');
+        Route::post('/wa-broadcasts', [App\Http\Controllers\WaBroadcastController::class, 'store'])->name('wa-broadcasts.store');
+        Route::post('/wa-broadcasts/preview-targets', [App\Http\Controllers\WaBroadcastController::class, 'previewTargets'])->name('wa-broadcasts.preview-targets');
+        Route::post('/wa-broadcasts/test-send', [App\Http\Controllers\WaBroadcastController::class, 'testSend'])->name('wa-broadcasts.test-send');
+        Route::get('/wa-broadcasts/{waBroadcast}', [App\Http\Controllers\WaBroadcastController::class, 'show'])->name('wa-broadcasts.show');
+        Route::post('/wa-broadcasts/{waBroadcast}/resend-failed', [App\Http\Controllers\WaBroadcastController::class, 'resendFailed'])->name('wa-broadcasts.resend-failed');
+
         // Bug Reports Management (Admin & Kaprodi)
         Route::get('/admin/bug-reports', [App\Http\Controllers\BugReportController::class, 'index'])->name('admin.bug-reports.index');
         Route::patch('/admin/bug-reports/{bugReport}/status', [App\Http\Controllers\BugReportController::class, 'updateStatus'])->name('admin.bug-reports.update-status');

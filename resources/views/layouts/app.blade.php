@@ -536,7 +536,7 @@
                         </a>
 
                         <!-- Dropdown 1: Konfigurasi Sistem -->
-                        @php $isConfigActive = request()->routeIs('waves.*') || request()->routeIs('admin.letter-settings.*') || request()->routeIs('wa-templates.*'); @endphp
+                        @php $isConfigActive = request()->routeIs('waves.*') || request()->routeIs('admin.letter-settings.*') || request()->routeIs('wa-templates.*') || request()->routeIs('wa-broadcasts.*'); @endphp
                         <div x-data="{ open: {{ $isConfigActive ? 'true' : 'false' }} }">
                             <button @click="open = !open" 
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isConfigActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
@@ -558,6 +558,10 @@
                                 <a href="{{ route('wa-templates.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('wa-templates.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Template WA
+                                </a>
+                                <a href="{{ route('wa-broadcasts.index') }}" 
+                                   class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('wa-broadcasts.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    • Broadcast WA
                                 </a>
                             </div>
                         </div>
