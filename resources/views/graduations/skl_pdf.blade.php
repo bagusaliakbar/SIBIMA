@@ -158,54 +158,66 @@
         .signature-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 18px;
         }
 
         .signature-table td {
-            vertical-align: top;
+            vertical-align: bottom;
             border: none;
             padding: 0;
         }
 
         .qr-section {
-            width: 45%;
-            font-size: 8.5pt;
-            color: #444;
-            line-height: 1.25;
+            width: 52%;
+            padding-bottom: 2px;
         }
 
         .qr-card {
-            border: 1px solid #ccc;
-            padding: 8px 10px;
-            border-radius: 6px;
-            background-color: #fafafa;
-            display: inline-block;
+            font-family: Arial, Helvetica, sans-serif;
+            border: 1px solid #94a3b8;
+            padding: 6px 8px;
+            background-color: #f8fafc;
+            width: 265px;
         }
 
-        .qr-card table {
+        .qr-inner-table {
+            width: 100%;
             border-collapse: collapse;
         }
 
-        .qr-card td {
+        .qr-inner-table td {
+            border: none !important;
+            padding: 0 !important;
             vertical-align: middle;
         }
 
         .signature-section {
-            width: 55%;
+            width: 48%;
             text-align: left;
-            padding-left: 80px;
+            padding-left: 35px;
+        }
+
+        .date-line {
+            font-size: 10.5pt;
+            margin-bottom: 3px;
         }
 
         .signer-title {
-            margin-bottom: 5px;
             font-size: 10.5pt;
+            margin-bottom: 0;
+        }
+
+        .signature-space {
+            height: 55px;
+            margin: 4px 0 2px 0;
         }
 
         .signer-name {
             font-weight: bold;
             text-decoration: underline;
-            margin-top: 55px;
             font-size: 11pt;
+            margin: 0;
+            padding: 0;
         }
 
         .signer-nip {
@@ -349,39 +361,62 @@
         Surat Keterangan Lulus (SKL) ini diterbitkan secara sah dan berlaku sebagai bukti kelulusan sementara yang dapat dipergunakan sebagaimana mestinya sebelum Ijazah dan Transkrip Nilai asli diterbitkan.
     </div>
 
+    @php
+        $kaprodiNidn = null;
+        if ($kaprodi) {
+            if (!empty($kaprodi->identifier) && is_numeric($kaprodi->identifier)) {
+                $kaprodiNidn = $kaprodi->identifier;
+            } else {
+                $kaprodiNidn = \App\Models\User::where('name', $kaprodi->name)
+                    ->where('role', 'dosen')
+                    ->whereNotNull('identifier')
+                    ->where('identifier', '!=', 'kaprodi')
+                    ->value('identifier');
+            }
+        }
+    @endphp
+
     <!-- TANDA TANGAN & QR CODE -->
     <table class="signature-table">
         <tr>
             <td class="qr-section">
                 <div class="qr-card">
-                    <table>
+                    <table class="qr-inner-table">
                         <tr>
-                            <td style="padding-right: 10px;">
-                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(65)->margin(0)->generate(route('skl.verify', $graduation->verification_token))) }}">
+                            <td style="width: 58px; padding-right: 8px !important; border-right: 1px solid #cbd5e1 !important; text-align: center;">
+                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(56)->margin(0)->generate(route('skl.verify', $graduation->verification_token))) }}" style="width: 56px; height: 56px; display: block;">
                             </td>
-                            <td>
-                                <strong style="color: #0c1427; font-size: 8.5pt;">DOKUMEN RESMI DIGITAL</strong><br>
-                                <span style="font-size: 7.5pt; color: #555;">Pindai QR Code untuk verifikasi keabsahan dokumen SKL ini secara daring di sistem SIBIMA UNSUB.</span>
+                            <td style="padding-left: 8px !important;">
+                                <div style="font-size: 7.5pt; font-weight: bold; color: #0f172a; letter-spacing: 0.5px;">DOKUMEN RESMI DIGITAL</div>
+                                <div style="font-size: 6.5pt; color: #334155; line-height: 1.25; margin-top: 2px;">
+                                    Surat Keterangan Lulus (SKL) sah dan terdaftar resmi di sistem SIBIMA FASILKOM UNSUB.
+                                </div>
+                                <div style="font-size: 6pt; color: #64748b; margin-top: 3px; font-style: italic;">
+                                    Pindai QR Code untuk memeriksa data.
+                                </div>
                             </td>
                         </tr>
                     </table>
                 </div>
             </td>
             <td class="signature-section">
-                <div>Subang, {{ $graduation->approved_at ? $graduation->approved_at->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y') }}</div>
+                <div class="date-line">Subang, {{ $graduation->approved_at ? $graduation->approved_at->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y') }}</div>
                 <div class="signer-title">
                     Ketua Program Studi {{ $prodiName }},
                 </div>
                 
-                @if($kaprodi && $kaprodi->signature)
-                    <div style="height: 55px; margin-top: 5px;">
-                        <img src="{{ $kaprodi->signature }}" style="max-height: 50px; max-width: 140px;" alt="Tanda Tangan">
-                    </div>
-                    <div class="signer-name" style="margin-top: 5px;">{{ $kaprodi->name }}</div>
-                @else
-                    <div class="signer-name">{{ $kaprodi->name ?? 'Ketua Program Studi' }}</div>
+                <div class="signature-space">
+                    @if($kaprodi && $kaprodi->decrypted_signature)
+                        <img src="{{ $kaprodi->decrypted_signature }}" style="max-height: 52px; max-width: 140px; display: block;">
+                    @else
+                        <div style="height: 52px;"></div>
+                    @endif
+                </div>
+
+                <div class="signer-name">{{ $kaprodi->name ?? 'Ketua Program Studi' }}</div>
+                @if($kaprodiNidn)
+                    <div class="signer-nip">NIDN. {{ $kaprodiNidn }}</div>
                 @endif
-                <div class="signer-nip">NIDN. {{ $kaprodi->identifier ?? '-' }}</div>
             </td>
         </tr>
     </table>
