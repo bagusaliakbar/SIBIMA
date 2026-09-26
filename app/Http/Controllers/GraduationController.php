@@ -7,6 +7,7 @@ use App\Models\Thesis;
 use App\Models\User;
 use App\Models\LetterSetting;
 use App\Models\ActivityLog;
+use App\Models\WaTemplate;
 use App\Services\WhatsAppService;
 use App\Notifications\GeneralNotification;
 use Illuminate\Http\Request;
@@ -316,19 +317,21 @@ class GraduationController extends Controller
                 $graduation
             );
 
-            // WhatsApp Notification if available
+            // WhatsApp Notification via dynamic template
             if ($graduation->student->phone_number) {
-                $waMsg = "🎓 *SURAT KETERANGAN LULUS (SKL) DITERBITKAN*\n\n"
-                    . "Halo *{$graduation->student->name}*,\n"
-                    . "Selamat! Seluruh proses bebas tanggungan pra-yudisium Anda telah diverifikasi dan disetujui oleh Program Studi.\n\n"
-                    . "📄 *Nomor SKL:* {$sklNumber}\n"
-                    . "📅 *Tanggal Kelulusan:* " . Carbon::parse($request->graduation_date)->locale('id')->translatedFormat('d F Y') . "\n"
-                    . "⭐ *Predikat:* {$request->predicate}\n\n"
-                    . "Silakan login ke SIBIMA untuk mengunduh dokumen SKL resmi Anda:\n"
-                    . url('/student/graduation') . "\n\n"
-                    . "_Sistem Informasi Bimbingan Mahasiswa (SIBIMA) - FASILKOM UNSUB_";
+                $formattedGradDate = Carbon::parse($request->graduation_date)->locale('id')->translatedFormat('d F Y');
+                $waMsg = WaTemplate::parse('skl_published', [
+                    'nama_mahasiswa' => $graduation->student->name,
+                    'nomor_skl' => $sklNumber,
+                    'tanggal_kelulusan' => $formattedGradDate,
+                    'predikat_kelulusan' => $request->predicate ?? '-',
+                    'ipk' => $request->gpa ? number_format($request->gpa, 2) : '-',
+                    'link_skl' => route('student.graduation'),
+                ], "🎓 *SURAT KETERANGAN LULUS (SKL) DITERBITKAN*\n\nHalo *{$graduation->student->name}*,\nSelamat! Seluruh berkas bebas tanggungan pra-yudisium Anda telah diverifikasi dan disetujui oleh Program Studi.\n\n📄 *Nomor SKL:* {$sklNumber}\n📅 *Tanggal Kelulusan:* {$formattedGradDate}\n⭐ *Predikat:* {$request->predicate}\n\nSilakan login ke SIBIMA untuk mengunduh dokumen SKL resmi Anda:\n" . route('student.graduation') . "\n\n_Sistem Informasi Bimbingan Mahasiswa (SIBIMA) - FASILKOM UNSUB_");
 
-                $this->whatsAppService->sendMessage($graduation->student->phone_number, $waMsg);
+                if (!empty($waMsg)) {
+                    $this->whatsAppService->sendMessage($graduation->student->phone_number, $waMsg);
+                }
             }
 
             return redirect()->back()->with('success', "SKL No. {$sklNumber} berhasil diterbitkan untuk mahasiswa {$graduation->student->name}.");
@@ -345,13 +348,26 @@ class GraduationController extends Controller
             $graduation->rejection_reason = $request->rejection_reason;
             $graduation->save();
 
-            // Notify student
+            // Notify student in-app
             $graduation->student->notify(new GeneralNotification(
                 'Perbaikan Berkas Bebas Tanggungan',
                 "Pengajuan bebas tanggungan Anda memerlukan perbaikan: {$request->rejection_reason}",
                 route('student.graduation'),
                 'warning'
             ));
+
+            // Notify student via WhatsApp if available
+            if ($graduation->student->phone_number) {
+                $waMsg = WaTemplate::parse('graduation_rejected', [
+                    'nama_mahasiswa' => $graduation->student->name,
+                    'alasan_penolakan' => $request->rejection_reason,
+                    'link_skl' => route('student.graduation'),
+                ], "⚠️ *PERBAIKAN BERKAS BEBAS TANGGUNGAN*\n\nHalo *{$graduation->student->name}*,\n\nPengajuan berkas bebas tanggungan pra-yudisium Anda memerlukan perbaikan dari Program Studi / Fakultas.\n\n📝 *Catatan / Alasan Perbaikan:*\n\"{$request->rejection_reason}\"\n\nSilakan periksa dan perbaiki berkas persyaratan Anda melalui portal SIBIMA:\n" . route('student.graduation') . "\n\nTerima kasih.\n_Sistem Informasi Bimbingan Mahasiswa (SIBIMA) - FASILKOM UNSUB_");
+
+                if (!empty($waMsg)) {
+                    $this->whatsAppService->sendMessage($graduation->student->phone_number, $waMsg);
+                }
+            }
 
             ActivityLog::log(
                 'Penolakan Berkas Yudisium',

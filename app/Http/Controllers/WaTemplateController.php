@@ -36,7 +36,7 @@ class WaTemplateController extends Controller implements HasMiddleware
         }
 
         $templates = $query->orderBy('category')->orderBy('id')->get();
-        $categories = ['Bimbingan', 'Skripsi', 'Ujian', 'Pengingat', 'Ulang Tahun'];
+        $categories = ['Bimbingan', 'Skripsi', 'Ujian', 'Yudisium', 'Pengingat', 'Ulang Tahun'];
         $isWhatsAppGloballyEnabled = Setting::isWhatsAppEnabled();
         $totalCount = WaTemplate::count();
         $categoryCounts = WaTemplate::groupBy('category')
@@ -103,6 +103,7 @@ class WaTemplateController extends Controller implements HasMiddleware
             'mentoring_reminder',
             'supervisor_assigned',
             'thesis_accepted',
+            'acc_given',
             'revision_requested',
             'revision_submitted',
             'thesis_completed',
@@ -112,6 +113,8 @@ class WaTemplateController extends Controller implements HasMiddleware
             'kaprodi_critical_summary',
             'birthday_student',
             'birthday_lecturer',
+            'skl_published',
+            'graduation_rejected',
         ];
 
         $existingCount = WaTemplate::whereIn('code', $requiredCodes)->count();
