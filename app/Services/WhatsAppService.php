@@ -13,9 +13,10 @@ class WhatsAppService
      * 
      * @param string $to Recipient phone number (e.g. 08123456789 or 628123456789)
      * @param string $message The message content
+     * @param string|int|null $customDelay Optional custom delay in seconds for staggered sending
      * @return bool
      */
-    public function sendMessage($to, $message)
+    public function sendMessage($to, $message, $customDelay = null)
     {
         // 1. Check if WhatsApp is enabled globally
         if (! Setting::isWhatsAppEnabled()) {
@@ -33,7 +34,7 @@ class WhatsAppService
 
         // Apply Anti-Spam decorator: spintax parsing and unique fingerprint
         $decoratedMessage = $this->applyAntiSpamDecorators($message);
-        $delay = config('services.whatsapp.delay', '5-12');
+        $delay = $customDelay !== null ? (string) $customDelay : config('services.whatsapp.delay', '5-12');
         $typing = (bool) config('services.whatsapp.typing', true);
 
         try {

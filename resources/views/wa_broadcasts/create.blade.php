@@ -474,12 +474,44 @@
                             </div>
                         </div>
 
-                        <button type="submit" :disabled="selectedUserIds.length === 0"
-                                class="w-full py-3.5 px-4 bg-white text-orange-950 hover:bg-orange-50 rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                            🚀 Kirim Siaran WhatsApp Sekarang
+                        <button type="submit" :disabled="selectedUserIds.length === 0 || isSubmitting"
+                                class="w-full py-3.5 px-4 bg-white text-orange-950 hover:bg-orange-50 rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <span x-show="!isSubmitting">🚀 Kirim Siaran WhatsApp Sekarang</span>
+                            <span x-show="isSubmitting" class="flex items-center gap-2">
+                                <svg class="w-4 h-4 animate-spin text-orange-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span>Sedang Memproses Siaran...</span>
+                            </span>
                         </button>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Full-screen Loading Overlay on Submit -->
+            <div x-show="isSubmitting" x-cloak class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center space-y-5 animate-in fade-in zoom-in duration-300">
+                    <div class="w-16 h-16 rounded-2xl bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 mx-auto flex items-center justify-center text-3xl shadow-inner relative">
+                        <span>🚀</span>
+                        <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-4 w-4 bg-orange-500"></span>
+                        </span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white">Siaran WhatsApp Sedang Diproses</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Sistem sedang mendistribusikan pesan ke <strong class="text-slate-800 dark:text-slate-200" x-text="selectedUserIds.length + ' sasaran terpilih'"></strong> dengan proteksi anti-spam.
+                        </p>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-[11px] text-amber-800 dark:text-amber-300 font-medium text-left">
+                        ⚠️ <strong>PENTING:</strong> Mohon tunggu hingga proses selesai. Jangan me-refresh atau menutup jendela peramban agar pesan tidak terkirim ganda.
+                    </div>
+
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 h-full w-full animate-pulse"></div>
+                    </div>
                 </div>
             </div>
         </form>
@@ -506,6 +538,7 @@
                 isSendingTest: false,
                 testStatusMessage: '',
                 testStatusSuccess: true,
+                isSubmitting: false,
 
                 init() {
                     this.fetchRecipients();
@@ -677,14 +710,20 @@
                 },
 
                 handleSubmit(e) {
+                    if (this.isSubmitting) {
+                        e.preventDefault();
+                        return false;
+                    }
                     if (this.selectedUserIds.length === 0) {
                         e.preventDefault();
                         alert('Pilih setidaknya satu kontak penerima.');
-                        return;
+                        return false;
                     }
                     if (!confirm(`Apakah Anda yakin ingin mengirim siaran WhatsApp ini ke ${this.selectedUserIds.length} sasaran terpilih?`)) {
                         e.preventDefault();
+                        return false;
                     }
+                    this.isSubmitting = true;
                 }
             }
         }

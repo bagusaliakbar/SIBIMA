@@ -469,6 +469,11 @@ class WaBroadcastService
      */
     public function executeBroadcast(WaBroadcast $broadcast, ?array $selectedUserIds = null): array
     {
+        @set_time_limit(300);
+        if (function_exists('ignore_user_abort')) {
+            @ignore_user_abort(true);
+        }
+
         $allTargets = $this->getTargetRecipients($broadcast->target_type, $broadcast->target_filter ?? []);
 
         // Filter if specific subset of user IDs was selected by user
@@ -486,68 +491,77 @@ class WaBroadcastService
         $broadcast->update([
             'status' => 'processing',
             'total_recipients' => $total,
+            'successful_count' => 0,
+            'failed_count' => 0,
         ]);
 
-        foreach ($targets as $index => $item) {
-            $renderedMsg = $this->renderPersonalizedMessage($broadcast->message_template, $item['context'] ?? []);
-            $phone = $item['phone'] ?? null;
+        try {
+            foreach ($targets as $index => $item) {
+                $renderedMsg = $this->renderPersonalizedMessage($broadcast->message_template, $item['context'] ?? []);
+                $phone = $item['phone'] ?? null;
 
-            $log = WaBroadcastLog::create([
-                'wa_broadcast_id' => $broadcast->id,
-                'recipient_id' => $item['user_id'] ?? null,
-                'recipient_name' => $item['name'] ?? 'Penerima',
-                'recipient_identifier' => $item['identifier'] ?? '-',
-                'recipient_phone' => $phone,
-                'message_content' => $renderedMsg,
-                'status' => 'pending',
-            ]);
-
-            if (empty($phone)) {
-                $log->update([
-                    'status' => 'failed',
-                    'error_message' => 'Nomor WhatsApp belum terdaftar di profil akun.',
+                $log = WaBroadcastLog::create([
+                    'wa_broadcast_id' => $broadcast->id,
+                    'recipient_id' => $item['user_id'] ?? null,
+                    'recipient_name' => $item['name'] ?? 'Penerima',
+                    'recipient_identifier' => $item['identifier'] ?? '-',
+                    'recipient_phone' => $phone,
+                    'message_content' => $renderedMsg,
+                    'status' => 'pending',
                 ]);
-                $failed++;
-                continue;
-            }
 
-            try {
-                // Apply staggered delay (if not the first recipient)
-                if ($index > 0 && $delay > 0) {
-                    sleep($delay);
-                }
-
-                $isSent = $this->whatsAppService->sendMessage($phone, $renderedMsg);
-
-                if ($isSent) {
-                    $log->update([
-                        'status' => 'sent',
-                        'sent_at' => now(),
-                    ]);
-                    $success++;
-                } else {
+                if (empty($phone)) {
                     $log->update([
                         'status' => 'failed',
-                        'error_message' => 'Gateway WhatsApp Fonnte gagal mengirim pesan (periksa kuota/koneksi).',
+                        'error_message' => 'Nomor WhatsApp belum terdaftar di profil akun.',
                     ]);
                     $failed++;
+                    $broadcast->increment('failed_count');
+                    continue;
                 }
-            } catch (\Throwable $e) {
-                Log::error('Broadcast error for recipient ' . $item['name'] . ': ' . $e->getMessage());
-                $log->update([
-                    'status' => 'failed',
-                    'error_message' => $e->getMessage(),
-                ]);
-                $failed++;
-            }
-        }
 
-        $broadcast->update([
-            'status' => 'completed',
-            'successful_count' => $success,
-            'failed_count' => $failed,
-            'sent_at' => now(),
-        ]);
+                try {
+                    // Beri jeda halus antar panggilan HTTP ke server Fonnte (0.6 detik)
+                    // Sementara jeda antar pesan sebenarnya ditangani secara terjadwal oleh parameter delay Fonnte
+                    if ($index > 0) {
+                        usleep(600000);
+                    }
+
+                    $isSent = $this->whatsAppService->sendMessage($phone, $renderedMsg, $delay);
+
+                    if ($isSent) {
+                        $log->update([
+                            'status' => 'sent',
+                            'sent_at' => now(),
+                        ]);
+                        $success++;
+                        $broadcast->increment('successful_count');
+                    } else {
+                        $log->update([
+                            'status' => 'failed',
+                            'error_message' => 'Gateway WhatsApp Fonnte gagal mengirim pesan (periksa kuota/koneksi).',
+                        ]);
+                        $failed++;
+                        $broadcast->increment('failed_count');
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Broadcast error for recipient ' . $item['name'] . ': ' . $e->getMessage());
+                    $log->update([
+                        'status' => 'failed',
+                        'error_message' => $e->getMessage(),
+                    ]);
+                    $failed++;
+                    $broadcast->increment('failed_count');
+                }
+            }
+        } finally {
+            $broadcast->update([
+                'status' => 'completed',
+                'successful_count' => $success,
+                'failed_count' => $failed,
+                'sent_at' => now(),
+            ]);
+        }
 
         return [
             'total' => $total,

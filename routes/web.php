@@ -261,6 +261,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/wa-broadcasts/test-send', [App\Http\Controllers\WaBroadcastController::class, 'testSend'])->name('wa-broadcasts.test-send');
         Route::get('/wa-broadcasts/{waBroadcast}', [App\Http\Controllers\WaBroadcastController::class, 'show'])->name('wa-broadcasts.show');
         Route::post('/wa-broadcasts/{waBroadcast}/resend-failed', [App\Http\Controllers\WaBroadcastController::class, 'resendFailed'])->name('wa-broadcasts.resend-failed');
+        Route::delete('/wa-broadcasts/{waBroadcast}', [App\Http\Controllers\WaBroadcastController::class, 'destroy'])->name('wa-broadcasts.destroy');
 
         // Bug Reports Management (Admin & Kaprodi)
         Route::get('/admin/bug-reports', [App\Http\Controllers\BugReportController::class, 'index'])->name('admin.bug-reports.index');

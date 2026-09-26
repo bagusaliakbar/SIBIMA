@@ -42,6 +42,22 @@ class WaBroadcastController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
+        // Auto-heal siaran yang sempat tertahan di status 'processing' karena timeout sebelumnya
+        $stuckBroadcasts = WaBroadcast::where('status', 'processing')
+            ->where('created_at', '<', now()->subMinutes(2))
+            ->get();
+
+        foreach ($stuckBroadcasts as $stuck) {
+            $sent = $stuck->logs()->where('status', 'sent')->count();
+            $failed = $stuck->logs()->where('status', 'failed')->count();
+            $stuck->update([
+                'status' => 'completed',
+                'successful_count' => $sent,
+                'failed_count' => $failed,
+                'sent_at' => $stuck->sent_at ?? $stuck->created_at,
+            ]);
+        }
+
         $broadcasts = WaBroadcast::with('sender')
             ->withCount('logs')
             ->latest()
@@ -218,6 +234,18 @@ class WaBroadcastController extends Controller implements HasMiddleware
             'wave_id' => $request->input('wave_id'),
         ];
 
+        // Cegah pengiriman siaran duplikat dalam rentang 2 menit (Idempotency / Double-Submit Protection)
+        $recentDuplicate = WaBroadcast::where('sender_id', Auth::id())
+            ->where('title', $request->input('title'))
+            ->where('target_type', $request->input('target_type'))
+            ->where('created_at', '>=', now()->subMinutes(2))
+            ->first();
+
+        if ($recentDuplicate) {
+            return redirect()->route('wa-broadcasts.show', $recentDuplicate)
+                ->with('warning', 'Siaran serupa baru saja diproses dalam 2 menit terakhir. Pengiriman ganda telah otomatis dicegah agar nomor penerima tidak menerima pesan berulang.');
+        }
+
         $broadcast = WaBroadcast::create([
             'sender_id' => Auth::id(),
             'title' => $request->input('title'),
@@ -235,6 +263,18 @@ class WaBroadcastController extends Controller implements HasMiddleware
 
         return redirect()->route('wa-broadcasts.show', $broadcast)
             ->with('success', "Siaran berhasil diproses! Terkirim: {$result['successful']}, Gagal: {$result['failed']}.");
+    }
+
+    /**
+     * Delete a broadcast record and all its delivery logs.
+     */
+    public function destroy(WaBroadcast $waBroadcast)
+    {
+        $waBroadcast->logs()->delete();
+        $waBroadcast->delete();
+
+        return redirect()->route('wa-broadcasts.index')
+            ->with('success', 'Riwayat siaran dan log pesan berhasil dihapus.');
     }
 
     /**
