@@ -325,6 +325,7 @@
                             </a>
                         </nav>
                         @endif
+                        @endif
 
                     <!-- Admin & Kaprodi Specific -->
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
