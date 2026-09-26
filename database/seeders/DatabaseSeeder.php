@@ -50,5 +50,7 @@ class DatabaseSeeder extends Seeder
             'identifier' => '2000000000',
             'password' => \Illuminate\Support\Facades\Hash::make('2000000000'),
         ]);
+
+        $this->call(FaqSeeder::class);
     }
 }

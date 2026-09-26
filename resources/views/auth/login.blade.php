@@ -103,11 +103,17 @@
         </div>
 
         <!-- Card Footer -->
-        <div class="auth-footer-border pt-5 sm:pt-6 mt-6 sm:mt-7 border-t text-center">
+        <div class="auth-footer-border pt-5 sm:pt-6 mt-6 sm:mt-7 border-t text-center space-y-2">
             <p class="auth-footer-text text-xs sm:text-sm font-medium">
                 Belum memiliki akun? 
                 <a href="{{ route('register') }}" class="font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition-colors">
                     Daftar Sekarang
+                </a>
+            </p>
+            <p class="text-xs">
+                <a href="{{ route('faqs.index') }}" class="inline-flex items-center gap-1 font-semibold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Pusat Bantuan & Tanya Jawab (FAQ)
                 </a>
             </p>
         </div>

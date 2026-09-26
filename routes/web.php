@@ -9,6 +9,7 @@ Route::get('/', function () {
 
 Route::get('/verify-signature/{token}', [App\Http\Controllers\SignatureController::class, 'verify'])->name('signature.verify');
 Route::get('/verify/document/{token}', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('document.verify');
+Route::get('/faq', [App\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -182,6 +183,13 @@ Route::middleware('auth')->group(function () {
         Route::patch('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'update'])->name('announcements.update');
         Route::delete('/announcements/{announcement}', [App\Http\Controllers\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
         Route::post('/announcements/{announcement}/toggle', [App\Http\Controllers\AnnouncementController::class, 'toggleStatus'])->name('announcements.toggle');
+
+        // FAQ Management
+        Route::get('/manage/faqs', [App\Http\Controllers\FaqController::class, 'manage'])->name('faqs.manage');
+        Route::post('/manage/faqs', [App\Http\Controllers\FaqController::class, 'store'])->name('faqs.store');
+        Route::match(['put', 'patch'], '/manage/faqs/{faq}', [App\Http\Controllers\FaqController::class, 'update'])->name('faqs.update');
+        Route::delete('/manage/faqs/{faq}', [App\Http\Controllers\FaqController::class, 'destroy'])->name('faqs.destroy');
+        Route::post('/manage/faqs/{faq}/toggle', [App\Http\Controllers\FaqController::class, 'toggle'])->name('faqs.toggle');
 
         // System Logs
         Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
