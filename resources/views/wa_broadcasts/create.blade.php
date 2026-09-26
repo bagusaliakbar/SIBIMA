@@ -457,25 +457,25 @@
                     </div>
 
                     <!-- Final Submission Card -->
-                    <div class="bg-gradient-to-br from-orange-600 via-amber-600 to-orange-700 rounded-3xl p-6 text-white shadow-xl space-y-4">
+                    <div class="bg-orange-600 rounded-3xl p-6 text-white shadow-xl shadow-orange-600/20 border border-orange-500 space-y-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-orange-200">Ringkasan Siaran</span>
+                            <span class="text-xs font-black uppercase tracking-wider text-orange-100">Ringkasan Siaran</span>
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white" x-text="selectedUserIds.length + ' Sasaran'"></span>
                         </div>
 
-                        <div class="space-y-1 text-xs">
+                        <div class="space-y-1.5 text-xs">
                             <div class="flex justify-between text-orange-100">
                                 <span>Target:</span>
-                                <strong class="text-white" x-text="targetTypeLabel"></strong>
+                                <strong class="text-white font-black" x-text="targetTypeLabel"></strong>
                             </div>
                             <div class="flex justify-between text-orange-100">
                                 <span>Estimasi Waktu:</span>
-                                <strong class="text-white" x-text="estimateTime"></strong>
+                                <strong class="text-white font-black" x-text="estimateTime"></strong>
                             </div>
                         </div>
 
                         <button type="submit" :disabled="selectedUserIds.length === 0 || isSubmitting"
-                                class="w-full py-3.5 px-4 bg-white text-orange-950 hover:bg-orange-50 rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                class="w-full py-3.5 px-4 bg-white text-orange-600 hover:bg-orange-50 active:scale-[0.99] rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                             <span x-show="!isSubmitting">🚀 Kirim Siaran WhatsApp Sekarang</span>
                             <span x-show="isSubmitting" class="flex items-center gap-2">
                                 <svg class="w-4 h-4 animate-spin text-orange-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
