@@ -243,10 +243,8 @@
                         @if(Auth::user()->role === 'mahasiswa')
                         @php 
                             $thesis = \App\Models\Thesis::where('student_id', Auth::id())->first();
-                            $isGraduated = $thesis && $thesis->status === 'completed';
                         @endphp
 
-                        @if(!$isGraduated)
                         <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
                             <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Tahapan Skripsi</p>
                         </div>
@@ -307,6 +305,12 @@
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-defense-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 5. Revisi Sidang
                             </a>
+
+                            <a href="{{ route('student.graduation') }}" 
+                               class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student.graduation') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student.graduation') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                                6. Yudisium & SKL
+                            </a>
                         </nav>
 
                         <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
@@ -325,7 +329,6 @@
                             </a>
                         </nav>
                         @endif
-                        @endif
 
                     <!-- Admin & Kaprodi Specific -->
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
@@ -338,6 +341,21 @@
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Daftar Pengajuan
+                        </a>
+
+                        <!-- Direct Link: Yudisium & SKL -->
+                        @php $pendingGraduationsCount = \App\Models\Graduation::where('status', 'pending')->count(); @endphp
+                        <a href="{{ route('graduations.index') }}" 
+                           class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('graduations.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('graduations.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                                <span>Yudisium & SKL</span>
+                            </div>
+                            @if($pendingGraduationsCount > 0)
+                                <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-orange-500 text-white animate-pulse">
+                                    {{ $pendingGraduationsCount }}
+                                </span>
+                            @endif
                         </a>
 
                         <!-- Dropdown 1: Validasi & Verifikasi -->

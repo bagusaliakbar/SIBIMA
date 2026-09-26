@@ -178,7 +178,28 @@ class DownloadController extends Controller
             }
         }
 
-        // 6. Templates
+        // 6. Graduation & Clearance Files
+        if (str_starts_with($path, 'graduation_files/')) {
+            $graduation = \App\Models\Graduation::where(function($query) use ($path) {
+                $query->where('final_thesis_file', $path)
+                      ->orWhere('journal_article_file', $path)
+                      ->orWhere('plagiarism_file', $path);
+            })->first();
+
+            if ($graduation) {
+                $isAllowed = $isAdmin || ($user->role === 'mahasiswa' && $graduation->student_id === $user->id);
+                if ($isAllowed) {
+                    $student = $graduation->student;
+                    $npm = $student->identifier ?? 'MHS';
+                    $name = str_replace(' ', '_', $student->name ?? 'Mahasiswa');
+                    $extension = pathinfo($path, PATHINFO_EXTENSION);
+                    $downloadName = "{$npm}_{$name}_berkas_yudisium.{$extension}";
+                    return Storage::disk(config('filesystems.default'))->download($path, $downloadName);
+                }
+            }
+        }
+
+        // 7. Templates
         if (str_starts_with($path, 'seminar_templates/')) {
             $template = \App\Models\SeminarTemplate::where('file_path', $path)->first();
             return Storage::disk(config('filesystems.default'))->download($path, $template ? $template->original_name : null);

@@ -9,6 +9,7 @@ Route::get('/', function () {
 
 Route::get('/verify-signature/{token}', [App\Http\Controllers\SignatureController::class, 'verify'])->name('signature.verify');
 Route::get('/verify/document/{token}', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('document.verify');
+Route::get('/verify/skl/{token}', [App\Http\Controllers\GraduationController::class, 'verifySkl'])->name('skl.verify');
 Route::get('/faq', [App\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
@@ -132,6 +133,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/student-defense-revisions/{revision}/print', [App\Http\Controllers\StudentThesisDefenseRevisionController::class, 'printPdf'])->name('student-defense-revisions.print-pdf');
     Route::get('/student/history', [App\Http\Controllers\StudentHistoryController::class, 'index'])->name('student.history');
 
+    // Yudisium, Bebas Tanggungan & SKL Digital (Mahasiswa & Download SKL)
+    Route::get('/student/graduation', [App\Http\Controllers\GraduationController::class, 'studentIndex'])->name('student.graduation');
+    Route::post('/student/graduation', [App\Http\Controllers\GraduationController::class, 'studentStore'])->name('student.graduation.store');
+    Route::get('/graduations/{graduation}/skl-pdf', [App\Http\Controllers\GraduationController::class, 'downloadSkl'])->name('graduations.download-skl');
+
     // Thesis Defense Applications (Sidang)
     Route::get('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'index'])->name('thesis-defense-applications.index');
     Route::post('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'store'])->name('thesis-defense-applications.store');
@@ -222,6 +228,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/documents/sk-penguji-sidang/{schedule}', [App\Http\Controllers\DocumentController::class, 'generateSKTimPengujiSidang'])->name('documents.sk-penguji-sidang');
         Route::get('/admin/letter-settings', [App\Http\Controllers\LetterSettingController::class, 'index'])->name('admin.letter-settings.index');
         Route::put('/admin/letter-settings/{letterSetting}', [App\Http\Controllers\LetterSettingController::class, 'update'])->name('admin.letter-settings.update');
+
+        // Yudisium & Bebas Tanggungan Management (Admin & Kaprodi)
+        Route::get('/admin/graduations', [App\Http\Controllers\GraduationController::class, 'adminIndex'])->name('graduations.index');
+        Route::post('/admin/graduations/{graduation}/verify', [App\Http\Controllers\GraduationController::class, 'adminVerify'])->name('graduations.verify');
 
         // User Management
         Route::get('/users/export', [App\Http\Controllers\UserController::class, 'export'])->name('users.export');

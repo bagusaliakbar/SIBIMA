@@ -754,4 +754,9 @@ class Thesis extends Model
             'created_at' => $this->created_at ? $this->created_at->format('d M Y') : '-',
         ];
     }
+
+    public function graduation()
+    {
+        return $this->hasOne(Graduation::class);
+    }
 }
