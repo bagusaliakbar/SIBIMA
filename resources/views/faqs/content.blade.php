@@ -208,19 +208,14 @@
     </div>
 
     <!-- Contact Support CTA Card -->
-    <div class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-white dark:to-slate-800 bg-white dark:bg-slate-800 border border-emerald-200/80 dark:border-emerald-800/40 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 transition-all">
-        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-            </div>
-            <div>
-                <h4 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">Masih punya pertanyaan yang belum terjawab?</h4>
-                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-xl leading-relaxed">
-                    Hubungi Admin Program Studi atau Dosen Pembimbing Anda untuk bantuan lebih lanjut seputar alur bimbingan dan sidang skripsi.
-                </p>
-            </div>
+    <div class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-white dark:to-slate-800 bg-white dark:bg-slate-800 border border-emerald-200/80 dark:border-emerald-800/40 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all">
+        <div class="text-left space-y-1">
+            <h4 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">Masih punya pertanyaan yang belum terjawab?</h4>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
+                Hubungi Admin Program Studi atau Dosen Pembimbing Anda untuk bantuan lebih lanjut seputar alur bimbingan dan sidang skripsi.
+            </p>
         </div>
-        <div class="shrink-0 flex items-center gap-3 w-full sm:w-auto justify-center">
+        <div class="shrink-0 flex items-center gap-3 w-full sm:w-auto justify-start md:justify-end">
             @auth
                 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     <a href="{{ route('faqs.manage') }}" class="inline-flex items-center justify-center px-4 py-3 rounded-2xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-all shadow-xs cursor-pointer">
