@@ -5,20 +5,6 @@
                 ['label' => 'Konfigurasi Sistem', 'route' => null],
                 ['label' => 'Broadcast WhatsApp', 'route' => null]
             ]" />
-
-            <div class="flex items-center gap-3">
-                <a href="{{ route('wa-templates.index') }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all border border-slate-200 dark:border-slate-700">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                    <span>Template WhatsApp</span>
-                </a>
-
-                <a href="{{ route('wa-broadcasts.create') }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-600/20">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    <span>Buat Siaran Baru</span>
-                </a>
-            </div>
         </div>
     </x-slot>
 
