@@ -38,12 +38,8 @@
         <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="relative z-10 max-w-3xl mx-auto text-center space-y-4">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-widest uppercase bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/40">
-                <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Pusat Bantuan SIBIMA
-            </span>
             <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-                Ada yang bisa kami bantu?
+                Pusat Bantuan SIBIMA
             </h1>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
                 Temukan panduan lengkap alur bimbingan, seminar proposal, sidang skripsi, hingga solusi kendala teknis akun.
