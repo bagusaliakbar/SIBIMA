@@ -37,7 +37,7 @@
         <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="relative z-10 max-w-2xl mx-auto text-center space-y-4">
+        <div class="relative z-10 max-w-3xl mx-auto text-center space-y-4">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-widest uppercase bg-orange-500/20 text-orange-300 border border-orange-500/30">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Pusat Bantuan SIBIMA
@@ -45,13 +45,13 @@
             <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
                 Ada yang bisa kami bantu?
             </h1>
-            <p class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-xl mx-auto">
+            <p class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto">
                 Temukan panduan lengkap alur bimbingan, seminar proposal, sidang skripsi, hingga solusi kendala teknis akun.
             </p>
 
             <!-- Search Input Box -->
             <div class="pt-2">
-                <div class="relative max-w-xl mx-auto">
+                <div class="relative max-w-2xl mx-auto">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
