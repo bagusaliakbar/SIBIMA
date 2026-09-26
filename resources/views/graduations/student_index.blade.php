@@ -30,31 +30,36 @@
             <!-- Hero Status Banner -->
             @if($graduation && $graduation->status === 'approved')
                 <!-- Status Lulus & SKL Siap -->
-                <div class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-xl shadow-emerald-900/10 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none"></div>
-                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div class="space-y-2 max-w-2xl">
-                            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-wider text-emerald-100 border border-white/25">
-                                <svg class="w-4 h-4 text-emerald-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                Bebas Tanggungan Terverifikasi & SKL Diterbitkan
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border-2 border-emerald-500/80 dark:border-emerald-500/60 shadow-lg shadow-emerald-500/5 relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="space-y-3 max-w-2xl">
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-black tracking-wide border border-emerald-200 dark:border-emerald-800/80">
+                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                <span>Bebas Tanggungan Terverifikasi & SKL Diterbitkan</span>
                             </div>
-                            <h2 class="text-2xl sm:text-3xl font-black tracking-tight">Selamat, Anda Resmi Lulus!</h2>
-                            <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed">
-                                Seluruh berkas akhir dan bebas tanggungan Anda telah disetujui oleh Program Studi. Surat Keterangan Lulus (SKL) resmi dengan QR Code verifikasi telah diterbitkan.
+                            <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+                                Selamat, Anda Resmi Lulus! 🎓
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                Seluruh berkas akhir dan bebas tanggungan Anda telah disetujui oleh Program Studi. Surat Keterangan Lulus (SKL) resmi dengan QR Code verifikasi telah diterbitkan dan dapat diunduh sekarang.
                             </p>
-                            <div class="flex flex-wrap items-center gap-4 pt-1 text-xs text-emerald-100 font-mono">
-                                <span>No. SKL: <strong class="text-white">{{ $graduation->skl_number }}</strong></span>
-                                <span>•</span>
-                                <span>Yudisium: <strong class="text-white">{{ $graduation->formatted_graduation_date }}</strong></span>
+                            <div class="flex flex-wrap items-center gap-2 sm:gap-4 pt-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700/60 font-mono font-bold text-slate-700 dark:text-slate-200">
+                                    No. SKL: <span class="text-emerald-600 dark:text-emerald-400">{{ $graduation->skl_number }}</span>
+                                </span>
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-200">
+                                    Yudisium: <strong class="text-slate-900 dark:text-white">{{ $graduation->formatted_graduation_date }}</strong>
+                                </span>
                                 @if($graduation->predicate)
-                                    <span>•</span>
-                                    <span>Predikat: <strong class="text-white">{{ $graduation->predicate }}</strong></span>
+                                    <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 font-bold text-emerald-700 dark:text-emerald-300">
+                                        Predikat: {{ $graduation->predicate }}
+                                    </span>
                                 @endif
                             </div>
                         </div>
                         <div class="shrink-0 flex items-center">
-                            <a href="{{ route('graduations.download-skl', $graduation) }}" target="_blank" class="inline-flex items-center gap-2.5 px-6 py-3.5 bg-white text-emerald-800 hover:bg-emerald-50 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <a href="{{ route('graduations.download-skl', $graduation) }}" target="_blank" class="inline-flex items-center gap-2.5 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 <span>Unduh SKL Digital (PDF)</span>
                             </a>
                         </div>
