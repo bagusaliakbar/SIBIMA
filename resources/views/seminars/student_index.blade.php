@@ -44,25 +44,18 @@
             <div class="space-y-6">
                 <!-- Main Status & Hero Guidance Card -->
                 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 p-6 sm:p-8">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-6">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200/70 dark:border-amber-800/40 flex items-center justify-center shrink-0">
-                            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                    <div class="mb-6 space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+                                Progres Menuju Pendaftaran Seminar Proposal
+                            </h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
+                                Belum Memenuhi Syarat
+                            </span>
                         </div>
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
-                                    Progres Menuju Pendaftaran Seminar Proposal
-                                </h3>
-                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-                                    Belum Memenuhi Syarat
-                                </span>
-                            </div>
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed max-w-2xl">
-                                Formulir pendaftaran seminar proposal akan otomatis aktif setelah Anda memperoleh persetujuan (<strong class="text-slate-700 dark:text-slate-200 font-bold">ACC Seminar UP</strong>) dari <strong class="text-slate-700 dark:text-slate-200 font-bold">kedua dosen pembimbing</strong> melalui sesi bimbingan resmi.
-                            </p>
-                        </div>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Formulir pendaftaran seminar proposal akan otomatis aktif setelah Anda memperoleh persetujuan (<strong class="text-slate-700 dark:text-slate-200 font-bold">ACC Seminar UP</strong>) dari <strong class="text-slate-700 dark:text-slate-200 font-bold">kedua dosen pembimbing</strong> melalui sesi bimbingan resmi.
+                        </p>
                     </div>
 
                     <!-- Dual Supervisor Status Cards -->
