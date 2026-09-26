@@ -21,10 +21,6 @@
     get visibleCount() {
         return this.faqsList.filter(f => this.matchesSearch(f.q, f.a, f.c)).length;
     },
-    setQuickQuery(query, category = null) {
-        this.searchQuery = query;
-        if (category) this.selectedCategory = category;
-    },
     resetSearch() {
         this.searchQuery = '';
         this.selectedCategory = 'all';
@@ -63,16 +59,6 @@
                         x-cloak>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
-                </div>
-
-                <!-- Quick Query Chips -->
-                <div class="pt-3 flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-xs">
-                    <span class="text-slate-400 dark:text-slate-500 text-[11px] font-semibold">Pencarian Cepat:</span>
-                    <button type="button" @click="setQuickQuery('minimal bimbingan', 'bimbingan')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Bimbingan</button>
-                    <button type="button" @click="setQuickQuery('acc seminar', 'seminar')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">ACC Seminar</button>
-                    <button type="button" @click="setQuickQuery('sidang', 'sidang')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Sidang Akhir</button>
-                    <button type="button" @click="setQuickQuery('revisi', 'revisi')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Batas Revisi</button>
-                    <button type="button" @click="setQuickQuery('captcha', 'teknis')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Kendala Akun</button>
                 </div>
             </div>
         </div>
