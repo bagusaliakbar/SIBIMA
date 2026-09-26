@@ -31,21 +31,21 @@
     }
 }" class="space-y-8">
 
-    <!-- Hero Search Card -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-orange-950 p-6 sm:p-10 text-white shadow-xl border border-slate-800">
-        <!-- Glow accents -->
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Hero Search Card (Solid White Card with dark mode support) -->
+    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-slate-800 p-6 sm:p-10 border border-slate-200/80 dark:border-slate-700/80 shadow-xs transition-all">
+        <!-- Subtle warm ambient lighting -->
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-500/5 dark:bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="relative z-10 max-w-3xl mx-auto text-center space-y-4">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-widest uppercase bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-widest uppercase bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/40">
+                <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Pusat Bantuan SIBIMA
             </span>
-            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
                 Ada yang bisa kami bantu?
             </h1>
-            <p class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto">
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-2xl mx-auto">
                 Temukan panduan lengkap alur bimbingan, seminar proposal, sidang skripsi, hingga solusi kendala teknis akun.
             </p>
 
@@ -58,11 +58,11 @@
                     <input type="text" 
                         x-model="searchQuery" 
                         placeholder="Ketik kata kunci pertanyaan (misal: bimbingan, seminar, revisi, acc, berkas)..." 
-                        class="block w-full pl-11 pr-10 py-3.5 text-xs sm:text-sm rounded-2xl bg-white/10 hover:bg-white/15 focus:bg-white/20 text-white placeholder-slate-400 border border-white/15 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 backdrop-blur-md transition-all shadow-inner font-medium">
+                        class="block w-full pl-11 pr-10 py-3.5 text-xs sm:text-sm rounded-2xl bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100/80 dark:hover:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all shadow-inner font-medium">
                     <button type="button" 
                         x-show="searchQuery.length > 0" 
                         @click="searchQuery = ''" 
-                        class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
                         title="Hapus pencarian"
                         x-cloak>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -71,12 +71,12 @@
 
                 <!-- Quick Query Chips -->
                 <div class="pt-3 flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-xs">
-                    <span class="text-slate-400 text-[11px] font-semibold">Pencarian Cepat:</span>
-                    <button type="button" @click="setQuickQuery('minimal bimbingan', 'bimbingan')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 text-[11px] font-medium border border-white/10 hover:border-orange-500/30 transition-all cursor-pointer">Bimbingan</button>
-                    <button type="button" @click="setQuickQuery('acc seminar', 'seminar')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 text-[11px] font-medium border border-white/10 hover:border-orange-500/30 transition-all cursor-pointer">ACC Seminar</button>
-                    <button type="button" @click="setQuickQuery('sidang', 'sidang')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 text-[11px] font-medium border border-white/10 hover:border-orange-500/30 transition-all cursor-pointer">Sidang Akhir</button>
-                    <button type="button" @click="setQuickQuery('revisi', 'revisi')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 text-[11px] font-medium border border-white/10 hover:border-orange-500/30 transition-all cursor-pointer">Batas Revisi</button>
-                    <button type="button" @click="setQuickQuery('captcha', 'teknis')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 text-[11px] font-medium border border-white/10 hover:border-orange-500/30 transition-all cursor-pointer">Kendala Akun</button>
+                    <span class="text-slate-400 dark:text-slate-500 text-[11px] font-semibold">Pencarian Cepat:</span>
+                    <button type="button" @click="setQuickQuery('minimal bimbingan', 'bimbingan')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Bimbingan</button>
+                    <button type="button" @click="setQuickQuery('acc seminar', 'seminar')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">ACC Seminar</button>
+                    <button type="button" @click="setQuickQuery('sidang', 'sidang')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Sidang Akhir</button>
+                    <button type="button" @click="setQuickQuery('revisi', 'revisi')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Batas Revisi</button>
+                    <button type="button" @click="setQuickQuery('captcha', 'teknis')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-orange-950/50 dark:hover:text-orange-400 text-slate-600 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/80 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">Kendala Akun</button>
                 </div>
             </div>
         </div>
