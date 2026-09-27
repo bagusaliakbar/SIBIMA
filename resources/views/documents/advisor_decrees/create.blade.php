@@ -7,8 +7,42 @@
     </x-slot>
 
     <div class="w-full space-y-6" x-data="advisorDecreeComposer()">
+        <!-- Error Alert Banner -->
+        @if($errors->any())
+            <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs space-y-1.5 shadow-sm">
+                <div class="flex items-center gap-2 font-black text-rose-900 dark:text-rose-100">
+                    <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>Gagal Menerbitkan SK / Surat Tugas:</span>
+                </div>
+                <ul class="list-disc list-inside space-y-0.5 pl-6 text-rose-700 dark:text-rose-300">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('advisor-decrees.store') }}" method="POST" @submit="handleSubmit($event)">
             @csrf
+
+            <!-- Hidden Inputs for Selected Candidates -->
+            <template x-for="id in selectedIds" :key="'submit-sel-' + id">
+                <input type="hidden" name="selected_theses[]" :value="id">
+            </template>
+
+            <!-- Hidden Inputs for Manual Students -->
+            <template x-for="(st, idx) in manualStudents" :key="'submit-man-' + idx">
+                <div>
+                    <input type="hidden" :name="'manual_theses[' + idx + '][student_name]'" :value="st.student_name">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][student_npm]'" :value="st.student_npm">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][student_cohort]'" :value="st.student_cohort">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][title]'" :value="st.title">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][pembimbing1_name]'" :value="st.pembimbing1_name">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][pembimbing1_nidn]'" :value="st.pembimbing1_nidn">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][pembimbing2_name]'" :value="st.pembimbing2_name">
+                    <input type="hidden" :name="'manual_theses[' + idx + '][pembimbing2_nidn]'" :value="st.pembimbing2_nidn">
+                </div>
+            </template>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Column: Filters & Candidates Table (2 cols) -->
@@ -26,7 +60,7 @@
                                 </div>
                             </div>
                             <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400"
-                                  x-text="candidateCount + ' Mahasiswa Ditemukan'"></span>
+                                  x-text="(candidateCount + manualStudents.length) + ' Mahasiswa Ditemukan'"></span>
                         </div>
 
                         @if(Auth::user()->role === 'dosen')
@@ -96,7 +130,7 @@
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Gelombang Pelaksanaan</label>
                                 <select name="wave_id" x-model="waveId" @change="fetchCandidates()"
                                         class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 focus:ring-orange-500 focus:border-orange-500">
-                                    <option value="all">Semua Gelombang / Tanpa Gelombang</option>
+                                    <option value="">Semua Gelombang / Tanpa Gelombang</option>
                                     @foreach($waves as $wave)
                                         <option value="{{ $wave->id }}">{{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}</option>
                                     @endforeach
@@ -127,14 +161,20 @@
 
                     <!-- Step 2: Candidate Selection Table -->
                     <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
                                 <h3 class="text-sm font-black text-slate-900 dark:text-white">Pilih Mahasiswa untuk Lampiran SK</h3>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400"
-                                      x-text="selectedCount + ' / ' + candidateCount + ' Terpilih'"></span>
+                                      x-text="(selectedCount + manualStudents.length) + ' Terpilih'"></span>
                             </div>
 
                             <div class="flex items-center gap-2">
+                                <button type="button" @click="showManualModal = true"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 dark:hover:bg-orange-900/60 border border-orange-200 dark:border-orange-800 transition cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                    <span>Tambah Manual</span>
+                                </button>
+                                <span class="text-slate-300">|</span>
                                 <button type="button" @click="selectAll()" class="text-xs font-bold text-orange-600 hover:text-orange-700 transition cursor-pointer">
                                     Pilih Semua
                                 </button>
@@ -145,7 +185,35 @@
                             </div>
                         </div>
 
-                        <!-- Candidates Container -->
+                        <!-- Manual Students List (if any added) -->
+                        <div x-show="manualStudents.length > 0" class="space-y-2">
+                            <div class="text-[11px] font-black uppercase text-orange-600 tracking-wider flex items-center gap-1.5">
+                                <span>✍️ Mahasiswa Tambahan Manual (<span x-text="manualStudents.length"></span>)</span>
+                            </div>
+                            <div class="border border-orange-200 dark:border-orange-900/60 rounded-2xl overflow-hidden divide-y divide-orange-100 dark:divide-orange-950/60 bg-orange-50/30 dark:bg-orange-950/10">
+                                <template x-for="(st, idx) in manualStudents" :key="'man-card-' + idx">
+                                    <div class="p-3.5 flex items-start justify-between gap-3 text-xs">
+                                        <div class="space-y-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-black text-slate-900 dark:text-white" x-text="st.student_name"></span>
+                                                <span class="text-slate-400" x-text="'(' + st.student_npm + ')'"></span>
+                                                <span class="px-1.5 py-0.2 rounded text-[10px] bg-orange-100 text-orange-700 font-bold">Manual</span>
+                                            </div>
+                                            <div class="text-slate-600 dark:text-slate-300 italic" x-text="st.title"></div>
+                                            <div class="text-[11px] text-slate-500 flex flex-wrap gap-x-3">
+                                                <span>P1: <strong x-text="st.pembimbing1_name || '-'"></strong></span>
+                                                <span>P2: <strong x-text="st.pembimbing2_name || '-'"></strong></span>
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="removeManualStudent(idx)" class="text-rose-500 hover:text-rose-700 p-1 text-xs font-bold cursor-pointer" title="Hapus">
+                                            ✕
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Candidates Container from SIBIMA DB -->
                         <div class="border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden">
                             <div class="max-h-96 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
                                 <!-- Loading State -->
@@ -155,17 +223,18 @@
                                 </div>
 
                                 <!-- Empty State -->
-                                <div x-show="!isLoading && candidates.length === 0" class="p-8 text-center text-slate-400 text-xs">
-                                    Tidak ada data mahasiswa dengan pembimbing yang sesuai dengan filter di atas.
+                                <div x-show="!isLoading && candidates.length === 0" class="p-8 text-center text-slate-400 text-xs space-y-2">
+                                    <p>Tidak ada data mahasiswa skripsi dengan pembimbing yang sesuai dengan filter.</p>
+                                    <p class="text-[11px] text-slate-500">Anda dapat menggunakan tombol <strong>+ Tambah Manual</strong> di atas untuk memasukkan data mahasiswa secara langsung.</p>
                                 </div>
 
                                 <!-- List of Candidates -->
                                 <template x-for="(candidate, index) in candidates" :key="candidate.id">
                                     <label class="p-4 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition select-none">
-                                        <input type="checkbox" name="selected_theses[]" :value="candidate.id"
+                                        <input type="checkbox" :value="candidate.id"
                                                :checked="selectedIds.includes(candidate.id)"
                                                @change="toggleSelection(candidate.id)"
-                                               class="mt-1 rounded text-orange-600 focus:ring-orange-500 border-slate-300 dark:border-slate-700">
+                                               class="mt-1 rounded text-orange-600 focus:ring-orange-500 border-slate-300 dark:border-slate-700 cursor-pointer">
                                         
                                         <div class="flex-1 space-y-1 text-xs">
                                             <div class="flex items-center justify-between">
@@ -281,11 +350,11 @@
                         </div>
                     </div>
 
-                    <!-- Final Action Solid Card (Mengikuti Standar Desain Solid SIBIMA) -->
+                    <!-- Final Action Solid Card -->
                     <div class="bg-orange-600 rounded-3xl p-6 text-white shadow-xl shadow-orange-600/20 border border-orange-500 space-y-4">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-black uppercase tracking-wider text-orange-100">Ringkasan Penerbitan</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white" x-text="selectedCount + ' Mahasiswa'"></span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white" x-text="(selectedCount + manualStudents.length) + ' Mahasiswa'"></span>
                         </div>
 
                         <div class="space-y-1.5 text-xs">
@@ -303,7 +372,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" :disabled="selectedCount === 0 || isSubmitting"
+                        <button type="submit" :disabled="(selectedCount + manualStudents.length === 0) || isSubmitting"
                                 class="w-full py-3.5 px-4 bg-white text-orange-600 hover:bg-orange-50 active:scale-[0.99] rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                             <span x-show="!isSubmitting">⚖️ Terbitkan & Simpan SK Sekarang</span>
                             <span x-show="isSubmitting" class="flex items-center gap-2">
@@ -315,6 +384,75 @@
                 </div>
             </div>
         </form>
+
+        <!-- Modal Tambah Mahasiswa Manual -->
+        <div x-show="showManualModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 space-y-4 border border-slate-200 dark:border-slate-800 shadow-2xl"
+                 @click.away="showManualModal = false">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="text-sm font-black text-slate-900 dark:text-white">Tambah Mahasiswa Manual</h3>
+                    <button type="button" @click="showManualModal = false" class="text-slate-400 hover:text-slate-600 text-sm">✕</button>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Mahasiswa *</label>
+                        <input type="text" x-model="newManual.student_name" placeholder="Nama Lengkap Mahasiswa"
+                               class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">NPM *</label>
+                            <input type="text" x-model="newManual.student_npm" placeholder="Contoh: 211011001"
+                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Angkatan</label>
+                            <input type="text" x-model="newManual.student_cohort" placeholder="2021"
+                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Judul Skripsi *</label>
+                        <textarea x-model="newManual.title" rows="2" placeholder="Judul skripsi mahasiswa..."
+                                  class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Pembimbing 1 *</label>
+                            <input type="text" x-model="newManual.pembimbing1_name" placeholder="Nama Pembimbing 1 & Gelar"
+                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">NIDN/NIP P1</label>
+                            <input type="text" x-model="newManual.pembimbing1_nidn" placeholder="NIDN P1"
+                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Pembimbing 2</label>
+                            <input type="text" x-model="newManual.pembimbing2_name" placeholder="Nama Pembimbing 2 & Gelar"
+                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">NIDN/NIP P2</label>
+                            <input type="text" x-model="newManual.pembimbing2_nidn" placeholder="NIDN P2"
+                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" @click="showManualModal = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        Batal
+                    </button>
+                    <button type="button" @click="saveManualStudent()" class="px-4 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm">
+                        Simpan ke Daftar
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -328,7 +466,7 @@
                 targetType: '{{ Auth::user()->role === "dosen" ? "individual_dosen" : "collective" }}',
                 dosenId: '{{ Auth::user()->role === "dosen" ? Auth::id() : "" }}',
                 cohort: 'all',
-                waveId: 'all',
+                waveId: '',
                 status: 'all',
                 searchQuery: '',
                 signatoryTitle: '{{ $defaultSignatoryTitle }}',
@@ -337,6 +475,18 @@
                 notes: '',
                 candidates: [],
                 selectedIds: [],
+                manualStudents: [],
+                showManualModal: false,
+                newManual: {
+                    student_name: '',
+                    student_npm: '',
+                    student_cohort: '2021',
+                    title: '',
+                    pembimbing1_name: '{{ Auth::user()->role === "dosen" ? Auth::user()->name : "" }}',
+                    pembimbing1_nidn: '{{ Auth::user()->role === "dosen" ? (Auth::user()->identifier ?? "") : "" }}',
+                    pembimbing2_name: '',
+                    pembimbing2_nidn: '',
+                },
                 isLoading: false,
                 isSubmitting: false,
 
@@ -399,10 +549,33 @@
                     }
                 },
 
+                saveManualStudent() {
+                    if (!this.newManual.student_name || !this.newManual.student_npm || !this.newManual.title || !this.newManual.pembimbing1_name) {
+                        alert('Mohon lengkapi Nama Mahasiswa, NPM, Judul Skripsi, dan Nama Pembimbing 1.');
+                        return;
+                    }
+                    this.manualStudents.push({ ...this.newManual });
+                    this.newManual = {
+                        student_name: '',
+                        student_npm: '',
+                        student_cohort: '2021',
+                        title: '',
+                        pembimbing1_name: '{{ Auth::user()->role === "dosen" ? Auth::user()->name : "" }}',
+                        pembimbing1_nidn: '{{ Auth::user()->role === "dosen" ? (Auth::user()->identifier ?? "") : "" }}',
+                        pembimbing2_name: '',
+                        pembimbing2_nidn: '',
+                    };
+                    this.showManualModal = false;
+                },
+
+                removeManualStudent(idx) {
+                    this.manualStudents.splice(idx, 1);
+                },
+
                 handleSubmit(event) {
-                    if (this.selectedIds.length === 0) {
+                    if (this.selectedIds.length === 0 && this.manualStudents.length === 0) {
                         event.preventDefault();
-                        alert('Pilih minimal satu judul skripsi / mahasiswa untuk dimasukkan ke dalam SK.');
+                        alert('Pilih minimal satu mahasiswa dari daftar atau klik "Tambah Manual" untuk menambahkan mahasiswa.');
                         return;
                     }
                     this.isSubmitting = true;

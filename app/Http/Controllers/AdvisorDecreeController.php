@@ -286,6 +286,19 @@ class AdvisorDecreeController extends Controller
             ]);
         }
 
+        if ($request->wave_id === 'all' || empty($request->wave_id)) {
+            $request->merge(['wave_id' => null]);
+        }
+
+        $selectedThesesIds = $request->input('selected_theses', []);
+        $manualTheses = $request->input('manual_theses', []);
+
+        if (empty($selectedThesesIds) && empty($manualTheses)) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['selected_theses' => 'Pilih minimal satu mahasiswa dari daftar atau tambahkan mahasiswa secara manual.']);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'academic_year' => 'required|string|max:50',
@@ -298,11 +311,17 @@ class AdvisorDecreeController extends Controller
             'signatory_name' => 'required|string|max:255',
             'signatory_identifier' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:1000',
-            'selected_theses' => 'required|array|min:1',
+            'selected_theses' => 'nullable|array',
             'selected_theses.*' => 'exists:theses,id',
+            'manual_theses' => 'nullable|array',
         ], [
-            'selected_theses.required' => 'Pilih minimal satu judul skripsi / mahasiswa untuk dimasukkan ke dalam SK Pembimbing.',
-            'selected_theses.min' => 'Pilih minimal satu judul skripsi / mahasiswa untuk dimasukkan ke dalam SK Pembimbing.',
+            'wave_id.exists' => 'Gelombang pelaksanaan yang dipilih tidak valid.',
+            'dosen_id.required_if' => 'Dosen pembimbing wajib dipilih untuk surat tugas BKD dosen.',
+            'title.required' => 'Perihal / Judul SK wajib diisi.',
+            'academic_year.required' => 'Tahun akademik wajib diisi.',
+            'decree_date.required' => 'Tanggal penetapan SK wajib diisi.',
+            'signatory_title.required' => 'Jabatan penandatangan wajib diisi.',
+            'signatory_name.required' => 'Nama pejabat penandatangan wajib diisi.',
         ]);
 
         // Generate decree number atomically via LetterSetting
@@ -336,37 +355,62 @@ class AdvisorDecreeController extends Controller
         });
 
         // Retrieve selected theses and build frozen snapshot
-        $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
-            ->whereIn('id', $request->selected_theses)
-            ->get();
-
         $thesesData = [];
         $lecturersToNotify = collect();
 
-        foreach ($theses as $thesis) {
-            $thesesData[] = [
-                'thesis_id' => $thesis->id,
-                'student_id' => $thesis->student_id,
-                'student_name' => $thesis->student ? $thesis->student->name : '-',
-                'student_npm' => $thesis->student ? ($thesis->student->identifier ?? '-') : '-',
-                'student_cohort' => $thesis->student ? ($thesis->student->entry_year ?? '-') : '-',
-                'title' => $thesis->display_title,
-                'topic' => $thesis->topic ?: '-',
-                'pembimbing1_id' => $thesis->pembimbing1_id,
-                'pembimbing1_name' => $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-',
-                'pembimbing1_nidn' => $thesis->pembimbing1 ? ($thesis->pembimbing1->identifier ?? '-') : '-',
-                'pembimbing2_id' => $thesis->pembimbing2_id,
-                'pembimbing2_name' => $thesis->pembimbing2 ? $thesis->pembimbing2->name : '-',
-                'pembimbing2_nidn' => $thesis->pembimbing2 ? ($thesis->pembimbing2->identifier ?? '-') : '-',
-            ];
+        if (!empty($selectedThesesIds)) {
+            $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+                ->whereIn('id', $selectedThesesIds)
+                ->get();
 
-            if ($thesis->pembimbing1) {
-                $lecturersToNotify->push($thesis->pembimbing1);
-            }
-            if ($thesis->pembimbing2) {
-                $lecturersToNotify->push($thesis->pembimbing2);
+            foreach ($theses as $thesis) {
+                $thesesData[] = [
+                    'thesis_id' => $thesis->id,
+                    'student_id' => $thesis->student_id,
+                    'student_name' => $thesis->student ? $thesis->student->name : '-',
+                    'student_npm' => $thesis->student ? ($thesis->student->identifier ?? '-') : '-',
+                    'student_cohort' => $thesis->student ? ($thesis->student->entry_year ?? '-') : '-',
+                    'title' => $thesis->display_title,
+                    'topic' => $thesis->topic ?: '-',
+                    'pembimbing1_id' => $thesis->pembimbing1_id,
+                    'pembimbing1_name' => $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-',
+                    'pembimbing1_nidn' => $thesis->pembimbing1 ? ($thesis->pembimbing1->identifier ?? '-') : '-',
+                    'pembimbing2_id' => $thesis->pembimbing2_id,
+                    'pembimbing2_name' => $thesis->pembimbing2 ? $thesis->pembimbing2->name : '-',
+                    'pembimbing2_nidn' => $thesis->pembimbing2 ? ($thesis->pembimbing2->identifier ?? '-') : '-',
+                ];
+
+                if ($thesis->pembimbing1) {
+                    $lecturersToNotify->push($thesis->pembimbing1);
+                }
+                if ($thesis->pembimbing2) {
+                    $lecturersToNotify->push($thesis->pembimbing2);
+                }
             }
         }
+
+        if (!empty($manualTheses)) {
+            foreach ($manualTheses as $manual) {
+                if (!empty($manual['student_name']) || !empty($manual['title'])) {
+                    $thesesData[] = [
+                        'thesis_id' => null,
+                        'student_id' => null,
+                        'student_name' => $manual['student_name'] ?? '-',
+                        'student_npm' => $manual['student_npm'] ?? '-',
+                        'student_cohort' => $manual['student_cohort'] ?? '-',
+                        'title' => $manual['title'] ?? '-',
+                        'topic' => $manual['topic'] ?? '-',
+                        'pembimbing1_id' => null,
+                        'pembimbing1_name' => $manual['pembimbing1_name'] ?? '-',
+                        'pembimbing1_nidn' => $manual['pembimbing1_nidn'] ?? '-',
+                        'pembimbing2_id' => null,
+                        'pembimbing2_name' => $manual['pembimbing2_name'] ?? '-',
+                        'pembimbing2_nidn' => $manual['pembimbing2_nidn'] ?? '-',
+                    ];
+                }
+            }
+        }
+
 
         // Unique verification token
         $verificationToken = Str::random(32) . time();
