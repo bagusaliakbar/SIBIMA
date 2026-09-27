@@ -44,15 +44,11 @@
         <!-- Banner Info BKD (Solid White Theme) -->
         <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div class="space-y-1.5 max-w-2xl">
-                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-xs font-bold w-fit">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span>Layanan Penugasan BKD Dosen</span>
-                </div>
                 <h2 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                     Surat Tugas Pembimbing Skripsi
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Cetak Surat Tugas Pembimbing Skripsi untuk keperluan Beban Kinerja Dosen (BKD) dan portofolio SISTER Kemendikbudristek.
+                    Cetak Surat Tugas Pembimbing Skripsi untuk keperluan Beban Kinerja Dosen (BKD).
                 </p>
             </div>
 
@@ -335,25 +331,23 @@
                             <div class="text-[10px] text-slate-400">NIDN: {{ $defaultSignatoryIdentifier ?? '-' }} | QR Code Terdaftar</div>
                         </div>
 
-                        <!-- Direct Print Solid Action Card -->
-                        <div class="bg-orange-600 rounded-2xl p-5 text-white shadow-xl shadow-orange-600/20 space-y-4">
+                        <!-- Action Area: Cetak & Simpan Bersama -->
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="font-bold text-orange-100">Status Seleksi:</span>
-                                <span class="font-black text-white" x-text="selectedCount + ' Mahasiswa'"></span>
+                                <span class="font-bold text-slate-500 dark:text-slate-400">Status Mahasiswa Terpilih:</span>
+                                <span class="font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 px-2.5 py-1 rounded-lg" x-text="selectedCount + ' Mahasiswa'"></span>
                             </div>
 
                             <button type="submit" name="print_direct" value="1"
                                     :disabled="selectedCount === 0"
-                                    class="w-full py-3.5 px-4 bg-white text-orange-600 hover:bg-orange-50 active:scale-95 rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                                <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                <span>Cetak Surat Tugas (PDF)</span>
+                                    class="w-full py-3.5 px-4 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-orange-600/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                <span>Cetak & Simpan Surat Tugas (PDF)</span>
                             </button>
 
-                            <button type="submit"
-                                    :disabled="selectedCount === 0"
-                                    class="w-full py-2.5 px-4 bg-orange-700/60 hover:bg-orange-700 text-white rounded-xl font-bold text-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                Simpan ke Riwayat Dokumen
-                            </button>
+                            <p class="text-[11px] text-center text-slate-400 dark:text-slate-500 leading-normal">
+                                Dokumen otomatis tersimpan ke riwayat arsip dan file PDF resmi langsung diunduh.
+                            </p>
                         </div>
                     </div>
 
