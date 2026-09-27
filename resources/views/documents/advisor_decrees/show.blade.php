@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
             <x-breadcrumb :items="[
-                ['label' => 'SK Dosen Pembimbing', 'route' => route('advisor-decrees.index')],
+                ['label' => 'Dokumen & Legalitas', 'route' => route('advisor-decrees.index')],
                 ['label' => $advisorDecree->decree_number, 'route' => null]
             ]" />
 
@@ -10,7 +10,7 @@
                 <a href="{{ route('advisor-decrees.pdf', $advisorDecree) }}" target="_blank"
                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg shadow-orange-600/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span>Cetak PDF Resmi</span>
+                    <span>{{ $advisorDecree->target_type === 'individual_dosen' ? 'Cetak Surat Tugas (PDF)' : 'Cetak SK PDF Resmi' }}</span>
                 </a>
             </div>
         </div>
@@ -31,12 +31,12 @@
             <!-- Details -->
             <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
                 <h3 class="text-sm font-black text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-800">
-                    Informasi Legalitas Surat Keputusan
+                    Informasi Legalitas {{ $advisorDecree->target_type === 'individual_dosen' ? 'Surat Tugas Pembimbing' : 'Surat Keputusan Dekan' }}
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                        <span class="text-slate-400">Nomor Surat Keputusan:</span>
+                        <span class="text-slate-400">Nomor Dokumen Resmi:</span>
                         <div class="font-black text-slate-800 dark:text-slate-200 text-sm mt-0.5">{{ $advisorDecree->decree_number }}</div>
                     </div>
                     <div>

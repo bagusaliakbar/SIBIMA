@@ -33,7 +33,7 @@
                 </div>
 
                 <h1 class="text-xl sm:text-2xl font-black tracking-tight uppercase">
-                    SK DOSEN PEMBIMBING SKRIPSI
+                    {{ $decree->target_type === 'individual_dosen' ? 'SURAT TUGAS PEMBIMBING SKRIPSI' : 'SK DOSEN PEMBIMBING SKRIPSI' }}
                 </h1>
                 <p class="text-xs sm:text-sm text-orange-100/90 font-medium max-w-md mx-auto">
                     Fakultas Ilmu Komputer &mdash; Universitas Subang
@@ -47,7 +47,9 @@
             <!-- Dokumen Information Box -->
             <div class="bg-orange-50/70 border border-orange-200/80 rounded-2xl p-5 space-y-3">
                 <div class="flex items-center justify-between flex-wrap gap-2">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-orange-800">Nomor Surat Keputusan</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-orange-800">
+                        {{ $decree->target_type === 'individual_dosen' ? 'Nomor Surat Tugas' : 'Nomor Surat Keputusan' }}
+                    </span>
                     <span class="px-2.5 py-1 rounded-lg bg-orange-600 text-white font-mono font-bold text-xs shadow-xs">
                         {{ $decree->decree_number }}
                     </span>

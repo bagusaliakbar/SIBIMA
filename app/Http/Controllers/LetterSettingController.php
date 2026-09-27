@@ -22,6 +22,10 @@ class LetterSettingController extends Controller
                 'title' => 'SK Dosen Pembimbing Skripsi',
                 'format' => '[NUMBER]/SK-PEMBIMBING/UNSUB/FIK/[ROMAN_MONTH]/[YEAR]',
             ],
+            'surat_tugas_pembimbing' => [
+                'title' => 'Surat Tugas Dosen Pembimbing (BKD)',
+                'format' => '[NUMBER]/PD.1.2/FIK-US/[ROMAN_MONTH]/[YEAR]',
+            ],
             'surat_keterangan_lulus' => [
                 'title' => 'Surat Keterangan Lulus (SKL)',
                 'format' => '[NUMBER]/SKL/UNSUB/FIK/[ROMAN_MONTH]/[YEAR]',

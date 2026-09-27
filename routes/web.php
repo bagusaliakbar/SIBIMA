@@ -292,8 +292,10 @@ Route::middleware('auth')->group(function () {
     // Conflict Check
     Route::post('/check-dosen-availability', [App\Http\Controllers\ScheduleConflictController::class, 'checkDosenAvailability'])->name('check-dosen-availability');
 
-    // SK Dosen Pembimbing Skripsi (Index, Create, Store, Detail & Cetak PDF untuk Admin, Kaprodi, dan Dosen)
+    // SK Dosen Pembimbing Skripsi & Surat Tugas Mandiri Dosen
     Route::get('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'index'])->name('advisor-decrees.index');
+    Route::get('/advisor-decrees/surat-tugas', [App\Http\Controllers\AdvisorDecreeController::class, 'suratTugas'])->name('advisor-decrees.surat-tugas');
+    Route::post('/advisor-decrees/surat-tugas/generate', [App\Http\Controllers\AdvisorDecreeController::class, 'generateSuratTugas'])->name('advisor-decrees.generate-surat-tugas');
     Route::get('/advisor-decrees/create', [App\Http\Controllers\AdvisorDecreeController::class, 'create'])->name('advisor-decrees.create');
     Route::post('/advisor-decrees/candidates', [App\Http\Controllers\AdvisorDecreeController::class, 'candidates'])->name('advisor-decrees.candidates');
     Route::post('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'store'])->name('advisor-decrees.store');

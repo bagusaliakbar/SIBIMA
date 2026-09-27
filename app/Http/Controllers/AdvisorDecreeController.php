@@ -587,7 +587,233 @@ class AdvisorDecreeController extends Controller
     }
 
     /**
-     * Generate official PDF document for the decree.
+     * View for Lecturers to print their own official Surat Tugas Pembimbingan.
+     */
+    public function suratTugas(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+            abort(403, 'Akses terbatas untuk Dosen dan Pimpinan.');
+        }
+
+        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+
+        // Determine current academic year and semester
+        $currentMonth = (int) now()->format('n');
+        $currentYear = (int) now()->format('Y');
+
+        if ($currentMonth >= 9) {
+            $defaultAcademicYear = $currentYear . '/' . ($currentYear + 1);
+            $defaultSemester = 'Ganjil';
+        } elseif ($currentMonth <= 2) {
+            $defaultAcademicYear = ($currentYear - 1) . '/' . $currentYear;
+            $defaultSemester = 'Ganjil';
+        } else {
+            $defaultAcademicYear = ($currentYear - 1) . '/' . $currentYear;
+            $defaultSemester = 'Genap';
+        }
+
+        $academicYear = $request->input('academic_year', $defaultAcademicYear);
+        $semester = $request->input('semester', $defaultSemester);
+
+        // Target Dosen
+        $targetDosenId = ($isStaff && $request->filled('dosen_id')) ? $request->dosen_id : ($user->role === 'dosen' ? $user->id : User::where('role', 'dosen')->first()?->id);
+        $targetDosen = User::find($targetDosenId) ?? $user;
+
+        // Preview next Surat Tugas number
+        $letterSetting = LetterSetting::firstOrCreate(
+            ['type' => 'surat_tugas_pembimbing'],
+            [
+                'title' => 'Surat Tugas Dosen Pembimbing (BKD)',
+                'format' => '[NUMBER]/PD.1.2/FIK-US/[ROMAN_MONTH]/[YEAR]',
+                'last_number' => 460,
+            ]
+        );
+
+        $nextNumber = str_pad($letterSetting->last_number + 1, 3, '0', STR_PAD_LEFT);
+        $month = now()->format('m');
+        $year = now()->format('Y');
+        $romans = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+        $romanMonth = $romans[(int)$month] ?? 'I';
+
+        $previewLetterNumber = str_replace(
+            ['[NUMBER]', '[ROMAN_MONTH]', '[MONTH]', '[YEAR]'],
+            [$nextNumber, $romanMonth, $month, $year],
+            $letterSetting->format
+        );
+
+        // Signer: Wakil Dekan I (Bambang Tjahjo Utomo, MT)
+        $viceDean = User::where('name', 'LIKE', '%Bambang Tjahjo Utomo%')->first();
+        $defaultSignatoryTitle = 'Wakil Dekan Fakultas Ilmu Komputer Universitas Subang';
+        $defaultSignatoryName = $viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT';
+        $defaultSignatoryIdentifier = $viceDean ? $viceDean->identifier : '0413056812';
+
+        // Query supervised theses for this lecturer
+        $allTheses = Thesis::with(['student'])
+            ->where(function ($q) use ($targetDosen) {
+                $q->where('pembimbing1_id', $targetDosen->id)
+                  ->orWhere('pembimbing2_id', $targetDosen->id);
+            })
+            ->whereIn('status', ['active', 'completed'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $p1Theses = $allTheses->where('pembimbing1_id', $targetDosen->id);
+        $p2Theses = $allTheses->where('pembimbing2_id', $targetDosen->id);
+
+        // History of issued Surat Tugas for this lecturer
+        $history = AdvisorDecree::where('target_type', 'individual_dosen')
+            ->where('dosen_id', $targetDosen->id)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $dosens = $isStaff ? User::where('role', 'dosen')->orderBy('name')->get() : collect([$user]);
+
+        return view('documents.advisor_decrees.surat_tugas', compact(
+            'isStaff',
+            'targetDosen',
+            'dosens',
+            'defaultAcademicYear',
+            'defaultSemester',
+            'academicYear',
+            'semester',
+            'previewLetterNumber',
+            'defaultSignatoryTitle',
+            'defaultSignatoryName',
+            'defaultSignatoryIdentifier',
+            'allTheses',
+            'p1Theses',
+            'p2Theses',
+            'history'
+        ));
+    }
+
+    /**
+     * Process generation of Surat Tugas and immediately stream PDF or redirect.
+     */
+    public function generateSuratTugas(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+            abort(403);
+        }
+
+        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+        $targetDosenId = ($isStaff && $request->filled('dosen_id')) ? $request->dosen_id : $user->id;
+        $targetDosen = User::findOrFail($targetDosenId);
+
+        $request->validate([
+            'academic_year' => 'required|string|max:50',
+            'semester' => 'required|string|in:Ganjil,Genap',
+            'decree_date' => 'required|date',
+            'selected_theses' => 'required|array|min:1',
+            'selected_theses.*' => 'exists:theses,id',
+        ], [
+            'selected_theses.required' => 'Pilih minimal satu mahasiswa bimbingan untuk dicantumkan dalam Surat Tugas.',
+            'selected_theses.min' => 'Pilih minimal satu mahasiswa bimbingan.',
+        ]);
+
+        // Generate official number
+        $letterSetting = LetterSetting::firstOrCreate(
+            ['type' => 'surat_tugas_pembimbing'],
+            [
+                'title' => 'Surat Tugas Dosen Pembimbing (BKD)',
+                'format' => '[NUMBER]/PD.1.2/FIK-US/[ROMAN_MONTH]/[YEAR]',
+                'last_number' => 460,
+            ]
+        );
+
+        if ($request->filled('custom_decree_number')) {
+            $decreeNumber = trim($request->custom_decree_number);
+        } else {
+            $letterSetting->increment('last_number');
+            $number = str_pad($letterSetting->last_number, 3, '0', STR_PAD_LEFT);
+            $month = Carbon::parse($request->decree_date)->format('m');
+            $year = Carbon::parse($request->decree_date)->format('Y');
+            $romans = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+            $romanMonth = $romans[(int)$month] ?? 'I';
+
+            $decreeNumber = str_replace(
+                ['[NUMBER]', '[ROMAN_MONTH]', '[MONTH]', '[YEAR]'],
+                [$number, $romanMonth, $month, $year],
+                $letterSetting->format
+            );
+        }
+
+        // Collect student records sorted: Pembimbing I first, then Pembimbing II
+        $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+            ->whereIn('id', $request->selected_theses)
+            ->get();
+
+        $p1Data = [];
+        $p2Data = [];
+        foreach ($theses as $thesis) {
+            $isP1 = ($thesis->pembimbing1_id == $targetDosen->id);
+            $row = [
+                'thesis_id' => $thesis->id,
+                'student_id' => $thesis->student_id,
+                'student_name' => $thesis->student ? $thesis->student->name : '-',
+                'student_npm' => $thesis->student ? ($thesis->student->identifier ?? '-') : '-',
+                'student_cohort' => $thesis->student ? ($thesis->student->entry_year ?? '-') : '-',
+                'title' => $thesis->display_title,
+                'topic' => $thesis->topic ?: '-',
+                'role_label' => $isP1 ? 'Pembimbing I' : 'Pembimbing II',
+                'pembimbing1_id' => $thesis->pembimbing1_id,
+                'pembimbing1_name' => $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-',
+                'pembimbing1_nidn' => $thesis->pembimbing1 ? ($thesis->pembimbing1->identifier ?? '-') : '-',
+                'pembimbing2_id' => $thesis->pembimbing2_id,
+                'pembimbing2_name' => $thesis->pembimbing2 ? $thesis->pembimbing2->name : '-',
+                'pembimbing2_nidn' => $thesis->pembimbing2 ? ($thesis->pembimbing2->identifier ?? '-') : '-',
+            ];
+
+            if ($isP1) {
+                $p1Data[] = $row;
+            } else {
+                $p2Data[] = $row;
+            }
+        }
+        $thesesData = array_merge($p1Data, $p2Data);
+
+        $verificationToken = Str::random(32) . time();
+        $viceDean = User::where('name', 'LIKE', '%Bambang Tjahjo Utomo%')->first();
+
+        $decree = AdvisorDecree::create([
+            'decree_number' => $decreeNumber,
+            'title' => 'Surat Tugas Pembimbingan Skripsi Mahasiswa',
+            'academic_year' => $request->academic_year,
+            'semester' => $request->semester,
+            'target_type' => 'individual_dosen',
+            'dosen_id' => $targetDosen->id,
+            'wave_id' => null,
+            'decree_date' => $request->decree_date,
+            'signatory_title' => $request->signatory_title ?? 'Wakil Dekan Fakultas Ilmu Komputer Universitas Subang',
+            'signatory_name' => $request->signatory_name ?? ($viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT'),
+            'signatory_identifier' => $request->signatory_identifier ?? ($viceDean ? $viceDean->identifier : '0413056812'),
+            'signer_user_id' => $viceDean ? $viceDean->id : null,
+            'theses_data' => $thesesData,
+            'total_students' => count($thesesData),
+            'verification_token' => $verificationToken,
+            'created_by' => $user->id,
+            'notes' => 'Diterbitkan mandiri untuk pelaporan BKD / SISTER.',
+        ]);
+
+        ActivityLog::log(
+            'Penerbitan Surat Tugas Pembimbing',
+            "{$user->name} menerbitkan Surat Tugas No. {$decreeNumber} untuk {$targetDosen->name}.",
+            'Dokumen & SK',
+            $decree
+        );
+
+        if ($request->has('print_direct')) {
+            return redirect()->route('advisor-decrees.pdf', $decree);
+        }
+
+        return redirect()->route('advisor-decrees.show', $decree)
+            ->with('success', "Surat Tugas No. {$decreeNumber} berhasil diterbitkan dan siap dicetak/diunduh.");
+    }
+
+    /**
+     * Generate official PDF document for the decree or duty letter.
      */
     public function pdf(AdvisorDecree $advisorDecree)
     {
@@ -605,9 +831,20 @@ class AdvisorDecreeController extends Controller
         }
 
         $advisorDecree->load(['creator', 'signer', 'dosen', 'wave']);
-
         $signerUser = $advisorDecree->signer ?? User::where('role', 'kaprodi')->first();
 
+        // Render Surat Tugas Template (persis foto referensi 100%)
+        if ($advisorDecree->target_type === 'individual_dosen') {
+            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser'))
+                ->setPaper('a4', 'portrait');
+
+            $cleanNumber = Str::slug($advisorDecree->decree_number);
+            $fileName = "Surat_Tugas_Pembimbing_{$cleanNumber}.pdf";
+
+            return $pdf->stream($fileName);
+        }
+
+        // Render Surat Keputusan Dekan Kolektif Template
         $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser'))
             ->setPaper('a4', 'portrait');
 
