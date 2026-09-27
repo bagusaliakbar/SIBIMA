@@ -44,14 +44,11 @@
         <!-- Banner Info BKD -->
         <div class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-orange-600/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div class="space-y-2 max-w-2xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-black uppercase tracking-wider text-orange-100">
-                    <span>📄 Cetak Mandiri Surat Tugas BKD</span>
-                </div>
                 <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">
-                    Surat Tugas Pembimbingan Skripsi
+                    Surat Tugas Pembimbing Skripsi
                 </h2>
                 <p class="text-xs sm:text-sm text-orange-100/90 leading-relaxed">
-                    Dokumen resmi yang ditugaskan oleh Wakil Dekan I Fakultas Ilmu Komputer Universitas Subang untuk keperluan Beban Kinerja Dosen (BKD) dan pelaporan SISTER Kemendikbudristek.
+                    Cetak Surat Tugas Pembimbing Skripsi untuk keperluan Beban Kinerja Dosen (BKD).
                 </p>
             </div>
 
@@ -134,6 +131,57 @@
                             </div>
                         </div>
 
+                        <!-- Status Filter Tabs -->
+                        <div class="flex flex-wrap items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-xs">
+                            <a href="{{ route('advisor-decrees.surat-tugas', array_merge(request()->query(), ['status_filter' => 'active'])) }}"
+                               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition {{ $statusFilter === 'active' ? 'bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>Aktif Bimbingan (Belum Lulus)</span>
+                                <span class="px-1.5 py-0.5 rounded-md text-[10px] {{ $statusFilter === 'active' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    {{ $activeCount }}
+                                </span>
+                            </a>
+
+                            <a href="{{ route('advisor-decrees.surat-tugas', array_merge(request()->query(), ['status_filter' => 'all'])) }}"
+                               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition {{ $statusFilter === 'all' ? 'bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                <span>Semua Mahasiswa</span>
+                                <span class="px-1.5 py-0.5 rounded-md text-[10px] {{ $statusFilter === 'all' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    {{ $totalSupervisedCount }}
+                                </span>
+                            </a>
+
+                            @if($graduatedCount > 0)
+                                <a href="{{ route('advisor-decrees.surat-tugas', array_merge(request()->query(), ['status_filter' => 'completed'])) }}"
+                                   class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition {{ $statusFilter === 'completed' ? 'bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    <span>Sudah Lulus</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] {{ $statusFilter === 'completed' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                        {{ $graduatedCount }}
+                                    </span>
+                                </a>
+                            @endif
+                        </div>
+
+                        @if($statusFilter === 'active')
+                            <div class="flex items-center gap-2 p-3 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-900/50 text-xs text-emerald-800 dark:text-emerald-300">
+                                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>
+                                    <strong>Filter Kelulusan Aktif:</strong> Hanya memuat <strong>{{ $activeCount }} mahasiswa yang sedang aktif bimbingan</strong> (belum lulus). Mahasiswa yang telah menyelesaikan skripsi/yudisium otomatis disaring keluar.
+                                </span>
+                            </div>
+                        @elseif($statusFilter === 'all')
+                            <div class="flex items-center gap-2 p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/50 text-xs text-amber-800 dark:text-amber-300">
+                                <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span>
+                                    Menampilkan semua mahasiswa binaan termasuk yang sudah lulus. Mahasiswa yang sudah lulus otomatis tidak dicentang demi akurasi Surat Tugas BKD.
+                                </span>
+                            </div>
+                        @endif
+
                         <!-- KPI Pill Counters -->
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <div class="p-3 rounded-2xl bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200/60 dark:border-orange-900/40">
@@ -145,7 +193,7 @@
                                 <div class="text-xl font-black text-blue-900 dark:text-blue-200">{{ $p2Theses->count() }} <span class="text-xs font-normal">Mhs</span></div>
                             </div>
                             <div class="col-span-2 sm:col-span-1 p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40">
-                                <div class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400">Total Bimbingan</div>
+                                <div class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400">Ditampilkan</div>
                                 <div class="text-xl font-black text-emerald-900 dark:text-emerald-200">{{ $allTheses->count() }} <span class="text-xs font-normal">Mhs</span></div>
                             </div>
                         </div>
@@ -168,9 +216,20 @@
                                                    class="mt-1 rounded text-orange-600 focus:ring-orange-500 border-slate-300 dark:border-slate-700 cursor-pointer">
                                             <div class="flex-1 space-y-1 text-xs">
                                                 <div class="flex items-center justify-between gap-2">
-                                                    <div>
+                                                    <div class="flex items-center gap-2 flex-wrap">
                                                         <span class="font-black text-slate-900 dark:text-white">{{ $th->student ? $th->student->name : '-' }}</span>
                                                         <span class="text-slate-400 text-[11px]">({{ $th->student ? $th->student->identifier : '-' }})</span>
+                                                        @if($th->isGraduated())
+                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1">
+                                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                                                Sudah Lulus / Yudisium
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+                                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                                Aktif Bimbingan
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-400">
                                                         Pembimbing I
@@ -197,9 +256,20 @@
                                                    class="mt-1 rounded text-orange-600 focus:ring-orange-500 border-slate-300 dark:border-slate-700 cursor-pointer">
                                             <div class="flex-1 space-y-1 text-xs">
                                                 <div class="flex items-center justify-between gap-2">
-                                                    <div>
+                                                    <div class="flex items-center gap-2 flex-wrap">
                                                         <span class="font-black text-slate-900 dark:text-white">{{ $th->student ? $th->student->name : '-' }}</span>
                                                         <span class="text-slate-400 text-[11px]">({{ $th->student ? $th->student->identifier : '-' }})</span>
+                                                        @if($th->isGraduated())
+                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1">
+                                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                                                Sudah Lulus / Yudisium
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+                                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                                Aktif Bimbingan
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-400">
                                                         Pembimbing II
@@ -215,8 +285,8 @@
                             </div>
                         @else
                             <div class="p-8 text-center text-slate-400 text-xs border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2">
-                                <p class="font-bold text-slate-600 dark:text-slate-300">Belum ada mahasiswa skripsi yang tercatat dibimbing oleh Anda.</p>
-                                <p class="text-[11px] text-slate-500">Mahasiswa akan muncul otomatis di sini begitu judul skripsi dan dosen pembimbing ditetapkan oleh prodi.</p>
+                                <p class="font-bold text-slate-600 dark:text-slate-300">Tidak ada mahasiswa yang memenuhi kriteria filter ini.</p>
+                                <p class="text-[11px] text-slate-500">Coba ganti filter status di atas ke "Semua Mahasiswa" untuk melihat arsip mahasiswa binaan sebelumnya.</p>
                             </div>
                         @endif
                     </div>
@@ -313,6 +383,18 @@
                                                class="py-1.5 px-3 rounded-lg text-center text-[11px] font-bold bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 transition">
                                                 Detail
                                             </a>
+                                            <form action="{{ route('advisor-decrees.destroy', $hist) }}" method="POST"
+                                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus arsip surat tugas ini?');"
+                                                  class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" title="Hapus Arsip"
+                                                        class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 @endforeach
@@ -330,15 +412,22 @@
 
     <script>
         function suratTugasManager() {
+            const allAvailableIds = @json($allTheses->pluck('id'));
+            const activeIds = @json($allTheses->filter(fn($t) => !$t->isGraduated())->pluck('id')->values());
+
             return {
-                selectedIds: @json($allTheses->pluck('id')),
+                selectedIds: activeIds.length > 0 ? activeIds : allAvailableIds,
                 
                 get selectedCount() {
                     return this.selectedIds.length;
                 },
 
                 selectAll() {
-                    this.selectedIds = @json($allTheses->pluck('id'));
+                    this.selectedIds = allAvailableIds;
+                },
+
+                selectActiveOnly() {
+                    this.selectedIds = activeIds;
                 },
 
                 deselectAll() {

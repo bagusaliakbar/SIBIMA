@@ -264,9 +264,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/wa-broadcasts/{waBroadcast}/resend-failed', [App\Http\Controllers\WaBroadcastController::class, 'resendFailed'])->name('wa-broadcasts.resend-failed');
         Route::delete('/wa-broadcasts/{waBroadcast}', [App\Http\Controllers\WaBroadcastController::class, 'destroy'])->name('wa-broadcasts.destroy');
 
-        // SK Dosen Pembimbing Skripsi (Hapus Arsip hanya Admin & Kaprodi)
-        Route::delete('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'destroy'])->name('advisor-decrees.destroy');
-
         // Bug Reports Management (Admin & Kaprodi)
         Route::get('/admin/bug-reports', [App\Http\Controllers\BugReportController::class, 'index'])->name('admin.bug-reports.index');
         Route::patch('/admin/bug-reports/{bugReport}/status', [App\Http\Controllers\BugReportController::class, 'updateStatus'])->name('admin.bug-reports.update-status');
@@ -301,6 +298,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'store'])->name('advisor-decrees.store');
     Route::get('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'show'])->name('advisor-decrees.show');
     Route::get('/advisor-decrees/{advisorDecree}/pdf', [App\Http\Controllers\AdvisorDecreeController::class, 'pdf'])->name('advisor-decrees.pdf');
+    Route::delete('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'destroy'])->name('advisor-decrees.destroy');
 });
 
 // Clear Cache & Migrate Endpoint (Useful for Shared Hosting / Auto-deploy without direct terminal)

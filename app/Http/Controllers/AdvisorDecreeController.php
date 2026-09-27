@@ -295,10 +295,12 @@ class AdvisorDecreeController extends Controller
         }
         // If 'all', do not constrain created_at
 
-        // Thesis status filter: active (default) vs completed vs all
+        // Thesis status filter: active (default: belum lulus) vs completed (sudah lulus) vs all
         $status = $request->input('status', 'active');
-        if ($status !== 'all' && in_array($status, ['active', 'completed'])) {
-            $query->where('status', $status);
+        if ($status === 'active') {
+            $query->activeMentoring();
+        } elseif ($status === 'completed') {
+            $query->graduated();
         } else {
             $query->whereIn('status', ['active', 'completed']);
         }
@@ -648,15 +650,31 @@ class AdvisorDecreeController extends Controller
         $defaultSignatoryName = $viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT';
         $defaultSignatoryIdentifier = $viceDean ? $viceDean->identifier : '0413056812';
 
-        // Query supervised theses for this lecturer
-        $allTheses = Thesis::with(['student'])
+        // Query supervised theses for this lecturer with status filter
+        $statusFilter = $request->input('status_filter', 'active'); // 'active' (default: belum lulus), 'all', 'completed'
+
+        $baseThesesQuery = Thesis::with(['student', 'graduation'])
             ->where(function ($q) use ($targetDosen) {
                 $q->where('pembimbing1_id', $targetDosen->id)
                   ->orWhere('pembimbing2_id', $targetDosen->id);
-            })
-            ->whereIn('status', ['active', 'completed'])
-            ->orderBy('id', 'desc')
-            ->get();
+            });
+
+        // Compute counts for UI badges
+        $activeCount = (clone $baseThesesQuery)->activeMentoring()->count();
+        $graduatedCount = (clone $baseThesesQuery)->graduated()->count();
+        $totalSupervisedCount = (clone $baseThesesQuery)->whereIn('status', ['active', 'completed'])->count();
+
+        // Apply filter: by default, only active (non-graduated) students are listed!
+        $thesesQuery = clone $baseThesesQuery;
+        if ($statusFilter === 'active') {
+            $thesesQuery->activeMentoring();
+        } elseif ($statusFilter === 'completed') {
+            $thesesQuery->graduated();
+        } else {
+            $thesesQuery->whereIn('status', ['active', 'completed']);
+        }
+
+        $allTheses = $thesesQuery->orderBy('id', 'desc')->get();
 
         $p1Theses = $allTheses->where('pembimbing1_id', $targetDosen->id);
         $p2Theses = $allTheses->where('pembimbing2_id', $targetDosen->id);
@@ -681,6 +699,10 @@ class AdvisorDecreeController extends Controller
             'defaultSignatoryTitle',
             'defaultSignatoryName',
             'defaultSignatoryIdentifier',
+            'statusFilter',
+            'activeCount',
+            'graduatedCount',
+            'totalSupervisedCount',
             'allTheses',
             'p1Theses',
             'p2Theses',
@@ -876,20 +898,26 @@ class AdvisorDecreeController extends Controller
     public function destroy(AdvisorDecree $advisorDecree)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+        $isOwner = ($advisorDecree->target_type === 'individual_dosen' && $advisorDecree->dosen_id === $user->id);
+        if (!in_array($user->role, ['admin', 'kaprodi']) && !$isOwner) {
             abort(403);
         }
 
         $decreeNumber = $advisorDecree->decree_number;
+        $isIndividual = ($advisorDecree->target_type === 'individual_dosen');
         $advisorDecree->delete();
 
         ActivityLog::log(
-            'Penghapusan SK Pembimbing',
-            "{$user->name} menghapus arsip SK Pembimbing No. {$decreeNumber}.",
+            'Penghapusan ' . ($isIndividual ? 'Surat Tugas Pembimbing' : 'SK Pembimbing'),
+            "{$user->name} menghapus arsip " . ($isIndividual ? 'Surat Tugas' : 'SK Pembimbing') . " No. {$decreeNumber}.",
             'Dokumen & SK'
         );
 
-        return redirect()->route('advisor-decrees.index')
-            ->with('success', "Arsip SK Pembimbing No. {$decreeNumber} berhasil dihapus.");
+        $redirectRoute = ($isIndividual && !in_array($user->role, ['admin', 'kaprodi']))
+            ? route('advisor-decrees.surat-tugas')
+            : route('advisor-decrees.index');
+
+        return redirect($redirectRoute)
+            ->with('success', "Arsip " . ($isIndividual ? 'Surat Tugas' : 'SK Pembimbing') . " No. {$decreeNumber} berhasil dihapus.");
     }
 }

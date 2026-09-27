@@ -175,9 +175,33 @@ class Thesis extends Model
         return $this->acc_sidang_p1 && $this->acc_sidang_p2;
     }
 
-    public function isGraduated()
+    public function isGraduated(): bool
     {
-        return $this->status === 'completed';
+        if ($this->status === 'completed') {
+            return true;
+        }
+        if ($this->relationLoaded('graduation')) {
+            return (bool) ($this->graduation && $this->graduation->status === 'approved');
+        }
+        return $this->graduation()->where('status', 'approved')->exists();
+    }
+
+    public function scopeActiveMentoring($query)
+    {
+        return $query->where('status', 'active')
+            ->whereDoesntHave('graduation', function ($q) {
+                $q->where('status', 'approved');
+            });
+    }
+
+    public function scopeGraduated($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('status', 'completed')
+              ->orWhereHas('graduation', function ($g) {
+                  $g->where('status', 'approved');
+              });
+        });
     }
 
     public function isOldCohort(): bool
