@@ -177,6 +177,52 @@ class AdvisorDecreeController extends Controller
     }
 
     /**
+     * Helper to compute Academic Year and Semester from a Carbon date.
+     */
+    public static function getAcademicPeriod(Carbon $date): array
+    {
+        $month = (int) $date->format('n');
+        $year = (int) $date->format('Y');
+
+        if ($month >= 9) {
+            $ay = $year . '/' . ($year + 1);
+            $sem = 'Ganjil';
+        } elseif ($month <= 2) {
+            $ay = ($year - 1) . '/' . $year;
+            $sem = 'Ganjil';
+        } else {
+            $ay = ($year - 1) . '/' . $year;
+            $sem = 'Genap';
+        }
+
+        return [
+            'academic_year' => $ay,
+            'semester' => $sem,
+            'label' => "{$ay} ({$sem})",
+        ];
+    }
+
+    /**
+     * Helper to compute start and end Carbon dates for a given academic year & semester.
+     */
+    public static function getDateRangeForPeriod(string $academicYear, string $semester): array
+    {
+        $parts = explode('/', trim($academicYear));
+        $startYear = (int) ($parts[0] ?? now()->year);
+        $endYear = (int) ($parts[1] ?? ($startYear + 1));
+
+        if (strtolower(trim($semester)) === 'ganjil') {
+            $start = Carbon::create($startYear, 9, 1, 0, 0, 0);
+            $end = Carbon::create($endYear, 2, 28, 23, 59, 59)->endOfMonth();
+        } else {
+            $start = Carbon::create($endYear, 3, 1, 0, 0, 0);
+            $end = Carbon::create($endYear, 8, 31, 23, 59, 59);
+        }
+
+        return [$start, $end];
+    }
+
+    /**
      * AJAX endpoint to query candidate theses based on filters.
      */
     public function candidates(Request $request)
@@ -184,6 +230,23 @@ class AdvisorDecreeController extends Controller
         $user = Auth::user();
         if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Map all existing decrees to see which theses have already been decreed
+        $existingDecrees = AdvisorDecree::all(['id', 'decree_number', 'academic_year', 'semester', 'theses_data']);
+        $decreedMap = [];
+        foreach ($existingDecrees as $dec) {
+            if (is_array($dec->theses_data)) {
+                foreach ($dec->theses_data as $item) {
+                    if (!empty($item['thesis_id'])) {
+                        $decreedMap[(int)$item['thesis_id']] = [
+                            'decree_id' => $dec->id,
+                            'decree_number' => $dec->decree_number,
+                            'period' => "{$dec->academic_year} ({$dec->semester})",
+                        ];
+                    }
+                }
+            }
         }
 
         $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
@@ -203,6 +266,43 @@ class AdvisorDecreeController extends Controller
             });
         }
 
+        // Decree status filter: unassigned (default) vs assigned vs all
+        $decreeStatus = $request->input('decree_status', 'unassigned');
+        if ($decreeStatus === 'unassigned') {
+            if (!empty($decreedMap)) {
+                $query->whereNotIn('id', array_keys($decreedMap));
+            }
+        } elseif ($decreeStatus === 'assigned') {
+            $query->whereIn('id', array_keys($decreedMap));
+        }
+
+        // Submission period filter (Periode Pengajuan Judul Mahasiswa)
+        $submissionPeriod = $request->input('submission_period', 'same_as_decree');
+        if ($submissionPeriod === 'same_as_decree' && $request->filled('academic_year') && $request->filled('semester')) {
+            try {
+                [$startRange, $endRange] = self::getDateRangeForPeriod($request->academic_year, $request->semester);
+                $query->whereBetween('created_at', [$startRange, $endRange]);
+            } catch (\Exception $e) {
+                // Ignore if date format error
+            }
+        } elseif ($submissionPeriod === 'custom' && $request->filled('filter_academic_year') && $request->filled('filter_semester')) {
+            try {
+                [$startRange, $endRange] = self::getDateRangeForPeriod($request->filter_academic_year, $request->filter_semester);
+                $query->whereBetween('created_at', [$startRange, $endRange]);
+            } catch (\Exception $e) {
+                // Ignore
+            }
+        }
+        // If 'all', do not constrain created_at
+
+        // Thesis status filter: active (default) vs completed vs all
+        $status = $request->input('status', 'active');
+        if ($status !== 'all' && in_array($status, ['active', 'completed'])) {
+            $query->where('status', $status);
+        } else {
+            $query->whereIn('status', ['active', 'completed']);
+        }
+
         // Cohort filter
         if ($request->filled('cohort') && $request->cohort !== 'all') {
             $cohort = $request->cohort;
@@ -212,7 +312,7 @@ class AdvisorDecreeController extends Controller
         }
 
         // Wave filter
-        if ($request->filled('wave_id') && $request->wave_id !== 'all') {
+        if ($request->filled('wave_id') && $request->wave_id !== 'all' && $request->wave_id !== '') {
             $waveId = $request->wave_id;
             $query->where(function ($q) use ($waveId) {
                 $q->whereHas('seminarApplications', function ($sq) use ($waveId) {
@@ -221,13 +321,6 @@ class AdvisorDecreeController extends Controller
                     $dq->where('wave_id', $waveId);
                 });
             });
-        }
-
-        // Status filter
-        if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
-        } else {
-            $query->whereIn('status', ['active', 'completed']);
         }
 
         // Search filter
@@ -243,9 +336,12 @@ class AdvisorDecreeController extends Controller
             });
         }
 
-        $theses = $query->orderBy('id', 'desc')->get();
+        $theses = $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')->get();
 
-        $candidates = $theses->map(function ($t) {
+        $candidates = $theses->map(function ($t) use ($decreedMap) {
+            $period = $t->created_at ? self::getAcademicPeriod($t->created_at) : null;
+            $isDecreed = isset($decreedMap[$t->id]);
+
             return [
                 'id' => $t->id,
                 'student_name' => $t->student ? $t->student->name : '-',
@@ -254,6 +350,10 @@ class AdvisorDecreeController extends Controller
                 'title' => $t->display_title,
                 'topic' => $t->topic ?: '-',
                 'status' => $t->status,
+                'submission_date' => $t->created_at ? $t->created_at->translatedFormat('d M Y') : '-',
+                'submission_period' => $period ? $period['label'] : '-',
+                'has_decree' => $isDecreed,
+                'decree_info' => $decreedMap[$t->id] ?? null,
                 'pembimbing1_id' => $t->pembimbing1_id,
                 'pembimbing1_name' => $t->pembimbing1 ? $t->pembimbing1->name : '-',
                 'pembimbing1_nidn' => $t->pembimbing1 ? ($t->pembimbing1->identifier ?? '-') : '-',

@@ -55,8 +55,8 @@
                                     1
                                 </span>
                                 <div>
-                                    <h3 class="text-sm font-black text-slate-900 dark:text-white">Filter Sasaran & Calon Mahasiswa</h3>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Tentukan kriteria mahasiswa skripsi yang akan dimasukkan ke dalam lampiran SK.</p>
+                                    <h3 class="text-sm font-black text-slate-900 dark:text-white">Filter Sasaran Mahasiswa per Semester</h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Pilih mahasiswa yang mengajukan judul pada semester ini dan belum diterbitkan SK pembimbing.</p>
                                 </div>
                             </div>
                             <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400"
@@ -113,8 +113,48 @@
                             </div>
                         @endif
 
-                        <!-- Multi-filter Row -->
+                        <!-- Multi-filter Grid 1: Status SK & Periode Pengajuan (Kunci Semester) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                                    <span>Status Penerbitan SK Mahasiswa</span>
+                                    <span class="text-[10px] text-orange-600 font-bold">Rekomendasi</span>
+                                </label>
+                                <select x-model="decreeStatus" @change="fetchCandidates()"
+                                        class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-semibold focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="unassigned">⚠️ Hanya yang Belum Di-SK-kan (Default)</option>
+                                    <option value="all">Semua Mahasiswa (Belum & Sudah Ada SK)</option>
+                                    <option value="assigned">✅ Sudah Pernah Di-SK-kan</option>
+                                </select>
+                                <p class="text-[10px] text-slate-400 mt-1">Mahasiswa yang sudah memiliki SK di semester lalu otomatis tidak ditampilkan.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                                    <span>Periode Pengajuan Judul</span>
+                                    <span class="text-[10px] text-slate-400">Berdasarkan Semester</span>
+                                </label>
+                                <select x-model="submissionPeriod" @change="fetchCandidates()"
+                                        class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-semibold focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="same_as_decree">Sesuai Semester SK Ini (<span x-text="academicYear + ' ' + semester"></span>)</option>
+                                    <option value="all">Semua Periode Pengajuan (Termasuk Semester Lalu)</option>
+                                </select>
+                                <p class="text-[10px] text-slate-400 mt-1">Otomatis sinkron dengan T.A & Semester penetapan SK di sebelah kanan.</p>
+                            </div>
+                        </div>
+
+                        <!-- Multi-filter Grid 2: Status Bimbingan, Angkatan, Gelombang -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Status Bimbingan</label>
+                                <select x-model="status" @change="fetchCandidates()"
+                                        class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="active">Sedang Berjalan (Aktif)</option>
+                                    <option value="completed">Sudah Lulus (Completed)</option>
+                                    <option value="all">Semua Status (Aktif & Lulus)</option>
+                                </select>
+                            </div>
+
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Angkatan Mahasiswa</label>
                                 <select x-model="cohort" @change="fetchCandidates()"
@@ -134,16 +174,6 @@
                                     @foreach($waves as $wave)
                                         <option value="{{ $wave->id }}">{{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}</option>
                                     @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Status Skripsi</label>
-                                <select x-model="status" @change="fetchCandidates()"
-                                        class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 focus:ring-orange-500 focus:border-orange-500">
-                                    <option value="all">Aktif & Selesai</option>
-                                    <option value="active">Sedang Berjalan (Aktif)</option>
-                                    <option value="completed">Sudah Lulus (Completed)</option>
                                 </select>
                             </div>
                         </div>
@@ -185,6 +215,17 @@
                             </div>
                         </div>
 
+                        <!-- Info Pill Banner -->
+                        <div class="px-4 py-2.5 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/70 dark:border-orange-900/40 text-[11px] text-orange-800 dark:text-orange-300 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-orange-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>
+                                    Menampilkan mahasiswa pengajuan <strong>Semester <span x-text="semester"></span> T.A <span x-text="academicYear"></span></strong> yang <strong x-text="decreeStatus === 'unassigned' ? 'belum memiliki SK Pembimbing' : (decreeStatus === 'assigned' ? 'sudah pernah di-SK-kan' : 'seluruhnya')"></strong>.
+                                </span>
+                            </div>
+                            <span class="font-bold text-orange-700 dark:text-orange-400 shrink-0" x-text="candidateCount + ' Calon'"></span>
+                        </div>
+
                         <!-- Manual Students List (if any added) -->
                         <div x-show="manualStudents.length > 0" class="space-y-2">
                             <div class="text-[11px] font-black uppercase text-orange-600 tracking-wider flex items-center gap-1.5">
@@ -224,8 +265,10 @@
 
                                 <!-- Empty State -->
                                 <div x-show="!isLoading && candidates.length === 0" class="p-8 text-center text-slate-400 text-xs space-y-2">
-                                    <p>Tidak ada data mahasiswa skripsi dengan pembimbing yang sesuai dengan filter.</p>
-                                    <p class="text-[11px] text-slate-500">Anda dapat menggunakan tombol <strong>+ Tambah Manual</strong> di atas untuk memasukkan data mahasiswa secara langsung.</p>
+                                    <p class="font-bold text-slate-600 dark:text-slate-300">Tidak ada mahasiswa yang sesuai dengan filter.</p>
+                                    <p class="text-[11px] text-slate-500">
+                                        Seluruh mahasiswa pada semester ini mungkin sudah pernah diterbitkan SK, atau Anda dapat mengubah filter <strong>Status Penerbitan SK</strong> / <strong>Periode Pengajuan</strong>, atau klik <strong>+ Tambah Manual</strong>.
+                                    </p>
                                 </div>
 
                                 <!-- List of Candidates -->
@@ -236,22 +279,28 @@
                                                @change="toggleSelection(candidate.id)"
                                                class="mt-1 rounded text-orange-600 focus:ring-orange-500 border-slate-300 dark:border-slate-700 cursor-pointer">
                                         
-                                        <div class="flex-1 space-y-1 text-xs">
-                                            <div class="flex items-center justify-between">
-                                                <div>
+                                        <div class="flex-1 space-y-1.5 text-xs">
+                                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                                <div class="flex flex-wrap items-center gap-2">
                                                     <span class="font-black text-slate-900 dark:text-white" x-text="candidate.student_name"></span>
                                                     <span class="text-slate-400 text-[11px]" x-text="'(' + candidate.student_npm + ')'"></span>
-                                                    <span class="ml-1 px-1.5 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                                    <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold"
                                                           x-text="'Angkatan ' + candidate.student_cohort"></span>
+                                                    
+                                                    <!-- Decree status badge -->
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                          :class="candidate.has_decree ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
+                                                          x-text="candidate.has_decree ? ('✅ Sudah Di-SK-kan: ' + candidate.decree_info.decree_number) : '⚠️ Belum Ada SK'"></span>
                                                 </div>
                                                 <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded"
                                                       :class="candidate.status === 'completed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400'"
-                                                      x-text="candidate.status"></span>
+                                                      x-text="candidate.status === 'completed' ? 'Sudah Lulus' : 'Aktif Bimbingan'"></span>
                                             </div>
 
-                                            <div class="text-slate-600 dark:text-slate-300 italic text-[11.5px] leading-relaxed" x-text="candidate.title"></div>
+                                            <div class="text-slate-700 dark:text-slate-300 italic text-[11.5px] leading-relaxed" x-text="candidate.title"></div>
 
-                                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                                                <span class="text-slate-600 dark:text-slate-400">📅 <strong>Pengajuan:</strong> <span x-text="candidate.submission_date"></span> (<span x-text="candidate.submission_period"></span>)</span>
                                                 <span>P1: <strong class="text-slate-800 dark:text-slate-200" x-text="candidate.pembimbing1_name"></strong> <span class="text-slate-400" x-text="'(' + candidate.pembimbing1_nidn + ')'"></span></span>
                                                 <span>P2: <strong class="text-slate-800 dark:text-slate-200" x-text="candidate.pembimbing2_name"></strong> <span class="text-slate-400" x-text="'(' + candidate.pembimbing2_nidn + ')'"></span></span>
                                             </div>
@@ -306,10 +355,10 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">T.A & Semester</label>
                                 <div class="grid grid-cols-2 gap-1.5">
-                                    <input type="text" name="academic_year" x-model="academicYear" required placeholder="2025/2026"
-                                           class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-2.5 py-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <input type="text" name="academic_year" x-model="academicYear" required placeholder="2026/2027"
+                                           class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-2.5 py-2 font-bold focus:ring-orange-500 focus:border-orange-500">
                                     <select name="semester" x-model="semester" required
-                                            class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-1 py-2 focus:ring-orange-500 focus:border-orange-500">
+                                            class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-1 py-2 font-bold focus:ring-orange-500 focus:border-orange-500">
                                         <option value="Ganjil">Ganjil</option>
                                         <option value="Genap">Genap</option>
                                     </select>
@@ -391,7 +440,7 @@
                  @click.away="showManualModal = false">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <h3 class="text-sm font-black text-slate-900 dark:text-white">Tambah Mahasiswa Manual</h3>
-                    <button type="button" @click="showManualModal = false" class="text-slate-400 hover:text-slate-600 text-sm">✕</button>
+                    <button type="button" @click="showManualModal = false" class="text-slate-400 hover:text-slate-600 text-sm cursor-pointer">✕</button>
                 </div>
 
                 <div class="space-y-3 text-xs">
@@ -444,10 +493,10 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                    <button type="button" @click="showManualModal = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <button type="button" @click="showManualModal = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
                         Batal
                     </button>
-                    <button type="button" @click="saveManualStudent()" class="px-4 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm">
+                    <button type="button" @click="saveManualStudent()" class="px-4 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm cursor-pointer">
                         Simpan ke Daftar
                     </button>
                 </div>
@@ -465,10 +514,15 @@
                 customDecreeNumber: '{{ $previewLetterNumber }}',
                 targetType: '{{ Auth::user()->role === "dosen" ? "individual_dosen" : "collective" }}',
                 dosenId: '{{ Auth::user()->role === "dosen" ? Auth::id() : "" }}',
+                
+                // Advanced Filters
+                decreeStatus: 'unassigned', // unassigned (default), assigned, all
+                submissionPeriod: 'same_as_decree', // same_as_decree (default), all
+                status: 'active', // active (default), completed, all
                 cohort: 'all',
                 waveId: '',
-                status: 'all',
                 searchQuery: '',
+
                 signatoryTitle: '{{ $defaultSignatoryTitle }}',
                 signatoryName: '{{ $defaultSignatoryName }}',
                 signatoryIdentifier: '{{ $defaultSignatoryIdentifier ?? "" }}',
@@ -492,6 +546,16 @@
 
                 init() {
                     this.fetchCandidates();
+                    this.$watch('academicYear', () => {
+                        if (this.submissionPeriod === 'same_as_decree') {
+                            this.fetchCandidates();
+                        }
+                    });
+                    this.$watch('semester', () => {
+                        if (this.submissionPeriod === 'same_as_decree') {
+                            this.fetchCandidates();
+                        }
+                    });
                 },
 
                 get candidateCount() {
@@ -514,9 +578,13 @@
                             body: JSON.stringify({
                                 target_type: this.targetType,
                                 dosen_id: this.dosenId,
+                                decree_status: this.decreeStatus,
+                                submission_period: this.submissionPeriod,
+                                academic_year: this.academicYear,
+                                semester: this.semester,
+                                status: this.status,
                                 cohort: this.cohort,
                                 wave_id: this.waveId,
-                                status: this.status,
                                 search: this.searchQuery,
                             })
                         });
