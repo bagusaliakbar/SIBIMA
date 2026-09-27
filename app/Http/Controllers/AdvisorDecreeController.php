@@ -535,6 +535,7 @@ class AdvisorDecreeController extends Controller
             'signatory_name' => $request->signatory_name,
             'signatory_identifier' => $request->signatory_identifier,
             'signer_user_id' => $signerUser ? $signerUser->id : null,
+            'include_stamp' => $request->boolean('include_stamp', true),
             'theses_data' => $thesesData,
             'total_students' => count($thesesData),
             'verification_token' => $verificationToken,
@@ -812,6 +813,7 @@ class AdvisorDecreeController extends Controller
             'signatory_name' => $request->signatory_name ?? ($viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT'),
             'signatory_identifier' => $request->signatory_identifier ?? ($viceDean ? $viceDean->identifier : '0413056812'),
             'signer_user_id' => $viceDean ? $viceDean->id : null,
+            'include_stamp' => $request->boolean('include_stamp', true),
             'theses_data' => $thesesData,
             'total_students' => count($thesesData),
             'verification_token' => $verificationToken,
@@ -837,7 +839,7 @@ class AdvisorDecreeController extends Controller
     /**
      * Generate official PDF document for the decree or duty letter.
      */
-    public function pdf(AdvisorDecree $advisorDecree)
+    public function pdf(Request $request, AdvisorDecree $advisorDecree)
     {
         $user = Auth::user();
         $isStaff = in_array($user->role, ['admin', 'kaprodi']);
@@ -855,9 +857,14 @@ class AdvisorDecreeController extends Controller
         $advisorDecree->load(['creator', 'signer', 'dosen', 'wave']);
         $signerUser = $advisorDecree->signer ?? User::where('role', 'kaprodi')->first();
 
+        // Check if stamp should be included: default to database setting, overridable by query param ?stamp=1/0
+        $includeStamp = $request->has('stamp')
+            ? $request->boolean('stamp')
+            : ($advisorDecree->include_stamp ?? true);
+
         // Render Surat Tugas Template (persis foto referensi 100%)
         if ($advisorDecree->target_type === 'individual_dosen') {
-            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser'))
+            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser', 'includeStamp'))
                 ->setPaper('a4', 'portrait');
 
             $cleanNumber = Str::slug($advisorDecree->decree_number);
@@ -867,7 +874,7 @@ class AdvisorDecreeController extends Controller
         }
 
         // Render Surat Keputusan Dekan Kolektif Template
-        $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser'))
+        $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser', 'includeStamp'))
             ->setPaper('a4', 'portrait');
 
         $cleanNumber = Str::slug($advisorDecree->decree_number);

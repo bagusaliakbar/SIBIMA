@@ -209,11 +209,25 @@
         .signature-space {
             height: 65px;
             position: relative;
+            margin-top: 4px;
+            margin-bottom: 4px;
         }
 
-        .signer-name {
-            font-weight: bold;
-            font-size: 10.5pt;
+        .stamp-overlay {
+            position: absolute;
+            top: -12px;
+            left: -28px;
+            width: 95px;
+            height: 95px;
+            z-index: 1;
+        }
+
+        .signer-img {
+            position: relative;
+            max-height: 55px;
+            max-width: 140px;
+            display: block;
+            z-index: 2;
         }
 
         .qr-card {
@@ -386,8 +400,11 @@
                 <div class="signer-title">Wakil Dekan I,</div>
                 
                 <div class="signature-space">
+                    @if(!empty($includeStamp) && file_exists(public_path('images/stempel_fasilkom.png')))
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/stempel_fasilkom.png'))) }}" class="stamp-overlay">
+                    @endif
                     @if($signerUser && $signerUser->decrypted_signature)
-                        <img src="{{ $signerUser->decrypted_signature }}" style="max-height: 52px; max-width: 140px; display: block;">
+                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img">
                     @endif
                 </div>
 

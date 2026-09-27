@@ -277,6 +277,24 @@
         .signature-space {
             height: 48px;
             margin: 4px 0;
+            position: relative;
+        }
+
+        .stamp-overlay {
+            position: absolute;
+            top: -12px;
+            left: -25px;
+            width: 80px;
+            height: 80px;
+            z-index: 1;
+        }
+
+        .signer-img {
+            position: relative;
+            max-height: 46px;
+            max-width: 130px;
+            display: block;
+            z-index: 2;
         }
 
         .signer-name {
@@ -420,8 +438,11 @@
                 <div class="date-line">Pada Tanggal: {{ $advisorDecree->formatted_decree_date }}</div>
                 <div class="signer-title">{{ $advisorDecree->signatory_title }},</div>
                 <div class="signature-space">
+                    @if(!empty($includeStamp) && file_exists(public_path('images/stempel_fasilkom.png')))
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/stempel_fasilkom.png'))) }}" class="stamp-overlay">
+                    @endif
                     @if($signerUser && $signerUser->decrypted_signature)
-                        <img src="{{ $signerUser->decrypted_signature }}" style="max-height: 46px; max-width: 130px; display: block;">
+                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img">
                     @endif
                 </div>
                 <div class="signer-name">{{ $advisorDecree->signatory_name }}</div>
@@ -503,8 +524,11 @@
                 <div class="date-line">Subang, {{ $advisorDecree->formatted_decree_date }}</div>
                 <div class="signer-title">{{ $advisorDecree->signatory_title }},</div>
                 <div class="signature-space">
+                    @if(!empty($includeStamp) && file_exists(public_path('images/stempel_fasilkom.png')))
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/stempel_fasilkom.png'))) }}" class="stamp-overlay">
+                    @endif
                     @if($signerUser && $signerUser->decrypted_signature)
-                        <img src="{{ $signerUser->decrypted_signature }}" style="max-height: 44px; max-width: 120px; display: block;">
+                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img">
                     @endif
                 </div>
                 <div class="signer-name">{{ $advisorDecree->signatory_name }}</div>

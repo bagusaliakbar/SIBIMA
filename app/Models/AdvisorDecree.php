@@ -23,6 +23,7 @@ class AdvisorDecree extends Model
         'signatory_name',
         'signatory_identifier',
         'signer_user_id',
+        'include_stamp',
         'theses_data',
         'total_students',
         'verification_token',
@@ -32,6 +33,7 @@ class AdvisorDecree extends Model
 
     protected $casts = [
         'decree_date' => 'date',
+        'include_stamp' => 'boolean',
         'theses_data' => 'array',
         'total_students' => 'integer',
     ];
