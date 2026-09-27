@@ -264,10 +264,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/wa-broadcasts/{waBroadcast}/resend-failed', [App\Http\Controllers\WaBroadcastController::class, 'resendFailed'])->name('wa-broadcasts.resend-failed');
         Route::delete('/wa-broadcasts/{waBroadcast}', [App\Http\Controllers\WaBroadcastController::class, 'destroy'])->name('wa-broadcasts.destroy');
 
-        // SK Dosen Pembimbing Skripsi (Admin & Kaprodi Management)
-        Route::get('/advisor-decrees/create', [App\Http\Controllers\AdvisorDecreeController::class, 'create'])->name('advisor-decrees.create');
-        Route::post('/advisor-decrees/candidates', [App\Http\Controllers\AdvisorDecreeController::class, 'candidates'])->name('advisor-decrees.candidates');
-        Route::post('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'store'])->name('advisor-decrees.store');
+        // SK Dosen Pembimbing Skripsi (Hapus Arsip hanya Admin & Kaprodi)
         Route::delete('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'destroy'])->name('advisor-decrees.destroy');
 
         // Bug Reports Management (Admin & Kaprodi)
@@ -295,8 +292,11 @@ Route::middleware('auth')->group(function () {
     // Conflict Check
     Route::post('/check-dosen-availability', [App\Http\Controllers\ScheduleConflictController::class, 'checkDosenAvailability'])->name('check-dosen-availability');
 
-    // SK Dosen Pembimbing Skripsi (Index, Detail & Cetak PDF untuk Admin, Kaprodi, dan Dosen)
+    // SK Dosen Pembimbing Skripsi (Index, Create, Store, Detail & Cetak PDF untuk Admin, Kaprodi, dan Dosen)
     Route::get('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'index'])->name('advisor-decrees.index');
+    Route::get('/advisor-decrees/create', [App\Http\Controllers\AdvisorDecreeController::class, 'create'])->name('advisor-decrees.create');
+    Route::post('/advisor-decrees/candidates', [App\Http\Controllers\AdvisorDecreeController::class, 'candidates'])->name('advisor-decrees.candidates');
+    Route::post('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'store'])->name('advisor-decrees.store');
     Route::get('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'show'])->name('advisor-decrees.show');
     Route::get('/advisor-decrees/{advisorDecree}/pdf', [App\Http\Controllers\AdvisorDecreeController::class, 'pdf'])->name('advisor-decrees.pdf');
 });

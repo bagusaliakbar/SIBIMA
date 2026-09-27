@@ -1,23 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('advisor-decrees.index') }}" class="text-xs font-bold text-orange-600 hover:underline">
-                        ← Kembali ke Arsip SK
-                    </a>
-                </div>
-                <h2 class="text-2xl font-black text-slate-900 dark:text-white mt-1">
-                    Generator SK Dosen Pembimbing Skripsi
-                </h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    Terbitkan Surat Keputusan Dekan resmi secara kolektif atau khusus per dosen pembimbing dengan penomoran otomatis dan QR Code validasi digital.
-                </p>
-            </div>
-        </div>
+        <x-breadcrumb :items="[
+            ['label' => 'SK Dosen Pembimbing', 'route' => route('advisor-decrees.index')],
+            ['label' => 'Terbitkan Dokumen', 'route' => null]
+        ]" />
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="advisorDecreeComposer()">
+    <div class="w-full space-y-6" x-data="advisorDecreeComposer()">
         <form action="{{ route('advisor-decrees.store') }}" method="POST" @submit="handleSubmit($event)">
             @csrf
 
@@ -40,43 +29,55 @@
                                   x-text="candidateCount + ' Mahasiswa Ditemukan'"></span>
                         </div>
 
-                        <!-- Target Type Segmented Control -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Jenis Penerbitan SK</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button type="button" 
-                                        @click="targetType = 'collective'; fetchCandidates()"
-                                        :class="targetType === 'collective' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
-                                        class="p-3.5 rounded-2xl text-left border border-slate-200/60 dark:border-slate-700 transition cursor-pointer">
-                                    <div class="text-xs font-black">🏢 Kolektif Seluruh Mahasiswa</div>
-                                    <div class="text-[11px] opacity-80 mt-0.5">SK Penetapan menyeluruh untuk arsip fakultas/prodi.</div>
-                                </button>
-
-                                <button type="button" 
-                                        @click="targetType = 'individual_dosen'; fetchCandidates()"
-                                        :class="targetType === 'individual_dosen' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
-                                        class="p-3.5 rounded-2xl text-left border border-slate-200/60 dark:border-slate-700 transition cursor-pointer">
-                                    <div class="text-xs font-black">👨‍🏫 Khusus Dosen (Surat Tugas BKD)</div>
-                                    <div class="text-[11px] opacity-80 mt-0.5">SK/Surat tugas khusus memuat daftar bimbingan 1 dosen.</div>
-                                </button>
+                        @if(Auth::user()->role === 'dosen')
+                            <input type="hidden" name="target_type" value="individual_dosen">
+                            <input type="hidden" name="dosen_id" value="{{ Auth::id() }}">
+                            <div class="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-black text-orange-900 dark:text-orange-200">👨‍🏫 Surat Tugas Pembimbingan BKD (Dosen)</div>
+                                    <div class="text-[11px] text-orange-700 dark:text-orange-400 mt-0.5">Menerbitkan surat tugas resmi untuk pelaporan BKD & SISTER bagi <strong>{{ Auth::user()->name }}</strong>.</div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-orange-600 text-white uppercase tracking-wider">Khusus BKD</span>
                             </div>
-                            <input type="hidden" name="target_type" :value="targetType">
-                        </div>
+                        @else
+                            <!-- Target Type Segmented Control -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Jenis Penerbitan SK</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button type="button" 
+                                            @click="targetType = 'collective'; fetchCandidates()"
+                                            :class="targetType === 'collective' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
+                                            class="p-3.5 rounded-2xl text-left border border-slate-200/60 dark:border-slate-700 transition cursor-pointer">
+                                        <div class="text-xs font-black">🏢 Kolektif Seluruh Mahasiswa</div>
+                                        <div class="text-[11px] opacity-80 mt-0.5">SK Penetapan menyeluruh untuk arsip fakultas/prodi.</div>
+                                    </button>
 
-                        <!-- Dropdown Dosen (if individual) -->
-                        <div x-show="targetType === 'individual_dosen'" x-cloak class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/60 space-y-2">
-                            <label class="block text-xs font-black text-amber-900 dark:text-amber-200">Pilih Dosen Pembimbing Target *</label>
-                            <select name="dosen_id" x-model="dosenId" @change="fetchCandidates()"
-                                    class="w-full text-xs rounded-xl bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 text-slate-800 dark:text-slate-200 px-3 py-2.5 focus:ring-orange-500 focus:border-orange-500">
-                                <option value="">-- Pilih Dosen Pembimbing --</option>
-                                @foreach($dosens as $dosen)
-                                    <option value="{{ $dosen->id }}">{{ $dosen->name }} {{ $dosen->identifier ? '('.$dosen->identifier.')' : '' }}</option>
-                                @endforeach
-                            </select>
-                            <p class="text-[11px] text-amber-700 dark:text-amber-400">
-                                Sistem akan memfilter mahasiswa yang dibimbing oleh dosen ini (baik sebagai Pembimbing 1 maupun Pembimbing 2).
-                            </p>
-                        </div>
+                                    <button type="button" 
+                                            @click="targetType = 'individual_dosen'; fetchCandidates()"
+                                            :class="targetType === 'individual_dosen' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
+                                            class="p-3.5 rounded-2xl text-left border border-slate-200/60 dark:border-slate-700 transition cursor-pointer">
+                                        <div class="text-xs font-black">👨‍🏫 Khusus Dosen (Surat Tugas BKD)</div>
+                                        <div class="text-[11px] opacity-80 mt-0.5">SK/Surat tugas khusus memuat daftar bimbingan 1 dosen.</div>
+                                    </button>
+                                </div>
+                                <input type="hidden" name="target_type" :value="targetType">
+                            </div>
+
+                            <!-- Dropdown Dosen (if individual) -->
+                            <div x-show="targetType === 'individual_dosen'" x-cloak class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/60 space-y-2">
+                                <label class="block text-xs font-black text-amber-900 dark:text-amber-200">Pilih Dosen Pembimbing Target *</label>
+                                <select name="dosen_id" x-model="dosenId" @change="fetchCandidates()"
+                                        class="w-full text-xs rounded-xl bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 text-slate-800 dark:text-slate-200 px-3 py-2.5 focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="">-- Pilih Dosen Pembimbing --</option>
+                                    @foreach($dosens as $dosen)
+                                        <option value="{{ $dosen->id }}">{{ $dosen->name }} {{ $dosen->identifier ? '('.$dosen->identifier.')' : '' }}</option>
+                                    @endforeach
+                                </select>
+                                <p class="text-[11px] text-amber-700 dark:text-amber-400">
+                                    Sistem akan memfilter mahasiswa yang dibimbing oleh dosen ini (baik sebagai Pembimbing 1 maupun Pembimbing 2).
+                                </p>
+                            </div>
+                        @endif
 
                         <!-- Multi-filter Row -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -319,13 +320,13 @@
     <script>
         function advisorDecreeComposer() {
             return {
-                title: 'Penetapan Dosen Pembimbing Skripsi Mahasiswa',
+                title: '{{ Auth::user()->role === "dosen" ? "Surat Tugas Pembimbingan Skripsi Mahasiswa" : "Penetapan Dosen Pembimbing Skripsi Mahasiswa" }}',
                 academicYear: '{{ $defaultAcademicYear }}',
                 semester: '{{ $defaultSemester }}',
                 decreeDate: '{{ now()->format("Y-m-d") }}',
                 customDecreeNumber: '{{ $previewLetterNumber }}',
-                targetType: 'collective',
-                dosenId: '',
+                targetType: '{{ Auth::user()->role === "dosen" ? "individual_dosen" : "collective" }}',
+                dosenId: '{{ Auth::user()->role === "dosen" ? Auth::id() : "" }}',
                 cohort: 'all',
                 waveId: 'all',
                 status: 'all',

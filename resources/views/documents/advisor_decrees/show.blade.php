@@ -1,36 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('advisor-decrees.index') }}" class="text-xs font-bold text-orange-600 hover:underline">
-                        ← Kembali ke Arsip SK
-                    </a>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 mt-1">
-                    <h2 class="text-2xl font-black text-slate-900 dark:text-white">
-                        SK No. {{ $advisorDecree->decree_number }}
-                    </h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                        Resmi & Terverifikasi
-                    </span>
-                </div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    {{ $advisorDecree->title }} - Tahun Akademik {{ $advisorDecree->academic_year }} (Semester {{ $advisorDecree->semester }})
-                </p>
-            </div>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+            <x-breadcrumb :items="[
+                ['label' => 'SK Dosen Pembimbing', 'route' => route('advisor-decrees.index')],
+                ['label' => $advisorDecree->decree_number, 'route' => null]
+            ]" />
 
             <div class="flex items-center gap-2">
                 <a href="{{ route('advisor-decrees.pdf', $advisorDecree) }}" target="_blank"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg shadow-orange-600/30">
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg shadow-orange-600/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span>Cetak / Unduh PDF Resmi</span>
+                    <span>Cetak PDF Resmi</span>
                 </a>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="w-full space-y-6">
         @if(session('success'))
             <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center justify-between">
                 <div class="flex items-center gap-2">

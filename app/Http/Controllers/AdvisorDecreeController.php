@@ -38,6 +38,29 @@ class AdvisorDecreeController extends Controller
             });
         }
 
+        $targetType = $request->get('target_type', 'all');
+
+        $baseStatsQuery = AdvisorDecree::query();
+        if (!$isStaff && $user->role === 'dosen') {
+            $baseStatsQuery->where(function ($q) use ($user) {
+                $q->where('target_type', 'collective')
+                  ->orWhere('dosen_id', $user->id)
+                  ->orWhere('theses_data', 'LIKE', '%' . $user->name . '%')
+                  ->orWhere('theses_data', 'LIKE', '%' . $user->identifier . '%');
+            });
+        }
+
+        $stats = [
+            'total' => (clone $baseStatsQuery)->count(),
+            'collective' => (clone $baseStatsQuery)->where('target_type', 'collective')->count(),
+            'individual' => (clone $baseStatsQuery)->where('target_type', 'individual_dosen')->count(),
+            'total_students' => (int) ((clone $baseStatsQuery)->sum('total_students') ?: 0),
+        ];
+
+        if ($targetType !== 'all') {
+            $query->where('target_type', $targetType);
+        }
+
         if ($request->filled('search')) {
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
@@ -56,10 +79,6 @@ class AdvisorDecreeController extends Controller
             $query->where('semester', $request->semester);
         }
 
-        if ($request->filled('target_type') && $request->target_type !== 'all') {
-            $query->where('target_type', $request->target_type);
-        }
-
         $decrees = $query->orderBy('decree_date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate(10)
@@ -70,7 +89,13 @@ class AdvisorDecreeController extends Controller
             ->orderBy('academic_year', 'desc')
             ->pluck('academic_year');
 
-        return view('documents.advisor_decrees.index', compact('decrees', 'academicYears', 'isStaff'));
+        return view('documents.advisor_decrees.index', compact(
+            'decrees',
+            'academicYears',
+            'isStaff',
+            'stats',
+            'targetType'
+        ));
     }
 
     /**
@@ -79,8 +104,8 @@ class AdvisorDecreeController extends Controller
     public function create(Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'kaprodi'])) {
-            abort(403, 'Akses terbatas untuk Administrator dan Kaprodi.');
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+            abort(403, 'Akses terbatas untuk Administrator, Kaprodi, dan Dosen.');
         }
 
         // Determine current academic year and semester
@@ -157,7 +182,7 @@ class AdvisorDecreeController extends Controller
     public function candidates(Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -165,7 +190,12 @@ class AdvisorDecreeController extends Controller
             ->whereNotNull('pembimbing1_id'); // Must have at least Pembimbing 1 assigned
 
         // Target type filter
-        if ($request->target_type === 'individual_dosen' && $request->filled('dosen_id')) {
+        if ($user->role === 'dosen') {
+            $query->where(function ($q) use ($user) {
+                $q->where('pembimbing1_id', $user->id)
+                  ->orWhere('pembimbing2_id', $user->id);
+            });
+        } elseif ($request->target_type === 'individual_dosen' && $request->filled('dosen_id')) {
             $dosenId = $request->dosen_id;
             $query->where(function ($q) use ($dosenId) {
                 $q->where('pembimbing1_id', $dosenId)
@@ -245,8 +275,15 @@ class AdvisorDecreeController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
             abort(403);
+        }
+
+        if ($user->role === 'dosen') {
+            $request->merge([
+                'target_type' => 'individual_dosen',
+                'dosen_id' => $user->id,
+            ]);
         }
 
         $request->validate([
