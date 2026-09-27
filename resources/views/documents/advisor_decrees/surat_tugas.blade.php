@@ -41,21 +41,25 @@
             </div>
         @endif
 
-        <!-- Banner Info BKD -->
-        <div class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-orange-600/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div class="space-y-2 max-w-2xl">
-                <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">
+        <!-- Banner Info BKD (Solid White Theme) -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="space-y-1.5 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-xs font-bold w-fit">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Layanan Penugasan BKD Dosen</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                     Surat Tugas Pembimbing Skripsi
                 </h2>
-                <p class="text-xs sm:text-sm text-orange-100/90 leading-relaxed">
-                    Cetak Surat Tugas Pembimbing Skripsi untuk keperluan Beban Kinerja Dosen (BKD).
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Cetak Surat Tugas Pembimbing Skripsi untuk keperluan Beban Kinerja Dosen (BKD) dan portofolio SISTER Kemendikbudristek.
                 </p>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-xs space-y-1.5 shrink-0 w-full sm:w-auto">
-                <div class="text-[11px] uppercase tracking-wider text-orange-200 font-bold">Dosen Pembimbing</div>
-                <div class="text-sm font-black text-white">{{ $targetDosen->name }}</div>
-                <div class="text-orange-100 text-[11px]">NIDN: {{ $targetDosen->identifier ?? '-' }} | Dosen Tetap</div>
+            <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 text-xs space-y-1.5 shrink-0 w-full sm:w-auto">
+                <div class="text-[11px] uppercase tracking-wider text-orange-600 dark:text-orange-400 font-black">Dosen Pembimbing</div>
+                <div class="text-sm font-black text-slate-900 dark:text-white">{{ $targetDosen->name }}</div>
+                <div class="text-slate-500 dark:text-slate-400 text-[11px]">NIDN: {{ $targetDosen->identifier ?? '-' }} | Dosen Tetap</div>
             </div>
         </div>
 
