@@ -9,24 +9,37 @@ class LetterSettingController extends Controller
 {
     public function index()
     {
-        $settings = LetterSetting::all();
-        if ($settings->isEmpty()) {
-            LetterSetting::create([
-                'type' => 'sk_penguji_seminar',
+        $defaults = [
+            'sk_penguji_seminar' => [
                 'title' => 'SK Tim Penguji Seminar',
                 'format' => '[NUMBER]/SK/UNSUB/FIK/[MONTH]/[YEAR]',
-                'last_number' => 0,
-            ]);
-
-            LetterSetting::create([
-                'type' => 'sk_penguji_sidang',
+            ],
+            'sk_penguji_sidang' => [
                 'title' => 'SK Tim Penguji Sidang',
                 'format' => '[NUMBER]/SK/UNSUB/FIK/[MONTH]/[YEAR]',
-                'last_number' => 0,
-            ]);
+            ],
+            'sk_pembimbing' => [
+                'title' => 'SK Dosen Pembimbing Skripsi',
+                'format' => '[NUMBER]/SK-PEMBIMBING/UNSUB/FIK/[ROMAN_MONTH]/[YEAR]',
+            ],
+            'surat_keterangan_lulus' => [
+                'title' => 'Surat Keterangan Lulus (SKL)',
+                'format' => '[NUMBER]/SKL/UNSUB/FIK/[ROMAN_MONTH]/[YEAR]',
+            ],
+        ];
 
-            $settings = LetterSetting::all();
+        foreach ($defaults as $type => $data) {
+            LetterSetting::firstOrCreate(
+                ['type' => $type],
+                [
+                    'title' => $data['title'],
+                    'format' => $data['format'],
+                    'last_number' => 0,
+                ]
+            );
         }
+
+        $settings = LetterSetting::all();
         return view('letter_settings.index', compact('settings'));
     }
 

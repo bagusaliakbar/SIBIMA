@@ -10,6 +10,7 @@ Route::get('/', function () {
 Route::get('/verify-signature/{token}', [App\Http\Controllers\SignatureController::class, 'verify'])->name('signature.verify');
 Route::get('/verify/document/{token}', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('document.verify');
 Route::get('/verify/skl/{token}', [App\Http\Controllers\GraduationController::class, 'verifySkl'])->name('skl.verify');
+Route::get('/verify/sk-pembimbing/{token}', [App\Http\Controllers\AdvisorDecreeController::class, 'verify'])->name('sk-pembimbing.verify');
 Route::get('/faq', [App\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
@@ -263,6 +264,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/wa-broadcasts/{waBroadcast}/resend-failed', [App\Http\Controllers\WaBroadcastController::class, 'resendFailed'])->name('wa-broadcasts.resend-failed');
         Route::delete('/wa-broadcasts/{waBroadcast}', [App\Http\Controllers\WaBroadcastController::class, 'destroy'])->name('wa-broadcasts.destroy');
 
+        // SK Dosen Pembimbing Skripsi (Admin & Kaprodi Management)
+        Route::get('/advisor-decrees/create', [App\Http\Controllers\AdvisorDecreeController::class, 'create'])->name('advisor-decrees.create');
+        Route::post('/advisor-decrees/candidates', [App\Http\Controllers\AdvisorDecreeController::class, 'candidates'])->name('advisor-decrees.candidates');
+        Route::post('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'store'])->name('advisor-decrees.store');
+        Route::delete('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'destroy'])->name('advisor-decrees.destroy');
+
         // Bug Reports Management (Admin & Kaprodi)
         Route::get('/admin/bug-reports', [App\Http\Controllers\BugReportController::class, 'index'])->name('admin.bug-reports.index');
         Route::patch('/admin/bug-reports/{bugReport}/status', [App\Http\Controllers\BugReportController::class, 'updateStatus'])->name('admin.bug-reports.update-status');
@@ -287,6 +294,11 @@ Route::middleware('auth')->group(function () {
 
     // Conflict Check
     Route::post('/check-dosen-availability', [App\Http\Controllers\ScheduleConflictController::class, 'checkDosenAvailability'])->name('check-dosen-availability');
+
+    // SK Dosen Pembimbing Skripsi (Index, Detail & Cetak PDF untuk Admin, Kaprodi, dan Dosen)
+    Route::get('/advisor-decrees', [App\Http\Controllers\AdvisorDecreeController::class, 'index'])->name('advisor-decrees.index');
+    Route::get('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'show'])->name('advisor-decrees.show');
+    Route::get('/advisor-decrees/{advisorDecree}/pdf', [App\Http\Controllers\AdvisorDecreeController::class, 'pdf'])->name('advisor-decrees.pdf');
 });
 
 // Clear Cache & Migrate Endpoint (Useful for Shared Hosting / Auto-deploy without direct terminal)
