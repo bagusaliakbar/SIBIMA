@@ -40,16 +40,16 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 1cm 1.5cm 1cm 1.5cm;
+            margin: 0.8cm 1.5cm 0.8cm 1.5cm;
         }
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            line-height: 1.25;
+            line-height: 1.15;
             color: #000;
             margin: 0;
             padding: 0;
-            font-size: 9pt;
+            font-size: 8pt;
         }
 
         .page-break {
@@ -70,23 +70,23 @@
         }
 
         .logo-cell {
-            width: 80px;
+            width: 70px;
             text-align: left;
         }
 
         .logo-img {
-            width: 76px;
+            width: 65px;
             height: auto;
             display: block;
         }
 
         .info-cell {
             text-align: center;
-            padding-right: 80px !important;
+            padding-right: 70px !important;
         }
 
         .univ-title {
-            font-size: 13pt;
+            font-size: 11.5pt;
             font-weight: normal;
             letter-spacing: 0.5px;
             margin: 0;
@@ -94,7 +94,7 @@
         }
 
         .fac-title {
-            font-size: 16pt;
+            font-size: 14pt;
             font-weight: bold;
             letter-spacing: 0.5px;
             margin: 1px 0;
@@ -102,18 +102,18 @@
         }
 
         .akred-title {
-            font-size: 8.5pt;
+            font-size: 7.5pt;
             font-weight: bold;
             margin: 1px 0;
         }
 
         .address-line {
-            font-size: 8pt;
+            font-size: 7.5pt;
             margin: 1px 0;
         }
 
         .email-line {
-            font-size: 8pt;
+            font-size: 7.5pt;
             margin: 1px 0;
         }
 
@@ -124,28 +124,28 @@
 
         .kop-line {
             width: 100%;
-            border-top: 3px solid #000;
-            margin-top: 4px;
-            margin-bottom: 12px;
+            border-top: 2.5px solid #000;
+            margin-top: 3px;
+            margin-bottom: 8px;
         }
 
         /* ================= JUDUL DOKUMEN ================= */
         .doc-header {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .header-bold {
             font-weight: bold;
-            font-size: 10pt;
-            line-height: 1.25;
+            font-size: 8.5pt;
+            line-height: 1.2;
             text-transform: uppercase;
         }
 
         .header-title-lg {
             font-weight: bold;
-            font-size: 10.5pt;
-            line-height: 1.25;
+            font-size: 9pt;
+            line-height: 1.2;
             text-transform: uppercase;
         }
 
@@ -153,28 +153,28 @@
         .legal-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9pt;
+            font-size: 8pt;
         }
 
         .legal-table td {
             border: none !important;
-            padding: 1px 0;
+            padding: 0.5px 0;
             vertical-align: top;
         }
 
         .label-col {
-            width: 75px;
+            width: 65px;
             font-weight: normal;
         }
 
         .sep-col {
-            width: 14px;
+            width: 10px;
             text-align: center;
         }
 
         .content-col {
             text-align: justify;
-            line-height: 1.25;
+            line-height: 1.15;
         }
 
         .item-table {
@@ -184,26 +184,26 @@
 
         .item-table td {
             border: none !important;
-            padding: 1px 0;
+            padding: 0.5px 0;
             vertical-align: top;
         }
 
         .item-char {
-            width: 20px;
+            width: 18px;
             text-align: left;
             vertical-align: top;
         }
 
         .item-text {
             text-align: justify;
-            line-height: 1.25;
+            line-height: 1.15;
         }
 
         .memutuskan-title {
             text-align: center;
             font-weight: bold;
-            font-size: 10pt;
-            margin: 10px 0 8px 0;
+            font-size: 8.5pt;
+            margin: 6px 0 4px 0;
         }
 
         /* ================= TANDA TANGAN ================= */
@@ -220,15 +220,15 @@
 
         .signature-space {
             position: relative;
-            height: 60px;
+            height: 48px;
             margin: 2px 0;
         }
 
         .stamp-img {
             position: absolute;
-            left: 20px;
-            top: -10px;
-            width: 105px;
+            left: 15px;
+            top: -8px;
+            width: 85px;
             height: auto;
             opacity: 0.88;
             z-index: 10;
@@ -236,9 +236,9 @@
 
         .signer-img {
             position: absolute;
-            left: 50px;
+            left: 40px;
             top: 0px;
-            width: 120px;
+            width: 100px;
             height: auto;
             z-index: 5;
         }
@@ -248,14 +248,14 @@
             display: inline-block;
             border: 1px solid #cbd5e1;
             background-color: #f8fafc;
-            border-radius: 6px;
-            padding: 4px 6px;
+            border-radius: 4px;
+            padding: 3px 5px;
             text-align: left;
         }
 
         /* ================= LAMPIRAN ================= */
         .lampiran-header {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 8.5pt;
         }
 
@@ -299,7 +299,7 @@
 </head>
 <body>
 
-    <!-- ================= HALAMAN 1: KOP SURAT & KONSIDERANS ================= -->
+    <!-- ================= HALAMAN 1: KOP SURAT, KONSIDERANS, DIKTUM, TTD ================= -->
     <div class="kop-surat">
         <table class="kop-table">
             <tr>
@@ -328,16 +328,16 @@
         <div class="header-bold">FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
         <div class="header-bold">NOMOR : {{ $advisorDecree->decree_number }}</div>
 
-        <div class="header-bold" style="margin: 10px 0;">TENTANG</div>
+        <div class="header-bold" style="margin: 4px 0;">TENTANG</div>
 
         <div class="header-title-lg">DOSEN PEMBIMBING TUGAS AKHIR</div>
         <div class="header-title-lg">FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
         <div class="header-title-lg">SEMESTER {{ strtoupper($advisorDecree->semester) }} TAHUN AKADEMIK {{ $advisorDecree->academic_year }}</div>
 
-        <div class="header-bold" style="margin-top: 12px;">DEKAN FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
+        <div class="header-bold" style="margin-top: 5px;">DEKAN FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
     </div>
 
-    <!-- Konsiderans: Menimbang & Mengingat (Halaman 1) -->
+    <!-- Konsiderans: Menimbang & Mengingat (Lengkap 1-14 Menyambung Tanpa Terpotong) -->
     <table class="legal-table">
         <tr>
             <td class="label-col">Menimbang</td>
@@ -364,9 +364,9 @@
             </td>
         </tr>
         <tr>
-            <td class="label-col" style="padding-top: 3px;">Mengingat</td>
-            <td class="sep-col" style="padding-top: 3px;">:</td>
-            <td class="content-col" style="padding-top: 3px;">
+            <td class="label-col" style="padding-top: 2px;">Mengingat</td>
+            <td class="sep-col" style="padding-top: 2px;">:</td>
+            <td class="content-col" style="padding-top: 2px;">
                 <table class="item-table">
                     <tr>
                         <td class="item-char">1.</td>
@@ -412,20 +412,6 @@
                         <td class="item-char">11.</td>
                         <td class="item-text">Surat Keputusan Rektor Nomor 68/US/VII/2022 tentang pedoman Penelitian dan Pengabdian kepada Masyarakat (PkM) Universitas Subang;</td>
                     </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-
-    <!-- ================= HALAMAN 2: LANJUTAN MENGINGAT, DIKTUM, TTD ================= -->
-    <div class="page-break"></div>
-
-    <table class="legal-table" style="margin-top: 10px;">
-        <tr>
-            <td class="label-col"></td>
-            <td class="sep-col"></td>
-            <td class="content-col">
-                <table class="item-table">
                     <tr>
                         <td class="item-char">12.</td>
                         <td class="item-text">Surat Keputusan Rektor Nomor 93/US/VII/2022 tentang Pedoman Akademik Universitas Subang;</td>
@@ -452,39 +438,39 @@
             <td class="content-col"></td>
         </tr>
         <tr>
-            <td class="label-col" style="padding-top: 4px;">Pertama</td>
-            <td class="sep-col" style="padding-top: 4px;">:</td>
-            <td class="content-col" style="padding-top: 4px;">
+            <td class="label-col" style="padding-top: 2px;">Pertama</td>
+            <td class="sep-col" style="padding-top: 2px;">:</td>
+            <td class="content-col" style="padding-top: 2px;">
                 Menunjuk nama-nama dosen sebagai pembimbing tugas akhir pada Fakultas Ilmu Komputer Universitas Subang Semester {{ $advisorDecree->semester }} Tahun Akademik {{ $advisorDecree->academic_year }} sebagaimana tercantum pada lampiran Surat Keputusan ini
             </td>
         </tr>
         <tr>
-            <td class="label-col" style="padding-top: 4px;">Kedua</td>
-            <td class="sep-col" style="padding-top: 4px;">:</td>
-            <td class="content-col" style="padding-top: 4px;">
+            <td class="label-col" style="padding-top: 2px;">Kedua</td>
+            <td class="sep-col" style="padding-top: 2px;">:</td>
+            <td class="content-col" style="padding-top: 2px;">
                 Prosedur bimbingan tugas akhir sesuai dengan pedoman penyusunan tugas akhir di Fakultas Ilmu Komputer Universitas Subang.
             </td>
         </tr>
         <tr>
-            <td class="label-col" style="padding-top: 4px;">Ketiga</td>
-            <td class="sep-col" style="padding-top: 4px;">:</td>
-            <td class="content-col" style="padding-top: 4px;">
+            <td class="label-col" style="padding-top: 2px;">Ketiga</td>
+            <td class="sep-col" style="padding-top: 2px;">:</td>
+            <td class="content-col" style="padding-top: 2px;">
                 Keputusan ini mulai berlaku sejak tanggal ditetapkan dan apabila terdapat kekeliruan dalam keputusan ini akan diperbaiki sebagaimana mestinya
             </td>
         </tr>
     </table>
 
     <!-- Tanda Tangan Dekan -->
-    <table class="signature-table" style="margin-top: 25px;">
+    <table class="signature-table" style="margin-top: 8px;">
         <tr>
-            <td style="width: 45%;"></td>
-            <td style="width: 55%; text-align: center;">
-                <div style="text-align: left; padding-left: 25px;">
+            <td style="width: 48%;"></td>
+            <td style="width: 52%; text-align: center;">
+                <div style="text-align: left; padding-left: 20px;">
                     <div>Ditetapkan di Subang</div>
                     <div><u>Pada Tanggal : {{ $advisorDecree->formatted_decree_date }}</u></div>
                 </div>
 
-                <div style="font-weight: bold; margin-top: 8px; line-height: 1.25; font-size: 10pt;">
+                <div style="font-weight: bold; margin-top: 4px; line-height: 1.2; font-size: 8.5pt;">
                     DEKAN<br>
                     FAKULTAS ILMU KOMPUTER<br>
                     UNIVERSITAS SUBANG
@@ -499,7 +485,7 @@
                     @endif
                 </div>
 
-                <div style="font-weight: bold; font-size: 10.5pt; text-decoration: underline;">
+                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline;">
                     {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
                 </div>
             </td>
@@ -507,10 +493,10 @@
     </table>
 
     <!-- Tembusan & SIBIMA Official Security QR Card -->
-    <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
         <tr>
             <td style="width: 55%; vertical-align: bottom;">
-                <div style="font-size: 8.5pt; line-height: 1.35;">
+                <div style="font-size: 7.5pt; line-height: 1.25;">
                     <strong>Tembusan :</strong><br>
                     1. Yayasan Kutawaringin Subang<br>
                     2. Rektor Universitas Subang<br>
@@ -521,13 +507,13 @@
                 <div class="qr-box">
                     <table style="width: 100%; border-collapse: collapse;">
                         <tr>
-                            <td style="width: 46px; text-align: center; vertical-align: middle; padding-right: 6px;">
-                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(46)->margin(0)->generate(route('sk-pembimbing.verify', $advisorDecree->verification_token))) }}" style="width: 46px; height: 46px; display: block;">
+                            <td style="width: 36px; text-align: center; vertical-align: middle; padding-right: 4px;">
+                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(36)->margin(0)->generate(route('sk-pembimbing.verify', $advisorDecree->verification_token))) }}" style="width: 36px; height: 36px; display: block;">
                             </td>
-                            <td style="text-align: left; vertical-align: middle; font-size: 6.5pt; color: #1e293b; line-height: 1.2;">
-                                <strong style="color: #0f172a; font-size: 7pt;">VERIFIKASI RESMI SIBIMA</strong><br>
+                            <td style="text-align: left; vertical-align: middle; font-size: 5.5pt; color: #1e293b; line-height: 1.15;">
+                                <strong style="color: #0f172a; font-size: 6pt;">VERIFIKASI RESMI SIBIMA</strong><br>
                                 Dokumen sah terdaftar resmi di sistem.<br>
-                                <span style="color: #64748b; font-size: 6pt;">Scan QR Code untuk verifikasi keaslian.</span>
+                                <span style="color: #64748b; font-size: 5pt;">Scan QR Code untuk verifikasi keaslian.</span>
                             </td>
                         </tr>
                     </table>
@@ -536,7 +522,7 @@
         </tr>
     </table>
 
-    <!-- ================= HALAMAN 3: LAMPIRAN TABEL ================= -->
+    <!-- ================= HALAMAN 2: LAMPIRAN TABEL ================= -->
     <div class="page-break"></div>
 
     <div class="lampiran-header">
@@ -613,7 +599,7 @@
         <tr>
             <td style="width: 50%;"></td>
             <td style="width: 50%; text-align: center;">
-                <div style="font-weight: bold; line-height: 1.25; font-size: 9.5pt;">
+                <div style="font-weight: bold; line-height: 1.25; font-size: 8.5pt;">
                     DEKAN<br>
                     FAKULTAS ILMU KOMPUTER<br>
                     UNIVERSITAS SUBANG
@@ -628,7 +614,7 @@
                     @endif
                 </div>
 
-                <div style="font-weight: bold; font-size: 10pt; text-decoration: underline;">
+                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline;">
                     {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
                 </div>
             </td>
