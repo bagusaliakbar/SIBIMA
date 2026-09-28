@@ -419,7 +419,7 @@
                             </td>
                             <td style="padding-left: 8px; vertical-align: middle; border: none !important; font-size: 7.5pt; color: #1e293b; line-height: 1.25;">
                                 <strong>VERIFIKASI KEASLIAN DOKUMEN</strong><br>
-                                <span style="font-size: 6.5pt; color: #64748b;">Pindai QR Code untuk memeriksa keaslian SK ini secara publik di SIBIMA FASILKOM UNSUB. </span>
+                                <span style="font-size: 6.5pt; color: #64748b;">Pindai QR Code untuk memeriksa keaslian Surat Tugas. </span>
                             </td>
                         </tr>
                     </table>
