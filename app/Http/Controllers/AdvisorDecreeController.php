@@ -128,10 +128,15 @@ class AdvisorDecreeController extends Controller
             ['type' => 'sk_pembimbing'],
             [
                 'title' => 'SK Dosen Pembimbing Skripsi',
-                'format' => '[NUMBER]/SK-PEMBIMBING/UNSUB/FIK/[ROMAN_MONTH]/[YEAR]',
+                'format' => '[NUMBER]/D/FIK-US/[ROMAN_MONTH]/[YEAR]',
                 'last_number' => 0,
             ]
         );
+
+        if (str_contains($letterSetting->format, 'SK-PEMBIMBING')) {
+            $letterSetting->update(['format' => '[NUMBER]/D/FIK-US/[ROMAN_MONTH]/[YEAR]']);
+            $letterSetting->refresh();
+        }
 
         $nextNumber = str_pad($letterSetting->last_number + 1, 3, '0', STR_PAD_LEFT);
         $month = now()->format('m');
@@ -156,11 +161,12 @@ class AdvisorDecreeController extends Controller
         $waves = Wave::orderBy('id', 'desc')->get();
         $dosens = User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
 
-        // Signatory defaults (Kaprodi / Dekan)
+        // Signatory defaults (Dekan)
+        $dekan = User::where('name', 'like', '%Tepi%')->first();
         $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         $defaultSignatoryTitle = 'Dekan Fakultas Ilmu Komputer';
-        $defaultSignatoryName = $kaprodi ? $kaprodi->name : 'Dekan Fasilkom';
-        $defaultSignatoryIdentifier = $kaprodi ? $kaprodi->identifier : null;
+        $defaultSignatoryName = $dekan ? $dekan->name : ($kaprodi ? $kaprodi->name : 'Dr. TEPI PEIRISAL, M.SI');
+        $defaultSignatoryIdentifier = $dekan ? $dekan->identifier : ($kaprodi ? $kaprodi->identifier : null);
 
         return view('documents.advisor_decrees.create', compact(
             'defaultAcademicYear',
@@ -504,10 +510,15 @@ class AdvisorDecreeController extends Controller
                 ['type' => 'sk_pembimbing'],
                 [
                     'title' => 'SK Dosen Pembimbing Skripsi',
-                    'format' => '[NUMBER]/SK-PEMBIMBING/UNSUB/FIK/[ROMAN_MONTH]/[YEAR]',
+                    'format' => '[NUMBER]/D/FIK-US/[ROMAN_MONTH]/[YEAR]',
                     'last_number' => 0,
                 ]
             );
+
+            if (str_contains($setting->format, 'SK-PEMBIMBING')) {
+                $setting->update(['format' => '[NUMBER]/D/FIK-US/[ROMAN_MONTH]/[YEAR]']);
+                $setting->refresh();
+            }
 
             $setting->increment('last_number');
             $number = str_pad($setting->last_number, 3, '0', STR_PAD_LEFT);

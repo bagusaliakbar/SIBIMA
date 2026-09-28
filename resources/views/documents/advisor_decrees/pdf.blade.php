@@ -5,30 +5,28 @@
     <title>SK Dosen Pembimbing Skripsi - {{ $advisorDecree->decree_number }}</title>
     <style>
         @page {
-            margin: 1.5cm 2cm 1.5cm 2cm;
             size: A4 portrait;
+            margin: 1cm 1.5cm 1cm 1.5cm;
         }
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            line-height: 1.3;
+            line-height: 1.25;
             color: #000;
             margin: 0;
             padding: 0;
-            font-size: 10pt;
+            font-size: 9pt;
         }
 
-        /* Kop Surat Resmi FASILKOM UNSUB */
-        .kop-surat {
-            width: 100%;
-            border-bottom: 3px double #000;
-            padding-bottom: 5px;
-            margin-bottom: 15px;
+        .page-break {
+            page-break-before: always;
         }
 
+        /* ================= KOP SURAT RESMI ================= */
         .kop-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 2px;
         }
 
         .kop-table td {
@@ -38,540 +36,574 @@
         }
 
         .logo-cell {
-            width: 75px;
+            width: 80px;
             text-align: left;
         }
 
         .logo-img {
-            width: 68px;
+            width: 76px;
             height: auto;
+            display: block;
         }
 
         .info-cell {
             text-align: center;
-            padding-right: 75px !important;
+            padding-right: 80px !important;
         }
 
-        .univ-name {
-            font-size: 15pt;
+        .univ-title {
+            font-size: 13pt;
+            font-weight: normal;
+            letter-spacing: 0.5px;
             margin: 0;
             padding: 0;
-            letter-spacing: 0.5px;
         }
 
-        .faculty-name {
-            font-size: 17pt;
+        .fac-title {
+            font-size: 16pt;
+            font-weight: bold;
+            letter-spacing: 0.5px;
             margin: 1px 0;
             padding: 0;
-            font-weight: bold;
-            letter-spacing: 0.5px;
         }
 
-        .accreditation {
-            font-size: 9pt;
-            font-weight: bold;
-            margin: 1px 0;
-        }
-
-        .address, .email {
+        .akred-title {
             font-size: 8.5pt;
+            font-weight: bold;
             margin: 1px 0;
         }
 
-        /* Judul Dokumen */
-        .title-block {
-            text-align: center;
-            margin-bottom: 15px;
+        .address-line {
+            font-size: 8pt;
+            margin: 1px 0;
         }
 
-        .title-block h2 {
-            font-size: 12pt;
-            font-weight: bold;
+        .email-line {
+            font-size: 8pt;
+            margin: 1px 0;
+        }
+
+        .email-link {
+            color: #0000ee;
             text-decoration: underline;
-            margin: 0;
-            text-transform: uppercase;
         }
 
-        .title-block .decree-no {
-            margin: 2px 0 6px 0;
-            font-size: 10pt;
-            font-weight: bold;
-        }
-
-        .title-block .subject {
-            margin: 0;
-            font-size: 10pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            line-height: 1.25;
-        }
-
-        /* Konsiderans */
-        .consider-table {
+        .kop-line {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            font-size: 9.5pt;
-        }
-
-        .consider-table td {
-            border: none !important;
-            padding: 2px 0;
-            vertical-align: top;
-        }
-
-        .consider-label {
-            width: 100px;
-            font-weight: bold;
-        }
-
-        .consider-sep {
-            width: 15px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .consider-content {
-            text-align: justify;
-            line-height: 1.25;
-        }
-
-        .consider-list {
-            margin: 0;
-            padding-left: 18px;
-        }
-
-        .consider-list li {
-            margin-bottom: 2px;
-            text-align: justify;
-        }
-
-        /* Dictum / Memutuskan */
-        .dictum-title {
-            text-align: center;
-            font-weight: bold;
-            margin: 8px 0 4px 0;
-            font-size: 10pt;
-        }
-
-        .dictum-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9.5pt;
+            border-top: 3px solid #000;
+            margin-top: 4px;
             margin-bottom: 12px;
         }
 
-        .dictum-table td {
-            border: none !important;
-            padding: 2px 0;
-            vertical-align: top;
-        }
-
-        .dictum-label {
-            width: 100px;
-            font-weight: bold;
-        }
-
-        .dictum-sep {
-            width: 15px;
+        /* ================= JUDUL DOKUMEN ================= */
+        .doc-header {
             text-align: center;
-            font-weight: bold;
-        }
-
-        .dictum-content {
-            text-align: justify;
-            line-height: 1.25;
-        }
-
-        /* Main Table Lampiran */
-        .page-break {
-            page-break-before: always;
-        }
-
-        .attachment-header {
             margin-bottom: 12px;
+        }
+
+        .header-bold {
+            font-weight: bold;
+            font-size: 10pt;
+            line-height: 1.25;
+            text-transform: uppercase;
+        }
+
+        .header-title-lg {
+            font-weight: bold;
+            font-size: 10.5pt;
+            line-height: 1.25;
+            text-transform: uppercase;
+        }
+
+        /* ================= KONSIDERANS & DIKTUM ================= */
+        .legal-table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 9pt;
         }
 
-        .attachment-header table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .attachment-header td {
-            border: none;
+        .legal-table td {
+            border: none !important;
             padding: 1px 0;
-        }
-
-        .main-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-            font-size: 8.5pt;
-        }
-
-        .main-table th, .main-table td {
-            border: 1px solid black;
-            padding: 4px 6px;
             vertical-align: top;
         }
 
-        .main-table th {
-            background-color: #f1f5f9;
-            text-align: center;
-            font-weight: bold;
-            font-size: 8.5pt;
+        .label-col {
+            width: 75px;
+            font-weight: normal;
         }
 
-        /* Signature Block */
+        .sep-col {
+            width: 14px;
+            text-align: center;
+        }
+
+        .content-col {
+            text-align: justify;
+            line-height: 1.25;
+        }
+
+        .item-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .item-table td {
+            border: none !important;
+            padding: 1px 0;
+            vertical-align: top;
+        }
+
+        .item-char {
+            width: 20px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .item-text {
+            text-align: justify;
+            line-height: 1.25;
+        }
+
+        .memutuskan-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 10pt;
+            margin: 10px 0 8px 0;
+        }
+
+        /* ================= TANDA TANGAN ================= */
         .signature-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            page-break-inside: avoid;
         }
 
         .signature-table td {
             border: none !important;
+            padding: 0;
             vertical-align: top;
         }
 
-        .qr-section {
-            width: 50%;
-        }
-
-        .qr-card {
-            border: 1px solid #cbd5e1;
-            padding: 6px 8px;
-            width: 250px;
-            background-color: #f8fafc;
-        }
-
-        .qr-inner-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .qr-inner-table td {
-            border: none !important;
-            padding: 0;
-            vertical-align: middle;
-        }
-
-        .sign-section {
-            width: 50%;
-            text-align: left;
-            padding-left: 30px;
-            font-size: 9.5pt;
-        }
-
-        .date-line {
-            margin-bottom: 2px;
-        }
-
-        .signer-title {
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-
         .signature-space {
-            height: 48px;
-            margin: 4px 0;
             position: relative;
+            height: 60px;
+            margin: 2px 0;
         }
 
-        .stamp-overlay {
+        .stamp-img {
             position: absolute;
-            top: -12px;
-            left: -25px;
-            width: 80px;
-            height: 80px;
-            z-index: 1;
+            left: 20px;
+            top: -10px;
+            width: 105px;
+            height: auto;
+            opacity: 0.88;
+            z-index: 10;
         }
 
         .signer-img {
-            position: relative;
-            max-height: 46px;
-            max-width: 130px;
-            display: block;
-            z-index: 2;
+            position: absolute;
+            left: 50px;
+            top: 0px;
+            width: 120px;
+            height: auto;
+            z-index: 5;
         }
 
-        .signer-name {
+        /* SIBIMA Security QR Card */
+        .qr-box {
+            display: inline-block;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        /* ================= LAMPIRAN ================= */
+        .lampiran-header {
+            margin-bottom: 10px;
+            font-size: 8.5pt;
+        }
+
+        .lampiran-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7.5pt;
+            line-height: 1.15;
+        }
+
+        .lampiran-table thead {
+            display: table-header-group;
+        }
+
+        .lampiran-table tr {
+            page-break-inside: avoid;
+        }
+
+        .lampiran-table th,
+        .lampiran-table td {
+            border: 1px solid #000;
+            padding: 3px 5px;
+        }
+
+        .lampiran-table th {
+            background-color: #cbd5e1;
             font-weight: bold;
-            text-decoration: underline;
-            font-size: 10pt;
-        }
-
-        .signer-nip {
-            font-size: 9pt;
-            margin-top: 1px;
+            text-transform: uppercase;
+            text-align: center;
         }
 
         .footer-system {
-            margin-top: 25px;
-            border-top: 1px solid #cbd5e1;
-            padding-top: 4px;
-            font-size: 7pt;
+            margin-top: 10px;
+            font-size: 6pt;
             color: #64748b;
-            text-align: justify;
+            text-align: center;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 2px;
         }
     </style>
 </head>
 <body>
-    @php
-        // Multi-path fallback resolution for stamp image
-        if (empty($stampBase64)) {
-            $stampCandidates = [
-                public_path('images/stempel_fasilkom.png'),
-                public_path('stempel_fasilkom.png'),
-                base_path('public/images/stempel_fasilkom.png'),
-                base_path('public/stempel_fasilkom.png'),
-                resource_path('images/stempel_fasilkom.png'),
-            ];
-            foreach ($stampCandidates as $cand) {
-                if (file_exists($cand) && is_readable($cand)) {
-                    $stampBase64 = base64_encode(file_get_contents($cand));
-                    break;
-                }
-            }
-        }
 
-        // Multi-path fallback resolution for logo image
-        if (empty($logoBase64)) {
-            $logoCandidates = [
-                public_path('logo_unsub.png'),
-                base_path('public/logo_unsub.png'),
-                public_path('images/logo_unsub.png'),
-                base_path('public/images/logo_unsub.png'),
-            ];
-            foreach ($logoCandidates as $cand) {
-                if (file_exists($cand) && is_readable($cand)) {
-                    $logoBase64 = base64_encode(file_get_contents($cand));
-                    break;
-                }
-            }
-        }
-    @endphp
-
-    <!-- ================= HALAMAN 1: SURAT KEPUTUSAN ================= -->
+    <!-- ================= HALAMAN 1: KOP SURAT & KONSIDERANS ================= -->
     <div class="kop-surat">
         <table class="kop-table">
             <tr>
                 <td class="logo-cell">
                     @if(!empty($logoBase64))
-                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img">
+                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img" alt="Logo UNSUB">
+                    @elseif(file_exists(public_path('logo_unsub.png')))
+                        <img src="{{ public_path('logo_unsub.png') }}" class="logo-img" alt="Logo UNSUB">
                     @endif
                 </td>
                 <td class="info-cell">
-                    <div class="univ-name">UNIVERSITAS SUBANG</div>
-                    <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
-                    <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
-                    <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
-                    <div class="email">E-Mail: <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
+                    <div class="univ-title">UNIVERSITAS SUBANG</div>
+                    <div class="fac-title">FAKULTAS ILMU KOMPUTER</div>
+                    <div class="akred-title">Akreditasi: B SK BAN PT No: 6453/SK/BAN-PT/Akred/S/X/2020</div>
+                    <div class="address-line">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                    <div class="email-line">E-Mail : <span class="email-link">fasilkom@unsub.ac.id</span></div>
                 </td>
             </tr>
         </table>
+        <div class="kop-line"></div>
     </div>
 
-    <div class="title-block">
-        <h2>SURAT KEPUTUSAN DEKAN FAKULTAS ILMU KOMPUTER</h2>
-        <div class="decree-no">Nomor: {{ $advisorDecree->decree_number }}</div>
-        <div class="subject">
-            TENTANG<br>
-            PENETAPAN DOSEN PEMBIMBING SKRIPSI MAHASISWA<br>
-            FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG<br>
-            TAHUN AKADEMIK {{ $advisorDecree->academic_year }} SEMESTER {{ strtoupper($advisorDecree->semester) }}
-        </div>
+    <!-- Judul & Perihal SK -->
+    <div class="doc-header">
+        <div class="header-bold">SURAT KEPUTUSAN DEKAN</div>
+        <div class="header-bold">FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
+        <div class="header-bold">NOMOR : {{ $advisorDecree->decree_number }}</div>
+
+        <div class="header-bold" style="margin: 10px 0;">TENTANG</div>
+
+        <div class="header-title-lg">DOSEN PEMBIMBING TUGAS AKHIR</div>
+        <div class="header-title-lg">FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
+        <div class="header-title-lg">SEMESTER {{ strtoupper($advisorDecree->semester) }} TAHUN AKADEMIK {{ $advisorDecree->academic_year }}</div>
+
+        <div class="header-bold" style="margin-top: 12px;">DEKAN FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG</div>
     </div>
 
-    <!-- Preamble / Konsiderans -->
-    <table class="consider-table">
+    <!-- Konsiderans: Menimbang & Mengingat (Halaman 1) -->
+    <table class="legal-table">
         <tr>
-            <td class="consider-label">Menimbang</td>
-            <td class="consider-sep">:</td>
-            <td class="consider-content">
-                <ol type="a" class="consider-list">
-                    <li>bahwa dalam rangka penyelesaian tugas akhir/skripsi sebagai syarat kelulusan mahasiswa Fakultas Ilmu Komputer Universitas Subang, dipandang perlu menetapkan Dosen Pembimbing Skripsi;</li>
-                    <li>bahwa dosen yang namanya tercantum dalam lampiran keputusan ini dipandang cakap dan memenuhi syarat akademis serta kompetensi keilmuan untuk ditugaskan sebagai Dosen Pembimbing Skripsi;</li>
-                    <li>bahwa berdasarkan pertimbangan sebagaimana dimaksud pada huruf a dan b, perlu diterbitkan Surat Keputusan Dekan.</li>
-                </ol>
+            <td class="label-col">Menimbang</td>
+            <td class="sep-col">:</td>
+            <td class="content-col">
+                <table class="item-table">
+                    <tr>
+                        <td class="item-char">a.</td>
+                        <td class="item-text">Bahwa mahasiswa mempunyai hak untuk mendapat bimbingan dari dosen yang bertanggungjawab atas program studi yang diikutinya dalam penyelesaian studi;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">b.</td>
+                        <td class="item-text">Bahwa mahasiswa sebagai bagian dari civitas akademika perlu lebih ditingkatkan kualitasnya serta diarahkan agar dapat menyelesaikan studi tepat pada waktunya;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">c.</td>
+                        <td class="item-text">Bahwa untuk mewujudkan hal tersebut di atas, maka kepada mahasiswa sebagai peserta didik diberikan bimbingan akademik;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">d.</td>
+                        <td class="item-text">Bahwa sesuai dengan hal-hal tersebut di atas, maka perlu ditetapkan persyaratan, tugas, wewenang Pembimbing Akademik dengan Keputusan Dekan Fakultas Ilmu Komputer Universitas Subang.</td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>
-            <td class="consider-label">Mengingat</td>
-            <td class="consider-sep">:</td>
-            <td class="consider-content">
-                <ol class="consider-list">
-                    <li>Undang-Undang Republik Indonesia Nomor 12 Tahun 2012 tentang Pendidikan Tinggi;</li>
-                    <li>Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi tentang Standar Nasional Pendidikan Tinggi;</li>
-                    <li>Statuta Universitas Subang;</li>
-                    <li>Buku Pedoman Akademik dan Pedoman Penyusunan Skripsi Fakultas Ilmu Komputer Universitas Subang.</li>
-                </ol>
+            <td class="label-col" style="padding-top: 3px;">Mengingat</td>
+            <td class="sep-col" style="padding-top: 3px;">:</td>
+            <td class="content-col" style="padding-top: 3px;">
+                <table class="item-table">
+                    <tr>
+                        <td class="item-char">1.</td>
+                        <td class="item-text">Undang-Undang Nomor 20 Tahun 2003 tentang Sistem Pendidikan Nasional;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">2.</td>
+                        <td class="item-text">Undang-Undang Nomor 14 Tahun 2005 tentang Guru dan Dosen;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">3.</td>
+                        <td class="item-text">Undang-Undang Nomor 12 Tahun 2012 tentang Perguruan Tinggi;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">4.</td>
+                        <td class="item-text">Peraturan Pemerintah Nomor 37 Tahun 2009 tentang Dosen;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">5.</td>
+                        <td class="item-text">Peraturan Pemerintah Nomor 4 Tahun 2014 tentang Penyelenggaraan Pendidikan dan Pengelolaan Perguruan Tinggi;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">6.</td>
+                        <td class="item-text">Peraturan Pemerintah Nomor 4 Tahun 2022 tentang Perubahan atas Peraturan Pemerintah Nomor 57 Tahun 2021 tentang Standar Nasional Pendidikan;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">7.</td>
+                        <td class="item-text">Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Republik Indonesia Nomor 53 Tahun 2023 tentang Penjaminan Mutu Pendidikan Tinggi;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">8.</td>
+                        <td class="item-text">Peraturan Menteri Pendidikan Nasional Republik Indonesia Nomor : 33/D/O/2005 tentang Penggabungan Sekolah Tinggi Ilmu Administrasi (STIA) Kutawaringin di Subang dan Sekolah Tinggi Teknologi (STT) Kutawaringin di Subang menjadi Universitas Subang serta Penambahan Program Studi Baru yang diselenggarakan oleh Yayasan Kutawaringin Subang di Subang;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">9.</td>
+                        <td class="item-text">Peraturan Yayasan Kutawaringin Nomor 15 Tahun 2020 Tentang Penetapan Statuta Universitas Subang;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">10.</td>
+                        <td class="item-text">Surat Keputusan Rektor Universitas Subang Nomor 25/US/X/2013 Tentang Penetapan Perubahan Struktur Organisasi dan Tata Kerja Universitas Subang;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">11.</td>
+                        <td class="item-text">Surat Keputusan Rektor Nomor 68/US/VII/2022 tentang pedoman Penelitian dan Pengabdian kepada Masyarakat (PkM) Universitas Subang;</td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
 
-    <div class="dictum-title">MEMUTUSKAN</div>
+    <!-- ================= HALAMAN 2: LANJUTAN MENGINGAT, DIKTUM, TTD ================= -->
+    <div class="page-break"></div>
 
-    <table class="dictum-table">
+    <table class="legal-table" style="margin-top: 10px;">
         <tr>
-            <td class="dictum-label">Menetapkan</td>
-            <td class="dictum-sep">:</td>
-            <td class="dictum-content">
-                <strong>KEPUTUSAN DEKAN FAKULTAS ILMU KOMPUTER TENTANG PENETAPAN DOSEN PEMBIMBING SKRIPSI MAHASISWA TAHUN AKADEMIK {{ $advisorDecree->academic_year }}.</strong>
-            </td>
-        </tr>
-        <tr>
-            <td class="dictum-label">KESATU</td>
-            <td class="dictum-sep">:</td>
-            <td class="dictum-content">
-                Menetapkan Dosen Pembimbing 1 dan Dosen Pembimbing 2 Skripsi bagi mahasiswa Fakultas Ilmu Komputer Universitas Subang sebagaimana tercantum dalam lampiran yang merupakan bagian tidak terpisahkan dari keputusan ini.
-            </td>
-        </tr>
-        <tr>
-            <td class="dictum-label">KEDUA</td>
-            <td class="dictum-sep">:</td>
-            <td class="dictum-content">
-                Dosen Pembimbing bertugas mengarahkan, membimbing, dan memantau penyusunan naskah skripsi mahasiswa terkait materi ilmiah, metodologi penelitian, sistematika penulisan, dan implementasi sistem/program, serta memvalidasi keaktifan logbook bimbingan.
-            </td>
-        </tr>
-        <tr>
-            <td class="dictum-label">KETIGA</td>
-            <td class="dictum-sep">:</td>
-            <td class="dictum-content">
-                Surat Keputusan ini berlaku untuk Tahun Akademik {{ $advisorDecree->academic_year }} sejak tanggal ditetapkan, dengan ketentuan apabila di kemudian hari terdapat kekeliruan dalam penetapan ini akan diperbaiki sebagaimana mestinya.
+            <td class="label-col"></td>
+            <td class="sep-col"></td>
+            <td class="content-col">
+                <table class="item-table">
+                    <tr>
+                        <td class="item-char">12.</td>
+                        <td class="item-text">Surat Keputusan Rektor Nomor 93/US/VII/2022 tentang Pedoman Akademik Universitas Subang;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">13.</td>
+                        <td class="item-text">Surat Keputusan Rektor Nomor 71/US/XI/2023 tentang Pengangkatan Dekan Fakultas Ilmu Komputer Universitas Subang masa jabatan 2023-2027;</td>
+                    </tr>
+                    <tr>
+                        <td class="item-char">14.</td>
+                        <td class="item-text">Berdasarkan Keputusan LAM INFOKOM No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025, menyatakan bahwa program studi Sistem Informasi pada Program Sarjana Universitas Subang, Kab. Subang Memenuhi Syarat Peringkat AKREDITASI BAIK SEKALI, sejak tanggal 8 Agustus 2025 sampai dengan 8 Agustus 2030.</td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
 
-    <!-- Tanda Tangan Dekan / Pejabat -->
-    <table class="signature-table">
+    <div class="memutuskan-title">MEMUTUSKAN :</div>
+
+    <table class="legal-table">
         <tr>
-            <td class="qr-section">
-                <div class="qr-card">
-                    <table class="qr-inner-table">
+            <td class="label-col">Menetapkan</td>
+            <td class="sep-col">:</td>
+            <td class="content-col"></td>
+        </tr>
+        <tr>
+            <td class="label-col" style="padding-top: 4px;">Pertama</td>
+            <td class="sep-col" style="padding-top: 4px;">:</td>
+            <td class="content-col" style="padding-top: 4px;">
+                Menunjuk nama-nama dosen sebagai pembimbing tugas akhir pada Fakultas Ilmu Komputer Universitas Subang Semester {{ $advisorDecree->semester }} Tahun Akademik {{ $advisorDecree->academic_year }} sebagaimana tercantum pada lampiran Surat Keputusan ini
+            </td>
+        </tr>
+        <tr>
+            <td class="label-col" style="padding-top: 4px;">Kedua</td>
+            <td class="sep-col" style="padding-top: 4px;">:</td>
+            <td class="content-col" style="padding-top: 4px;">
+                Prosedur bimbingan tugas akhir sesuai dengan pedoman penyusunan tugas akhir di Fakultas Ilmu Komputer Universitas Subang.
+            </td>
+        </tr>
+        <tr>
+            <td class="label-col" style="padding-top: 4px;">Ketiga</td>
+            <td class="sep-col" style="padding-top: 4px;">:</td>
+            <td class="content-col" style="padding-top: 4px;">
+                Keputusan ini mulai berlaku sejak tanggal ditetapkan dan apabila terdapat kekeliruan dalam keputusan ini akan diperbaiki sebagaimana mestinya
+            </td>
+        </tr>
+    </table>
+
+    <!-- Tanda Tangan Dekan -->
+    <table class="signature-table" style="margin-top: 25px;">
+        <tr>
+            <td style="width: 45%;"></td>
+            <td style="width: 55%; text-align: center;">
+                <div style="text-align: left; padding-left: 25px;">
+                    <div>Ditetapkan di Subang</div>
+                    <div><u>Pada Tanggal : {{ $advisorDecree->formatted_decree_date }}</u></div>
+                </div>
+
+                <div style="font-weight: bold; margin-top: 8px; line-height: 1.25; font-size: 10pt;">
+                    DEKAN<br>
+                    FAKULTAS ILMU KOMPUTER<br>
+                    UNIVERSITAS SUBANG
+                </div>
+
+                <div class="signature-space">
+                    @if(!empty($includeStamp) && !empty($stampBase64))
+                        <img src="data:image/png;base64,{{ $stampBase64 }}" class="stamp-img" alt="Cap Fasilkom">
+                    @endif
+                    @if($signerUser && $signerUser->decrypted_signature)
+                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img" alt="TTD Dekan">
+                    @endif
+                </div>
+
+                <div style="font-weight: bold; font-size: 10.5pt; text-decoration: underline;">
+                    {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Tembusan & SIBIMA Official Security QR Card -->
+    <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
+        <tr>
+            <td style="width: 55%; vertical-align: bottom;">
+                <div style="font-size: 8.5pt; line-height: 1.35;">
+                    <strong>Tembusan :</strong><br>
+                    1. Yayasan Kutawaringin Subang<br>
+                    2. Rektor Universitas Subang<br>
+                    3. Yang bersangkutan untuk diketahui dan seperlunya
+                </div>
+            </td>
+            <td style="width: 45%; vertical-align: bottom; text-align: right;">
+                <div class="qr-box">
+                    <table style="width: 100%; border-collapse: collapse;">
                         <tr>
-                            <td style="width: 52px; padding-right: 6px; text-align: center;">
-                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(50)->margin(0)->generate(route('sk-pembimbing.verify', $advisorDecree->verification_token))) }}" style="width: 50px; height: 50px; display: block;">
+                            <td style="width: 46px; text-align: center; vertical-align: middle; padding-right: 6px;">
+                                <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(46)->margin(0)->generate(route('sk-pembimbing.verify', $advisorDecree->verification_token))) }}" style="width: 46px; height: 46px; display: block;">
                             </td>
-                            <td>
-                                <div style="font-size: 7.5pt; font-weight: bold; color: #0f172a;">DOKUMEN RESMI DIGITAL</div>
-                                <div style="font-size: 6.5pt; color: #334155; line-height: 1.2; margin-top: 1px;">
-                                    Surat Keputusan sah dan terdaftar resmi di sistem SIBIMA FASILKOM UNSUB.
-                                </div>
-                                <div style="font-size: 6pt; color: #64748b; margin-top: 2px; font-style: italic;">
-                                    Pindai QR untuk verifikasi keaslian dokumen.
-                                </div>
+                            <td style="text-align: left; vertical-align: middle; font-size: 6.5pt; color: #1e293b; line-height: 1.2;">
+                                <strong style="color: #0f172a; font-size: 7pt;">VERIFIKASI RESMI SIBIMA</strong><br>
+                                Dokumen sah terdaftar resmi di sistem.<br>
+                                <span style="color: #64748b; font-size: 6pt;">Scan QR Code untuk verifikasi keaslian.</span>
                             </td>
                         </tr>
                     </table>
                 </div>
             </td>
-            <td class="sign-section">
-                <div class="date-line">Ditetapkan di: Subang</div>
-                <div class="date-line">Pada Tanggal: {{ $advisorDecree->formatted_decree_date }}</div>
-                <div class="signer-title">{{ $advisorDecree->signatory_title }},</div>
-                <div class="signature-space">
-                    @if(!empty($includeStamp) && !empty($stampBase64))
-                        <img src="data:image/png;base64,{{ $stampBase64 }}" class="stamp-overlay">
-                    @endif
-                    @if($signerUser && $signerUser->decrypted_signature)
-                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img">
-                    @endif
-                </div>
-                <div class="signer-name">{{ $advisorDecree->signatory_name }}</div>
-                @if($advisorDecree->signatory_identifier)
-                    <div class="signer-nip">NIDN/NIP: {{ $advisorDecree->signatory_identifier }}</div>
-                @endif
-            </td>
         </tr>
     </table>
 
-    <div class="footer-system">
-        Dokumen resmi diterbitkan melalui SIBIMA (Sistem Informasi Bimbingan Mahasiswa) FASILKOM UNSUB | Token Verifikasi: {{ substr($advisorDecree->verification_token, 0, 20) }}...
-    </div>
-
-    <!-- ================= HALAMAN 2: LAMPIRAN TABEL ================= -->
+    <!-- ================= HALAMAN 3: LAMPIRAN TABEL ================= -->
     <div class="page-break"></div>
 
-    <div class="attachment-header">
-        <table>
+    <div class="lampiran-header">
+        <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt; line-height: 1.25;">
             <tr>
-                <td style="width: 55%;"></td>
-                <td style="width: 45%;">
-                    <strong>LAMPIRAN:</strong><br>
-                    SURAT KEPUTUSAN DEKAN FAKULTAS ILMU KOMPUTER<br>
-                    NOMOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ $advisorDecree->decree_number }}<br>
-                    TANGGAL&nbsp;: {{ $advisorDecree->formatted_decree_date }}<br>
-                    TENTANG&nbsp;&nbsp;: PENETAPAN DOSEN PEMBIMBING SKRIPSI MAHASISWA
+                <td style="width: 65px; vertical-align: top;">Lampiran</td>
+                <td style="width: 10px; vertical-align: top;">:</td>
+                <td style="vertical-align: top; text-transform: uppercase;">
+                    KEPUTUSAN DEKAN FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="vertical-align: top;"></td>
+                <td style="vertical-align: top;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt;">
+                        <tr>
+                            <td style="width: 60px;">Nomor</td>
+                            <td style="width: 10px;">:</td>
+                            <td>{{ $advisorDecree->decree_number }}</td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: top;">Tentang</td>
+                            <td style="vertical-align: top;">:</td>
+                            <td style="text-transform: uppercase;">
+                                DOSEN PEMBIMBING PENULISAN TUGAS AKHIR<br>
+                                FAKULTAS ILMU KOMPUTER UNIVERSITAS SUBANG SEMESTER {{ strtoupper($advisorDecree->semester) }} TAHUN AKADEMIK {{ $advisorDecree->academic_year }}
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>
     </div>
 
-    <div style="text-align: center; font-weight: bold; font-size: 10pt; margin-bottom: 8px;">
-        DAFTAR PENETAPAN DOSEN PEMBIMBING SKRIPSI MAHASISWA<br>
-        TAHUN AKADEMIK {{ $advisorDecree->academic_year }} SEMESTER {{ strtoupper($advisorDecree->semester) }}
-    </div>
-
-    <table class="main-table">
+    <!-- Tabel Daftar Pembimbing Skripsi -->
+    <table class="lampiran-table">
         <thead>
             <tr>
-                <th style="width: 22px;">No</th>
-                <th style="width: 135px;">Mahasiswa / NPM</th>
-                <th>Judul Skripsi</th>
-                <th style="width: 140px;">Pembimbing 1</th>
-                <th style="width: 140px;">Pembimbing 2</th>
+                <th style="width: 25px;">NO</th>
+                <th style="width: 75px;">NPM</th>
+                <th style="width: 135px;">NAMA</th>
+                <th>JUDUL TUGAS AKHIR</th>
+                <th style="width: 110px;">PEMBIMBING I</th>
+                <th style="width: 110px;">PEMBIMBING II</th>
             </tr>
         </thead>
         <tbody>
             @foreach($advisorDecree->theses_data as $idx => $row)
                 <tr>
-                    <td style="text-align: center;">{{ $idx + 1 }}</td>
-                    <td>
-                        <strong>{{ $row['student_name'] ?? '-' }}</strong><br>
-                        <span style="font-size: 8pt; color: #333;">NPM: {{ $row['student_npm'] ?? '-' }}</span>
-                        @if(!empty($row['student_cohort']))
-                            <br><span style="font-size: 7.5pt; color: #555;">(Angkatan {{ $row['student_cohort'] }})</span>
-                        @endif
+                    <td style="text-align: center; vertical-align: top;">{{ $idx + 1 }}</td>
+                    <td style="text-align: left; vertical-align: top; font-family: 'Times New Roman', Times, serif;">
+                        {{ strtoupper($row['student_npm'] ?? '') }}
                     </td>
-                    <td style="font-style: italic;">
-                        {{ $row['title'] ?? '-' }}
+                    <td style="text-align: left; vertical-align: top;">
+                        {{ strtoupper($row['student_name'] ?? '') }}
                     </td>
-                    <td>
-                        <strong>{{ $row['pembimbing1_name'] ?? '-' }}</strong><br>
-                        <span style="font-size: 7.5pt; color: #444;">NIDN: {{ $row['pembimbing1_nidn'] ?? '-' }}</span>
+                    <td style="text-align: justify; vertical-align: top; text-transform: uppercase;">
+                        {{ (!empty($row['title']) && $row['title'] !== '-') ? $row['title'] : '' }}
                     </td>
-                    <td>
-                        <strong>{{ $row['pembimbing2_name'] ?? '-' }}</strong><br>
-                        <span style="font-size: 7.5pt; color: #444;">NIDN: {{ $row['pembimbing2_nidn'] ?? '-' }}</span>
+                    <td style="text-align: left; vertical-align: top; text-transform: uppercase;">
+                        {{ (!empty($row['pembimbing1_name']) && $row['pembimbing1_name'] !== '-') ? $row['pembimbing1_name'] : '' }}
+                    </td>
+                    <td style="text-align: left; vertical-align: top; text-transform: uppercase;">
+                        {{ (!empty($row['pembimbing2_name']) && $row['pembimbing2_name'] !== '-') ? $row['pembimbing2_name'] : '' }}
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <table class="signature-table" style="margin-top: 15px;">
+    <!-- Tanda Tangan Dekan pada Lampiran -->
+    <table class="signature-table" style="margin-top: 15px; page-break-inside: avoid;">
         <tr>
-            <td style="width: 55%;"></td>
-            <td style="width: 45%; text-align: left; padding-left: 20px;">
-                <div class="date-line">Subang, {{ $advisorDecree->formatted_decree_date }}</div>
-                <div class="signer-title">{{ $advisorDecree->signatory_title }},</div>
+            <td style="width: 50%;"></td>
+            <td style="width: 50%; text-align: center;">
+                <div style="font-weight: bold; line-height: 1.25; font-size: 9.5pt;">
+                    DEKAN<br>
+                    FAKULTAS ILMU KOMPUTER<br>
+                    UNIVERSITAS SUBANG
+                </div>
+
                 <div class="signature-space">
                     @if(!empty($includeStamp) && !empty($stampBase64))
-                        <img src="data:image/png;base64,{{ $stampBase64 }}" class="stamp-overlay">
+                        <img src="data:image/png;base64,{{ $stampBase64 }}" class="stamp-img" alt="Cap Fasilkom">
                     @endif
                     @if($signerUser && $signerUser->decrypted_signature)
-                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img">
+                        <img src="{{ $signerUser->decrypted_signature }}" class="signer-img" alt="TTD Dekan">
                     @endif
                 </div>
-                <div class="signer-name">{{ $advisorDecree->signatory_name }}</div>
-                @if($advisorDecree->signatory_identifier)
-                    <div class="signer-nip">NIDN/NIP: {{ $advisorDecree->signatory_identifier }}</div>
-                @endif
+
+                <div style="font-weight: bold; font-size: 10pt; text-decoration: underline;">
+                    {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
+                </div>
             </td>
         </tr>
     </table>
+
+    <div class="footer-system">
+        Dokumen resmi diterbitkan melalui SIBIMA (Sistem Informasi Bimbingan Mahasiswa) FASILKOM UNSUB | Token Verifikasi: {{ substr($advisorDecree->verification_token, 0, 24) }}
+    </div>
+
 </body>
 </html>
