@@ -232,15 +232,42 @@ class AdvisorDecreeController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // Map all existing decrees to see which theses have already been decreed
-        $existingDecrees = AdvisorDecree::all(['id', 'decree_number', 'academic_year', 'semester', 'theses_data']);
-        $decreedMap = [];
-        foreach ($existingDecrees as $dec) {
+        // 1. Map existing Collective SKs (Hanya SK Kolektif Dekan yang dihitung sebagai SK!)
+        $collectiveDecrees = AdvisorDecree::where('target_type', 'collective')
+            ->get(['id', 'decree_number', 'academic_year', 'semester', 'theses_data']);
+
+        $skMap = [];
+        foreach ($collectiveDecrees as $dec) {
             if (is_array($dec->theses_data)) {
                 foreach ($dec->theses_data as $item) {
                     if (!empty($item['thesis_id'])) {
-                        $decreedMap[(int)$item['thesis_id']] = [
+                        $skMap[(int)$item['thesis_id']] = [
                             'decree_id' => $dec->id,
+                            'decree_number' => $dec->decree_number,
+                            'period' => "{$dec->academic_year} ({$dec->semester})",
+                        ];
+                    }
+                }
+            }
+        }
+
+        // 2. Map existing Surat Tugas (individual_dosen per pembimbing)
+        // Surat Tugas bisa diterbitkan terpisah untuk Pembimbing 1 dan Pembimbing 2 (dipakai 2x)
+        $suratTugasDecrees = AdvisorDecree::where('target_type', 'individual_dosen')
+            ->get(['id', 'dosen_id', 'decree_number', 'academic_year', 'semester', 'theses_data']);
+
+        $stMap = [];
+        foreach ($suratTugasDecrees as $dec) {
+            if (is_array($dec->theses_data)) {
+                foreach ($dec->theses_data as $item) {
+                    if (!empty($item['thesis_id'])) {
+                        $thId = (int)$item['thesis_id'];
+                        if (!isset($stMap[$thId])) {
+                            $stMap[$thId] = [];
+                        }
+                        $stMap[$thId][] = [
+                            'decree_id' => $dec->id,
+                            'dosen_id' => (int)$dec->dosen_id,
                             'decree_number' => $dec->decree_number,
                             'period' => "{$dec->academic_year} ({$dec->semester})",
                         ];
@@ -266,14 +293,34 @@ class AdvisorDecreeController extends Controller
             });
         }
 
+        $isIndividual = ($request->target_type === 'individual_dosen');
+        $targetDosenId = $isIndividual ? ($request->filled('dosen_id') ? (int)$request->dosen_id : ($user->role === 'dosen' ? $user->id : null)) : null;
+
+        if ($isIndividual && $targetDosenId) {
+            // Untuk Surat Tugas dosen tertentu:
+            // Mahasiswa dianggap 'assigned' HANYA JIKA dosen ini sudah menerbitkan surat tugas untuk mahasiswa tsb.
+            // Pembimbing 1 membuat surat tugas TIDAK menghalangi Pembimbing 2 membuat surat tugas (bisa dipakai 2x)!
+            $assignedThesesIds = [];
+            foreach ($stMap as $thId => $items) {
+                if (collect($items)->contains('dosen_id', $targetDosenId)) {
+                    $assignedThesesIds[] = $thId;
+                }
+            }
+        } else {
+            // Untuk SK Kolektif Dekan (Kaprodi):
+            // Mahasiswa dianggap 'assigned' (Sudah Di-SK-kan) HANYA JIKA sudah ada di SK Kolektif!
+            // Surat Tugas mandiri dosen BUKAN SK, sehingga mahasiswa yang baru punya Surat Tugas tetap berstatus 'unassigned' (Belum Di-SK-kan).
+            $assignedThesesIds = array_keys($skMap);
+        }
+
         // Decree status filter: unassigned (default) vs assigned vs all
         $decreeStatus = $request->input('decree_status', 'unassigned');
         if ($decreeStatus === 'unassigned') {
-            if (!empty($decreedMap)) {
-                $query->whereNotIn('id', array_keys($decreedMap));
+            if (!empty($assignedThesesIds)) {
+                $query->whereNotIn('id', $assignedThesesIds);
             }
         } elseif ($decreeStatus === 'assigned') {
-            $query->whereIn('id', array_keys($decreedMap));
+            $query->whereIn('id', $assignedThesesIds);
         }
 
         // Submission period filter (Periode Pengajuan Judul Mahasiswa)
@@ -340,9 +387,24 @@ class AdvisorDecreeController extends Controller
 
         $theses = $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')->get();
 
-        $candidates = $theses->map(function ($t) use ($decreedMap) {
+        $candidates = $theses->map(function ($t) use ($skMap, $stMap, $isIndividual, $targetDosenId) {
             $period = $t->created_at ? self::getAcademicPeriod($t->created_at) : null;
-            $isDecreed = isset($decreedMap[$t->id]);
+            $hasSk = isset($skMap[$t->id]);
+            $skInfo = $skMap[$t->id] ?? null;
+
+            $stList = $stMap[$t->id] ?? [];
+            $p1St = collect($stList)->firstWhere('dosen_id', (int)$t->pembimbing1_id);
+            $p2St = collect($stList)->firstWhere('dosen_id', (int)$t->pembimbing2_id);
+
+            // Jika dalam konteks Surat Tugas Dosen tertentu:
+            if ($isIndividual && $targetDosenId) {
+                $hasDecree = collect($stList)->contains('dosen_id', $targetDosenId);
+                $decreeInfo = collect($stList)->firstWhere('dosen_id', $targetDosenId);
+            } else {
+                // Konteks SK Kolektif Dekan (Kaprodi):
+                $hasDecree = $hasSk;
+                $decreeInfo = $skInfo;
+            }
 
             return [
                 'id' => $t->id,
@@ -354,8 +416,13 @@ class AdvisorDecreeController extends Controller
                 'status' => $t->status,
                 'submission_date' => $t->created_at ? $t->created_at->translatedFormat('d M Y') : '-',
                 'submission_period' => $period ? $period['label'] : '-',
-                'has_decree' => $isDecreed,
-                'decree_info' => $decreedMap[$t->id] ?? null,
+                'has_decree' => $hasDecree,
+                'decree_info' => $decreeInfo,
+                'has_sk' => $hasSk,
+                'sk_info' => $skInfo,
+                'p1_st' => $p1St,
+                'p2_st' => $p2St,
+                'st_list' => $stList,
                 'pembimbing1_id' => $t->pembimbing1_id,
                 'pembimbing1_name' => $t->pembimbing1 ? $t->pembimbing1->name : '-',
                 'pembimbing1_nidn' => $t->pembimbing1 ? ($t->pembimbing1->identifier ?? '-') : '-',

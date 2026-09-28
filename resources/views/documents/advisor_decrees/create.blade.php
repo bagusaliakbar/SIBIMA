@@ -117,16 +117,16 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
-                                    <span>Status Penerbitan SK Mahasiswa</span>
+                                    <span x-text="targetType === 'collective' ? 'Status Penerbitan SK Dekan' : 'Status Surat Tugas Dosen'"></span>
                                     <span class="text-[10px] text-orange-600 font-bold">Rekomendasi</span>
                                 </label>
                                 <select x-model="decreeStatus" @change="fetchCandidates()"
                                         class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-semibold focus:ring-orange-500 focus:border-orange-500">
-                                    <option value="unassigned">⚠️ Hanya yang Belum Di-SK-kan (Default)</option>
-                                    <option value="all">Semua Mahasiswa (Belum & Sudah Ada SK)</option>
-                                    <option value="assigned">✅ Sudah Pernah Di-SK-kan</option>
+                                    <option value="unassigned" x-text="targetType === 'collective' ? '⚠️ Hanya yang Belum Di-SK-kan (Default)' : '⚠️ Belum Ada Surat Tugas Dosen Ini (Default)'"></option>
+                                    <option value="all">Semua Mahasiswa (Belum & Sudah Ada Dokumen)</option>
+                                    <option value="assigned" x-text="targetType === 'collective' ? '✅ Sudah Pernah Di-SK-kan' : '✅ Sudah Terbit Surat Tugas Dosen Ini'"></option>
                                 </select>
-                                <p class="text-[10px] text-slate-400 mt-1">Mahasiswa yang sudah memiliki SK di semester lalu otomatis tidak ditampilkan.</p>
+                                <p class="text-[10px] text-slate-400 mt-1" x-text="targetType === 'collective' ? 'Mahasiswa yang baru memiliki Surat Tugas mandiri dosen tetap dihitung belum di-SK-kan.' : 'Surat Tugas bisa diterbitkan 2x (masing-masing untuk Pembimbing 1 & Pembimbing 2).'"></p>
                             </div>
 
                             <div>
@@ -287,10 +287,35 @@
                                                     <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold"
                                                           x-text="'Angkatan ' + candidate.student_cohort"></span>
                                                     
-                                                    <!-- Decree status badge -->
-                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold"
-                                                          :class="candidate.has_decree ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
-                                                          x-text="candidate.has_decree ? ('✅ Sudah Di-SK-kan: ' + candidate.decree_info.decree_number) : '⚠️ Belum Ada SK'"></span>
+                                                    <!-- Status Dokumen: SK Dekan vs Surat Tugas Dosen -->
+                                                    <template x-if="targetType === 'collective'">
+                                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                              :class="candidate.has_sk ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
+                                                              x-text="candidate.has_sk ? ('✅ Sudah Di-SK-kan: ' + candidate.sk_info.decree_number) : '⚠️ Belum Ada SK'"></span>
+                                                    </template>
+
+                                                    <template x-if="targetType === 'individual_dosen'">
+                                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                              :class="candidate.has_decree ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
+                                                              x-text="candidate.has_decree ? ('✅ Sudah Ada Surat Tugas Dosen Ini: ' + candidate.decree_info.decree_number) : '⚠️ Belum Ada Surat Tugas Dosen Ini'"></span>
+                                                    </template>
+
+                                                    <!-- Badge Surat Tugas Mandiri Dosen (Bisa 2x: untuk Pembimbing 1 & Pembimbing 2) -->
+                                                    <template x-if="candidate.p1_st">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                                                              :title="'Surat Tugas Dosen Pembimbing 1: ' + candidate.p1_st.decree_number">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                            <span x-text="'ST P1: ' + candidate.p1_st.decree_number"></span>
+                                                        </span>
+                                                    </template>
+
+                                                    <template x-if="candidate.p2_st">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800"
+                                                              :title="'Surat Tugas Dosen Pembimbing 2: ' + candidate.p2_st.decree_number">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                                            <span x-text="'ST P2: ' + candidate.p2_st.decree_number"></span>
+                                                        </span>
+                                                    </template>
                                                 </div>
                                                 <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded"
                                                       :class="candidate.status === 'completed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400'"
