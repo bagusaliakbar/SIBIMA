@@ -57,16 +57,16 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 0.8cm 1.5cm 0.8cm 1.5cm;
+            margin: 1cm 1.5cm 1.2cm 1.5cm;
         }
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            line-height: 1.15;
+            line-height: 1.3;
             color: #000;
             margin: 0;
             padding: 0;
-            font-size: 8pt;
+            font-size: 10.5pt;
         }
 
         .page-break {
@@ -166,15 +166,15 @@
 
         .header-bold {
             font-weight: bold;
-            font-size: 8.5pt;
-            line-height: 1.2;
+            font-size: 11pt;
+            line-height: 1.25;
             text-transform: uppercase;
         }
 
         .header-title-lg {
             font-weight: bold;
-            font-size: 9pt;
-            line-height: 1.2;
+            font-size: 11.5pt;
+            line-height: 1.25;
             text-transform: uppercase;
         }
 
@@ -182,28 +182,28 @@
         .legal-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 8pt;
+            font-size: 10.5pt;
         }
 
         .legal-table td {
             border: none !important;
-            padding: 0.5px 0;
+            padding: 1px 0;
             vertical-align: top;
         }
 
         .label-col {
-            width: 65px;
+            width: 75px;
             font-weight: normal;
         }
 
         .sep-col {
-            width: 10px;
+            width: 12px;
             text-align: center;
         }
 
         .content-col {
             text-align: justify;
-            line-height: 1.15;
+            line-height: 1.3;
         }
 
         .item-table {
@@ -213,26 +213,26 @@
 
         .item-table td {
             border: none !important;
-            padding: 0.5px 0;
+            padding: 1px 0;
             vertical-align: top;
         }
 
         .item-char {
-            width: 18px;
+            width: 20px;
             text-align: left;
             vertical-align: top;
         }
 
         .item-text {
             text-align: justify;
-            line-height: 1.15;
+            line-height: 1.3;
         }
 
         .memutuskan-title {
             text-align: center;
             font-weight: bold;
-            font-size: 8.5pt;
-            margin: 6px 0 4px 0;
+            font-size: 11pt;
+            margin: 10px 0 6px 0;
         }
 
         /* ================= TANDA TANGAN ================= */
@@ -288,15 +288,16 @@
 
         /* ================= LAMPIRAN ================= */
         .lampiran-header {
-            margin-bottom: 8px;
-            font-size: 8.5pt;
+            margin-bottom: 12px;
+            font-size: 10.5pt;
+            line-height: 1.35;
         }
 
         .lampiran-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 7.5pt;
-            line-height: 1.15;
+            font-size: 9pt;
+            line-height: 1.25;
         }
 
         .lampiran-table thead {
@@ -310,7 +311,7 @@
         .lampiran-table th,
         .lampiran-table td {
             border: 1px solid #000;
-            padding: 3px 5px;
+            padding: 5px 6px;
         }
 
         .lampiran-table th {
@@ -453,6 +454,20 @@
                         <td class="item-char">11.</td>
                         <td class="item-text">Surat Keputusan Rektor Nomor 68/US/VII/2022 tentang pedoman Penelitian dan Pengabdian kepada Masyarakat (PkM) Universitas Subang;</td>
                     </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- Konsiderans Lanjutan (Halaman 2: Mengingat 12-14) -->
+    <table class="legal-table" style="margin-top: 10px;">
+        <tr>
+            <td class="label-col"></td>
+            <td class="sep-col"></td>
+            <td class="content-col">
+                <table class="item-table">
                     <tr>
                         <td class="item-char">12.</td>
                         <td class="item-text">Surat Keputusan Rektor Nomor 93/US/VII/2022 tentang Pedoman Akademik Universitas Subang;</td>
@@ -502,16 +517,16 @@
     </table>
 
     <!-- Tanda Tangan Dekan -->
-    <table class="signature-table" style="margin-top: 8px;">
+    <table class="signature-table" style="margin-top: 12px; page-break-inside: avoid;">
         <tr>
             <td style="width: 48%;"></td>
             <td style="width: 52%; text-align: center;">
-                <div style="text-align: left; padding-left: 20px;">
+                <div style="text-align: left; padding-left: 20px; font-size: 10.5pt;">
                     <div>Ditetapkan di Subang</div>
                     <div><u>Pada Tanggal : {{ $advisorDecree->formatted_decree_date }}</u></div>
                 </div>
 
-                <div style="font-weight: bold; margin-top: 4px; line-height: 1.2; font-size: 8.5pt;">
+                <div style="font-weight: bold; margin-top: 4px; line-height: 1.25; font-size: 10.5pt;">
                     DEKAN<br>
                     FAKULTAS ILMU KOMPUTER<br>
                     UNIVERSITAS SUBANG
@@ -526,7 +541,7 @@
                     @endif
                 </div>
 
-                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline; margin-top: 4px;">
+                <div style="font-weight: bold; font-size: 11pt; text-decoration: underline; margin-top: 4px;">
                     {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
                 </div>
             </td>
@@ -534,10 +549,10 @@
     </table>
 
     <!-- Tembusan & SIBIMA Official Security QR Card -->
-    <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 12px; page-break-inside: avoid;">
         <tr>
             <td style="width: 55%; vertical-align: bottom;">
-                <div style="font-size: 7.5pt; line-height: 1.25;">
+                <div style="font-size: 9.5pt; line-height: 1.3;">
                     <strong>Tembusan :</strong><br>
                     1. Yayasan Kutawaringin Subang<br>
                     2. Rektor Universitas Subang<br>
@@ -562,11 +577,11 @@
         </tr>
     </table>
 
-    <!-- ================= HALAMAN 2: LAMPIRAN TABEL ================= -->
+    <!-- ================= HALAMAN LAMPIRAN TABEL ================= -->
     <div class="page-break"></div>
 
     <div class="lampiran-header">
-        <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt; line-height: 1.25;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 10pt; line-height: 1.3;">
             <tr>
                 <td style="width: 65px; vertical-align: top;">Lampiran</td>
                 <td style="width: 10px; vertical-align: top;">:</td>
@@ -578,7 +593,7 @@
                 <td></td>
                 <td style="vertical-align: top;"></td>
                 <td style="vertical-align: top;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt;">
                         <tr>
                             <td style="width: 60px;">Nomor</td>
                             <td style="width: 10px;">:</td>
@@ -637,13 +652,13 @@
     <!-- Tanda Tangan Dekan pada Lampiran -->
     <table class="signature-table" style="margin-top: 15px; page-break-inside: avoid;">
         <tr>
-            <td style="width: 50%;"></td>
-            <td style="width: 50%; text-align: center;">
-                <div style="text-align: left; padding-left: 20px;">
+            <td style="width: 48%;"></td>
+            <td style="width: 52%; text-align: center;">
+                <div style="text-align: left; padding-left: 20px; font-size: 10.5pt;">
                     <div>Ditetapkan di Subang</div>
                     <div><u>Pada Tanggal : {{ $advisorDecree->formatted_decree_date }}</u></div>
                 </div>
-                <div style="font-weight: bold; line-height: 1.25; font-size: 8.5pt;">
+                <div style="font-weight: bold; margin-top: 4px; line-height: 1.25; font-size: 10.5pt;">
                     DEKAN<br>
                     FAKULTAS ILMU KOMPUTER<br>
                     UNIVERSITAS SUBANG
@@ -658,7 +673,7 @@
                     @endif
                 </div>
 
-                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline; margin-top: 4px;">
+                <div style="font-weight: bold; font-size: 11pt; text-decoration: underline; margin-top: 4px;">
                     {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
                 </div>
             </td>
