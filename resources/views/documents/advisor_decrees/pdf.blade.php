@@ -220,15 +220,15 @@
 
         .signature-space {
             position: relative;
-            height: 48px;
+            height: 60px;
             margin: 2px 0;
         }
 
         .stamp-img {
             position: absolute;
-            left: 15px;
-            top: -8px;
-            width: 85px;
+            left: -5px;
+            top: -15px;
+            width: 78px;
             height: auto;
             opacity: 0.88;
             z-index: 10;
@@ -236,9 +236,11 @@
 
         .signer-img {
             position: absolute;
-            left: 40px;
-            top: 0px;
-            width: 100px;
+            left: 45px;
+            top: -8px;
+            max-height: 50px;
+            max-width: 110px;
+            width: auto;
             height: auto;
             z-index: 5;
         }
@@ -485,7 +487,7 @@
                     @endif
                 </div>
 
-                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline;">
+                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline; margin-top: 4px;">
                     {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
                 </div>
             </td>
@@ -511,9 +513,8 @@
                                 <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(36)->margin(0)->generate(route('sk-pembimbing.verify', $advisorDecree->verification_token))) }}" style="width: 36px; height: 36px; display: block;">
                             </td>
                             <td style="text-align: left; vertical-align: middle; font-size: 5.5pt; color: #1e293b; line-height: 1.15;">
-                                <strong style="color: #0f172a; font-size: 6pt;">VERIFIKASI RESMI SIBIMA</strong><br>
-                                Dokumen sah terdaftar resmi di sistem.<br>
-                                <span style="color: #64748b; font-size: 5pt;">Scan QR Code untuk verifikasi keaslian.</span>
+                                <strong style="color: #0f172a; font-size: 6pt;">VERIFIKASI KEASLIAN DOKUMEN</strong><br>
+                                <span style="color: #64748b; font-size: 5pt;">Pindai QR Code untuk memeriksa keaslian Surat Tugas.</span>
                             </td>
                         </tr>
                     </table>
@@ -614,7 +615,7 @@
                     @endif
                 </div>
 
-                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline;">
+                <div style="font-weight: bold; font-size: 9pt; text-decoration: underline; margin-top: 4px;">
                     {{ $advisorDecree->signatory_name ?? 'Dr. TEPI PEIRISAL, M.SI' }}
                 </div>
             </td>
