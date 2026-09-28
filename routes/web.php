@@ -356,6 +356,28 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
             }
         }
 
+        // Sync static assets (images, logos, stamps) to public_path() (especially for cPanel/shared hosting with separate public_html)
+        if (!file_exists(public_path('images'))) {
+            @mkdir(public_path('images'), 0755, true);
+        }
+        $staticImagesToSync = [
+            'public/images/stempel_fasilkom.png' => ['images/stempel_fasilkom.png', 'stempel_fasilkom.png'],
+            'public/logo_unsub.png' => ['logo_unsub.png', 'images/logo_unsub.png'],
+        ];
+        foreach ($staticImagesToSync as $srcRel => $destRels) {
+            $srcPath = base_path($srcRel);
+            if (file_exists($srcPath)) {
+                foreach ($destRels as $destRel) {
+                    $destPath = public_path($destRel);
+                    $destDir = dirname($destPath);
+                    if (!file_exists($destDir)) {
+                        @mkdir($destDir, 0755, true);
+                    }
+                    @copy($srcPath, $destPath);
+                }
+            }
+        }
+
         $migrationOutput = null;
         if ($request->has('migrate')) {
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);

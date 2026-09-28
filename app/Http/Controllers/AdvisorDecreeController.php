@@ -857,14 +857,48 @@ class AdvisorDecreeController extends Controller
         $advisorDecree->load(['creator', 'signer', 'dosen', 'wave']);
         $signerUser = $advisorDecree->signer ?? User::where('role', 'kaprodi')->first();
 
-        // Check if stamp should be included: default to database setting, overridable by query param ?stamp=1/0
-        $includeStamp = $request->has('stamp')
-            ? $request->boolean('stamp')
-            : ($advisorDecree->include_stamp ?? true);
+        // Check if stamp should be included: default true unless explicitly turned off via ?stamp=0 or include_stamp === false
+        $includeStamp = true;
+        if ($request->has('stamp')) {
+            $includeStamp = $request->boolean('stamp');
+        } elseif (isset($advisorDecree->include_stamp) && $advisorDecree->include_stamp === false) {
+            $includeStamp = false;
+        }
+
+        // Resolve official stamp image (support standard public, cPanel/shared hosting public_html, and repo base_path)
+        $stampCandidates = [
+            public_path('images/stempel_fasilkom.png'),
+            public_path('stempel_fasilkom.png'),
+            base_path('public/images/stempel_fasilkom.png'),
+            base_path('public/stempel_fasilkom.png'),
+            resource_path('images/stempel_fasilkom.png'),
+        ];
+        $stampBase64 = null;
+        foreach ($stampCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $stampBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
+        }
+
+        // Resolve official logo image
+        $logoCandidates = [
+            public_path('logo_unsub.png'),
+            base_path('public/logo_unsub.png'),
+            public_path('images/logo_unsub.png'),
+            base_path('public/images/logo_unsub.png'),
+        ];
+        $logoBase64 = null;
+        foreach ($logoCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $logoBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
+        }
 
         // Render Surat Tugas Template (persis foto referensi 100%)
         if ($advisorDecree->target_type === 'individual_dosen') {
-            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser', 'includeStamp'))
+            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser', 'includeStamp', 'stampBase64', 'logoBase64'))
                 ->setPaper('a4', 'portrait');
 
             $cleanNumber = Str::slug($advisorDecree->decree_number);
@@ -874,7 +908,7 @@ class AdvisorDecreeController extends Controller
         }
 
         // Render Surat Keputusan Dekan Kolektif Template
-        $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser', 'includeStamp'))
+        $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser', 'includeStamp', 'stampBase64', 'logoBase64'))
             ->setPaper('a4', 'portrait');
 
         $cleanNumber = Str::slug($advisorDecree->decree_number);

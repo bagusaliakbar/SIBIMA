@@ -279,6 +279,39 @@
         if (empty($sortedList)) {
             $sortedList = $theses;
         }
+
+        // Multi-path fallback resolution for stamp image
+        if (empty($stampBase64)) {
+            $stampCandidates = [
+                public_path('images/stempel_fasilkom.png'),
+                public_path('stempel_fasilkom.png'),
+                base_path('public/images/stempel_fasilkom.png'),
+                base_path('public/stempel_fasilkom.png'),
+                resource_path('images/stempel_fasilkom.png'),
+            ];
+            foreach ($stampCandidates as $cand) {
+                if (file_exists($cand) && is_readable($cand)) {
+                    $stampBase64 = base64_encode(file_get_contents($cand));
+                    break;
+                }
+            }
+        }
+
+        // Multi-path fallback resolution for logo image
+        if (empty($logoBase64)) {
+            $logoCandidates = [
+                public_path('logo_unsub.png'),
+                base_path('public/logo_unsub.png'),
+                public_path('images/logo_unsub.png'),
+                base_path('public/images/logo_unsub.png'),
+            ];
+            foreach ($logoCandidates as $cand) {
+                if (file_exists($cand) && is_readable($cand)) {
+                    $logoBase64 = base64_encode(file_get_contents($cand));
+                    break;
+                }
+            }
+        }
     @endphp
 
     <!-- Kop Surat Resmi FASILKOM UNSUB -->
@@ -286,8 +319,8 @@
         <table class="kop-table">
             <tr>
                 <td class="logo-cell">
-                    @if(file_exists(public_path('logo_unsub.png')))
-                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img">
+                    @if(!empty($logoBase64))
+                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img">
                     @endif
                 </td>
                 <td class="info-cell">
@@ -400,8 +433,8 @@
                 <div class="signer-title">Wakil Dekan I,</div>
                 
                 <div class="signature-space">
-                    @if(!empty($includeStamp) && file_exists(public_path('images/stempel_fasilkom.png')))
-                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/stempel_fasilkom.png'))) }}" class="stamp-overlay">
+                    @if(!empty($includeStamp) && !empty($stampBase64))
+                        <img src="data:image/png;base64,{{ $stampBase64 }}" class="stamp-overlay">
                     @endif
                     @if($signerUser && $signerUser->decrypted_signature)
                         <img src="{{ $signerUser->decrypted_signature }}" class="signer-img">
