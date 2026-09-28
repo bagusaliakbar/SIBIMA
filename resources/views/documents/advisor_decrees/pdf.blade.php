@@ -219,16 +219,19 @@
         }
 
         .signature-space {
+            display: inline-block;
             position: relative;
-            height: 60px;
-            margin: 2px 0;
+            width: 220px;
+            height: 68px;
+            margin: 2px auto;
+            text-align: center;
         }
 
         .stamp-img {
             position: absolute;
-            left: -5px;
-            top: -15px;
-            width: 78px;
+            left: 0px;
+            top: -14px;
+            width: 88px;
             height: auto;
             opacity: 0.88;
             z-index: 10;
@@ -237,10 +240,9 @@
         .signer-img {
             position: absolute;
             left: 45px;
-            top: -8px;
-            max-height: 50px;
-            max-width: 110px;
-            width: auto;
+            top: 0px;
+            width: 135px;
+            max-height: 64px;
             height: auto;
             z-index: 5;
         }
