@@ -52,6 +52,17 @@
                 background-color: #ffffff;
                 border: 1px solid #e2e8f0;
                 box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.04);
+                padding: 1.75rem 1.25rem 2rem 1.25rem;
+            }
+            @media (min-width: 420px) {
+                .auth-card {
+                    padding: 2rem 1.5rem 2.25rem 1.5rem;
+                }
+            }
+            @media (min-width: 640px) {
+                .auth-card {
+                    padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+                }
             }
             .auth-title {
                 color: #0f172a;
@@ -149,7 +160,7 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased min-h-screen flex flex-col {{ $card ? 'justify-center items-center p-4 sm:p-6' : 'justify-between items-stretch p-0' }} transition-colors duration-300 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
+    <body class="font-sans antialiased min-h-screen flex flex-col {{ $card ? 'justify-center items-center p-3 sm:p-6' : 'justify-between items-stretch p-0' }} transition-colors duration-300 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
         
         <!-- Tech Dot-Grid Background & Soft Warm Halo -->
         <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -217,10 +228,10 @@
             </footer>
         @else
             <!-- Center Auth Wrapper for Standard Login/Register Cards -->
-            <div class="w-full flex flex-col items-center justify-center my-auto py-8 sm:py-12 px-4 relative z-10">
+            <div class="w-full flex flex-col items-center justify-center my-auto py-6 sm:py-12 px-0 sm:px-4 relative z-10">
                 
                 <!-- Auth Card (Clean Elevated Surface, comfortable & substantial) -->
-                <div class="w-full auth-card rounded-3xl p-7 sm:p-10 pb-8 sm:pb-10 transition-all mx-auto"
+                <div class="w-full auth-card rounded-2xl sm:rounded-3xl transition-all mx-auto"
                      style="max-width: {{ $maxWidth ?? (request()->routeIs('register') ? '620px' : '480px') }};">
                     {{ $slot }}
                 </div>
