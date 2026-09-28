@@ -602,6 +602,10 @@
         <tr>
             <td style="width: 50%;"></td>
             <td style="width: 50%; text-align: center;">
+                <div style="text-align: left; padding-left: 20px;">
+                    <div>Ditetapkan di Subang</div>
+                    <div><u>Pada Tanggal : {{ $advisorDecree->formatted_decree_date }}</u></div>
+                </div>
                 <div style="font-weight: bold; line-height: 1.25; font-size: 8.5pt;">
                     DEKAN<br>
                     FAKULTAS ILMU KOMPUTER<br>
