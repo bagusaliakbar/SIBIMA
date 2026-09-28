@@ -974,9 +974,25 @@ class AdvisorDecreeController extends Controller
             }
         }
 
+        // Resolve official kop surat banner image
+        $kopCandidates = [
+            public_path('images/kop_fasilkom.png'),
+            public_path('kop_fasilkom.png'),
+            base_path('public/images/kop_fasilkom.png'),
+            base_path('public/kop_fasilkom.png'),
+            resource_path('images/kop_fasilkom.png'),
+        ];
+        $kopBase64 = null;
+        foreach ($kopCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $kopBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
+        }
+
         // Render Surat Tugas Template (persis foto referensi 100%)
         if ($advisorDecree->target_type === 'individual_dosen') {
-            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser', 'includeStamp', 'stampBase64', 'logoBase64'))
+            $pdf = Pdf::loadView('documents.advisor_decrees.pdf_surat_tugas', compact('advisorDecree', 'signerUser', 'includeStamp', 'stampBase64', 'logoBase64', 'kopBase64'))
                 ->setPaper('a4', 'portrait');
 
             $cleanNumber = Str::slug($advisorDecree->decree_number);
@@ -986,7 +1002,7 @@ class AdvisorDecreeController extends Controller
         }
 
         // Render Surat Keputusan Dekan Kolektif Template
-        $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser', 'includeStamp', 'stampBase64', 'logoBase64'))
+        $pdf = Pdf::loadView('documents.advisor_decrees.pdf', compact('advisorDecree', 'signerUser', 'includeStamp', 'stampBase64', 'logoBase64', 'kopBase64'))
             ->setPaper('a4', 'portrait');
 
         $cleanNumber = Str::slug($advisorDecree->decree_number);

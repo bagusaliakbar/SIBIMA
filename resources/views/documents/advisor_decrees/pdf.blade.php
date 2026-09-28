@@ -16,6 +16,23 @@
         }
     }
 
+    // Multi-path fallback resolution for kop surat banner image
+    if (empty($kopBase64)) {
+        $kopCandidates = [
+            public_path('images/kop_fasilkom.png'),
+            public_path('kop_fasilkom.png'),
+            base_path('public/images/kop_fasilkom.png'),
+            base_path('public/kop_fasilkom.png'),
+            resource_path('images/kop_fasilkom.png'),
+        ];
+        foreach ($kopCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $kopBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
+        }
+    }
+
     // Multi-path fallback resolution for logo image
     if (empty($logoBase64)) {
         $logoCandidates = [
@@ -57,6 +74,18 @@
         }
 
         /* ================= KOP SURAT RESMI ================= */
+        .kop-surat {
+            width: 100%;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .kop-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .kop-table {
             width: 100%;
             border-collapse: collapse;
@@ -305,25 +334,33 @@
 
     <!-- ================= HALAMAN 1: KOP SURAT, KONSIDERANS, DIKTUM, TTD ================= -->
     <div class="kop-surat">
-        <table class="kop-table">
-            <tr>
-                <td class="logo-cell">
-                    @if(!empty($logoBase64))
-                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img" alt="Logo UNSUB">
-                    @elseif(file_exists(public_path('logo_unsub.png')))
-                        <img src="{{ public_path('logo_unsub.png') }}" class="logo-img" alt="Logo UNSUB">
-                    @endif
-                </td>
-                <td class="info-cell">
-                    <div class="univ-title">UNIVERSITAS SUBANG</div>
-                    <div class="fac-title">FAKULTAS ILMU KOMPUTER</div>
-                    <div class="akred-title">Akreditasi: B SK BAN PT No: 6453/SK/BAN-PT/Akred/S/X/2020</div>
-                    <div class="address-line">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
-                    <div class="email-line">E-Mail : <span class="email-link">fasilkom@unsub.ac.id</span></div>
-                </td>
-            </tr>
-        </table>
-        <div class="kop-line"></div>
+        @if(!empty($kopBase64))
+            <img src="data:image/png;base64,{{ $kopBase64 }}" class="kop-img" alt="Kop Surat Fakultas Ilmu Komputer Universitas Subang">
+        @elseif(file_exists(public_path('kop_fasilkom.png')))
+            <img src="{{ public_path('kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat Fakultas Ilmu Komputer Universitas Subang">
+        @elseif(file_exists(public_path('images/kop_fasilkom.png')))
+            <img src="{{ public_path('images/kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat Fakultas Ilmu Komputer Universitas Subang">
+        @else
+            <table class="kop-table">
+                <tr>
+                    <td class="logo-cell">
+                        @if(!empty($logoBase64))
+                            <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img" alt="Logo UNSUB">
+                        @elseif(file_exists(public_path('logo_unsub.png')))
+                            <img src="{{ public_path('logo_unsub.png') }}" class="logo-img" alt="Logo UNSUB">
+                        @endif
+                    </td>
+                    <td class="info-cell">
+                        <div class="univ-title">UNIVERSITAS SUBANG</div>
+                        <div class="fac-title">FAKULTAS ILMU KOMPUTER</div>
+                        <div class="akred-title">Akreditasi: B SK BAN PT No: 6453/SK/BAN-PT/Akred/S/X/2020</div>
+                        <div class="address-line">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                        <div class="email-line">E-Mail : <span class="email-link">fasilkom@unsub.ac.id</span></div>
+                    </td>
+                </tr>
+            </table>
+            <div class="kop-line"></div>
+        @endif
     </div>
 
     <!-- Judul & Perihal SK -->
