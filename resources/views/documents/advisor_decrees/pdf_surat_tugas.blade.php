@@ -21,9 +21,19 @@
         /* Kop Surat Resmi FASILKOM UNSUB */
         .kop-surat {
             width: 100%;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .kop-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .kop-table-wrapper {
             border-bottom: 3px double #000;
             padding-bottom: 4px;
-            margin-bottom: 16px;
         }
 
         .kop-table {
@@ -297,6 +307,23 @@
             }
         }
 
+        // Multi-path fallback resolution for kop surat banner image
+        if (empty($kopBase64)) {
+            $kopCandidates = [
+                public_path('images/kop_fasilkom.png'),
+                public_path('kop_fasilkom.png'),
+                base_path('public/images/kop_fasilkom.png'),
+                base_path('public/kop_fasilkom.png'),
+                resource_path('images/kop_fasilkom.png'),
+            ];
+            foreach ($kopCandidates as $cand) {
+                if (file_exists($cand) && is_readable($cand)) {
+                    $kopBase64 = base64_encode(file_get_contents($cand));
+                    break;
+                }
+            }
+        }
+
         // Multi-path fallback resolution for logo image
         if (empty($logoBase64)) {
             $logoCandidates = [
@@ -316,22 +343,32 @@
 
     <!-- Kop Surat Resmi FASILKOM UNSUB -->
     <div class="kop-surat">
-        <table class="kop-table">
-            <tr>
-                <td class="logo-cell">
-                    @if(!empty($logoBase64))
-                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img">
-                    @endif
-                </td>
-                <td class="info-cell">
-                    <div class="univ-name">UNIVERSITAS SUBANG</div>
-                    <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
-                    <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
-                    <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
-                    <div class="email">E-Mail : <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
-                </td>
-            </tr>
-        </table>
+        @if(!empty($kopBase64))
+            <img src="data:image/png;base64,{{ $kopBase64 }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @elseif(file_exists(public_path('kop_fasilkom.png')))
+            <img src="{{ public_path('kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @elseif(file_exists(public_path('images/kop_fasilkom.png')))
+            <img src="{{ public_path('images/kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @else
+            <div class="kop-table-wrapper">
+                <table class="kop-table">
+                    <tr>
+                        <td class="logo-cell">
+                            @if(!empty($logoBase64))
+                                <img src="data:image/png;base64,{{ $logoBase64 }}" class="logo-img">
+                            @endif
+                        </td>
+                        <td class="info-cell">
+                            <div class="univ-name">UNIVERSITAS SUBANG</div>
+                            <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
+                            <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
+                            <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                            <div class="email">E-Mail : <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endif
     </div>
 
     <!-- Judul Dokumen -->

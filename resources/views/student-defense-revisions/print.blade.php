@@ -6,7 +6,9 @@
     <style>
         @page { margin: 1.5cm; }
         body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11pt; color: #000; line-height: 1.4; }
-        .kop-surat { width: 100%; border-bottom: 4px double #000; padding-bottom: 10px; margin-bottom: 25px; }
+        .kop-surat { width: 100%; margin-bottom: 20px; text-align: center; }
+        .kop-img { width: 100%; height: auto; display: block; }
+        .kop-table-wrapper { border-bottom: 4px double #000; padding-bottom: 10px; }
         .kop-surat table { width: 100%; border-collapse: collapse; }
         .kop-surat .logo { width: 85px; text-align: left; vertical-align: middle; }
         .kop-surat .text { text-align: center; vertical-align: middle; }
@@ -36,30 +38,58 @@
     </style>
 </head>
 <body>
+    @php
+        if (empty($kopBase64)) {
+            $kopCandidates = [
+                public_path('images/kop_fasilkom.png'),
+                public_path('kop_fasilkom.png'),
+                base_path('public/images/kop_fasilkom.png'),
+                base_path('public/kop_fasilkom.png'),
+                resource_path('images/kop_fasilkom.png'),
+            ];
+            foreach ($kopCandidates as $cand) {
+                if (file_exists($cand) && is_readable($cand)) {
+                    $kopBase64 = base64_encode(file_get_contents($cand));
+                    break;
+                }
+            }
+        }
+    @endphp
+
     <div class="kop-surat">
-        <table>
-            <tr>
-                <td class="logo">
-                    @php
-                        $logoPath = public_path('logo_unsub.png');
-                        $logoData = "";
-                        if(file_exists($logoPath)) {
-                            $logoData = base64_encode(file_get_contents($logoPath));
-                        }
-                    @endphp
-                    @if($logoData)
-                        <img src="data:image/png;base64,{{ $logoData }}" width="85">
-                    @endif
-                </td>
-                <td class="text">
-                    <div style="margin-bottom: 2px;">UNIVERSITAS SUBANG</div>
-                    <div style="font-size: 19pt; font-weight: bold; margin-bottom: 2px;">FAKULTAS ILMU KOMPUTER</div>
-                    <p>Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</p>
-                    <p>Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</p>
-                    <p>E-Mail : <span style="color: #0000EE; text-decoration: underline;">fasilkom@unsub.ac.id</span></p>
-                </td>
-            </tr>
-        </table>
+        @if(!empty($kopBase64))
+            <img src="data:image/png;base64,{{ $kopBase64 }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @elseif(file_exists(public_path('kop_fasilkom.png')))
+            <img src="{{ public_path('kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @elseif(file_exists(public_path('images/kop_fasilkom.png')))
+            <img src="{{ public_path('images/kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @else
+            <div class="kop-table-wrapper">
+                <table>
+                    <tr>
+                        <td class="logo">
+                            @php
+                                $logoPath = public_path('logo_unsub.png');
+                                $logoData = "";
+                                if(file_exists($logoPath)) {
+                                    $logoData = base64_encode(file_get_contents($logoPath));
+                                }
+                            @endphp
+                            @if($logoData)
+                                <img src="data:image/png;base64,{{ $logoData }}" width="85">
+                            @endif
+                        </td>
+                        <td class="text">
+                            <div style="margin-bottom: 2px;">UNIVERSITAS SUBANG</div>
+                            <div style="font-size: 19pt; font-weight: bold; margin-bottom: 2px;">FAKULTAS ILMU KOMPUTER</div>
+                            <p>Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</p>
+                            <p>Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</p>
+                            <p>E-Mail : <span style="color: #0000EE; text-decoration: underline;">fasilkom@unsub.ac.id</span></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endif
     </div>
 
     <div class="title">PERNYATAAN REVISI HASIL SIDANG</div>
