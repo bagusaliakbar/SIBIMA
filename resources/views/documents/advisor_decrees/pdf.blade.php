@@ -1,3 +1,37 @@
+@php
+    // Multi-path fallback resolution for stamp image
+    if (empty($stampBase64)) {
+        $stampCandidates = [
+            public_path('images/stempel_fasilkom.png'),
+            public_path('stempel_fasilkom.png'),
+            base_path('public/images/stempel_fasilkom.png'),
+            base_path('public/stempel_fasilkom.png'),
+            resource_path('images/stempel_fasilkom.png'),
+        ];
+        foreach ($stampCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $stampBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
+        }
+    }
+
+    // Multi-path fallback resolution for logo image
+    if (empty($logoBase64)) {
+        $logoCandidates = [
+            public_path('logo_unsub.png'),
+            base_path('public/logo_unsub.png'),
+            public_path('images/logo_unsub.png'),
+            base_path('public/images/logo_unsub.png'),
+        ];
+        foreach ($logoCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $logoBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
+        }
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
