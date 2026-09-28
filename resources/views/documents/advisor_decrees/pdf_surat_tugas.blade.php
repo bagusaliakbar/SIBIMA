@@ -418,9 +418,8 @@
                                 <img src="data:image/svg+xml;base64,{{ base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(48)->margin(0)->generate(route('sk-pembimbing.verify', $advisorDecree->verification_token))) }}" style="width: 48px; height: 48px; display: block;">
                             </td>
                             <td style="padding-left: 8px; vertical-align: middle; border: none !important; font-size: 7.5pt; color: #1e293b; line-height: 1.25;">
-                                <strong>VERIFIKASI RESMI SIBIMA</strong><br>
-                                Dokumen sah terdaftar secara digital.<br>
-                                <span style="font-size: 6.5pt; color: #64748b;">Scan QR Code untuk verifikasi keaslian surat.</span>
+                                <strong>VERIFIKASI KEASLIAN DOKUMEN</strong><br>
+                                <span style="font-size: 6.5pt; color: #64748b;">Pindai QR Code untuk memeriksa keaslian SK ini secara publik di SIBIMA FASILKOM UNSUB. </span>
                             </td>
                         </tr>
                     </table>

@@ -11,31 +11,30 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex items-center justify-center p-4 selection:bg-orange-100 selection:text-orange-900">
-    <div class="max-w-3xl w-full bg-white rounded-[2.5rem] shadow-2xl shadow-orange-500/10 border border-slate-100 overflow-hidden my-8">
+    <div class="max-w-3xl w-full bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-200/80 overflow-hidden my-8">
         
-        <!-- Header Terverifikasi -->
-        <div class="bg-gradient-to-br from-orange-600 via-amber-600 to-orange-700 p-8 sm:p-10 text-center relative overflow-hidden text-white">
-            <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-0 left-0 w-36 h-36 bg-orange-400/20 rounded-full -ml-16 -mb-16 blur-2xl pointer-events-none"></div>
-            
-            <div class="relative z-10 space-y-3">
-                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-xl p-2.5">
+        <!-- Header Terverifikasi (Solid White Theme) -->
+        <div class="bg-white p-8 sm:p-10 text-center relative border-b border-slate-100">
+            <div class="space-y-3.5 max-w-xl mx-auto">
+                <div class="w-20 h-20 bg-white border border-slate-200/80 rounded-3xl flex items-center justify-center mx-auto shadow-xs p-2.5">
                     @if(file_exists(public_path('logo_unsub.png')))
                         <img src="{{ asset('logo_unsub.png') }}" class="w-full h-auto object-contain" alt="Logo UNSUB">
+                    @elseif(file_exists(public_path('images/logo_unsub.png')))
+                        <img src="{{ asset('images/logo_unsub.png') }}" class="w-full h-auto object-contain" alt="Logo UNSUB">
                     @else
                         <span class="text-orange-600 font-black text-xl">UNSUB</span>
                     @endif
                 </div>
                 
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-orange-100 border border-white/25">
-                    <svg class="w-4 h-4 text-orange-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                    Dokumen Resmi Terverifikasi
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-700 border border-emerald-200/80">
+                    <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    <span>Dokumen Resmi Terverifikasi</span>
                 </div>
 
-                <h1 class="text-xl sm:text-2xl font-black tracking-tight uppercase">
+                <h1 class="text-xl sm:text-2xl font-black tracking-tight uppercase text-slate-900">
                     {{ $decree->target_type === 'individual_dosen' ? 'SURAT TUGAS PEMBIMBING SKRIPSI' : 'SK DOSEN PEMBIMBING SKRIPSI' }}
                 </h1>
-                <p class="text-xs sm:text-sm text-orange-100/90 font-medium max-w-md mx-auto">
+                <p class="text-xs sm:text-sm text-slate-500 font-medium max-w-md mx-auto">
                     Fakultas Ilmu Komputer &mdash; Universitas Subang
                 </p>
             </div>
@@ -65,6 +64,25 @@
                     </div>
                 </div>
             </div>
+
+            @if($decree->target_type === 'individual_dosen' && $decree->dosen)
+                <!-- Dosen Pembimbing Info (For Surat Tugas) -->
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center font-bold shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Dosen Pembimbing Ditugaskan</p>
+                            <p class="font-bold text-slate-800 text-sm">{{ $decree->dosen->name }}</p>
+                            <p class="text-[11px] text-slate-500">NIDN: {{ $decree->dosen->identifier ?? '-' }}</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-100 text-orange-800">
+                        Dosen Tetap
+                    </span>
+                </div>
+            @endif
 
             <!-- Signatory Info -->
             <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
