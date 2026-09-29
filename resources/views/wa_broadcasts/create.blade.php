@@ -143,7 +143,25 @@
                                 </p>
                             </label>
 
-                            <!-- 7. Dosen Penguji Gelombang -->
+                            <!-- 7. Dosen dengan Sesi Bimbingan Belum Selesai -->
+                            <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
+                                   :class="targetType === 'dosen_belum_selesai_bimbingan' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
+                                <input type="radio" name="target_type" value="dosen_belum_selesai_bimbingan" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                                        <span>⚠️</span> Sesi Belum Selesai
+                                    </span>
+                                    <span class="w-4 h-4 rounded-full border flex items-center justify-center"
+                                          :class="targetType === 'dosen_belum_selesai_bimbingan' ? 'border-orange-500 bg-orange-500 text-white' : 'border-slate-300 dark:border-slate-600'">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white" x-show="targetType === 'dosen_belum_selesai_bimbingan'"></span>
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                                    Dosen yang memiliki jadwal bimbingan belum diselesaikan atau belum diinput catatan.
+                                </p>
+                            </label>
+
+                            <!-- 8. Dosen Penguji Gelombang -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'dosen_penguji_gelombang' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
                                 <input type="radio" name="target_type" value="dosen_penguji_gelombang" x-model="targetType" @change="fetchRecipients()" class="sr-only">
@@ -161,7 +179,7 @@
                                 </p>
                             </label>
 
-                            <!-- 8. Seluruh Mahasiswa Aktif -->
+                            <!-- 9. Seluruh Mahasiswa Aktif -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'all_mahasiswa_aktif' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
                                 <input type="radio" name="target_type" value="all_mahasiswa_aktif" x-model="targetType" @change="fetchRecipients()" class="sr-only">
@@ -521,13 +539,13 @@
     <script>
         function waBroadcastComposer() {
             return {
-                targetType: 'mahasiswa_belum_seminar',
+                targetType: '{{ request('target_type', 'mahasiswa_belum_seminar') }}',
                 cohort: 'all',
                 days: 30,
                 waveId: '',
                 delaySeconds: 4,
-                title: 'Pengingat Pendaftaran Seminar Proposal Skripsi',
-                messageTemplate: @json($presets['mahasiswa_belum_seminar']['message'] ?? ''),
+                title: @json($presets[request('target_type', 'mahasiswa_belum_seminar')]['title'] ?? 'Pengingat Pendaftaran Seminar Proposal Skripsi'),
+                messageTemplate: @json($presets[request('target_type', 'mahasiswa_belum_seminar')]['message'] ?? ''),
                 presets: @json($presets),
                 recipients: [],
                 selectedUserIds: [],

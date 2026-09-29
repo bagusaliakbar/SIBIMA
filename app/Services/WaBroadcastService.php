@@ -41,6 +41,7 @@ class WaBroadcastService
             'mahasiswa_belum_sidang' => $this->getMahasiswaBelumSidang($filters),
             'mahasiswa_belum_skripsi' => $this->getMahasiswaBelumSkripsi($filters),
             'dosen_pembimbing_aktif' => $this->getDosenPembimbingAktif($filters),
+            'dosen_belum_selesai_bimbingan' => $this->getDosenBelumSelesaiBimbingan($filters),
             'dosen_penguji_gelombang' => $this->getDosenPengujiGelombang($filters),
             'all_mahasiswa_aktif' => $this->getAllMahasiswaAktif($filters),
             'custom' => $this->getCustomRecipients($filters),
@@ -318,6 +319,92 @@ class WaBroadcastService
                 ],
             ];
         });
+    }
+
+    /**
+     * Dosen yang memiliki sesi bimbingan belum diselesaikan atau belum diinput catatan.
+     */
+    protected function getDosenBelumSelesaiBimbingan(array $filters): Collection
+    {
+        $scope = $filters['scope'] ?? 'overdue';
+
+        $sessionsQuery = MentoringSession::with(['thesis.student', 'dosen'])
+            ->whereNotIn('status', ['completed', 'rejected']);
+
+        if ($scope === 'overdue') {
+            $sessionsQuery->where('scheduled_at', '<=', now());
+        } elseif ($scope === 'today') {
+            $sessionsQuery->whereDate('scheduled_at', Carbon::today());
+        }
+
+        if (!empty($filters['dosen_id'])) {
+            $dosenId = $filters['dosen_id'];
+            $sessionsQuery->where(function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            });
+        }
+
+        $sessions = $sessionsQuery->get();
+
+        // Group by lecturer
+        $dosenGroups = $sessions->groupBy(function($session) {
+            return $session->dosen_id ?: ($session->thesis?->pembimbing1_id ?: null);
+        })->filter(function($group, $dosenId) {
+            return !empty($dosenId);
+        });
+
+        $dosenUsers = User::whereIn('id', $dosenGroups->keys())->get()->keyBy('id');
+
+        return $dosenGroups->map(function($group, $dosenId) use ($dosenUsers) {
+            $dosen = $dosenUsers->get($dosenId);
+            if (!$dosen) return null;
+
+            $totalCount = $group->count();
+            $overdueCount = $group->where('scheduled_at', '<=', now())->count();
+            $oldest = $group->sortBy('scheduled_at')->first();
+            $oldestDate = $oldest ? $oldest->scheduled_at->locale('id')->translatedFormat('d M Y') : '-';
+
+            $studentNames = $group->map(function($s) {
+                return $s->thesis?->student?->name;
+            })->filter()->unique()->take(4)->implode(', ');
+
+            if ($group->map(fn($s) => $s->thesis?->student?->name)->filter()->unique()->count() > 4) {
+                $studentNames .= ' dkk.';
+            }
+
+            $detailList = $group->take(4)->map(function($s) {
+                $stName = $s->thesis?->student?->name ?? 'Mahasiswa';
+                $tgl = $s->scheduled_at->locale('id')->translatedFormat('d M Y');
+                return "• {$stName}: \"{$s->topic}\" ({$tgl})";
+            })->implode("\n");
+
+            if ($totalCount > 4) {
+                $detailList .= "\n• ...dan " . ($totalCount - 4) . " sesi lainnya.";
+            }
+
+            return [
+                'user_id' => $dosen->id,
+                'name' => $dosen->name,
+                'identifier' => $dosen->identifier ?? '-',
+                'phone' => $dosen->phone_number,
+                'role' => 'dosen',
+                'cohort' => '-',
+                'status_info' => "{$totalCount} Sesi Belum Selesai ({$overdueCount} Lewat Jadwal)",
+                'context' => [
+                    'nama' => $dosen->name,
+                    'nidn' => $dosen->identifier ?? '-',
+                    'jumlah_sesi' => (string) $totalCount,
+                    'jumlah_lewat_jadwal' => (string) $overdueCount,
+                    'daftar_mahasiswa' => $detailList,
+                    'mahasiswa_ringkas' => $studentNames,
+                    'sesi_terlama' => $oldestDate,
+                    'link_bimbingan' => route('mentoring-sessions.index'),
+                    'link_dashboard' => url('/dashboard'),
+                    'link_login' => url('/login'),
+                ],
+            ];
+        })->filter()->values();
     }
 
     /**

@@ -213,6 +213,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/analytics', [App\Http\Controllers\AnalyticsChartController::class, 'index'])->name('analytics.index');
 
         // Monitoring
+        Route::get('/monitoring/uncompleted-mentoring/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportUncompletedMentoringExcel'])->name('monitoring.uncompleted-mentoring.export-excel');
+        Route::post('/monitoring/uncompleted-mentoring/remind', [App\Http\Controllers\MonitoringController::class, 'sendUncompletedMentoringReminder'])->name('monitoring.uncompleted-mentoring.remind');
+        Route::get('/monitoring/uncompleted-mentoring', [App\Http\Controllers\MonitoringController::class, 'uncompletedMentoring'])->name('monitoring.uncompleted-mentoring');
         Route::get('/monitoring/activity/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportActivityExcel'])->name('monitoring.activity.export-excel');
         Route::get('/monitoring/activity/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportActivityPdf'])->name('monitoring.activity.export-pdf');
         Route::post('/monitoring/activity/remind', [App\Http\Controllers\MonitoringController::class, 'sendActivityReminder'])->name('monitoring.activity.remind');

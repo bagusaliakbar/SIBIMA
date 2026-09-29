@@ -115,6 +115,10 @@ class WaBroadcastController extends Controller implements HasMiddleware
                 'title' => 'Laporan Singkat Monitoring Bimbingan Mahasiswa',
                 'message' => "Yth. Bpk/Ibu *{nama}*,\n\nTerima kasih atas dedikasi Bpk/Ibu dalam membimbing {jumlah_bimbingan} mahasiswa skripsi aktif di SIBIMA.\n\nMohon bantuannya untuk mengecek kemajuan naskah dan logbook bimbingan mahasiswa bimbingan melalui dashboard SIBIMA:\n{link_dashboard}\n\nSalam takzim,\n_Program Studi FASILKOM UNSUB_",
             ],
+            'dosen_belum_selesai_bimbingan' => [
+                'title' => 'Pengingat Penyelesaian Sesi Bimbingan & Catatan Hasil',
+                'message' => "🔔 *PENGINGAT PENYELESAIAN SESI BIMBINGAN SKRIPSI*\n\nYth. Bpk/Ibu *{nama}*,\n\nBerdasarkan pantauan sistem SIBIMA, tercatat terdapat *{jumlah_sesi} sesi bimbingan* yang statusnya belum diselesaikan atau belum diinput catatan/feedback hasil bimbingan:\n\n{daftar_mahasiswa}\n\nMohon kesediaan Bpk/Ibu untuk memperbarui status dan menginput hasil bimbingan mahasiswa melalui tautan berikut:\n{link_bimbingan}\n\nTerima kasih atas kerja sama dan dedikasi Bpk/Ibu.\n_Program Studi FASILKOM UNSUB_",
+            ],
         ];
 
         return view('wa_broadcasts.create', compact('waves', 'cohorts', 'senderPhone', 'presets', 'isWhatsAppEnabled'));

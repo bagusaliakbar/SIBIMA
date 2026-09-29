@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\ThesisDefenseScheduleDetail;
 use App\Models\Wave;
 use App\Models\User;
+use App\Models\MentoringSession;
+use Carbon\Carbon;
 
 class MonitoringService
 {
@@ -624,5 +626,124 @@ class MonitoringService
         $inactiveText = ($daysInactive && $daysInactive < 9000) ? "selama *{$daysInactive} hari* terakhir" : "sejak pengajuan skripsi";
 
         return "Halo Sdr/i *{$userName}*,\n\nBerdasarkan pantauan radar keaktifan bimbingan SIBIMA FASILKOM UNSUB, Anda tercatat belum melakukan sesi bimbingan skripsi {$inactiveText}.\n\nKami mengingatkan agar Anda *segera berinisiatif menghubungi Dosen Pembimbing* ({$p1} & {$p2}) untuk mengajukan jadwal dan berkonsultasi mengenai kelanjutan tugas akhir Anda.\n\nJangan biarkan skripsi Anda tertunda. Tetap semangat menyelesaikan studi!";
+    }
+
+    /**
+     * Get uncompleted mentoring sessions data grouped by lecturer and flat sessions.
+     */
+    public function getUncompletedMentoringData(array $filters = []): array
+    {
+        $scope = $filters['scope'] ?? 'overdue'; // 'overdue' (default), 'all', 'today'
+        $dosenId = $filters['dosen_id'] ?? null;
+        $search = $filters['search'] ?? null;
+
+        $baseQuery = MentoringSession::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
+            ->whereNotIn('status', ['completed', 'rejected']);
+
+        if ($scope === 'overdue') {
+            $baseQuery->where('scheduled_at', '<=', now());
+        } elseif ($scope === 'today') {
+            $baseQuery->whereDate('scheduled_at', Carbon::today());
+        }
+
+        if ($dosenId) {
+            $baseQuery->where(function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            });
+        }
+
+        if ($search) {
+            $baseQuery->where(function($q) use ($search) {
+                $q->where('topic', 'like', "%{$search}%")
+                  ->orWhereHas('dosen', fn($dq) => $dq->where('name', 'like', "%{$search}%"))
+                  ->orWhereHas('thesis.student', fn($sq) => $sq->where('name', 'like', "%{$search}%")->orWhere('identifier', 'like', "%{$search}%"));
+            });
+        }
+
+        // All matching sessions
+        $allSessions = (clone $baseQuery)->orderBy('scheduled_at', 'asc')->get();
+
+        // Total global metrics across all uncompleted sessions (for context badges)
+        $globalUncompletedCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])->count();
+        $globalOverdueCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])->where('scheduled_at', '<=', now())->count();
+        $globalTodayCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])->whereDate('scheduled_at', Carbon::today())->count();
+
+        $filteredSessionsCount = $allSessions->count();
+        $affectedStudentsCount = $allSessions->pluck('thesis.student_id')->filter()->unique()->count();
+
+        // Group by lecturer
+        $dosenGroups = $allSessions->groupBy(function($session) {
+            return $session->dosen_id ?: ($session->thesis?->pembimbing1_id ?: null);
+        })->filter(function($group, $key) {
+            return !empty($key);
+        });
+
+        $dosenUsers = User::whereIn('id', $dosenGroups->keys())->get()->keyBy('id');
+
+        $lecturersData = $dosenGroups->map(function($sessions, $lecturerId) use ($dosenUsers) {
+            $dosen = $dosenUsers->get($lecturerId);
+            if (!$dosen) return null;
+
+            $total = $sessions->count();
+            $overdue = $sessions->where('scheduled_at', '<=', now())->count();
+            $upcoming = $sessions->where('scheduled_at', '>', now())->count();
+            $oldest = $sessions->sortBy('scheduled_at')->first();
+            $oldestDate = $oldest ? $oldest->scheduled_at : null;
+            $daysOverdue = $oldestDate && $oldestDate->isPast() ? $oldestDate->diffInDays(now()) : 0;
+
+            $uniqueStudents = $sessions->map(fn($s) => $s->thesis?->student)->filter()->unique('id')->values();
+
+            return [
+                'dosen' => $dosen,
+                'total_sessions' => $total,
+                'overdue_sessions' => $overdue,
+                'upcoming_sessions' => $upcoming,
+                'oldest_session_at' => $oldestDate,
+                'days_overdue' => $daysOverdue,
+                'students_count' => $uniqueStudents->count(),
+                'students' => $uniqueStudents,
+                'sessions' => $sessions,
+            ];
+        })->filter()->sortByDesc('overdue_sessions')->values();
+
+        $uniqueDosenCount = $lecturersData->count();
+
+        return [
+            'scope' => $scope,
+            'dosen_id' => $dosenId,
+            'search' => $search,
+            'global_uncompleted_count' => $globalUncompletedCount,
+            'global_overdue_count' => $globalOverdueCount,
+            'global_today_count' => $globalTodayCount,
+            'filtered_sessions_count' => $filteredSessionsCount,
+            'unique_dosen_count' => $uniqueDosenCount,
+            'affected_students_count' => $affectedStudentsCount,
+            'lecturers' => $lecturersData,
+            'all_sessions' => $allSessions,
+        ];
+    }
+
+    /**
+     * Generate reminder message for uncompleted mentoring sessions of a lecturer.
+     */
+    public function generateUncompletedMentoringReminderMessage(User $dosen, $sessions): string
+    {
+        $userName = $dosen->name;
+        $count = $sessions->count();
+        
+        $sessionList = $sessions->take(5)->map(function($s) {
+            $student = $s->thesis?->student;
+            $tgl = $s->scheduled_at->locale('id')->translatedFormat('d M Y, H:i');
+            return "• {$student?->name} ({$student?->identifier}): \"{$s->topic}\" [Jadwal: {$tgl} WIB]";
+        })->implode("\n");
+
+        if ($count > 5) {
+            $sessionList .= "\n• ...dan " . ($count - 5) . " sesi lainnya.";
+        }
+
+        $link = route('mentoring-sessions.index');
+
+        return "Yth. Bpk/Ibu *{$userName}*,\n\nSalam takzim dari Program Studi FASILKOM UNSUB.\n\nBerdasarkan pantauan sistem SIBIMA, tercatat terdapat *{$count} sesi bimbingan* mahasiswa yang statusnya belum diselesaikan atau belum diinput catatan/feedback hasil bimbingan:\n\n{$sessionList}\n\nMohon kesediaan Bpk/Ibu untuk memperbarui status dan menginput hasil bimbingan agar mahasiswa dapat segera menindaklanjuti proses skripsi mereka:\n{$link}\n\nTerima kasih banyak atas perhatian dan kerja sama Bpk/Ibu.\n_Program Studi FASILKOM UNSUB_";
     }
 }

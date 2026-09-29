@@ -7,10 +7,12 @@ use App\Models\Wave;
 use App\Models\User;
 use App\Models\SeminarScheduleDetail;
 use App\Models\ThesisDefenseScheduleDetail;
+use App\Models\MentoringSession;
 use App\Services\MonitoringService;
 use App\Exports\MonitoringExport;
 use App\Exports\DefenseScoresExport;
 use App\Exports\WeeklyMentoringExport;
+use App\Exports\UncompletedMentoringExport;
 use App\Services\WhatsAppService;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -611,5 +613,93 @@ class MonitoringController extends Controller implements HasMiddleware
 
         $fileName = 'Radar_Keaktifan_Bimbingan_' . now()->format('Ymd_His') . '.pdf';
         return $pdf->download($fileName);
+    }
+
+    /**
+     * Display list and monitoring of uncompleted mentoring sessions for Admin & Kaprodi.
+     */
+    public function uncompletedMentoring(Request $request)
+    {
+        $filters = [
+            'scope' => $request->input('scope', 'overdue'), // 'overdue' (default), 'today', 'all'
+            'dosen_id' => $request->input('dosen_id'),
+            'search' => $request->input('search'),
+            'view' => $request->input('view', 'dosen'), // 'dosen' (default) or 'session'
+        ];
+
+        $data = $this->monitoringService->getUncompletedMentoringData($filters);
+
+        $dosens = User::whereIn('role', ['dosen', 'kaprodi'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return view('monitoring.uncompleted_mentoring', array_merge($data, [
+            'filters' => $filters,
+            'dosens' => $dosens,
+        ]));
+    }
+
+    /**
+     * Send WhatsApp reminder to a lecturer regarding their uncompleted mentoring sessions.
+     */
+    public function sendUncompletedMentoringReminder(Request $request, WhatsAppService $whatsAppService)
+    {
+        $dosenId = $request->input('dosen_id');
+        $dosen = User::findOrFail($dosenId);
+
+        $phone = $dosen->phone_number ?? $dosen->phone;
+        if (empty($phone)) {
+            return back()->with('error', "Nomor WhatsApp {$dosen->name} tidak ditemukan atau belum diatur di profil.");
+        }
+
+        // Get uncompleted sessions for this lecturer
+        $sessions = MentoringSession::with(['thesis.student'])
+            ->where(function($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+            })
+            ->whereNotIn('status', ['completed', 'rejected'])
+            ->where('scheduled_at', '<=', now())
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+
+        if ($sessions->isEmpty()) {
+            $sessions = MentoringSession::with(['thesis.student'])
+                ->where(function($q) use ($dosenId) {
+                    $q->where('dosen_id', $dosenId)
+                      ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
+                })
+                ->whereNotIn('status', ['completed', 'rejected'])
+                ->orderBy('scheduled_at', 'asc')
+                ->get();
+        }
+
+        $customMessage = $request->input('message');
+        $message = $customMessage ?: $this->monitoringService->generateUncompletedMentoringReminderMessage($dosen, $sessions);
+
+        $sent = $whatsAppService->sendMessage($phone, $message);
+
+        if ($sent) {
+            return back()->with('success', "Pesan pengingat WhatsApp berhasil dikirim ke {$dosen->name} ({$phone}).");
+        }
+
+        return back()->with('warning', "Pesan tidak dapat terkirim otomatis melalui gateway WhatsApp (fitur WA mungkin belum aktif atau gateway sedang offline). Anda dapat menghubungi secara langsung melalui tautan WhatsApp.");
+    }
+
+    /**
+     * Export uncompleted mentoring monitoring report to Excel.
+     */
+    public function exportUncompletedMentoringExcel(Request $request)
+    {
+        $filters = [
+            'scope' => $request->input('scope', 'overdue'),
+            'dosen_id' => $request->input('dosen_id'),
+            'search' => $request->input('search'),
+        ];
+
+        $data = $this->monitoringService->getUncompletedMentoringData($filters);
+        $fileName = 'Monitoring_Bimbingan_Belum_Selesai_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new \App\Exports\UncompletedMentoringExport($data), $fileName);
     }
 }

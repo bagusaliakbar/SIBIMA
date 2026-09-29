@@ -32,6 +32,32 @@
         </span>
     </a>
 
+    <!-- Tab 4: Sesi Belum Selesai (Dosen) -->
+    @php
+        $uncompletedCount = 0;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('mentoring_sessions')) {
+                $uncompletedCount = \App\Models\MentoringSession::whereNotIn('status', ['completed', 'rejected'])
+                    ->where('scheduled_at', '<=', now())
+                    ->count();
+            }
+        } catch (\Throwable $e) {
+            $uncompletedCount = 0;
+        }
+    @endphp
+    <a href="{{ route('monitoring.uncompleted-mentoring') }}" 
+       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 {{ request()->routeIs('monitoring.uncompleted-mentoring*') ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-700/50' }}">
+        <svg class="w-4 h-4 {{ request()->routeIs('monitoring.uncompleted-mentoring*') ? 'text-white' : 'text-rose-500 dark:text-rose-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Sesi Belum Selesai</span>
+        @if($uncompletedCount > 0)
+            <span class="px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.uncompleted-mentoring*') ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/40' }}">
+                {{ $uncompletedCount }}
+            </span>
+        @endif
+    </a>
+
     <!-- Tab 4: Mahasiswa Masa Studi Kritikal -->
     <a href="{{ route('monitoring.critical') }}" 
        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 {{ request()->routeIs('monitoring.critical') ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-700/50' }}">
