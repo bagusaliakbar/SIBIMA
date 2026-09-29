@@ -6,6 +6,8 @@
     </x-slot>
 
     <div class="w-full mx-auto transition-colors duration-300">
+        @include('logs.partials.tabs')
+
         <x-table-card 
             title="Daftar Aktivitas"
             :footer="$logs->links()">

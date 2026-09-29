@@ -200,7 +200,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/manage/faqs/{faq}', [App\Http\Controllers\FaqController::class, 'destroy'])->name('faqs.destroy');
         Route::post('/manage/faqs/{faq}/toggle', [App\Http\Controllers\FaqController::class, 'toggle'])->name('faqs.toggle');
 
-        // System Logs
+        // System Logs & Login Activity Monitoring
+        Route::get('/admin/logs/login-activity/export', [App\Http\Controllers\ActivityLogController::class, 'exportLoginActivity'])->name('admin.logs.login-activity.export');
+        Route::get('/admin/logs/login-activity/{user}/history', [App\Http\Controllers\ActivityLogController::class, 'userLoginHistory'])->name('admin.logs.login-activity.user-history');
+        Route::get('/admin/logs/login-activity', [App\Http\Controllers\ActivityLogController::class, 'loginActivity'])->name('admin.logs.login-activity');
         Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
         Route::get('/admin/logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.logs');
 
