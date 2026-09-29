@@ -133,6 +133,17 @@ class WaBroadcastController extends Controller implements HasMiddleware
             ],
         ];
 
+        // Sinkronisasi otomatis dengan database WaTemplate jika sudah ada/diedit admin di menu Kelola Template WA
+        $dbTemplates = \App\Models\WaTemplate::whereIn('code', array_keys($presets))->get()->keyBy('code');
+        foreach ($presets as $code => &$presetData) {
+            if ($dbTemplates->has($code)) {
+                $dbTpl = $dbTemplates->get($code);
+                $presetData['title'] = $dbTpl->name;
+                $presetData['message'] = $dbTpl->content;
+            }
+        }
+        unset($presetData);
+
         return view('wa_broadcasts.create', compact('waves', 'cohorts', 'senderPhone', 'presets', 'isWhatsAppEnabled'));
     }
 

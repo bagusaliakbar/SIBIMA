@@ -115,6 +115,14 @@ class WaTemplateController extends Controller implements HasMiddleware
             'birthday_lecturer',
             'skl_published',
             'graduation_rejected',
+            'dosen_belum_selesai_bimbingan',
+            'mahasiswa_bimbingan_pasif',
+            'mahasiswa_belum_seminar',
+            'mahasiswa_belum_sidang',
+            'mahasiswa_belum_skripsi',
+            'dosen_penguji_gelombang',
+            'dosen_pembimbing_aktif',
+            'all_mahasiswa_aktif',
         ];
 
         $existingCount = WaTemplate::whereIn('code', $requiredCodes)->count();
