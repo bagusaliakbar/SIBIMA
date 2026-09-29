@@ -1019,6 +1019,18 @@
                                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 italic" title="{{ $thesis?->title }}">
                                                         "{{ $thesis?->title ?? 'Judul Skripsi' }}"
                                                     </p>
+                                                    @if($session->document_path)
+                                                        <div class="pt-1">
+                                                            <a href="{{ $session->document_path }}" 
+                                                               target="_blank" 
+                                                               @click.stop 
+                                                               class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800 text-[11px] font-bold transition-all shadow-2xs hover:scale-105 active:scale-95" 
+                                                               title="Buka Dokumen Bimbingan Mahasiswa">
+                                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                <span>Lihat Dokumen</span>
+                                                            </a>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </td>
 
@@ -1075,6 +1087,15 @@
                                                                 </button>
                                                             </form>
                                                         @endcan
+                                                    @endif
+
+                                                    @if($session->document_path)
+                                                        <a href="{{ $session->document_path }}" 
+                                                           target="_blank" 
+                                                           class="p-1.5 text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-950/40 rounded-xl border border-orange-200/80 dark:border-orange-800/80 transition-all shadow-2xs hover:scale-105 active:scale-95" 
+                                                           title="Buka Dokumen Bimbingan Mahasiswa">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                        </a>
                                                     @endif
 
                                                     <!-- Expand Button -->
@@ -1176,6 +1197,16 @@
                                                                 </p>
                                                             @else
                                                                 <p class="text-slate-400 dark:text-slate-500 italic text-xs">Tidak ada catatan pengajuan khusus dari mahasiswa.</p>
+                                                            @endif
+
+                                                            @if($session->document_path)
+                                                                <div class="pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                                                                    <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-1">Dokumen Bimbingan Mahasiswa:</span>
+                                                                    <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl font-bold text-xs transition-all shadow-2xs hover:scale-[1.02] active:scale-95">
+                                                                        <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                        <span>Lihat Dokumen Bimbingan Mahasiswa</span>
+                                                                    </a>
+                                                                </div>
                                                             @endif
                                                         </div>
 
@@ -3356,6 +3387,17 @@
                         <div class="space-y-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Catatan Pengajuan Mahasiswa:</span>
                             <p class="text-slate-600 dark:text-slate-300 italic" x-text="'&ldquo;' + selectedEvent.notes + '&rdquo;'"></p>
+                        </div>
+                    </template>
+
+                    <!-- Student Uploaded Document -->
+                    <template x-if="selectedEvent?.document_path">
+                        <div class="space-y-1 p-3 bg-orange-50/70 dark:bg-orange-950/30 rounded-xl border border-orange-200/80 dark:border-orange-800/60">
+                            <span class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest block mb-0.5">Dokumen Bimbingan Mahasiswa:</span>
+                            <a :href="selectedEvent.document_path" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                <span>Lihat Dokumen Bimbingan Mahasiswa</span>
+                            </a>
                         </div>
                     </template>
 

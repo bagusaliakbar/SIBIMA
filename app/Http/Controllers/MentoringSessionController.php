@@ -506,6 +506,8 @@ class MentoringSessionController extends Controller
                 'student_attendance_reason' => $session->student_attendance_reason,
                 'student_confirmed_at' => $session->student_confirmed_at ? $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') . ' WIB' : null,
                 'notes' => $session->notes,
+                'document_path' => $session->document_path,
+                'document_original_name' => $session->document_original_name,
                 'feedback' => $session->feedback,
                 'feedback_document_url' => $session->feedback_document_url,
                 'time' => $session->scheduled_at->format('H:i') . ' WIB',
