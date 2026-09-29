@@ -59,6 +59,12 @@ class MentoringScheduledWaNotificationTest extends TestCase
                 $this->assertStringContainsString('Bimbingan Bab 1 dan 2', $waMessage);
                 $this->assertStringContainsString('Konfirmasi Kehadiran', $waMessage);
 
+                // Verify database notification payload contains topic and notes
+                $data = $notification->toArray($student);
+                $this->assertEquals('Bimbingan Bab 1 dan 2', $data['topic']);
+                $this->assertArrayHasKey('notes', $data);
+                $this->assertStringContainsString('Topik: Bimbingan Bab 1 dan 2', $data['message']);
+
                 return true;
             }
         );

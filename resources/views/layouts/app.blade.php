@@ -829,7 +829,34 @@
                                                 <!-- Message Body -->
                                                 <div class="flex-1 min-w-0">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="getTitle(notif)"></p>
-                                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed line-clamp-2" x-text="notif.data.message || ''"></p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" 
+                                                       :class="(notif.data.topic || notif.data.notes) ? '' : 'line-clamp-2'" 
+                                                       x-text="(notif.data.topic || notif.data.notes) ? (notif.data.message || '').split('\n')[0] : (notif.data.message || '')"></p>
+
+                                                    <template x-if="notif.data.topic || notif.data.notes">
+                                                        <div class="mt-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 text-[11px] space-y-1">
+                                                            <template x-if="notif.data.topic">
+                                                                <div class="flex items-start gap-1.5">
+                                                                    <span class="font-bold text-slate-700 dark:text-slate-300 shrink-0">Topik:</span>
+                                                                    <span class="text-slate-900 dark:text-slate-100 font-semibold" x-text="notif.data.topic"></span>
+                                                                </div>
+                                                            </template>
+                                                            <template x-if="notif.data.notes">
+                                                                <div class="flex items-start gap-1.5">
+                                                                    <span class="font-bold text-slate-700 dark:text-slate-300 shrink-0">Catatan:</span>
+                                                                    <span class="text-slate-700 dark:text-slate-300 italic" x-text="notif.data.notes"></span>
+                                                                </div>
+                                                            </template>
+                                                            <template x-if="notif.data.scheduled_at">
+                                                                <div class="text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                                                                    <span x-text="'📅 ' + notif.data.scheduled_at"></span>
+                                                                    <template x-if="notif.data.type_location">
+                                                                        <span x-text="' • 📍 ' + notif.data.type_location"></span>
+                                                                    </template>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
                                                     <div class="flex items-center gap-2 mt-1.5">
                                                         <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
                                                         <span x-show="!notif.read_at" class="text-[9px] font-black text-orange-600 dark:text-orange-400">• Baru</span>

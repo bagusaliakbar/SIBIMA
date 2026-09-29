@@ -260,9 +260,43 @@
                                     </span>
                                 </div>
 
-                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                                    {{ $message }}
+                                @php
+                                    $notifTopic = $data['topic'] ?? null;
+                                    $notifNotes = $data['notes'] ?? null;
+                                    $notifSchedule = $data['scheduled_at'] ?? null;
+                                    $notifLocation = $data['type_location'] ?? null;
+                                    $displayMessage = ($notifTopic || $notifNotes) ? strtok($message, "\n") : $message;
+                                @endphp
+
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed whitespace-pre-line">
+                                    {{ $displayMessage }}
                                 </p>
+
+                                @if($notifTopic || $notifNotes)
+                                    <div class="mt-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-xs space-y-2">
+                                        @if($notifTopic)
+                                            <div class="flex items-start gap-2">
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">TOPIK</span>
+                                                <span class="text-slate-900 dark:text-slate-100 font-semibold">{{ $notifTopic }}</span>
+                                            </div>
+                                        @endif
+                                        @if($notifNotes)
+                                            <div class="flex items-start gap-2">
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 shrink-0">CATATAN</span>
+                                                <span class="text-slate-800 dark:text-slate-200 italic font-medium">{{ $notifNotes }}</span>
+                                            </div>
+                                        @endif
+                                        @if($notifSchedule)
+                                            <div class="flex items-center gap-2 pt-1.5 border-t border-slate-200/60 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+                                                <span>📅 {{ $notifSchedule }}</span>
+                                                @if($notifLocation)
+                                                    <span class="mx-1">•</span>
+                                                    <span>📍 {{ $notifLocation }}</span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
 
                                 {{-- Actionable Attendance Buttons (If Applicable) --}}
                                 @if($isActionableAttendance)

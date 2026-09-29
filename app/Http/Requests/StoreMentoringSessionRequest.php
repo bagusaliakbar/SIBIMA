@@ -27,11 +27,11 @@ class StoreMentoringSessionRequest extends FormRequest
         }
 
         if ($this->has('thesis_ids')) {
-            $ids = is_array($this->thesis_ids) ? $this->thesis_ids : explode(',', $this->thesis_ids);
-            $ids = array_filter(array_map('trim', $ids));
+            $ids = is_array($this->thesis_ids) ? $this->thesis_ids : explode(',', (string) $this->thesis_ids);
+            $ids = array_filter(array_map('trim', array_map('strval', $ids)));
             $this->merge(['thesis_ids' => array_values($ids)]);
         } elseif ($this->has('thesis_id') && !empty($this->thesis_id)) {
-            $this->merge(['thesis_ids' => [$this->thesis_id]]);
+            $this->merge(['thesis_ids' => [(string) $this->thesis_id]]);
         }
     }
 
