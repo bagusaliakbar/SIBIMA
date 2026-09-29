@@ -12,7 +12,12 @@
         </div>
     </x-slot>
 
-    <div class="w-full space-y-6">
+    <div class="w-full space-y-6" 
+         x-data="{ 
+             viewMode: localStorage.getItem('sibima_wa_templates_view_mode') || 'card' 
+         }" 
+         x-init="$watch('viewMode', val => localStorage.setItem('sibima_wa_templates_view_mode', val))">
+
         <!-- Master Switch & Banner Info -->
         <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
             <div class="absolute -right-10 -bottom-10 w-56 h-56 {{ $isWhatsAppGloballyEnabled ? 'bg-emerald-500/10' : 'bg-rose-500/10' }} rounded-full blur-3xl pointer-events-none transition-all"></div>
@@ -62,22 +67,43 @@
             </div>
         </div>
 
-        <!-- Filter Tab Category -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar border-b border-slate-200 dark:border-slate-800">
-            <a href="{{ route('wa-templates.index', ['category' => 'all']) }}" 
-               class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === 'all' ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
-                Semua Kategori ({{ $totalCount ?? $templates->count() }})
-            </a>
-            @foreach($categories as $cat)
-                <a href="{{ route('wa-templates.index', ['category' => $cat]) }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === $cat ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
-                    {{ $cat }} ({{ $categoryCounts[$cat] ?? 0 }})
+        <!-- Filter Tab Category & View Switcher -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <!-- Filter Tab Category -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                <a href="{{ route('wa-templates.index', ['category' => 'all']) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === 'all' ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
+                    Semua Kategori ({{ $totalCount ?? $templates->count() }})
                 </a>
-            @endforeach
+                @foreach($categories as $cat)
+                    <a href="{{ route('wa-templates.index', ['category' => $cat]) }}" 
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap {{ $selectedCategory === $cat ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700' }}">
+                        {{ $cat }} ({{ $categoryCounts[$cat] ?? 0 }})
+                    </a>
+                @endforeach
+            </div>
+
+            <!-- View Switcher (Card vs List) -->
+            <div class="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-xl shadow-2xs shrink-0 self-end sm:self-auto">
+                <button type="button" 
+                        @click="viewMode = 'card'"
+                        :class="viewMode === 'card' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span>Card</span>
+                </button>
+                <button type="button" 
+                        @click="viewMode = 'list'"
+                        :class="viewMode === 'list' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    <span>List</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Notification Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- VIEW MODE 1: CARD GRID -->
+        <div x-show="viewMode === 'card'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($templates as $template)
                 <div class="bg-white dark:bg-slate-800 rounded-2xl border {{ $template->is_active ? 'border-slate-200 dark:border-slate-700' : 'border-slate-300 dark:border-slate-700/60 opacity-85' }} p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all group relative">
                     <div>
@@ -161,6 +187,119 @@
                     <p class="text-sm text-slate-500">Tidak ada template pada kategori ini.</p>
                 </div>
             @endforelse
+        </div>
+
+        <!-- VIEW MODE 2: LIST VIEW (TABLE) -->
+        <div x-show="viewMode === 'list'" x-cloak class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700/80 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        <tr>
+                            <th class="py-3.5 px-4 w-28">Status</th>
+                            <th class="py-3.5 px-4 w-44">Kategori & Kode</th>
+                            <th class="py-3.5 px-4 min-w-[220px]">Nama Template</th>
+                            <th class="py-3.5 px-4 min-w-[320px]">Pratinjau Pesan WhatsApp</th>
+                            <th class="py-3.5 px-4 w-36 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60">
+                        @forelse($templates as $template)
+                            <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition-colors {{ !$template->is_active ? 'opacity-70 bg-slate-50/30 dark:bg-slate-900/20' : '' }}">
+                                <!-- Status Toggle -->
+                                <td class="py-4 px-4 align-top">
+                                    <form action="{{ route('wa-templates.toggle-status', $template) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" 
+                                                title="{{ $template->is_active ? 'Klik untuk mematikan notifikasi' : 'Klik untuk mengaktifkan notifikasi' }}"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-black transition-all border cursor-pointer {{ $template->is_active ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200' : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-emerald-50 hover:text-emerald-700' }}">
+                                            @if($template->is_active)
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                <span>ON</span>
+                                            @else
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                <span>OFF</span>
+                                            @endif
+                                        </button>
+                                    </form>
+                                </td>
+
+                                <!-- Kategori & Kode -->
+                                <td class="py-4 px-4 align-top space-y-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                        {{ $template->category }}
+                                    </span>
+                                    <div class="font-mono text-[10px] text-slate-400 dark:text-slate-500 break-all">
+                                        {{ $template->code }}
+                                    </div>
+                                    @if($template->is_customized)
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                            Custom
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <!-- Nama Template -->
+                                <td class="py-4 px-4 align-top">
+                                    <div class="font-bold text-slate-900 dark:text-white text-xs leading-snug">
+                                        {{ $template->name }}
+                                    </div>
+                                    @if($template->available_variables && is_array($template->available_variables))
+                                        <div class="flex flex-wrap gap-1 mt-2">
+                                            @foreach(array_slice($template->available_variables, 0, 4) as $vKey => $vDesc)
+                                                <span class="font-mono text-[9px] bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
+                                                    {{ '{' . $vKey . '}' }}
+                                                </span>
+                                            @endforeach
+                                            @if(count($template->available_variables) > 4)
+                                                <span class="text-[9px] text-slate-400 self-center">
+                                                    +{{ count($template->available_variables) - 4 }} variabel
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </td>
+
+                                <!-- Pratinjau Pesan -->
+                                <td class="py-4 px-4 align-top">
+                                    <div class="bg-slate-50 dark:bg-slate-900/80 rounded-xl p-2.5 border border-slate-100 dark:border-slate-800">
+                                        <p class="font-mono text-[11px] text-slate-600 dark:text-slate-300 line-clamp-3 whitespace-pre-line leading-relaxed">
+                                            {{ $template->content }}
+                                        </p>
+                                    </div>
+                                </td>
+
+                                <!-- Aksi -->
+                                <td class="py-4 px-4 align-top text-center">
+                                    <div class="inline-flex items-center justify-center gap-1.5">
+                                        <a href="{{ route('wa-templates.edit', $template) }}" 
+                                           class="inline-flex items-center gap-1 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors shadow-2xs shadow-orange-600/20">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            <span>Edit</span>
+                                        </a>
+
+                                        @if($template->is_customized)
+                                            <form action="{{ route('wa-templates.reset', $template) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengembalikan format teks ini ke versi default bawaan?');">
+                                                @csrf
+                                                <button type="submit" 
+                                                        title="Reset ke Default Bawaan"
+                                                        class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-12 text-center text-slate-400">
+                                    Tidak ada template pada kategori ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </x-app-layout>
