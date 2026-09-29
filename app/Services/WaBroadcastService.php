@@ -87,7 +87,7 @@ class WaBroadcastService
                     'judul' => $thesis->final_title ?: $thesis->title,
                     'pembimbing_1' => $thesis->pembimbing1->name ?? '-',
                     'pembimbing_2' => $thesis->pembimbing2->name ?? '-',
-                    'link_seminar' => route('seminar-applications.create'),
+                    'link_seminar' => route('seminar-applications.index'),
                     'link_login' => url('/login'),
                 ],
             ];
@@ -241,7 +241,7 @@ class WaBroadcastService
                     'judul' => $thesis->final_title ?: $thesis->title,
                     'pembimbing_1' => $thesis->pembimbing1->name ?? '-',
                     'pembimbing_2' => $thesis->pembimbing2->name ?? '-',
-                    'link_sidang' => route('thesis-defense-applications.create'),
+                    'link_sidang' => route('thesis-defense-applications.index'),
                     'link_login' => url('/login'),
                 ],
             ];
@@ -486,6 +486,7 @@ class WaBroadcastService
                     'nama' => $student->name,
                     'npm' => $student->identifier ?? '-',
                     'angkatan' => $student->entry_year ?? '-',
+                    'link_dashboard' => url('/dashboard'),
                     'link_login' => url('/login'),
                 ],
             ];

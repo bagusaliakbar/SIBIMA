@@ -38,7 +38,7 @@
                             <!-- 1. Belum Seminar -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'mahasiswa_belum_seminar' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="mahasiswa_belum_seminar" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="mahasiswa_belum_seminar" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>🎓</span> Belum Seminar
@@ -56,7 +56,7 @@
                             <!-- 2. Bimbingan Pasif -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'mahasiswa_bimbingan_pasif' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="mahasiswa_bimbingan_pasif" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="mahasiswa_bimbingan_pasif" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>⏳</span> Bimbingan Pasif
@@ -74,7 +74,7 @@
                             <!-- 3. Semester Kritis -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'mahasiswa_kritis' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="mahasiswa_kritis" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="mahasiswa_kritis" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
                                         <span>🚨</span> Semester Kritis
@@ -92,7 +92,7 @@
                             <!-- 4. Belum Sidang -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'mahasiswa_belum_sidang' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="mahasiswa_belum_sidang" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="mahasiswa_belum_sidang" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>📝</span> Belum Sidang
@@ -110,7 +110,7 @@
                             <!-- 5. Belum Mengajukan Skripsi -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'mahasiswa_belum_skripsi' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="mahasiswa_belum_skripsi" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="mahasiswa_belum_skripsi" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>📋</span> Belum Judul
@@ -128,7 +128,7 @@
                             <!-- 6. Dosen Pembimbing Aktif -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'dosen_pembimbing_aktif' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="dosen_pembimbing_aktif" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="dosen_pembimbing_aktif" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>👨‍🏫</span> Dosen Pembimbing
@@ -146,7 +146,7 @@
                             <!-- 7. Dosen dengan Sesi Bimbingan Belum Selesai -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'dosen_belum_selesai_bimbingan' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="dosen_belum_selesai_bimbingan" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="dosen_belum_selesai_bimbingan" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
                                         <span>⚠️</span> Sesi Belum Selesai
@@ -164,7 +164,7 @@
                             <!-- 8. Dosen Penguji Gelombang -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'dosen_penguji_gelombang' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="dosen_penguji_gelombang" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="dosen_penguji_gelombang" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>⚖️</span> Dosen Penguji
@@ -182,7 +182,7 @@
                             <!-- 9. Seluruh Mahasiswa Aktif -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'all_mahasiswa_aktif' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
-                                <input type="radio" name="target_type" value="all_mahasiswa_aktif" x-model="targetType" @change="fetchRecipients()" class="sr-only">
+                                <input type="radio" name="target_type" value="all_mahasiswa_aktif" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
                                 <div class="flex items-center justify-between gap-2 mb-1.5">
                                     <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                                         <span>👥</span> Semua Mahasiswa
@@ -350,30 +350,12 @@
 
                         <!-- Tag Pills Button -->
                         <div class="flex flex-wrap gap-1.5">
-                            <button type="button" @click="insertVariable('{nama}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {nama}
-                            </button>
-                            <button type="button" @click="insertVariable('{npm}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {npm}
-                            </button>
-                            <button type="button" @click="insertVariable('{judul}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {judul}
-                            </button>
-                            <button type="button" @click="insertVariable('{pembimbing_1}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {pembimbing_1}
-                            </button>
-                            <button type="button" @click="insertVariable('{terakhir_bimbingan}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {terakhir_bimbingan}
-                            </button>
-                            <button type="button" @click="insertVariable('{hari_tanpa_bimbingan}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {hari_tanpa_bimbingan}
-                            </button>
-                            <button type="button" @click="insertVariable('{link_seminar}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {link_seminar}
-                            </button>
-                            <button type="button" @click="insertVariable('{link_login}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer">
-                                {link_login}
-                            </button>
+                            <template x-for="tag in availableVariables" :key="tag">
+                                <button type="button" @click="insertVariable(tag)"
+                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-100 hover:text-orange-700 dark:hover:bg-orange-950 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer"
+                                        x-text="tag">
+                                </button>
+                            </template>
                         </div>
 
                         <!-- Message Textarea -->
@@ -562,6 +544,41 @@
                     this.fetchRecipients();
                 },
 
+                get availableVariables() {
+                    switch (this.targetType) {
+                        case 'mahasiswa_belum_seminar':
+                            return ['{nama}', '{npm}', '{angkatan}', '{judul}', '{pembimbing_1}', '{pembimbing_2}', '{link_seminar}', '{link_login}'];
+                        case 'mahasiswa_bimbingan_pasif':
+                            return ['{nama}', '{npm}', '{angkatan}', '{judul}', '{pembimbing_1}', '{pembimbing_2}', '{hari_tanpa_bimbingan}', '{terakhir_bimbingan}', '{link_bimbingan}', '{link_login}'];
+                        case 'mahasiswa_kritis':
+                            return ['{nama}', '{npm}', '{angkatan}', '{semester}', '{judul}', '{pembimbing_1}', '{pembimbing_2}', '{link_login}'];
+                        case 'mahasiswa_belum_sidang':
+                            return ['{nama}', '{npm}', '{angkatan}', '{judul}', '{pembimbing_1}', '{pembimbing_2}', '{link_sidang}', '{link_login}'];
+                        case 'mahasiswa_belum_skripsi':
+                            return ['{nama}', '{npm}', '{angkatan}', '{link_pengajuan}', '{link_login}'];
+                        case 'dosen_pembimbing_aktif':
+                            return ['{nama}', '{nidn}', '{jumlah_bimbingan}', '{link_dashboard}', '{link_login}'];
+                        case 'dosen_belum_selesai_bimbingan':
+                            return ['{nama}', '{nidn}', '{jumlah_sesi}', '{jumlah_lewat_jadwal}', '{daftar_mahasiswa}', '{mahasiswa_ringkas}', '{sesi_terlama}', '{link_bimbingan}', '{link_dashboard}', '{link_login}'];
+                        case 'dosen_penguji_gelombang':
+                            return ['{nama}', '{nidn}', '{gelombang}', '{link_dashboard}', '{link_login}'];
+                        case 'all_mahasiswa_aktif':
+                            return ['{nama}', '{npm}', '{angkatan}', '{link_dashboard}', '{link_login}'];
+                        default:
+                            return ['{nama}', '{npm}', '{nidn}', '{link_login}', '{link_dashboard}'];
+                    }
+                },
+
+                handleTargetTypeChange() {
+                    this.fetchRecipients();
+                    // Jika pesan belum dimodifikasi atau cocok dengan salah satu preset bawaan, otomatis muat template target baru
+                    const isUnmodified = !this.messageTemplate || Object.values(this.presets).some(p => p.message.trim() === this.messageTemplate.trim());
+                    if (isUnmodified && this.presets && this.presets[this.targetType]) {
+                        this.title = this.presets[this.targetType].title;
+                        this.messageTemplate = this.presets[this.targetType].message;
+                    }
+                },
+
                 get targetTypeLabel() {
                     const map = {
                         'mahasiswa_belum_seminar': 'Mahasiswa Belum Seminar',
@@ -570,6 +587,7 @@
                         'mahasiswa_belum_sidang': 'Mahasiswa Belum Sidang',
                         'mahasiswa_belum_skripsi': 'Mahasiswa Belum Judul',
                         'dosen_pembimbing_aktif': 'Dosen Pembimbing Aktif',
+                        'dosen_belum_selesai_bimbingan': 'Dosen Sesi Belum Selesai',
                         'dosen_penguji_gelombang': 'Dosen Penguji Gelombang',
                         'all_mahasiswa_aktif': 'Semua Mahasiswa Aktif',
                     };
@@ -580,7 +598,8 @@
                     if (this.recipients.length > 0) {
                         return this.recipients[0].name;
                     }
-                    return 'Nama Mahasiswa';
+                    const isDosen = ['dosen_pembimbing_aktif', 'dosen_belum_selesai_bimbingan', 'dosen_penguji_gelombang'].includes(this.targetType);
+                    return isDosen ? 'Nama Dosen' : 'Nama Mahasiswa';
                 },
 
                 get estimateTime() {
@@ -600,13 +619,15 @@
                     
                     // Replace sample tags
                     const first = this.recipients.length > 0 ? this.recipients[0] : null;
-                    const sampleNama = first ? first.name : 'Aditya Pratama Putra';
+                    const isDosen = ['dosen_pembimbing_aktif', 'dosen_belum_selesai_bimbingan', 'dosen_penguji_gelombang'].includes(this.targetType);
+                    const sampleNama = first ? first.name : (isDosen ? 'Bagus Ali Akbar, S.SI., M.Kom' : 'Aditya Pratama Putra');
                     const sampleNpm = first ? first.identifier : 'D1A210045';
+                    const sampleNidn = first ? first.identifier : '0410019202';
                     const sampleAngkatan = first && first.cohort ? first.cohort : '2021';
 
                     msg = msg.replace(/\{nama\}/g, sampleNama);
                     msg = msg.replace(/\{npm\}/g, sampleNpm);
-                    msg = msg.replace(/\{nidn\}/g, '0410019202');
+                    msg = msg.replace(/\{nidn\}/g, sampleNidn);
                     msg = msg.replace(/\{angkatan\}/g, sampleAngkatan);
                     msg = msg.replace(/\{judul\}/g, 'Rancang Bangun Sistem Informasi Pelayanan Terpadu');
                     msg = msg.replace(/\{pembimbing_1\}/g, 'Bagus Ali Akbar, S.SI., M.Kom');
@@ -614,11 +635,19 @@
                     msg = msg.replace(/\{hari_tanpa_bimbingan\}/g, '> 30 hari');
                     msg = msg.replace(/\{terakhir_bimbingan\}/g, '14 Agustus 2026');
                     msg = msg.replace(/\{semester\}/g, '14');
-                    msg = msg.replace(/\{link_seminar\}/g, '{{ url('/seminar-applications/create') }}');
-                    msg = msg.replace(/\{link_sidang\}/g, '{{ url('/thesis-defense-applications/create') }}');
+                    msg = msg.replace(/\{link_seminar\}/g, '{{ route('seminar-applications.index') }}');
+                    msg = msg.replace(/\{link_sidang\}/g, '{{ route('thesis-defense-applications.index') }}');
                     msg = msg.replace(/\{link_bimbingan\}/g, '{{ url('/mentoring-sessions') }}');
+                    msg = msg.replace(/\{link_pengajuan\}/g, '{{ route('theses.create') }}');
                     msg = msg.replace(/\{link_login\}/g, '{{ url('/login') }}');
                     msg = msg.replace(/\{link_dashboard\}/g, '{{ url('/dashboard') }}');
+                    msg = msg.replace(/\{gelombang\}/g, 'Gelombang 2 Semester Genap 2025/2026');
+                    msg = msg.replace(/\{jumlah_bimbingan\}/g, '8');
+                    msg = msg.replace(/\{jumlah_sesi\}/g, '3');
+                    msg = msg.replace(/\{jumlah_lewat_jadwal\}/g, '2');
+                    msg = msg.replace(/\{daftar_mahasiswa\}/g, '• Aditya Pratama: "Sistem Informasi Pelayanan..." (24 Sep 2026)\n• Bella Safitri: "Implementasi Machine Learning..." (26 Sep 2026)');
+                    msg = msg.replace(/\{mahasiswa_ringkas\}/g, 'Aditya Pratama, Bella Safitri');
+                    msg = msg.replace(/\{sesi_terlama\}/g, '24 Sep 2026');
 
                     // Format bold and italic for preview
                     msg = msg.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');

@@ -111,6 +111,10 @@ class WaBroadcastController extends Controller implements HasMiddleware
                 'title' => 'Pemberitahuan Pendaftaran Sidang Skripsi',
                 'message' => "🎓 *INFORMASI PENDAFTARAN SIDANG SKRIPSI*\n\nHalo *{nama}*,\n\nSelamat atas penyelesaian revisi seminar proposal Anda! Segera lengkapi naskah final skripsi Anda dan ajukan pendaftaran sidang skripsi melalui sistem SIBIMA:\n{link_sidang}\n\nJangan menunda, selangkah lagi menuju toga wisuda! 🚀\n_SIBIMA FASILKOM UNSUB_",
             ],
+            'mahasiswa_belum_skripsi' => [
+                'title' => 'Himbauan Pengajuan Usulan Judul Skripsi',
+                'message' => "📋 *HIMBAUAN PENGAJUAN JUDUL SKRIPSI*\n\nHalo *{nama}* (NPM: {npm}), Mahasiswa Angkatan {angkatan},\n\nBerdasarkan data akademik pada sistem SIBIMA, Anda tercatat telah memenuhi persyaratan untuk memprogram tugas akhir/skripsi, namun *belum mengajukan usulan judul skripsi*.\n\nKami menghimbau Anda untuk segera mempersiapkan topik/minat penelitian dan mengajukan judul skripsi melalui portal SIBIMA agar masa studi Anda dapat selesai tepat waktu:\n{link_pengajuan}\n\nMari segera mulai langkah skripsi Anda! 🎓\n_Program Studi FASILKOM UNSUB_",
+            ],
             'dosen_pembimbing_aktif' => [
                 'title' => 'Laporan Singkat Monitoring Bimbingan Mahasiswa',
                 'message' => "Yth. Bpk/Ibu *{nama}*,\n\nTerima kasih atas dedikasi Bpk/Ibu dalam membimbing {jumlah_bimbingan} mahasiswa skripsi aktif di SIBIMA.\n\nMohon bantuannya untuk mengecek kemajuan naskah dan logbook bimbingan mahasiswa bimbingan melalui dashboard SIBIMA:\n{link_dashboard}\n\nSalam takzim,\n_Program Studi FASILKOM UNSUB_",
@@ -118,6 +122,14 @@ class WaBroadcastController extends Controller implements HasMiddleware
             'dosen_belum_selesai_bimbingan' => [
                 'title' => 'Pengingat Penyelesaian Sesi Bimbingan & Catatan Hasil',
                 'message' => "🔔 *PENGINGAT PENYELESAIAN SESI BIMBINGAN SKRIPSI*\n\nYth. Bpk/Ibu *{nama}*,\n\nBerdasarkan pantauan sistem SIBIMA, tercatat terdapat *{jumlah_sesi} sesi bimbingan* yang statusnya belum diselesaikan atau belum diinput catatan/feedback hasil bimbingan:\n\n{daftar_mahasiswa}\n\nMohon kesediaan Bpk/Ibu untuk memperbarui status dan menginput hasil bimbingan mahasiswa melalui tautan berikut:\n{link_bimbingan}\n\nTerima kasih atas kerja sama dan dedikasi Bpk/Ibu.\n_Program Studi FASILKOM UNSUB_",
+            ],
+            'dosen_penguji_gelombang' => [
+                'title' => 'Pemberitahuan Tugas Penguji Ujian Skripsi',
+                'message' => "⚖️ *PEMBERITAHUAN TUGAS PENGUJI UJIAN SKRIPSI*\n\nYth. Bpk/Ibu *{nama}*,\n\nDengan hormat kami sampaikan bahwa jadwal penguji untuk *{gelombang}* telah diterbitkan pada sistem SIBIMA.\n\nBpk/Ibu terdaftar sebagai *Dosen Penguji* pada gelombang tersebut. Mohon kesediaan Bpk/Ibu untuk meninjau jadwal, berkas naskah mahasiswa, dan menghadiri sesi ujian sesuai waktu yang telah diagendakan.\n\nDetail jadwal ujian dan berkas skripsi dapat diakses melalui Dashboard SIBIMA:\n{link_dashboard}\n\nTerima kasih atas dedikasi dan kerja sama Bpk/Ibu dalam mengawal mutu kelulusan mahasiswa.\n_Program Studi FASILKOM UNSUB_",
+            ],
+            'all_mahasiswa_aktif' => [
+                'title' => 'Pengumuman Akademik Skripsi FASILKOM UNSUB',
+                'message' => "📢 *PENGUMUMAN AKADEMIK SKRIPSI*\n\nHalo *{nama}* (NPM: {npm}),\n\nBerikut kami sampaikan pengumuman penting terkait progres skripsi, jadwal gelombang seminar & sidang, serta ketertiban administrasi bimbingan di lingkungan FASILKOM UNSUB.\n\nPastikan Anda selalu memantau perkembangan status skripsi dan melengkapi logbook bimbingan secara berkala di portal SIBIMA:\n{link_dashboard}\n\nTetap semangat dalam menyelesaikan tugas akhir Anda! 🎓✨\n_Program Studi FASILKOM UNSUB_",
             ],
         ];
 
