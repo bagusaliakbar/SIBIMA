@@ -297,4 +297,332 @@ class MonitoringService
             ->with(['thesis.pembimbing1', 'thesis.pembimbing2'])
             ->orderBy('entry_year', 'asc');
     }
+
+    /**
+     * Get mentoring activity rankings (most active) and early warning radar (inactive/at-risk)
+     * for both lecturers and students.
+     */
+    public function getMentoringActivityData(array $filters = []): array
+    {
+        $period = $filters['period'] ?? 'this_month';
+        $now = \Carbon\Carbon::now();
+
+        // 1. Resolve date range based on period
+        $startDate = null;
+        $endDate = null;
+
+        switch ($period) {
+            case 'last_30_days':
+                $startDate = $now->copy()->subDays(30)->startOfDay();
+                $endDate = $now->copy()->endOfDay();
+                $periodLabel = '30 Hari Terakhir (' . $startDate->format('d M') . ' - ' . $endDate->format('d M Y') . ')';
+                break;
+            case 'last_90_days':
+                $startDate = $now->copy()->subDays(90)->startOfDay();
+                $endDate = $now->copy()->endOfDay();
+                $periodLabel = '90 Hari Terakhir (' . $startDate->format('d M') . ' - ' . $endDate->format('d M Y') . ')';
+                break;
+            case 'this_semester':
+                if ($now->month >= 3 && $now->month <= 8) {
+                    $startDate = \Carbon\Carbon::create($now->year, 3, 1, 0, 0, 0);
+                    $endDate = \Carbon\Carbon::create($now->year, 8, 31, 23, 59, 59);
+                    $periodLabel = 'Semester Genap ' . ($now->year - 1) . '/' . $now->year;
+                } else {
+                    $semYear = $now->month >= 9 ? $now->year : $now->year - 1;
+                    $startDate = \Carbon\Carbon::create($semYear, 9, 1, 0, 0, 0);
+                    $endDate = \Carbon\Carbon::create($semYear + 1, 2, 28, 23, 59, 59);
+                    $periodLabel = 'Semester Ganjil ' . $semYear . '/' . ($semYear + 1);
+                }
+                break;
+            case 'all_time':
+                $startDate = null;
+                $endDate = null;
+                $periodLabel = 'Semua Waktu (Keseluruhan)';
+                break;
+            case 'custom':
+                if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
+                    $startDate = \Carbon\Carbon::parse($filters['date_from'])->startOfDay();
+                    $endDate = \Carbon\Carbon::parse($filters['date_to'])->endOfDay();
+                    $periodLabel = \Carbon\Carbon::parse($filters['date_from'])->format('d M Y') . ' s/d ' . \Carbon\Carbon::parse($filters['date_to'])->format('d M Y');
+                } else {
+                    $startDate = $now->copy()->startOfMonth();
+                    $endDate = $now->copy()->endOfMonth();
+                    $periodLabel = 'Bulan Ini (' . $now->translatedFormat('F Y') . ')';
+                }
+                break;
+            case 'this_month':
+            default:
+                $startDate = $now->copy()->startOfMonth();
+                $endDate = $now->copy()->endOfMonth();
+                $periodLabel = 'Bulan Ini (' . $now->translatedFormat('F Y') . ')';
+                break;
+        }
+
+        $cohort = $filters['cohort'] ?? null;
+        $search = trim($filters['search'] ?? '');
+
+        // 2. Fetch all completed sessions for this period
+        $periodSessionsQuery = \App\Models\MentoringSession::where('status', 'completed')
+            ->where('is_absent', false);
+
+        if ($startDate && $endDate) {
+            $periodSessionsQuery->whereBetween('scheduled_at', [$startDate, $endDate]);
+        }
+
+        $periodSessions = $periodSessionsQuery->get(['id', 'thesis_id', 'dosen_id', 'scheduled_at']);
+
+        // Latest session per dosen and per thesis all-time
+        $latestSessionByDosen = \App\Models\MentoringSession::where('status', 'completed')
+            ->where('is_absent', false)
+            ->selectRaw('dosen_id, MAX(scheduled_at) as last_session_at')
+            ->groupBy('dosen_id')
+            ->pluck('last_session_at', 'dosen_id');
+
+        $latestSessionByThesis = \App\Models\MentoringSession::where('status', 'completed')
+            ->where('is_absent', false)
+            ->selectRaw('thesis_id, MAX(scheduled_at) as last_session_at')
+            ->groupBy('thesis_id')
+            ->pluck('last_session_at', 'thesis_id');
+
+        // All-time session counts
+        $allTimeCountsByDosen = \App\Models\MentoringSession::where('status', 'completed')
+            ->where('is_absent', false)
+            ->selectRaw('dosen_id, COUNT(*) as total')
+            ->groupBy('dosen_id')
+            ->pluck('total', 'dosen_id');
+
+        $allTimeCountsByThesis = \App\Models\MentoringSession::where('status', 'completed')
+            ->where('is_absent', false)
+            ->selectRaw('thesis_id, COUNT(*) as total')
+            ->groupBy('thesis_id')
+            ->pluck('total', 'thesis_id');
+
+        // ==========================================
+        // A. DOSEN RANKINGS & INACTIVE RADAR
+        // ==========================================
+        $allActiveTheses = \App\Models\Thesis::where('status', '!=', 'completed')
+            ->get(['id', 'student_id', 'pembimbing1_id', 'pembimbing2_id', 'title', 'status', 'created_at']);
+
+        $allDosens = User::where('role', 'dosen')
+            ->where('is_active', true)
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('name', 'like', "%{$search}%")
+                        ->orWhere('identifier', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->get();
+
+        $dosenList = $allDosens->map(function ($dosen) use ($periodSessions, $allActiveTheses, $latestSessionByDosen, $allTimeCountsByDosen, $now) {
+            $dosenPeriodSessions = $periodSessions->where('dosen_id', $dosen->id);
+            $sessionsInPeriod = $dosenPeriodSessions->count();
+            $uniqueStudentsInPeriod = $dosenPeriodSessions->pluck('thesis_id')->unique()->count();
+
+            $supervisedTheses = $allActiveTheses->filter(function ($t) use ($dosen) {
+                return $t->pembimbing1_id === $dosen->id || $t->pembimbing2_id === $dosen->id;
+            });
+            $supervisedCount = $supervisedTheses->count();
+
+            $lastSessionAt = isset($latestSessionByDosen[$dosen->id]) ? \Carbon\Carbon::parse($latestSessionByDosen[$dosen->id]) : null;
+            $daysSinceLastSession = $lastSessionAt ? (int) $lastSessionAt->diffInDays($now) : null;
+            $totalAllTime = $allTimeCountsByDosen[$dosen->id] ?? 0;
+
+            if ($sessionsInPeriod >= 8) {
+                $activityLevel = 'Sangat Rajin';
+                $activityColor = 'emerald';
+            } elseif ($sessionsInPeriod >= 4) {
+                $activityLevel = 'Rajin';
+                $activityColor = 'blue';
+            } elseif ($sessionsInPeriod >= 1) {
+                $activityLevel = 'Cukup Aktif';
+                $activityColor = 'amber';
+            } else {
+                if ($supervisedCount === 0) {
+                    $activityLevel = 'Tidak Ada Bimbingan';
+                    $activityColor = 'slate';
+                } else {
+                    $activityLevel = 'Pasif / Perlu Perhatian';
+                    $activityColor = 'rose';
+                }
+            }
+
+            return [
+                'id' => $dosen->id,
+                'name' => $dosen->name,
+                'identifier' => $dosen->identifier,
+                'email' => $dosen->email,
+                'phone' => $dosen->phone_number ?? $dosen->phone,
+                'avatar_url' => $dosen->avatar_url,
+                'supervised_count' => $supervisedCount,
+                'sessions_in_period' => $sessionsInPeriod,
+                'unique_students_in_period' => $uniqueStudentsInPeriod,
+                'total_all_time' => $totalAllTime,
+                'last_session_at' => $lastSessionAt,
+                'days_since_last' => $daysSinceLastSession,
+                'activity_level' => $activityLevel,
+                'activity_color' => $activityColor,
+            ];
+        });
+
+        $topDosens = $dosenList->filter(fn($d) => $d['sessions_in_period'] > 0 || $d['supervised_count'] > 0)
+            ->sortByDesc('sessions_in_period')
+            ->values()
+            ->map(function ($d, $idx) {
+                $d['rank'] = $idx + 1;
+                return $d;
+            });
+
+        $inactiveDosens = $dosenList->filter(function ($d) {
+            return $d['supervised_count'] > 0 && ($d['sessions_in_period'] === 0 || ($d['days_since_last'] !== null && $d['days_since_last'] >= 14));
+        })->sortByDesc(function ($d) {
+            return $d['days_since_last'] === null ? 9999 : $d['days_since_last'];
+        })->values();
+
+        // ==========================================
+        // B. MAHASISWA RANKINGS & INACTIVE RADAR
+        // ==========================================
+        $thesesQuery = \App\Models\Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'seminarApplications'])
+            ->where('status', '!=', 'completed')
+            ->whereHas('student')
+            ->when($cohort, function ($q) use ($cohort) {
+                $q->whereHas('student', function ($sq) use ($cohort) {
+                    $sq->where('entry_year', $cohort);
+                });
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->whereHas('student', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%")
+                           ->orWhere('identifier', 'like', "%{$search}%");
+                    })
+                    ->orWhere('title', 'like', "%{$search}%");
+                });
+            });
+
+        $theses = $thesesQuery->get();
+
+        $studentList = $theses->map(function ($thesis) use ($periodSessions, $latestSessionByThesis, $allTimeCountsByThesis, $now) {
+            $student = $thesis->student;
+
+            $thesisPeriodSessions = $periodSessions->where('thesis_id', $thesis->id);
+            $p1Sessions = $thesisPeriodSessions->where('dosen_id', $thesis->pembimbing1_id)->count();
+            $p2Sessions = $thesisPeriodSessions->where('dosen_id', $thesis->pembimbing2_id)->count();
+            $sessionsInPeriod = $thesisPeriodSessions->count();
+
+            $totalAllTime = $allTimeCountsByThesis[$thesis->id] ?? 0;
+            $lastSessionAt = isset($latestSessionByThesis[$thesis->id]) ? \Carbon\Carbon::parse($latestSessionByThesis[$thesis->id]) : null;
+            $daysSinceLastSession = $lastSessionAt ? (int) $lastSessionAt->diffInDays($now) : null;
+
+            $stage = 'Bab 1-3';
+            if ($thesis->acc_sidang_p1 && $thesis->acc_sidang_p2) {
+                $stage = 'Siap Sidang';
+            } elseif ($thesis->seminarApplications && $thesis->seminarApplications->where('status', 'approved')->count() > 0) {
+                $stage = 'Bab 4-5';
+            } elseif ($thesis->acc_up_p1 && $thesis->acc_up_p2) {
+                $stage = 'Siap Sempro';
+            }
+
+            if ($daysSinceLastSession !== null && $daysSinceLastSession <= 7) {
+                $healthStatus = 'Aktif Mingguan';
+                $healthColor = 'emerald';
+            } elseif ($daysSinceLastSession !== null && $daysSinceLastSession <= 14) {
+                $healthStatus = 'Waspada (1-2 Minggu)';
+                $healthColor = 'amber';
+            } else {
+                $healthStatus = $lastSessionAt ? 'Kritis (> 2 Minggu)' : 'Belum Pernah Bimbingan';
+                $healthColor = 'rose';
+            }
+
+            return [
+                'thesis_id' => $thesis->id,
+                'student_id' => $student->id,
+                'name' => $student->name,
+                'identifier' => $student->identifier,
+                'email' => $student->email,
+                'phone' => $student->phone_number ?? $student->phone,
+                'avatar_url' => $student->avatar_url,
+                'entry_year' => $student->entry_year,
+                'title' => $thesis->title,
+                'stage' => $stage,
+                'pembimbing1_name' => $thesis->pembimbing1?->name,
+                'pembimbing2_name' => $thesis->pembimbing2?->name,
+                'sessions_in_period' => $sessionsInPeriod,
+                'p1_sessions' => $p1Sessions,
+                'p2_sessions' => $p2Sessions,
+                'total_all_time' => $totalAllTime,
+                'last_session_at' => $lastSessionAt,
+                'days_since_last' => $daysSinceLastSession,
+                'health_status' => $healthStatus,
+                'health_color' => $healthColor,
+            ];
+        });
+
+        $topStudents = $studentList->filter(fn($s) => $s['sessions_in_period'] > 0 || $s['total_all_time'] > 0)
+            ->sortByDesc('sessions_in_period')
+            ->values()
+            ->map(function ($s, $idx) {
+                $s['rank'] = $idx + 1;
+                return $s;
+            });
+
+        $inactiveStudents = $studentList->filter(function ($s) {
+            return $s['sessions_in_period'] === 0 || ($s['days_since_last'] !== null && $s['days_since_last'] >= 14) || $s['last_session_at'] === null;
+        })->sortByDesc(function ($s) {
+            return $s['days_since_last'] === null ? 9999 : $s['days_since_last'];
+        })->values();
+
+        // ==========================================
+        // C. KPI AGGREGATE STATS
+        // ==========================================
+        $totalSessionsInPeriod = $periodSessions->count();
+        $activeDosenCount = $allDosens->count();
+        $avgSessionsPerDosen = $activeDosenCount > 0 ? round($totalSessionsInPeriod / $activeDosenCount, 1) : 0;
+        $topDosen = $topDosens->first();
+        $topStudent = $topStudents->first();
+
+        $kpi = [
+            'total_sessions_in_period' => $totalSessionsInPeriod,
+            'avg_sessions_per_dosen' => $avgSessionsPerDosen,
+            'top_dosen_name' => $topDosen['name'] ?? '-',
+            'top_dosen_sessions' => $topDosen['sessions_in_period'] ?? 0,
+            'top_student_name' => $topStudent['name'] ?? '-',
+            'top_student_sessions' => $topStudent['sessions_in_period'] ?? 0,
+            'inactive_students_count' => $inactiveStudents->count(),
+            'inactive_dosens_count' => $inactiveDosens->count(),
+        ];
+
+        return [
+            'period' => $period,
+            'period_label' => $periodLabel,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'cohort' => $cohort,
+            'search' => $search,
+            'kpi' => $kpi,
+            'top_dosens' => $topDosens,
+            'inactive_dosens' => $inactiveDosens,
+            'top_students' => $topStudents,
+            'inactive_students' => $inactiveStudents,
+        ];
+    }
+
+    /**
+     * Generate reminder message text for inactive student or dosen.
+     */
+    public function generateActivityReminderMessage(string $type, User $user, ?\App\Models\Thesis $thesis = null, ?int $daysInactive = null): string
+    {
+        $userName = ucwords(strtolower($user->name));
+
+        if ($type === 'dosen') {
+            $inactiveNotice = ($daysInactive && $daysInactive < 9000) ? "dalam *{$daysInactive} hari* terakhir" : "pada periode ini";
+            return "Yth. Bapak/Ibu *{$userName}*,\n\nSalam hangat dari Program Studi FASILKOM UNSUB.\n\nBerdasarkan pantauan sistem SIBIMA, belum tercatat aktivitas sesi bimbingan skripsi dengan mahasiswa bimbingan aktif Bapak/Ibu {$inactiveNotice}.\n\nMohon kesediaan Bapak/Ibu untuk memeriksa pengajuan jadwal atau mengoordinasikan sesi bimbingan bersama mahasiswa bimbingan agar progres skripsi mereka tetap berjalan lancar.\n\nTerima kasih banyak atas perhatian dan dedikasi Bapak/Ibu.";
+        }
+
+        $p1 = $thesis?->pembimbing1?->name ?? 'Pembimbing 1';
+        $p2 = $thesis?->pembimbing2?->name ?? 'Pembimbing 2';
+        $inactiveText = ($daysInactive && $daysInactive < 9000) ? "selama *{$daysInactive} hari* terakhir" : "sejak pengajuan skripsi";
+
+        return "Halo Sdr/i *{$userName}*,\n\nBerdasarkan pantauan radar keaktifan bimbingan SIBIMA FASILKOM UNSUB, Anda tercatat belum melakukan sesi bimbingan skripsi {$inactiveText}.\n\nKami mengingatkan agar Anda *segera berinisiatif menghubungi Dosen Pembimbing* ({$p1} & {$p2}) untuk mengajukan jadwal dan berkonsultasi mengenai kelanjutan tugas akhir Anda.\n\nJangan biarkan skripsi Anda tertunda. Tetap semangat menyelesaikan studi!";
+    }
 }

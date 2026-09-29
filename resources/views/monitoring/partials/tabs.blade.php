@@ -20,7 +20,19 @@
         </span>
     </a>
 
-    <!-- Tab 3: Mahasiswa Masa Studi Kritikal -->
+    <!-- Tab 3: Radar Keaktifan & Leaderboard Bimbingan -->
+    <a href="{{ route('monitoring.activity') }}" 
+       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 {{ request()->routeIs('monitoring.activity*') ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-700/50' }}">
+        <svg class="w-4 h-4 {{ request()->routeIs('monitoring.activity*') ? 'text-white' : 'text-amber-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        <span>Radar Keaktifan</span>
+        <span class="px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.activity*') ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40' }}">
+            Ranking
+        </span>
+    </a>
+
+    <!-- Tab 4: Mahasiswa Masa Studi Kritikal -->
     <a href="{{ route('monitoring.critical') }}" 
        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 {{ request()->routeIs('monitoring.critical') ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-700/50' }}">
         <svg class="w-4 h-4 {{ request()->routeIs('monitoring.critical') ? 'text-white' : 'text-slate-400 dark:text-slate-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">

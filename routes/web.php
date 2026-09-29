@@ -210,6 +210,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/analytics', [App\Http\Controllers\AnalyticsChartController::class, 'index'])->name('analytics.index');
 
         // Monitoring
+        Route::get('/monitoring/activity/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportActivityExcel'])->name('monitoring.activity.export-excel');
+        Route::get('/monitoring/activity/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportActivityPdf'])->name('monitoring.activity.export-pdf');
+        Route::post('/monitoring/activity/remind', [App\Http\Controllers\MonitoringController::class, 'sendActivityReminder'])->name('monitoring.activity.remind');
+        Route::get('/monitoring/activity', [App\Http\Controllers\MonitoringController::class, 'activity'])->name('monitoring.activity');
         Route::get('/monitoring/weekly/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportWeeklyExcel'])->name('monitoring.weekly.export-excel');
         Route::post('/monitoring/weekly/{thesis}/remind', [App\Http\Controllers\MonitoringController::class, 'sendWeeklyReminder'])->name('monitoring.weekly.remind');
         Route::get('/monitoring/weekly', [App\Http\Controllers\MonitoringController::class, 'weekly'])->name('monitoring.weekly');

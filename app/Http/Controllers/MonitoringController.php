@@ -507,4 +507,109 @@ class MonitoringController extends Controller implements HasMiddleware
 
         return Excel::download(new WeeklyMentoringExport($weeklyData['all'], $startDate, $endDate), $fileName);
     }
+
+    /**
+     * Display Mentoring Activity Leaderboard and Inactive Early Warning Radar.
+     */
+    public function activity(Request $request)
+    {
+        $filters = [
+            'period' => $request->input('period', 'this_month'),
+            'cohort' => $request->input('cohort'),
+            'search' => $request->input('search'),
+            'date_from' => $request->input('date_from'),
+            'date_to' => $request->input('date_to'),
+        ];
+
+        $activityData = $this->monitoringService->getMentoringActivityData($filters);
+
+        $cohortYears = User::where('role', 'mahasiswa')
+            ->whereNotNull('entry_year')
+            ->distinct()
+            ->orderBy('entry_year', 'desc')
+            ->pluck('entry_year');
+
+        $activeTab = $request->input('tab', 'mahasiswa'); // 'mahasiswa' or 'dosen'
+
+        return view('monitoring.activity', array_merge($activityData, [
+            'filters' => $filters,
+            'cohortYears' => $cohortYears,
+            'activeTab' => $activeTab,
+        ]));
+    }
+
+    /**
+     * Send WhatsApp reminder to inactive student or lecturer.
+     */
+    public function sendActivityReminder(Request $request, WhatsAppService $whatsAppService)
+    {
+        $type = $request->input('type'); // 'student' or 'dosen'
+        $userId = $request->input('user_id');
+        $user = User::findOrFail($userId);
+
+        $phone = $user->phone_number ?? $user->phone;
+        if (empty($phone)) {
+            return back()->with('error', "Nomor WhatsApp {$user->name} tidak ditemukan atau belum diatur di profil.");
+        }
+
+        $thesis = null;
+        if ($type === 'student' && $request->input('thesis_id')) {
+            $thesis = Thesis::with(['pembimbing1', 'pembimbing2'])->find($request->input('thesis_id'));
+        }
+
+        $daysInactive = $request->input('days_inactive') ? (int) $request->input('days_inactive') : null;
+        $customMessage = $request->input('message');
+        $message = $customMessage ?: $this->monitoringService->generateActivityReminderMessage($type, $user, $thesis, $daysInactive);
+
+        $sent = $whatsAppService->sendMessage($phone, $message);
+
+        if ($sent) {
+            return back()->with('success', "Pesan pengingat WhatsApp berhasil dikirim ke {$user->name} ({$phone}).");
+        }
+
+        return back()->with('warning', "Pesan tidak dapat terkirim otomatis melalui gateway WhatsApp (fitur WA mungkin belum aktif atau gateway sedang offline). Anda dapat menghubungi secara langsung melalui no: {$phone}.");
+    }
+
+    /**
+     * Export Mentoring Activity Leaderboard & Radar to Excel.
+     */
+    public function exportActivityExcel(Request $request)
+    {
+        $filters = [
+            'period' => $request->input('period', 'this_month'),
+            'cohort' => $request->input('cohort'),
+            'search' => $request->input('search'),
+            'date_from' => $request->input('date_from'),
+            'date_to' => $request->input('date_to'),
+        ];
+
+        $activityData = $this->monitoringService->getMentoringActivityData($filters);
+        $fileName = 'Radar_Keaktifan_Bimbingan_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new \App\Exports\MentoringActivityRankExport($activityData), $fileName);
+    }
+
+    /**
+     * Export Mentoring Activity Leaderboard & Radar to PDF.
+     */
+    public function exportActivityPdf(Request $request)
+    {
+        $filters = [
+            'period' => $request->input('period', 'this_month'),
+            'cohort' => $request->input('cohort'),
+            'search' => $request->input('search'),
+            'date_from' => $request->input('date_from'),
+            'date_to' => $request->input('date_to'),
+        ];
+
+        $activityData = $this->monitoringService->getMentoringActivityData($filters);
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $pdf = Pdf::loadView('monitoring.activity_pdf', array_merge($activityData, [
+            'kaprodi' => $kaprodi,
+        ]))->setPaper('a4', 'landscape');
+
+        $fileName = 'Radar_Keaktifan_Bimbingan_' . now()->format('Ymd_His') . '.pdf';
+        return $pdf->download($fileName);
+    }
 }
