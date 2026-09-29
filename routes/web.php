@@ -88,6 +88,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/repositories/{repository}/bab6', [\App\Http\Controllers\ThesisRepositoryController::class, 'streamBab6'])->name('repositories.bab6');
     Route::get('/repositories', [\App\Http\Controllers\ThesisRepositoryController::class, 'index'])->name('repositories.index');
     Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/repositories/monitoring', [\App\Http\Controllers\ThesisRepositoryController::class, 'monitoring'])->name('repositories.monitoring');
+        Route::get('/repositories/monitoring/{user}/collection', [\App\Http\Controllers\ThesisRepositoryController::class, 'userCollection'])->name('repositories.monitoring.user-collection');
         Route::post('/repositories/journals/sync-fasilkom', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncFasilkomJournals'])->name('repositories.journals.sync-fasilkom');
         Route::get('/repositories/unsub-info', [\App\Http\Controllers\ThesisRepositoryController::class, 'unsubInfo'])->name('repositories.unsub-info');
         Route::post('/repositories/sync-unsub-chunk', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncUnsubChunk'])->name('repositories.sync-unsub-chunk');

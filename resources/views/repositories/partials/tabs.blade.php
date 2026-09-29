@@ -42,4 +42,18 @@
             </span>
         @endif
     </a>
+
+    @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'kaprodi']))
+    <!-- Tab 5: Monitoring Pustaka Civitas (Admin & Kaprodi) -->
+    <a href="{{ route('repositories.monitoring') }}" 
+       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 {{ request()->routeIs('repositories.monitoring*') ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/30' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-700/50' }}">
+        <svg class="w-4 h-4 {{ request()->routeIs('repositories.monitoring*') ? 'text-white' : 'text-indigo-500 dark:text-indigo-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <span>Monitoring Pustaka</span>
+        <span class="px-1.5 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-extrabold {{ request()->routeIs('repositories.monitoring*') ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300' }}">
+            Civitas
+        </span>
+    </a>
+    @endif
 </div>

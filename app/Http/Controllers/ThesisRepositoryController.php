@@ -1518,6 +1518,224 @@ class ThesisRepositoryController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Display monitoring dashboard of civitas (lecturers and students) who saved catalog bookmarks.
+     * Accessible by Admin and Kaprodi only.
+     */
+    public function monitoring(Request $request)
+    {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'kaprodi'])) {
+            abort(403, 'Akses monitoring pustaka hanya diizinkan untuk Admin dan Kaprodi.');
+        }
+
+        $search = trim($request->input('q', $request->input('search', '')));
+        $roleFilter = $request->input('role', 'all');
+        $sortBy = $request->input('sort', 'most_bookmarks');
+
+        // Summary Statistics (KPI)
+        $totalMahasiswaWithBookmarks = User::where('role', 'mahasiswa')
+            ->whereHas('journalBookmarks')
+            ->count();
+
+        $totalDosenWithBookmarks = User::where('role', 'dosen')
+            ->whereHas('journalBookmarks')
+            ->count();
+
+        $totalBookmarks = JournalBookmark::count();
+        $totalFolders = JournalBookmarkFolder::count();
+
+        $topSources = JournalBookmark::selectRaw('source, count(*) as count')
+            ->whereNotNull('source')
+            ->groupBy('source')
+            ->orderByDesc('count')
+            ->limit(5)
+            ->pluck('count', 'source')
+            ->toArray();
+
+        // Query civitas users who have saved bookmarks
+        $userQuery = User::query()
+            ->whereHas('journalBookmarks')
+            ->withCount([
+                'journalBookmarks as bookmarks_count',
+                'journalBookmarkFolders as folders_count',
+            ])
+            ->addSelect([
+                'last_bookmarked_at' => JournalBookmark::select('created_at')
+                    ->whereColumn('user_id', 'users.id')
+                    ->latest()
+                    ->limit(1),
+            ])
+            ->with(['thesis.pembimbing1', 'thesis.pembimbing2']);
+
+        // Role filter
+        if (in_array($roleFilter, ['mahasiswa', 'dosen'])) {
+            $userQuery->where('role', $roleFilter);
+        }
+
+        // Search filter (name, identifier, email, or student's thesis title)
+        if (!empty($search)) {
+            $userQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('identifier', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhereHas('thesis', function ($tq) use ($search) {
+                      $tq->where('judul', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Sorting
+        switch ($sortBy) {
+            case 'latest':
+                $userQuery->orderByDesc('last_bookmarked_at');
+                break;
+            case 'name_asc':
+                $userQuery->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $userQuery->orderBy('name', 'desc');
+                break;
+            case 'most_folders':
+                $userQuery->orderByDesc('folders_count')->orderByDesc('bookmarks_count');
+                break;
+            case 'most_bookmarks':
+            default:
+                $userQuery->orderByDesc('bookmarks_count')->orderByDesc('last_bookmarked_at');
+                break;
+        }
+
+        $users = $userQuery->paginate(12)->withQueryString();
+
+        return view('repositories.monitoring', compact(
+            'users',
+            'search',
+            'roleFilter',
+            'sortBy',
+            'totalMahasiswaWithBookmarks',
+            'totalDosenWithBookmarks',
+            'totalBookmarks',
+            'totalFolders',
+            'topSources'
+        ));
+    }
+
+    /**
+     * Get detailed collection of a specific civitas user (JSON for modal / inspector).
+     */
+    public function userCollection(User $user, Request $request)
+    {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'kaprodi'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized.',
+            ], 403);
+        }
+
+        $folderFilter = $request->input('folder_id');
+        $sourceFilter = $request->input('source');
+        $queryFilter = trim($request->input('q', ''));
+
+        // Load folders for this user with bookmark count
+        $folders = JournalBookmarkFolder::where('user_id', $user->id)
+            ->withCount('bookmarks')
+            ->orderBy('name')
+            ->get();
+
+        $unassignedCount = JournalBookmark::where('user_id', $user->id)
+            ->whereNull('folder_id')
+            ->count();
+
+        // Query bookmarks
+        $bookmarksQuery = JournalBookmark::where('user_id', $user->id)
+            ->with('folder')
+            ->latest();
+
+        if ($folderFilter !== null && $folderFilter !== '') {
+            if ($folderFilter === 'unassigned') {
+                $bookmarksQuery->whereNull('folder_id');
+            } else {
+                $bookmarksQuery->where('folder_id', $folderFilter);
+            }
+        }
+
+        if (!empty($sourceFilter)) {
+            $bookmarksQuery->where('source', $sourceFilter);
+        }
+
+        if (!empty($queryFilter)) {
+            $bookmarksQuery->where(function ($q) use ($queryFilter) {
+                $q->where('title', 'like', "%{$queryFilter}%")
+                  ->orWhere('venue', 'like', "%{$queryFilter}%")
+                  ->orWhere('publisher', 'like', "%{$queryFilter}%")
+                  ->orWhere('authors_string', 'like', "%{$queryFilter}%")
+                  ->orWhere('notes', 'like', "%{$queryFilter}%");
+            });
+        }
+
+        $bookmarks = $bookmarksQuery->get()->map(function ($bm) {
+            $authorsText = $bm->authors_string;
+            if (empty($authorsText) && is_array($bm->authors)) {
+                $authorsText = implode(', ', array_slice($bm->authors, 0, 3));
+                if (count($bm->authors) > 3) {
+                    $authorsText .= ' et al.';
+                }
+            }
+
+            return [
+                'id' => $bm->id,
+                'title' => $bm->title,
+                'authors' => $authorsText ?: 'Penulis Tidak Diketahui',
+                'year' => $bm->year,
+                'venue' => $bm->venue,
+                'publisher' => $bm->publisher,
+                'doi' => $bm->doi,
+                'url' => $bm->url,
+                'pdf_url' => $bm->pdf_url,
+                'source' => $bm->source,
+                'source_label' => $bm->clean_source_label ?? ucfirst($bm->source),
+                'notes' => $bm->notes,
+                'folder' => $bm->folder ? [
+                    'id' => $bm->folder->id,
+                    'name' => $bm->folder->name,
+                    'color' => $bm->folder->color ?? '#6366f1',
+                ] : null,
+                'date_formatted' => $bm->created_at ? $bm->created_at->translatedFormat('d M Y, H:i') : '-',
+                'time_ago' => $bm->created_at ? $bm->created_at->diffForHumans() : '-',
+            ];
+        });
+
+        // User thesis details if mahasiswa
+        $thesis = null;
+        if ($user->role === 'mahasiswa') {
+            $userThesis = $user->thesis()->with(['pembimbing1', 'pembimbing2'])->first();
+            if ($userThesis) {
+                $thesis = [
+                    'id' => $userThesis->id,
+                    'judul' => $userThesis->judul,
+                    'status' => $userThesis->status,
+                    'pembimbing1' => $userThesis->pembimbing1?->name,
+                    'pembimbing2' => $userThesis->pembimbing2?->name,
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'identifier' => $user->identifier,
+                'role' => $user->role,
+                'avatar_url' => $user->avatar_url,
+                'thesis' => $thesis,
+            ],
+            'total_bookmarks' => $user->journalBookmarks()->count(),
+            'folders' => $folders,
+            'unassigned_count' => $unassignedCount,
+            'bookmarks' => $bookmarks,
+        ]);
+    }
 }
 
 
