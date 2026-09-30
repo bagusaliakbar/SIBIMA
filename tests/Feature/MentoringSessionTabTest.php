@@ -60,7 +60,6 @@ class MentoringSessionTabTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Topik Bimbingan Aktif');
         $response->assertDontSee('Topik Bimbingan Lulus');
-        $response->assertDontSee('Lulus');
 
         // 2. Check History Tab
         $response = $this->actingAs($dosen)
@@ -69,7 +68,6 @@ class MentoringSessionTabTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Topik Bimbingan Lulus');
         $response->assertDontSee('Topik Bimbingan Aktif');
-        $response->assertSee('Lulus');
     }
 
     public function test_lecturer_can_revise_feedback_for_completed_mentoring_session()

@@ -9,6 +9,8 @@
     <script>
         function mentoringSchedule() {
             return {
+                openGuideModal: false,
+                activeGuideTab: 'workflow', // 'workflow', 'views', 'tips', 'faq'
                 viewMode: '{{ request('view', '') }}' || localStorage.getItem('sibima_mentoring_view_mode') || 'table',
                 cardGrouping: localStorage.getItem('sibima_card_grouping') || 'session', // 'session' (default) or 'student'
                 selectedEvent: null,
@@ -605,6 +607,16 @@
                             :params="['tab' => $activeTab, 'dosen_id' => $dosenId ?? '']" />
                     </template>
 
+                    <!-- Tombol Panduan Penggunaan Menu Bimbingan -->
+                    <button type="button" 
+                            @click="openGuideModal = true"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 dark:text-amber-300 border border-amber-200/90 dark:border-amber-800/60 text-xs font-bold rounded-xl transition-all shadow-2xs hover:shadow-xs cursor-pointer whitespace-nowrap group"
+                            title="Buka Panduan Penggunaan Jadwal Bimbingan">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
+                        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <span>Panduan Dosen</span>
+                    </button>
+
                     @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                         <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center px-4 py-2.5 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm whitespace-nowrap">+ Tambah Jadwal</a>
                     @endif
@@ -915,7 +927,10 @@
                                                        class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500/30 transition-all cursor-pointer">
                                             </th>
                                         @endif
-                                        <th class="py-3.5 px-4">Mahasiswa</th>
+                                        <th class="py-3.5 px-4">
+                                            <span>Mahasiswa</span>
+                                            <span class="ml-1 text-[9px] font-normal lowercase tracking-normal text-slate-400 dark:text-slate-500 hidden sm:inline">(klik baris untuk berkas & catatan)</span>
+                                        </th>
                                         <th class="py-3.5 px-4">Jadwal & Waktu</th>
                                         <th class="py-3.5 px-4">Topik & Judul Skripsi</th>
                                         <th class="py-3.5 px-4 text-center">Kehadiran Mhs</th>
@@ -3261,6 +3276,9 @@
                 </div>
             </div>
         </x-table-card>
+
+        <!-- Modal Panduan Interaktif Penggunaan Jadwal Bimbingan (Solusi 1) -->
+        @include('mentoring.partials.guide-modal')
 
         <!-- Interactive Event Modal -->
         <template x-teleport="body">
