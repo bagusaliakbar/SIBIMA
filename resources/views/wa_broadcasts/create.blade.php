@@ -157,7 +157,7 @@
                                     </span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                                    Dosen yang memiliki jadwal bimbingan belum diselesaikan atau belum diinput catatan.
+                                    Dosen yang memiliki jadwal bimbingan yang telah terlewat namun belum diselesaikan atau belum diinput catatan.
                                 </p>
                             </label>
 
@@ -643,7 +643,7 @@
                     msg = msg.replace(/\{link_dashboard\}/g, '{{ url('/dashboard') }}');
                     msg = msg.replace(/\{gelombang\}/g, 'Gelombang 2 Semester Genap 2025/2026');
                     msg = msg.replace(/\{jumlah_bimbingan\}/g, '8');
-                    msg = msg.replace(/\{jumlah_sesi\}/g, '3');
+                    msg = msg.replace(/\{jumlah_sesi\}/g, '2');
                     msg = msg.replace(/\{jumlah_lewat_jadwal\}/g, '2');
                     msg = msg.replace(/\{daftar_mahasiswa\}/g, '• Aditya Pratama: "Sistem Informasi Pelayanan..." (24 Sep 2026)\n• Bella Safitri: "Implementasi Machine Learning..." (26 Sep 2026)');
                     msg = msg.replace(/\{mahasiswa_ringkas\}/g, 'Aditya Pratama, Bella Safitri');

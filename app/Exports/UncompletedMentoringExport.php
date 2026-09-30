@@ -72,9 +72,9 @@ class UncompletedLecturersSheet extends DefaultValueBinder implements FromCollec
             'NAMA DOSEN',
             'NIDN',
             'NO WHATSAPP',
-            'TOTAL SESI BELUM SELESAI',
-            'LEWAT JADWAL (OVERDUE)',
-            'JADWAL HARI INI / MENDATANG',
+            'TOTAL SESI BELUM SELESAI (TERLEWAT)',
+            'LEWAT HARI SEBELUMNYA',
+            'TERLEWAT HARI INI',
             'JADWAL TERLAMA',
             'KETERLAMBATAN (HARI)',
             'DAFTAR MAHASISWA',
@@ -94,8 +94,8 @@ class UncompletedLecturersSheet extends DefaultValueBinder implements FromCollec
             $dosen->identifier ?: '-',
             $dosen->phone_number ?: '-',
             $item['total_sessions'],
-            $item['overdue_sessions'],
-            $item['upcoming_sessions'],
+            $item['prior_days_sessions'] ?? $item['overdue_sessions'],
+            $item['today_sessions'] ?? 0,
             $oldest,
             $item['days_overdue'] > 0 ? "{$item['days_overdue']} Hari" : 'Hari ini',
             $studentsList,
@@ -169,7 +169,7 @@ class UncompletedSessionsSheet extends DefaultValueBinder implements FromCollect
         $dosen = $session->dosen ?? $session->thesis?->pembimbing1;
         $isOverdue = $session->scheduled_at->isPast();
         $days = $isOverdue ? $session->scheduled_at->diffInDays(now()) : 0;
-        $delayNotice = $isOverdue ? ($days > 0 ? "Lewat {$days} hari" : "Lewat hari ini") : "Akan datang";
+        $delayNotice = $days > 0 ? "Lewat {$days} hari" : "Lewat hari ini";
 
         return [
             $this->row,

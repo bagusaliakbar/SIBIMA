@@ -621,7 +621,7 @@ class MonitoringController extends Controller implements HasMiddleware
     public function uncompletedMentoring(Request $request)
     {
         $filters = [
-            'scope' => $request->input('scope', 'overdue'), // 'overdue' (default), 'today', 'all'
+            'scope' => $request->input('scope', 'all'), // 'all' (default: semua terlewat), 'overdue' (lewat hari), 'today' (hari ini terlewat)
             'dosen_id' => $request->input('dosen_id'),
             'search' => $request->input('search'),
             'view' => $request->input('view', 'dosen'), // 'dosen' (default) or 'session'
@@ -652,7 +652,7 @@ class MonitoringController extends Controller implements HasMiddleware
             return back()->with('error', "Nomor WhatsApp {$dosen->name} tidak ditemukan atau belum diatur di profil.");
         }
 
-        // Get uncompleted sessions for this lecturer
+        // Get uncompleted sessions for this lecturer (HANYA SESI YANG SUDAH TERLEWAT)
         $sessions = MentoringSession::with(['thesis.student'])
             ->where(function($q) use ($dosenId) {
                 $q->where('dosen_id', $dosenId)
@@ -664,14 +664,7 @@ class MonitoringController extends Controller implements HasMiddleware
             ->get();
 
         if ($sessions->isEmpty()) {
-            $sessions = MentoringSession::with(['thesis.student'])
-                ->where(function($q) use ($dosenId) {
-                    $q->where('dosen_id', $dosenId)
-                      ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
-                })
-                ->whereNotIn('status', ['completed', 'rejected'])
-                ->orderBy('scheduled_at', 'asc')
-                ->get();
+            return back()->with('error', "Tidak ada sesi bimbingan yang terlewat untuk {$dosen->name}.");
         }
 
         $customMessage = $request->input('message');

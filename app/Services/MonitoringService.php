@@ -633,18 +633,21 @@ class MonitoringService
      */
     public function getUncompletedMentoringData(array $filters = []): array
     {
-        $scope = $filters['scope'] ?? 'overdue'; // 'overdue' (default), 'all', 'today'
+        $scope = $filters['scope'] ?? 'all'; // 'all' (default), 'overdue' (lewat hari/sebelum hari ini), 'today' (hari ini terlewat)
         $dosenId = $filters['dosen_id'] ?? null;
         $search = $filters['search'] ?? null;
 
+        // Base Query: KETAT HANYA SESI YANG BELUM SELESAI DAN TANGGAL/JAMNYA SUDAH TERLEWAT
         $baseQuery = MentoringSession::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
-            ->whereNotIn('status', ['completed', 'rejected']);
+            ->whereNotIn('status', ['completed', 'rejected'])
+            ->where('scheduled_at', '<=', now());
 
-        if ($scope === 'overdue') {
-            $baseQuery->where('scheduled_at', '<=', now());
-        } elseif ($scope === 'today') {
+        if ($scope === 'today') {
             $baseQuery->whereDate('scheduled_at', Carbon::today());
+        } elseif ($scope === 'overdue') {
+            $baseQuery->where('scheduled_at', '<', Carbon::today());
         }
+        // jika 'all', tetap where('scheduled_at', '<=', now())
 
         if ($dosenId) {
             $baseQuery->where(function($q) use ($dosenId) {
@@ -664,10 +667,17 @@ class MonitoringService
         // All matching sessions
         $allSessions = (clone $baseQuery)->orderBy('scheduled_at', 'asc')->get();
 
-        // Total global metrics across all uncompleted sessions (for context badges)
-        $globalUncompletedCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])->count();
-        $globalOverdueCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])->where('scheduled_at', '<=', now())->count();
-        $globalTodayCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])->whereDate('scheduled_at', Carbon::today())->count();
+        // Total global metrics across all uncompleted sessions (HANYA YANG SUDAH TERLEWAT)
+        $globalUncompletedCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])
+            ->where('scheduled_at', '<=', now())
+            ->count();
+        $globalOverdueCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])
+            ->where('scheduled_at', '<', Carbon::today())
+            ->count();
+        $globalTodayCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])
+            ->whereDate('scheduled_at', Carbon::today())
+            ->where('scheduled_at', '<=', now())
+            ->count();
 
         $filteredSessionsCount = $allSessions->count();
         $affectedStudentsCount = $allSessions->pluck('thesis.student_id')->filter()->unique()->count();
@@ -686,8 +696,8 @@ class MonitoringService
             if (!$dosen) return null;
 
             $total = $sessions->count();
-            $overdue = $sessions->where('scheduled_at', '<=', now())->count();
-            $upcoming = $sessions->where('scheduled_at', '>', now())->count();
+            $priorDays = $sessions->where('scheduled_at', '<', Carbon::today())->count();
+            $today = $sessions->filter(fn($s) => $s->scheduled_at->isToday())->count();
             $oldest = $sessions->sortBy('scheduled_at')->first();
             $oldestDate = $oldest ? $oldest->scheduled_at : null;
             $daysOverdue = $oldestDate && $oldestDate->isPast() ? $oldestDate->diffInDays(now()) : 0;
@@ -697,15 +707,16 @@ class MonitoringService
             return [
                 'dosen' => $dosen,
                 'total_sessions' => $total,
-                'overdue_sessions' => $overdue,
-                'upcoming_sessions' => $upcoming,
+                'prior_days_sessions' => $priorDays,
+                'today_sessions' => $today,
+                'overdue_sessions' => $total,
                 'oldest_session_at' => $oldestDate,
                 'days_overdue' => $daysOverdue,
                 'students_count' => $uniqueStudents->count(),
                 'students' => $uniqueStudents,
                 'sessions' => $sessions,
             ];
-        })->filter()->sortByDesc('overdue_sessions')->values();
+        })->filter()->sortByDesc('total_sessions')->values();
 
         $uniqueDosenCount = $lecturersData->count();
 

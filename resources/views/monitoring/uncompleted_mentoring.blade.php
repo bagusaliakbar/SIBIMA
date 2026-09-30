@@ -12,17 +12,17 @@
 
         <!-- KPI Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <!-- 1. Lewat Jadwal (Overdue) -->
+            <!-- 1. Total Sesi Terlewat -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group">
                 <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-500/10 dark:bg-rose-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500"></div>
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Lewat Jadwal (Overdue)</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Sesi Terlewat</span>
                     <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-800/60 shadow-xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 tracking-tight">{{ number_format($global_overdue_count) }}</span>
+                    <span class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 tracking-tight">{{ number_format($global_uncompleted_count) }}</span>
                     <span class="text-xs font-bold text-slate-400 dark:text-slate-500">sesi</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
@@ -31,22 +31,22 @@
                 </p>
             </div>
 
-            <!-- 2. Total Sesi Tertunda -->
+            <!-- 2. Lewat Hari (H-1+) -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group">
                 <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500"></div>
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Belum Selesai</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Lewat Hari (H-1+)</span>
                     <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center border border-orange-100 dark:border-orange-800/60 shadow-xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($global_uncompleted_count) }}</span>
+                    <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($global_overdue_count) }}</span>
                     <span class="text-xs font-bold text-slate-400 dark:text-slate-500">sesi</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                    <span>Status pending & approved</span>
+                    <span>Sebelum tanggal hari ini</span>
                 </p>
             </div>
 
@@ -95,25 +95,25 @@
             <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                 <!-- Scope Tabs -->
                 <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                    <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'all'])) }}"
+                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
+                        <span>📋 Semua Terlewat</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                            {{ $global_uncompleted_count }}
+                        </span>
+                    </a>
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'overdue'])) }}"
-                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'overdue') === 'overdue' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>⚠️ Lewat Jadwal</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'overdue') === 'overdue' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
+                        <span>⚠️ Lewat Hari (H-1+)</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_overdue_count }}
                         </span>
                     </a>
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'today'])) }}"
-                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'overdue') === 'today' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>📅 Hari Ini</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'overdue') === 'today' ? 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
+                        <span>📅 Hari Ini (Terlewat)</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_today_count }}
-                        </span>
-                    </a>
-                    <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'all'])) }}"
-                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'overdue') === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>📋 Semua</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'overdue') === 'all' ? 'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
-                            {{ $global_uncompleted_count }}
                         </span>
                     </a>
                 </div>
@@ -184,7 +184,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center gap-1">
-                                @if(!empty($filters['search']) || !empty($filters['dosen_id']) || ($filters['scope'] ?? 'overdue') !== 'overdue')
+                                @if(!empty($filters['search']) || !empty($filters['dosen_id']) || ($filters['scope'] ?? 'all') !== 'all')
                                     <a href="{{ route('monitoring.uncompleted-mentoring', ['view' => $filters['view'] ?? 'dosen']) }}" class="px-2 py-1 text-[11px] font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-lg">
                                         Reset
                                     </a>
@@ -234,12 +234,7 @@
                                 <div class="flex flex-wrap items-center gap-2 shrink-0">
                                     <!-- Badge Sesi Count -->
                                     <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs font-black">
-                                        <span>{{ $item['total_sessions'] }} Sesi Tertunda</span>
-                                        @if($item['overdue_sessions'] > 0)
-                                            <span class="px-1.5 py-0.2 bg-rose-500 text-white rounded text-[10px]">
-                                                {{ $item['overdue_sessions'] }} Overdue
-                                            </span>
-                                        @endif
+                                        <span>{{ $item['total_sessions'] }} Sesi Terlewat</span>
                                     </div>
 
                                     <!-- Tombol Kirim Pengingat WA -->
@@ -317,16 +312,10 @@
                                                     @endif
                                                 </td>
                                                 <td class="py-3 px-5 whitespace-nowrap">
-                                                    @if($isOverdue)
-                                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                                            {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
-                                                        </span>
-                                                    @else
-                                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
-                                                            Jadwal Mendatang
-                                                        </span>
-                                                    @endif
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                        {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
+                                                    </span>
                                                 </td>
                                                 <td class="py-3 px-5 text-right whitespace-nowrap">
                                                     <a href="{{ route('mentoring-sessions.edit', $session) }}" 
@@ -421,16 +410,10 @@
                                         @endif
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
-                                        @if($isOverdue)
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                                {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60">
-                                                Akan Datang
-                                            </span>
-                                        @endif
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                            {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
+                                        </span>
                                     </td>
                                     <td class="py-4 px-6 text-right whitespace-nowrap">
                                         <div class="flex items-center justify-end gap-1.5">

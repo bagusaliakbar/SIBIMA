@@ -62,17 +62,18 @@ class UncompletedMentoringMonitoringTest extends TestCase
         ]);
 
         // Admin view per dosen
-        $resAdmin = $this->actingAs($admin)->get(route('monitoring.uncompleted-mentoring', ['scope' => 'overdue', 'view' => 'dosen']));
+        $resAdmin = $this->actingAs($admin)->get(route('monitoring.uncompleted-mentoring', ['scope' => 'all', 'view' => 'dosen']));
         $resAdmin->assertStatus(200);
         $resAdmin->assertSee('Dr. Budi Santoso, M.Kom');
         $resAdmin->assertSee('Pembahasan Bab 3 Metodologi Penelitian');
-        $resAdmin->assertSee('1 Sesi Tertunda');
+        $resAdmin->assertSee('1 Sesi Terlewat');
+        $resAdmin->assertDontSee('Diskusi Bab 4 Hasil Pengujian');
 
         // Kaprodi view flat session
         $resKaprodi = $this->actingAs($kaprodi)->get(route('monitoring.uncompleted-mentoring', ['scope' => 'all', 'view' => 'session']));
         $resKaprodi->assertStatus(200);
         $resKaprodi->assertSee('Pembahasan Bab 3 Metodologi Penelitian');
-        $resKaprodi->assertSee('Diskusi Bab 4 Hasil Pengujian');
+        $resKaprodi->assertDontSee('Diskusi Bab 4 Hasil Pengujian');
     }
 
     public function test_send_uncompleted_mentoring_reminder_to_lecturer(): void

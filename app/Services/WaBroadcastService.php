@@ -322,19 +322,20 @@ class WaBroadcastService
     }
 
     /**
-     * Dosen yang memiliki sesi bimbingan belum diselesaikan atau belum diinput catatan.
+     * Dosen yang memiliki sesi bimbingan belum diselesaikan atau belum diinput catatan (Hanya tanggal yang sudah terlewat).
      */
     protected function getDosenBelumSelesaiBimbingan(array $filters): Collection
     {
-        $scope = $filters['scope'] ?? 'overdue';
+        $scope = $filters['scope'] ?? 'all';
 
         $sessionsQuery = MentoringSession::with(['thesis.student', 'dosen'])
-            ->whereNotIn('status', ['completed', 'rejected']);
+            ->whereNotIn('status', ['completed', 'rejected'])
+            ->where('scheduled_at', '<=', now()); // KETAT: HANYA TANGGAL/JAM YANG SUDAH TERLEWAT
 
-        if ($scope === 'overdue') {
-            $sessionsQuery->where('scheduled_at', '<=', now());
-        } elseif ($scope === 'today') {
+        if ($scope === 'today') {
             $sessionsQuery->whereDate('scheduled_at', Carbon::today());
+        } elseif ($scope === 'overdue') {
+            $sessionsQuery->where('scheduled_at', '<', Carbon::today());
         }
 
         if (!empty($filters['dosen_id'])) {
@@ -361,7 +362,6 @@ class WaBroadcastService
             if (!$dosen) return null;
 
             $totalCount = $group->count();
-            $overdueCount = $group->where('scheduled_at', '<=', now())->count();
             $oldest = $group->sortBy('scheduled_at')->first();
             $oldestDate = $oldest ? $oldest->scheduled_at->locale('id')->translatedFormat('d M Y') : '-';
 
@@ -390,12 +390,12 @@ class WaBroadcastService
                 'phone' => $dosen->phone_number,
                 'role' => 'dosen',
                 'cohort' => '-',
-                'status_info' => "{$totalCount} Sesi Belum Selesai ({$overdueCount} Lewat Jadwal)",
+                'status_info' => "{$totalCount} Sesi Terlewat Belum Selesai",
                 'context' => [
                     'nama' => $dosen->name,
                     'nidn' => $dosen->identifier ?? '-',
                     'jumlah_sesi' => (string) $totalCount,
-                    'jumlah_lewat_jadwal' => (string) $overdueCount,
+                    'jumlah_lewat_jadwal' => (string) $totalCount,
                     'daftar_mahasiswa' => $detailList,
                     'mahasiswa_ringkas' => $studentNames,
                     'sesi_terlama' => $oldestDate,
