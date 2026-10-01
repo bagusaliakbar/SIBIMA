@@ -159,4 +159,132 @@ class UncompletedMentoringMonitoringTest extends TestCase
         $response->assertStatus(200);
         $this->assertStringContainsString('spreadsheetml', $response->headers->get('content-type'));
     }
+
+    public function test_sessions_scheduled_today_are_not_counted_as_overdue_in_broadcast(): void
+    {
+        // Lecturer 1: Only has a session scheduled for TODAY (e.g. 2 hours ago or right now)
+        $dosenToday = User::factory()->create([
+            'role' => 'dosen',
+            'name' => 'Dosen Jadwal Hari Ini',
+            'phone_number' => '081234567801',
+        ]);
+        $student1 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Hari Ini']);
+        $thesis1 = Thesis::create([
+            'student_id' => $student1->id,
+            'pembimbing1_id' => $dosenToday->id,
+            'title' => 'Judul Skripsi Mahasiswa Hari Ini',
+            'status' => 'active',
+        ]);
+        MentoringSession::create([
+            'thesis_id' => $thesis1->id,
+            'dosen_id' => $dosenToday->id,
+            'scheduled_at' => Carbon::today()->setHour(9)->setMinute(0),
+            'topic' => 'Bimbingan Jadwal Hari Ini Pagi',
+            'status' => 'approved',
+        ]);
+
+        // Lecturer 2: Had an overdue session in the past, but it was COMPLETED. Also has a session TODAY.
+        $dosenCompleted = User::factory()->create([
+            'role' => 'dosen',
+            'name' => 'Dosen Selesai Terlewat',
+            'phone_number' => '081234567802',
+        ]);
+        $student2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Selesai']);
+        $thesis2 = Thesis::create([
+            'student_id' => $student2->id,
+            'pembimbing1_id' => $dosenCompleted->id,
+            'title' => 'Judul Skripsi Selesai',
+            'status' => 'active',
+        ]);
+        MentoringSession::create([
+            'thesis_id' => $thesis2->id,
+            'dosen_id' => $dosenCompleted->id,
+            'scheduled_at' => Carbon::now()->subDays(5),
+            'topic' => 'Sesi Masa Lalu Yang Sudah Selesai',
+            'status' => 'completed',
+        ]);
+        MentoringSession::create([
+            'thesis_id' => $thesis2->id,
+            'dosen_id' => $dosenCompleted->id,
+            'scheduled_at' => Carbon::today()->setHour(11)->setMinute(0),
+            'topic' => 'Bimbingan Hari Ini Siang',
+            'status' => 'approved',
+        ]);
+
+        // Lecturer 3: Actually has an OVERDUE session from yesterday AND a session today
+        $dosenOverdue = User::factory()->create([
+            'role' => 'dosen',
+            'name' => 'Dosen Benar Terlewat',
+            'phone_number' => '081234567803',
+        ]);
+        $student3 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Terlewat']);
+        $thesis3 = Thesis::create([
+            'student_id' => $student3->id,
+            'pembimbing1_id' => $dosenOverdue->id,
+            'title' => 'Judul Skripsi Terlewat',
+            'status' => 'active',
+        ]);
+        MentoringSession::create([
+            'thesis_id' => $thesis3->id,
+            'dosen_id' => $dosenOverdue->id,
+            'scheduled_at' => Carbon::now()->subDays(2),
+            'topic' => 'Sesi 2 Hari Lalu Belum Selesai',
+            'status' => 'approved',
+        ]);
+        MentoringSession::create([
+            'thesis_id' => $thesis3->id,
+            'dosen_id' => $dosenOverdue->id,
+            'scheduled_at' => Carbon::today()->setHour(10)->setMinute(0),
+            'topic' => 'Bimbingan Hari Ini Jangan Masuk Lewat',
+            'status' => 'approved',
+        ]);
+
+        /** @var WaBroadcastService $broadcastService */
+        $broadcastService = app(WaBroadcastService::class);
+        $recipients = $broadcastService->getTargetRecipients('dosen_belum_selesai_bimbingan');
+
+        // Lecturer 1 & 2 must NOT be in the recipients list at all
+        $this->assertNull($recipients->firstWhere('user_id', $dosenToday->id), 'Dosen with only today session should not be in broadcast recipients');
+        $this->assertNull($recipients->firstWhere('user_id', $dosenCompleted->id), 'Dosen with completed past sessions and today session should not be in broadcast recipients');
+
+        // Lecturer 3 must be included, but only with 1 overdue session (the past one, not today's)
+        $target3 = $recipients->firstWhere('user_id', $dosenOverdue->id);
+        $this->assertNotNull($target3);
+        $this->assertEquals(1, $target3['context']['jumlah_sesi']);
+        $this->assertEquals('1 Sesi Terlewat Belum Selesai', $target3['status_info']);
+        $this->assertStringContainsString('Sesi 2 Hari Lalu Belum Selesai', $target3['context']['daftar_mahasiswa']);
+        $this->assertStringNotContainsString('Bimbingan Hari Ini Jangan Masuk Lewat', $target3['context']['daftar_mahasiswa']);
+    }
+
+    public function test_send_uncompleted_mentoring_reminder_fails_if_only_today_sessions(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $dosen = User::factory()->create([
+            'role' => 'dosen',
+            'name' => 'Dosen Hanya Hari Ini',
+            'phone_number' => '081234567800',
+        ]);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Tes']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'pembimbing1_id' => $dosen->id,
+            'title' => 'Skripsi Hari Ini',
+            'status' => 'active',
+        ]);
+
+        // Session scheduled for today (e.g. 1 hour ago)
+        MentoringSession::create([
+            'thesis_id' => $thesis->id,
+            'dosen_id' => $dosen->id,
+            'scheduled_at' => Carbon::today()->setHour(8)->setMinute(0),
+            'topic' => 'Bimbingan Pagi Ini',
+            'status' => 'approved',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('monitoring.uncompleted-mentoring.remind'), [
+            'dosen_id' => $dosen->id,
+        ]);
+
+        $response->assertSessionHas('error', "Tidak ada sesi bimbingan yang terlewat untuk {$dosen->name}.");
+    }
 }

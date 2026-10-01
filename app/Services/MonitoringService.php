@@ -633,21 +633,22 @@ class MonitoringService
      */
     public function getUncompletedMentoringData(array $filters = []): array
     {
-        $scope = $filters['scope'] ?? 'all'; // 'all' (default), 'overdue' (lewat hari/sebelum hari ini), 'today' (hari ini terlewat)
+        $scope = $filters['scope'] ?? 'overdue'; // 'overdue' (default: lewat hari/sebelum hari ini), 'today' (jadwal hari ini), 'all' (semua)
         $dosenId = $filters['dosen_id'] ?? null;
         $search = $filters['search'] ?? null;
 
-        // Base Query: KETAT HANYA SESI YANG BELUM SELESAI DAN TANGGAL/JAMNYA SUDAH TERLEWAT
+        // Base Query: KETAT HANYA SESI YANG BELUM SELESAI
         $baseQuery = MentoringSession::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
-            ->whereNotIn('status', ['completed', 'rejected'])
-            ->where('scheduled_at', '<=', now());
+            ->whereNotIn('status', ['completed', 'rejected']);
 
         if ($scope === 'today') {
             $baseQuery->whereDate('scheduled_at', Carbon::today());
-        } elseif ($scope === 'overdue') {
-            $baseQuery->where('scheduled_at', '<', Carbon::today());
+        } elseif ($scope === 'all') {
+            $baseQuery->where('scheduled_at', '<=', now());
+        } else {
+            // 'overdue' default: sebelum hari ini
+            $baseQuery->where('scheduled_at', '<', Carbon::today()->startOfDay());
         }
-        // jika 'all', tetap where('scheduled_at', '<=', now())
 
         if ($dosenId) {
             $baseQuery->where(function($q) use ($dosenId) {
@@ -672,11 +673,10 @@ class MonitoringService
             ->where('scheduled_at', '<=', now())
             ->count();
         $globalOverdueCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])
-            ->where('scheduled_at', '<', Carbon::today())
+            ->where('scheduled_at', '<', Carbon::today()->startOfDay())
             ->count();
         $globalTodayCount = MentoringSession::whereNotIn('status', ['completed', 'rejected'])
             ->whereDate('scheduled_at', Carbon::today())
-            ->where('scheduled_at', '<=', now())
             ->count();
 
         $filteredSessionsCount = $allSessions->count();

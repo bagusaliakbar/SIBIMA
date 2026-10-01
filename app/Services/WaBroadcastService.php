@@ -326,16 +326,17 @@ class WaBroadcastService
      */
     protected function getDosenBelumSelesaiBimbingan(array $filters): Collection
     {
-        $scope = $filters['scope'] ?? 'all';
+        $scope = $filters['scope'] ?? 'overdue';
 
         $sessionsQuery = MentoringSession::with(['thesis.student', 'dosen'])
-            ->whereNotIn('status', ['completed', 'rejected'])
-            ->where('scheduled_at', '<=', now()); // KETAT: HANYA TANGGAL/JAM YANG SUDAH TERLEWAT
+            ->whereNotIn('status', ['completed', 'rejected']);
 
         if ($scope === 'today') {
             $sessionsQuery->whereDate('scheduled_at', Carbon::today());
-        } elseif ($scope === 'overdue') {
-            $sessionsQuery->where('scheduled_at', '<', Carbon::today());
+        } else {
+            // Sesi terlewat HANYA sesi sebelum hari ini (< Carbon::today())
+            // Sesi yang dijadwalkan hari ini BUKAN sesi yang lewat / terlewat
+            $sessionsQuery->where('scheduled_at', '<', Carbon::today()->startOfDay());
         }
 
         if (!empty($filters['dosen_id'])) {

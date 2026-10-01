@@ -621,7 +621,7 @@ class MonitoringController extends Controller implements HasMiddleware
     public function uncompletedMentoring(Request $request)
     {
         $filters = [
-            'scope' => $request->input('scope', 'all'), // 'all' (default: semua terlewat), 'overdue' (lewat hari), 'today' (hari ini terlewat)
+            'scope' => $request->input('scope', 'overdue'), // 'overdue' (default: lewat hari), 'today' (hari ini), 'all' (semua)
             'dosen_id' => $request->input('dosen_id'),
             'search' => $request->input('search'),
             'view' => $request->input('view', 'dosen'), // 'dosen' (default) or 'session'
@@ -659,7 +659,7 @@ class MonitoringController extends Controller implements HasMiddleware
                   ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
             })
             ->whereNotIn('status', ['completed', 'rejected'])
-            ->where('scheduled_at', '<=', now())
+            ->where('scheduled_at', '<', Carbon::today()->startOfDay())
             ->orderBy('scheduled_at', 'asc')
             ->get();
 
