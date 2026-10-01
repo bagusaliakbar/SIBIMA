@@ -18,6 +18,32 @@
          }" 
          x-init="$watch('viewMode', val => localStorage.setItem('sibima_wa_templates_view_mode', val))">
 
+        @if(!empty($isCircuitTripped))
+            <!-- Emergency Circuit Breaker Banner -->
+            <div class="p-5 rounded-2xl bg-amber-500/15 border-2 border-amber-500/40 text-amber-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-md shadow-lg">
+                <div class="flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-extrabold text-amber-300">Pengiriman WhatsApp Dijeda Otomatis (Circuit Breaker Aktif)</h4>
+                        <p class="text-xs text-amber-200/80 mt-0.5 leading-relaxed">
+                            Sistem mendeteksi kendala koneksi atau batas kuota/indikasi pemblokiran dari gateway WhatsApp:
+                            <span class="font-bold underline">{{ $circuitReason ?? 'Kendala gateway' }}</span>.
+                            Sistem otomatis menahan pengiriman pesan keluar untuk melindungi akun nomor WhatsApp dari pemblokiran permanen.
+                        </p>
+                    </div>
+                </div>
+                <form action="{{ route('wa-templates.reset-circuit') }}" method="POST" class="shrink-0">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>Reset & Coba Lagi</span>
+                    </button>
+                </form>
+            </div>
+        @endif
+
         <!-- Master Switch & Banner Info -->
         <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
             <div class="absolute -right-10 -bottom-10 w-56 h-56 {{ $isWhatsAppGloballyEnabled ? 'bg-emerald-500/10' : 'bg-rose-500/10' }} rounded-full blur-3xl pointer-events-none transition-all"></div>

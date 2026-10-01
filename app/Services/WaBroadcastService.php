@@ -611,11 +611,8 @@ class WaBroadcastService
                 try {
                     // Beri jeda halus antar panggilan HTTP ke server Fonnte (0.6 detik)
                     // Sementara jeda antar pesan sebenarnya ditangani secara terjadwal oleh parameter delay Fonnte
-                    if ($index > 0) {
-                        usleep(600000);
-                    }
-
-                    $isSent = $this->whatsAppService->sendMessage($phone, $renderedMsg, $delay);
+                    // Gunakan smart queue staggering agar setiap pesan siaran otomatis mendapatkan jeda berantai yang aman
+                    $isSent = $this->whatsAppService->sendMessage($phone, $renderedMsg);
 
                     if ($isSent) {
                         $log->update([

@@ -261,6 +261,7 @@ Route::middleware('auth')->group(function () {
         // WA Templates Management
         Route::get('/wa-templates', [App\Http\Controllers\WaTemplateController::class, 'index'])->name('wa-templates.index');
         Route::post('/wa-templates/toggle-global', [App\Http\Controllers\WaTemplateController::class, 'toggleGlobal'])->name('wa-templates.toggle-global');
+        Route::post('/wa-templates/reset-circuit', [App\Http\Controllers\WaTemplateController::class, 'resetCircuit'])->name('wa-templates.reset-circuit');
         Route::post('/wa-templates/{waTemplate}/toggle-status', [App\Http\Controllers\WaTemplateController::class, 'toggleStatus'])->name('wa-templates.toggle-status');
         Route::get('/wa-templates/{waTemplate}/edit', [App\Http\Controllers\WaTemplateController::class, 'edit'])->name('wa-templates.edit');
         Route::put('/wa-templates/{waTemplate}', [App\Http\Controllers\WaTemplateController::class, 'update'])->name('wa-templates.update');

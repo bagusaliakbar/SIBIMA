@@ -71,6 +71,31 @@ class Setting extends Model
     }
 
     /**
+     * Check if WhatsApp circuit breaker is currently tripped.
+     */
+    public static function isWhatsAppCircuitTripped(): bool
+    {
+        return Cache::has('wa_circuit_breaker_tripped');
+    }
+
+    /**
+     * Get the reason why WhatsApp circuit breaker was tripped.
+     */
+    public static function getWhatsAppCircuitReason(): ?string
+    {
+        return Cache::get('wa_circuit_breaker_reason');
+    }
+
+    /**
+     * Reset the WhatsApp circuit breaker.
+     */
+    public static function resetWhatsAppCircuit(): void
+    {
+        Cache::forget('wa_circuit_breaker_tripped');
+        Cache::forget('wa_circuit_breaker_reason');
+    }
+
+    /**
      * Cast string value to its respective type.
      *
      * @param mixed $value

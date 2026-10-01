@@ -38,13 +38,24 @@ class WaTemplateController extends Controller implements HasMiddleware
         $templates = $query->orderBy('category')->orderBy('id')->get();
         $categories = ['Bimbingan', 'Skripsi', 'Ujian', 'Yudisium', 'Pengingat', 'Ulang Tahun'];
         $isWhatsAppGloballyEnabled = Setting::isWhatsAppEnabled();
+        $isCircuitTripped = Setting::isWhatsAppCircuitTripped();
+        $circuitReason = Setting::getWhatsAppCircuitReason();
         $totalCount = WaTemplate::count();
         $categoryCounts = WaTemplate::groupBy('category')
             ->selectRaw('category, count(*) as count')
             ->pluck('count', 'category')
             ->toArray();
 
-        return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory', 'isWhatsAppGloballyEnabled', 'totalCount', 'categoryCounts'));
+        return view('wa_templates.index', compact('templates', 'categories', 'selectedCategory', 'isWhatsAppGloballyEnabled', 'isCircuitTripped', 'circuitReason', 'totalCount', 'categoryCounts'));
+    }
+
+    /**
+     * Reset the emergency circuit breaker so outgoing WhatsApp can resume.
+     */
+    public function resetCircuit(Request $request)
+    {
+        Setting::resetWhatsAppCircuit();
+        return redirect()->back()->with('success', 'Sirkuit darurat WhatsApp berhasil direset. Sistem siap mencoba mengirimkan pesan kembali.');
     }
 
     /**

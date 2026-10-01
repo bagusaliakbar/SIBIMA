@@ -20,6 +20,7 @@ class BulkUpdateMentoringSessionStatusRequest extends FormRequest
             'status' => 'required|in:absent,completed,approved',
             'feedback' => 'nullable|string',
             'feedback_document_url' => 'nullable|url|max:1000',
+            'notify_student_wa' => 'nullable|boolean',
         ];
     }
 

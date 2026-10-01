@@ -15,6 +15,7 @@ class MentoringStatusUpdatedNotification extends Notification implements ShouldQ
     public $session;
     public $status;
     public $feedback;
+    public $sendWhatsApp;
 
     /**
      * Create a new notification instance.
@@ -22,12 +23,14 @@ class MentoringStatusUpdatedNotification extends Notification implements ShouldQ
      * @param MentoringSession $session
      * @param string $status
      * @param string|null $feedback
+     * @param bool $sendWhatsApp
      */
-    public function __construct(MentoringSession $session, string $status, ?string $feedback = null)
+    public function __construct(MentoringSession $session, string $status, ?string $feedback = null, bool $sendWhatsApp = true)
     {
         $this->session = $session;
         $this->status = $status;
         $this->feedback = $feedback;
+        $this->sendWhatsApp = $sendWhatsApp;
     }
 
     /**
@@ -38,7 +41,9 @@ class MentoringStatusUpdatedNotification extends Notification implements ShouldQ
      */
     public function via($notifiable)
     {
-        return [FonnteChannel::class, 'database'];
+        return $this->sendWhatsApp 
+            ? [FonnteChannel::class, 'database'] 
+            : ['database'];
     }
 
     /**

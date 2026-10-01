@@ -426,6 +426,16 @@ class MentoringService
      */
     public function updateStatus(MentoringSession $session, array $data)
     {
+        // Determine whether to send WhatsApp notification to student:
+        // 1. Explicit override if provided in $data['notify_student_wa'].
+        // 2. Otherwise: if session is in the past (scheduled_at > 12 hours ago), default to FALSE (silent)
+        //    to protect the WhatsApp gateway from mass bans during backlog cleanup.
+        // 3. For current/future or upcoming sessions, default to TRUE.
+        $isPastSession = $session->scheduled_at && $session->scheduled_at->lt(now()->subHours(12));
+        $sendWhatsApp = array_key_exists('notify_student_wa', $data)
+            ? (bool) $data['notify_student_wa']
+            : ! $isPastSession;
+
         if ($data['status'] === 'absent') {
             $session->update([
                 'status' => 'completed',
@@ -437,7 +447,8 @@ class MentoringService
                 $session->thesis->student->notify(new \App\Notifications\MentoringStatusUpdatedNotification(
                     $session,
                     'absent',
-                    $data['feedback'] ?? null
+                    $data['feedback'] ?? null,
+                    $sendWhatsApp
                 ));
             }
 
@@ -491,7 +502,8 @@ class MentoringService
                 $session->thesis->student->notify(new \App\Notifications\MentoringStatusUpdatedNotification(
                     $session,
                     $data['status'],
-                    $data['feedback'] ?? null
+                    $data['feedback'] ?? null,
+                    $sendWhatsApp
                 ));
             }
 
@@ -514,13 +526,17 @@ class MentoringService
     {
         $updatedCount = 0;
         $status = $data['status'];
+        $notifyStudentWa = array_key_exists('notify_student_wa', $data)
+            ? (bool) $data['notify_student_wa']
+            : false; // default for bulk operations is FALSE to avoid blast bans
 
-        \DB::transaction(function () use ($sessions, $data, $status, &$updatedCount) {
+        \DB::transaction(function () use ($sessions, $data, $status, $notifyStudentWa, &$updatedCount) {
             foreach ($sessions as $session) {
                 $this->updateStatus($session, [
                     'status' => $status,
                     'feedback' => $data['feedback'] ?? null,
                     'feedback_document_url' => $data['feedback_document_url'] ?? null,
+                    'notify_student_wa' => $notifyStudentWa,
                 ]);
                 $updatedCount++;
             }

@@ -1993,13 +1993,27 @@
                                                                                 <input type="hidden" name="status" value="completed">
                                                                                 <label class="block text-xs font-extrabold text-slate-800 dark:text-slate-200 mb-1">Catatan Hasil Bimbingan:</label>
                                                                                 <textarea name="feedback" rows="2" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:ring-emerald-500 focus:border-emerald-500 mb-2 leading-relaxed" placeholder="Tuliskan catatan dan arahan bimbingan untuk mahasiswa..."></textarea>
-                                                                                <div class="mb-3">
+                                                                                <div class="mb-2.5">
                                                                                     <div class="relative">
                                                                                         <input type="url" name="feedback_document_url" placeholder="Link dokumen/revisi Google Drive (opsional)..." class="block w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-emerald-500 focus:border-emerald-500 py-1.5 pl-7 pr-2">
                                                                                         <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-slate-400">
                                                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="mb-3">
+                                                                                    <label class="inline-flex items-center gap-2 cursor-pointer select-none text-xs text-slate-600 dark:text-slate-300">
+                                                                                        <input type="checkbox" name="notify_student_wa" value="1" 
+                                                                                               {{ ($session->scheduled_at && $session->scheduled_at->isPast()) ? '' : 'checked' }}
+                                                                                               class="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500">
+                                                                                        <span class="flex items-center gap-1.5 font-medium">
+                                                                                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2z"/></svg>
+                                                                                            Kirim notifikasi WhatsApp ke mahasiswa
+                                                                                            @if($session->scheduled_at && $session->scheduled_at->isPast())
+                                                                                                <span class="text-[10px] text-slate-400 italic">(Otomatis nonaktif untuk sesi lampau)</span>
+                                                                                            @endif
+                                                                                        </span>
+                                                                                    </label>
                                                                                 </div>
                                                                                 <div class="flex items-center justify-end space-x-2">
                                                                                     <button type="button" @click="showFeedback = false" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold cursor-pointer">Batal</button>
@@ -2297,7 +2311,21 @@
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div class="flex space-x-2">
+                                                                                            <div class="mb-2">
+                                                                                                    <label class="inline-flex items-center gap-1.5 cursor-pointer select-none text-[11px] text-slate-600 dark:text-slate-300">
+                                                                                                        <input type="checkbox" name="notify_student_wa" value="1" 
+                                                                                                               {{ ($session->scheduled_at && $session->scheduled_at->isPast()) ? '' : 'checked' }}
+                                                                                                               class="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500">
+                                                                                                        <span class="flex items-center gap-1 font-medium">
+                                                                                                            <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2z"/></svg>
+                                                                                                            <span>Notif WA</span>
+                                                                                                            @if($session->scheduled_at && $session->scheduled_at->isPast())
+                                                                                                                <span class="text-[9px] text-slate-400 italic">(off sesi lampau)</span>
+                                                                                                            @endif
+                                                                                                        </span>
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                                <div class="flex space-x-2">
                                                                                                 <button type="submit" class="flex-1 px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer">Simpan</button>
                                                                                                 <button type="button" @click="showFeedback = false" class="px-2 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 rounded-xl text-[10px] font-black uppercase cursor-pointer">Batal</button>
                                                                                             </div>
@@ -4208,6 +4236,22 @@
                                           placeholder="Contoh: Mahasiswa tidak hadir tanpa keterangan pada jam yang telah ditentukan..."></textarea>
                             </div>
 
+                            <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                                    <input type="checkbox" name="notify_student_wa" value="1" 
+                                           class="mt-0.5 rounded border-slate-300 dark:border-slate-600 text-rose-600 focus:ring-rose-500">
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2z"/></svg>
+                                            Kirim Notifikasi WhatsApp ke Mahasiswa
+                                        </span>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                                            Default tidak dicentang untuk aksi massal guna melindungi nomor WhatsApp kampus dari risiko pemblokiran spam.
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+
                             <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
                                 <button type="button" 
                                         @click="closeModal()" 
@@ -4299,6 +4343,22 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                                    <input type="checkbox" name="notify_student_wa" value="1" 
+                                           class="mt-0.5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500">
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2z"/></svg>
+                                            Kirim Notifikasi WhatsApp ke Mahasiswa
+                                        </span>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                                            Default tidak dicentang untuk aksi massal guna melindungi nomor WhatsApp kampus dari risiko pemblokiran spam.
+                                        </p>
+                                    </div>
+                                </label>
                             </div>
 
                             <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
