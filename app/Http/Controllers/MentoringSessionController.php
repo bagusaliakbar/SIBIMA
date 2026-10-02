@@ -572,6 +572,39 @@ class MentoringSessionController extends Controller
 
     public function confirmAttendance(Request $request, MentoringSession $session)
     {
+        $user = Auth::user();
+
+        // Handle GET requests (e.g. proxy redirect, browser refresh, history navigation, or direct link)
+        if ($request->isMethod('get')) {
+            $status = $request->query('status');
+
+            if (in_array($status, ['attending', 'permission'])) {
+                $this->authorize('confirmAttendance', $session);
+
+                $reason = $request->query('reason');
+                $message = $this->mentoringService->confirmAttendance($session, [
+                    'status' => $status,
+                    'reason' => $reason,
+                ]);
+
+                $redirectRoute = ($user && $user->role === 'mahasiswa') ? 'mentoring.student_index' : 'mentoring-sessions.index';
+                return redirect()->route($redirectRoute, ['highlight' => $session->id])
+                    ->with('success', $message);
+            }
+
+            // GET without status parameter: gracefully redirect to student bimbingan page
+            $redirectRoute = ($user && $user->role === 'mahasiswa') ? 'mentoring.student_index' : 'mentoring-sessions.index';
+            
+            $statusMsg = match($session->student_attendance_status) {
+                'attending' => 'Status kehadiran pada sesi bimbingan ini: Akan Hadir.',
+                'permission' => 'Status kehadiran pada sesi bimbingan ini: Izin (' . ($session->student_attendance_reason ?: 'Berhalangan') . ').',
+                default => 'Silakan konfirmasi kehadiran Anda pada jadwal bimbingan berikut.',
+            };
+
+            return redirect()->route($redirectRoute, ['highlight' => $session->id])
+                ->with('info', $statusMsg);
+        }
+
         // Only the session's student can confirm
         $this->authorize('confirmAttendance', $session);
 
@@ -595,7 +628,8 @@ class MentoringSessionController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', $message);
+        $fallbackUrl = ($user && $user->role === 'mahasiswa') ? route('mentoring.student_index') : route('mentoring-sessions.index');
+        return redirect()->back(fallback: $fallbackUrl)->with('success', $message);
     }
 
     /**

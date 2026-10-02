@@ -156,4 +156,67 @@ class MentoringAttendanceConfirmationTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_student_can_confirm_attendance_via_get_with_status_query()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Sistem Informasi Skripsi',
+            'pembimbing1_id' => $dosen->id,
+            'status' => 'active',
+        ]);
+
+        $session = MentoringSession::create([
+            'thesis_id' => $thesis->id,
+            'dosen_id' => $dosen->id,
+            'topic' => 'Pembahasan Bab 1-3',
+            'scheduled_at' => now()->addDays(2),
+            'type' => 'offline',
+            'status' => 'approved',
+            'student_attendance_status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($student)
+            ->get(route('mentoring-sessions.confirm-attendance', [$session->id, 'status' => 'attending']));
+
+        $response->assertRedirect(route('mentoring.student_index', ['highlight' => $session->id]));
+        $response->assertSessionHas('success');
+        $session->refresh();
+
+        $this->assertEquals('attending', $session->student_attendance_status);
+        $this->assertNotNull($session->student_confirmed_at);
+    }
+
+    public function test_get_confirm_attendance_without_status_redirects_gracefully_without_405()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Sistem Informasi Skripsi',
+            'pembimbing1_id' => $dosen->id,
+            'status' => 'active',
+        ]);
+
+        $session = MentoringSession::create([
+            'thesis_id' => $thesis->id,
+            'dosen_id' => $dosen->id,
+            'topic' => 'Pembahasan Bab 1-3',
+            'scheduled_at' => now()->addDays(2),
+            'type' => 'offline',
+            'status' => 'approved',
+            'student_attendance_status' => 'pending',
+        ]);
+
+        // Access via plain GET (like browser refresh, back button, or direct URL)
+        $response = $this->actingAs($student)
+            ->get(route('mentoring-sessions.confirm-attendance', $session->id));
+
+        $response->assertRedirect(route('mentoring.student_index', ['highlight' => $session->id]));
+        $response->assertSessionHas('info');
+    }
 }

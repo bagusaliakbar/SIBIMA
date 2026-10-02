@@ -157,7 +157,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/mentoring-sessions/bulk-status', [App\Http\Controllers\MentoringSessionController::class, 'bulkStatus'])->name('mentoring-sessions.bulk-status');
     Route::post('/mentoring-sessions/{session}/upload-document', [App\Http\Controllers\MentoringSessionController::class, 'uploadDocument'])->name('mentoring-sessions.upload-document');
     Route::delete('/mentoring-sessions/{session}/document', [App\Http\Controllers\MentoringSessionController::class, 'deleteDocument'])->name('mentoring-sessions.delete-document');
-    Route::post('/mentoring-sessions/{session}/confirm-attendance', [App\Http\Controllers\MentoringSessionController::class, 'confirmAttendance'])->name('mentoring-sessions.confirm-attendance');
+    Route::match(['get', 'post'], '/mentoring-sessions/{session}/confirm-attendance', [App\Http\Controllers\MentoringSessionController::class, 'confirmAttendance'])->name('mentoring-sessions.confirm-attendance');
 
     // Logbooks
     Route::get('/logbooks', [App\Http\Controllers\LogbookController::class, 'index'])->name('logbooks.index');
