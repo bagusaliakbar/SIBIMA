@@ -28,7 +28,7 @@ class LecturerLogbookKpiTest extends TestCase
             'created_at' => now()->subDays(20),
         ]);
 
-        // Student 2: 4 sessions (ready_up), entry_year 2022
+        // Student 2: 8 sessions (4x P1 & 4x P2, ready_up), entry_year 2022
         $mhs2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Siap UP', 'entry_year' => 2022]);
         $thesis2 = Thesis::create([
             'student_id' => $mhs2->id,
@@ -46,9 +46,17 @@ class LecturerLogbookKpiTest extends TestCase
                 'is_absent' => false,
                 'scheduled_at' => now()->subDays(3 - $i),
             ]);
+            MentoringSession::create([
+                'thesis_id' => $thesis2->id,
+                'dosen_id' => $dosen2->id,
+                'topic' => "Bimbingan UP P2 ke-{$i}",
+                'status' => 'completed',
+                'is_absent' => false,
+                'scheduled_at' => now()->subDays(3 - $i),
+            ]);
         }
 
-        // Student 3: 8 sessions (ready_sidang), entry_year 2022
+        // Student 3: 16 sessions (8x P1 & 8x P2, ready_sidang), entry_year 2022
         $mhs3 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Siap Sidang', 'entry_year' => 2022]);
         $thesis3 = Thesis::create([
             'student_id' => $mhs3->id,
@@ -62,6 +70,14 @@ class LecturerLogbookKpiTest extends TestCase
                 'thesis_id' => $thesis3->id,
                 'dosen_id' => $dosen->id,
                 'topic' => "Bimbingan Sidang ke-{$i}",
+                'status' => 'completed',
+                'is_absent' => false,
+                'scheduled_at' => now()->subDays(2),
+            ]);
+            MentoringSession::create([
+                'thesis_id' => $thesis3->id,
+                'dosen_id' => $dosen2->id,
+                'topic' => "Bimbingan Sidang P1 ke-{$i}",
                 'status' => 'completed',
                 'is_absent' => false,
                 'scheduled_at' => now()->subDays(2),
@@ -183,18 +199,18 @@ class LecturerLogbookKpiTest extends TestCase
         $activeResponse = $this->actingAs($dosen)->get(route('logbooks.index'));
         $activeResponse->assertSee('Target UP');
         $activeResponse->assertSee('Target Sidang');
-        $activeResponse->assertSee('4/4 Sesi');
         $activeResponse->assertSee('8/8 Sesi');
+        $activeResponse->assertSee('16/16 Sesi');
         $activeResponse->assertSee('PROGRES TARGET BIMBINGAN');
         $activeResponse->assertSee('Tab Filter Cepat');
-        $activeResponse->assertSee('Filter Peran:');
+        $activeResponse->assertSee('Filter Peran');
         $activeResponse->assertSee('Sebagai Pembimbing 1');
         $activeResponse->assertSee('Sebagai Pembimbing 2');
-        $activeResponse->assertSee('Kategori Progres:');
-        $activeResponse->assertSee('Tahap Proposal (< 4 sesi)');
-        $activeResponse->assertSee('Siap UP (≥ 4 sesi)');
-        $activeResponse->assertSee('Siap Sidang (≥ 8 sesi)');
-        $activeResponse->assertSee('Macet (> 14 hari)');
+        $activeResponse->assertSee('Kategori Progres');
+        $activeResponse->assertSee('Tahap Proposal');
+        $activeResponse->assertSee('Siap Seminar Proposal (UP)');
+        $activeResponse->assertSee('Siap Sidang Skripsi');
+        $activeResponse->assertSee('Macet / Pasif');
         $activeResponse->assertSee('Semua Angkatan');
         $activeResponse->assertSee('Angkatan 2021');
         $activeResponse->assertSee('Angkatan 2022');
