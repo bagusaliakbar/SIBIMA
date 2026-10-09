@@ -49,7 +49,32 @@ class MonitoringController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $pembimbingId = $request->input('pembimbing_id');
         $entryYear = $request->input('entry_year');
+        $accStatus = $request->input('acc_status', 'all');
         
+        $baseCountQuery = Thesis::where('status', '!=', 'completed')
+            ->when($pembimbingId, function($query, $pembimbingId) {
+                return $query->where(function($q) use ($pembimbingId) {
+                    $q->where('pembimbing1_id', $pembimbingId)
+                      ->orWhere('pembimbing2_id', $pembimbingId);
+                });
+            })
+            ->when($entryYear, function($query, $entryYear) {
+                return $query->whereHas('student', function($q) use ($entryYear) {
+                    $q->where('entry_year', $entryYear);
+                });
+            })
+            ->when($search, function($query, $search) {
+                return $query->search($search);
+            });
+
+        $accCounts = [
+            'all' => (clone $baseCountQuery)->count(),
+            'ready_seminar' => (clone $baseCountQuery)->accStatus('ready_seminar')->count(),
+            'ready_defense' => (clone $baseCountQuery)->accStatus('ready_defense')->count(),
+            'partial_acc' => (clone $baseCountQuery)->accStatus('partial_acc')->count(),
+            'in_mentoring' => (clone $baseCountQuery)->accStatus('in_mentoring')->count(),
+        ];
+
         $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->withMentoringCounts()
             ->search($search)
@@ -64,9 +89,17 @@ class MonitoringController extends Controller implements HasMiddleware
                     $q->where('entry_year', $entryYear);
                 });
             })
+            ->when($accStatus && $accStatus !== 'all', function($query) use ($accStatus) {
+                return $query->accStatus($accStatus);
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(15)
-            ->appends(['search' => $search, 'pembimbing_id' => $pembimbingId, 'entry_year' => $entryYear]);
+            ->appends([
+                'search' => $search, 
+                'pembimbing_id' => $pembimbingId, 
+                'entry_year' => $entryYear,
+                'acc_status' => $accStatus,
+            ]);
 
         $dosens = User::where('role', 'dosen')->orderBy('name')->get();
         $entryYears = User::where('role', 'mahasiswa')->whereNotNull('entry_year')->distinct()->orderBy('entry_year', 'desc')->pluck('entry_year');
@@ -139,7 +172,7 @@ class MonitoringController extends Controller implements HasMiddleware
             ]
         ];
 
-        return view('monitoring.index', compact('theses', 'search', 'dosens', 'pembimbingId', 'entryYears', 'entryYear', 'chartData'));
+        return view('monitoring.index', compact('theses', 'search', 'dosens', 'pembimbingId', 'entryYears', 'entryYear', 'chartData', 'accStatus', 'accCounts'));
     }
 
     public function export(Request $request)
@@ -148,11 +181,16 @@ class MonitoringController extends Controller implements HasMiddleware
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $format = $request->input('format', 'excel');
+        $accStatus = $request->input('acc_status');
 
         $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2']);
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        if ($accStatus && $accStatus !== 'all') {
+            $query->accStatus($accStatus);
         }
 
         switch ($type) {

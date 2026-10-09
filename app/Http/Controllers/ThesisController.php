@@ -51,6 +51,7 @@ class ThesisController extends Controller
         $status = $request->input('status', $defaultStatus);
         $cohortFilter = $request->input('cohort_filter', 'all');
         $entryYear = $request->input('entry_year');
+        $accStatus = $request->input('acc_status', 'all');
 
         $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
             ->forUser($user)
@@ -58,6 +59,10 @@ class ThesisController extends Controller
 
         if ($status !== 'all') {
             $thesesQuery->where('status', $status);
+        }
+
+        if ($accStatus !== 'all') {
+            $thesesQuery->accStatus($accStatus, $user);
         }
 
         if ($user->role === 'dosen' && in_array($roleFilter, ['p1', 'p2'])) {
@@ -95,7 +100,7 @@ class ThesisController extends Controller
 
         $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
         
-        $pdf = Pdf::loadView('theses.pdf', compact('theses', 'kaprodi', 'cohortFilter', 'entryYear'));
+        $pdf = Pdf::loadView('theses.pdf', compact('theses', 'kaprodi', 'cohortFilter', 'entryYear', 'accStatus'));
         return $pdf->download('data-skripsi-' . now()->format('Y-m-d') . '.pdf');
     }
 
@@ -350,6 +355,12 @@ class ThesisController extends Controller
             $thesesQuery->mentoringHealth($mentoringHealth);
         }
 
+        // Filter ACC Status (Seminar UP & Sidang)
+        $accStatus = $request->input('acc_status', 'all');
+        if (!empty($accStatus) && $accStatus !== 'all') {
+            $thesesQuery->accStatus($accStatus, $user);
+        }
+
         $theses = $thesesQuery->orderBy('created_at', 'desc')
             ->paginate(10)
             ->appends([
@@ -359,6 +370,7 @@ class ThesisController extends Controller
                 'cohort_filter' => $cohortFilter,
                 'entry_year' => $entryYear,
                 'mentoring_health' => $mentoringHealth,
+                'acc_status' => $accStatus,
             ]);
 
         // Distinct available entry years for dropdown filter
@@ -404,6 +416,19 @@ class ThesisController extends Controller
             'critical' => (clone $baseScopeQuery)->mentoringHealth('critical')->count(),
         ];
 
+        $accCounts = [
+            'all' => (clone $baseScopeQuery)->count(),
+            'ready_seminar' => (clone $baseScopeQuery)->accStatus('ready_seminar')->count(),
+            'ready_defense' => (clone $baseScopeQuery)->accStatus('ready_defense')->count(),
+            'partial_acc' => (clone $baseScopeQuery)->accStatus('partial_acc')->count(),
+            'in_mentoring' => (clone $baseScopeQuery)->accStatus('in_mentoring')->count(),
+        ];
+        if ($user->role === 'dosen') {
+            $accCounts['my_acc_pending'] = (clone $baseScopeQuery)->accStatus('my_acc_pending', $user)->count();
+            $accCounts['my_acc_approved'] = (clone $baseScopeQuery)->accStatus('my_acc_approved', $user)->count();
+            $accCounts['waiting_partner'] = (clone $baseScopeQuery)->accStatus('waiting_partner', $user)->count();
+        }
+
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosens = User::where('role', 'dosen')
                 ->withCount(['thesesAsP1 as p1_count' => function($query) {
@@ -425,7 +450,7 @@ class ThesisController extends Controller
             return view('theses.index', compact(
                 'theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter',
                 'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts',
-                'mentoringHealth', 'mentoringHealthCounts'
+                'mentoringHealth', 'mentoringHealthCounts', 'accStatus', 'accCounts'
             ));
         }
 
@@ -438,7 +463,7 @@ class ThesisController extends Controller
         return view('theses.index', compact(
             'theses', 'search', 'status', 'roleFilter', 'dosenStats',
             'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts',
-            'mentoringHealth', 'mentoringHealthCounts'
+            'mentoringHealth', 'mentoringHealthCounts', 'accStatus', 'accCounts'
         ));
     }
 

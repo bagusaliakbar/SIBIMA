@@ -65,7 +65,7 @@
                             :value="$search ?? ''" 
                             placeholder="Cari nama, NPM, judul..." 
                             route="theses.index"
-                            :params="['status' => $status ?? '', 'role_filter' => $roleFilter ?? '', 'cohort_filter' => $cohortFilter ?? '', 'entry_year' => $entryYear ?? '']" />
+                            :params="['status' => $status ?? '', 'role_filter' => $roleFilter ?? '', 'cohort_filter' => $cohortFilter ?? '', 'entry_year' => $entryYear ?? '', 'mentoring_health' => $mentoringHealth ?? 'all', 'acc_status' => $accStatus ?? 'all']" />
                     </div>
 
                     @if(Auth::user()->role === 'dosen')
@@ -74,6 +74,8 @@
                             <form action="{{ route('theses.index') }}" method="GET" class="relative">
                                 <input type="hidden" name="status" value="{{ $status ?? 'active' }}">
                                 <input type="hidden" name="cohort_filter" value="{{ $cohortFilter ?? 'all' }}">
+                                <input type="hidden" name="mentoring_health" value="{{ $mentoringHealth ?? 'all' }}">
+                                <input type="hidden" name="acc_status" value="{{ $accStatus ?? 'all' }}">
                                 @if($entryYear)
                                     <input type="hidden" name="entry_year" value="{{ $entryYear }}">
                                 @endif
@@ -95,7 +97,7 @@
                             </form>
 
                             <!-- Export PDF for Dosen -->
-                            <a href="{{ route('theses.export-pdf', ['search' => $search ?? '', 'status' => $status ?? 'active', 'role_filter' => $roleFilter ?? '', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '']) }}" 
+                            <a href="{{ route('theses.export-pdf', ['search' => $search ?? '', 'status' => $status ?? 'active', 'role_filter' => $roleFilter ?? '', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'mentoring_health' => $mentoringHealth ?? 'all', 'acc_status' => $accStatus ?? 'all']) }}" 
                                class="inline-flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all" 
                                title="Ekspor PDF Mahasiswa Bimbingan">
                                 <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -148,13 +150,13 @@
 
                             <!-- Group 2: Export Dropdown / Segment -->
                             <div class="inline-flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xs divide-x divide-slate-200 dark:divide-slate-700 overflow-hidden">
-                                <a href="{{ route('theses.export-excel', ['search' => request('search'), 'status' => $status ?? 'all', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '']) }}" 
+                                <a href="{{ route('theses.export-excel', ['search' => request('search'), 'status' => $status ?? 'all', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'mentoring_health' => $mentoringHealth ?? 'all', 'acc_status' => $accStatus ?? 'all']) }}" 
                                    class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors" 
                                    title="Ekspor ke Excel">
                                     <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     <span>Excel</span>
                                 </a>
-                                <a href="{{ route('theses.export-pdf', ['search' => request('search'), 'status' => $status ?? 'all', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '']) }}" 
+                                <a href="{{ route('theses.export-pdf', ['search' => request('search'), 'status' => $status ?? 'all', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'mentoring_health' => $mentoringHealth ?? 'all', 'acc_status' => $accStatus ?? 'all']) }}" 
                                    class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors" 
                                    title="Ekspor ke PDF">
                                     <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -422,8 +424,169 @@
                         </div>
                     </div>
 
+                    <!-- 3. Dropdown Filter Status Kelayakan ACC (Seminar / Sidang) -->
+                    <div class="relative" x-data="{ openAccDropdown: false }" @click.outside="openAccDropdown = false">
+                        <button type="button" 
+                                @click="openAccDropdown = !openAccDropdown"
+                                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer shadow-2xs {{ ($accStatus ?? 'all') !== 'all' ? 'bg-indigo-50/80 dark:bg-indigo-950/30 border-indigo-300 dark:border-indigo-500/50 text-indigo-700 dark:text-indigo-300 ring-2 ring-indigo-500/10' : 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700' }}"
+                                aria-haspopup="true"
+                                :aria-expanded="openAccDropdown">
+                            <svg class="w-3.5 h-3.5 {{ ($accStatus ?? 'all') !== 'all' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-400' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            
+                            @if(($accStatus ?? 'all') === 'ready_seminar')
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                                <span>Siap Seminar</span>
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
+                                    {{ $accCounts['ready_seminar'] ?? 0 }}
+                                </span>
+                            @elseif(($accStatus ?? 'all') === 'ready_defense')
+                                <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
+                                <span>Siap Sidang</span>
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300">
+                                    {{ $accCounts['ready_defense'] ?? 0 }}
+                                </span>
+                            @elseif(($accStatus ?? 'all') === 'partial_acc')
+                                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                <span>ACC 1/2</span>
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                    {{ $accCounts['partial_acc'] ?? 0 }}
+                                </span>
+                            @elseif(($accStatus ?? 'all') === 'my_acc_pending')
+                                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 animate-pulse"></span>
+                                <span>Menunggu ACC Saya</span>
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
+                                    {{ $accCounts['my_acc_pending'] ?? 0 }}
+                                </span>
+                            @elseif(($accStatus ?? 'all') === 'waiting_partner')
+                                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                <span>Tunggu Rekan</span>
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                    {{ $accCounts['waiting_partner'] ?? 0 }}
+                                </span>
+                            @else
+                                <span>Status ACC: Semua</span>
+                            @endif
+
+                            <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="openAccDropdown ? 'rotate-180 text-indigo-600 dark:text-indigo-400' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <!-- Dropdown Menu ACC Status -->
+                        <div x-show="openAccDropdown"
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                             class="absolute left-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
+                             style="display: none;">
+                            
+                            <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                <span>Kelayakan Ujian & ACC</span>
+                                @if(($accStatus ?? 'all') !== 'all')
+                                    <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'all'])) }}" 
+                                       class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 font-bold lowercase hover:underline">
+                                        Reset
+                                    </a>
+                                @endif
+                            </div>
+
+                            <div class="py-1 space-y-0.5">
+                                <!-- 1. Semua -->
+                                <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'all'])) }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($accStatus ?? 'all') === 'all' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full {{ ($accStatus ?? 'all') === 'all' ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600' }} shrink-0"></span>
+                                        <span>Semua Status ACC</span>
+                                    </div>
+                                    <span class="text-[10px] font-black text-slate-400">{{ $accCounts['all'] ?? 0 }}</span>
+                                </a>
+
+                                <!-- 2. Siap Seminar UP -->
+                                <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'ready_seminar'])) }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($accStatus ?? 'all') === 'ready_seminar' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                                        <div>
+                                            <span>🎓 Siap Seminar UP</span>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">ACC Lengkap (P1 & P2)</p>
+                                        </div>
+                                    </div>
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
+                                        {{ $accCounts['ready_seminar'] ?? 0 }}
+                                    </span>
+                                </a>
+
+                                <!-- 3. Siap Sidang Akhir -->
+                                <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'ready_defense'])) }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($accStatus ?? 'all') === 'ready_defense' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
+                                        <div>
+                                            <span>🏛️ Siap Sidang Akhir</span>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">ACC Lengkap (P1 & P2)</p>
+                                        </div>
+                                    </div>
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300">
+                                        {{ $accCounts['ready_defense'] ?? 0 }}
+                                    </span>
+                                </a>
+
+                                <!-- 4. ACC Parsial -->
+                                <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'partial_acc'])) }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($accStatus ?? 'all') === 'partial_acc' ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                        <div>
+                                            <span>⏳ ACC Parsial (1/2)</span>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Baru 1 Pembimbing ACC</p>
+                                        </div>
+                                    </div>
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                        {{ $accCounts['partial_acc'] ?? 0 }}
+                                    </span>
+                                </a>
+
+                                @if(Auth::user()->role === 'dosen')
+                                    <div class="pt-1 mt-1 border-t border-slate-100 dark:border-slate-700/80">
+                                        <!-- Khusus Dosen: Menunggu ACC Saya -->
+                                        <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'my_acc_pending'])) }}"
+                                           class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($accStatus ?? 'all') === 'my_acc_pending' ? 'bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 animate-pulse"></span>
+                                                <div>
+                                                    <span class="font-bold text-rose-700 dark:text-rose-300">Menunggu ACC Saya</span>
+                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Belum Anda berikan ACC</p>
+                                                </div>
+                                            </div>
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
+                                                {{ $accCounts['my_acc_pending'] ?? 0 }}
+                                            </span>
+                                        </a>
+
+                                        <!-- Khusus Dosen: Menunggu Rekan Pembimbing -->
+                                        <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'waiting_partner'])) }}"
+                                           class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ ($accStatus ?? 'all') === 'waiting_partner' ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60' }}">
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                                <div>
+                                                    <span>Tunggu Rekan Pembimbing</span>
+                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Anda sudah ACC, rekan belum</p>
+                                                </div>
+                                            </div>
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                                {{ $accCounts['waiting_partner'] ?? 0 }}
+                                            </span>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Reset Filter Button (Jika filter aktif) -->
-                    @if(($cohortFilter ?? 'all') !== 'all' || (!empty($entryYear) && $entryYear !== 'all') || (($mentoringHealth ?? 'all') !== 'all'))
+                    @if(($cohortFilter ?? 'all') !== 'all' || (!empty($entryYear) && $entryYear !== 'all') || (($mentoringHealth ?? 'all') !== 'all') || (($accStatus ?? 'all') !== 'all'))
                         <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '']) }}"
                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-800/60 rounded-xl transition-all shadow-2xs"
                            title="Reset semua filter">
@@ -439,6 +602,7 @@
                         <input type="hidden" name="status" value="{{ $status ?? ($user->role === 'dosen' ? 'active' : 'all') }}">
                         <input type="hidden" name="cohort_filter" value="{{ $cohortFilter ?? 'all' }}">
                         <input type="hidden" name="mentoring_health" value="{{ $mentoringHealth ?? 'all' }}">
+                        <input type="hidden" name="acc_status" value="{{ $accStatus ?? 'all' }}">
                         @if($search)
                             <input type="hidden" name="search" value="{{ $search }}">
                         @endif
@@ -714,6 +878,24 @@
                                             </span>
                                         @endif
                                     </div>
+
+                                    <!-- ACC Readiness Tag -->
+                                    @if($thesis->isAccSidangFinal())
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-500/30 shadow-2xs" title="Kedua Pembimbing telah memberikan ACC Sidang Akhir">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                                            <span>ACC Sidang</span>
+                                        </span>
+                                    @elseif($thesis->isAccUpFinal())
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-500/30 shadow-2xs" title="Kedua Pembimbing telah memberikan ACC Seminar UP">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                            <span>ACC Seminar</span>
+                                        </span>
+                                    @elseif($thesis->acc_up_p1 || $thesis->acc_up_p2 || $thesis->acc_sidang_p1 || $thesis->acc_sidang_p2)
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-500/30" title="ACC Parsial: Baru disetujui salah satu pembimbing">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            <span>ACC 1/2</span>
+                                        </span>
+                                    @endif
 
                                     @if($thesis->status === 'active')
                                         @php

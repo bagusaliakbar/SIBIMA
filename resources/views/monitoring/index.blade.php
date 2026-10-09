@@ -118,22 +118,163 @@
         </script>
         @endif
 
+        <!-- Interactive KPI Summary Cards for ACC Status -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            <!-- 1. Siap Seminar UP -->
+            <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => ($accStatus ?? 'all') === 'ready_seminar' ? 'all' : 'ready_seminar'])) }}"
+               class="group relative overflow-hidden rounded-2xl p-4 sm:p-5 transition-all duration-200 border cursor-pointer {{ ($accStatus ?? 'all') === 'ready_seminar' ? 'bg-emerald-500/10 dark:bg-emerald-500/15 border-emerald-500/50 dark:border-emerald-500/60 shadow-md ring-2 ring-emerald-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700/80 hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:shadow-sm' }}">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-800/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    @if(($accStatus ?? 'all') === 'ready_seminar')
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white shadow-2xs">
+                            Aktif
+                        </span>
+                    @endif
+                </div>
+                <div class="mt-3">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{{ $accCounts['ready_seminar'] ?? 0 }}</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">Siap Seminar UP</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">ACC Lengkap (P1 & P2)</p>
+                </div>
+            </a>
+
+            <!-- 2. Siap Sidang Akhir -->
+            <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => ($accStatus ?? 'all') === 'ready_defense' ? 'all' : 'ready_defense'])) }}"
+               class="group relative overflow-hidden rounded-2xl p-4 sm:p-5 transition-all duration-200 border cursor-pointer {{ ($accStatus ?? 'all') === 'ready_defense' ? 'bg-indigo-500/10 dark:bg-indigo-500/15 border-indigo-500/50 dark:border-indigo-500/60 shadow-md ring-2 ring-indigo-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-500/40 hover:shadow-sm' }}">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-800/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    @if(($accStatus ?? 'all') === 'ready_defense')
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-white shadow-2xs">
+                            Aktif
+                        </span>
+                    @endif
+                </div>
+                <div class="mt-3">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{{ $accCounts['ready_defense'] ?? 0 }}</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">Siap Sidang Akhir</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">ACC Lengkap (P1 & P2)</p>
+                </div>
+            </a>
+
+            <!-- 3. ACC Parsial (1/2) -->
+            <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => ($accStatus ?? 'all') === 'partial_acc' ? 'all' : 'partial_acc'])) }}"
+               class="group relative overflow-hidden rounded-2xl p-4 sm:p-5 transition-all duration-200 border cursor-pointer {{ ($accStatus ?? 'all') === 'partial_acc' ? 'bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/50 dark:border-amber-500/60 shadow-md ring-2 ring-amber-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700/80 hover:border-amber-300 dark:hover:border-amber-500/40 hover:shadow-sm' }}">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-100 dark:border-amber-800/60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    @if(($accStatus ?? 'all') === 'partial_acc')
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-600 text-white shadow-2xs">
+                            Aktif
+                        </span>
+                    @endif
+                </div>
+                <div class="mt-3">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{{ $accCounts['partial_acc'] ?? 0 }}</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">ACC Parsial (1/2)</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">Menunggu 1 Pembimbing</p>
+                </div>
+            </a>
+
+            <!-- 4. Dalam Bimbingan (Belum ACC) -->
+            <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => ($accStatus ?? 'all') === 'in_mentoring' ? 'all' : 'in_mentoring'])) }}"
+               class="group relative overflow-hidden rounded-2xl p-4 sm:p-5 transition-all duration-200 border cursor-pointer {{ ($accStatus ?? 'all') === 'in_mentoring' ? 'bg-slate-500/10 dark:bg-slate-500/15 border-slate-400 dark:border-slate-500 shadow-md ring-2 ring-slate-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-sm' }}">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </div>
+                    @if(($accStatus ?? 'all') === 'in_mentoring')
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-700 dark:bg-slate-600 text-white shadow-2xs">
+                            Aktif
+                        </span>
+                    @endif
+                </div>
+                <div class="mt-3">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{{ $accCounts['in_mentoring'] ?? 0 }}</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">Dalam Bimbingan</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">Belum di-ACC Ujian</p>
+                </div>
+            </a>
+        </div>
+
         <x-table-card 
             title="Status Progres Mahasiswa"
             :footer="$theses->links()">
             
             <x-slot name="headerActions">
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    <x-search-input 
-                        name="search" 
-                        :value="$search ?? ''" 
-                        placeholder="Cari mahasiswa..." 
-                        route="monitoring.index" />
-                    
+                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 w-full">
+                    <!-- Search Input -->
+                    <div class="w-full sm:w-60">
+                        <x-search-input 
+                            name="search" 
+                            :value="$search ?? ''" 
+                            placeholder="Cari mahasiswa, judul..." 
+                            route="monitoring.index"
+                            :params="['pembimbing_id' => $pembimbingId ?? '', 'entry_year' => $entryYear ?? '', 'acc_status' => $accStatus ?? 'all']" />
+                    </div>
 
-                    <a href="{{ route('monitoring.export') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 transition-all shadow-sm whitespace-nowrap gap-2 group">
-                        <svg class="w-4 h-4 text-emerald-100 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Export Data
+                    <!-- Dropdown Filter ACC Status -->
+                    <form action="{{ route('monitoring.index') }}" method="GET" class="relative">
+                        @if($search)
+                            <input type="hidden" name="search" value="{{ $search }}">
+                        @endif
+                        @if($pembimbingId)
+                            <input type="hidden" name="pembimbing_id" value="{{ $pembimbingId }}">
+                        @endif
+                        @if($entryYear)
+                            <input type="hidden" name="entry_year" value="{{ $entryYear }}">
+                        @endif
+                        <select name="acc_status" onchange="this.form.submit()" 
+                                style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                                class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-bold shadow-2xs cursor-pointer">
+                            <option value="all" {{ ($accStatus ?? 'all') === 'all' ? 'selected' : '' }}>
+                                Semua Status ACC ({{ $accCounts['all'] ?? 0 }})
+                            </option>
+                            <option value="ready_seminar" {{ ($accStatus ?? '') === 'ready_seminar' ? 'selected' : '' }}>
+                                🎓 Siap Seminar UP ({{ $accCounts['ready_seminar'] ?? 0 }})
+                            </option>
+                            <option value="ready_defense" {{ ($accStatus ?? '') === 'ready_defense' ? 'selected' : '' }}>
+                                🏛️ Siap Sidang Akhir ({{ $accCounts['ready_defense'] ?? 0 }})
+                            </option>
+                            <option value="partial_acc" {{ ($accStatus ?? '') === 'partial_acc' ? 'selected' : '' }}>
+                                ⏳ ACC Parsial 1/2 ({{ $accCounts['partial_acc'] ?? 0 }})
+                            </option>
+                            <option value="in_mentoring" {{ ($accStatus ?? '') === 'in_mentoring' ? 'selected' : '' }}>
+                                📝 Dalam Bimbingan ({{ $accCounts['in_mentoring'] ?? 0 }})
+                            </option>
+                        </select>
+                    </form>
+
+                    @if(($accStatus ?? 'all') !== 'all')
+                        <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => 'all'])) }}" 
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 hover:bg-orange-100 transition-colors"
+                           title="Reset filter status ACC">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <span>Reset ACC</span>
+                        </a>
+                    @endif
+
+                    <!-- Export Data Button -->
+                    <a href="{{ route('monitoring.export', ['acc_status' => $accStatus ?? 'all', 'pembimbing_id' => $pembimbingId ?? '', 'entry_year' => $entryYear ?? '']) }}" 
+                       class="inline-flex items-center px-3.5 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-2xs whitespace-nowrap gap-1.5 group">
+                        <svg class="w-3.5 h-3.5 text-emerald-100 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Export Data</span>
                     </a>
                 </div>
             </x-slot>

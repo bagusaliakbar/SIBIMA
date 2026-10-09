@@ -417,6 +417,189 @@ class Thesis extends Model
     }
 
     /**
+     * Scope query to filter theses based on examination ACC readiness (Seminar UP & Sidang).
+     */
+    public function scopeAccStatus($query, $status, ?User $user = null)
+    {
+        if (empty($status) || $status === 'all') {
+            return $query;
+        }
+
+        switch ($status) {
+            case 'ready_seminar':
+                // Siap Seminar UP: Sudah di-ACC Seminar oleh P1 & P2
+                return $query->where('acc_up_p1', true)
+                             ->where('acc_up_p2', true);
+
+            case 'ready_defense':
+                // Siap Sidang Akhir: Sudah di-ACC Sidang oleh P1 & P2
+                return $query->where('acc_sidang_p1', true)
+                             ->where('acc_sidang_p2', true);
+
+            case 'partial_seminar':
+                // Baru 1 dari 2 pembimbing yang ACC Seminar
+                return $query->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('acc_up_p1', true)->where('acc_up_p2', false);
+                    })->orWhere(function ($sub) {
+                        $sub->where('acc_up_p1', false)->where('acc_up_p2', true);
+                    });
+                });
+
+            case 'partial_defense':
+                // Baru 1 dari 2 pembimbing yang ACC Sidang
+                return $query->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('acc_sidang_p1', true)->where('acc_sidang_p2', false);
+                    })->orWhere(function ($sub) {
+                        $sub->where('acc_sidang_p1', false)->where('acc_sidang_p2', true);
+                    });
+                });
+
+            case 'partial_acc':
+                // Parsial baik di tahap seminar atau sidang (ada 1 pembimbing yang ACC dan 1 belum)
+                return $query->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('acc_up_p1', true)->where('acc_up_p2', false);
+                    })->orWhere(function ($sub) {
+                        $sub->where('acc_up_p1', false)->where('acc_up_p2', true);
+                    })->orWhere(function ($sub) {
+                        $sub->where('acc_sidang_p1', true)->where('acc_sidang_p2', false);
+                    })->orWhere(function ($sub) {
+                        $sub->where('acc_sidang_p1', false)->where('acc_sidang_p2', true);
+                    });
+                });
+
+            case 'in_mentoring':
+            case 'not_acc':
+                // Belum di-ACC seminar maupun sidang sama sekali
+                return $query->where('acc_up_p1', false)
+                             ->where('acc_up_p2', false)
+                             ->where('acc_sidang_p1', false)
+                             ->where('acc_sidang_p2', false);
+
+            // Filter Khusus Dosen:
+            case 'my_acc_pending':
+                if ($user && $user->role === 'dosen') {
+                    return $query->where(function ($q) use ($user) {
+                        $q->where(function ($sub) use ($user) {
+                            $sub->where('pembimbing1_id', $user->id)
+                                ->where('acc_up_p1', false);
+                        })->orWhere(function ($sub) use ($user) {
+                            $sub->where('pembimbing2_id', $user->id)
+                                ->where('acc_up_p2', false);
+                        });
+                    });
+                }
+                break;
+
+            case 'my_acc_approved':
+                if ($user && $user->role === 'dosen') {
+                    return $query->where(function ($q) use ($user) {
+                        $q->where(function ($sub) use ($user) {
+                            $sub->where('pembimbing1_id', $user->id)
+                                ->where(function ($s) {
+                                    $s->where('acc_up_p1', true)->orWhere('acc_sidang_p1', true);
+                                });
+                        })->orWhere(function ($sub) use ($user) {
+                            $sub->where('pembimbing2_id', $user->id)
+                                ->where(function ($s) {
+                                    $s->where('acc_up_p2', true)->orWhere('acc_sidang_p2', true);
+                                });
+                        });
+                    });
+                }
+                break;
+
+            case 'waiting_partner':
+                if ($user && $user->role === 'dosen') {
+                    return $query->where(function ($q) use ($user) {
+                        $q->where(function ($sub) use ($user) {
+                            $sub->where('pembimbing1_id', $user->id)
+                                ->where(function ($s) {
+                                    $s->where(function ($u) {
+                                        $u->where('acc_up_p1', true)->where('acc_up_p2', false);
+                                    })->orWhere(function ($d) {
+                                        $d->where('acc_sidang_p1', true)->where('acc_sidang_p2', false);
+                                    });
+                                });
+                        })->orWhere(function ($sub) use ($user) {
+                            $sub->where('pembimbing2_id', $user->id)
+                                ->where(function ($s) {
+                                    $s->where(function ($u) {
+                                        $u->where('acc_up_p2', true)->where('acc_up_p1', false);
+                                    })->orWhere(function ($d) {
+                                        $d->where('acc_sidang_p2', true)->where('acc_sidang_p1', false);
+                                    });
+                                });
+                        });
+                    });
+                }
+                break;
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get structured ACC summary state for UI badges.
+     */
+    public function getAccSummaryAttribute(): array
+    {
+        if ($this->isAccSidangFinal()) {
+            return [
+                'status' => 'ready_defense',
+                'label' => 'Siap Sidang Akhir',
+                'stage' => 'Sidang Akhir',
+                'color' => 'indigo',
+                'is_final' => true,
+            ];
+        }
+
+        if ($this->acc_sidang_p1 || $this->acc_sidang_p2) {
+            $approvedSlot = $this->acc_sidang_p1 ? 'P1' : 'P2';
+            $waitingSlot = $this->acc_sidang_p1 ? 'P2' : 'P1';
+            return [
+                'status' => 'partial_defense',
+                'label' => "Sidang ({$approvedSlot} ACC, Tunggu {$waitingSlot})",
+                'stage' => 'Sidang Akhir',
+                'color' => 'amber',
+                'is_final' => false,
+            ];
+        }
+
+        if ($this->isAccUpFinal()) {
+            return [
+                'status' => 'ready_seminar',
+                'label' => 'Siap Seminar UP',
+                'stage' => 'Seminar UP',
+                'color' => 'emerald',
+                'is_final' => true,
+            ];
+        }
+
+        if ($this->acc_up_p1 || $this->acc_up_p2) {
+            $approvedSlot = $this->acc_up_p1 ? 'P1' : 'P2';
+            $waitingSlot = $this->acc_up_p1 ? 'P2' : 'P1';
+            return [
+                'status' => 'partial_seminar',
+                'label' => "Seminar ({$approvedSlot} ACC, Tunggu {$waitingSlot})",
+                'stage' => 'Seminar UP',
+                'color' => 'amber',
+                'is_final' => false,
+            ];
+        }
+
+        return [
+            'status' => 'in_mentoring',
+            'label' => 'Dalam Bimbingan',
+            'stage' => 'Pra-Seminar',
+            'color' => 'slate',
+            'is_final' => false,
+        ];
+    }
+
+    /**
      * Common academic stopwords & Indonesian conjunctions/prepositions ignored in keyword matching.
      */
     public static function getStopwords(): array
