@@ -264,57 +264,248 @@
                     </div>
                 @endif
                 <div class="p-6">
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4 uppercase tracking-widest">Detail Berkas Persyaratan:</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @php
-                            $fileLabels = [
-                                'file_formulir' => 'Formulir Pendaftaran Sidang',
-                                'file_transkrip' => 'Scan Transkrip Nilai Akhir',
-                                'file_acc_pembimbing' => 'Scan Bukti ACC Pembimbing',
-                                'file_logbook' => 'Scan Kartu Bimbingan / Logbook',
-                                'file_pembayaran' => 'Scan Bukti Pembayaran Sidang',
-                                'file_skripsi' => 'Dokumen Soft File Skripsi',
-                                'file_ktm' => 'Scan KTM',
-                                'file_pkkmb_univ' => 'Scan Sertifikat PKKMB Univ',
-                                'file_pkkmb_fak' => 'Scan Sertifikat PKKMB Fak',
-                                'file_makrab' => 'Scan Sertifikat Makrab',
-                                'file_cisco' => 'Scan Sertifikat Cisco',
-                                'file_workshop' => 'Scan Sertifikat Workshop',
-                                'file_organisasi' => 'Scan Sertifikat / Surat Aktif Organisasi',
-                                'file_toefl' => 'Scan Sertifikat TOEFL',
-                                'file_kewirausahaan' => 'Scan Sertifikat Wirausaha',
-                                'file_tahsin' => 'Scan Sertifikat Tahsin',
-                                'file_komputer' => 'Scan Sertifikat Komputer',
-                                'file_perpus_pinjam' => 'Scan Bebas Pinjam Perpus',
-                                'file_perpus_sumbang' => 'Scan Sumbang Buku Perpus',
-                                'file_ijazah' => 'Scan Ijazah SMA/SMK',
-                            ];
-                        @endphp
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 pb-4 border-b border-slate-100 dark:border-slate-700/80">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">Detail Berkas Persyaratan Sidang</h4>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
+                                    20 Berkas Terlampir
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Seluruh berkas persyaratan sidang skripsi yang telah Anda ajukan untuk diverifikasi oleh BAAK / Kaprodi.</p>
+                        </div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-700/70 text-slate-500 dark:text-slate-400 text-xs">
+                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            <span class="font-medium text-[11px]">Tersimpan di Google Drive</span>
+                        </div>
+                    </div>
 
-                        @foreach($fileLabels as $field => $label)
-                            <div class="relative p-3 border rounded-xl transition-all {{ isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected' ? 'border-rose-200 bg-rose-50/30 dark:bg-rose-900/10 dark:border-rose-800' : 'border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50' }}">
-                                <div class="flex items-start">
-                                    <div class="p-2 bg-slate-100 dark:bg-slate-900 rounded-lg mr-3">
-                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center justify-between gap-2">
-                                            <p class="text-[10px] font-bold text-slate-700 dark:text-slate-200 truncate">{{ $label }}</p>
-                                            @if(isset($application->file_reviews[$field]['status']))
-                                                <span class="text-[8px] font-black uppercase px-1.5 py-0.5 rounded flex-shrink-0 {{ $application->file_reviews[$field]['status'] === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                                                    {{ $application->file_reviews[$field]['status'] === 'approved' ? 'OK' : 'REJECT' }}
+                    @php
+                        $fileFields = [
+                            'file_formulir' => [
+                                'label' => 'Formulir Pendaftaran Sidang',
+                                'subtitle' => 'Scan Formulir Pendaftaran Resmi',
+                                'category' => 'Administrasi',
+                                'theme' => ['bg' => 'bg-indigo-50 dark:bg-indigo-950/40', 'text' => 'text-indigo-600 dark:text-indigo-400', 'border' => 'border-indigo-100 dark:border-indigo-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 13l1.5 1.5 3-3" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 17h8" />'
+                            ],
+                            'file_transkrip' => [
+                                'label' => 'Scan Transkrip Nilai Akhir',
+                                'subtitle' => 'Transkrip Nilai Sem. 1 s/d Akhir',
+                                'category' => 'Akademik',
+                                'theme' => ['bg' => 'bg-amber-50 dark:bg-amber-950/40', 'text' => 'text-amber-600 dark:text-amber-400', 'border' => 'border-amber-100 dark:border-amber-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 17v-3M12 17v-6M16 17v-2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 11h2" />'
+                            ],
+                            'file_acc_pembimbing' => [
+                                'label' => 'Scan Bukti ACC Pembimbing',
+                                'subtitle' => 'Persetujuan Sidang P1 & P2',
+                                'category' => 'Persetujuan',
+                                'theme' => ['bg' => 'bg-amber-50 dark:bg-amber-950/40', 'text' => 'text-amber-600 dark:text-amber-400', 'border' => 'border-amber-100 dark:border-amber-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="14.5" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.8 14.5l1 1 1.7-1.7" />'
+                            ],
+                            'file_logbook' => [
+                                'label' => 'Scan Kartu Bimbingan / Logbook',
+                                'subtitle' => 'Kartu Kendali Logbook Validasi',
+                                'category' => 'Bimbingan',
+                                'theme' => ['bg' => 'bg-sky-50 dark:bg-sky-950/40', 'text' => 'text-sky-600 dark:text-sky-400', 'border' => 'border-sky-100 dark:border-sky-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h.01M11 12h5" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 15h.01M11 15h5" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 18h.01M11 18h3" />'
+                            ],
+                            'file_pembayaran' => [
+                                'label' => 'Scan Bukti Pembayaran Sidang',
+                                'subtitle' => 'Kwitansi / Slip Bukti Bayar',
+                                'category' => 'Keuangan',
+                                'theme' => ['bg' => 'bg-emerald-50 dark:bg-emerald-950/40', 'text' => 'text-emerald-600 dark:text-emerald-400', 'border' => 'border-emerald-100 dark:border-emerald-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><rect x="7" y="11" width="10" height="7" rx="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 14h10m-7 2h2" />'
+                            ],
+                            'file_skripsi' => [
+                                'label' => 'Dokumen Soft File Skripsi',
+                                'subtitle' => 'Draft Lengkap Naskah Skripsi',
+                                'category' => 'Naskah Skripsi',
+                                'theme' => ['bg' => 'bg-purple-50 dark:bg-purple-950/40', 'text' => 'text-purple-600 dark:text-purple-400', 'border' => 'border-purple-100 dark:border-purple-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 11.5l-4.5 2 4.5 2 4.5-2-4.5-2z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 14.8v1.8c0 .7 1.1 1.2 2.5 1.2s2.5-.5 2.5-1.2v-1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16.5 13.5v2" />'
+                            ],
+                            'file_ktm' => [
+                                'label' => 'Scan Kartu Tanda Mahasiswa (KTM)',
+                                'subtitle' => 'Identitas Resmi Mahasiswa',
+                                'category' => 'Identitas',
+                                'theme' => ['bg' => 'bg-blue-50 dark:bg-blue-950/40', 'text' => 'text-blue-600 dark:text-blue-400', 'border' => 'border-blue-100 dark:border-blue-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="12.5" r="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 18c0-1.8 1.8-3 4-3s4 1.2 4 3" />'
+                            ],
+                            'file_ijazah' => [
+                                'label' => 'Scan Ijazah SMA/SMK',
+                                'subtitle' => 'Ijazah Pendidikan Terakhir',
+                                'category' => 'Identitas',
+                                'theme' => ['bg' => 'bg-slate-100 dark:bg-slate-800', 'text' => 'text-slate-600 dark:text-slate-300', 'border' => 'border-slate-200 dark:border-slate-700'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="13" r="2.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 15.5l-1 3.5 3-1.5 3 1.5-1-3.5" />'
+                            ],
+                            'file_pkkmb_univ' => [
+                                'label' => 'Scan Sertifikat PKKMB Univ',
+                                'subtitle' => 'Pengenalan Kampus Universitas',
+                                'category' => 'Sertifikasi',
+                                'theme' => ['bg' => 'bg-teal-50 dark:bg-teal-950/40', 'text' => 'text-teal-600 dark:text-teal-400', 'border' => 'border-teal-100 dark:border-teal-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="13" r="2.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.2 15.5l-1.2 3.5 3-1.5 3 1.5-1.2-3.5" />'
+                            ],
+                            'file_pkkmb_fak' => [
+                                'label' => 'Scan Sertifikat PKKMB Fak',
+                                'subtitle' => 'Pengenalan Kampus Fakultas',
+                                'category' => 'Sertifikasi',
+                                'theme' => ['bg' => 'bg-teal-50 dark:bg-teal-950/40', 'text' => 'text-teal-600 dark:text-teal-400', 'border' => 'border-teal-100 dark:border-teal-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="13" r="2.8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 11.5v3M10.5 13h3" />'
+                            ],
+                            'file_makrab' => [
+                                'label' => 'Scan Sertifikat Makrab',
+                                'subtitle' => 'Malam Keakraban / LKMM',
+                                'category' => 'Kemahasiswaan',
+                                'theme' => ['bg' => 'bg-orange-50 dark:bg-orange-950/40', 'text' => 'text-orange-600 dark:text-orange-400', 'border' => 'border-orange-100 dark:border-orange-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="14" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 12l.5 1.2 1.3.2-1 1 .2 1.3-1-.6-1 .6.2-1.3-1-1 1.3-.2z" />'
+                            ],
+                            'file_cisco' => [
+                                'label' => 'Scan Sertifikat Cisco IPv6',
+                                'subtitle' => 'Pelatihan Jaringan Komputer',
+                                'category' => 'Kompetensi IT',
+                                'theme' => ['bg' => 'bg-cyan-50 dark:bg-cyan-950/40', 'text' => 'text-cyan-600 dark:text-cyan-400', 'border' => 'border-cyan-100 dark:border-cyan-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><circle cx="12" cy="14" r="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.5 14h7M12 10.5a5 5 0 010 7M12 10.5a5 5 0 000 7" />'
+                            ],
+                            'file_workshop' => [
+                                'label' => 'Scan Sertifikat Workshop',
+                                'subtitle' => 'Seminar / Workshop Keilmuan',
+                                'category' => 'Seminar',
+                                'theme' => ['bg' => 'bg-violet-50 dark:bg-violet-950/40', 'text' => 'text-violet-600 dark:text-violet-400', 'border' => 'border-violet-100 dark:border-violet-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><rect x="7.5" y="11" width="9" height="6" rx="1" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 17v2m-2.5 0h5" />'
+                            ],
+                            'file_organisasi' => [
+                                'label' => 'Scan Sertifikat Organisasi',
+                                'subtitle' => 'Surat Keterangan Aktif Ormawa',
+                                'category' => 'Organisasi',
+                                'theme' => ['bg' => 'bg-rose-50 dark:bg-rose-950/40', 'text' => 'text-rose-600 dark:text-rose-400', 'border' => 'border-rose-100 dark:border-rose-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 11h7l-1.5 2.5 1.5 2.5H8v3" />'
+                            ],
+                            'file_toefl' => [
+                                'label' => 'Scan Sertifikat TOEFL',
+                                'subtitle' => 'Uji Kemampuan Bahasa Inggris',
+                                'category' => 'Bahasa',
+                                'theme' => ['bg' => 'bg-indigo-50 dark:bg-indigo-950/40', 'text' => 'text-indigo-600 dark:text-indigo-400', 'border' => 'border-indigo-100 dark:border-indigo-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.5 18l3.5-7 3.5 7M9.5 15.5h5" />'
+                            ],
+                            'file_kewirausahaan' => [
+                                'label' => 'Scan Sertifikat Wirausaha',
+                                'subtitle' => 'Pelatihan / Program Kewirausahaan',
+                                'category' => 'Kewirausahaan',
+                                'theme' => ['bg' => 'bg-emerald-50 dark:bg-emerald-950/40', 'text' => 'text-emerald-600 dark:text-emerald-400', 'border' => 'border-emerald-100 dark:border-emerald-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 16l3-3 2 2 3.5-4m-2 0h2v2" />'
+                            ],
+                            'file_tahsin' => [
+                                'label' => 'Scan Sertifikat Tahsin',
+                                'subtitle' => 'Kelulusan Uji Baca Al-Qur\'an',
+                                'category' => 'Keagamaan',
+                                'theme' => ['bg' => 'bg-emerald-50 dark:bg-emerald-950/40', 'text' => 'text-emerald-600 dark:text-emerald-400', 'border' => 'border-emerald-100 dark:border-emerald-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 11.5a3 3 0 002.5 4.5 3.3 3.3 0 11-2.5-4.5z" /><circle cx="15.5" cy="12" r=".6" fill="currentColor" />'
+                            ],
+                            'file_komputer' => [
+                                'label' => 'Scan Sertifikat Komputer',
+                                'subtitle' => 'Sertifikasi Keahlian Komputer',
+                                'category' => 'Kompetensi IT',
+                                'theme' => ['bg' => 'bg-blue-50 dark:bg-blue-950/40', 'text' => 'text-blue-600 dark:text-blue-400', 'border' => 'border-blue-100 dark:border-blue-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><rect x="8" y="11.5" width="8" height="5.5" rx="1" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 17v1.5m4-1.5v1.5M6.5 13.5h1.5m8 0h1.5" />'
+                            ],
+                            'file_perpus_pinjam' => [
+                                'label' => 'Scan Bebas Pinjam Perpus',
+                                'subtitle' => 'Surat Bebas Pustaka Universitas',
+                                'category' => 'Perpustakaan',
+                                'theme' => ['bg' => 'bg-amber-50 dark:bg-amber-950/40', 'text' => 'text-amber-600 dark:text-amber-400', 'border' => 'border-amber-100 dark:border-amber-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h4m-4 3h3" /><circle cx="14.5" cy="14.5" r="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.5 14.5l.7.7 1.3-1.3" />'
+                            ],
+                            'file_perpus_sumbang' => [
+                                'label' => 'Scan Sumbang Buku Perpus',
+                                'subtitle' => 'Tanda Terima Sumbangan Buku',
+                                'category' => 'Perpustakaan',
+                                'theme' => ['bg' => 'bg-rose-50 dark:bg-rose-950/40', 'text' => 'text-rose-600 dark:text-rose-400', 'border' => 'border-rose-100 dark:border-rose-800/50'],
+                                'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h8M8 15h5" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.5 15.5l1.5-1.5 1.5 1.5-1.5 1.5z" />'
+                            ],
+                        ];
+                    @endphp
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        @foreach($fileFields as $field => $info)
+                            @php
+                                $review = $application->file_reviews[$field] ?? null;
+                                $isRejected = ($review['status'] ?? '') === 'rejected';
+                                $isApproved = ($review['status'] ?? '') === 'approved';
+                                $hasFile = !empty($application->$field);
+                            @endphp
+                            <div class="group relative flex flex-col justify-between p-4 rounded-2xl border transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 {{ $isRejected ? 'border-rose-200 bg-rose-50/40 dark:border-rose-900/60 dark:bg-rose-950/20' : 'border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-800/90 hover:border-slate-300 dark:hover:border-slate-600' }}">
+                                <div>
+                                    <!-- Top row: Icon Badge + Category + Status Pill -->
+                                    <div class="flex items-start justify-between gap-3 mb-3">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border {{ $info['theme']['bg'] }} {{ $info['theme']['text'] }} {{ $info['theme']['border'] }} shadow-2xs transition-transform group-hover:scale-105">
+                                                <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    {!! $info['svg'] !!}
+                                                </svg>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                                    {{ $info['category'] }}
+                                                </span>
+                                                <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug truncate" title="{{ $info['label'] }}">
+                                                    {{ $info['label'] }}
+                                                </h5>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status Pill -->
+                                        <div class="shrink-0">
+                                            @if($isApproved)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                    <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                    <span>Valid</span>
+                                                </span>
+                                            @elseif($isRejected)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                                    <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    <span>Revisi</span>
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-600/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                                    <span>Diproses</span>
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="mt-1 flex items-center gap-2">
-                                            <a href="{{ $application->$field }}" target="_blank" class="text-[9px] font-bold text-indigo-600 hover:underline">Buka Link Dokumen</a>
-                                        </div>
-                                        @if(isset($application->file_reviews[$field]['note']) && $application->file_reviews[$field]['note'])
-                                            <div class="mt-2 p-1.5 bg-rose-100/50 dark:bg-rose-900/30 rounded border border-rose-200/50 dark:border-rose-800/50">
-                                                <p class="text-[9px] text-rose-700 dark:text-rose-400 font-medium italic leading-tight">"{{ $application->file_reviews[$field]['note'] }}"</p>
-                                            </div>
-                                        @endif
                                     </div>
+
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mb-3 line-clamp-1">
+                                        {{ $info['subtitle'] }}
+                                    </p>
+
+                                    <!-- Rejection Note if any -->
+                                    @if($isRejected && !empty($review['note']))
+                                        <div class="mb-3 p-2.5 bg-rose-100/70 dark:bg-rose-900/40 rounded-xl border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300">
+                                            <div class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                                                <svg class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span>Catatan Validator:</span>
+                                            </div>
+                                            <p class="text-xs italic mt-0.5 leading-relaxed">"{{ $review['note'] }}"</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Footer: Action link to Google Drive -->
+                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2 mt-auto">
+                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                        <span>Google Drive</span>
+                                    </span>
+
+                                    @if($hasFile)
+                                        <a href="{{ $application->$field }}" target="_blank" rel="noopener noreferrer" 
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 border border-orange-200/80 dark:border-orange-800/50 transition-all shadow-2xs group-hover:shadow-xs cursor-pointer">
+                                            <span>Buka Dokumen</span>
+                                            <svg class="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="text-[11px] text-slate-400 italic">Belum diunggah</span>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -332,10 +523,10 @@
                             <form action="{{ route('thesis-defense-applications.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    @foreach($fileLabels as $field => $label)
+                                    @foreach($fileFields as $field => $info)
                                         @if(isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected')
                                             <div class="space-y-2">
-                                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">{{ $label }} <span class="text-red-500">*</span></label>
+                                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">{{ $info['label'] }} <span class="text-red-500">*</span></label>
                                                 <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold tracking-wide mb-2">
                                                     Masukkan link dari Google Drive.
                                                 </p>
