@@ -298,6 +298,7 @@ class ThesisController extends Controller
         $user = Auth::user();
         $search = $request->input('search');
         $roleFilter = $request->input('role_filter');
+        $filter = $request->input('filter', 'all');
         $cohortFilter = $request->input('cohort_filter', 'all');
         $entryYear = $request->input('entry_year');
 
@@ -307,6 +308,94 @@ class ThesisController extends Controller
 
         $defaultStatus = $user->role === 'dosen' ? 'active' : 'all';
         $status = $request->input('status', $defaultStatus);
+
+        // Pre-compute KPI Stats for Dosen
+        $stats = null;
+        $proposalIds = [];
+        $readyUpIds = [];
+        $readySidangIds = [];
+        $stalledIds = [];
+
+        if ($user->role === 'dosen') {
+            $dosenId = $user->id;
+            $activeThesesForKpi = Thesis::where(function ($q) use ($dosenId) {
+                    $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
+                })
+                ->where('status', '!=', 'completed')
+                ->where('status', '!=', 'rejected')
+                ->withCount([
+                    'mentoringSessions as completed_sessions_count' => function ($q) {
+                        $q->where('status', 'completed')->where('is_absent', false);
+                    },
+                    'mentoringSessions as my_completed_sessions_count' => function ($q) use ($dosenId) {
+                        $q->where('dosen_id', $dosenId)->where('status', 'completed')->where('is_absent', false);
+                    }
+                ])
+                ->with([
+                    'pembimbing1',
+                    'pembimbing2',
+                    'mentoringSessions' => function ($q) {
+                        $q->where('status', 'completed')
+                          ->where('is_absent', false)
+                          ->orderBy('scheduled_at', 'desc');
+                    }
+                ])
+                ->get();
+
+            $completedCountTotal = Thesis::where(function ($q) use ($dosenId) {
+                    $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId);
+                })
+                ->where('status', 'completed')
+                ->count();
+
+            $countP1 = $activeThesesForKpi->where('pembimbing1_id', $dosenId)->count();
+            $countP2 = $activeThesesForKpi->where('pembimbing2_id', $dosenId)->count();
+
+            foreach ($activeThesesForKpi as $t) {
+                $completedCount = (int) $t->completed_sessions_count;
+                $p1Count = $t->mentoringSessions ? $t->mentoringSessions->where('dosen_id', $t->pembimbing1_id)->count() : 0;
+                $p2Count = $t->mentoringSessions ? $t->mentoringSessions->where('dosen_id', $t->pembimbing2_id)->count() : 0;
+
+                // Tahap Proposal (< 8 sesi bimbingan atau belum memenuhi 4x P1 & 4x P2)
+                if ($p1Count < 4 || $p2Count < 4) {
+                    $proposalIds[] = $t->id;
+                }
+
+                // Siap Seminar Proposal (UP): minimal 4 sesi P1 & 4 sesi P2
+                if ($p1Count >= 4 && $p2Count >= 4) {
+                    $readyUpIds[] = $t->id;
+                }
+
+                // Siap Sidang Akhir: minimal 8 sesi P1 & 8 sesi P2
+                if ($p1Count >= 8 && $p2Count >= 8) {
+                    $readySidangIds[] = $t->id;
+                }
+
+                // Perlu Perhatian (Pasif / Macet)
+                if ($completedCount === 0) {
+                    $stalledIds[] = $t->id;
+                } else {
+                    $lastSession = $t->mentoringSessions->first();
+                    if ($lastSession && $lastSession->scheduled_at) {
+                        $daysSince = (int) \Carbon\Carbon::parse($lastSession->scheduled_at)->startOfDay()->diffInDays(now()->startOfDay());
+                        if ($daysSince > 14) {
+                            $stalledIds[] = $t->id;
+                        }
+                    }
+                }
+            }
+
+            $stats = [
+                'total' => $activeThesesForKpi->count(),
+                'p1' => $countP1,
+                'p2' => $countP2,
+                'proposal' => count($proposalIds),
+                'ready_up' => count($readyUpIds),
+                'ready_sidang' => count($readySidangIds),
+                'stalled' => count($stalledIds),
+                'graduated_total' => $completedCountTotal,
+            ];
+        }
 
         $thesesQuery = Thesis::with([
             'student', 
@@ -318,13 +407,44 @@ class ThesisController extends Controller
             'seminarApplications',
             'defenseApplications',
             'seminarScheduleDetails',
-            'defenseScheduleDetails'
+            'defenseScheduleDetails',
+            'mentoringSessions' => function ($q) {
+                $q->where('status', 'completed')
+                  ->where('is_absent', false)
+                  ->orderBy('scheduled_at', 'desc');
+            }
+        ])
+        ->withCount([
+            'mentoringSessions as completed_sessions_count' => function ($q) {
+                $q->where('status', 'completed')->where('is_absent', false);
+            },
+            'mentoringSessions as my_completed_sessions_count' => function ($q) use ($user) {
+                $q->where('dosen_id', $user->id)->where('status', 'completed')->where('is_absent', false);
+            }
         ])
             ->forUser($user)
             ->search($search);
 
-        if ($status !== 'all') {
-            $thesesQuery->where('status', $status);
+        if ($user->role === 'dosen') {
+            if ($status === 'completed') {
+                $thesesQuery->where('status', 'completed');
+            } else {
+                $thesesQuery->where('status', '!=', 'completed')->where('status', '!=', 'rejected');
+
+                if ($filter === 'proposal') {
+                    $thesesQuery->whereIn('id', $proposalIds);
+                } elseif ($filter === 'ready_up') {
+                    $thesesQuery->whereIn('id', $readyUpIds);
+                } elseif ($filter === 'ready_sidang') {
+                    $thesesQuery->whereIn('id', $readySidangIds);
+                } elseif ($filter === 'stalled') {
+                    $thesesQuery->whereIn('id', $stalledIds);
+                }
+            }
+        } else {
+            if ($status !== 'all') {
+                $thesesQuery->where('status', $status);
+            }
         }
 
         if ($user->role === 'dosen' && in_array($roleFilter, ['p1', 'p2'])) {
@@ -374,16 +494,17 @@ class ThesisController extends Controller
         }
 
         $theses = $thesesQuery->orderBy('created_at', 'desc')
-            ->paginate(10)
-            ->appends([
+            ->paginate(12)
+            ->appends(array_filter([
                 'search' => $search, 
-                'status' => $status, 
-                'role_filter' => $roleFilter,
-                'cohort_filter' => $cohortFilter,
-                'entry_year' => $entryYear,
-                'mentoring_health' => $mentoringHealth,
-                'acc_status' => $accStatus,
-            ]);
+                'status' => $status !== $defaultStatus ? $status : null, 
+                'role_filter' => (!empty($roleFilter) && $roleFilter !== 'all') ? $roleFilter : null,
+                'filter' => (!empty($filter) && $filter !== 'all') ? $filter : null,
+                'cohort_filter' => (!empty($cohortFilter) && $cohortFilter !== 'all') ? $cohortFilter : null,
+                'entry_year' => (!empty($entryYear) && $entryYear !== 'all') ? $entryYear : null,
+                'mentoring_health' => (!empty($mentoringHealth) && $mentoringHealth !== 'all') ? $mentoringHealth : null,
+                'acc_status' => (!empty($accStatus) && $accStatus !== 'all') ? $accStatus : null,
+            ]));
 
         // Distinct available entry years for dropdown filter
         $availableEntryYears = User::where('role', 'mahasiswa')
@@ -460,20 +581,20 @@ class ThesisController extends Controller
             $pendingSummary = ['total' => $pendingCount];
 
             return view('theses.index', compact(
-                'theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter',
+                'theses', 'dosens', 'search', 'status', 'pendingSummary', 'roleFilter', 'filter', 'stats',
                 'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts',
                 'mentoringHealth', 'mentoringHealthCounts', 'accStatus', 'accCounts'
             ));
         }
 
-        $dosenStats = [
+        $dosenStats = $stats ?? [
             'total' => Thesis::forUser($user)->where('status', $status)->count(),
             'p1' => Thesis::where('pembimbing1_id', $user->id)->where('status', $status)->count(),
             'p2' => Thesis::where('pembimbing2_id', $user->id)->where('status', $status)->count(),
         ];
 
         return view('theses.index', compact(
-            'theses', 'search', 'status', 'roleFilter', 'dosenStats',
+            'theses', 'search', 'status', 'roleFilter', 'filter', 'dosenStats', 'stats',
             'cohortFilter', 'entryYear', 'availableEntryYears', 'cohortCounts',
             'mentoringHealth', 'mentoringHealthCounts', 'accStatus', 'accCounts'
         ));
