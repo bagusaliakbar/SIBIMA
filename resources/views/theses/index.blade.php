@@ -640,7 +640,7 @@
                         <th class="py-4 px-6">Mahasiswa</th>
                         <th class="py-4 px-6">Rencana Judul Skripsi</th>
                         <th class="py-4 px-6">Deskripsi</th>
-                        <th class="py-4 px-6 text-center">Status</th>
+                        <th class="py-4 px-6 text-center">Status & Progres</th>
                         <th class="py-4 px-6">Pembimbing</th>
                         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                             <th class="py-4 px-6 text-right whitespace-nowrap">Aksi</th>
@@ -652,15 +652,15 @@
                         <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="py-4 px-6">
                                 <div class="flex items-center gap-3.5">
-                                    <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800 shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-2xs">
+                                    <a href="{{ route('theses.logbooks', $thesis->id) }}" class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800 shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-2xs hover:scale-105 transition-transform" title="Buka catatan bimbingan {{ $thesis->student->name }}">
                                         <img src="{{ $thesis->student->avatar_url }}" alt="{{ $thesis->student->name }}" class="w-full h-full object-cover">
-                                    </div>
+                                    </a>
                                     <div class="space-y-1">
                                         <!-- Baris 1: Nama Mahasiswa -->
                                         <div>
-                                            <span class="font-bold text-slate-900 dark:text-white tracking-tight text-xs sm:text-sm group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            <a href="{{ route('theses.logbooks', $thesis->id) }}" class="font-bold text-slate-900 dark:text-white tracking-tight text-xs sm:text-sm hover:text-orange-600 dark:hover:text-orange-400 transition-colors" title="Buka catatan bimbingan {{ $thesis->student->name }}">
                                                 {{ ucwords(strtolower($thesis->student->name)) }}
-                                            </span>
+                                            </a>
                                         </div>
                                         
                                         @php
@@ -821,113 +821,151 @@
                                             </div>
                                         </div>
                                     </template>
-                                @else
-                                    <span class="text-slate-300 dark:text-slate-600 text-xs italic">—</span>
                                 @endif
                             </td>
-                            <td class="py-4 px-6 text-center">
-                                <div class="flex flex-col items-center gap-2">
-                                    <!-- Main Status Pill -->
-                                    @if($thesis->status === 'active')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            <span>Aktif</span>
-                                        </span>
-                                    @elseif($thesis->status === 'completed')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            <span>Lulus</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-500/10 text-slate-700 dark:text-slate-300">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                                            <span>{{ ucfirst($thesis->status) }}</span>
-                                        </span>
-                                    @endif
+                            <td class="py-4 px-6 text-center align-middle">
+                                @php
+                                    $stageInfo = $thesis->getCurrentAcademicStage();
+                                    $hasSeminar = $thesis->hasPassedSeminar();
+                                    $hasDefense = $thesis->hasPassedDefense();
+
+                                    // Contextual ACC status (Sempro vs Sidang)
+                                    $isTargetSidang = $hasSeminar;
+                                    $p1Acc = $isTargetSidang ? $thesis->acc_sidang_p1 : $thesis->acc_up_p1;
+                                    $p2Acc = $isTargetSidang ? $thesis->acc_sidang_p2 : $thesis->acc_up_p2;
+                                    $targetAccLabel = $isTargetSidang ? 'Sidang' : 'Sempro';
                                     
-                                    @php
-                                        $hasSeminar = ($thesis->status === 'completed')
-                                            || \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists()
-                                            || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists();
-                                            
-                                        $hasDefense = ($thesis->status === 'completed')
-                                            || \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists()
-                                            || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists();
-                                    @endphp
-                                    <!-- Milestone Chips (Inline Pills, clean & compact) -->
-                                    <div class="flex items-center justify-center gap-1 flex-wrap">
+                                    $isMyP1 = (Auth::id() === $thesis->pembimbing1_id);
+                                    $isMyP2 = (Auth::id() === $thesis->pembimbing2_id);
+                                @endphp
+
+                                <div class="flex flex-col items-center gap-2 min-w-[190px] max-w-[230px] mx-auto">
+                                    <!-- 1. Tahap Akademik Utama Mahasiswa -->
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold {{ $stageInfo['badge_class'] }} border shadow-2xs tracking-tight">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $stageInfo['dot_class'] }} shrink-0"></span>
+                                        <span>{{ $stageInfo['label'] }}</span>
+                                    </span>
+
+                                    <!-- 2. Milestone Stepper: Seminar & Sidang Tracker -->
+                                    <div class="w-full inline-flex items-center justify-between p-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-[10px]">
+                                        <!-- Seminar Milestone -->
                                         @if($hasSeminar)
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-500/10 text-teal-700 dark:text-teal-300" title="Seminar Proposal: Selesai">
-                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                <span>Sem: Sudah</span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60 shrink-0 shadow-2xs" title="Seminar Proposal: Selesai">
+                                                <svg class="w-2.5 h-2.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                <span>Sempro</span>
+                                            </span>
+                                        @elseif($thesis->isAccUpFinal())
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0 shadow-2xs" title="Seminar Proposal: ACC Lengkap, Siap Daftar">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                <span>ACC Sem</span>
                                             </span>
                                         @else
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" title="Seminar Proposal: Belum">
+                                            <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Seminar Proposal: Belum">
                                                 Sem: Belum
                                             </span>
                                         @endif
 
+                                        <svg class="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0 mx-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+
+                                        <!-- Sidang Milestone -->
                                         @if($hasDefense)
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-700 dark:text-blue-300" title="Sidang Skripsi: Selesai">
-                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                <span>Sidang: Sudah</span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 shrink-0 shadow-2xs" title="Sidang Skripsi: Selesai">
+                                                <svg class="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                <span>Sidang</span>
+                                            </span>
+                                        @elseif($thesis->isAccSidangFinal())
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 shrink-0 shadow-2xs" title="Sidang Skripsi: ACC Lengkap, Siap Daftar">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                                                <span>ACC Sidang</span>
                                             </span>
                                         @else
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" title="Sidang Skripsi: Belum">
+                                            <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Sidang Skripsi: Belum">
                                                 Sidang: Belum
                                             </span>
                                         @endif
                                     </div>
 
-                                    <!-- ACC Readiness Tag -->
-                                    @if($thesis->isAccSidangFinal())
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-500/30 shadow-2xs" title="Kedua Pembimbing telah memberikan ACC Sidang Akhir">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-                                            <span>ACC Sidang</span>
-                                        </span>
-                                    @elseif($thesis->isAccUpFinal())
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-500/30 shadow-2xs" title="Kedua Pembimbing telah memberikan ACC Seminar UP">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                            <span>ACC Seminar</span>
-                                        </span>
-                                    @elseif($thesis->acc_up_p1 || $thesis->acc_up_p2 || $thesis->acc_sidang_p1 || $thesis->acc_sidang_p2)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-500/30" title="ACC Parsial: Baru disetujui salah satu pembimbing">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            <span>ACC 1/2</span>
-                                        </span>
+                                    <!-- 3. Rincian ACC Pembimbing (P1 & P2 Status) -->
+                                    @if($thesis->status !== 'completed' && !$hasDefense)
+                                        <div class="flex items-center justify-center gap-1.5 w-full text-[10px]">
+                                            <!-- P1 Status -->
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold border transition-all {{ $p1Acc ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' }} {{ $isMyP1 ? 'ring-1 ring-orange-500/40' : '' }}"
+                                                  title="Pembimbing 1 ACC {{ $targetAccLabel }}: {{ $p1Acc ? 'Sudah Disetujui' : 'Belum' }} {{ $isMyP1 ? '(Anda)' : '' }}">
+                                                <span class="text-[9px] font-black {{ $isMyP1 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}">P1{{ $isMyP1 ? '*' : '' }}</span>
+                                                @if($p1Acc)
+                                                    <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                @else
+                                                    <span class="text-slate-300 dark:text-slate-600 font-bold">—</span>
+                                                @endif
+                                            </span>
+
+                                            <!-- P2 Status -->
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold border transition-all {{ $p2Acc ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' }} {{ $isMyP2 ? 'ring-1 ring-orange-500/40' : '' }}"
+                                                  title="Pembimbing 2 ACC {{ $targetAccLabel }}: {{ $p2Acc ? 'Sudah Disetujui' : 'Belum' }} {{ $isMyP2 ? '(Anda)' : '' }}">
+                                                <span class="text-[9px] font-black {{ $isMyP2 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}">P2{{ $isMyP2 ? '*' : '' }}</span>
+                                                @if($p2Acc)
+                                                    <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                @else
+                                                    <span class="text-slate-300 dark:text-slate-600 font-bold">—</span>
+                                                @endif
+                                            </span>
+                                        </div>
                                     @endif
 
+                                    <!-- 4. Keaktifan Bimbingan (Health & Recency) -->
                                     @if($thesis->status === 'active')
                                         @php
                                             $healthBadge = $thesis->mentoring_health_badge;
                                             $healthColor = $healthBadge['color'] ?? 'emerald';
                                             $healthBgClass = $healthColor === 'rose' 
-                                                ? 'bg-rose-500/10 text-rose-700 dark:text-rose-300' 
-                                                : ($healthColor === 'amber' ? 'bg-amber-500/10 text-amber-700 dark:text-amber-300' : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300');
+                                                ? 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20' 
+                                                : ($healthColor === 'amber' ? 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20');
                                             $healthDotClass = $healthColor === 'rose' ? 'bg-rose-500 animate-pulse' : ($healthColor === 'amber' ? 'bg-amber-500' : 'bg-emerald-500');
                                         @endphp
-                                        <span class="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $healthBgClass }}"
-                                              title="Aktivitas Bimbingan: Terakhir bimbingan {{ $thesis->days_since_last_mentoring ?? 0 }} hari lalu">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $healthDotClass }}"></span>
-                                            <span>{{ $healthBadge['label'] }}</span>
-                                        </span>
+                                        <div class="flex items-center justify-center">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $healthBgClass }}"
+                                                  title="Aktivitas Bimbingan: Terakhir bimbingan {{ $thesis->days_since_last_mentoring ?? 0 }} hari lalu">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $healthDotClass }}"></span>
+                                                <span>{{ $healthBadge['label'] }}</span>
+                                            </span>
+                                        </div>
                                     @endif
+
+                                    <!-- 5. Tombol Shortcut ke Logbook Mahasiswa -->
+                                    <a href="{{ route('theses.logbooks', $thesis->id) }}" 
+                                       class="inline-flex items-center gap-1 text-[10px] font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 group/link transition-colors mt-0.5 cursor-pointer"
+                                       title="Buka catatan bimbingan & logbook {{ $thesis->student->name }}">
+                                        <span>Buka Logbook</span>
+                                        <svg class="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                    </a>
                                 </div>
                             </td>
                             
-                            <td class="py-4 px-6">
+                            <td class="py-4 px-6 align-middle">
                                 @if($thesis->pembimbing1 || $thesis->pembimbing2)
-                                    <div class="flex flex-col gap-1.5">
+                                    <div class="flex flex-col gap-2">
                                         @if($thesis->pembimbing1)
+                                            @php $isMeP1 = (Auth::id() === $thesis->pembimbing1_id); @endphp
                                             <div class="flex items-center gap-2">
-                                                <span class="w-4 h-4 rounded bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-[9px] font-bold border border-indigo-200 dark:border-indigo-500/30 shrink-0">1</span>
-                                                <span class="font-medium text-slate-700 dark:text-slate-300 text-[10px] uppercase tracking-tight">{{ $thesis->pembimbing1->name }}</span>
+                                                <span class="w-4 h-4 rounded {{ $isMeP1 ? 'bg-orange-500 text-white font-extrabold shadow-2xs' : 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30' }} flex items-center justify-center text-[9px] font-bold shrink-0">1</span>
+                                                <span class="font-medium text-[10px] uppercase tracking-tight {{ $isMeP1 ? 'font-bold text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300' }}">
+                                                    {{ $thesis->pembimbing1->name }}
+                                                    @if($isMeP1)
+                                                        <span class="text-[9px] font-bold text-orange-500 dark:text-orange-400 lowercase">(anda)</span>
+                                                    @endif
+                                                </span>
                                             </div>
                                         @endif
                                         @if($thesis->pembimbing2)
+                                            @php $isMeP2 = (Auth::id() === $thesis->pembimbing2_id); @endphp
                                             <div class="flex items-center gap-2">
-                                                <span class="w-4 h-4 rounded bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 flex items-center justify-center text-[9px] font-bold border border-purple-200 dark:border-purple-500/30 shrink-0">2</span>
-                                                <span class="font-medium text-slate-700 dark:text-slate-300 text-[10px] uppercase tracking-tight">{{ $thesis->pembimbing2->name }}</span>
+                                                <span class="w-4 h-4 rounded {{ $isMeP2 ? 'bg-orange-500 text-white font-extrabold shadow-2xs' : 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30' }} flex items-center justify-center text-[9px] font-bold shrink-0">2</span>
+                                                <span class="font-medium text-[10px] uppercase tracking-tight {{ $isMeP2 ? 'font-bold text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300' }}">
+                                                    {{ $thesis->pembimbing2->name }}
+                                                    @if($isMeP2)
+                                                        <span class="text-[9px] font-bold text-orange-500 dark:text-orange-400 lowercase">(anda)</span>
+                                                    @endif
+                                                </span>
                                             </div>
                                         @endif
                                     </div>

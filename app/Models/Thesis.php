@@ -219,6 +219,127 @@ class Thesis extends Model
         return $this->acc_sidang_p1 && $this->acc_sidang_p2;
     }
 
+    public function hasPassedSeminar(): bool
+    {
+        if ($this->status === 'completed') {
+            return true;
+        }
+
+        if ($this->relationLoaded('seminarApplications')) {
+            $hasApprovedApp = $this->seminarApplications->contains(function ($app) {
+                return in_array($app->status, ['approved', 'completed', 'finished']);
+            });
+            if ($hasApprovedApp) {
+                return true;
+            }
+        } elseif ($this->relationLoaded('seminarApplication') && $this->seminarApplication) {
+            if (in_array($this->seminarApplication->status, ['approved', 'completed', 'finished'])) {
+                return true;
+            }
+        } else {
+            if ($this->seminarApplications()->whereIn('status', ['approved', 'completed', 'finished'])->exists()) {
+                return true;
+            }
+        }
+
+        if ($this->relationLoaded('seminarScheduleDetails')) {
+            return $this->seminarScheduleDetails->isNotEmpty();
+        }
+
+        return $this->seminarScheduleDetails()->exists();
+    }
+
+    public function hasPassedDefense(): bool
+    {
+        if ($this->status === 'completed') {
+            return true;
+        }
+
+        if ($this->relationLoaded('defenseApplications')) {
+            $hasApprovedDef = $this->defenseApplications->contains(function ($app) {
+                return in_array($app->status, ['approved', 'completed', 'finished']);
+            });
+            if ($hasApprovedDef) {
+                return true;
+            }
+        } elseif ($this->relationLoaded('defenseApplication') && $this->defenseApplication) {
+            if (in_array($this->defenseApplication->status, ['approved', 'completed', 'finished'])) {
+                return true;
+            }
+        } else {
+            if ($this->defenseApplications()->whereIn('status', ['approved', 'completed', 'finished'])->exists()) {
+                return true;
+            }
+        }
+
+        if ($this->relationLoaded('defenseScheduleDetails')) {
+            return $this->defenseScheduleDetails->isNotEmpty();
+        }
+
+        return $this->defenseScheduleDetails()->exists();
+    }
+
+    public function getCurrentAcademicStage(): array
+    {
+        if ($this->status === 'completed' || $this->isGraduated()) {
+            return [
+                'stage' => 'graduated',
+                'label' => 'Lulus / Selesai',
+                'color' => 'emerald',
+                'badge_class' => 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20',
+                'dot_class' => 'bg-emerald-500',
+            ];
+        }
+
+        if ($this->hasPassedDefense()) {
+            return [
+                'stage' => 'defense_completed',
+                'label' => 'Revisi / Selesai Sidang',
+                'color' => 'blue',
+                'badge_class' => 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20',
+                'dot_class' => 'bg-blue-500',
+            ];
+        }
+
+        if ($this->isAccSidangFinal()) {
+            return [
+                'stage' => 'ready_defense',
+                'label' => 'Siap Sidang Akhir',
+                'color' => 'indigo',
+                'badge_class' => 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20',
+                'dot_class' => 'bg-indigo-500 animate-pulse',
+            ];
+        }
+
+        if ($this->hasPassedSeminar()) {
+            return [
+                'stage' => 'thesis_mentoring',
+                'label' => 'Bimbingan Skripsi',
+                'color' => 'teal',
+                'badge_class' => 'bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20',
+                'dot_class' => 'bg-teal-500',
+            ];
+        }
+
+        if ($this->isAccUpFinal()) {
+            return [
+                'stage' => 'ready_seminar',
+                'label' => 'Siap Seminar UP',
+                'color' => 'emerald',
+                'badge_class' => 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20',
+                'dot_class' => 'bg-emerald-500 animate-pulse',
+            ];
+        }
+
+        return [
+            'stage' => 'proposal_mentoring',
+            'label' => 'Bimbingan Proposal',
+            'color' => 'amber',
+            'badge_class' => 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20',
+            'dot_class' => 'bg-amber-500',
+        ];
+    }
+
     public function isGraduated(): bool
     {
         if ($this->status === 'completed') {
@@ -317,6 +438,16 @@ class Thesis extends Model
     public function defenseApplications()
     {
         return $this->hasMany(ThesisDefenseApplication::class);
+    }
+
+    public function seminarScheduleDetails()
+    {
+        return $this->hasMany(SeminarScheduleDetail::class);
+    }
+
+    public function defenseScheduleDetails()
+    {
+        return $this->hasMany(ThesisDefenseScheduleDetail::class);
     }
 
     /**

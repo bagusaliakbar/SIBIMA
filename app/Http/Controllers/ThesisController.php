@@ -308,7 +308,18 @@ class ThesisController extends Controller
         $defaultStatus = $user->role === 'dosen' ? 'active' : 'all';
         $status = $request->input('status', $defaultStatus);
 
-        $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'requestedPembimbing1', 'requestedPembimbing2'])
+        $thesesQuery = Thesis::with([
+            'student', 
+            'pembimbing1', 
+            'pembimbing2', 
+            'requestedPembimbing1', 
+            'requestedPembimbing2',
+            'latestCompletedMentoringSession',
+            'seminarApplications',
+            'defenseApplications',
+            'seminarScheduleDetails',
+            'defenseScheduleDetails'
+        ])
             ->forUser($user)
             ->search($search);
 

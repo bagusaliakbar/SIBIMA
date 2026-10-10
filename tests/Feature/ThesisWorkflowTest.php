@@ -134,4 +134,46 @@ class ThesisWorkflowTest extends TestCase
         $response = $this->actingAs($student)->get(route('theses.show', $thesis->id));
         $response->assertRedirect(route('theses.logbooks', $thesis->id));
     }
+
+    public function test_dosen_theses_index_renders_redesigned_status_layout()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Bagus Ali Akbar']);
+        $partner = User::factory()->create(['role' => 'dosen', 'name' => 'Syarif Hidayat']);
+        $student1 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Nia Purnamasari', 'identifier' => '01A220073']);
+        $student2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Riska Nuril Anwar', 'identifier' => '01A230062']);
+
+        // Student 1: Proposal Stage (in mentoring)
+        Thesis::create([
+            'student_id' => $student1->id,
+            'pembimbing1_id' => $partner->id,
+            'pembimbing2_id' => $dosen->id,
+            'title' => 'Sistem Informasi Kost',
+            'status' => 'active',
+            'acc_up_p1' => false,
+            'acc_up_p2' => false,
+        ]);
+
+        // Student 2: Ready Seminar UP
+        Thesis::create([
+            'student_id' => $student2->id,
+            'pembimbing1_id' => $dosen->id,
+            'pembimbing2_id' => $partner->id,
+            'title' => 'Sistem Informasi Bawaslu',
+            'status' => 'active',
+            'acc_up_p1' => true,
+            'acc_up_p2' => true,
+        ]);
+
+        $response = $this->actingAs($dosen)->get(route('theses.index'));
+        $response->assertStatus(200);
+
+        // Header and layout elements
+        $response->assertSee('Status & Progres', false);
+        $response->assertSee('Bimbingan Proposal');
+        $response->assertSee('Siap Seminar UP');
+        $response->assertSee('Sempro');
+        $response->assertSee('Sidang');
+        $response->assertSee('Buka Logbook');
+        $response->assertSee('(anda)');
+    }
 }
