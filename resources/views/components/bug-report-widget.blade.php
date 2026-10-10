@@ -1,3 +1,57 @@
+<style>
+/* Responsive Dock Container */
+#bug-report-dock-container {
+    position: fixed !important;
+    bottom: 16px !important;
+    right: 16px !important;
+    z-index: 9999999 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (min-width: 768px) {
+    #bug-report-dock-container {
+        bottom: 24px !important;
+        right: 24px !important;
+    }
+}
+
+/* Default Mobile: Collapsed FAB mode (< 768px) */
+@media (max-width: 767px) {
+    #bug-report-dock-container:not(.dock-expanded) #bug-report-full-dock {
+        display: none !important;
+    }
+    #bug-report-dock-container:not(.dock-expanded) #bug-report-collapsed-pill {
+        display: flex !important;
+    }
+    #bug-report-dock-container.dock-expanded #bug-report-full-dock {
+        display: flex !important;
+    }
+    #bug-report-dock-container.dock-expanded #bug-report-collapsed-pill {
+        display: none !important;
+    }
+}
+
+/* Default Desktop: Full Vertical Dock mode (>= 768px) */
+@media (min-width: 768px) {
+    #bug-report-dock-container:not(.dock-collapsed) #bug-report-full-dock {
+        display: flex !important;
+    }
+    #bug-report-dock-container:not(.dock-collapsed) #bug-report-collapsed-pill {
+        display: none !important;
+    }
+    #bug-report-dock-container.dock-collapsed #bug-report-full-dock {
+        display: none !important;
+    }
+    #bug-report-dock-container.dock-collapsed #bug-report-collapsed-pill {
+        display: flex !important;
+    }
+}
+</style>
+
 <script>
 // =========================================================================
 // GLOBAL CONTROLLERS FOR BUG REPORT WIDGET (VANILLA JS + ALPINE DUAL COMPATIBLE)
@@ -10,6 +64,9 @@ window.openBugReportModal = function() {
         if (urlInput && !urlInput.value) {
             urlInput.value = window.location.href;
         }
+    }
+    if (window.innerWidth < 768) {
+        window.toggleBugCollapse(true);
     }
     if (window._bugWidget) {
         window._bugWidget.showReportModal = true;
@@ -32,6 +89,9 @@ window.openBugHistoryModal = function() {
     const modal = document.getElementById('bug-history-modal');
     if (modal) {
         modal.style.setProperty('display', 'block', 'important');
+    }
+    if (window.innerWidth < 768) {
+        window.toggleBugCollapse(true);
     }
     if (window._bugWidget) {
         window._bugWidget.showHistoryModal = true;
@@ -56,6 +116,9 @@ window.openBugGuideModal = function() {
     if (modal) {
         modal.style.setProperty('display', 'block', 'important');
     }
+    if (window.innerWidth < 768) {
+        window.toggleBugCollapse(true);
+    }
     if (window._bugWidget) {
         window._bugWidget.showGuideModal = true;
     }
@@ -78,10 +141,26 @@ window.closeAllBugModals = function() {
 };
 
 window.toggleBugCollapse = function(collapse) {
+    const container = document.getElementById('bug-report-dock-container');
     const dock = document.getElementById('bug-report-full-dock');
     const pill = document.getElementById('bug-report-collapsed-pill');
-    const isCurrentlyCollapsed = dock && dock.style.display === 'none';
+    
+    let isCurrentlyCollapsed = true;
+    if (dock) {
+        const display = window.getComputedStyle(dock).display;
+        isCurrentlyCollapsed = (display === 'none');
+    }
     const shouldCollapse = (typeof collapse === 'boolean') ? collapse : !isCurrentlyCollapsed;
+
+    if (container) {
+        if (shouldCollapse) {
+            container.classList.add('dock-collapsed');
+            container.classList.remove('dock-expanded');
+        } else {
+            container.classList.remove('dock-collapsed');
+            container.classList.add('dock-expanded');
+        }
+    }
 
     if (dock) {
         dock.style.setProperty('display', shouldCollapse ? 'none' : 'flex', 'important');
@@ -89,10 +168,59 @@ window.toggleBugCollapse = function(collapse) {
     if (pill) {
         pill.style.setProperty('display', shouldCollapse ? 'flex' : 'none', 'important');
     }
+
+    if (window.innerWidth >= 768) {
+        try {
+            localStorage.setItem('sibima_bug_dock_collapsed', shouldCollapse ? 'true' : 'false');
+        } catch(e) {}
+    }
+
     if (window._bugWidget) {
         window._bugWidget.isCollapsed = shouldCollapse;
     }
 };
+
+// Auto initialize based on viewport width
+document.addEventListener('DOMContentLoaded', function() {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+        window.toggleBugCollapse(true);
+    } else {
+        const savedPref = localStorage.getItem('sibima_bug_dock_collapsed');
+        if (savedPref === 'true') {
+            window.toggleBugCollapse(true);
+        } else {
+            window.toggleBugCollapse(false);
+        }
+    }
+});
+
+// Auto collapse on mobile when tapping outside
+document.addEventListener('click', function(e) {
+    if (window.innerWidth < 768) {
+        const container = document.getElementById('bug-report-dock-container');
+        const dock = document.getElementById('bug-report-full-dock');
+        if (container && dock && window.getComputedStyle(dock).display !== 'none') {
+            if (!container.contains(e.target)) {
+                window.toggleBugCollapse(true);
+            }
+        }
+    }
+});
+
+// Auto collapse on window resize down to mobile
+let _bugResizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(_bugResizeTimer);
+    _bugResizeTimer = setTimeout(function() {
+        if (window.innerWidth < 768) {
+            const dock = document.getElementById('bug-report-full-dock');
+            if (dock && window.getComputedStyle(dock).display !== 'none') {
+                window.toggleBugCollapse(true);
+            }
+        }
+    }, 250);
+});
 
 
 window.fetchMyReportsDirect = async function() {
@@ -209,23 +337,30 @@ document.addEventListener('keydown', function(e) {
 <!-- FLOATING CAPSULE DOCK (BOTTOM-RIGHT CORNER)                                -->
 <!-- ========================================================================= -->
 <div id="bug-report-dock-container"
-     class="select-none"
-     style="position: fixed !important; bottom: 24px !important; right: 24px !important; z-index: 9999999 !important; pointer-events: auto !important; display: flex !important; flex-direction: column !important; align-items: center !important;">
+     class="select-none">
 
-    <!-- 1. Collapsed Mini Pill (When user clicks arrow to collapse) -->
+    <!-- 1. Collapsed Mini Pill / FAB (Round compact button on mobile, pill on desktop) -->
     <div id="bug-report-collapsed-pill"
-         style="display: none; pointer-events: auto !important;">
+         style="pointer-events: auto !important;">
         <button onclick="window.toggleBugCollapse(false); event.stopPropagation();"
                 type="button"
-                style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(255, 255, 255, 0.98); border-radius: 9999px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; pointer-events: auto !important;"
-                class="group relative flex items-center gap-2 px-3 py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-full shadow-2xl border border-slate-200 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+                class="group relative flex items-center justify-center p-3 sm:px-3.5 sm:py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-200 rounded-full shadow-2xl border border-slate-200/90 dark:border-slate-700/80 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
                 title="Buka Toolbar Pelaporan Bug">
-            <span class="flex h-3 w-3 relative">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+            <span class="relative flex items-center justify-center">
+                <!-- Pulsing Badge Indicator Dot -->
+                <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
+                </span>
+                <!-- Bug/Alert Icon -->
+                <svg class="w-5 h-5 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
             </span>
-            <span class="text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200">Lapor Bug</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors">
+            <span class="hidden sm:inline-block ml-2 text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200">
+                Lapor Bug
+            </span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden sm:inline-block ml-1 w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors">
                 <path d="M5 15l7-7 7 7" />
             </svg>
         </button>
@@ -233,7 +368,7 @@ document.addEventListener('keydown', function(e) {
 
     <!-- 2. Full Vertical Capsule Dock (Pixel-Perfect Reference Design) -->
     <div id="bug-report-full-dock"
-         style="width: 56px !important; min-width: 56px !important; max-width: 56px !important; background: #ffffff; border-radius: 9999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; padding: 14px 7px; display: flex !important; flex-direction: column !important; align-items: center !important; gap: 10px !important; pointer-events: auto !important;"
+         style="width: 56px !important; min-width: 56px !important; max-width: 56px !important; background: #ffffff; border-radius: 9999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; padding: 14px 7px; flex-direction: column !important; align-items: center !important; gap: 10px !important; pointer-events: auto !important;"
          class="bg-white dark:bg-slate-900 rounded-full shadow-2xl border border-slate-200 dark:border-slate-700 py-3.5 px-1.5 flex flex-col items-center gap-2.5">
         
         <!-- Grip Drag Indicator (6 dots) -->
@@ -370,6 +505,17 @@ document.addEventListener('keydown', function(e) {
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
+                </button>
+            </div>
+
+            <!-- Secondary Navigation Bar: Quick Link to Check Status -->
+            <div class="px-6 sm:px-8 py-2.5 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span class="text-slate-500 dark:text-slate-400">Pernah mengirim laporan sebelumnya?</span>
+                <button type="button" 
+                        onclick="window.closeBugReportModal(); window.openBugHistoryModal();" 
+                        class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Cek Status Laporan Saya &rarr;</span>
                 </button>
             </div>
 
@@ -589,7 +735,13 @@ document.addEventListener('keydown', function(e) {
             </div>
 
             <!-- Footer -->
-            <div class="p-4 px-6 sm:px-8 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
+            <div class="p-4 px-6 sm:px-8 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+                <button type="button" 
+                        onclick="window.closeBugHistoryModal(); window.openBugReportModal();"
+                        class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    <span>Buat Laporan Baru</span>
+                </button>
                 <button type="button" 
                         onclick="window.closeBugHistoryModal()"
                         class="px-5 py-2 bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-xs font-bold rounded-xl uppercase tracking-wider hover:bg-slate-900 transition-all shadow-xs cursor-pointer">
