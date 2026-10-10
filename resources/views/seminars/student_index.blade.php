@@ -244,44 +244,220 @@
                 @endif
 
                 <div class="p-6">
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-4">Detail Berkas:</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @php
-                            $fileFields = [
-                                'file_acc_pembimbing' => ['label' => 'Bukti ACC Pembimbing', 'icon' => 'orange', 'svg' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
-                                'file_pembayaran' => ['label' => 'Bukti Pembayaran', 'icon' => 'emerald', 'svg' => 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z'],
-                                'file_kartu_bimbingan' => ['label' => 'Kartu Bimbingan', 'icon' => 'blue', 'svg' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
-                                'file_skripsi' => ['label' => 'Soft File Skripsi', 'icon' => 'indigo', 'svg' => 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z'],
-                                'file_formulir' => ['label' => 'Formulir Seminar', 'icon' => 'pink', 'svg' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z']
-                            ];
-                        @endphp
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 pb-4 border-b border-slate-100 dark:border-slate-700/80">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100">Detail Berkas Persyaratan</h4>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
+                                    5 Berkas Terlampir
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Dokumen pendaftaran seminar yang telah Anda ajukan untuk diverifikasi.</p>
+                        </div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-700/70 text-slate-500 dark:text-slate-400 text-xs">
+                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            <span class="font-medium text-[11px]">Tersimpan di Google Drive</span>
+                        </div>
+                    </div>
+
+                    @php
+                        $fileFields = [
+                            'file_formulir' => [
+                                'label' => 'Formulir Seminar',
+                                'subtitle' => 'Formulir Pendaftaran Resmi',
+                                'category' => 'Administrasi',
+                                'theme' => [
+                                    'bg' => 'bg-indigo-50 dark:bg-indigo-950/40',
+                                    'text' => 'text-indigo-600 dark:text-indigo-400',
+                                    'border' => 'border-indigo-100 dark:border-indigo-800/50',
+                                ],
+                                'svg' => '
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 13l1.5 1.5 3-3" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 17h8" />
+                                '
+                            ],
+                            'file_pembayaran' => [
+                                'label' => 'Bukti Pembayaran',
+                                'subtitle' => 'Kwitansi / Slip Bukti Bayar',
+                                'category' => 'Keuangan',
+                                'theme' => [
+                                    'bg' => 'bg-emerald-50 dark:bg-emerald-950/40',
+                                    'text' => 'text-emerald-600 dark:text-emerald-400',
+                                    'border' => 'border-emerald-100 dark:border-emerald-800/50',
+                                ],
+                                'svg' => '
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" />
+                                    <rect x="7" y="11" width="10" height="7" rx="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 14h10m-7 2h2" />
+                                '
+                            ],
+                            'file_acc_pembimbing' => [
+                                'label' => 'Bukti ACC Pembimbing',
+                                'subtitle' => 'Persetujuan Seminar P1 & P2',
+                                'category' => 'Persetujuan',
+                                'theme' => [
+                                    'bg' => 'bg-amber-50 dark:bg-amber-950/40',
+                                    'text' => 'text-amber-600 dark:text-amber-400',
+                                    'border' => 'border-amber-100 dark:border-amber-800/50',
+                                ],
+                                'svg' => '
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" />
+                                    <circle cx="12" cy="14.5" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.8 14.5l1 1 1.7-1.7" />
+                                '
+                            ],
+                            'file_kartu_bimbingan' => [
+                                'label' => 'Kartu Bimbingan',
+                                'subtitle' => 'Rekap Logbook Bimbingan',
+                                'category' => 'Akademik',
+                                'theme' => [
+                                    'bg' => 'bg-sky-50 dark:bg-sky-950/40',
+                                    'text' => 'text-sky-600 dark:text-sky-400',
+                                    'border' => 'border-sky-100 dark:border-sky-800/50',
+                                ],
+                                'svg' => '
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h.01M11 12h5" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 15h.01M11 15h5" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 18h.01M11 18h3" />
+                                '
+                            ],
+                            'file_skripsi' => [
+                                'label' => 'Soft File Skripsi',
+                                'subtitle' => 'Draft Naskah Proposal / Skripsi',
+                                'category' => 'Naskah Ilmiah',
+                                'theme' => [
+                                    'bg' => 'bg-purple-50 dark:bg-purple-950/40',
+                                    'text' => 'text-purple-600 dark:text-purple-400',
+                                    'border' => 'border-purple-100 dark:border-purple-800/50',
+                                ],
+                                'svg' => '
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2v6h6" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 11.5l-4.5 2 4.5 2 4.5-2-4.5-2z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 14.8v1.8c0 .7 1.1 1.2 2.5 1.2s2.5-.5 2.5-1.2v-1.8" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16.5 13.5v2" />
+                                '
+                            ],
+                        ];
+                    @endphp
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($fileFields as $field => $info)
-                            <div class="relative p-4 border rounded-xl transition-all {{ isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected' ? 'border-rose-200 bg-rose-50/30 dark:bg-rose-900/10 dark:border-rose-800' : 'border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50' }}">
-                                <div class="flex items-start">
-                                    <div class="p-2 bg-{{ $info['icon'] }}-100 dark:bg-{{ $info['icon'] }}-900/30 rounded-lg mr-3">
-                                        <svg class="w-5 h-5 text-{{ $info['icon'] }}-600 dark:text-{{ $info['icon'] }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $info['svg'] }}"></path></svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center justify-between">
-                                            <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ $info['label'] }}</p>
-                                            @if(isset($application->file_reviews[$field]['status']))
-                                                <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded {{ $application->file_reviews[$field]['status'] === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                                                    {{ $application->file_reviews[$field]['status'] }}
+                            @php
+                                $review = $application->file_reviews[$field] ?? null;
+                                $isRejected = ($review['status'] ?? '') === 'rejected';
+                                $isApproved = ($review['status'] ?? '') === 'approved';
+                                $hasFile = !empty($application->$field);
+                            @endphp
+                            <div class="group relative flex flex-col justify-between p-4 rounded-2xl border transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 {{ $isRejected ? 'border-rose-200 bg-rose-50/40 dark:border-rose-900/60 dark:bg-rose-950/20' : 'border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-800/90 hover:border-slate-300 dark:hover:border-slate-600' }}">
+                                <div>
+                                    <!-- Top row: Icon Badge + Category + Status Pill -->
+                                    <div class="flex items-start justify-between gap-3 mb-3">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border {{ $info['theme']['bg'] }} {{ $info['theme']['text'] }} {{ $info['theme']['border'] }} shadow-2xs transition-transform group-hover:scale-105">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    {!! $info['svg'] !!}
+                                                </svg>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                                    {{ $info['category'] }}
+                                                </span>
+                                                <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug truncate">
+                                                    {{ $info['label'] }}
+                                                </h5>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status Pill -->
+                                        <div class="shrink-0">
+                                            @if($isApproved)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                    <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                    <span>Valid</span>
+                                                </span>
+                                            @elseif($isRejected)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                                    <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    <span>Revisi</span>
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-600/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                                    <span>Diproses</span>
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="mt-1 flex items-center gap-2">
-                                            <a href="{{ $application->$field }}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline">Buka Link Dokumen</a>
-                                        </div>
-                                        @if(isset($application->file_reviews[$field]['note']) && $application->file_reviews[$field]['note'])
-                                            <div class="mt-2 p-2 bg-rose-100/50 dark:bg-rose-900/30 rounded border border-rose-200/50 dark:border-rose-800/50">
-                                                <p class="text-[10px] text-rose-700 dark:text-rose-400 font-medium italic">"{{ $application->file_reviews[$field]['note'] }}"</p>
-                                            </div>
-                                        @endif
                                     </div>
+
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mb-3">
+                                        {{ $info['subtitle'] }}
+                                    </p>
+
+                                    <!-- Rejection Note if any -->
+                                    @if($isRejected && !empty($review['note']))
+                                        <div class="mb-3 p-2.5 bg-rose-100/70 dark:bg-rose-900/40 rounded-xl border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300">
+                                            <div class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                                                <svg class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span>Catatan Validator:</span>
+                                            </div>
+                                            <p class="text-xs italic mt-0.5 leading-relaxed">"{{ $review['note'] }}"</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Footer: Action link to Google Drive -->
+                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2 mt-auto">
+                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                        <span>Google Drive</span>
+                                    </span>
+
+                                    @if($hasFile)
+                                        <a href="{{ $application->$field }}" target="_blank" rel="noopener noreferrer" 
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 border border-orange-200/80 dark:border-orange-800/50 transition-all shadow-2xs group-hover:shadow-xs cursor-pointer">
+                                            <span>Buka Dokumen</span>
+                                            <svg class="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="text-[11px] text-slate-400 italic">Belum diunggah</span>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
+
+                        <!-- 6th Tile: Quick Helper Card to balance 2x3 grid perfectly -->
+                        <div class="p-4 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/30 flex flex-col justify-between">
+                            <div class="flex items-start gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-500 border border-orange-200/60 dark:border-orange-800/40 flex items-center justify-center shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </div>
+                                <div>
+                                    <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                        Panduan Akses
+                                    </span>
+                                    <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug">
+                                        Izin Akses Berkas Drive
+                                    </h5>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
+                                        Pastikan link Google Drive diatur ke <strong>"Anyone with the link can view"</strong> agar berkas dapat ditinjau oleh validator & penguji.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700/60 mt-3 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
+                                <span>Status Sinkronisasi</span>
+                                <span class="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Aktif
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     @if($application->status === 'rejected')
