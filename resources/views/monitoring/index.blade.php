@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/chartjs/chart.umd.min.js') }}"></script>
         @if(count($chartData['labels']) > 0)
         <script>
             document.addEventListener('DOMContentLoaded', function () {

@@ -197,9 +197,9 @@
     @endpush
 
     @push('scripts')
-    <script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
-    <script src="{{ asset('vendor/tippy/popper.min.js') }}"></script>
-    <script src="{{ asset('vendor/tippy/tippy-bundle.umd.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/fullcalendar/index.global.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/tippy/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/tippy/tippy-bundle.umd.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');

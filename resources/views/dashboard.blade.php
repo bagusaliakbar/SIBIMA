@@ -1411,7 +1411,7 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/chartjs/chart.umd.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const darkMode = document.documentElement.classList.contains('dark');

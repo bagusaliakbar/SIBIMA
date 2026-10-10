@@ -3990,7 +3990,7 @@
     @endpush
 
     @push('scripts')
-    <script defer src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
+    <script defer src="{{ asset('assets/vendor/fullcalendar/index.global.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);

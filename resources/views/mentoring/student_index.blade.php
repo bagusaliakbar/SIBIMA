@@ -703,7 +703,7 @@
             </template>
         </div>
     </div>
-    <script src="{{ asset('vendor/html2canvas/html2canvas.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/html2canvas/html2canvas.min.js') }}"></script>
     <script>
         function captureProgress() {
             const element = document.getElementById('progress-card');

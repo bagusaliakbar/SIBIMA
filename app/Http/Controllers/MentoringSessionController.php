@@ -381,23 +381,18 @@ class MentoringSessionController extends Controller
             });
         }
 
-        // 1. Jadwal Minggu Ini
-        $thisWeekCount = (clone $sessionBaseQuery)
-            ->whereBetween('scheduled_at', [$startOfWeek, $endOfWeek])
-            ->whereIn('status', ['pending', 'approved'])
-            ->count();
+        // 1 & 2. Jadwal Minggu Ini & Menunggu Hasil / Catatan Dosen (Combined into 1 selectRaw)
+        $rawSessionStats = (clone $sessionBaseQuery)->selectRaw("
+            SUM(CASE WHEN scheduled_at BETWEEN ? AND ? AND status IN ('pending', 'approved') THEN 1 ELSE 0 END) as this_week,
+            SUM(CASE WHEN scheduled_at <= ? AND status = 'approved' AND (feedback IS NULL OR feedback = '') THEN 1 ELSE 0 END) as pending_feedback
+        ", [$startOfWeek, $endOfWeek, now()])->first();
 
-        // 2. Menunggu Hasil / Catatan Dosen (sesi yang sudah lewat/berjalan tapi belum diselesaikan/feedback kosong)
-        $pendingFeedbackCount = (clone $sessionBaseQuery)
-            ->where('scheduled_at', '<=', now())
-            ->where('status', 'approved')
-            ->where(function($q) {
-                $q->whereNull('feedback')->orWhere('feedback', '');
-            })
-            ->count();
+        $thisWeekCount = (int) ($rawSessionStats->this_week ?? 0);
+        $pendingFeedbackCount = (int) ($rawSessionStats->pending_feedback ?? 0);
 
-        // 3 & 4. Theses base query
-        $thesisQuery = Thesis::with(['mentoringSessions'])
+        // 3 & 4. Theses base query (select only required columns)
+        $thesisQuery = Thesis::select('id', 'status', 'pembimbing1_id', 'pembimbing2_id', 'acc_up_p1', 'acc_up_p2', 'acc_sidang_p1', 'acc_sidang_p2')
+            ->with(['mentoringSessions' => fn($q) => $q->select('id', 'thesis_id', 'dosen_id', 'status', 'is_absent')])
             ->where('status', 'active');
 
         if ($user->role === 'dosen') {

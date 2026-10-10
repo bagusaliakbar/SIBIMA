@@ -585,8 +585,8 @@
     </div>
 
     <!-- Chart.js & Datalabels Plugin -->
-    <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
-    <script src="{{ asset('vendor/chartjs/chartjs-plugin-datalabels.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/chartjs/chart.umd.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/chartjs/chartjs-plugin-datalabels.min.js') }}"></script>
 
     <script>
         // Global chart collection for dynamic dark/light mode updates

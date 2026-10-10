@@ -1539,7 +1539,7 @@
         </script>
 
         <!-- Instant Navigation: Just-In-Time Link Prefetching -->
-        <script src="{{ asset('vendor/instantpage/instantpage.min.js') }}" type="module"></script>
+        <script src="{{ asset('assets/vendor/instantpage/instantpage.min.js') }}" type="module"></script>
 
         @stack('scripts')
     </body>
