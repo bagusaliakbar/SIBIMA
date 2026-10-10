@@ -629,7 +629,7 @@ class DashboardService
     public function getCommonData()
     {
         return Cache::remember('sibima_dashboard_common_data', 15, function () {
-            $allUsers = User::select('id', 'name', 'role', 'avatar', 'nim', 'nidn', 'email')->get();
+            $allUsers = User::select('id', 'name', 'role', 'avatar', 'identifier', 'email')->get();
             $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values();
 
             return [
