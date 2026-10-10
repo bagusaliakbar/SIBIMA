@@ -861,7 +861,7 @@
                                             </span>
                                         @else
                                             <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Seminar Proposal: Belum">
-                                                Sem: Belum
+                                                Seminar : Belum
                                             </span>
                                         @endif
 
@@ -880,7 +880,7 @@
                                             </span>
                                         @else
                                             <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Sidang Skripsi: Belum">
-                                                Sidang: Belum
+                                                Sidang : Belum
                                             </span>
                                         @endif
                                     </div>
