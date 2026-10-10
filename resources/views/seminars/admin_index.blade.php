@@ -62,20 +62,39 @@
                  setTimeout(() => { this.previewLoading = false; }, 600);
              },
 
+             isGoogleDrive() {
+                 if (!this.previewRawUrl) return false;
+                 return this.previewRawUrl.includes('drive.google.com') || this.previewRawUrl.includes('docs.google.com');
+             },
+
              formatPreviewUrl(link) {
                  if (!link) return '';
-                 if (link.includes('drive.google.com/file/d/')) {
-                     let url = link.replace(/\/view(\?.*)?$/, '/preview').replace(/\/edit(\?.*)?$/, '/preview');
-                     if (!url.includes('/preview')) {
-                         url = url.replace(/\/?$/, '/preview');
-                     }
-                     return url;
-                 } else if (link.includes('drive.google.com/open?id=')) {
-                     const id = link.split('id=')[1]?.split('&')[0];
-                     return id ? 'https://drive.google.com/file/d/' + id + '/preview' : link;
-                 } else if (link.includes('docs.google.com/document/d/') || link.includes('docs.google.com/spreadsheets/d/') || link.includes('docs.google.com/presentation/d/')) {
-                     return link.replace(/\/edit(\?.*)?$/, '/preview').replace(/\/view(\?.*)?$/, '/preview');
-                 } else if (!link.startsWith('http://') && !link.startsWith('https://')) {
+
+                 // Google Drive: /file/d/FILE_ID/...
+                 const gdriveFileMatch = link.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+                 if (gdriveFileMatch && gdriveFileMatch[1]) {
+                     return 'https://drive.google.com/file/d/' + gdriveFileMatch[1] + '/preview';
+                 }
+
+                 // Google Drive: open?id=FILE_ID or uc?id=FILE_ID
+                 const gdriveIdMatch = link.match(/drive\.google\.com\/(?:open|uc)\?[^#]*\bid=([a-zA-Z0-9_-]+)/);
+                 if (gdriveIdMatch && gdriveIdMatch[1]) {
+                     return 'https://drive.google.com/file/d/' + gdriveIdMatch[1] + '/preview';
+                 }
+
+                 // Google Docs / Sheets / Slides
+                 const gdocsMatch = link.match(/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/);
+                 if (gdocsMatch && gdocsMatch[1] && gdocsMatch[2]) {
+                     return 'https://docs.google.com/' + gdocsMatch[1] + '/d/' + gdocsMatch[2] + '/preview';
+                 }
+
+                 // Fallback for Google Drive links without standard format
+                 if (link.includes('drive.google.com') && (link.includes('/view') || link.includes('/edit'))) {
+                     return link.replace(/\/view(\?.*)?$/, '/preview').replace(/\/edit(\?.*)?$/, '/preview');
+                 }
+
+                 // Local storage private files
+                 if (!link.startsWith('http://') && !link.startsWith('https://')) {
                      return '{{ route('download.private') }}?path=' + encodeURIComponent(link) + '&inline=1';
                  }
                  return link;
@@ -853,6 +872,31 @@
                                             </div>
                                         </div>
 
+                                        {{-- Google Drive Notice & Fast WA Contact Banner --}}
+                                        <template x-if="isGoogleDrive()">
+                                            <div class="px-4 py-2.5 bg-amber-950/80 border-b border-amber-800/60 flex flex-wrap items-center justify-between gap-2.5 text-xs shrink-0">
+                                                <div class="flex items-center gap-2 text-amber-200 min-w-0">
+                                                    <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                    <span class="text-[11px] font-medium leading-tight">
+                                                        Tautan Google Drive. Jika muncul pesan <strong class="text-white font-bold">"403 / You do not have access"</strong>, hak akses file Drive mahasiswa belum dibuka ke publik (<em class="italic text-amber-300 font-semibold">Anyone with the link</em>).
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center gap-2 shrink-0">
+                                                    <template x-if="previewApp && previewApp.clean_phone">
+                                                        <a :href="'https://wa.me/' + previewApp.clean_phone + '?text=' + encodeURIComponent('Halo ' + previewApp.student_name + ', terkait pengajuan berkas di SIBIMA: Berkas ' + previewFileLabel + ' Anda tidak dapat dibuka (Google Drive 403 / Akses Dibatasi). Mohon segera ubah setelan akses link Google Drive Anda menjadi \'Siapa saja yang memiliki link dapat melihat\' (Anyone with the link) agar dapat divalidasi oleh prodi. Terima kasih.')"
+                                                           target="_blank"
+                                                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors shadow-2xs cursor-pointer">
+                                                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                                                            <span>Minta Buka Akses via WA</span>
+                                                        </a>
+                                                    </template>
+                                                    <a :href="previewRawUrl" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white rounded-lg text-[10px] font-bold transition-colors border border-amber-500/30">
+                                                        <span>Buka Tab Baru ↗</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </template>
+
                                         {{-- Viewer Content Area --}}
                                         <div class="flex-1 relative bg-slate-950 flex items-center justify-center overflow-hidden">
                                             {{-- Loading State --}}
@@ -864,8 +908,7 @@
                                             <template x-if="previewFileUrl">
                                                 <iframe :src="previewFileUrl" 
                                                         class="w-full h-full border-0 bg-white"
-                                                        allow="autoplay"
-                                                        sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
+                                                        allow="autoplay; fullscreen">
                                                 </iframe>
                                             </template>
 
