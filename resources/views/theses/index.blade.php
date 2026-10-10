@@ -857,7 +857,7 @@
                                         @elseif($thesis->isAccUpFinal())
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0 shadow-2xs" title="Seminar Proposal: ACC Lengkap, Siap Daftar">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                <span>ACC Sem</span>
+                                                <span>ACC Seminar</span>
                                             </span>
                                         @else
                                             <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Seminar Proposal: Belum">
