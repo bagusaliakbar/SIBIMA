@@ -250,7 +250,7 @@
                         
                         @if(Auth::user()->role === 'mahasiswa')
                         @php 
-                            $thesis = \App\Models\Thesis::where('student_id', Auth::id())->first();
+                            $thesis = cache()->remember('u_' . Auth::id() . '_thesis_sidebar', 30, fn() => \App\Models\Thesis::where('student_id', Auth::id())->first());
                         @endphp
 
                         <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
@@ -271,7 +271,7 @@
                             @endif
 
                             @php
-                                $hasSeminar = $thesis ? \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists() : false;
+                                $hasSeminar = $thesis ? cache()->remember('u_' . Auth::id() . '_has_sem', 30, fn() => \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
                             @endphp
                             @if($hasSeminar)
                             <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar seminar proposal/hasil.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
@@ -293,7 +293,7 @@
                             </a>
 
                             @php
-                                $hasDefense = $thesis ? \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists() : false;
+                                $hasDefense = $thesis ? cache()->remember('u_' . Auth::id() . '_has_def', 30, fn() => \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
                             @endphp
                             @if($hasDefense)
                             <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar sidang skripsi.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
@@ -590,14 +590,14 @@
 
                         <!-- Direct Link: Laporan Bug Sistem -->
                         @php 
-                            $openBugCount = 0;
-                            try {
-                                if (\Illuminate\Support\Facades\Schema::hasTable('bug_reports')) {
-                                    $openBugCount = \App\Models\BugReport::where('status', 'open')->count();
-                                }
-                            } catch (\Throwable $e) {
-                                $openBugCount = 0;
-                            }
+                            $openBugCount = cache()->remember('sidebar_open_bug_count', 30, function() {
+                                try {
+                                    if (\Illuminate\Support\Facades\Schema::hasTable('bug_reports')) {
+                                        return \App\Models\BugReport::where('status', 'open')->count();
+                                    }
+                                } catch (\Throwable $e) {}
+                                return 0;
+                            });
                         @endphp
                         <a href="{{ route('admin.bug-reports.index') }}" 
                            class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.bug-reports.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
@@ -1537,6 +1537,9 @@
                 observer.observe(document.body, { childList: true, subtree: true });
             });
         </script>
+
+        <!-- Instant Navigation: Just-In-Time Link Prefetching -->
+        <script src="{{ asset('vendor/instantpage/instantpage.min.js') }}" type="module"></script>
 
         @stack('scripts')
     </body>

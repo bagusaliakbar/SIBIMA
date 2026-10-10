@@ -3925,7 +3925,6 @@
     </div>
 
     @push('styles')
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet" />
     <style>
         :root {
             --fc-border-color: #f1f5f9;
@@ -3991,7 +3990,7 @@
     @endpush
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script defer src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);

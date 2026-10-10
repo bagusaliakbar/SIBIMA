@@ -584,8 +584,8 @@
 
     </div>
 
-    <!-- Chart.js & Datalabels Plugin CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js & Datalabels Plugin -->
+    <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>

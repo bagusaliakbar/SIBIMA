@@ -35,6 +35,13 @@ class Thesis extends Model
 
     public function getCompletedMentoringCountAttribute()
     {
+        if ($this->relationLoaded('mentoringSessions')) {
+            return $this->mentoringSessions
+                ->where('status', 'completed')
+                ->filter(fn($s) => empty($s->is_absent))
+                ->count();
+        }
+
         return $this->mentoringSessions()
             ->where('status', 'completed')
             ->where('is_absent', false)
@@ -43,6 +50,14 @@ class Thesis extends Model
 
     public function getCompletedMentoringCountForDosen($dosenId)
     {
+        if ($this->relationLoaded('mentoringSessions')) {
+            return $this->mentoringSessions
+                ->where('dosen_id', $dosenId)
+                ->where('status', 'completed')
+                ->filter(fn($s) => empty($s->is_absent))
+                ->count();
+        }
+
         return $this->mentoringSessions()
             ->where('dosen_id', $dosenId)
             ->where('status', 'completed')
@@ -64,6 +79,20 @@ class Thesis extends Model
             return abs((int) now()->diffInDays($this->latestCompletedMentoringSession->scheduled_at, true));
         }
 
+        if ($this->relationLoaded('mentoringSessions')) {
+            $lastSession = $this->mentoringSessions
+                ->where('status', 'completed')
+                ->filter(fn($s) => empty($s->is_absent))
+                ->sortByDesc('scheduled_at')
+                ->first();
+
+            if ($lastSession && $lastSession->scheduled_at) {
+                return abs((int) now()->diffInDays($lastSession->scheduled_at, true));
+            }
+
+            return $this->created_at ? abs((int) now()->diffInDays($this->created_at, true)) : null;
+        }
+
         $lastSession = $this->mentoringSessions()
             ->where('status', 'completed')
             ->where('is_absent', false)
@@ -79,6 +108,21 @@ class Thesis extends Model
 
     public function getDaysSinceLastMentoringForDosen($dosenId): ?int
     {
+        if ($this->relationLoaded('mentoringSessions')) {
+            $lastSession = $this->mentoringSessions
+                ->where('dosen_id', $dosenId)
+                ->where('status', 'completed')
+                ->filter(fn($s) => empty($s->is_absent))
+                ->sortByDesc('scheduled_at')
+                ->first();
+
+            if ($lastSession && $lastSession->scheduled_at) {
+                return abs((int) now()->diffInDays($lastSession->scheduled_at, true));
+            }
+
+            return $this->created_at ? abs((int) now()->diffInDays($this->created_at, true)) : null;
+        }
+
         $lastSession = $this->mentoringSessions()
             ->where('dosen_id', $dosenId)
             ->where('status', 'completed')

@@ -40,7 +40,6 @@
     </div>
 
     @push('styles')
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet" />
     <style>
         :root {
             --fc-border-color: #f1f5f9;
@@ -198,7 +197,7 @@
     @endpush
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     <script>

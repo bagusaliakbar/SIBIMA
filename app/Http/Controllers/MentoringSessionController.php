@@ -191,22 +191,11 @@ class MentoringSessionController extends Controller
                 ->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
                 ->get();
 
-            $calendarQuery = MentoringSession::forUser($user)
-                ->whereHas('thesis', function($q) use ($activeTab) {
-                    if ($activeTab === 'history') {
-                        $q->where('status', 'completed');
-                    } else {
-                        $q->where('status', '!=', 'completed');
-                    }
-                });
-
-            if ($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending'])) {
-                $calendarQuery->where('student_attendance_status', $attendanceFilter);
-            }
-
-            $calendarEvents = $calendarQuery
-                ->with(['thesis.student', 'dosen'])
-                ->get()
+            // Reuse $sessions when there is no text search to prevent duplicate database query
+            $calendarEvents = ($search ? MentoringSession::forUser($user)
+                ->whereHas('thesis', fn($q) => $activeTab === 'history' ? $q->where('status', 'completed') : $q->where('status', '!=', 'completed'))
+                ->when($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending']), fn($q) => $q->where('student_attendance_status', $attendanceFilter))
+                ->with(['thesis.student', 'dosen'])->get() : $sessions)
                 ->map(fn($s) => $this->formatCalendarEvent($s));
 
             $kpiStats = $this->calculateKpiStats($user);
@@ -252,27 +241,13 @@ class MentoringSessionController extends Controller
                 ->orderBy('scheduled_at', 'desc')
                 ->get();
 
-            $calendarQuery = MentoringSession::query()
-                ->whereHas('thesis', function($q) use ($activeTab) {
-                    if ($activeTab === 'history') {
-                        $q->where('status', 'completed');
-                    } else {
-                        $q->where('status', '!=', 'completed');
-                    }
-                });
-
-            if ($dosenId) {
-                $calendarQuery->where(function($q) use ($dosenId) {
-                    $q->where('dosen_id', $dosenId)
-                      ->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
-                });
-            }
-
-            if ($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending'])) {
-                $calendarQuery->where('student_attendance_status', $attendanceFilter);
-            }
-
-            $calendarEvents = $calendarQuery->with(['thesis.student', 'dosen'])->get()->map(fn($s) => $this->formatCalendarEvent($s));
+            // Reuse $sessions when there is no text search to prevent duplicate database query
+            $calendarEvents = ($search ? MentoringSession::query()
+                ->whereHas('thesis', fn($q) => $activeTab === 'history' ? $q->where('status', 'completed') : $q->where('status', '!=', 'completed'))
+                ->when($dosenId, fn($q) => $q->where(fn($sub) => $sub->where('dosen_id', $dosenId)->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId))))
+                ->when($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending']), fn($q) => $q->where('student_attendance_status', $attendanceFilter))
+                ->with(['thesis.student', 'dosen'])->get() : $sessions)
+                ->map(fn($s) => $this->formatCalendarEvent($s));
 
             $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
             $kpiStats = $this->calculateKpiStats($user, $dosenId);
@@ -374,13 +349,18 @@ class MentoringSessionController extends Controller
             });
         }
 
-        $sessions = $query->get();
+        $stats = $query->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN student_attendance_status = 'attending' THEN 1 ELSE 0 END) as attending,
+            SUM(CASE WHEN student_attendance_status = 'permission' THEN 1 ELSE 0 END) as permission,
+            SUM(CASE WHEN student_attendance_status = 'pending' THEN 1 ELSE 0 END) as pending
+        ")->first();
 
         return [
-            'total' => $sessions->count(),
-            'attending' => $sessions->where('student_attendance_status', 'attending')->count(),
-            'permission' => $sessions->where('student_attendance_status', 'permission')->count(),
-            'pending' => $sessions->where('student_attendance_status', 'pending')->count(),
+            'total' => (int) ($stats->total ?? 0),
+            'attending' => (int) ($stats->attending ?? 0),
+            'permission' => (int) ($stats->permission ?? 0),
+            'pending' => (int) ($stats->pending ?? 0),
         ];
     }
 
