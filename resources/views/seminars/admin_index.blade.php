@@ -48,7 +48,7 @@
              openPreviewModal(app) {
                  this.previewApp = app;
                  this.openPreview = true;
-                 const firstKey = Object.keys(app.files)[0] || 'file_acc_pembimbing';
+                 const firstKey = (app && app.files && Object.keys(app.files).length > 0) ? Object.keys(app.files)[0] : 'file_acc_pembimbing';
                  this.selectPreviewFile(firstKey);
              },
 
@@ -82,7 +82,7 @@
              },
 
              nextPreviewFile() {
-                 if (!this.previewApp) return;
+                 if (!this.previewApp || !this.previewApp.files) return;
                  const keys = Object.keys(this.previewApp.files);
                  const currIdx = keys.indexOf(this.previewFileKey);
                  if (currIdx < keys.length - 1) {
@@ -91,7 +91,7 @@
              },
 
              prevPreviewFile() {
-                 if (!this.previewApp) return;
+                 if (!this.previewApp || !this.previewApp.files) return;
                  const keys = Object.keys(this.previewApp.files);
                  const currIdx = keys.indexOf(this.previewFileKey);
                  if (currIdx > 0) {
@@ -681,6 +681,8 @@
                     </div>
                 </div>
             </div>
+        </template>
+
         {{-- GLOBAL PREVIEW APPLICATION MODAL WITH IN-APP VIEWER --}}
         <template x-teleport="body">
             <div x-show="openPreview" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>

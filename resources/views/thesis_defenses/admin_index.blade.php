@@ -100,7 +100,7 @@
                  this.previewApp = app;
                  this.openPreview = true;
                  this.previewCategory = 'all';
-                 const firstKey = Object.keys(app.files)[0] || 'file_formulir';
+                 const firstKey = (app && app.files && Object.keys(app.files).length > 0) ? Object.keys(app.files)[0] : 'file_formulir';
                  this.selectPreviewFile(firstKey);
              },
 
@@ -134,7 +134,7 @@
              },
 
              getFilteredFiles() {
-                 if (!this.previewApp) return [];
+                 if (!this.previewApp || !this.previewApp.files) return [];
                  const keys = Object.keys(this.previewApp.files);
                  if (this.previewCategory === 'all') return keys;
                  const cat = this.fileCategories[this.previewCategory];
@@ -142,7 +142,7 @@
              },
 
              nextPreviewFile() {
-                 if (!this.previewApp) return;
+                 if (!this.previewApp || !this.previewApp.files) return;
                  const filtered = this.getFilteredFiles();
                  const currIdx = filtered.indexOf(this.previewFileKey);
                  if (currIdx < filtered.length - 1) {
@@ -151,7 +151,7 @@
              },
 
              prevPreviewFile() {
-                 if (!this.previewApp) return;
+                 if (!this.previewApp || !this.previewApp.files) return;
                  const filtered = this.getFilteredFiles();
                  const currIdx = filtered.indexOf(this.previewFileKey);
                  if (currIdx > 0) {
@@ -809,6 +809,8 @@
                     </div>
                 </div>
             </div>
+        </template>
+
         {{-- GLOBAL PREVIEW APPLICATION MODAL WITH IN-APP VIEWER (20 BERKAS) --}}
         <template x-teleport="body">
             <div x-show="openPreview" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>
