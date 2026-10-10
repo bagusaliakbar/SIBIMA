@@ -1549,17 +1549,6 @@
                                                     </span>
                                                 @endif
                                             </div>
-                                        </div>
-
-                                        <!-- 5. Tombol Shortcut Buka Logbook -->
-                                        <div class="w-full flex justify-center pt-0.5">
-                                            <a href="{{ route('theses.logbooks', $thesis->id) }}" 
-                                               class="inline-flex items-center gap-1 text-[10px] font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 group/link transition-colors cursor-pointer"
-                                               title="Buka catatan bimbingan & logbook {{ $thesis->student->name }}">
-                                                <span>Buka Logbook</span>
-                                                <svg class="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                                            </a>
-                                        </div>
                                     </div>
                                 </td>
 
