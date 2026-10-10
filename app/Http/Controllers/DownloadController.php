@@ -26,6 +26,7 @@ class DownloadController extends Controller
 
         $user = Auth::user();
         $isAdmin = ($user->role === 'admin' || $user->role === 'kaprodi');
+        $inline = $request->boolean('inline') || $request->boolean('preview');
 
         // 1. Mentoring Session Documents
         if (str_starts_with($path, 'session-documents/')) {
@@ -36,7 +37,7 @@ class DownloadController extends Controller
                     ($user->role === 'dosen' && ($session->dosen_id === $user->id || $session->thesis->pembimbing1_id === $user->id || $session->thesis->pembimbing2_id === $user->id));
                 
                 if ($isAllowed) {
-                    return Storage::disk(config('filesystems.default'))->download($path, $session->document_original_name);
+                    return $this->deliverFile($path, $session->document_original_name, $inline);
                 }
             }
         }
@@ -71,7 +72,7 @@ class DownloadController extends Controller
                     $extension = pathinfo($path, PATHINFO_EXTENSION);
                     $downloadName = "{$npm}_{$name}_{$fieldName}.{$extension}";
 
-                    return Storage::disk(config('filesystems.default'))->download($path, $downloadName);
+                    return $this->deliverFile($path, $downloadName, $inline);
                 }
             }
         }
@@ -111,7 +112,7 @@ class DownloadController extends Controller
                     $extension = pathinfo($path, PATHINFO_EXTENSION);
                     $downloadName = "{$npm}_{$name}_{$fieldName}.{$extension}";
 
-                    return Storage::disk(config('filesystems.default'))->download($path, $downloadName);
+                    return $this->deliverFile($path, $downloadName, $inline);
                 }
             }
         }
@@ -141,7 +142,7 @@ class DownloadController extends Controller
                         $extension = pathinfo($path, PATHINFO_EXTENSION);
                         
                         $downloadName = "{$npm}_{$name}_revisi_seminar_" . $message->id . ".{$extension}";
-                        return Storage::disk(config('filesystems.default'))->download($path, $downloadName);
+                        return $this->deliverFile($path, $downloadName, $inline);
                     }
                 }
             }
@@ -172,7 +173,7 @@ class DownloadController extends Controller
                         $extension = pathinfo($path, PATHINFO_EXTENSION);
                         
                         $downloadName = "{$npm}_{$name}_revisi_sidang_" . $message->id . ".{$extension}";
-                        return Storage::disk(config('filesystems.default'))->download($path, $downloadName);
+                        return $this->deliverFile($path, $downloadName, $inline);
                     }
                 }
             }
@@ -194,7 +195,7 @@ class DownloadController extends Controller
                     $name = str_replace(' ', '_', $student->name ?? 'Mahasiswa');
                     $extension = pathinfo($path, PATHINFO_EXTENSION);
                     $downloadName = "{$npm}_{$name}_berkas_yudisium.{$extension}";
-                    return Storage::disk(config('filesystems.default'))->download($path, $downloadName);
+                    return $this->deliverFile($path, $downloadName, $inline);
                 }
             }
         }
@@ -202,19 +203,38 @@ class DownloadController extends Controller
         // 7. Templates
         if (str_starts_with($path, 'seminar_templates/')) {
             $template = \App\Models\SeminarTemplate::where('file_path', $path)->first();
-            return Storage::disk(config('filesystems.default'))->download($path, $template ? $template->original_name : null);
+            return $this->deliverFile($path, $template ? $template->original_name : null, $inline);
         }
 
         if (str_starts_with($path, 'thesis_defense_templates/')) {
             $template = \App\Models\ThesisDefenseTemplate::where('file_path', $path)->first();
-            return Storage::disk(config('filesystems.default'))->download($path, $template ? $template->original_name : null);
+            return $this->deliverFile($path, $template ? $template->original_name : null, $inline);
         }
 
-        // 7. Fallback for admin if path didn't match any standard prefixes but they are authorized
+        // 8. Fallback for admin if path didn't match any standard prefixes but they are authorized
         if ($isAdmin) {
-            return Storage::disk(config('filesystems.default'))->download($path);
+            return $this->deliverFile($path, null, $inline);
         }
 
         abort(403, 'Anda tidak memiliki izin untuk mengunduh file ini.');
+    }
+
+    /**
+     * Helper to deliver file as either inline preview or forced attachment download.
+     */
+    protected function deliverFile(string $path, ?string $downloadName = null, bool $inline = false)
+    {
+        $disk = Storage::disk(config('filesystems.default'));
+        if ($inline) {
+            $fullPath = $disk->path($path);
+            if (file_exists($fullPath)) {
+                $headers = [
+                    'Content-Disposition' => 'inline' . ($downloadName ? '; filename="' . $downloadName . '"' : ''),
+                ];
+                return response()->file($fullPath, $headers);
+            }
+        }
+
+        return $downloadName ? $disk->download($path, $downloadName) : $disk->download($path);
     }
 }
