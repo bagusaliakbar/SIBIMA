@@ -446,7 +446,7 @@
                                         Izin Akses Berkas Drive
                                     </h5>
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
-                                        Pastikan link Google Drive diatur ke <strong>"Anyone with the link can view"</strong> agar berkas dapat ditinjau oleh validator & penguji.
+                                        Pastikan link Google Drive diatur ke <strong>"Anyone with the link can view"</strong> agar berkas dapat ditinjau oleh BAAK / Kaprodi.
                                     </p>
                                 </div>
                             </div>
