@@ -154,12 +154,13 @@ class ThesisController extends Controller
             ], 422);
         }
         
-        $thesesQuery = Thesis::with('student');
+        $thesesQuery = Thesis::select('id', 'title', 'student_id', 'created_at')
+            ->with(['student' => fn($q) => $q->select('id', 'name', 'entry_year')]);
         if (Auth::check() && Auth::user()->role === 'mahasiswa') {
             $thesesQuery->where('student_id', '!=', Auth::id());
         }
         $theses = $thesesQuery->get();
-        $repositories = \App\Models\ThesisRepository::all();
+        $repositories = \App\Models\ThesisRepository::select('id', 'title', 'name', 'year')->get();
         
         $similarTitles = [];
         

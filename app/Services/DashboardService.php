@@ -13,6 +13,7 @@ use App\Models\Announcement;
 use App\Models\User;
 use App\Models\Wave; use App\Services\ThesisAnalyticsService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardService
 {
@@ -627,19 +628,21 @@ class DashboardService
 
     public function getCommonData()
     {
-        $allUsers = User::all();
-        $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values();
+        return Cache::remember('sibima_dashboard_common_data', 15, function () {
+            $allUsers = User::select('id', 'name', 'role', 'avatar', 'nim', 'nidn', 'email')->get();
+            $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values();
 
-        return [
-            'announcements' => Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get(),
-            'onlineUsers' => $onlineUsers,
-            'onlineUsersCount' => $onlineUsers->count(),
-            'onlineUsersByRole' => [
-                'mahasiswa' => $onlineUsers->where('role', 'mahasiswa')->count(),
-                'dosen' => $onlineUsers->where('role', 'dosen')->count(),
-                'kaprodi' => $onlineUsers->where('role', 'kaprodi')->count(),
-                'admin' => $onlineUsers->where('role', 'admin')->count(),
-            ]
-        ];
+            return [
+                'announcements' => Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get(),
+                'onlineUsers' => $onlineUsers,
+                'onlineUsersCount' => $onlineUsers->count(),
+                'onlineUsersByRole' => [
+                    'mahasiswa' => $onlineUsers->where('role', 'mahasiswa')->count(),
+                    'dosen' => $onlineUsers->where('role', 'dosen')->count(),
+                    'kaprodi' => $onlineUsers->where('role', 'kaprodi')->count(),
+                    'admin' => $onlineUsers->where('role', 'admin')->count(),
+                ]
+            ];
+        });
     }
 }

@@ -170,12 +170,20 @@ class BugReportController extends Controller
             ->withQueryString();
 
         // Metrics Summary
+        $rawStats = BugReport::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as `open`,
+            SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+            SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
+            SUM(CASE WHEN severity = 'critical' AND status IN ('open', 'in_progress') THEN 1 ELSE 0 END) as critical
+        ")->first();
+
         $stats = [
-            'total' => BugReport::count(),
-            'open' => BugReport::where('status', 'open')->count(),
-            'in_progress' => BugReport::where('status', 'in_progress')->count(),
-            'resolved' => BugReport::where('status', 'resolved')->count(),
-            'critical' => BugReport::where('severity', 'critical')->whereIn('status', ['open', 'in_progress'])->count(),
+            'total' => (int) ($rawStats->total ?? 0),
+            'open' => (int) ($rawStats->open ?? 0),
+            'in_progress' => (int) ($rawStats->in_progress ?? 0),
+            'resolved' => (int) ($rawStats->resolved ?? 0),
+            'critical' => (int) ($rawStats->critical ?? 0),
         ];
 
         return view('bug_reports.index', compact('bugReports', 'stats'));

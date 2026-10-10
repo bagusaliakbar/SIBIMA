@@ -157,11 +157,19 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
             }
         }
 
+        $todayStr = now()->toDateString();
+        $dateStats = (clone $countBaseQuery)->selectRaw("
+            COUNT(*) as all_count,
+            SUM(CASE WHEN date = ? THEN 1 ELSE 0 END) as today_count,
+            SUM(CASE WHEN date >= ? THEN 1 ELSE 0 END) as upcoming_count,
+            SUM(CASE WHEN date < ? THEN 1 ELSE 0 END) as past_count
+        ", [$todayStr, $todayStr, $todayStr])->first();
+
         $counts = [
-            'all' => (clone $countBaseQuery)->count(),
-            'today' => (clone $countBaseQuery)->whereDate('date', now()->toDateString())->count(),
-            'upcoming' => (clone $countBaseQuery)->whereDate('date', '>=', now()->toDateString())->count(),
-            'past' => (clone $countBaseQuery)->whereDate('date', '<', now()->toDateString())->count(),
+            'all' => (int) ($dateStats->all_count ?? 0),
+            'today' => (int) ($dateStats->today_count ?? 0),
+            'upcoming' => (int) ($dateStats->upcoming_count ?? 0),
+            'past' => (int) ($dateStats->past_count ?? 0),
             'mySchedules' => 0,
         ];
 

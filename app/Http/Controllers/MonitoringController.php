@@ -118,19 +118,25 @@ class MonitoringController extends Controller implements HasMiddleware
         $dataSiapSidang = [];
         $dataKritikal = [];
 
+        $allChartTheses = Thesis::where('status', '!=', 'completed')
+            ->when($pembimbingId, function($q) use ($pembimbingId) {
+                return $q->where(function($sq) use ($pembimbingId) {
+                    $sq->where('pembimbing1_id', $pembimbingId)
+                       ->orWhere('pembimbing2_id', $pembimbingId);
+                });
+            })
+            ->when($entryYear, function($q) use ($entryYear) {
+                return $q->whereHas('student', function($sq) use ($entryYear) {
+                    $sq->where('entry_year', $entryYear);
+                });
+            })
+            ->with('student')
+            ->get();
+
         foreach ($chartDosens as $dosen) {
-            $thesesQuery = Thesis::where('status', '!=', 'completed')
-                ->where(function($q) use ($dosen) {
-                    $q->where('pembimbing1_id', $dosen->id)
-                      ->orWhere('pembimbing2_id', $dosen->id);
-                })
-                ->whereHas('student', function($q) use ($entryYear) {
-                    if ($entryYear) {
-                        $q->where('entry_year', $entryYear);
-                    }
-                })
-                ->with('student')
-                ->get();
+            $thesesQuery = $allChartTheses->filter(function($t) use ($dosen) {
+                return $t->pembimbing1_id == $dosen->id || $t->pembimbing2_id == $dosen->id;
+            });
 
             if ($thesesQuery->count() > 0 || $pembimbingId) {
                 // Shorten name for chart label

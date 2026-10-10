@@ -69,11 +69,18 @@ class SeminarApplicationController extends Controller
             }
 
             // Statistics for the selected wave scope
+            $rawStats = (clone $baseWaveQuery)->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
+            ")->first();
+
             $stats = [
-                'total' => (clone $baseWaveQuery)->count(),
-                'pending' => (clone $baseWaveQuery)->where('status', 'pending')->count(),
-                'approved' => (clone $baseWaveQuery)->where('status', 'approved')->count(),
-                'rejected' => (clone $baseWaveQuery)->where('status', 'rejected')->count(),
+                'total' => (int) ($rawStats->total ?? 0),
+                'pending' => (int) ($rawStats->pending ?? 0),
+                'approved' => (int) ($rawStats->approved ?? 0),
+                'rejected' => (int) ($rawStats->rejected ?? 0),
             ];
 
             // Filtered applications query
@@ -107,10 +114,7 @@ class SeminarApplicationController extends Controller
                     'search' => $search,
                 ]);
             
-            $waves = Wave::orderBy('created_at', 'desc')->get()->map(function($w) {
-                $w->app_count = SeminarApplication::where('wave_id', $w->id)->count();
-                return $w;
-            });
+            $waves = Wave::withCount('seminarApplications as app_count')->orderBy('created_at', 'desc')->get();
             $template = SeminarTemplate::where('is_active', true)->latest()->first();
             
             return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats'));

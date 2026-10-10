@@ -158,26 +158,34 @@ class ThesisRepositoryController extends Controller
         $filteredCount = (clone $query)->count();
         $repositories = $query->orderBy('year', 'desc')->orderBy('name', 'asc')->paginate(12)->withQueryString();
 
-        // Get unique years for filter
-        $years = ThesisRepository::select('year')->whereNotNull('year')->where('year', '!=', '')->distinct()->orderBy('year', 'desc')->pluck('year');
+        // Compile distinct deduplicated metadata and filters (cached for 5 minutes)
+        $meta = \Illuminate\Support\Facades\Cache::remember('repo_catalog_metadata', 300, function () {
+            $years = ThesisRepository::select('year')->whereNotNull('year')->where('year', '!=', '')->distinct()->orderBy('year', 'desc')->pluck('year');
+            $advisors = $this->getNormalizedAdvisorsList();
+            $minYear = $years->min();
+            $maxYear = $years->max();
+            $yearRange = ($minYear && $maxYear) ? ($minYear == $maxYear ? $minYear : "{$minYear} – {$maxYear}") : '-';
 
-        // Compile distinct deduplicated advisors from ThesisRepository and active lecturers
-        $advisors = $this->getNormalizedAdvisorsList();
+            $topicStats = [];
+            $sampleRepos = ThesisRepository::select('title')->get();
+            foreach ($sampleRepos as $r) {
+                $badge = $r->topic_badge;
+                $lbl = $badge['label'] ?? 'Lainnya';
+                $topicStats[$lbl] = ($topicStats[$lbl] ?? 0) + 1;
+            }
+            arsort($topicStats);
+            $topTopicLabel = key($topicStats) ?? 'Web App & SI';
 
-        $minYear = $years->min();
-        $maxYear = $years->max();
-        $yearRange = ($minYear && $maxYear) ? ($minYear == $maxYear ? $minYear : "{$minYear} – {$maxYear}") : '-';
+            return compact('years', 'advisors', 'minYear', 'maxYear', 'yearRange', 'topicStats', 'topTopicLabel');
+        });
 
-        // Count topics distribution dynamically
-        $topicStats = [];
-        $sampleRepos = ThesisRepository::select('title')->get();
-        foreach ($sampleRepos as $r) {
-            $badge = $r->topic_badge;
-            $lbl = $badge['label'] ?? 'Lainnya';
-            $topicStats[$lbl] = ($topicStats[$lbl] ?? 0) + 1;
-        }
-        arsort($topicStats);
-        $topTopicLabel = key($topicStats) ?? 'Web App & SI';
+        $years = $meta['years'];
+        $advisors = $meta['advisors'];
+        $minYear = $meta['minYear'];
+        $maxYear = $meta['maxYear'];
+        $yearRange = $meta['yearRange'];
+        $topicStats = $meta['topicStats'];
+        $topTopicLabel = $meta['topTopicLabel'];
         $topTopicCount = current($topicStats) ?: 0;
 
         $stats = [

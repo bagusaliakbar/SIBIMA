@@ -15,7 +15,7 @@ class NotificationController extends Controller
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'notifications' => $user->notifications()->latest()->take(20)->get(),
-                'unread_count' => $user->unreadNotifications->count()
+                'unread_count' => $user->unreadNotifications()->count()
             ]);
         }
 
@@ -42,7 +42,7 @@ class NotificationController extends Controller
             'tab'    => $activeTab,
         ]);
 
-        $unreadCount = $user->unreadNotifications->count();
+        $unreadCount = $user->unreadNotifications()->count();
         $totalCount = $user->notifications()->count();
         $readCount = max(0, $totalCount - $unreadCount);
 

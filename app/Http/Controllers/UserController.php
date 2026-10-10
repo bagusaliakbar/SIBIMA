@@ -47,32 +47,48 @@ class UserController extends Controller implements HasMiddleware
         $oldCohortThresholdYear = $isSecondHalf ? ($currentYear - 4) : ($currentYear - 5);
 
         // Role Counts for quick filter tabs
-        $baseCountQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi']);
+        $rawRoleCounts = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->selectRaw("
+                COUNT(*) as all_count,
+                SUM(CASE WHEN role = 'mahasiswa' THEN 1 ELSE 0 END) as mahasiswa,
+                SUM(CASE WHEN role = 'dosen' THEN 1 ELSE 0 END) as dosen,
+                SUM(CASE WHEN role = 'kaprodi' THEN 1 ELSE 0 END) as kaprodi
+            ")->first();
+
         $roleCounts = [
-            'all' => (clone $baseCountQuery)->count(),
-            'mahasiswa' => (clone $baseCountQuery)->where('role', 'mahasiswa')->count(),
-            'dosen' => (clone $baseCountQuery)->where('role', 'dosen')->count(),
-            'kaprodi' => (clone $baseCountQuery)->where('role', 'kaprodi')->count(),
+            'all' => (int) ($rawRoleCounts->all_count ?? 0),
+            'mahasiswa' => (int) ($rawRoleCounts->mahasiswa ?? 0),
+            'dosen' => (int) ($rawRoleCounts->dosen ?? 0),
+            'kaprodi' => (int) ($rawRoleCounts->kaprodi ?? 0),
         ];
 
         // Status Counts
-        $statusCountQuery = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
-            ->when($role !== 'all', fn($q) => $q->where('role', $role));
+        $rawStatusCounts = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->when($role !== 'all', fn($q) => $q->where('role', $role))
+            ->selectRaw("
+                COUNT(*) as all_count,
+                SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) as pending
+            ")->first();
+
         $statusCounts = [
-            'all' => (clone $statusCountQuery)->count(),
-            'active' => (clone $statusCountQuery)->where('is_active', true)->count(),
-            'pending' => (clone $statusCountQuery)->where('is_active', false)->count(),
+            'all' => (int) ($rawStatusCounts->all_count ?? 0),
+            'active' => (int) ($rawStatusCounts->active ?? 0),
+            'pending' => (int) ($rawStatusCounts->pending ?? 0),
         ];
 
         // Cohort Counts for students
-        $studentQuery = User::where('role', 'mahasiswa');
+        $rawCohortCounts = User::where('role', 'mahasiswa')
+            ->selectRaw("
+                COUNT(*) as all_count,
+                SUM(CASE WHEN entry_year > ? OR entry_year IS NULL THEN 1 ELSE 0 END) as new_count,
+                SUM(CASE WHEN entry_year <= ? THEN 1 ELSE 0 END) as old_count
+            ", [$oldCohortThresholdYear, $oldCohortThresholdYear])->first();
+
         $cohortCounts = [
-            'all' => (clone $studentQuery)->count(),
-            'new' => (clone $studentQuery)->where(function ($q) use ($oldCohortThresholdYear) {
-                $q->where('entry_year', '>', $oldCohortThresholdYear)
-                  ->orWhereNull('entry_year');
-            })->count(),
-            'old' => (clone $studentQuery)->where('entry_year', '<=', $oldCohortThresholdYear)->count(),
+            'all' => (int) ($rawCohortCounts->all_count ?? 0),
+            'new' => (int) ($rawCohortCounts->new_count ?? 0),
+            'old' => (int) ($rawCohortCounts->old_count ?? 0),
         ];
 
         // Distinct available entry years for dropdown
@@ -88,14 +104,24 @@ class UserController extends Controller implements HasMiddleware
                 $q->whereNotNull('pembimbing1_id')->orWhereNotNull('pembimbing2_id');
             })->count();
 
+        $rawKpi = User::whereIn('role', ['dosen', 'mahasiswa', 'kaprodi'])
+            ->selectRaw("
+                COUNT(*) as total_users,
+                SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as total_active,
+                SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) as total_pending,
+                SUM(CASE WHEN role = 'dosen' AND is_active = 1 THEN 1 ELSE 0 END) as active_dosen,
+                SUM(CASE WHEN role = 'mahasiswa' AND is_active = 1 THEN 1 ELSE 0 END) as active_mahasiswa,
+                SUM(CASE WHEN role = 'kaprodi' AND is_active = 1 THEN 1 ELSE 0 END) as active_kaprodi
+            ")->first();
+
         $kpiStats = [
-            'total_users' => (clone $baseCountQuery)->count(),
-            'total_active' => (clone $baseCountQuery)->where('is_active', true)->count(),
-            'total_pending' => (clone $baseCountQuery)->where('is_active', false)->count(),
-            'active_dosen' => (clone $baseCountQuery)->where('role', 'dosen')->where('is_active', true)->count(),
+            'total_users' => (int) ($rawKpi->total_users ?? 0),
+            'total_active' => (int) ($rawKpi->total_active ?? 0),
+            'total_pending' => (int) ($rawKpi->total_pending ?? 0),
+            'active_dosen' => (int) ($rawKpi->active_dosen ?? 0),
             'total_supervised' => $totalSupervisedTheses,
-            'active_mahasiswa' => (clone $baseCountQuery)->where('role', 'mahasiswa')->where('is_active', true)->count(),
-            'active_kaprodi' => (clone $baseCountQuery)->where('role', 'kaprodi')->where('is_active', true)->count(),
+            'active_mahasiswa' => (int) ($rawKpi->active_mahasiswa ?? 0),
+            'active_kaprodi' => (int) ($rawKpi->active_kaprodi ?? 0),
         ];
 
         // Main Query

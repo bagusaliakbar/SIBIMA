@@ -47,7 +47,9 @@ class ActivityLogController extends Controller implements HasMiddleware
             ->paginate(10)
             ->appends(['search' => $search, 'module' => $module]);
 
-        $modules = ActivityLog::distinct()->pluck('module')->filter();
+        $modules = \Illuminate\Support\Facades\Cache::remember('activity_log_modules', 3600, function () {
+            return ActivityLog::distinct()->pluck('module')->filter()->values();
+        });
 
         return view('logs.index', compact('logs', 'search', 'module', 'modules'));
     }

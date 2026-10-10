@@ -188,7 +188,7 @@
                 :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                 class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-50 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:inset-auto md:h-full md:flex">
                 <!-- Sidebar Pattern Overlay -->
-                <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('{{ asset('images/carbon-fibre.png') }}')"></div>
                 
                 <div class="h-20 flex items-center justify-between px-8 border-b border-white/5 dark:border-white/[0.02] relative z-10">
                     <div class="flex items-center gap-3">
@@ -970,8 +970,8 @@
                             </form>
                         </div>
 
-                        <audio id="notif-sound" preload="auto">
-                            <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+                        <audio id="notif-sound" preload="none">
+                            <source src="{{ asset('sounds/notification.mp3') }}" type="audio/mpeg">
                         </audio>
 
                         <script>
