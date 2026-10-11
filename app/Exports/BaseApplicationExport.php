@@ -206,7 +206,7 @@ abstract class BaseApplicationExport extends DefaultValueBinder implements
 
                 // 3. Set Row 2 (Subtitle)
                 $sheet->mergeCells('A2:E2');
-                $sheet->setCellValue('A2', 'SISTEM INFORMASI BIMBINGAN TUGAS AKHIR & SKRIPSI (SIBIMA) - UNIVERSITAS SUBANG');
+                $sheet->setCellValue('A2', 'SISTEM INFORMASI BIMBINGAN MAHASISWA (SIBIMA) - FAKULTAS ILMU KOMPUTER - UNIVERSITAS SUBANG');
                 $sheet->getRowDimension(2)->setRowHeight(18);
                 $sheet->getStyle('A2:E2')->applyFromArray([
                     'font' => [
