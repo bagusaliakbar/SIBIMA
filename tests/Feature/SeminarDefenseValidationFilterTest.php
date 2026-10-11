@@ -205,4 +205,100 @@ class SeminarDefenseValidationFilterTest extends TestCase
         $responseSearch->assertSee('Ahmad Fauzi');
         $responseSearch->assertDontSee('Dewi Lestari');
     }
+
+    public function test_admin_and_kaprodi_can_export_seminar_applications_to_excel()
+    {
+        \Maatwebsite\Excel\Facades\Excel::fake();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 Test',
+            'start_date' => now()->subDays(5),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('seminar-applications.export-excel', [
+            'wave_id' => $wave->id,
+            'status' => 'all',
+        ]));
+
+        $response->assertStatus(200);
+        \Maatwebsite\Excel\Facades\Excel::assertDownloaded('data-validasi-seminar-gelombang-1-test-' . now()->format('Y-m-d') . '.xlsx', function(\App\Exports\SeminarApplicationsExport $export) {
+            return $export->headings() === ['NO', 'NPM', 'NAMA MAHASISWA', 'JUDUL SKRIPSI', 'PEMBIMBING'];
+        });
+
+        // Unauthorized check
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $this->actingAs($student)->get(route('seminar-applications.export-excel'))->assertStatus(403);
+    }
+
+    public function test_admin_and_kaprodi_can_export_thesis_defense_applications_to_excel()
+    {
+        \Maatwebsite\Excel\Facades\Excel::fake();
+
+        $kaprodi = User::factory()->create(['role' => 'kaprodi']);
+        $wave = Wave::create([
+            'name' => 'Gelombang Sidang 2026',
+            'start_date' => now()->subDays(5),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($kaprodi)->get(route('thesis-defense-applications.export-excel', [
+            'wave_id' => $wave->id,
+            'status' => 'all',
+        ]));
+
+        $response->assertStatus(200);
+        \Maatwebsite\Excel\Facades\Excel::assertDownloaded('data-validasi-sidang-gelombang-sidang-2026-' . now()->format('Y-m-d') . '.xlsx', function(\App\Exports\ThesisDefenseApplicationsExport $export) {
+            return $export->headings() === ['NO', 'NPM', 'NAMA MAHASISWA', 'JUDUL SKRIPSI', 'PEMBIMBING'];
+        });
+
+        // Unauthorized check
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $this->actingAs($dosen)->get(route('thesis-defense-applications.export-excel'))->assertStatus(403);
+    }
+
+    public function test_export_collection_and_mapping_without_fake()
+    {
+        $p1 = User::factory()->create(['role' => 'dosen', 'name' => 'Dr. Budi Pembimbing']);
+        $p2 = User::factory()->create(['role' => 'dosen', 'name' => 'Siti Co-Advisor']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Agus Mahasiswa', 'identifier' => '01A220999']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Rancang Bangun Aplikasi SIBIMA',
+            'status' => 'active',
+            'pembimbing1_id' => $p1->id,
+            'pembimbing2_id' => $p2->id,
+        ]);
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 Validasi',
+            'start_date' => now()->subDays(2),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+        $app = SeminarApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'status' => 'approved',
+            'file_acc_pembimbing' => 'seminars/acc.pdf',
+            'file_pembayaran' => 'seminars/pay.pdf',
+            'file_kartu_bimbingan' => 'seminars/card.pdf',
+            'file_skripsi' => 'seminars/draft.pdf',
+            'file_formulir' => 'seminars/form.pdf',
+        ]);
+
+        $export = new \App\Exports\SeminarApplicationsExport($wave->id, 'approved', 'SIBIMA');
+        $collection = $export->collection();
+        $this->assertCount(1, $collection);
+
+        $mapped = $export->map($collection->first());
+        $this->assertEquals(1, $mapped[0]); // No
+        $this->assertEquals('01A220999', $mapped[1]); // NPM
+        $this->assertEquals('Agus Mahasiswa', $mapped[2]); // Nama
+        $this->assertEquals('Rancang Bangun Aplikasi SIBIMA', $mapped[3]); // Judul Skripsi
+        $this->assertStringContainsString('1. Dr. Budi Pembimbing', $mapped[4]); // Pembimbing 1
+        $this->assertStringContainsString('2. Siti Co-Advisor', $mapped[4]); // Pembimbing 2
+    }
 }

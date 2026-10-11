@@ -11,6 +11,8 @@ use App\Models\Wave;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SeminarApplicationsExport;
 
 class SeminarApplicationController extends Controller
 {
@@ -121,6 +123,29 @@ class SeminarApplicationController extends Controller
         }
 
         abort(403);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi') {
+            abort(403);
+        }
+
+        $activeWave = Wave::getCurrentActive();
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $status = $request->input('status', 'all');
+        $search = $request->input('search');
+
+        $filename = 'data-validasi-seminar-' . now()->format('Y-m-d') . '.xlsx';
+        if (!empty($selectedWaveId) && $selectedWaveId !== 'all') {
+            $wave = Wave::find($selectedWaveId);
+            if ($wave) {
+                $filename = 'data-validasi-seminar-' . \Illuminate\Support\Str::slug($wave->name) . '-' . now()->format('Y-m-d') . '.xlsx';
+            }
+        }
+
+        return Excel::download(new SeminarApplicationsExport($selectedWaveId, $status, $search), $filename);
     }
 
     public function store(Request $request)

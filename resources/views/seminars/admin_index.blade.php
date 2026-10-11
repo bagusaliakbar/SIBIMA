@@ -348,33 +348,45 @@
                     </a>
                 </div>
 
-                {{-- Search Bar Form --}}
-                <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2 w-full md:w-auto">
-                    @if(!empty($selectedWaveId))
-                        <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}">
-                    @endif
-                    @if(!empty($status) && $status !== 'all')
-                        <input type="hidden" name="status" value="{{ $status }}">
-                    @endif
-
-                    <div class="relative w-full md:w-72">
-                        <input type="text" name="search" value="{{ $search }}"
-                               placeholder="Cari nama, NPM, judul..."
-                               class="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
-                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        @if($search)
-                            <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}" 
-                               class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
-                                ✕
-                            </a>
+                <div class="flex items-center gap-2 w-full md:w-auto flex-wrap">
+                    {{-- Search Bar Form --}}
+                    <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2 flex-1 md:flex-initial">
+                        @if(!empty($selectedWaveId))
+                            <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}">
                         @endif
-                    </div>
-                    <button type="submit" class="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-xl text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-2xs shrink-0 cursor-pointer">
-                        Cari
-                    </button>
-                </form>
+                        @if(!empty($status) && $status !== 'all')
+                            <input type="hidden" name="status" value="{{ $status }}">
+                        @endif
+
+                        <div class="relative w-full md:w-72">
+                            <input type="text" name="search" value="{{ $search }}"
+                                   placeholder="Cari nama, NPM, judul..."
+                                   class="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            @if($search)
+                                <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}" 
+                                   class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
+                                    ✕
+                                </a>
+                            @endif
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-xl text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-2xs shrink-0 cursor-pointer">
+                            Cari
+                        </button>
+                    </form>
+
+                    {{-- Export Excel Button --}}
+                    <a href="{{ route('seminar-applications.export-excel', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
+                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                       title="Export Data Validasi Seminar ke Excel">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Export Excel</span>
+                    </a>
+                </div>
             </div>
 
             {{-- Table Content --}}
