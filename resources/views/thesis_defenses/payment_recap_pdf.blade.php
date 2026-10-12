@@ -265,59 +265,7 @@
             padding: 8px;
         }
 
-        /* SIGNATURE SECTION */
-        .signature-section {
-            width: 100%;
-            margin-top: 18px;
-            page-break-inside: avoid;
-        }
 
-        .signature-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: none;
-        }
-
-        .signature-table td {
-            border: none !important;
-            padding: 0 !important;
-            vertical-align: top;
-        }
-
-        .sign-box {
-            width: 220px;
-            text-align: center;
-            float: right;
-        }
-
-        .sign-date {
-            font-size: 8pt;
-            color: #1e293b;
-            margin-bottom: 2px;
-        }
-
-        .sign-role {
-            font-size: 8pt;
-            font-weight: bold;
-            color: #0f172a;
-            text-transform: uppercase;
-        }
-
-        .sign-space {
-            height: 55px;
-        }
-
-        .sign-name {
-            font-size: 8.5pt;
-            font-weight: bold;
-            color: #0f172a;
-            text-decoration: underline;
-        }
-
-        .sign-nip {
-            font-size: 7.5pt;
-            color: #475569;
-        }
     </style>
 </head>
 <body>
@@ -474,27 +422,6 @@
         </tbody>
     </table>
 
-    {{-- TANDA TANGAN / PENGESAHAN --}}
-    <div class="signature-section">
-        <table class="signature-table">
-            <tr>
-                <td style="width: 60%;">
-                    <div style="font-size: 7.5pt; color: #64748b; font-style: italic; margin-top: 15px;">
-                        * Dokumen ini dicetak otomatis secara resmi melalui Sistem Informasi Bimbingan Mahasiswa (SIBIMA).
-                    </div>
-                </td>
-                <td style="width: 40%;">
-                    <div class="sign-box">
-                        <div class="sign-date">Subang, {{ now()->translatedFormat('d F Y') }}</div>
-                        <div class="sign-role">Ketua Program Studi,</div>
-                        <div class="sign-space"></div>
-                        <div class="sign-name">{{ $kaprodi?->name ?? 'Ketua Program Studi' }}</div>
-                        <div class="sign-nip">NIDN/NIP. {{ $kaprodi?->identifier ?? '-' }}</div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
 
 </body>
 </html>
