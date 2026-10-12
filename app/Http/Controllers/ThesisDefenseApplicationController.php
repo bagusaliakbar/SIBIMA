@@ -206,6 +206,61 @@ class ThesisDefenseApplicationController extends Controller
         return $pdf->download($filename);
     }
 
+    public function exportPaymentWord(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi') {
+            abort(403);
+        }
+
+        $activeWave = Wave::getCurrentActive();
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $status = $request->input('status', 'all');
+        $search = $request->input('search');
+
+        $applicationsQuery = ThesisDefenseApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+
+        if (!empty($selectedWaveId) && $selectedWaveId !== 'all') {
+            $applicationsQuery->where('wave_id', $selectedWaveId);
+        }
+
+        if (!empty($status) && $status !== 'all') {
+            $applicationsQuery->where('status', $status);
+        }
+
+        if (!empty($search)) {
+            $applicationsQuery->where(function($q) use ($search) {
+                $q->whereHas('thesis.student', function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%")
+                       ->orWhere('identifier', 'like', "%{$search}%");
+                })->orWhereHas('thesis', function($tq) use ($search) {
+                    $tq->where('title', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $applications = $applicationsQuery->orderBy('created_at', 'desc')->get();
+
+        foreach ($applications as $app) {
+            $app->payment_proof_data = $this->preparePaymentProofData($app);
+        }
+
+        $wave = (!empty($selectedWaveId) && $selectedWaveId !== 'all') ? Wave::find($selectedWaveId) : null;
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $filename = 'rekap-pembayaran-sidang-' . now()->format('Y-m-d') . '.doc';
+        if ($wave) {
+            $filename = 'rekap-pembayaran-sidang-' . Str::slug($wave->name) . '-' . now()->format('Y-m-d') . '.doc';
+        }
+
+        $content = view('thesis_defenses.payment_recap_word', compact('applications', 'wave', 'status', 'search', 'kaprodi'))->render();
+
+        return response($content)
+            ->header('Content-Type', 'application/msword')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Cache-Control', 'max-age=0, must-revalidate');
+    }
+
     protected function preparePaymentProofData($application): array
     {
         $rawPath = $application->file_pembayaran;

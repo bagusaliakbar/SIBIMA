@@ -396,6 +396,16 @@
                         </svg>
                         <span>Rekap Pembayaran (PDF)</span>
                     </a>
+
+                    {{-- Export Rekap Pembayaran Word Button --}}
+                    <a href="{{ route('seminar-applications.export-payment-word', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
+                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                       title="Export Rekap Bukti Pembayaran Seminar ke Word (.doc)">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Rekap Pembayaran (Word)</span>
+                    </a>
                 </div>
             </div>
 

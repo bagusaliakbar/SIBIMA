@@ -443,4 +443,79 @@ class SeminarDefenseValidationFilterTest extends TestCase
         $response->assertStatus(200);
         $this->assertEquals('application/pdf', $response->headers->get('content-type'));
     }
+
+    public function test_admin_can_export_payment_recap_word_for_seminar_and_defense()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Bambang Word', 'identifier' => 'D1A220999']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Sistem Rekomendasi Jurnal Ilmiah',
+            'status' => 'active',
+        ]);
+        $wave = Wave::create([
+            'name' => 'Gelombang Word Test',
+            'start_date' => now()->subDays(2),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+
+        SeminarApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'status' => 'approved',
+            'file_acc_pembimbing' => 'seminars/acc.pdf',
+            'file_pembayaran' => 'https://drive.google.com/file/d/12345/view',
+            'file_kartu_bimbingan' => 'seminars/card.pdf',
+            'file_skripsi' => 'seminars/draft.pdf',
+            'file_formulir' => 'seminars/form.pdf',
+        ]);
+
+        ThesisDefenseApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'status' => 'approved',
+            'file_formulir' => 'defenses/form.pdf',
+            'file_transkrip' => 'defenses/trans.pdf',
+            'file_acc_pembimbing' => 'defenses/acc.pdf',
+            'file_logbook' => 'defenses/log.pdf',
+            'file_pembayaran' => 'https://drive.google.com/file/d/67890/view',
+            'file_skripsi' => 'defense/skripsi.pdf',
+            'file_ktm' => 'defenses/ktm.pdf',
+            'file_pkkmb_univ' => 'defenses/pkkmb1.pdf',
+            'file_pkkmb_fak' => 'defenses/pkkmb2.pdf',
+            'file_makrab' => 'defenses/makrab.pdf',
+            'file_cisco' => 'defenses/cisco.pdf',
+            'file_workshop' => 'defenses/ws.pdf',
+            'file_organisasi' => 'defenses/org.pdf',
+            'file_toefl' => 'defenses/toefl.pdf',
+            'file_kewirausahaan' => 'defenses/kwu.pdf',
+            'file_tahsin' => 'defenses/tahsin.pdf',
+            'file_komputer' => 'defenses/comp.pdf',
+            'file_perpus_pinjam' => 'defenses/perpus1.pdf',
+            'file_perpus_sumbang' => 'defenses/perpus2.pdf',
+            'file_ijazah' => 'defenses/ijazah.pdf',
+        ]);
+
+        // Seminar Word Export
+        $responseSem = $this->actingAs($admin)->get(route('seminar-applications.export-payment-word', [
+            'wave_id' => $wave->id,
+        ]));
+        $responseSem->assertStatus(200);
+        $this->assertStringContainsString('rekap-pembayaran-seminar', $responseSem->headers->get('content-disposition'));
+        $this->assertEquals('application/msword', $responseSem->headers->get('content-type'));
+
+        // Defense Word Export
+        $responseDef = $this->actingAs($admin)->get(route('thesis-defense-applications.export-payment-word', [
+            'wave_id' => $wave->id,
+        ]));
+        $responseDef->assertStatus(200);
+        $this->assertStringContainsString('rekap-pembayaran-sidang', $responseDef->headers->get('content-disposition'));
+        $this->assertEquals('application/msword', $responseDef->headers->get('content-type'));
+
+        // Unauthorized check
+        $mahasiswa = User::factory()->create(['role' => 'mahasiswa']);
+        $this->actingAs($mahasiswa)->get(route('seminar-applications.export-payment-word'))->assertStatus(403);
+        $this->actingAs($mahasiswa)->get(route('thesis-defense-applications.export-payment-word'))->assertStatus(403);
+    }
 }

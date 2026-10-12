@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/seminar-applications', [App\Http\Controllers\SeminarApplicationController::class, 'index'])->name('seminar-applications.index');
     Route::get('/seminar-applications/export-excel', [App\Http\Controllers\SeminarApplicationController::class, 'exportExcel'])->name('seminar-applications.export-excel');
     Route::get('/seminar-applications/export-payment-pdf', [App\Http\Controllers\SeminarApplicationController::class, 'exportPaymentPdf'])->name('seminar-applications.export-payment-pdf');
+    Route::get('/seminar-applications/export-payment-word', [App\Http\Controllers\SeminarApplicationController::class, 'exportPaymentWord'])->name('seminar-applications.export-payment-word');
     Route::post('/seminar-applications', [App\Http\Controllers\SeminarApplicationController::class, 'store'])->name('seminar-applications.store');
     Route::post('/seminar-applications/upload-template', [App\Http\Controllers\SeminarApplicationController::class, 'uploadTemplate'])->name('seminar-applications.upload-template');
     Route::patch('/seminar-applications/{application}/validate', [App\Http\Controllers\SeminarApplicationController::class, 'validateApplication'])->name('seminar-applications.validate');
@@ -147,6 +148,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'index'])->name('thesis-defense-applications.index');
     Route::get('/thesis-defense-applications/export-excel', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'exportExcel'])->name('thesis-defense-applications.export-excel');
     Route::get('/thesis-defense-applications/export-payment-pdf', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'exportPaymentPdf'])->name('thesis-defense-applications.export-payment-pdf');
+    Route::get('/thesis-defense-applications/export-payment-word', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'exportPaymentWord'])->name('thesis-defense-applications.export-payment-word');
     Route::post('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'store'])->name('thesis-defense-applications.store');
     Route::post('/thesis-defense-applications/upload-template', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'uploadTemplate'])->name('thesis-defense-applications.upload-template');
     Route::patch('/thesis-defense-applications/{application}/validate', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'validateApplication'])->name('thesis-defense-applications.validate');
