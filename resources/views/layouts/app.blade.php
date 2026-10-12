@@ -282,11 +282,6 @@
             </div>
 
             <!-- Sidebar (Dark & Premium) -->
-            <!-- Desktop Sidebar Spacer (Zero Layout Shift) -->
-            <div class="hidden md:block shrink-0 transition-all duration-300"
-                 :class="{ 'w-[280px]': !sidebarCollapsed, 'w-[80px]': sidebarCollapsed }"></div>
-
-            <!-- Sidebar (Dark & Premium) -->
             <aside 
                 x-data="{ sidebarHovered: false }"
                 @mouseenter="if (sidebarCollapsed) sidebarHovered = true"
@@ -294,11 +289,11 @@
                 :class="{
                     'translate-x-0': sidebarOpen,
                     '-translate-x-full': !sidebarOpen,
-                    'md:w-[280px]': !sidebarCollapsed,
+                    'md:w-[280px]': !sidebarCollapsed || sidebarHovered,
                     'md:w-[80px] sidebar-collapsed': sidebarCollapsed && !sidebarHovered,
-                    'md:w-[280px] sidebar-hover-expanded': sidebarCollapsed && sidebarHovered
+                    'sidebar-hover-expanded shadow-2xl z-50': sidebarCollapsed && sidebarHovered
                 }"
-                class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-50 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:fixed md:translate-x-0 md:h-full md:flex">
+                class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-40 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:inset-auto md:h-full md:flex">
                 <!-- Sidebar Pattern Overlay -->
                 <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('{{ asset('images/carbon-fibre.png') }}')"></div>
                 
