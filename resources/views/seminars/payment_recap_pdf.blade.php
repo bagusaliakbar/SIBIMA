@@ -294,7 +294,6 @@
     {{-- HEADER LAPORAN --}}
     <div class="report-header">
         <h1 class="report-title">REKAPITULASI BUKTI PEMBAYARAN PENDAFTARAN SEMINAR PROPOSAL</h1>
-        <div class="report-subtitle">SISTEM INFORMASI BIMBINGAN MAHASISWA (SIBIMA) - FAKULTAS ILMU KOMPUTER - UNIVERSITAS SUBANG</div>
     </div>
 
     {{-- DATA TABLE (NO, NPM, NAMA, BUKTI PEMBAYARAN) --}}

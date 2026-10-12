@@ -91,13 +91,6 @@
             margin: 0;
         }
 
-        .report-subtitle {
-            font-size: 8.5pt;
-            font-weight: bold;
-            color: #374151;
-            margin-top: 2px;
-        }
-
         /* DATA TABLE */
         .data-table {
             width: 100%;
@@ -120,7 +113,7 @@
         .data-table td {
             border: 1px solid #94a3b8;
             padding: 7px 6px;
-            vertical-align: top;
+            vertical-align: middle;
             font-size: 8.5pt;
         }
 
@@ -137,27 +130,20 @@
         }
 
         .col-nama {
-            width: 45%;
+            width: 40%;
             text-align: left;
         }
 
         .col-bukti {
-            width: 35%;
+            width: 40%;
             text-align: center;
         }
 
         .student-name {
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 9pt;
-            margin-bottom: 3px;
-        }
-
-        .thesis-title {
-            font-size: 8pt;
-            color: #4b5563;
-            font-style: italic;
-            line-height: 1.35;
+            font-size: 8.5pt;
+            margin: 0;
         }
 
         .proof-img {
@@ -245,7 +231,6 @@
     {{-- HEADER LAPORAN --}}
     <div class="report-header">
         <div class="report-title">REKAPITULASI BUKTI PEMBAYARAN PENDAFTARAN SEMINAR PROPOSAL</div>
-        <div class="report-subtitle">SISTEM INFORMASI BIMBINGAN MAHASISWA (SIBIMA) - FAKULTAS ILMU KOMPUTER - UNIVERSITAS SUBANG</div>
     </div>
 
     {{-- DATA TABLE --}}
@@ -254,8 +239,8 @@
             <tr style="mso-yfti-tblheader: yes;">
                 <th class="col-no" width="5%" style="width: 5%;">NO</th>
                 <th class="col-npm" width="15%" style="width: 15%;">NPM</th>
-                <th class="col-nama" width="45%" style="width: 45%;">NAMA & JUDUL SKRIPSI</th>
-                <th class="col-bukti" width="35%" style="width: 35%;">BUKTI PEMBAYARAN</th>
+                <th class="col-nama" width="40%" style="width: 40%;">NAMA MAHASISWA</th>
+                <th class="col-bukti" width="40%" style="width: 40%;">BUKTI PEMBAYARAN</th>
             </tr>
         </thead>
         <tbody>
@@ -265,18 +250,12 @@
                     $proof = $app->payment_proof_data ?? null;
                 @endphp
                 <tr>
-                    <td class="col-no" width="5%" style="text-align: center; vertical-align: top;">{{ $index + 1 }}</td>
-                    <td class="col-npm" width="15%" style="text-align: center; vertical-align: top;">{{ $student?->identifier ?? '-' }}</td>
-                    <td class="col-nama" width="45%" style="text-align: left; vertical-align: top;">
+                    <td class="col-no" width="5%" style="text-align: center; vertical-align: middle;">{{ $index + 1 }}</td>
+                    <td class="col-npm" width="15%" style="text-align: center; vertical-align: middle;">{{ $student?->identifier ?? '-' }}</td>
+                    <td class="col-nama" width="40%" style="text-align: left; vertical-align: middle;">
                         <div class="student-name">{{ $student?->name ?? 'Mahasiswa' }}</div>
-                        <div class="thesis-title">{{ $app->thesis?->final_title ?? $app->thesis?->title ?? '-' }}</div>
-                        @if($app->thesis?->pembimbing1)
-                            <div style="font-size: 7.5pt; color: #64748b; margin-top: 4px;">
-                                P1: {{ $app->thesis->pembimbing1->name }}
-                            </div>
-                        @endif
                     </td>
-                    <td class="col-bukti" width="35%" style="text-align: center; vertical-align: middle;">
+                    <td class="col-bukti" width="40%" style="text-align: center; vertical-align: middle;">
                         @if($proof && $proof['type'] === 'image' && !empty($proof['base64']))
                             <img src="{{ $proof['base64'] }}" width="200" class="proof-img" alt="Bukti Pembayaran {{ $student?->name }}">
                             <div style="font-size: 7.5pt; color: #64748b; margin-top: 4px;">
