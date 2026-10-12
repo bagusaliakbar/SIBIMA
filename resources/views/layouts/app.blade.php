@@ -910,7 +910,7 @@
                                 <svg x-cloak x-show="darkMode" class="w-5 h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </button>
 
-                            <div x-data="notificationDropdown()" x-init="init()" class="relative">
+                            <div x-data="notificationDropdown()" x-init="init()" class="relative flex items-center">
                                 <button x-ref="button" @click="toggle()" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
@@ -1136,10 +1136,10 @@
                             </div>
 
                             <!-- Cool Divider -->
-                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 self-center"></div>
 
                             <!-- Logout Button -->
-                            <form method="POST" action="{{ route('logout') }}" class="block">
+                            <form method="POST" action="{{ route('logout') }}" class="flex items-center m-0 p-0">
                                 @csrf
                                 <button type="submit" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group" title="Keluar">
                                     <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -1147,7 +1147,7 @@
                             </form>
                         </div>
 
-                        <audio id="notif-sound" preload="none">
+                        <audio id="notif-sound" preload="none" class="hidden" hidden>
                             <source src="{{ asset('sounds/notification.mp3') }}" type="audio/mpeg">
                         </audio>
 
