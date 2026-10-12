@@ -19,70 +19,80 @@
             padding: 0;
         }
 
-        /* KOP SURAT RESMI */
-        .kop-wrapper {
+        /* KOP SURAT RESMI (SERAGAM DENGAN DOKUMEN LAIN) */
+        .kop-surat {
             width: 100%;
-            margin-bottom: 12px;
-            border-bottom: 2.5px solid #0f172a;
-            padding-bottom: 8px;
+            margin-bottom: 14px;
+            text-align: center;
         }
 
-        .kop-table {
+        .kop-img {
             width: 100%;
-            border-collapse: collapse;
+            height: auto;
+            display: block;
+        }
+
+        .kop-table-wrapper {
+            border-bottom: 3px double #000;
+            padding-bottom: 5px;
+        }
+
+        .kop-surat table {
+            width: 100%;
             border: none;
+            margin-bottom: 0;
         }
 
-        .kop-table td {
+        .kop-surat td {
             border: none !important;
             padding: 0 !important;
             vertical-align: middle;
         }
 
-        .kop-logo-cell {
-            width: 75px;
+        .kop-surat .logo-cell {
+            width: 80px;
             text-align: left;
         }
 
-        .kop-logo-img {
-            width: 65px;
+        .kop-surat .logo-img {
+            width: 70px;
             height: auto;
         }
 
-        .kop-text-cell {
+        .kop-surat .info-cell {
             text-align: center;
-            padding-right: 75px !important;
+            padding-right: 80px !important;
         }
 
-        .kop-univ {
-            font-size: 11pt;
-            font-weight: bold;
-            color: #0f172a;
-            letter-spacing: 0.5px;
+        .kop-surat .univ-name {
+            font-size: 16px;
             margin: 0;
-            text-transform: uppercase;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
         }
 
-        .kop-faculty {
-            font-size: 15pt;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: 0.8px;
-            margin: 2px 0;
-            text-transform: uppercase;
-        }
-
-        .kop-accreditation {
-            font-size: 8pt;
+        .kop-surat .faculty-name {
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
             font-weight: bold;
-            color: #0284c7;
+        }
+
+        .kop-surat .accreditation {
+            font-size: 11px;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+
+        .kop-surat .address {
+            font-size: 9px;
             margin: 1px 0;
         }
 
-        .kop-address {
-            font-size: 7.5pt;
-            color: #475569;
-            margin-top: 2px;
+        .kop-surat .email {
+            font-size: 9px;
+            margin: 1px 0;
         }
 
         /* HEADER LAPORAN */
@@ -270,31 +280,51 @@
 </head>
 <body>
 
-    {{-- KOP SURAT RESMI --}}
+    {{-- KOP SURAT RESMI (SERAGAM DENGAN DOKUMEN LAIN) --}}
     @php
-        $logoBase64 = null;
-        if (file_exists(public_path('logo_unsub.png'))) {
-            $logoBase64 = base64_encode(file_get_contents(public_path('logo_unsub.png')));
+        $kopBase64 = null;
+        $kopCandidates = [
+            public_path('images/kop_fasilkom.png'),
+            public_path('kop_fasilkom.png'),
+            base_path('public/images/kop_fasilkom.png'),
+            base_path('public/kop_fasilkom.png'),
+            resource_path('images/kop_fasilkom.png'),
+        ];
+        foreach ($kopCandidates as $cand) {
+            if (file_exists($cand) && is_readable($cand)) {
+                $kopBase64 = base64_encode(file_get_contents($cand));
+                break;
+            }
         }
     @endphp
 
-    <div class="kop-wrapper">
-        <table class="kop-table">
-            <tr>
-                <td class="kop-logo-cell">
-                    @if($logoBase64)
-                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="kop-logo-img" alt="Logo Universitas Subang">
-                    @endif
-                </td>
-                <td class="kop-text-cell">
-                    <div class="kop-univ">YAYASAN PEMBINA PENDIDIKAN KUTAWALUYA</div>
-                    <div class="kop-univ">UNIVERSITAS SUBANG</div>
-                    <div class="kop-faculty">FAKULTAS ILMU KOMPUTER</div>
-                    <div class="kop-accreditation">Terakreditasi "BAIK SEKALI" LAM INFOKOM (No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025)</div>
-                    <div class="kop-address">Jl. R.A. Kartini No. 4 Subang 41211, Jawa Barat | Website: falkom.unsub.ac.id | Email: falkom@unsub.ac.id</div>
-                </td>
-            </tr>
-        </table>
+    <div class="kop-surat">
+        @if(!empty($kopBase64))
+            <img src="data:image/png;base64,{{ $kopBase64 }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @elseif(file_exists(public_path('kop_fasilkom.png')))
+            <img src="{{ public_path('kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @elseif(file_exists(public_path('images/kop_fasilkom.png')))
+            <img src="{{ public_path('images/kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+        @else
+            <div class="kop-table-wrapper">
+                <table>
+                    <tr>
+                        <td class="logo-cell">
+                            @if(file_exists(public_path('logo_unsub.png')))
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" class="logo-img" alt="Logo Universitas Subang">
+                            @endif
+                        </td>
+                        <td class="info-cell">
+                            <div class="univ-name">UNIVERSITAS SUBANG</div>
+                            <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
+                            <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
+                            <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                            <div class="email">E-Mail : <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endif
     </div>
 
     {{-- HEADER LAPORAN --}}
