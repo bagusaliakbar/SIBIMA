@@ -197,4 +197,74 @@ class AccReadinessFilterFeatureTest extends TestCase
         $res->assertStatus(200);
         $this->assertStringContainsString('Laporan_Mahasiswa', $res->headers->get('content-disposition'));
     }
+
+    public function test_monitoring_export_filters_and_mapping()
+    {
+        $dosenA = User::factory()->create(['role' => 'dosen', 'name' => 'Dr. Alpha']);
+        $dosenB = User::factory()->create(['role' => 'dosen', 'name' => 'Dr. Beta']);
+
+        $mhs2021 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Budi Santoso', 'identifier' => '2110001', 'entry_year' => 2021]);
+        $mhs2022 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Siti Nurhaliza', 'identifier' => '2210002', 'entry_year' => 2022]);
+
+        $thesis1 = Thesis::create([
+            'student_id' => $mhs2021->id,
+            'title' => 'Implementasi Machine Learning pada IoT',
+            'status' => 'active',
+            'pembimbing1_id' => $dosenA->id,
+            'pembimbing2_id' => $dosenB->id,
+            'acc_up_p1' => true,
+            'acc_up_p2' => true,
+            'acc_sidang_p1' => false,
+            'acc_sidang_p2' => false,
+        ]);
+
+        $thesis2 = Thesis::create([
+            'student_id' => $mhs2022->id,
+            'title' => 'Rancang Bangun Sistem Informasi Berbasis Flutter',
+            'status' => 'active',
+            'pembimbing1_id' => $dosenB->id,
+            'pembimbing2_id' => null,
+            'acc_up_p1' => true,
+            'acc_up_p2' => true,
+            'acc_sidang_p1' => true,
+            'acc_sidang_p2' => true,
+        ]);
+
+        // 1. Filter by pembimbingId (dosenA) -> should return only thesis1
+        $exportPembimbingA = new \App\Exports\MonitoringExport('akademik', null, null, 'all', $dosenA->id);
+        $colA = $exportPembimbingA->collection();
+        $this->assertCount(1, $colA);
+        $this->assertEquals($thesis1->id, $colA->first()->id);
+
+        // 2. Filter by entryYear (2022) -> should return only thesis2
+        $exportYear2022 = new \App\Exports\MonitoringExport('akademik', null, null, 'all', null, 2022);
+        $colYear = $exportYear2022->collection();
+        $this->assertCount(1, $colYear);
+        $this->assertEquals($thesis2->id, $colYear->first()->id);
+
+        // 3. Filter by search ('Machine Learning') -> should return thesis1
+        $exportSearch = new \App\Exports\MonitoringExport('akademik', null, null, 'all', null, null, 'Machine Learning');
+        $colSearch = $exportSearch->collection();
+        $this->assertCount(1, $colSearch);
+        $this->assertEquals($thesis1->id, $colSearch->first()->id);
+
+        // 4. Filter by accStatus ('ready_defense') -> should return thesis2
+        $exportAccDefense = new \App\Exports\MonitoringExport('akademik', null, null, 'ready_defense');
+        $colAcc = $exportAccDefense->collection();
+        $this->assertCount(1, $colAcc);
+        $this->assertEquals($thesis2->id, $colAcc->first()->id);
+
+        // 5. Test Heading and Map row
+        $headings = $exportAccDefense->headings();
+        $this->assertContains('STATUS ACC SEMINAR (UP)', $headings);
+        $this->assertContains('STATUS ACC SIDANG', $headings);
+        $this->assertCount(13, $headings);
+
+        $mapped = $exportAccDefense->map($thesis2);
+        $this->assertCount(13, $mapped);
+        $this->assertEquals('2210002', $mapped[1]);
+        $this->assertEquals('Siti Nurhaliza', $mapped[2]);
+        $this->assertEquals(2022, $mapped[3]);
+        $this->assertEquals('Siap Sidang (ACC P1 & P2)', $mapped[11]);
+    }
 }

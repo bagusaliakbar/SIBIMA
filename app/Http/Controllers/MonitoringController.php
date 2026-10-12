@@ -187,16 +187,36 @@ class MonitoringController extends Controller implements HasMiddleware
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $format = $request->input('format', 'excel');
-        $accStatus = $request->input('acc_status');
+        $accStatus = $request->input('acc_status', 'all');
+        $pembimbingId = $request->input('pembimbing_id');
+        $entryYear = $request->input('entry_year');
+        $search = $request->input('search');
 
-        $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2']);
+        $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])->withMentoringCounts();
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        if ($accStatus && $accStatus !== 'all') {
+        if (!empty($pembimbingId)) {
+            $query->where(function($q) use ($pembimbingId) {
+                $q->where('pembimbing1_id', $pembimbingId)
+                  ->orWhere('pembimbing2_id', $pembimbingId);
+            });
+        }
+
+        if (!empty($entryYear)) {
+            $query->whereHas('student', function($q) use ($entryYear) {
+                $q->where('entry_year', $entryYear);
+            });
+        }
+
+        if (!empty($accStatus) && $accStatus !== 'all') {
             $query->accStatus($accStatus);
+        }
+
+        if (!empty($search)) {
+            $query->search($search);
         }
 
         switch ($type) {
@@ -226,8 +246,11 @@ class MonitoringController extends Controller implements HasMiddleware
             return $pdf->download('Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.pdf');
         }
 
-        // Default to Excel using the existing MonitoringExport (or specialized one)
-        return Excel::download(new MonitoringExport($type, $startDate, $endDate), 'Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.xlsx');
+        // Default to Excel using MonitoringExport with all active filters
+        return Excel::download(
+            new MonitoringExport($type, $startDate, $endDate, $accStatus, $pembimbingId, $entryYear, $search),
+            'Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.xlsx'
+        );
     }
 
     public function revisions(Request $request)
