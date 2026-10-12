@@ -328,14 +328,6 @@
                             <span class="text-[9px] uppercase tracking-wider text-orange-400 font-bold block -mt-1">Fasilkom UNSUB</span>
                         </div>
                     </div>
-                    <!-- Desktop Minimize Toggle Button in Header -->
-                    <button @click="sidebarCollapsed = !sidebarCollapsed" 
-                            class="hidden md:flex w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all shrink-0 cursor-pointer"
-                            :title="sidebarCollapsed ? 'Perluas Menu (Expand)' : 'Kecilkan Menu (Minimize)'">
-                        <svg class="w-4 h-4 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                        </svg>
-                    </button>
                     <!-- Close Button for Mobile -->
                     <button @click="sidebarOpen = false" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -895,21 +887,6 @@
                         </div>
                     </nav>
                     @endif
-                </div>
-
-                <!-- Sidebar Footer Toggle (Desktop Only) -->
-                <div class="hidden md:flex p-3 border-t border-white/[0.08] bg-slate-950/40 items-center justify-between shrink-0">
-                    <button type="button"
-                            @click="sidebarCollapsed = !sidebarCollapsed"
-                            class="w-full flex items-center justify-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-300 group"
-                            :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'">
-                        <div class="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-all shrink-0">
-                            <svg class="w-4 h-4 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                            </svg>
-                        </div>
-                        <span class="sidebar-text truncate transition-opacity duration-300" x-show="!sidebarCollapsed">Kecilkan Menu</span>
-                    </button>
                 </div>
             </aside>
 
