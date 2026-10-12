@@ -301,4 +301,146 @@ class SeminarDefenseValidationFilterTest extends TestCase
         $this->assertStringContainsString('1. Dr. Budi Pembimbing', $mapped[4]); // Pembimbing 1
         $this->assertStringContainsString('2. Siti Co-Advisor', $mapped[4]); // Pembimbing 2
     }
+
+    public function test_admin_can_export_payment_recap_pdf_for_seminar()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $p1 = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Fulan Mahasiswa', 'identifier' => 'D1A220888']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Judul Skripsi Fulan',
+            'status' => 'active',
+            'pembimbing1_id' => $p1->id,
+        ]);
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 Seminar PDF',
+            'start_date' => now()->subDays(2),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+
+        SeminarApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'status' => 'approved',
+            'file_acc_pembimbing' => 'seminars/acc.pdf',
+            'file_pembayaran' => 'https://drive.google.com/file/d/12345/view',
+            'file_kartu_bimbingan' => 'seminars/card.pdf',
+            'file_skripsi' => 'seminars/draft.pdf',
+            'file_formulir' => 'seminars/form.pdf',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('seminar-applications.export-payment-pdf', [
+            'wave_id' => $wave->id,
+            'status' => 'all',
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('rekap-pembayaran-seminar', $response->headers->get('content-disposition'));
+        $this->assertEquals('application/pdf', $response->headers->get('content-type'));
+
+        // Test unauthorized
+        $mahasiswa = User::factory()->create(['role' => 'mahasiswa']);
+        $this->actingAs($mahasiswa)->get(route('seminar-applications.export-payment-pdf'))->assertStatus(403);
+    }
+
+    public function test_admin_can_export_payment_recap_pdf_for_defense()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $p1 = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Fulan Sidang', 'identifier' => 'D1A220777']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Judul Sidang Fulan',
+            'status' => 'active',
+            'pembimbing1_id' => $p1->id,
+        ]);
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 Sidang PDF',
+            'start_date' => now()->subDays(2),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+
+        ThesisDefenseApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'status' => 'approved',
+            'file_formulir' => 'defenses/form.pdf',
+            'file_transkrip' => 'defenses/trans.pdf',
+            'file_acc_pembimbing' => 'defenses/acc.pdf',
+            'file_logbook' => 'defenses/log.pdf',
+            'file_pembayaran' => 'https://drive.google.com/file/d/98765/view',
+            'file_skripsi' => 'defense/skripsi.pdf',
+            'file_ktm' => 'defenses/ktm.pdf',
+            'file_pkkmb_univ' => 'defenses/pkkmb1.pdf',
+            'file_pkkmb_fak' => 'defenses/pkkmb2.pdf',
+            'file_makrab' => 'defenses/makrab.pdf',
+            'file_cisco' => 'defenses/cisco.pdf',
+            'file_workshop' => 'defenses/ws.pdf',
+            'file_organisasi' => 'defenses/org.pdf',
+            'file_toefl' => 'defenses/toefl.pdf',
+            'file_kewirausahaan' => 'defenses/kwu.pdf',
+            'file_tahsin' => 'defenses/tahsin.pdf',
+            'file_komputer' => 'defenses/comp.pdf',
+            'file_perpus_pinjam' => 'defenses/perpus1.pdf',
+            'file_perpus_sumbang' => 'defenses/perpus2.pdf',
+            'file_ijazah' => 'defenses/ijazah.pdf',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('thesis-defense-applications.export-payment-pdf', [
+            'wave_id' => $wave->id,
+            'status' => 'all',
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('rekap-pembayaran-sidang', $response->headers->get('content-disposition'));
+        $this->assertEquals('application/pdf', $response->headers->get('content-type'));
+
+        // Test unauthorized
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $this->actingAs($dosen)->get(route('thesis-defense-applications.export-payment-pdf'))->assertStatus(403);
+    }
+
+    public function test_export_payment_recap_pdf_with_stored_image()
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        
+        // Buat file 1x1 png dummy
+        $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
+        \Illuminate\Support\Facades\Storage::disk(config('filesystems.default'))->put('SeminarApplication_files/bukti_transfer.png', $imageContent);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Bambang Sudirman', 'identifier' => 'D1A220555']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Implementasi Deep Learning Pada Deteksi Hama',
+            'status' => 'active',
+        ]);
+        $wave = Wave::create([
+            'name' => 'Gelombang Image Test',
+            'start_date' => now()->subDays(2),
+            'end_date' => now()->addDays(5),
+            'is_active' => true,
+        ]);
+
+        SeminarApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'status' => 'approved',
+            'file_acc_pembimbing' => 'seminars/acc.pdf',
+            'file_pembayaran' => 'SeminarApplication_files/bukti_transfer.png',
+            'file_kartu_bimbingan' => 'seminars/card.pdf',
+            'file_skripsi' => 'seminars/draft.pdf',
+            'file_formulir' => 'seminars/form.pdf',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('seminar-applications.export-payment-pdf', [
+            'wave_id' => $wave->id,
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertEquals('application/pdf', $response->headers->get('content-type'));
+    }
 }

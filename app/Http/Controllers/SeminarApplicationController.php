@@ -8,10 +8,14 @@ use App\Models\SeminarApplication;
 use App\Models\SeminarTemplate;
 use App\Models\Thesis;
 use App\Models\Wave;
+use App\Models\User;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\SeminarApplicationsExport;
 
 class SeminarApplicationController extends Controller
@@ -146,6 +150,155 @@ class SeminarApplicationController extends Controller
         }
 
         return Excel::download(new SeminarApplicationsExport($selectedWaveId, $status, $search), $filename);
+    }
+
+    public function exportPaymentPdf(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi') {
+            abort(403);
+        }
+
+        $activeWave = Wave::getCurrentActive();
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+        $status = $request->input('status', 'all');
+        $search = $request->input('search');
+
+        $applicationsQuery = SeminarApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+
+        if (!empty($selectedWaveId) && $selectedWaveId !== 'all') {
+            $applicationsQuery->where('wave_id', $selectedWaveId);
+        }
+
+        if (!empty($status) && $status !== 'all') {
+            $applicationsQuery->where('status', $status);
+        }
+
+        if (!empty($search)) {
+            $applicationsQuery->where(function($q) use ($search) {
+                $q->whereHas('thesis.student', function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%")
+                       ->orWhere('identifier', 'like', "%{$search}%");
+                })->orWhereHas('thesis', function($tq) use ($search) {
+                    $tq->where('title', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $applications = $applicationsQuery->orderBy('created_at', 'desc')->get();
+
+        foreach ($applications as $app) {
+            $app->payment_proof_data = $this->preparePaymentProofData($app);
+        }
+
+        $wave = (!empty($selectedWaveId) && $selectedWaveId !== 'all') ? Wave::find($selectedWaveId) : null;
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $filename = 'rekap-pembayaran-seminar-' . now()->format('Y-m-d') . '.pdf';
+        if ($wave) {
+            $filename = 'rekap-pembayaran-seminar-' . Str::slug($wave->name) . '-' . now()->format('Y-m-d') . '.pdf';
+        }
+
+        $pdf = Pdf::loadView('seminars.payment_recap_pdf', compact('applications', 'wave', 'status', 'search', 'kaprodi'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download($filename);
+    }
+
+    protected function preparePaymentProofData($application): array
+    {
+        $rawPath = $application->file_pembayaran;
+        if (empty($rawPath)) {
+            return [
+                'type' => 'empty',
+                'label' => 'Belum Ada Bukti Pembayaran',
+                'url' => null,
+                'base64' => null,
+                'filename' => null,
+            ];
+        }
+
+        if (str_starts_with($rawPath, 'http://') || str_starts_with($rawPath, 'https://')) {
+            return [
+                'type' => 'url',
+                'is_gdrive' => str_contains($rawPath, 'drive.google.com') || str_contains($rawPath, 'docs.google.com'),
+                'label' => 'Tautan Bukti Pembayaran Cloud/Drive',
+                'url' => $rawPath,
+                'base64' => null,
+                'filename' => basename(parse_url($rawPath, PHP_URL_PATH) ?? 'link'),
+            ];
+        }
+
+        $defaultDisk = config('filesystems.default');
+        $disksToCheck = array_unique([$defaultDisk, 'local', 'public']);
+        $fullPath = null;
+
+        foreach ($disksToCheck as $disk) {
+            if (Storage::disk($disk)->exists($rawPath)) {
+                $fullPath = Storage::disk($disk)->path($rawPath);
+                break;
+            }
+        }
+
+        if (!$fullPath) {
+            $candidates = [
+                storage_path('app/' . $rawPath),
+                storage_path('app/private/' . $rawPath),
+                storage_path('app/public/' . $rawPath),
+                public_path($rawPath),
+            ];
+            foreach ($candidates as $cand) {
+                if (file_exists($cand) && is_readable($cand)) {
+                    $fullPath = $cand;
+                    break;
+                }
+            }
+        }
+
+        $downloadUrl = route('download.private', ['path' => $rawPath, 'inline' => 1]);
+        $filename = basename($rawPath);
+        $extension = strtolower(pathinfo($rawPath, PATHINFO_EXTENSION));
+
+        if ($fullPath && file_exists($fullPath) && is_readable($fullPath)) {
+            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+            if (in_array($extension, $imageExtensions)) {
+                $mime = mime_content_type($fullPath) ?: ('image/' . $extension);
+                $content = file_get_contents($fullPath);
+                return [
+                    'type' => 'image',
+                    'label' => $filename,
+                    'url' => $downloadUrl,
+                    'base64' => 'data:' . $mime . ';base64,' . base64_encode($content),
+                    'filename' => $filename,
+                ];
+            }
+
+            if ($extension === 'pdf') {
+                return [
+                    'type' => 'pdf',
+                    'label' => 'Dokumen PDF Terlampir',
+                    'url' => $downloadUrl,
+                    'base64' => null,
+                    'filename' => $filename,
+                ];
+            }
+
+            return [
+                'type' => 'file',
+                'label' => $filename,
+                'url' => $downloadUrl,
+                'base64' => null,
+                'filename' => $filename,
+            ];
+        }
+
+        return [
+            'type' => 'file',
+            'label' => $filename,
+            'url' => $downloadUrl,
+            'base64' => null,
+            'filename' => $filename,
+        ];
     }
 
     public function store(Request $request)

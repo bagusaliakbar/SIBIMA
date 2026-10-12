@@ -445,6 +445,16 @@
                         </svg>
                         <span>Export Excel</span>
                     </a>
+
+                    {{-- Export Rekap Pembayaran PDF Button --}}
+                    <a href="{{ route('thesis-defense-applications.export-payment-pdf', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
+                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                       title="Export Rekap Bukti Pembayaran Sidang ke PDF">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Rekap Pembayaran (PDF)</span>
+                    </a>
                 </div>
             </div>
 
