@@ -410,13 +410,23 @@
                                 :params="['wave_id' => request('wave_id', '')]" />
                         </div>
                         
+                        <!-- Simulation Button -->
+                        <a href="{{ route('seminar-schedules.simulation', ['wave_id' => $selectedWaveId]) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
+                            title="Generate simulasi jadwal seminar otomatis cerdas">
+                            <svg class="w-4 h-4 fill-none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap">Simulasi Otomatis</span>
+                        </a>
+
                         <!-- Add Button -->
                         <a href="{{ route('seminar-schedules.create', ['wave_id' => $selectedWaveId]) }}"
-                            class="inline-flex items-center gap-2 px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
                             <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <span class="whitespace-nowrap">Tambah Jadwal Seminar</span>
+                            <span class="whitespace-nowrap">Tambah Jadwal Manual</span>
                         </a>
                     </div>
                 </x-slot>
