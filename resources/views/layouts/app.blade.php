@@ -95,35 +95,35 @@
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
 
             /* ========================================================
-               MINIMIZED / COLLAPSED SIDEBAR (CANTIK & KEREN)
+               MINIMIZED / COLLAPSED SIDEBAR (EXPAND ON HOVER)
                ======================================================== */
-            .sidebar-collapsed,
-            .sidebar-is-collapsed aside {
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) {
                 width: 80px !important;
             }
 
-            /* Smooth width & transform transitions */
+            aside.sidebar-hover-expanded {
+                width: 280px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+                z-index: 50 !important;
+            }
+
+            /* Smooth width, transform, & shadow transitions */
             aside {
-                transition-property: width, transform;
+                transition-property: width, transform, box-shadow;
                 transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
                 transition-duration: 300ms;
             }
 
-            /* Hide text labels, descriptions, and dropdown arrows */
-            .sidebar-collapsed .sidebar-text,
-            .sidebar-collapsed .sidebar-arrow,
-            .sidebar-collapsed .sidebar-header-title,
-            .sidebar-collapsed .sidebar-section-title,
-            .sidebar-is-collapsed aside .sidebar-text,
-            .sidebar-is-collapsed aside .sidebar-arrow,
-            .sidebar-is-collapsed aside .sidebar-header-title,
-            .sidebar-is-collapsed aside .sidebar-section-title {
+            /* Hide text labels, descriptions, and dropdown arrows only when collapsed AND not hovered */
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-text,
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-arrow,
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-header-title,
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-section-title {
                 display: none !important;
             }
 
-            /* Hide raw text nodes in links when collapsed and center icons */
-            .sidebar-collapsed .sidebar-link,
-            .sidebar-is-collapsed aside .sidebar-link {
+            /* Center icons when collapsed and not hovered */
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-link {
                 font-size: 0 !important;
                 justify-content: center !important;
                 padding-left: 0 !important;
@@ -136,23 +136,20 @@
                 position: relative !important;
             }
 
-            .sidebar-collapsed .sidebar-link svg,
-            .sidebar-is-collapsed aside .sidebar-link svg {
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-link svg {
                 margin-right: 0 !important;
                 width: 20px !important;
                 height: 20px !important;
                 flex-shrink: 0 !important;
             }
 
-            /* Hide dropdown submenu children */
-            .sidebar-collapsed .sidebar-dropdown-content,
-            .sidebar-is-collapsed aside .sidebar-dropdown-content {
+            /* Hide dropdown submenu children when collapsed and not hovered */
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-dropdown-content {
                 display: none !important;
             }
 
-            /* Section headers become minimalist pill separators */
-            .sidebar-collapsed .sidebar-section-header,
-            .sidebar-is-collapsed aside .sidebar-section-header {
+            /* Section headers become minimalist pill separators when collapsed and not hovered */
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-section-header {
                 padding-left: 0 !important;
                 padding-right: 0 !important;
                 text-align: center !important;
@@ -161,14 +158,12 @@
                 border-top: none !important;
             }
 
-            .sidebar-collapsed .sidebar-section-divider,
-            .sidebar-is-collapsed aside .sidebar-section-divider {
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-section-divider {
                 display: block !important;
             }
 
-            /* Mini notification ping badge on icon */
-            .sidebar-collapsed .sidebar-badge,
-            .sidebar-is-collapsed aside .sidebar-badge {
+            /* Mini notification ping badge on icon when collapsed and not hovered */
+            aside.sidebar-collapsed:not(.sidebar-hover-expanded) .sidebar-badge {
                 position: absolute !important;
                 top: 6px !important;
                 right: 6px !important;
@@ -287,43 +282,31 @@
             </div>
 
             <!-- Sidebar (Dark & Premium) -->
+            <!-- Desktop Sidebar Spacer (Zero Layout Shift) -->
+            <div class="hidden md:block shrink-0 transition-all duration-300"
+                 :class="{ 'w-[280px]': !sidebarCollapsed, 'w-[80px]': sidebarCollapsed }"></div>
+
+            <!-- Sidebar (Dark & Premium) -->
             <aside 
+                x-data="{ sidebarHovered: false }"
+                @mouseenter="if (sidebarCollapsed) sidebarHovered = true"
+                @mouseleave="sidebarHovered = false"
                 :class="{
                     'translate-x-0': sidebarOpen,
                     '-translate-x-full': !sidebarOpen,
                     'md:w-[280px]': !sidebarCollapsed,
-                    'md:w-[80px] sidebar-collapsed': sidebarCollapsed
+                    'md:w-[80px] sidebar-collapsed': sidebarCollapsed && !sidebarHovered,
+                    'md:w-[280px] sidebar-hover-expanded': sidebarCollapsed && sidebarHovered
                 }"
-                @mouseover="
-                    if (sidebarCollapsed) {
-                        const item = $event.target.closest('[data-tooltip]');
-                        if (item) {
-                            const rect = item.getBoundingClientRect();
-                            window.dispatchEvent(new CustomEvent('sidebar-tooltip-show', {
-                                detail: {
-                                    text: item.getAttribute('data-tooltip'),
-                                    top: rect.top + (rect.height / 2)
-                                }
-                            }));
-                        } else {
-                            window.dispatchEvent(new CustomEvent('sidebar-tooltip-hide'));
-                        }
-                    }
-                "
-                @mouseleave="
-                    window.dispatchEvent(new CustomEvent('sidebar-tooltip-hide'));
-                "
-                class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-50 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:inset-auto md:h-full md:flex">
+                class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-50 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:fixed md:translate-x-0 md:h-full md:flex">
                 <!-- Sidebar Pattern Overlay -->
                 <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('{{ asset('images/carbon-fibre.png') }}')"></div>
                 
                 <div class="h-20 flex items-center border-b border-white/5 dark:border-white/[0.02] relative z-10 transition-all duration-300"
-                     :class="sidebarCollapsed ? 'px-3 justify-center' : 'px-6 justify-between'">
-                    <div class="flex items-center gap-3 overflow-hidden cursor-pointer"
-                         @click="if (sidebarCollapsed) sidebarCollapsed = false"
-                         :title="sidebarCollapsed ? 'Klik untuk memperluas menu' : ''">
-                        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain shrink-0 transition-transform duration-300" :class="{ 'hover:scale-105': sidebarCollapsed }">
-                        <div x-show="!sidebarCollapsed" x-transition.opacity.duration.200ms class="sidebar-header-title whitespace-nowrap overflow-hidden">
+                     :class="(sidebarCollapsed && !sidebarHovered) ? 'px-3 justify-center' : 'px-6 justify-between'">
+                    <div class="flex items-center gap-3 overflow-hidden cursor-pointer">
+                        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain shrink-0 transition-transform duration-300" :class="{ 'hover:scale-105': (sidebarCollapsed && !sidebarHovered) }">
+                        <div x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity.duration.200ms class="sidebar-header-title whitespace-nowrap overflow-hidden">
                             <h1 class="text-xl font-black text-white tracking-tighter">SIBIMA</h1>
                             <span class="text-[9px] uppercase tracking-wider text-orange-400 font-bold block -mt-1">Fasilkom UNSUB</span>
                         </div>
@@ -334,8 +317,8 @@
                     </button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar relative z-10 transition-all duration-300"
-                     :class="sidebarCollapsed ? 'px-2 py-4' : 'px-4 py-6'">
+                <div class="flex-1 overflow-y-auto py-6 custom-scrollbar relative z-10 transition-all duration-300"
+                     :class="(sidebarCollapsed && !sidebarHovered) ? 'px-2 py-4' : 'px-4 py-6'">
                     <!-- General Menu -->
                     <div class="sidebar-section-header px-4 mb-4">
                         <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Menu Utama</p>
@@ -1736,40 +1719,6 @@
                 observer.observe(document.body, { childList: true, subtree: true });
             });
         </script>
-
-        <!-- Floating Tooltip for Collapsed Sidebar (Ultra-Sleek Glassmorphism) -->
-        <div x-data="{
-                text: '',
-                top: 0,
-                left: 90,
-                show: false,
-                init() {
-                    window.addEventListener('sidebar-tooltip-show', (e) => {
-                        this.text = e.detail.text;
-                        this.top = e.detail.top;
-                        this.left = e.detail.left || 90;
-                        this.show = true;
-                    });
-                    window.addEventListener('sidebar-tooltip-hide', () => {
-                        this.show = false;
-                    });
-                }
-             }"
-             x-cloak
-             x-show="show && sidebarCollapsed"
-             x-transition:enter="transition ease-out duration-150"
-             x-transition:enter-start="opacity-0 translate-x-1 scale-95"
-             x-transition:enter-end="opacity-100 translate-x-0 scale-100"
-             x-transition:leave="transition ease-in duration-100"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-95"
-             :style="`top: ${top}px; left: ${left}px;`"
-             class="fixed z-[9999] pointer-events-none hidden md:block">
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-white/15 whitespace-nowrap">
-                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
-                <span x-text="text"></span>
-            </div>
-        </div>
 
         <!-- Instant Navigation: Just-In-Time Link Prefetching -->
         <script src="{{ asset('assets/vendor/instantpage/instantpage.min.js') }}" type="module"></script>
