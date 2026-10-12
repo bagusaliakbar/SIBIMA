@@ -39,8 +39,8 @@
             width: 100%;
             border-collapse: collapse;
             border-bottom: 3px double #000000;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
         }
 
         .kop-table td {
@@ -108,7 +108,7 @@
         }
 
         .meta-table td {
-            padding: 4px 8px;
+            padding: 5px 8px;
             font-size: 8.5pt;
             border: none;
         }
@@ -128,6 +128,7 @@
         /* DATA TABLE */
         .data-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
@@ -145,7 +146,7 @@
 
         .data-table td {
             border: 1px solid #94a3b8;
-            padding: 8px 6px;
+            padding: 7px 6px;
             vertical-align: top;
             font-size: 8.5pt;
         }
@@ -157,18 +158,18 @@
         }
 
         .col-npm {
-            width: 16%;
+            width: 15%;
             text-align: center;
             font-weight: bold;
         }
 
         .col-nama {
-            width: 25%;
+            width: 45%;
             text-align: left;
         }
 
         .col-bukti {
-            width: 54%;
+            width: 35%;
             text-align: center;
         }
 
@@ -183,11 +184,13 @@
             font-size: 8pt;
             color: #4b5563;
             font-style: italic;
+            line-height: 1.35;
         }
 
         .proof-img {
-            max-height: 250px;
-            max-width: 340px;
+            width: 200px;
+            max-width: 100%;
+            height: auto;
             border: 1px solid #cbd5e1;
             margin: 0 auto;
             display: block;
@@ -195,10 +198,12 @@
 
         .proof-link-card {
             background-color: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            padding: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 7px 8px;
             text-align: center;
             font-size: 8pt;
+            word-break: break-all;
+            word-wrap: break-word;
         }
 
         .signature-table {
@@ -238,18 +243,22 @@
     @endphp
 
     @if(!empty($kopBase64))
-        <div style="text-align: center; margin-bottom: 12px; border-bottom: 3px double #000; padding-bottom: 4px;">
-            <img src="data:image/png;base64,{{ $kopBase64 }}" style="width: 100%; max-width: 650px; height: auto;" alt="Kop Surat FASILKOM UNSUB">
-        </div>
-    @else
-        <table class="kop-table">
+        <table width="100%" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
             <tr>
-                <td style="width: 80px; text-align: left;">
+                <td align="center" style="text-align: center; padding: 0;">
+                    <img src="data:image/png;base64,{{ $kopBase64 }}" width="615" height="138" style="width: 615px; height: 138px; display: block; margin: 0 auto;" alt="Kop Surat FASILKOM UNSUB">
+                </td>
+            </tr>
+        </table>
+    @else
+        <table class="kop-table" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td width="15%" style="width: 15%; text-align: center; vertical-align: middle;">
                     @if(file_exists(public_path('logo_unsub.png')))
-                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" style="width: 70px; height: auto;" alt="Logo Unsub">
+                        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_unsub.png'))) }}" width="70" height="70" style="width: 70px; height: 70px;" alt="Logo Unsub">
                     @endif
                 </td>
-                <td class="kop-title">
+                <td width="85%" class="kop-title" style="width: 85%; padding-right: 40px;">
                     <div class="univ-name">UNIVERSITAS SUBANG</div>
                     <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
                     <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
@@ -267,7 +276,7 @@
     </div>
 
     {{-- METADATA BAR --}}
-    <table class="meta-table">
+    <table class="meta-table" width="100%" cellpadding="0" cellspacing="0">
         <tr>
             <td style="width: 15%;" class="meta-label">Gelombang:</td>
             <td style="width: 35%;" class="meta-val">{{ $wave ? strtoupper($wave->name) : 'SEMUA GELOMBANG' }}</td>
@@ -299,13 +308,13 @@
     </table>
 
     {{-- DATA TABLE --}}
-    <table class="data-table">
+    <table class="data-table" width="100%" cellpadding="4" cellspacing="0">
         <thead>
-            <tr>
-                <th class="col-no">NO</th>
-                <th class="col-npm">NPM</th>
-                <th class="col-nama">NAMA & JUDUL SKRIPSI</th>
-                <th class="col-bukti">BUKTI PEMBAYARAN</th>
+            <tr style="mso-yfti-tblheader: yes;">
+                <th class="col-no" width="5%" style="width: 5%;">NO</th>
+                <th class="col-npm" width="15%" style="width: 15%;">NPM</th>
+                <th class="col-nama" width="45%" style="width: 45%;">NAMA & JUDUL SKRIPSI</th>
+                <th class="col-bukti" width="35%" style="width: 35%;">BUKTI PEMBAYARAN</th>
             </tr>
         </thead>
         <tbody>
@@ -315,9 +324,9 @@
                     $proof = $app->payment_proof_data ?? null;
                 @endphp
                 <tr>
-                    <td class="col-no">{{ $index + 1 }}</td>
-                    <td class="col-npm">{{ $student?->identifier ?? '-' }}</td>
-                    <td class="col-nama">
+                    <td class="col-no" width="5%" style="text-align: center; vertical-align: top;">{{ $index + 1 }}</td>
+                    <td class="col-npm" width="15%" style="text-align: center; vertical-align: top;">{{ $student?->identifier ?? '-' }}</td>
+                    <td class="col-nama" width="45%" style="text-align: left; vertical-align: top;">
                         <div class="student-name">{{ $student?->name ?? 'Mahasiswa' }}</div>
                         <div class="thesis-title">{{ $app->thesis?->final_title ?? $app->thesis?->title ?? '-' }}</div>
                         @if($app->thesis?->pembimbing1)
@@ -326,26 +335,26 @@
                             </div>
                         @endif
                     </td>
-                    <td class="col-bukti">
+                    <td class="col-bukti" width="35%" style="text-align: center; vertical-align: middle;">
                         @if($proof && $proof['type'] === 'image' && !empty($proof['base64']))
-                            <img src="{{ $proof['base64'] }}" class="proof-img" alt="Bukti Pembayaran {{ $student?->name }}">
+                            <img src="{{ $proof['base64'] }}" width="200" class="proof-img" alt="Bukti Pembayaran {{ $student?->name }}">
                             <div style="font-size: 7.5pt; color: #64748b; margin-top: 4px;">
                                 Bukti Pembayaran Terverifikasi
                             </div>
                         @elseif($proof && $proof['type'] === 'url')
                             <div class="proof-link-card">
-                                <strong>{{ $proof['is_gdrive'] ? 'Dokumen di Google Drive' : 'Tautan Bukti Bayar' }}</strong><br>
-                                <a href="{{ $proof['url'] }}" target="_blank">{{ \Illuminate\Support\Str::limit($proof['url'], 55) }}</a>
+                                <strong style="color: #1e293b; font-size: 8pt;">{{ $proof['is_gdrive'] ? 'Dokumen di Google Drive' : 'Tautan Bukti Bayar' }}</strong><br>
+                                <a href="{{ $proof['url'] }}" target="_blank" style="color: #2563eb; text-decoration: underline; font-size: 7.5pt; word-break: break-all; word-wrap: break-word;">{{ \Illuminate\Support\Str::limit($proof['url'], 45) }}</a>
                             </div>
                         @elseif($proof && $proof['type'] === 'pdf')
                             <div class="proof-link-card">
-                                <strong>Berkas PDF Bukti Pembayaran</strong><br>
-                                <a href="{{ $proof['url'] }}" target="_blank">Buka Dokumen PDF</a>
+                                <strong style="color: #1e293b; font-size: 8pt;">Berkas PDF Bukti Pembayaran</strong><br>
+                                <a href="{{ $proof['url'] }}" target="_blank" style="color: #2563eb; text-decoration: underline; font-size: 7.5pt;">Buka Dokumen PDF</a>
                             </div>
                         @elseif($proof && $proof['type'] === 'file')
                             <div class="proof-link-card">
-                                <strong>Berkas Bukti Pembayaran: {{ $proof['filename'] ?? '-' }}</strong><br>
-                                <a href="{{ $proof['url'] }}" target="_blank">Buka Berkas Asli</a>
+                                <strong style="color: #1e293b; font-size: 8pt;">Berkas Bukti: {{ $proof['filename'] ?? '-' }}</strong><br>
+                                <a href="{{ $proof['url'] }}" target="_blank" style="color: #2563eb; text-decoration: underline; font-size: 7.5pt;">Buka Berkas Asli</a>
                             </div>
                         @else
                             <div style="color: #94a3b8; font-style: italic; font-size: 8pt; padding: 10px;">
@@ -365,13 +374,13 @@
     </table>
 
     {{-- LEMBAR PENGESAHAN KAPRODI --}}
-    <table class="signature-table">
+    <table class="signature-table" width="100%" cellpadding="0" cellspacing="0">
         <tr>
             <td style="width: 60%;"></td>
             <td style="width: 40%; text-align: center;">
                 <div>Subang, {{ now()->translatedFormat('d F Y') }}</div>
                 <div style="margin-top: 4px; font-weight: bold;">Mengetahui,</div>
-                <div style="font-weight: bold; margin-bottom: 60px;">Koordinator Program Studi</div>
+                <div style="font-weight: bold; margin-bottom: 50px;">Koordinator Program Studi</div>
                 <div style="font-weight: bold; text-decoration: underline;">{{ $kaprodi?->name ?? '............................................' }}</div>
                 <div style="font-size: 8.5pt; color: #4b5563;">NIP/NIDN. {{ $kaprodi?->identifier ?? '-' }}</div>
             </td>
