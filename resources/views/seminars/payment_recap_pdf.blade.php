@@ -187,7 +187,7 @@
         }
 
         .col-npm {
-            width: 15%;
+            width: 16%;
             text-align: center;
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
@@ -196,12 +196,12 @@
         }
 
         .col-nama {
-            width: 28%;
+            width: 24%;
             text-align: left;
         }
 
         .col-bukti {
-            width: 52%;
+            width: 55%;
             text-align: center;
         }
 
@@ -213,72 +213,25 @@
             margin-bottom: 3px;
         }
 
-        .student-info {
-            font-size: 7pt;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-
-        .thesis-title-box {
-            background-color: #f1f5f9;
-            border-left: 2px solid #3b82f6;
-            padding: 3px 5px;
-            border-radius: 3px;
-            margin-top: 4px;
-            font-size: 7pt;
-            color: #334155;
-            line-height: 1.25;
-            font-style: italic;
-        }
-
-        /* BADGES */
-        .badge {
-            display: inline-block;
-            padding: 1.5px 5px;
-            font-size: 6.5pt;
-            font-weight: bold;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .badge-success {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-
-        .badge-pending {
-            background-color: #fffbeb;
-            color: #b45309;
-            border: 1px solid #fde68a;
-        }
-
-        .badge-danger {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
-        }
-
         /* BUKTI PEMBAYARAN CARD */
         .proof-card {
             display: inline-block;
             background-color: #ffffff;
             border: 1px solid #cbd5e1;
-            border-radius: 5px;
-            padding: 4px;
-            max-width: 95%;
+            border-radius: 6px;
+            padding: 5px;
+            max-width: 98%;
             text-align: center;
         }
 
         .proof-img {
-            max-height: 155px;
-            max-width: 220px;
+            max-height: 220px;
+            max-width: 320px;
             width: auto;
             height: auto;
             display: block;
             margin: 0 auto;
-            border-radius: 3px;
+            border-radius: 4px;
             border: 1px solid #e2e8f0;
         }
 
@@ -462,24 +415,15 @@
                     <td class="col-npm">{{ $student?->identifier ?? '-' }}</td>
                     <td class="col-nama">
                         <div class="student-name">{{ $student?->name ?? 'Mahasiswa' }}</div>
-                        <div class="student-info">
-                            Angkatan: {{ $student?->entry_year ?? '-' }}
-                            • <span class="badge {{ $statusLabel['class'] }}">{{ $statusLabel['text'] }}</span>
-                        </div>
-                        @if($app->thesis?->title)
-                            <div class="thesis-title-box">
-                                <strong>Judul:</strong> {{ $app->thesis->final_title ?: $app->thesis->title }}
-                            </div>
-                        @endif
                     </td>
                     <td class="col-bukti">
                         @if($proof && $proof['type'] === 'image' && !empty($proof['base64']))
                             <div class="proof-card">
                                 <img src="{{ $proof['base64'] }}" class="proof-img" alt="Bukti Pembayaran {{ $student?->name }}">
                                 <div class="proof-caption">
-                                    Scan/Foto Bukti Pembayaran Resmi
-                                    @if(!empty($proof['filename']))
-                                        • {{ $proof['filename'] }}
+                                    Bukti Pembayaran Terverifikasi
+                                    @if(!empty($proof['url']))
+                                        • <a href="{{ $proof['url'] }}" target="_blank" style="color: #2563eb; text-decoration: underline;">Buka Berkas Asli ↗</a>
                                     @endif
                                 </div>
                             </div>
@@ -488,6 +432,9 @@
                                 <div style="font-weight: bold; color: #1e293b; margin-bottom: 2px;">
                                     {{ $proof['is_gdrive'] ? '📁 Dokumen Bukti Bayar di Google Drive' : '🔗 Tautan Dokumen Bukti Bayar' }}
                                 </div>
+                                <div style="font-size: 7pt; color: #64748b; margin-bottom: 3px;">
+                                    (Akses file dibatasi oleh mahasiswa, klik tautan di bawah untuk melihat)
+                                </div>
                                 <a href="{{ $proof['url'] }}" target="_blank">
                                     {{ \Illuminate\Support\Str::limit($proof['url'], 55) }}
                                 </a>
@@ -495,10 +442,10 @@
                         @elseif($proof && $proof['type'] === 'pdf')
                             <div class="proof-link-card" style="background-color: #fef2f2; border-color: #fecaca;">
                                 <div style="font-weight: bold; color: #b91c1c; margin-bottom: 2px;">
-                                    📄 Berkas Bukti Pembayaran Terlampir (Format PDF)
+                                    📄 Berkas Bukti Pembayaran (Format PDF)
                                 </div>
                                 <a href="{{ $proof['url'] }}" target="_blank" style="color: #b91c1c;">
-                                    Klik untuk membuka file PDF: {{ $proof['filename'] ?? 'Lihat Dokumen' }}
+                                    Klik untuk membuka dokumen PDF ↗
                                 </a>
                             </div>
                         @elseif($proof && $proof['type'] === 'file')
@@ -507,7 +454,7 @@
                                     📎 Berkas Bukti Pembayaran: {{ $proof['filename'] ?? '-' }}
                                 </div>
                                 <a href="{{ $proof['url'] }}" target="_blank">
-                                    Klik untuk membuka berkas asli
+                                    Buka berkas asli ↗
                                 </a>
                             </div>
                         @else

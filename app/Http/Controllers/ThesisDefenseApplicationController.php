@@ -13,6 +13,7 @@ use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -219,9 +220,75 @@ class ThesisDefenseApplicationController extends Controller
         }
 
         if (str_starts_with($rawPath, 'http://') || str_starts_with($rawPath, 'https://')) {
+            $isGdrive = str_contains($rawPath, 'drive.google.com') || str_contains($rawPath, 'docs.google.com');
+
+            if ($isGdrive) {
+                $fileId = null;
+                if (preg_match('/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/', $rawPath, $m)) {
+                    $fileId = $m[1];
+                } elseif (preg_match('/drive\.google\.com\/(?:open|uc)\?[^#]*\bid=([a-zA-Z0-9_-]+)/', $rawPath, $m)) {
+                    $fileId = $m[1];
+                } elseif (preg_match('/docs\.google\.com\/[^\/]+\/d\/([a-zA-Z0-9_-]+)/', $rawPath, $m)) {
+                    $fileId = $m[1];
+                }
+
+                if ($fileId) {
+                    $gdriveCandidates = [
+                        "https://drive.google.com/thumbnail?id={$fileId}&sz=w1000",
+                        "https://lh3.googleusercontent.com/d/{$fileId}",
+                        "https://drive.google.com/uc?export=view&id={$fileId}",
+                    ];
+
+                    foreach ($gdriveCandidates as $candidateUrl) {
+                        try {
+                            $resp = Http::withoutVerifying()
+                                ->timeout(4)
+                                ->get($candidateUrl);
+
+                            if ($resp->successful() && strlen($resp->body()) > 200) {
+                                $cType = $resp->header('Content-Type');
+                                if ($cType && str_starts_with($cType, 'image/')) {
+                                    return [
+                                        'type' => 'image',
+                                        'label' => 'Bukti Pembayaran (Google Drive)',
+                                        'url' => $rawPath,
+                                        'base64' => 'data:' . $cType . ';base64,' . base64_encode($resp->body()),
+                                        'filename' => 'Google Drive File',
+                                    ];
+                                }
+                            }
+                        } catch (\Throwable $e) {
+                            // Abaikan dan coba URL berikutnya
+                        }
+                    }
+                }
+            } else {
+                // Direct image URL
+                try {
+                    $resp = Http::withoutVerifying()
+                        ->timeout(4)
+                        ->get($rawPath);
+
+                    if ($resp->successful() && strlen($resp->body()) > 200) {
+                        $cType = $resp->header('Content-Type');
+                        if ($cType && str_starts_with($cType, 'image/')) {
+                            return [
+                                'type' => 'image',
+                                'label' => basename(parse_url($rawPath, PHP_URL_PATH) ?? 'bukti_bayar'),
+                                'url' => $rawPath,
+                                'base64' => 'data:' . $cType . ';base64,' . base64_encode($resp->body()),
+                                'filename' => basename(parse_url($rawPath, PHP_URL_PATH) ?? 'bukti_bayar'),
+                            ];
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Abaikan
+                }
+            }
+
             return [
                 'type' => 'url',
-                'is_gdrive' => str_contains($rawPath, 'drive.google.com') || str_contains($rawPath, 'docs.google.com'),
+                'is_gdrive' => $isGdrive,
                 'label' => 'Tautan Bukti Pembayaran Cloud/Drive',
                 'url' => $rawPath,
                 'base64' => null,
