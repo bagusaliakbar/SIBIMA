@@ -164,21 +164,6 @@
             word-break: break-all;
             word-wrap: break-word;
         }
-
-        .signature-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: none;
-            margin-top: 25px;
-            page-break-inside: avoid;
-        }
-
-        .signature-table td {
-            border: none;
-            padding: 0;
-            vertical-align: top;
-            font-size: 9.5pt;
-        }
     </style>
 </head>
 <body>
@@ -291,20 +276,6 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>
-
-    {{-- LEMBAR PENGESAHAN KAPRODI --}}
-    <table class="signature-table" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <td style="width: 60%;"></td>
-            <td style="width: 40%; text-align: center;">
-                <div>Subang, {{ now()->translatedFormat('d F Y') }}</div>
-                <div style="margin-top: 4px; font-weight: bold;">Mengetahui,</div>
-                <div style="font-weight: bold; margin-bottom: 50px;">Koordinator Program Studi</div>
-                <div style="font-weight: bold; text-decoration: underline;">{{ $kaprodi?->name ?? '............................................' }}</div>
-                <div style="font-size: 8.5pt; color: #4b5563;">NIP/NIDN. {{ $kaprodi?->identifier ?? '-' }}</div>
-            </td>
-        </tr>
     </table>
 
 </div>
