@@ -1,7 +1,20 @@
-<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
-      x-data="{ darkMode: localStorage.getItem('darkMode') === 'true', sidebarOpen: false }" 
-      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      x-data="{ 
+          darkMode: localStorage.getItem('darkMode') === 'true', 
+          sidebarOpen: false,
+          sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true'
+      }" 
+      x-init="
+          $watch('darkMode', val => localStorage.setItem('darkMode', val));
+          $watch('sidebarCollapsed', val => {
+              localStorage.setItem('sidebarCollapsed', val);
+              if (val) {
+                  document.documentElement.classList.add('sidebar-is-collapsed');
+              } else {
+                  document.documentElement.classList.remove('sidebar-is-collapsed');
+              }
+          });
+      "
       :class="{ 'dark': darkMode }">
     <head>
         <meta charset="utf-8">
@@ -80,6 +93,93 @@
             }
             .sidebar-link { transition: all 0.2s ease-in-out; }
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
+
+            /* ========================================================
+               MINIMIZED / COLLAPSED SIDEBAR (CANTIK & KEREN)
+               ======================================================== */
+            .sidebar-collapsed,
+            .sidebar-is-collapsed aside {
+                width: 80px !important;
+            }
+
+            /* Smooth width & transform transitions */
+            aside {
+                transition-property: width, transform;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-duration: 300ms;
+            }
+
+            /* Hide text labels, descriptions, and dropdown arrows */
+            .sidebar-collapsed .sidebar-text,
+            .sidebar-collapsed .sidebar-arrow,
+            .sidebar-collapsed .sidebar-header-title,
+            .sidebar-collapsed .sidebar-section-title,
+            .sidebar-is-collapsed aside .sidebar-text,
+            .sidebar-is-collapsed aside .sidebar-arrow,
+            .sidebar-is-collapsed aside .sidebar-header-title,
+            .sidebar-is-collapsed aside .sidebar-section-title {
+                display: none !important;
+            }
+
+            /* Hide raw text nodes in links when collapsed and center icons */
+            .sidebar-collapsed .sidebar-link,
+            .sidebar-is-collapsed aside .sidebar-link {
+                font-size: 0 !important;
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: 12px !important;
+                position: relative !important;
+            }
+
+            .sidebar-collapsed .sidebar-link svg,
+            .sidebar-is-collapsed aside .sidebar-link svg {
+                margin-right: 0 !important;
+                width: 20px !important;
+                height: 20px !important;
+                flex-shrink: 0 !important;
+            }
+
+            /* Hide dropdown submenu children */
+            .sidebar-collapsed .sidebar-dropdown-content,
+            .sidebar-is-collapsed aside .sidebar-dropdown-content {
+                display: none !important;
+            }
+
+            /* Section headers become minimalist pill separators */
+            .sidebar-collapsed .sidebar-section-header,
+            .sidebar-is-collapsed aside .sidebar-section-header {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                text-align: center !important;
+                margin-top: 1.25rem !important;
+                margin-bottom: 0.5rem !important;
+                border-top: none !important;
+            }
+
+            .sidebar-collapsed .sidebar-section-divider,
+            .sidebar-is-collapsed aside .sidebar-section-divider {
+                display: block !important;
+            }
+
+            /* Mini notification ping badge on icon */
+            .sidebar-collapsed .sidebar-badge,
+            .sidebar-is-collapsed aside .sidebar-badge {
+                position: absolute !important;
+                top: 6px !important;
+                right: 6px !important;
+                padding: 0 !important;
+                width: 8px !important;
+                height: 8px !important;
+                min-width: 8px !important;
+                border-radius: 9999px !important;
+                font-size: 0 !important;
+                line-height: 0 !important;
+            }
             /* Date & Time Picker Calendar / Clock Icons */
             input[type="date"],
             input[type="time"],
@@ -164,6 +264,9 @@
             } else {
                 document.documentElement.classList.remove('dark');
             }
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                document.documentElement.classList.add('sidebar-is-collapsed');
+            }
         </script>
         @stack('styles')
     </head>
@@ -185,66 +288,113 @@
 
             <!-- Sidebar (Dark & Premium) -->
             <aside 
-                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+                :class="{
+                    'translate-x-0': sidebarOpen,
+                    '-translate-x-full': !sidebarOpen,
+                    'md:w-[280px]': !sidebarCollapsed,
+                    'md:w-[80px] sidebar-collapsed': sidebarCollapsed
+                }"
+                @mouseover="
+                    if (sidebarCollapsed) {
+                        const item = $event.target.closest('[data-tooltip]');
+                        if (item) {
+                            const rect = item.getBoundingClientRect();
+                            window.dispatchEvent(new CustomEvent('sidebar-tooltip-show', {
+                                detail: {
+                                    text: item.getAttribute('data-tooltip'),
+                                    top: rect.top + (rect.height / 2)
+                                }
+                            }));
+                        } else {
+                            window.dispatchEvent(new CustomEvent('sidebar-tooltip-hide'));
+                        }
+                    }
+                "
+                @mouseleave="
+                    window.dispatchEvent(new CustomEvent('sidebar-tooltip-hide'));
+                "
                 class="w-[280px] bg-[#0c1427] dark:bg-[#070b14] text-slate-400 flex flex-col z-50 shrink-0 shadow-2xl fixed inset-y-0 left-0 transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:inset-auto md:h-full md:flex">
                 <!-- Sidebar Pattern Overlay -->
                 <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('{{ asset('images/carbon-fibre.png') }}')"></div>
                 
-                <div class="h-20 flex items-center justify-between px-8 border-b border-white/5 dark:border-white/[0.02] relative z-10">
-                    <div class="flex items-center gap-3">
-                        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain">
-                        <h1 class="text-xl font-black text-white tracking-tighter">SIBIMA</h1>
+                <div class="h-20 flex items-center border-b border-white/5 dark:border-white/[0.02] relative z-10 transition-all duration-300"
+                     :class="sidebarCollapsed ? 'px-3 justify-center' : 'px-6 justify-between'">
+                    <div class="flex items-center gap-3 overflow-hidden cursor-pointer"
+                         @click="if (sidebarCollapsed) sidebarCollapsed = false"
+                         :title="sidebarCollapsed ? 'Klik untuk memperluas menu' : ''">
+                        <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain shrink-0 transition-transform duration-300" :class="{ 'hover:scale-105': sidebarCollapsed }">
+                        <div x-show="!sidebarCollapsed" x-transition.opacity.duration.200ms class="sidebar-header-title whitespace-nowrap overflow-hidden">
+                            <h1 class="text-xl font-black text-white tracking-tighter">SIBIMA</h1>
+                            <span class="text-[9px] uppercase tracking-wider text-orange-400 font-bold block -mt-1">Fasilkom UNSUB</span>
+                        </div>
                     </div>
+                    <!-- Desktop Minimize Toggle Button in Header -->
+                    <button @click="sidebarCollapsed = !sidebarCollapsed" 
+                            class="hidden md:flex w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all shrink-0 cursor-pointer"
+                            :title="sidebarCollapsed ? 'Perluas Menu (Expand)' : 'Kecilkan Menu (Minimize)'">
+                        <svg class="w-4 h-4 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                        </svg>
+                    </button>
                     <!-- Close Button for Mobile -->
                     <button @click="sidebarOpen = false" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar relative z-10">
+                <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar relative z-10 transition-all duration-300"
+                     :class="sidebarCollapsed ? 'px-2 py-4' : 'px-4 py-6'">
                     <!-- General Menu -->
-                    <div class="px-4 mb-4">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Menu Utama</p>
+                    <div class="sidebar-section-header px-4 mb-4">
+                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Menu Utama</p>
+                        <div class="sidebar-section-divider hidden w-6 h-0.5 bg-white/10 rounded-full mx-auto my-2" title="Menu Utama"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
                         <a href="{{ route('dashboard') }}" 
+                           data-tooltip="Dashboard" title="Dashboard"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('dashboard') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                            Dashboard
+                            <span class="sidebar-text">Dashboard</span>
                         </a>
 
                         <a href="{{ route('chat.index') }}" 
+                           data-tooltip="Pesan" title="Pesan"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('chat.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('chat.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                            Pesan
+                            <span class="sidebar-text">Pesan</span>
                         </a>
                         <a href="{{ route('calendar.index') }}" 
+                           data-tooltip="Kalender Akademik" title="Kalender Akademik"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('calendar.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('calendar.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Kalender Akademik
+                            <span class="sidebar-text">Kalender Akademik</span>
                         </a>
                         <a href="{{ route('repositories.index') }}" 
+                           data-tooltip="Katalog Pustaka" title="Katalog Pustaka"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('repositories.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('repositories.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            Katalog Pustaka
+                            <span class="sidebar-text">Katalog Pustaka</span>
                         </a>
                         <a href="{{ route('guidance-documents.index') }}" 
+                           data-tooltip="Panduan & Dokumen" title="Panduan & Dokumen"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('guidance-documents.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('guidance-documents.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Panduan & Dokumen
+                            <span class="sidebar-text">Panduan & Dokumen</span>
                         </a>
                         <a href="{{ route('faqs.index') }}" 
+                           data-tooltip="Pusat Bantuan (FAQ)" title="Pusat Bantuan (FAQ)"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('faqs.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('faqs.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Pusat Bantuan (FAQ)
+                            <span class="sidebar-text">Pusat Bantuan (FAQ)</span>
                         </a>
                         <button type="button" 
+                                data-tooltip="Lapor Kendala / Bug" title="Lapor Kendala / Bug"
                                 @click="sidebarOpen = false; if (window.openBugReportModal) window.openBugReportModal();"
                                 class="w-full sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 font-medium text-left cursor-pointer">
                             <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            <span>Lapor Kendala / Bug</span>
+                            <span class="sidebar-text">Lapor Kendala / Bug</span>
                         </button>
                     </nav>
                         
@@ -253,20 +403,24 @@
                             $thesis = cache()->remember('u_' . Auth::id() . '_thesis_sidebar', 30, fn() => \App\Models\Thesis::where('student_id', Auth::id())->first());
                         @endphp
 
-                        <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Tahapan Skripsi</p>
+                        <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                            <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Tahapan Skripsi</p>
+                            <div class="sidebar-section-divider hidden w-6 h-0.5 bg-white/10 rounded-full mx-auto my-2" title="Tahapan Skripsi"></div>
                         </div>
                         <nav class="space-y-1 mb-10">
                             @if($thesis)
-                            <a href="#" onclick="alert('Anda sudah melakukan pengajuan judul skripsi.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
+                            <a href="#" onclick="alert('Anda sudah melakukan pengajuan judul skripsi.'); return false;" 
+                               data-tooltip="1. Pengajuan Judul (Selesai)" title="1. Pengajuan Judul (Selesai)"
+                               class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
                                 <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                1. Pengajuan Judul
+                                <span class="sidebar-text">1. Pengajuan Judul</span>
                             </a>
                             @else
                             <a href="{{ route('theses.create') }}" 
+                               data-tooltip="1. Pengajuan Judul" title="1. Pengajuan Judul"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                1. Pengajuan Judul
+                                <span class="sidebar-text">1. Pengajuan Judul</span>
                             </a>
                             @endif
 
@@ -274,93 +428,108 @@
                                 $hasSeminar = $thesis ? cache()->remember('u_' . Auth::id() . '_has_sem', 30, fn() => \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
                             @endphp
                             @if($hasSeminar)
-                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar seminar proposal/hasil.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
+                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar seminar proposal/hasil.'); return false;" 
+                               data-tooltip="2. Pendaftaran Seminar (Selesai)" title="2. Pendaftaran Seminar (Selesai)"
+                               class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
                                 <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                2. Pendaftaran Seminar
+                                <span class="sidebar-text">2. Pendaftaran Seminar</span>
                             </a>
                             @else
                             <a href="{{ route('seminar-applications.index') }}" 
+                               data-tooltip="2. Pendaftaran Seminar" title="2. Pendaftaran Seminar"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('seminar-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('seminar-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                2. Pendaftaran Seminar
+                                <span class="sidebar-text">2. Pendaftaran Seminar</span>
                             </a>
                             @endif
 
                             <a href="{{ route('student-seminar-revisions.index') }}" 
+                               data-tooltip="3. Revisi Seminar" title="3. Revisi Seminar"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student-seminar-revisions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-seminar-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                3. Revisi Seminar
+                                <span class="sidebar-text">3. Revisi Seminar</span>
                             </a>
 
                             @php
                                 $hasDefense = $thesis ? cache()->remember('u_' . Auth::id() . '_has_def', 30, fn() => \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
                             @endphp
                             @if($hasDefense)
-                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar sidang skripsi.'); return false;" class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
+                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar sidang skripsi.'); return false;" 
+                               data-tooltip="4. Pendaftaran Sidang (Selesai)" title="4. Pendaftaran Sidang (Selesai)"
+                               class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
                                 <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                4. Pendaftaran Sidang
+                                <span class="sidebar-text">4. Pendaftaran Sidang</span>
                             </a>
                             @else
                             <a href="{{ route('thesis-defense-applications.index') }}" 
+                               data-tooltip="4. Pendaftaran Sidang" title="4. Pendaftaran Sidang"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('thesis-defense-applications.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                4. Pendaftaran Sidang
+                                <span class="sidebar-text">4. Pendaftaran Sidang</span>
                             </a>
                             @endif
 
                             <a href="{{ route('student-defense-revisions.index') }}" 
+                               data-tooltip="5. Revisi Sidang" title="5. Revisi Sidang"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student-defense-revisions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-defense-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                5. Revisi Sidang
+                                <span class="sidebar-text">5. Revisi Sidang</span>
                             </a>
 
                             <a href="{{ route('student.graduation') }}" 
+                               data-tooltip="6. Yudisium & SKL" title="6. Yudisium & SKL"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student.graduation') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student.graduation') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-                                6. Yudisium & SKL
+                                <span class="sidebar-text">6. Yudisium & SKL</span>
                             </a>
                         </nav>
 
-                        <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Aktivitas & Bimbingan</p>
+                        <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                            <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Aktivitas & Bimbingan</p>
+                            <div class="sidebar-section-divider hidden w-6 h-0.5 bg-white/10 rounded-full mx-auto my-2" title="Aktivitas & Bimbingan"></div>
                         </div>
                         <nav class="space-y-1 mb-10">
                             <a href="{{ route('mentoring-sessions.index') }}" 
+                               data-tooltip="Jadwal Bimbingan" title="Jadwal Bimbingan"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('mentoring-sessions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('mentoring-sessions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                Jadwal Bimbingan
+                                <span class="sidebar-text">Jadwal Bimbingan</span>
                             </a>
                             <a href="{{ route('logbooks.index') }}" 
+                               data-tooltip="Logbook Bimbingan" title="Logbook Bimbingan"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('logbooks.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('logbooks.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                Logbook Bimbingan
+                                <span class="sidebar-text">Logbook Bimbingan</span>
                             </a>
                         </nav>
                         @endif
 
                     <!-- Admin & Kaprodi Specific -->
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
-                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pelaksanaan Skripsi</p>
+                    <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pelaksanaan Skripsi</p>
+                        <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
                         <!-- Direct Link: Daftar Pengajuan -->
                         <a href="{{ route('theses.index') }}" 
+                           data-tooltip="Daftar Pengajuan" title="Daftar Pengajuan"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('theses.index') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('theses.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            Daftar Pengajuan
+                            <span class="sidebar-text">Daftar Pengajuan</span>
                         </a>
 
                         <!-- Direct Link: Yudisium & SKL -->
                         @php $pendingGraduationsCount = \App\Models\Graduation::where('status', 'pending')->count(); @endphp
                         <a href="{{ route('graduations.index') }}" 
+                           data-tooltip="Yudisium & SKL" title="Yudisium & SKL"
                            class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('graduations.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <div class="flex items-center">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('graduations.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-                                <span>Yudisium & SKL</span>
+                                <span class="sidebar-text">Yudisium & SKL</span>
                             </div>
                             @if($pendingGraduationsCount > 0)
-                                <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-orange-500 text-white animate-pulse">
+                                <span class="sidebar-badge px-2 py-0.5 text-[10px] font-black rounded-full bg-orange-500 text-white animate-pulse">
                                     {{ $pendingGraduationsCount }}
                                 </span>
                             @endif
@@ -368,23 +537,25 @@
 
                         <!-- Direct Link: SK Dosen Pembimbing -->
                         <a href="{{ route('advisor-decrees.index') }}" 
+                           data-tooltip="SK Pembimbing" title="SK Pembimbing"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('advisor-decrees.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('advisor-decrees.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            SK Pembimbing
+                            <span class="sidebar-text">SK Pembimbing</span>
                         </a>
 
                         <!-- Dropdown 1: Validasi & Verifikasi -->
                         @php $isValidasiActive = request()->routeIs('seminar-applications.*') || request()->routeIs('thesis-defense-applications.*'); @endphp
                         <div x-data="{ open: {{ $isValidasiActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Validasi & Verifikasi" title="Validasi & Verifikasi"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isValidasiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isValidasiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                    <span>Validasi & Verifikasi</span>
+                                    <span class="sidebar-text">Validasi & Verifikasi</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('seminar-applications.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-applications.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Validasi Seminar
@@ -399,15 +570,16 @@
                         <!-- Dropdown 2: Jadwal & Agenda -->
                         @php $isJadwalActive = request()->routeIs('mentoring-sessions.*') || request()->routeIs('seminar-schedules.*') || request()->routeIs('thesis-defense-schedules.*'); @endphp
                         <div x-data="{ open: {{ $isJadwalActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Jadwal & Agenda" title="Jadwal & Agenda"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isJadwalActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isJadwalActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <span>Jadwal & Agenda</span>
+                                    <span class="sidebar-text">Jadwal & Agenda</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('mentoring-sessions.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('mentoring-sessions.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Jadwal Bimbingan
@@ -421,21 +593,24 @@
                                     • Jadwal Sidang
                                 </a>
                             </div>
-                                              <!-- Dropdown 3: Penugasan Penguji -->
+                        </div>
+
+                        <!-- Dropdown 3: Penugasan Penguji -->
                         @php $isPengujiActive = request()->routeIs('seminar-examiner.*') || request()->routeIs('defense-examiner.*'); @endphp
                         <div x-data="{ open: {{ $isPengujiActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Penugasan Penguji" title="Penugasan Penguji"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isPengujiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isPengujiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
                                     </svg>
-                                    <span>Penugasan Penguji</span>
+                                    <span class="sidebar-text">Penugasan Penguji</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('seminar-examiner.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-examiner.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Penguji Seminar
@@ -446,38 +621,47 @@
                                 </a>
                             </div>
                         </div>
-                                  <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Monitoring</p>
+                    </nav>
+                    @endif
+
+                    <!-- Monitoring Section -->
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
+                    <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Monitoring</p>
+                        <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
                         <!-- Direct Link: Grafik Analitik -->
                         <a href="{{ route('analytics.index') }}" 
+                           data-tooltip="Grafik Analitik" title="Grafik Analitik"
                            class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('analytics.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <div class="flex items-center">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('analytics.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-                                <span>Grafik Analitik</span>
+                                <span class="sidebar-text">Grafik Analitik</span>
                             </div>
                         </a>
 
                         <!-- Direct Link: Monitoring Bimbingan -->
                         <a href="{{ route('monitoring.index') }}" 
+                           data-tooltip="Monitoring Bimbingan" title="Monitoring Bimbingan"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('monitoring.index') || request()->routeIs('monitoring.weekly') || request()->routeIs('monitoring.activity*') || request()->routeIs('monitoring.uncompleted-mentoring*') || request()->routeIs('monitoring.critical') || request()->routeIs('monitoring.advanced-reporting') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('monitoring.index') || request()->routeIs('monitoring.weekly') || request()->routeIs('monitoring.activity*') || request()->routeIs('monitoring.uncompleted-mentoring*') || request()->routeIs('monitoring.critical') || request()->routeIs('monitoring.advanced-reporting') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                            Monitoring Bimbingan
+                            <span class="sidebar-text">Monitoring Bimbingan</span>
                         </a>
 
                         <!-- Dropdown 1: Monitoring Revisi -->
                         @php $isMonitoringRevisiActive = request()->routeIs('monitoring.revisions') || request()->routeIs('monitoring.defense-revisions'); @endphp
                         <div x-data="{ open: {{ $isMonitoringRevisiActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
-                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isMonitoringRevisiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Monitoring Revisi" title="Monitoring Revisi"
+                                    class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isMonitoringRevisiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isMonitoringRevisiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    <span>Monitoring Revisi</span>
+                                    <span class="sidebar-text">Monitoring Revisi</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('monitoring.revisions') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('monitoring.revisions') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Revisi Seminar
@@ -492,15 +676,16 @@
                         <!-- Dropdown 2: Evaluasi & Laporan -->
                         @php $isEvaluasiActive = request()->routeIs('monitoring.defense-scores') || request()->routeIs('monitoring.critical') || request()->routeIs('monitoring.advanced-reporting') || request()->routeIs('theses.unsubmitted-students'); @endphp
                         <div x-data="{ open: {{ $isEvaluasiActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Evaluasi & Laporan" title="Evaluasi & Laporan"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isEvaluasiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isEvaluasiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    <span>Evaluasi & Laporan</span>
+                                    <span class="sidebar-text">Evaluasi & Laporan</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('theses.unsubmitted-students') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('theses.unsubmitted-students') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Belum Mengajukan Judul
@@ -525,43 +710,48 @@
                         </div>
                     </nav>
 
-                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Sistem & Konfigurasi</p>
+                    <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Sistem & Konfigurasi</p>
+                        <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
                         <!-- Direct Link: Pengumuman -->
                         <a href="{{ route('announcements.index') }}" 
+                           data-tooltip="Pengumuman" title="Pengumuman"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('announcements.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('announcements.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                            Pengumuman
+                            <span class="sidebar-text">Pengumuman</span>
                         </a>
 
                         <!-- Direct Link: Kelola FAQ -->
                         <a href="{{ route('faqs.manage') }}" 
+                           data-tooltip="Kelola FAQ" title="Kelola FAQ"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('faqs.manage') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('faqs.manage') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Kelola FAQ
+                            <span class="sidebar-text">Kelola FAQ</span>
                         </a>
 
                         <!-- Direct Link: Data Pengguna -->
                         <a href="{{ route('users.index') }}" 
+                           data-tooltip="Data Pengguna" title="Data Pengguna"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('users.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            Data Pengguna
+                            <span class="sidebar-text">Data Pengguna</span>
                         </a>
 
                         <!-- Dropdown 1: Konfigurasi Sistem -->
                         @php $isConfigActive = request()->routeIs('waves.*') || request()->routeIs('admin.letter-settings.*') || request()->routeIs('wa-templates.*') || request()->routeIs('wa-broadcasts.*'); @endphp
                         <div x-data="{ open: {{ $isConfigActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Konfigurasi Sistem" title="Konfigurasi Sistem"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isConfigActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isConfigActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                                    <span>Konfigurasi Sistem</span>
+                                    <span class="sidebar-text">Konfigurasi Sistem</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('waves.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('waves.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Gelombang Pelaksanaan
@@ -583,9 +773,10 @@
 
                         <!-- Direct Link: Log Sistem -->
                         <a href="{{ route('admin.logs') }}" 
+                           data-tooltip="Log Sistem" title="Log Sistem"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.logs*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.logs*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Log Sistem
+                            <span class="sidebar-text">Log Sistem</span>
                         </a>
 
                         <!-- Direct Link: Laporan Bug Sistem -->
@@ -600,13 +791,14 @@
                             });
                         @endphp
                         <a href="{{ route('admin.bug-reports.index') }}" 
+                           data-tooltip="Laporan Bug" title="Laporan Bug"
                            class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.bug-reports.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <div class="flex items-center">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.bug-reports.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                <span>Laporan Bug</span>
+                                <span class="sidebar-text">Laporan Bug</span>
                             </div>
                             @if($openBugCount > 0)
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white leading-none">
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white leading-none">
                                     {{ $openBugCount }}
                                 </span>
                             @endif
@@ -616,10 +808,11 @@
                         @if(Auth::user()->role === 'admin')
                         <a href="{{ route('system.clear-cache', ['migrate' => 1]) }}" 
                            target="_blank"
+                           data-tooltip="Bersihkan Cache" title="Bersihkan Cache"
                            onclick="return confirm('Bersihkan cache sistem dan jalankan migrasi database sekarang?')"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-amber-400 hover:bg-white/5 font-medium">
                             <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            <span>Bersihkan Cache</span>
+                            <span class="sidebar-text">Bersihkan Cache</span>
                         </a>
                         @endif
                     </nav>
@@ -627,40 +820,45 @@
 
                     <!-- Dosen Specific -->
                     @if(Auth::user()->role === 'dosen')
-                    <div class="px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Dokumentasi & Bimbingan</p>
+                    <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
+                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Dokumentasi & Bimbingan</p>
+                        <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
                         <a href="{{ route('theses.index') }}" 
+                           data-tooltip="Mahasiswa Bimbingan" title="Mahasiswa Bimbingan"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ (request()->routeIs('theses.*') || request()->routeIs('logbooks.*')) ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ (request()->routeIs('theses.*') || request()->routeIs('logbooks.*')) ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            Mahasiswa Bimbingan
+                            <span class="sidebar-text">Mahasiswa Bimbingan</span>
                         </a>
                         <a href="{{ route('mentoring-sessions.index') }}" 
+                           data-tooltip="Jadwal Bimbingan" title="Jadwal Bimbingan"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('mentoring-sessions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('mentoring-sessions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Jadwal Bimbingan
+                            <span class="sidebar-text">Jadwal Bimbingan</span>
                         </a>
 
                         <!-- Direct Link: Surat Tugas Pembimbing (BKD / SISTER) -->
                         <a href="{{ route('advisor-decrees.surat-tugas') }}" 
+                           data-tooltip="Surat Tugas" title="Surat Tugas"
                            class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('advisor-decrees.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('advisor-decrees.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Surat Tugas
+                            <span class="sidebar-text">Surat Tugas</span>
                         </a>
 
                         <!-- Dropdown: Jadwal Ujian (Seminar & Sidang) -->
                         @php $isJadwalUjianActive = request()->routeIs('seminar-schedules.*') || request()->routeIs('thesis-defense-schedules.*'); @endphp
                         <div x-data="{ open: {{ $isJadwalUjianActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Jadwal Ujian" title="Jadwal Ujian"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isJadwalUjianActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isJadwalUjianActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <span>Jadwal Ujian</span>
+                                    <span class="sidebar-text">Jadwal Ujian</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('seminar-schedules.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-schedules.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Jadwal Seminar
@@ -675,15 +873,16 @@
                         <!-- Dropdown: Tugas Penguji (Seminar & Sidang) -->
                         @php $isTugasPengujiActive = request()->routeIs('seminar-examiner.*') || request()->routeIs('defense-examiner.*'); @endphp
                         <div x-data="{ open: {{ $isTugasPengujiActive ? 'true' : 'false' }} }">
-                            <button @click="open = !open" 
+                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                                    data-tooltip="Tugas Penguji" title="Tugas Penguji"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isTugasPengujiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 transition-colors {{ $isTugasPengujiActive ? 'text-orange-400' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                                    <span>Tugas Penguji</span>
+                                    <span class="sidebar-text">Tugas Penguji</span>
                                 </div>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <svg class="sidebar-arrow w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                             </button>
-                            <div x-show="open" x-cloak class="pl-12 pr-2 py-1.5 space-y-1">
+                            <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
                                 <a href="{{ route('seminar-examiner.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('seminar-examiner.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Penguji Seminar
@@ -696,6 +895,21 @@
                         </div>
                     </nav>
                     @endif
+                </div>
+
+                <!-- Sidebar Footer Toggle (Desktop Only) -->
+                <div class="hidden md:flex p-3 border-t border-white/[0.08] bg-slate-950/40 items-center justify-between shrink-0">
+                    <button type="button"
+                            @click="sidebarCollapsed = !sidebarCollapsed"
+                            class="w-full flex items-center justify-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-300 group"
+                            :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'">
+                        <div class="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-all shrink-0">
+                            <svg class="w-4 h-4 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                            </svg>
+                        </div>
+                        <span class="sidebar-text truncate transition-opacity duration-300" x-show="!sidebarCollapsed">Kecilkan Menu</span>
+                    </button>
                 </div>
             </aside>
 
@@ -716,8 +930,21 @@
                         </div>
                     </div>
 
-                    <!-- Desktop Spacer to keep right elements aligned -->
-                    <div class="hidden md:block"></div>
+                    <!-- Desktop Sidebar Toggle & Quick Minimize/Expand Button -->
+                    <div class="hidden md:flex items-center gap-3">
+                        <button type="button" 
+                                @click="sidebarCollapsed = !sidebarCollapsed" 
+                                class="h-10 px-3.5 rounded-xl flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-slate-700/60 transition-all border border-slate-200/80 dark:border-slate-700/60 shadow-xs cursor-pointer group"
+                                :title="sidebarCollapsed ? 'Perluas Sidebar (Expanded)' : 'Kecilkan Sidebar (Collapsed)'">
+                            <div class="w-5 h-5 flex items-center justify-center transition-colors">
+                                <svg class="w-5 h-5 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h14" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" x-text="sidebarCollapsed ? 'Buka Menu' : 'Minimize'"></span>
+                        </button>
+                    </div>
+
 
 
                     <div class="flex items-center space-x-3 sm:space-x-5">
@@ -1532,6 +1759,40 @@
                 observer.observe(document.body, { childList: true, subtree: true });
             });
         </script>
+
+        <!-- Floating Tooltip for Collapsed Sidebar (Ultra-Sleek Glassmorphism) -->
+        <div x-data="{
+                text: '',
+                top: 0,
+                left: 90,
+                show: false,
+                init() {
+                    window.addEventListener('sidebar-tooltip-show', (e) => {
+                        this.text = e.detail.text;
+                        this.top = e.detail.top;
+                        this.left = e.detail.left || 90;
+                        this.show = true;
+                    });
+                    window.addEventListener('sidebar-tooltip-hide', () => {
+                        this.show = false;
+                    });
+                }
+             }"
+             x-cloak
+             x-show="show && sidebarCollapsed"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-x-1 scale-95"
+             x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             :style="`top: ${top}px; left: ${left}px;`"
+             class="fixed z-[9999] pointer-events-none hidden md:block">
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-white/15 whitespace-nowrap">
+                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                <span x-text="text"></span>
+            </div>
+        </div>
 
         <!-- Instant Navigation: Just-In-Time Link Prefetching -->
         <script src="{{ asset('assets/vendor/instantpage/instantpage.min.js') }}" type="module"></script>
