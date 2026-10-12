@@ -81,7 +81,7 @@
         /* HEADER LAPORAN */
         .report-header {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 18px;
         }
 
         .report-title {
@@ -96,33 +96,6 @@
             font-weight: bold;
             color: #374151;
             margin-top: 2px;
-        }
-
-        /* METADATA */
-        .meta-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid #cbd5e1;
-            background-color: #f8fafc;
-            margin-bottom: 14px;
-        }
-
-        .meta-table td {
-            padding: 5px 8px;
-            font-size: 8.5pt;
-            border: none;
-        }
-
-        .meta-label {
-            font-weight: bold;
-            color: #4b5563;
-            text-transform: uppercase;
-            font-size: 8pt;
-        }
-
-        .meta-val {
-            font-weight: bold;
-            color: #111827;
         }
 
         /* DATA TABLE */
@@ -274,38 +247,6 @@
         <div class="report-title">REKAPITULASI BUKTI PEMBAYARAN PENDAFTARAN SIDANG SKRIPSI</div>
         <div class="report-subtitle">SISTEM INFORMASI BIMBINGAN MAHASISWA (SIBIMA) - FAKULTAS ILMU KOMPUTER - UNIVERSITAS SUBANG</div>
     </div>
-
-    {{-- METADATA BAR --}}
-    <table class="meta-table" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <td style="width: 15%;" class="meta-label">Gelombang:</td>
-            <td style="width: 35%;" class="meta-val">{{ $wave ? strtoupper($wave->name) : 'SEMUA GELOMBANG' }}</td>
-            <td style="width: 15%;" class="meta-label">Tanggal Cetak:</td>
-            <td style="width: 35%;" class="meta-val">{{ now()->translatedFormat('d F Y, H:i') }} WIB</td>
-        </tr>
-        <tr>
-            <td class="meta-label">Status Validasi:</td>
-            <td class="meta-val">
-                @if(($status ?? 'all') === 'approved')
-                    Disetujui (Approved)
-                @elseif(($status ?? '') === 'pending')
-                    Menunggu Validasi (Pending)
-                @elseif(($status ?? '') === 'rejected')
-                    Perlu Revisi / Ditolak (Rejected)
-                @else
-                    Semua Status
-                @endif
-            </td>
-            <td class="meta-label">Total Mahasiswa:</td>
-            <td class="meta-val">{{ count($applications) }} Mahasiswa Pendaftar</td>
-        </tr>
-        @if(!empty($search))
-        <tr>
-            <td class="meta-label">Filter Pencarian:</td>
-            <td colspan="3" class="meta-val">"{{ $search }}"</td>
-        </tr>
-        @endif
-    </table>
 
     {{-- DATA TABLE --}}
     <table class="data-table" width="100%" cellpadding="4" cellspacing="0">

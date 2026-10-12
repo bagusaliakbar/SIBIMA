@@ -99,7 +99,7 @@
         .report-header {
             text-align: center;
             margin-top: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 18px;
         }
 
         .report-title {
@@ -117,42 +117,6 @@
             color: #475569;
             margin-top: 3px;
             letter-spacing: 0.3px;
-        }
-
-        /* METADATA BAR */
-        .meta-box {
-            width: 100%;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 6px 10px;
-            margin-bottom: 14px;
-        }
-
-        .meta-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: none;
-        }
-
-        .meta-table td {
-            border: none !important;
-            padding: 2px 4px !important;
-            font-size: 7.5pt;
-            color: #334155;
-            vertical-align: middle;
-        }
-
-        .meta-label {
-            font-weight: bold;
-            color: #64748b;
-            text-transform: uppercase;
-            font-size: 7pt;
-        }
-
-        .meta-val {
-            font-weight: bold;
-            color: #0f172a;
         }
 
         /* DATA TABLE */
@@ -331,40 +295,6 @@
     <div class="report-header">
         <h1 class="report-title">REKAPITULASI BUKTI PEMBAYARAN PENDAFTARAN SEMINAR PROPOSAL</h1>
         <div class="report-subtitle">SISTEM INFORMASI BIMBINGAN MAHASISWA (SIBIMA) - FAKULTAS ILMU KOMPUTER - UNIVERSITAS SUBANG</div>
-    </div>
-
-    {{-- METADATA BAR --}}
-    <div class="meta-box">
-        <table class="meta-table">
-            <tr>
-                <td style="width: 14%;" class="meta-label">Gelombang:</td>
-                <td style="width: 36%;" class="meta-val">{{ $wave ? strtoupper($wave->name) : 'SEMUA GELOMBANG' }}</td>
-                <td style="width: 16%;" class="meta-label">Tanggal Cetak:</td>
-                <td style="width: 34%;" class="meta-val">{{ now()->translatedFormat('d F Y, H:i') }} WIB</td>
-            </tr>
-            <tr>
-                <td class="meta-label">Status Validasi:</td>
-                <td class="meta-val">
-                    @if(($status ?? 'all') === 'approved')
-                        Disetujui (Approved)
-                    @elseif(($status ?? '') === 'pending')
-                        Menunggu Validasi (Pending)
-                    @elseif(($status ?? '') === 'rejected')
-                        Perlu Revisi / Ditolak (Rejected)
-                    @else
-                        Semua Status
-                    @endif
-                </td>
-                <td class="meta-label">Total Mahasiswa:</td>
-                <td class="meta-val">{{ count($applications) }} Mahasiswa Pendaftar</td>
-            </tr>
-            @if(!empty($search))
-            <tr>
-                <td class="meta-label">Filter Pencarian:</td>
-                <td colspan="3" class="meta-val">"{{ $search }}"</td>
-            </tr>
-            @endif
-        </table>
     </div>
 
     {{-- DATA TABLE (NO, NPM, NAMA, BUKTI PEMBAYARAN) --}}
