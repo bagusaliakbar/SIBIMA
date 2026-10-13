@@ -119,6 +119,7 @@ class WaTemplateController extends Controller implements HasMiddleware
             'revision_submitted',
             'thesis_completed',
             'schedule_published',
+            'schedule_published_lecturer',
             'schedule_reminder',
             'critical_student_reminder',
             'kaprodi_critical_summary',
@@ -186,14 +187,15 @@ class WaTemplateController extends Controller implements HasMiddleware
 
     public function reset(WaTemplate $waTemplate)
     {
-        // Re-run seeder data for this specific template code
+        // Mark not customized first so seeder will overwrite content with factory default
+        $waTemplate->update(['is_customized' => false]);
+
+        // Re-run seeder data
         $seeder = new \Database\Seeders\WaTemplateSeeder();
-        // Run seed to restore default
         $seeder->run();
 
-        // Refetch and mark not customized
+        // Refetch and clear cache
         $waTemplate->refresh();
-        $waTemplate->update(['is_customized' => false]);
         WaTemplate::clearCache($waTemplate->code);
 
         return redirect()->back()->with('success', "Template WhatsApp '{$waTemplate->name}' berhasil dikembalikan ke format default pabrikan.");

@@ -197,7 +197,9 @@
                         'umur': '22',
                         'hari_ini': '20 September 2026',
                         'nama_pembimbing1': 'Dr. Irzan, M.T.',
-                        'peran_pengguna': 'Dosen'
+                        'peran_pengguna': 'Dosen',
+                        'peran_dosen': 'Ketua Sidang & Penguji',
+                        'nama_agenda': 'Seminar UP Gelombang 1 TA 2026/2027',
                     };
 
                     for (const [key, val] of Object.entries(sampleValues)) {

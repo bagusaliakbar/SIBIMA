@@ -160,14 +160,33 @@ class WaTemplateSeeder extends Seeder
             ],
             [
                 'code' => 'schedule_published',
-                'name' => 'Jadwal Seminar / Sidang Terbit',
+                'name' => 'Jadwal Seminar / Sidang Terbit (ke Mahasiswa)',
                 'category' => 'Ujian',
-                'content' => "Halo *{nama_penerima}*,\n\nJadwal *{jenis_ujian}* Anda telah dirilis!\n\nTanggal: {tanggal_ujian}\nRuangan: {lokasi_ujian}\n\nMohon hadir tepat waktu dan persiapkan segala dokumen yang diperlukan. Cek detail selengkapnya di dashboard SIBIMA:\n{link_login}",
+                'content' => "📢 *JADWAL {jenis_ujian} TELAH DITERBITKAN*\n\nHalo *{nama_mahasiswa}*,\nJadwal *{jenis_ujian}* Anda telah **ditetapkan dan diterbitkan** di SIBIMA.\n\n📅 *Tanggal:* {tanggal_ujian}\n⏰ *Waktu:* {jam_ujian}\n📍 *Ruangan:* {lokasi_ujian}\n\nMohon memperhatikan jadwal tersebut dan hadir **tepat waktu**. Pastikan seluruh dokumen, berkas, dan persyaratan yang diperlukan telah dipersiapkan sebelum pelaksanaan.\n\n🔗 *Detail Jadwal:* {link_login}\n\nTerima kasih.",
                 'available_variables' => [
-                    'nama_penerima' => 'Nama Penerima (Dosen / Mahasiswa)',
+                    'nama_mahasiswa' => 'Nama Mahasiswa',
+                    'nama_penerima' => 'Nama Mahasiswa',
                     'jenis_ujian' => 'Seminar UP / Sidang Akhir',
                     'tanggal_ujian' => 'Tanggal Ujian',
+                    'jam_ujian' => 'Jam / Waktu Sesi Ujian',
                     'lokasi_ujian' => 'Ruangan / Lokasi Ujian',
+                    'link_login' => 'Tautan Login SIBIMA',
+                ],
+            ],
+            [
+                'code' => 'schedule_published_lecturer',
+                'name' => 'Penugasan Jadwal Seminar / Sidang (ke Dosen)',
+                'category' => 'Ujian',
+                'content' => "📢 *PENUGASAN JADWAL {jenis_ujian}*\n\nHalo Bpk/Ibu *{nama_dosen}*,\nAnda telah ditugaskan pada agenda *{nama_agenda}* ({jenis_ujian}) sebagai *{peran_dosen}*.\n\n📅 *Tanggal:* {tanggal_ujian}\n📍 *Ruangan:* {lokasi_ujian}\n👥 *Peserta:* {jumlah_mahasiswa} Mahasiswa\n\n{daftar_mahasiswa}\n\nMohon kehadirannya tepat waktu untuk memimpin / menguji jalannya ujian. Detail berkas skripsi dan lembar penilaian dapat diakses di dashboard SIBIMA:\n🔗 *Detail Jadwal:* {link_login}\n\nTerima kasih.",
+                'available_variables' => [
+                    'nama_dosen' => 'Nama Dosen Penguji / Pembimbing / Pimpinan',
+                    'peran_dosen' => 'Peran Penugasan (Ketua Sidang / Moderator / Penguji / Pembimbing)',
+                    'jenis_ujian' => 'Seminar UP / Sidang Akhir',
+                    'nama_agenda' => 'Judul / Nama Sesi Jadwal',
+                    'tanggal_ujian' => 'Tanggal Ujian',
+                    'lokasi_ujian' => 'Ruangan / Lokasi Ujian',
+                    'jumlah_mahasiswa' => 'Jumlah Mahasiswa yang Diuji / Dijadwalkan',
+                    'daftar_mahasiswa' => 'Daftar Nama Mahasiswa & Jam Sesi',
                     'link_login' => 'Tautan Login SIBIMA',
                 ],
             ],
@@ -386,7 +405,20 @@ class WaTemplateSeeder extends Seeder
         ];
 
         foreach ($templates as $data) {
-            WaTemplate::updateOrCreate(['code' => $data['code']], $data);
+            $existing = WaTemplate::where('code', $data['code'])->first();
+            if ($existing) {
+                $updateData = [
+                    'name' => $data['name'],
+                    'category' => $data['category'],
+                    'available_variables' => $data['available_variables'],
+                ];
+                if (!$existing->is_customized) {
+                    $updateData['content'] = $data['content'];
+                }
+                $existing->update($updateData);
+            } else {
+                WaTemplate::create($data);
+            }
         }
 
         WaTemplate::clearCache();
