@@ -195,9 +195,17 @@
         .td-center {
             text-align: center;
         }
+        .col-no {
+            width: 3%;
+            padding-left: 2px !important;
+            padding-right: 2px !important;
+            text-align: center;
+        }
         .td-num {
             font-weight: 700;
             color: #475569;
+            padding-left: 2px !important;
+            padding-right: 2px !important;
         }
         .td-time {
             font-weight: 700;
@@ -369,15 +377,24 @@
 
     {{-- TABEL JADWAL PESERTA --}}
     <table class="schedule-table">
+        <colgroup>
+            <col style="width: 3%;">
+            <col style="width: 8.5%;">
+            <col style="width: 8.5%;">
+            <col style="width: 17%;">
+            <col style="width: 33.5%;">
+            <col style="width: 15%;">
+            <col style="width: 14.5%;">
+        </colgroup>
         <thead>
             <tr>
-                <th style="width: 25px;">NO</th>
-                <th style="width: 68px;">WAKTU</th>
-                <th style="width: 72px;">NPM</th>
-                <th style="width: 130px;">NAMA MAHASISWA</th>
-                <th>JUDUL PENELITIAN / SKRIPSI</th>
-                <th style="width: 135px;">PEMBIMBING</th>
-                <th style="width: 135px;">TIM PENGUJI</th>
+                <th class="col-no" style="width: 3%;">NO</th>
+                <th style="width: 8.5%;">WAKTU</th>
+                <th style="width: 8.5%;">NPM</th>
+                <th style="width: 17%;">NAMA MAHASISWA</th>
+                <th style="width: 33.5%;">JUDUL SKRIPSI</th>
+                <th style="width: 15%;">PEMBIMBING</th>
+                <th style="width: 14.5%;">PENGUJI</th>
             </tr>
         </thead>
         <tbody>
