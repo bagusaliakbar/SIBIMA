@@ -7,7 +7,7 @@
     </x-slot>
 
     <div class="w-full mx-auto" x-data="scheduleForm()">
-        <form action="{{ route('thesis-defense-schedules.update', $thesisDefenseSchedule) }}" method="POST">
+        <form action="{{ route('thesis-defense-schedules.update', $thesisDefenseSchedule) }}" method="POST" @submit="submitForm($event)">
             @csrf
             @method('PUT')
             
@@ -144,17 +144,51 @@
                                     </div>
                                 </div>
 
-                                <!-- Conflict Warning -->
-                                <div x-show="row.conflicts && row.conflicts.length > 0" x-transition class="mt-3 p-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-lg">
-                                    <div class="flex items-start">
-                                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                        <div>
-                                            <p class="text-[10px] font-black text-rose-700 dark:text-rose-300 uppercase tracking-widest">Peringatan Bentrok Jadwal</p>
+                                <!-- Conflict Warning & Override Toggle -->
+                                <div x-show="row.conflicts && row.conflicts.length > 0" x-transition 
+                                     class="mt-3 p-3.5 rounded-xl border transition-all duration-200"
+                                     :class="row.allow_override 
+                                         ? 'bg-amber-50/70 dark:bg-amber-950/20 border-amber-300 dark:border-amber-700/60' 
+                                         : 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/70'">
+                                    <div class="flex items-start gap-2.5">
+                                        <div class="mt-0.5 shrink-0">
+                                            <template x-if="!row.allow_override">
+                                                <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                            </template>
+                                            <template x-if="row.allow_override">
+                                                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            </template>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                                <p class="text-[10px] font-black uppercase tracking-widest"
+                                                   :class="row.allow_override ? 'text-amber-800 dark:text-amber-300' : 'text-rose-700 dark:text-rose-300'">
+                                                    Peringatan Bentrok Jadwal
+                                                </p>
+                                                <span x-show="row.allow_override" class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/60">
+                                                    ✓ Pengecualian Disetujui
+                                                </span>
+                                            </div>
                                             <ul class="mt-1 space-y-1">
                                                 <template x-for="msg in row.conflicts">
-                                                    <li class="text-[10px] text-rose-600 dark:text-rose-400 font-medium list-disc ml-3" x-text="msg"></li>
+                                                    <li class="text-[10px] font-medium list-disc ml-3"
+                                                        :class="row.allow_override ? 'text-amber-700/90 dark:text-amber-400/90' : 'text-rose-600 dark:text-rose-400'"
+                                                        x-text="msg"></li>
                                                 </template>
                                             </ul>
+
+                                            <!-- Checkbox Pengecualian -->
+                                            <div class="mt-2.5 pt-2 border-t"
+                                                 :class="row.allow_override ? 'border-amber-200/80 dark:border-amber-800/40' : 'border-rose-200/80 dark:border-rose-800/40'">
+                                                <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                                                    <input type="checkbox" x-model="row.allow_override" 
+                                                           class="rounded border-slate-300 dark:border-slate-700 text-amber-600 focus:ring-amber-500 w-3.5 h-3.5 transition-colors">
+                                                    <span class="text-[10.5px] font-semibold"
+                                                          :class="row.allow_override ? 'text-amber-800 dark:text-amber-300' : 'text-slate-700 dark:text-slate-300'">
+                                                        Izinkan pengecualian jadwal bentrok ini (Disetujui Kaprodi/Admin)
+                                                    </span>
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -176,7 +210,7 @@
             return {
                 chairman_id: '{{ $thesisDefenseSchedule->chairman_id }}',
                 moderator_id: '{{ $thesisDefenseSchedule->moderator_id }}',
-                rows: @json($mappedDetails).map(r => ({ ...r, conflicts: [] })),
+                rows: @json($mappedDetails).map(r => ({ ...r, conflicts: [], allow_override: false })),
                 theses: @json($theses),
                 init() {
                     this.recheckAll();
@@ -190,7 +224,8 @@
                         thesis_id: '',
                         examiner1_id: '',
                         examiner2_id: '',
-                        conflicts: []
+                        conflicts: [],
+                        allow_override: false
                     });
                 },
                 removeRow(index) {
@@ -260,6 +295,24 @@
                     this.rows.forEach((row, index) => {
                         this.checkConflict(index);
                     });
+                },
+                submitForm(e) {
+                    const unexempted = this.rows.filter(r => r.conflicts && r.conflicts.length > 0 && !r.allow_override);
+                    if (unexempted.length > 0) {
+                        let msg = `PERHATIAN: Terdeteksi bentrok jadwal pada ${unexempted.length} sesi yang belum diberi centang izin pengecualian:\n\n`;
+                        unexempted.forEach((r, idx) => {
+                            const name = r.thesis_id ? (this.theses.find(t => t.id == r.thesis_id)?.student?.name || 'Mahasiswa') : (r.activity_name || 'Kegiatan');
+                            msg += `• Sesi (${name}):\n  ${r.conflicts.join('\n  ')}\n\n`;
+                        });
+                        msg += `Apakah Anda yakin ingin tetap MEMPERBARUI jadwal ini dengan memberikan pengecualian bentrok?`;
+
+                        if (!confirm(msg)) {
+                            e.preventDefault();
+                            return false;
+                        }
+                        // User setuju: tandai semua override menjadi true
+                        unexempted.forEach(r => r.allow_override = true);
+                    }
                 }
             }
         }
