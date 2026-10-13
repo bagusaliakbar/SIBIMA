@@ -89,6 +89,9 @@ class ScheduleService
                     if ($thesis->pembimbing1_id) {
                         $userIds->push($thesis->pembimbing1_id);
                     }
+                    if ($thesis->pembimbing2_id) {
+                        $userIds->push($thesis->pembimbing2_id);
+                    }
                 }
             }
         }

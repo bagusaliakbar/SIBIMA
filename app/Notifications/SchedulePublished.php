@@ -61,38 +61,72 @@ class SchedulePublished extends Notification implements ShouldQueue
 
         // Branch by recipient role: Dosen vs Mahasiswa
         if (($notifiable->role ?? null) === 'dosen') {
+            $notifiableId = (int) $notifiable->id;
+
             // Determine lecturer roles in this schedule session
-            $isChairman = (int) ($this->schedule->chairman_id ?? 0) === (int) $notifiable->id;
-            $isModerator = (int) ($this->schedule->moderator_id ?? 0) === (int) $notifiable->id;
+            $isChairman = (int) ($this->schedule->chairman_id ?? 0) === $notifiableId;
+            $isModerator = (int) ($this->schedule->moderator_id ?? 0) === $notifiableId;
             $isExaminer = false;
             $isSupervisor = false;
+            $isDefense = str_contains($this->type, 'Sidang');
 
             $studentLines = [];
             foreach ($details as $detail) {
-                if ((int) ($detail->examiner1_id ?? 0) === (int) $notifiable->id || (int) ($detail->examiner2_id ?? 0) === (int) $notifiable->id) {
+                if (!$detail->thesis) {
+                    continue;
+                }
+
+                $student = $detail->thesis->student ?? null;
+                if (!$student) {
+                    continue;
+                }
+
+                $rolesForStudent = [];
+
+                if ((int) ($detail->examiner1_id ?? 0) === $notifiableId) {
+                    $rolesForStudent[] = 'Penguji 1';
                     $isExaminer = true;
                 }
-                if ($detail->thesis) {
-                    if ((int) ($detail->thesis->pembimbing1_id ?? 0) === (int) $notifiable->id || (int) ($detail->thesis->pembimbing2_id ?? 0) === (int) $notifiable->id) {
-                        $isSupervisor = true;
-                    }
-
-                    $student = $detail->thesis->student ?? null;
-                    if ($student) {
-                        $timeStr = '';
-                        if ($detail->start_time && $detail->end_time) {
-                            $timeStr = ' (' . Carbon::parse($detail->start_time)->format('H:i') . ' - ' . Carbon::parse($detail->end_time)->format('H:i') . ' WIB)';
-                        } elseif ($detail->start_time) {
-                            $timeStr = ' (' . Carbon::parse($detail->start_time)->format('H:i') . ' WIB)';
-                        }
-                        $studentLines[] = "• {$student->name}{$timeStr}";
-                    }
+                if ((int) ($detail->examiner2_id ?? 0) === $notifiableId) {
+                    $rolesForStudent[] = 'Penguji 2';
+                    $isExaminer = true;
                 }
+                if ((int) ($detail->thesis->pembimbing1_id ?? 0) === $notifiableId) {
+                    $rolesForStudent[] = 'Pembimbing 1';
+                    $isSupervisor = true;
+                }
+                if ((int) ($detail->thesis->pembimbing2_id ?? 0) === $notifiableId) {
+                    $rolesForStudent[] = 'Pembimbing 2';
+                    $isSupervisor = true;
+                }
+
+                // If lecturer is not chairman or moderator, only include students where they are examiner/supervisor
+                if (!$isChairman && !$isModerator && empty($rolesForStudent)) {
+                    continue;
+                }
+
+                $timeStr = '';
+                if ($detail->start_time && $detail->end_time) {
+                    $timeStr = ' (' . Carbon::parse($detail->start_time)->format('H:i') . ' - ' . Carbon::parse($detail->end_time)->format('H:i') . ' WIB)';
+                } elseif ($detail->start_time) {
+                    $timeStr = ' (' . Carbon::parse($detail->start_time)->format('H:i') . ' WIB)';
+                }
+
+                $roleLabel = '';
+                if (!empty($rolesForStudent)) {
+                    $roleLabel = ' - ' . implode(' & ', $rolesForStudent);
+                } elseif ($isChairman) {
+                    $roleLabel = ' - ' . ($isDefense ? 'Ketua Sidang' : 'Ketua Seminar');
+                } elseif ($isModerator) {
+                    $roleLabel = ' - Moderator';
+                }
+
+                $studentLines[] = "• {$student->name}{$timeStr}{$roleLabel}";
             }
 
             $roles = [];
             if ($isChairman) {
-                $roles[] = str_contains($this->type, 'Sidang') ? 'Ketua Sidang' : 'Ketua Seminar';
+                $roles[] = $isDefense ? 'Ketua Sidang' : 'Ketua Seminar';
             }
             if ($isModerator) {
                 $roles[] = 'Moderator';
