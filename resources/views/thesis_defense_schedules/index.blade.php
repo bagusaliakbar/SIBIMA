@@ -5,13 +5,43 @@
         ]" />
     </x-slot>
 
-    <div class="w-full space-y-6" x-data="{ allOpen: true }">
+    <div class="w-full space-y-6" x-data="{ allOpen: true, openImportModal: false }">
         @if(session('success'))
-            <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-[11px] font-black uppercase tracking-widest flex items-center border border-emerald-100 dark:border-emerald-800/50 shadow-sm animate-pulse">
-                <svg class="w-5 h-5 mr-3 text-emerald-600 dark:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center border border-emerald-100 dark:border-emerald-800/50 shadow-sm animate-pulse">
+                <svg class="w-5 h-5 mr-3 text-emerald-600 dark:text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                 </svg>
                 {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 text-xs font-bold flex items-center border border-rose-100 dark:border-rose-800/50 shadow-sm">
+                <svg class="w-5 h-5 mr-3 text-rose-600 dark:text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if(session('skippedDetails') && count(session('skippedDetails')) > 0)
+            <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 shadow-sm text-xs">
+                <div class="flex items-center gap-2 font-bold text-amber-800 dark:text-amber-300 mb-2">
+                    <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <span>Perhatian: Beberapa baris data sesi dilewati (tidak diimpor):</span>
+                </div>
+                <div class="max-h-40 overflow-y-auto space-y-1 pl-6">
+                    @foreach(session('skippedDetails') as $detail)
+                        <div class="text-[11px] text-amber-900 dark:text-amber-200 list-item">
+                            @if(isset($detail['row']) && $detail['row'] !== '-')
+                                <span class="font-bold">Baris {{ $detail['row'] }}:</span>
+                            @endif
+                            {{ $detail['reason'] }}
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
 
@@ -420,6 +450,16 @@
                             <span class="whitespace-nowrap">Simulasi Otomatis</span>
                         </a>
 
+                        <!-- Import Excel Button -->
+                        <button type="button" @click="openImportModal = true"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm cursor-pointer shrink-0"
+                            title="Import jadwal sidang skripsi dari file Excel">
+                            <svg class="w-4 h-4 fill-none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            <span class="whitespace-nowrap">Import Excel</span>
+                        </button>
+
                         <!-- Add Button -->
                         <a href="{{ route('thesis-defense-schedules.create', ['wave_id' => $selectedWaveId]) }}" 
                             class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
@@ -507,5 +547,114 @@
                 </table>
             </x-table-card>
         @endif
+
+        <!-- Import Excel Modal (Admin & Kaprodi) -->
+        <div x-show="openImportModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak x-transition>
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openImportModal = false">
+                    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-200 dark:border-slate-700">
+                    <!-- Modal Header -->
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200 dark:border-emerald-800/60 shadow-xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                                    Import Jadwal Sidang Skripsi
+                                </h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Unggah berkas spreadsheet Excel (.xlsx, .xls, .csv)</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="openImportModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body Form -->
+                    <form action="{{ route('thesis-defense-schedules.import') }}" method="POST" enctype="multipart/form-data" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
+                        @csrf
+                        <div class="p-6 space-y-5">
+                            <!-- Download Template Card -->
+                            <div class="p-4 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20 border border-orange-200/80 dark:border-orange-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                                <div class="space-y-0.5">
+                                    <h4 class="text-xs font-black text-orange-900 dark:text-orange-200 uppercase tracking-wider flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Format / Template Excel
+                                    </h4>
+                                    <p class="text-[11px] text-orange-800/80 dark:text-orange-300/80">Gunakan template resmi agar susunan kolom sesuai sistem</p>
+                                </div>
+                                <a href="{{ route('thesis-defense-schedules.template') }}"
+                                   class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 text-orange-600 dark:text-orange-400 font-bold text-xs rounded-xl border border-orange-300 dark:border-orange-700/60 shadow-xs transition-all shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    <span>Download Format Excel</span>
+                                </a>
+                            </div>
+
+                            <!-- Gelombang Target -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                                    Target Gelombang Sidang <span class="text-rose-500">*</span>
+                                </label>
+                                <select name="wave_id" required
+                                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                    @foreach($waves as $wave)
+                                        <option value="{{ $wave->id }}" {{ ($selectedWaveId ?? $activeWave?->id) == $wave->id ? 'selected' : '' }}>
+                                            {{ strtoupper($wave->name) }} {{ $wave->is_active ? '(Aktif Saat Ini)' : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- File Input -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                                    Pilih File Excel (.xlsx, .xls, .csv) <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="file" name="file" required accept=".xlsx,.xls,.csv"
+                                           class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-600 file:text-white hover:file:bg-orange-700 file:cursor-pointer transition-all bg-slate-50 dark:bg-slate-900 rounded-2xl p-2 border border-dashed border-slate-300 dark:border-slate-700 focus:outline-none">
+                                </div>
+                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Ukuran maksimal file: 5 MB</p>
+                            </div>
+
+                            <!-- Petunjuk Pengisian Singkat -->
+                            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
+                                <p class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">Petunjuk Format:</p>
+                                <ul class="list-disc list-inside space-y-0.5 text-[10.5px]">
+                                    <li>Baris dengan <b>Nama Sesi, Tanggal, dan Lokasi</b> yang sama otomatis digabung menjadi 1 kelompok jadwal.</li>
+                                    <li>Format tanggal: <b>YYYY-MM-DD</b> (cth: 2026-10-25). Jam: <b>HH:mm</b> (cth: 08:00).</li>
+                                    <li>Kolom Dosen (Ketua, Penguji 1 & 2): dapat diisi <b>NIDN</b> atau <b>Nama Lengkap</b>.</li>
+                                    <li>Untuk sesi non-mahasiswa (cth: Rapat Yudisium), kosongkan NPM dan isi kolom <b>Kegiatan Khusus</b>.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
+                            <button type="button" @click="openImportModal = false" :disabled="isSubmitting"
+                                    class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                                Batal
+                            </button>
+                            <button type="submit" :disabled="isSubmitting"
+                                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg x-show="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span x-text="isSubmitting ? 'Memproses Import...' : 'Mulai Import Data'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </x-app-layout>

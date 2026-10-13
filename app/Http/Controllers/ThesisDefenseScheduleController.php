@@ -329,4 +329,44 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
 
         return $pdf->download('Jadwal_Sidang_' . str_replace([' ', '/', '\\'], '_', $thesisDefenseSchedule->title) . '.pdf');
     }
+
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ThesisDefenseScheduleTemplateExport,
+            'Template_Import_Jadwal_Sidang_' . date('Ymd_His') . '.xlsx'
+        );
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+            'wave_id' => 'nullable|exists:waves,id',
+        ]);
+
+        $waveId = $request->input('wave_id') ?: Wave::getCurrentActive()?->id;
+        if (!$waveId) {
+            return redirect()->back()->with('error', 'Silakan pilih gelombang yang aktif atau tersedia terlebih dahulu.');
+        }
+
+        try {
+            $importer = new \App\Imports\ThesisDefenseSchedulesImport($waveId);
+            \Maatwebsite\Excel\Facades\Excel::import($importer, $request->file('file'));
+
+            $message = "Berhasil mengimpor {$importer->schedulesCount} jadwal sidang dengan total {$importer->sessionsCount} sesi.";
+            if ($importer->skippedCount > 0) {
+                $message .= " ({$importer->skippedCount} baris sesi dilewati).";
+            }
+
+            $redirect = redirect()->route('thesis-defense-schedules.index', ['wave_id' => $waveId])->with('success', $message);
+            if (!empty($importer->skippedDetails)) {
+                $redirect->with('skippedDetails', $importer->skippedDetails);
+            }
+
+            return $redirect;
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal memproses file Excel: ' . $e->getMessage());
+        }
+    }
 }

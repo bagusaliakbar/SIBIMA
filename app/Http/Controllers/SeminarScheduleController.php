@@ -329,4 +329,44 @@ class SeminarScheduleController extends Controller implements HasMiddleware
 
         return $pdf->download('Jadwal_Seminar_' . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.pdf');
     }
+
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\SeminarScheduleTemplateExport,
+            'Template_Import_Jadwal_Seminar_' . date('Ymd_His') . '.xlsx'
+        );
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+            'wave_id' => 'nullable|exists:waves,id',
+        ]);
+
+        $waveId = $request->input('wave_id') ?: Wave::getCurrentActive()?->id;
+        if (!$waveId) {
+            return redirect()->back()->with('error', 'Silakan pilih gelombang yang aktif atau tersedia terlebih dahulu.');
+        }
+
+        try {
+            $importer = new \App\Imports\SeminarSchedulesImport($waveId);
+            \Maatwebsite\Excel\Facades\Excel::import($importer, $request->file('file'));
+
+            $message = "Berhasil mengimpor {$importer->schedulesCount} jadwal seminar dengan total {$importer->sessionsCount} sesi.";
+            if ($importer->skippedCount > 0) {
+                $message .= " ({$importer->skippedCount} baris sesi dilewati).";
+            }
+
+            $redirect = redirect()->route('seminar-schedules.index', ['wave_id' => $waveId])->with('success', $message);
+            if (!empty($importer->skippedDetails)) {
+                $redirect->with('skippedDetails', $importer->skippedDetails);
+            }
+
+            return $redirect;
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal memproses file Excel: ' . $e->getMessage());
+        }
+    }
 }

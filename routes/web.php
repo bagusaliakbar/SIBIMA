@@ -172,8 +172,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/theses/{thesis}/logbooks/quick-preview', [App\Http\Controllers\LogbookController::class, 'quickPreview'])->name('theses.logbooks.quick-preview');
     Route::get('/theses/{thesis}/logbooks/export-pdf', [App\Http\Controllers\LogbookController::class, 'exportPdf'])->name('theses.logbooks.export-pdf');
 
-    // Seminar & Defense Schedule Simulation (Admin & Kaprodi)
+    // Seminar & Defense Schedule Simulation & Import (Admin & Kaprodi)
     Route::middleware(['role:admin,kaprodi'])->group(function () {
+        Route::get('/seminar-schedules/template', [App\Http\Controllers\SeminarScheduleController::class, 'downloadTemplate'])->name('seminar-schedules.template');
+        Route::post('/seminar-schedules/import', [App\Http\Controllers\SeminarScheduleController::class, 'import'])->name('seminar-schedules.import');
+
+        Route::get('/thesis-defense-schedules/template', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'downloadTemplate'])->name('thesis-defense-schedules.template');
+        Route::post('/thesis-defense-schedules/import', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'import'])->name('thesis-defense-schedules.import');
+
         Route::get('/seminar-schedules/simulation', [App\Http\Controllers\ScheduleSimulationController::class, 'seminarIndex'])->name('seminar-schedules.simulation');
         Route::post('/seminar-schedules/simulation/run', [App\Http\Controllers\ScheduleSimulationController::class, 'seminarRun'])->name('seminar-schedules.simulation.run');
         Route::post('/seminar-schedules/simulation/apply', [App\Http\Controllers\ScheduleSimulationController::class, 'seminarApply'])->name('seminar-schedules.simulation.apply');
