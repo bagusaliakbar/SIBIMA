@@ -1762,7 +1762,8 @@
                 </div>
 
                 <!-- MAIN VIEWER VIEWPORT (RELATIVE, OVERFLOW HIDDEN, NON-SCROLLING WRAPPER) -->
-                <div style="position: relative !important; flex: 1 1 0% !important; min-height: 0 !important; width: 100% !important; overflow: hidden !important; display: flex !important; flex-direction: column !important;">
+                <div class="relative flex-1 min-h-0 w-full h-full overflow-hidden flex flex-col"
+                     style="position: relative !important; flex: 1 1 0% !important; min-height: 0 !important; width: 100% !important; height: 100% !important; overflow: hidden !important; display: flex !important; flex-direction: column !important;">
                     
                     <!-- Loading State Overlay (Dead-Center in Screen) -->
                     <div x-show="pdfIsLoading" 
@@ -1793,14 +1794,13 @@
 
                     <!-- DOCUMENT CANVAS SCROLL BODY -->
                     <div id="pdfViewerContainer" 
-                         style="background-color: #020617 !important; flex: 1 1 0% !important; min-height: 0 !important; overflow: auto !important; width: 100% !important; height: 100% !important;"
-                         class="p-4 sm:p-8"
-                         :style="pdfReadOnly ? 'user-select: none; -webkit-user-select: none;' : ''"
+                         class="p-4 sm:p-8 flex-1 min-h-0 w-full h-full overflow-y-auto overflow-x-auto select-none"
+                         style="background-color: #020617 !important; flex: 1 1 0% !important; min-height: 0 !important; overflow-y: auto !important; overflow-x: auto !important; width: 100% !important; height: 100% !important; -webkit-overflow-scrolling: touch;"
                          @contextmenu="if (pdfReadOnly) { $event.preventDefault(); return false; }"
                          @copy="if (pdfReadOnly) { $event.preventDefault(); return false; }">
                         
                         <!-- Canvas Viewport -->
-                        <div class="pb-12 pt-2 flex justify-center items-start w-full">
+                        <div class="pb-16 pt-2 flex justify-center items-start w-full min-h-full">
                             <canvas id="pdfViewerCanvas" 
                                     x-ref="pdfCanvas"
                                     style="background-color: #ffffff !important; border: 1px solid #334155 !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important; display: block !important; margin: 0 auto !important; border-radius: 2px !important; outline: none !important;"></canvas>
