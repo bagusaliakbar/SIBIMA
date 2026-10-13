@@ -50,6 +50,115 @@
         display: flex !important;
     }
 }
+
+/* ========================================================================= */
+/* DOCK & MINI PILL THEME STYLING (SEAMLESS LIGHT / DARK MODE SUPPORT)        */
+/* ========================================================================= */
+
+/* Collapsed Mini Pill Button */
+.bug-report-pill-btn {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.dark .bug-report-pill-btn {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+}
+.bug-report-pill-btn .bug-report-pill-text {
+    color: #1e293b !important;
+}
+.dark .bug-report-pill-btn .bug-report-pill-text {
+    color: #f1f5f9 !important;
+}
+.bug-report-pill-btn .bug-report-pill-chevron {
+    color: #94a3b8 !important;
+}
+.dark .bug-report-pill-btn .bug-report-pill-chevron {
+    color: #94a3b8 !important;
+}
+.bug-report-pill-btn:hover .bug-report-pill-chevron {
+    color: #f97316 !important;
+}
+
+/* Badge Indicator Ring matching pill background */
+.bug-badge-ring {
+    box-shadow: 0 0 0 2px #ffffff !important;
+}
+.dark .bug-badge-ring {
+    box-shadow: 0 0 0 2px #0f172a !important;
+}
+
+/* Full Vertical Capsule Dock Container */
+.bug-full-dock-container {
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+    border-radius: 9999px !important;
+    padding: 14px 7px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+    pointer-events: auto !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+}
+.dark .bug-full-dock-container {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.6) !important;
+}
+
+.bug-dock-grip {
+    color: #94a3b8 !important;
+}
+.dark .bug-dock-grip {
+    color: #64748b !important;
+}
+
+.bug-dock-divider-line {
+    width: 24px !important;
+    height: 1.5px !important;
+    background-color: #e2e8f0 !important;
+    border-radius: 9999px !important;
+}
+.dark .bug-dock-divider-line {
+    background-color: #334155 !important;
+}
+
+.bug-dock-collapse-btn {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+}
+.dark .bug-dock-collapse-btn {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+}
+.bug-dock-collapse-btn:hover {
+    background-color: #e2e8f0 !important;
+}
+.dark .bug-dock-collapse-btn:hover {
+    background-color: #334155 !important;
+}
+
+.bug-dock-admin-link {
+    background-color: #eef2ff !important;
+    color: #4f46e5 !important;
+}
+.dark .bug-dock-admin-link {
+    background-color: #1e1b4b !important;
+    color: #a5b4fc !important;
+}
+.dark .bug-dock-admin-link:hover {
+    background-color: #312e81 !important;
+}
 </style>
 
 <script>
@@ -344,23 +453,23 @@ document.addEventListener('keydown', function(e) {
          style="pointer-events: auto !important;">
         <button onclick="window.toggleBugCollapse(false); event.stopPropagation();"
                 type="button"
-                class="group relative flex items-center justify-center p-3 sm:px-3.5 sm:py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-200 rounded-full shadow-2xl border border-slate-200/90 dark:border-slate-700/80 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+                class="bug-report-pill-btn group relative flex items-center justify-center p-3 sm:px-3.5 sm:py-2.5 rounded-full hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
                 title="Buka Toolbar Pelaporan Bug">
-            <span class="relative flex items-center justify-center">
-                <!-- Pulsing Badge Indicator Dot -->
-                <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+            <span class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                <!-- Pulsing Badge Indicator Dot (Anchored cleanly to triangle upper-right shoulder) -->
+                <span class="absolute top-0 right-0 flex h-2 w-2 pointer-events-none">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
+                    <span class="bug-badge-ring relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
                 </span>
                 <!-- Bug/Alert Icon -->
                 <svg class="w-5 h-5 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
             </span>
-            <span class="hidden sm:inline-block ml-2 text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200">
+            <span class="bug-report-pill-text hidden sm:inline-block ml-2 text-xs font-bold tracking-tight">
                 Lapor Bug
             </span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden sm:inline-block ml-1 w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="bug-report-pill-chevron hidden sm:inline-block ml-1 w-4 h-4 transition-colors">
                 <path d="M5 15l7-7 7 7" />
             </svg>
         </button>
@@ -368,11 +477,10 @@ document.addEventListener('keydown', function(e) {
 
     <!-- 2. Full Vertical Capsule Dock (Pixel-Perfect Reference Design) -->
     <div id="bug-report-full-dock"
-         style="width: 56px !important; min-width: 56px !important; max-width: 56px !important; background: #ffffff; border-radius: 9999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; padding: 14px 7px; flex-direction: column !important; align-items: center !important; gap: 10px !important; pointer-events: auto !important;"
-         class="bg-white dark:bg-slate-900 rounded-full shadow-2xl border border-slate-200 dark:border-slate-700 py-3.5 px-1.5 flex flex-col items-center gap-2.5">
+         class="bug-full-dock-container">
         
         <!-- Grip Drag Indicator (6 dots) -->
-        <div class="flex flex-col items-center justify-center py-0.5 cursor-default text-slate-400 dark:text-slate-500" title="Toolbar Pelaporan Bug">
+        <div class="bug-dock-grip flex flex-col items-center justify-center py-0.5 cursor-default" title="Toolbar Pelaporan Bug">
             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px;">
                 <circle cx="7" cy="5" r="1.5" />
                 <circle cx="13" cy="5" r="1.5" />
@@ -384,13 +492,13 @@ document.addEventListener('keydown', function(e) {
         </div>
 
         <!-- Divider Line -->
-        <div style="width: 24px; height: 1.5px; background: #e2e8f0; border-radius: 9999px;" class="w-6 h-[1.5px] bg-slate-200 dark:bg-slate-700/80 rounded-full mb-0.5"></div>
+        <div class="bug-dock-divider-line mb-0.5"></div>
 
         <!-- Button 1: Gray Circle with Left Arrow (Collapse/Perkecil) -->
         <button onclick="window.toggleBugCollapse(true); event.stopPropagation();"
                 type="button"
-                style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; background: #f1f5f9; color: #334155; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; border: none !important; padding: 0 !important; overflow: hidden !important; pointer-events: auto !important;"
-                class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-90 group relative cursor-pointer"
+                style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; border: none !important; padding: 0 !important; overflow: hidden !important; pointer-events: auto !important;"
+                class="bug-dock-collapse-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-90 group relative cursor-pointer"
                 title="Perkecil Toolbar">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px;" class="group-hover:-translate-x-0.5 transition-transform">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -447,10 +555,10 @@ document.addEventListener('keydown', function(e) {
 
         @if(in_array(Auth::user()?->role, ['admin', 'kaprodi']))
         <!-- Quick Link for Admin/Kaprodi to Bug Inbox -->
-        <div style="width: 24px; height: 1.5px; background: #e2e8f0; border-radius: 9999px;" class="w-6 h-[1.5px] bg-slate-200 dark:bg-slate-700/80 rounded-full my-0.5"></div>
+        <div class="bug-dock-divider-line my-0.5"></div>
         <a href="{{ route('admin.bug-reports.index') }}" 
-           style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; background: #eef2ff; color: #4f46e5; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; text-decoration: none !important; padding: 0 !important; overflow: hidden !important; pointer-events: auto !important;"
-           class="w-10 h-10 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-90 group relative"
+           style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; text-decoration: none !important; padding: 0 !important; overflow: hidden !important; pointer-events: auto !important;"
+           class="bug-dock-admin-link w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-90 group relative"
            title="Inbox Kelola Bug (Admin/Kaprodi)">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px;">
                 <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
