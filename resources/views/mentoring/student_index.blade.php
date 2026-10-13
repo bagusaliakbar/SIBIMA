@@ -249,9 +249,9 @@
                     @endif
                 </div>
                 
-                <div class="flex items-center gap-2.5 w-full sm:w-auto">
+                <div class="flex items-center gap-2.5 w-full sm:w-auto" style="display: flex !important; align-items: center !important;">
                     <!-- Search Input -->
-                    <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="relative flex-1 sm:flex-initial">
+                    <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="relative m-0 p-0 h-10 flex items-center flex-1 sm:flex-initial" style="margin: 0 !important; padding: 0 !important; height: 40px !important; display: flex !important; align-items: center !important;">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
@@ -259,7 +259,8 @@
                                name="search" 
                                value="{{ $search ?? '' }}" 
                                placeholder="Cari Topik Pembahasan" 
-                               class="h-10 w-full sm:w-64 pl-9 pr-9 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
+                               class="h-10 w-full sm:w-64 pl-9 pr-9 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs block"
+                               style="height: 40px !important; margin: 0 !important; line-height: normal !important; box-sizing: border-box !important;">
                         @if(isset($search) && $search !== '')
                             <a href="{{ route('mentoring-sessions.index') }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" title="Bersihkan Pencarian">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -269,7 +270,8 @@
 
                     <!-- Ajukan Bimbingan Button -->
                     <a href="{{ route('mentoring-sessions.create') }}" 
-                       class="h-10 inline-flex items-center justify-center gap-1.5 px-4 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 hover:scale-[1.02] transition-all whitespace-nowrap shrink-0 cursor-pointer">
+                       class="h-10 inline-flex items-center justify-center gap-1.5 px-4 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 hover:scale-[1.02] transition-all whitespace-nowrap shrink-0 cursor-pointer"
+                       style="height: 40px !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; box-sizing: border-box !important;">
                         <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                         </svg>
