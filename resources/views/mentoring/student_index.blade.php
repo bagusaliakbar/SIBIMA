@@ -241,24 +241,40 @@
                 </div>
             @endif
 
-            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Riwayat Bimbingan</h3>
+            <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Riwayat Bimbingan</h3>
+                    @if(isset($sessions) && $sessions->total() > 0)
+                        <span class="px-2 py-0.5 text-[11px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full border border-slate-200 dark:border-slate-700">{{ $sessions->total() }}</span>
+                    @endif
+                </div>
                 
-                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <div class="flex items-center gap-2.5 w-full sm:w-auto">
                     <!-- Search Input -->
-                    <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="relative w-full sm:w-auto">
+                    <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="relative flex-1 sm:flex-initial">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari Topik Pembahasan" class="block w-full sm:w-64 pl-10 pr-10 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md leading-5 bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm transition-all">
+                        <input type="text" 
+                               name="search" 
+                               value="{{ $search ?? '' }}" 
+                               placeholder="Cari Topik Pembahasan" 
+                               class="h-10 w-full sm:w-64 pl-9 pr-9 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
                         @if(isset($search) && $search !== '')
-                            <a href="{{ route('mentoring-sessions.index') }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                            <a href="{{ route('mentoring-sessions.index') }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" title="Bersihkan Pencarian">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </a>
                         @endif
                     </form>
 
-                    <a href="{{ route('mentoring-sessions.create') }}" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-medium rounded hover:bg-orange-700 transition-colors shadow-sm whitespace-nowrap">+ Ajukan Bimbingan</a>
+                    <!-- Ajukan Bimbingan Button -->
+                    <a href="{{ route('mentoring-sessions.create') }}" 
+                       class="h-10 inline-flex items-center justify-center gap-1.5 px-4 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 hover:scale-[1.02] transition-all whitespace-nowrap shrink-0 cursor-pointer">
+                        <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>Ajukan Bimbingan</span>
+                    </a>
                 </div>
             </div>
 
