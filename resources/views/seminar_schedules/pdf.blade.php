@@ -22,65 +22,65 @@
         /* Kop Surat Resmi FASILKOM UNSUB */
         .kop-surat {
             width: 100%;
-            border-bottom: 3px double #0f172a;
+            border-bottom: 3px double #000;
             padding-bottom: 5px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
-        .kop-table {
+        .kop-surat table {
             width: 100%;
+            border: none;
             border-collapse: collapse;
         }
-        .kop-table td {
+        .kop-surat td {
+            border: none !important;
+            padding: 0 !important;
             vertical-align: middle;
-            padding: 0;
-            border: none;
         }
-        .logo-cell {
-            width: 70px;
+        .kop-surat .logo-cell {
+            width: 85px;
             text-align: left;
         }
-        .logo-img {
-            width: 60px;
+        .kop-surat .logo-img {
+            width: 75px;
             height: auto;
             display: block;
         }
-        .info-cell {
+        .kop-surat .info-cell {
             text-align: center;
-            padding-right: 60px; /* Balance logo width */
+            padding-right: 85px !important; /* Balance logo width */
         }
-        .univ-name {
-            font-family: 'Times-Roman', Times, serif;
-            font-size: 13pt;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: #0f172a;
+        .kop-surat .univ-name {
+            font-size: 16px;
             margin: 0;
-            line-height: 1.2;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            letter-spacing: 0.5px;
+            color: #000;
         }
-        .faculty-name {
-            font-family: 'Times-Roman', Times, serif;
-            font-size: 16pt;
-            font-weight: bold;
-            letter-spacing: 1.5px;
-            color: #1e3a8a;
+        .kop-surat .faculty-name {
+            font-size: 21px;
             margin: 1px 0;
-            line-height: 1.2;
-        }
-        .study-program {
-            font-size: 8pt;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
             font-weight: bold;
-            color: #334155;
-            margin-bottom: 1px;
+            letter-spacing: 0.5px;
+            color: #000;
         }
-        .accreditation {
-            font-size: 7.5pt;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 1px;
+        .kop-surat .accreditation {
+            font-size: 11px;
+            font-weight: bold;
+            margin: 2px 0 1px 0;
+            color: #000;
         }
-        .contact-info {
-            font-size: 6.8pt;
-            color: #64748b;
+        .kop-surat .address {
+            font-size: 9.5px;
+            margin: 1px 0;
+            color: #000;
+        }
+        .kop-surat .email {
+            font-size: 9.5px;
+            margin: 1px 0;
+            color: #000;
         }
 
         /* Document Title */
@@ -310,9 +310,9 @@
 </head>
 <body>
 
-    {{-- KOP SURAT RESMI --}}
+    {{-- KOP SURAT RESMI FASILKOM UNSUB --}}
     <div class="kop-surat">
-        <table class="kop-table">
+        <table>
             <tr>
                 <td class="logo-cell">
                     @if(file_exists(public_path('logo_unsub.png')))
@@ -322,9 +322,9 @@
                 <td class="info-cell">
                     <div class="univ-name">UNIVERSITAS SUBANG</div>
                     <div class="faculty-name">FAKULTAS ILMU KOMPUTER</div>
-                    <div class="study-program">Program Studi Sistem Informasi & Teknik Informatika</div>
                     <div class="accreditation">Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</div>
-                    <div class="contact-info">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang &bull; E-Mail: fasilkom@unsub.ac.id</div>
+                    <div class="address">Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</div>
+                    <div class="email">E-Mail : <span style="color: blue; text-decoration: underline;">fasilkom@unsub.ac.id</span></div>
                 </td>
             </tr>
         </table>
