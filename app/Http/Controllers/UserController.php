@@ -28,7 +28,7 @@ class UserController extends Controller implements HasMiddleware
             new Middleware(function ($request, $next) {
                 if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
                 return $next($request);
-            }),
+            }, except: ['avatar']),
         ];
     }
 
@@ -333,5 +333,41 @@ class UserController extends Controller implements HasMiddleware
         $user->save();
 
         return redirect()->route('users.index')->with('success', "Password untuk pengguna {$user->name} berhasil di-reset menjadi: {$newPassword}");
+    }
+
+    /**
+     * Stream user avatar as a lightweight cached HTTP image response.
+     */
+    public function avatar(User $user)
+    {
+        if ($user->avatar) {
+            // If stored as base64 data URI
+            if (str_starts_with($user->avatar, 'data:image')) {
+                if (preg_match('/^data:([^;]+);base64,(.+)$/', $user->avatar, $matches)) {
+                    $mime = $matches[1];
+                    $data = base64_decode($matches[2]);
+                    return response($data, 200, [
+                        'Content-Type' => $mime,
+                        'Cache-Control' => 'public, max-age=86400',
+                        'ETag' => md5(($user->updated_at ? $user->updated_at->timestamp : $user->id) . strlen($user->avatar)),
+                    ]);
+                }
+            }
+
+            // If stored as storage path
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->response($user->avatar, null, [
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
+        }
+
+        // Fallback default SVG silhouette
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#94a3b8"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.6-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/></svg>';
+
+        return response($svg, 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
     }
 }

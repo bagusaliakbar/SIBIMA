@@ -232,12 +232,7 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar) {
-            // Check if it's already a base64 string
-            if (str_starts_with($this->avatar, 'data:image')) {
-                return $this->avatar;
-            }
-            // Fallback for legacy files (just in case they weren't wiped yet)
-            return Storage::url($this->avatar);
+            return route('users.avatar', $this->id);
         }
 
         // Fallback to a default user silhouette SVG (Heroicons User Solid)

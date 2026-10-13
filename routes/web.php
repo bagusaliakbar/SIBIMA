@@ -18,6 +18,9 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/users/{user}/avatar', [App\Http\Controllers\UserController::class, 'avatar'])
+        ->name('users.avatar');
+
     Route::get('/dashboard/online-users', [\App\Http\Controllers\DashboardController::class, 'onlineUsers'])
         ->name('dashboard.online-users');
     // Secure File Download Route

@@ -17,7 +17,7 @@ class UserService
     {
         $avatarPath = null;
         if ($avatarFile) {
-            $avatarPath = $avatarFile->store('avatars', 'public');
+            $avatarPath = $this->processAvatarFile($avatarFile);
         }
 
         $user = User::create([
@@ -57,10 +57,7 @@ class UserService
         ];
 
         if ($avatarFile) {
-            $imageData = file_get_contents($avatarFile->getRealPath());
-            $base64 = base64_encode($imageData);
-            $mime = $avatarFile->getMimeType();
-            $updateData['avatar'] = 'data:' . $mime . ';base64,' . $base64;
+            $updateData['avatar'] = $this->processAvatarFile($avatarFile);
         }
 
         if (!empty($data['email']) && $data['email'] !== $user->email) {
@@ -147,5 +144,47 @@ class UserService
         
         $user->save();
         ActivityLog::log('Update Tanda Tangan', 'User memperbarui tanda tangan digital mereka.', 'Profil');
+    }
+
+    /**
+     * Resize and encode avatar image to prevent oversized data in database and cache.
+     */
+    private function processAvatarFile($avatarFile): string
+    {
+        $path = $avatarFile->getRealPath();
+        $mime = $avatarFile->getMimeType();
+        $imageData = file_get_contents($path);
+
+        if (extension_loaded('gd') && function_exists('imagecreatefromstring')) {
+            $img = @imagecreatefromstring($imageData);
+            if ($img !== false) {
+                $w = imagesx($img);
+                $h = imagesy($img);
+                $maxDim = 300;
+
+                if ($w > $maxDim || $h > $maxDim) {
+                    $ratio = min($maxDim / $w, $maxDim / $h);
+                    $newW = (int) ($w * $ratio);
+                    $newH = (int) ($h * $ratio);
+
+                    $thumb = imagecreatetruecolor($newW, $newH);
+                    imagealphablending($thumb, false);
+                    imagesavealpha($thumb, true);
+                    imagecopyresampled($thumb, $img, 0, 0, 0, 0, $newW, $newH, $w, $h);
+
+                    ob_start();
+                    imagejpeg($thumb, null, 85);
+                    $imageData = ob_get_clean();
+
+                    imagedestroy($thumb);
+                    imagedestroy($img);
+                    $mime = 'image/jpeg';
+                } else {
+                    imagedestroy($img);
+                }
+            }
+        }
+
+        return 'data:' . $mime . ';base64,' . base64_encode($imageData);
     }
 }

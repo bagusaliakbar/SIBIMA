@@ -629,7 +629,8 @@ class DashboardService
     public function getCommonData()
     {
         return Cache::remember('sibima_dashboard_common_data', 15, function () {
-            $allUsers = User::select('id', 'name', 'role', 'avatar', 'identifier', 'email')->get();
+            // Omit avatar blob to keep cached payload ultra lightweight (< 2 KB) and prevent MySQL cache column truncation
+            $allUsers = User::select('id', 'name', 'role', 'identifier', 'email')->get();
             $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values();
 
             return [
