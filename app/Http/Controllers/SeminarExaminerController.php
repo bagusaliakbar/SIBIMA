@@ -83,8 +83,12 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             });
         }
 
+        $dateDirection = $hasWaveFilter ? 'desc' : 'asc';
+
         $examinations = $query
-            ->orderBy('seminar_schedules.date', 'desc')
+            ->orderBy('seminar_schedules.date', $dateDirection)
+            ->orderBy('seminar_schedule_details.start_time', 'asc')
+            ->orderBy('seminar_schedule_details.order', 'asc')
             ->select('seminar_schedule_details.*')
             ->paginate(15)
             ->withQueryString();

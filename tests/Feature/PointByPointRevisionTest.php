@@ -325,4 +325,63 @@ class PointByPointRevisionTest extends TestCase
         $responseEmpty->assertStatus(200);
         $responseEmpty->assertSee('Pencarian Tidak Ditemukan');
     }
+
+    public function test_examiner_schedules_are_sorted_by_date_and_time()
+    {
+        $studentPagi = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Ahmad Pagi']);
+        $thesisPagi = Thesis::create([
+            'student_id' => $studentPagi->id,
+            'title' => 'Judul Skripsi Pagi Hari',
+            'status' => 'active',
+        ]);
+
+        $studentSiang = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Zulfa Siang']);
+        $thesisSiang = Thesis::create([
+            'student_id' => $studentSiang->id,
+            'title' => 'Judul Skripsi Siang Hari',
+            'status' => 'active',
+        ]);
+
+        $schedule = SeminarSchedule::create([
+            'title' => 'Seminar Proposal Gelombang 1',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 101',
+            'wave_id' => $this->wave->id,
+            'created_by' => $this->admin->id,
+        ]);
+
+        // Insert Siang first into DB
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $thesisSiang->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => '13:00',
+            'end_time' => '14:00',
+            'order' => 2,
+            'examiner1_id' => $this->examiner->id,
+        ]);
+
+        // Insert Pagi second into DB
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $thesisPagi->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => '08:00',
+            'end_time' => '09:00',
+            'order' => 1,
+            'examiner1_id' => $this->examiner->id,
+        ]);
+
+        $response = $this->actingAs($this->examiner)->get(route('seminar-examiner.index'));
+        $response->assertStatus(200);
+
+        // Check that Ahmad Pagi (08:00) appears before Zulfa Siang (13:00) in HTML output
+        $content = $response->getContent();
+        $posPagi = strpos($content, 'Ahmad Pagi');
+        $posSiang = strpos($content, 'Zulfa Siang');
+
+        $this->assertNotFalse($posPagi);
+        $this->assertNotFalse($posSiang);
+        $this->assertTrue($posPagi < $posSiang, 'Jadwal jam pagi (08:00) harus muncul lebih dulu daripada jam siang (13:00)');
+    }
 }

@@ -87,8 +87,12 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             });
         }
 
+        $dateDirection = $hasWaveFilter ? 'desc' : 'asc';
+
         $examinations = $query
-            ->orderBy('thesis_defense_schedules.date', 'desc')
+            ->orderBy('thesis_defense_schedules.date', $dateDirection)
+            ->orderBy('thesis_defense_schedule_details.start_time', 'asc')
+            ->orderBy('thesis_defense_schedule_details.order', 'asc')
             ->select('thesis_defense_schedule_details.*')
             ->paginate(15)
             ->withQueryString();
