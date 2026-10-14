@@ -57,10 +57,12 @@
                             </td>
                             <td class="px-6 py-5 text-center">
                                 @php
+                                    $defDate = \Carbon\Carbon::parse($exam->schedule->date)->format('Y-m-d');
+                                    $defEnd = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($exam->end_time)->format('H:i:s'));
                                     $isFinished = ($exam->thesis && $exam->thesis->defenseApplication && $exam->thesis->defenseApplication->status === 'completed')
                                         || $exam->isGradingComplete()
                                         || $exam->isRevisionAllApproved()
-                                        || \Carbon\Carbon::parse($exam->schedule->date)->isPast();
+                                        || $defEnd->isPast();
                                 @endphp
                                 <div class="flex flex-col items-center gap-1.5">
                                     <span class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase">{{ \Carbon\Carbon::parse($exam->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>

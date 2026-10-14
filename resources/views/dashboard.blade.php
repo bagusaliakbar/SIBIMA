@@ -850,20 +850,27 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 @if($mySeminarSchedule)
                     @php
-                        $isSeminarFinished = ($progress['currentStage'] >= 4)
-                            || $mySeminarSchedule->isGraded()
-                            || \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->isPast();
+                        $semDateStr = \Carbon\Carbon::parse($mySeminarSchedule->schedule->date)->format('Y-m-d');
+                        $semStart = \Carbon\Carbon::parse($semDateStr . ' ' . \Carbon\Carbon::parse($mySeminarSchedule->start_time)->format('H:i:s'));
+                        $semEnd = \Carbon\Carbon::parse($semDateStr . ' ' . \Carbon\Carbon::parse($mySeminarSchedule->end_time)->format('H:i:s'));
+                        $isSeminarOngoing = now()->between($semStart, $semEnd);
+                        $isSeminarFinished = $mySeminarSchedule->isGraded()
+                            || $mySeminarSchedule->isAllRevisionsApproved()
+                            || ($semEnd->isPast() && ($mySeminarSchedule->revisions()->exists() || $progress['currentStage'] >= 4))
+                            || ($progress['currentStage'] >= 4 && $semStart->isPast());
                     @endphp
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden transition-all duration-300">
-                        <div class="absolute top-0 right-0 w-24 h-24 {{ $isSeminarFinished ? 'bg-emerald-50 dark:bg-emerald-950/10' : 'bg-orange-50 dark:bg-orange-900/10' }} rounded-full -mr-12 -mt-12 opacity-50"></div>
+                        <div class="absolute top-0 right-0 w-24 h-24 {{ $isSeminarFinished ? 'bg-emerald-50 dark:bg-emerald-950/10' : ($isSeminarOngoing ? 'bg-blue-50 dark:bg-blue-900/10' : 'bg-orange-50 dark:bg-orange-900/10') }} rounded-full -mr-12 -mt-12 opacity-50"></div>
                         <div class="relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
-                                    <svg class="w-4 h-4 mr-2 {{ $isSeminarFinished ? 'text-emerald-600' : 'text-orange-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <svg class="w-4 h-4 mr-2 {{ $isSeminarFinished ? 'text-emerald-600' : ($isSeminarOngoing ? 'text-blue-600' : 'text-orange-600') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     Jadwal Seminar Skripsi
                                 </h3>
                                 @if($isSeminarFinished)
                                     <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                @elseif($isSeminarOngoing)
+                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200 animate-pulse">Berlangsung</span>
                                 @else
                                     <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Terjadwal</span>
                                 @endif
@@ -923,9 +930,9 @@
                                 </div>
                                 @if($mySeminarSchedule->schedule->meeting_link && !$isSeminarFinished)
                                     <div class="pt-2">
-                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
+                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 {{ $isSeminarOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-orange-600 hover:bg-orange-700' }} text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                            Gabung Sekarang
+                                            {{ $isSeminarOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Gabung Sekarang' }}
                                         </a>
                                     </div>
                                 @endif
@@ -936,20 +943,27 @@
 
                 @if($myDefenseSchedule)
                     @php
-                        $isDefenseFinished = ($progress['currentStage'] >= 6)
-                            || $myDefenseSchedule->isGraded()
-                            || \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->isPast();
+                        $defDateStr = \Carbon\Carbon::parse($myDefenseSchedule->schedule->date)->format('Y-m-d');
+                        $defStart = \Carbon\Carbon::parse($defDateStr . ' ' . \Carbon\Carbon::parse($myDefenseSchedule->start_time)->format('H:i:s'));
+                        $defEnd = \Carbon\Carbon::parse($defDateStr . ' ' . \Carbon\Carbon::parse($myDefenseSchedule->end_time)->format('H:i:s'));
+                        $isDefenseOngoing = now()->between($defStart, $defEnd);
+                        $isDefenseFinished = $myDefenseSchedule->isGradingComplete()
+                            || $myDefenseSchedule->isRevisionAllApproved()
+                            || ($defEnd->isPast() && ($myDefenseSchedule->revisions()->exists() || $progress['currentStage'] >= 5))
+                            || ($progress['currentStage'] >= 5 && $defStart->isPast());
                     @endphp
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden transition-all duration-300">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-950/10 rounded-full -mr-12 -mt-12 opacity-50"></div>
+                        <div class="absolute top-0 right-0 w-24 h-24 {{ $isDefenseFinished ? 'bg-emerald-50 dark:bg-emerald-950/10' : ($isDefenseOngoing ? 'bg-blue-50 dark:bg-blue-900/10' : 'bg-indigo-50 dark:bg-indigo-900/10') }} rounded-full -mr-12 -mt-12 opacity-50"></div>
                         <div class="relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
-                                    <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <svg class="w-4 h-4 mr-2 {{ $isDefenseFinished ? 'text-emerald-600' : ($isDefenseOngoing ? 'text-blue-600' : 'text-indigo-600') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Jadwal Sidang Skripsi
                                 </h3>
                                 @if($isDefenseFinished)
                                     <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                @elseif($isDefenseOngoing)
+                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200 animate-pulse">Berlangsung</span>
                                 @else
                                     <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Terjadwal</span>
                                 @endif
@@ -1009,9 +1023,9 @@
                                 </div>
                                 @if($myDefenseSchedule->schedule->meeting_link && !$isDefenseFinished)
                                     <div class="pt-2">
-                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
+                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 {{ $isDefenseOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                            Join Online Meeting
+                                            {{ $isDefenseOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Join Online Meeting' }}
                                         </a>
                                     </div>
                                 @endif
@@ -1064,10 +1078,12 @@
                                     <div class="flex items-center gap-2">
                                         <x-status-badge type="orange" label="Seminar" size="sm" />
                                         @php
+                                            $detailSemDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
+                                            $detailSemEnd = \Carbon\Carbon::parse($detailSemDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
                                             $isFinished = ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
                                                 || $detail->isGraded()
                                                 || $detail->isAllRevisionsApproved()
-                                                || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+                                                || $detailSemEnd->isPast();
                                         @endphp
                                         @if($isFinished)
                                             <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
@@ -1118,10 +1134,12 @@
                                     <div class="flex items-center gap-2">
                                         <x-status-badge type="emerald" label="Sidang" size="sm" />
                                         @php
+                                            $detailDefDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
+                                            $detailDefEnd = \Carbon\Carbon::parse($detailDefDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
                                             $isFinished = ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
                                                 || $detail->isGradingComplete()
                                                 || $detail->isRevisionAllApproved()
-                                                || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+                                                || $detailDefEnd->isPast();
                                         @endphp
                                         @if($isFinished)
                                             <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>

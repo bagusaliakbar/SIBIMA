@@ -78,7 +78,7 @@ class DashboardService
             $data['isCriticalStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] > 14;
 
             // Calculate Progress Data
-            $data['progress'] = $this->calculateStudentProgress($thesis, $data['pastSessionsCount'], $data['seminar'], $data['defense']);
+            $data['progress'] = $this->calculateStudentProgress($thesis, $data['pastSessionsCount'], $data['seminar'], $data['defense'], $data['mySeminarSchedule'], $data['myDefenseSchedule']);
 
             // Auto-sync Graduation
             if ($thesis->status !== 'completed' && $data['progress']['isGraduated']) {
@@ -105,7 +105,7 @@ class DashboardService
         return $data;
     }
 
-    public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense)
+    public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense, $mySeminarSchedule = null, $myDefenseSchedule = null)
     {
         $isGraduated = $thesis && $thesis->status === 'completed';
         $pastSessions = (int)($pastSessionsCount ?? 0);
@@ -125,21 +125,56 @@ class DashboardService
             }
         }
 
+        // Lazy load schedule details if not passed
+        if ($thesis && $mySeminarSchedule === null) {
+            $mySeminarSchedule = SeminarScheduleDetail::with('schedule')->where('thesis_id', $thesis->id)->first();
+        }
+        if ($thesis && $myDefenseSchedule === null) {
+            $myDefenseSchedule = ThesisDefenseScheduleDetail::with('schedule')->where('thesis_id', $thesis->id)->first();
+        }
+
+        // Check if seminar schedule has finished
+        $isSeminarScheduleFinished = false;
+        if ($mySeminarSchedule) {
+            $semDate = \Carbon\Carbon::parse($mySeminarSchedule->schedule->date ?? now())->format('Y-m-d');
+            $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($mySeminarSchedule->end_time)->format('H:i:s'));
+            $isSeminarScheduleFinished = $mySeminarSchedule->isGraded()
+                || $mySeminarSchedule->isAllRevisionsApproved()
+                || ($semEnd->isPast() && $mySeminarSchedule->revisions()->exists());
+        }
+
+        // Check if defense schedule has finished
+        $isDefenseScheduleFinished = false;
+        if ($myDefenseSchedule) {
+            $defDate = \Carbon\Carbon::parse($myDefenseSchedule->schedule->date ?? now())->format('Y-m-d');
+            $defEnd = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($myDefenseSchedule->end_time)->format('H:i:s'));
+            $isDefenseScheduleFinished = $myDefenseSchedule->isGraded()
+                || ($defEnd->isPast() && $hasDefenseRevisions);
+        }
+
         // Determine step completion in chronological order
         // 1. Judul Selesai: Thesis exists and is active or completed
         $stage1Done = $thesis && in_array($thesis->status, ['active', 'completed']);
         
-        // 3. Seminar Done: Seminar approved/completed OR ACC Sempro given by both advisors
-        $stage3Done = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']))
-            || ($thesis && $thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2);
-
-        // 2. Bimbingan Done: 8 or more sessions completed OR already reached seminar
-        $stage2Done = $stage1Done && ($pastSessions >= 8 || $stage3Done);
-
-        // 4. Sidang Done: Defense approved/completed OR Revisions exist OR ACC Sidang given
-        $stage4Done = ($defense && in_array($defense->status, ['approved', 'completed', 'finished']))
+        // Has student reached or completed seminar (Stage 3 done)
+        $hasReachedSidang = ($defense && in_array($defense->status, ['pending', 'approved', 'completed', 'finished']))
+            || ($thesis && (($thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2) || $thesis->isAccSidangFinal()))
             || $hasDefenseRevisions
-            || ($thesis && $thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2);
+            || $isGraduated;
+
+        $stage3Done = $hasReachedSidang 
+            || ($seminar && in_array($seminar->status, ['completed', 'finished']))
+            || $isSeminarScheduleFinished;
+
+        // 2. Bimbingan Done: 8 or more sessions completed OR ACC Sempro given OR already reached seminar/beyond
+        $hasAccSempro = $thesis && (($thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2) || $thesis->isAccUpFinal());
+        $stage2Done = $stage1Done && ($pastSessions >= 8 || $hasAccSempro || $seminar || $stage3Done);
+
+        // 4. Sidang Done: Defense graded/completed OR Revisions exist OR Graduated
+        $stage4Done = ($defense && in_array($defense->status, ['completed', 'finished']))
+            || $isDefenseScheduleFinished
+            || $hasDefenseRevisions
+            || $isGraduated;
 
         // 5. Revisi Done: Defense done and (all revisions approved or no revisions needed and defense is completed)
         $stage5Done = $stage4Done && (($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated);
@@ -274,10 +309,12 @@ class DashboardService
 
         $data['examinerSeminarSchedules'] = $seminarQuery->orderBy('start_time', 'asc')->get()
             ->reject(function (SeminarScheduleDetail $detail) {
+                $semDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
+                $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
                 return ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
                     || $detail->isGraded()
                     || $detail->isAllRevisionsApproved()
-                    || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+                    || $semEnd->isPast();
             });
 
         $defenseQuery = ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student'])
@@ -293,10 +330,12 @@ class DashboardService
 
         $data['examinerDefenseSchedules'] = $defenseQuery->orderBy('start_time', 'asc')->get()
             ->reject(function (ThesisDefenseScheduleDetail $detail) {
+                $defDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
+                $defEnd = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
                 return ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
                     || $detail->isGradingComplete()
                     || $detail->isRevisionAllApproved()
-                    || \Carbon\Carbon::parse($detail->schedule->date)->isPast();
+                    || $defEnd->isPast();
             });
 
         $activeTheses = Thesis::where('status', 'active')
