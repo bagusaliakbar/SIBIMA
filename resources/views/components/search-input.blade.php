@@ -10,7 +10,7 @@
     $actionUrl = $route ? (Route::has($route) ? route($route) : $route) : url()->current();
 @endphp
 
-<form action="{{ $actionUrl }}" method="GET" class="relative w-full sm:w-auto group">
+<form action="{{ $actionUrl }}" method="GET" class="relative w-full sm:w-auto group m-0 p-0 h-10 flex items-center" style="margin: 0 !important; padding: 0 !important; height: 40px !important; display: flex !important; align-items: center !important;">
     @foreach($params as $key => $val)
         @if($val)
             <input type="hidden" name="{{ $key }}" value="{{ $val }}">
@@ -27,7 +27,8 @@
            name="{{ $name }}" 
            value="{{ $value }}" 
            placeholder="{{ $placeholder }}" 
-           class="block w-full sm:w-64 pl-10 pr-10 h-10 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 text-xs transition-colors font-medium">
+           class="block w-full sm:w-64 pl-10 pr-10 h-10 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 text-xs transition-colors font-medium"
+           style="height: 40px !important; margin: 0 !important; line-height: normal !important; box-sizing: border-box !important;">
 
     @if($value)
         <a href="{{ $actionUrl }}?{{ http_build_query(collect($params)->forget($name)->toArray()) }}" 

@@ -250,7 +250,7 @@
                     </p>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
+                <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto" style="display: flex !important; align-items: center !important;">
                     <!-- Search Input (mencakup topik, catatan mhs, feedback dosen) -->
                     <x-search-input 
                         name="search" 
@@ -262,6 +262,7 @@
                     <!-- Export PDF Button -->
                     <a href="{{ route('logbooks.export-pdf', array_filter(['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null])) }}" 
                        class="h-10 inline-flex items-center justify-center gap-2 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider transition-all shadow-xs shrink-0 cursor-pointer" 
+                       style="height: 40px !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; box-sizing: border-box !important;"
                        title="Unduh seluruh catatan logbook dalam format PDF">
                         <svg class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span>Export PDF</span>
