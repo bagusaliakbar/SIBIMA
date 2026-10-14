@@ -194,38 +194,47 @@
                          class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden transition-all">
                         
                         <!-- Header Banner -->
-                        <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r {{ count($myRoles) > 0 ? 'from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-slate-800 dark:to-slate-800' : 'from-slate-50/80 via-white to-white dark:from-slate-800/80 dark:via-slate-800 dark:to-slate-800' }}">
+                        <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div class="space-y-1.5 flex-1 min-w-0">
+                                <div class="space-y-2 flex-1 min-w-0">
                                     <!-- Badges Row -->
-                                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-bold border border-orange-200 dark:border-orange-500/20">
-                                            <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <!-- Date Badge -->
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold border border-slate-200/90 dark:border-slate-700 shadow-2xs">
+                                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                             {{ $scheduleDate->locale('id')->translatedFormat('l, d F Y') }}
                                         </span>
 
+                                        <!-- Status Badge -->
                                         @if($isToday)
-                                            <span class="px-2.5 py-0.5 bg-emerald-500 text-white rounded-full text-[10px] font-black uppercase tracking-wider animate-pulse">
-                                                🟢 Hari Ini
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-lg text-xs font-semibold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                Hari Ini
                                             </span>
                                         @elseif($isUpcoming)
-                                            <span class="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/20 rounded-full text-[10px] font-black uppercase tracking-wider">
-                                                🔵 Mendatang
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-lg text-xs font-semibold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                Mendatang
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 rounded-full text-[10px] font-black uppercase tracking-wider">
-                                                ⚪ Selesai
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                Selesai
                                             </span>
                                         @endif
 
+                                        <!-- User Role Badge -->
                                         @if(count($myRoles) > 0)
-                                            <span class="px-2.5 py-0.5 bg-amber-400 text-slate-950 font-black rounded-full text-[10px] uppercase tracking-wider shadow-2xs">
-                                                ⭐ Peran Anda: {{ implode(' & ', $myRoles) }}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60 rounded-lg text-xs font-semibold">
+                                                <svg class="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                                Peran Anda: {{ implode(' & ', $myRoles) }}
                                             </span>
                                         @endif
 
-                                        <span class="px-2.5 py-0.5 {{ $mySchedules ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-700' }} border rounded-full text-[10px] font-bold">
-                                            👥 {{ $studentCount }} {{ $mySchedules ? 'Mahasiswa Bimbingan/Uji' : 'Mahasiswa' }}
+                                        <!-- Student Count Badge -->
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700 rounded-lg text-xs font-medium shadow-2xs">
+                                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                            {{ $studentCount }} {{ $mySchedules ? 'Mahasiswa Bimbingan/Uji' : 'Mahasiswa' }}
                                         </span>
                                     </div>
 
