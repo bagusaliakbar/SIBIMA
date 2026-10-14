@@ -37,6 +37,7 @@
                         <th class="px-6 py-4">Mahasiswa & Judul</th>
                         <th class="px-6 py-4 text-center">Jadwal Seminar</th>
                         <th class="px-6 py-4 text-center">Lokasi</th>
+                        <th class="px-6 py-4 text-center">Dokumen Skripsi</th>
                         <th class="px-6 py-4 text-center">Status Revisi</th>
                         <th class="px-6 py-4 text-right">Aksi</th>
                     </tr>
@@ -87,6 +88,34 @@
                             </td>
                             <td class="px-6 py-5 text-center">
                                 @php
+                                    $app = $exam->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
+                                        ?? $exam->thesis?->seminarApplication;
+                                    $filePath = $app?->file_skripsi;
+                                    $docUrl = null;
+                                    if ($filePath) {
+                                        $docUrl = filter_var($filePath, FILTER_VALIDATE_URL) 
+                                            ? $filePath 
+                                            : route('download.private', ['path' => $filePath, 'inline' => 1]);
+                                    }
+                                @endphp
+                                @if($docUrl)
+                                    <a href="{{ $docUrl }}" target="_blank" 
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white text-xs font-bold transition-all shadow-xs group/doc"
+                                       title="Buka / Baca Dokumen Skripsi">
+                                        <svg class="w-4 h-4 text-indigo-500 group-hover/doc:text-white transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <span>Dokumen</span>
+                                        <svg class="w-3 h-3 text-indigo-400 group-hover/doc:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </a>
+                                @else
+                                    <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium italic">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-5 text-center">
+                                @php
                                     $isExaminer1 = ($exam->examiner1_id === Auth::id());
                                     $isExaminer2 = ($exam->examiner2_id === Auth::id());
                                     $revision = $exam->revisions()->where('examiner_id', Auth::id())->first();
@@ -122,7 +151,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-12 text-center">
+                            <td colspan="6" class="py-12 text-center">
                                 <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-3">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 </div>

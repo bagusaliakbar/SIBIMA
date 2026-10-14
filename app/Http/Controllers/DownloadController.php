@@ -54,8 +54,17 @@ class DownloadController extends Controller
 
             if ($application) {
                 $isAllowed = $isAdmin ||
-                    ($user->role === 'mahasiswa' && $application->thesis->student_id === $user->id) ||
-                    ($user->role === 'dosen' && ($application->thesis->pembimbing1_id === $user->id || $application->thesis->pembimbing2_id === $user->id));
+                    ($user->role === 'mahasiswa' && $application->thesis && $application->thesis->student_id === $user->id) ||
+                    ($user->role === 'dosen' && $application->thesis && (
+                        $application->thesis->pembimbing1_id === $user->id || 
+                        $application->thesis->pembimbing2_id === $user->id ||
+                        $application->thesis->seminarScheduleDetails()->where(function($q) use ($user) {
+                            $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
+                        })->exists() ||
+                        $application->thesis->defenseScheduleDetails()->where(function($q) use ($user) {
+                            $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
+                        })->exists()
+                    ));
                 
                 if ($isAllowed) {
                     $student = $application->thesis->student;
@@ -94,8 +103,17 @@ class DownloadController extends Controller
 
             if ($application) {
                 $isAllowed = $isAdmin ||
-                    ($user->role === 'mahasiswa' && $application->thesis->student_id === $user->id) ||
-                    ($user->role === 'dosen' && ($application->thesis->pembimbing1_id === $user->id || $application->thesis->pembimbing2_id === $user->id));
+                    ($user->role === 'mahasiswa' && $application->thesis && $application->thesis->student_id === $user->id) ||
+                    ($user->role === 'dosen' && $application->thesis && (
+                        $application->thesis->pembimbing1_id === $user->id || 
+                        $application->thesis->pembimbing2_id === $user->id ||
+                        $application->thesis->seminarScheduleDetails()->where(function($q) use ($user) {
+                            $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
+                        })->exists() ||
+                        $application->thesis->defenseScheduleDetails()->where(function($q) use ($user) {
+                            $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
+                        })->exists()
+                    ));
                 
                 if ($isAllowed) {
                     $student = $application->thesis->student;

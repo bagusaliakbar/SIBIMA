@@ -41,7 +41,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         $selectedWaveId = $request->input('wave_id');
 
         $query = SeminarScheduleDetail::has('thesis.student')
-            ->with(['thesis.student', 'schedule', 'revisions'])
+            ->with(['thesis.student', 'thesis.seminarApplication', 'thesis.seminarApplications', 'schedule', 'revisions'])
             ->join('seminar_schedules', 'seminar_schedule_details.seminar_schedule_id', '=', 'seminar_schedules.id');
 
         if ($user->role === 'dosen') {
@@ -90,7 +90,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             abort(403);
         }
 
-        $detail->load(['thesis.student', 'examiner1', 'examiner2', 'schedule', 'revisions.messages.sender']);
+        $detail->load(['thesis.student', 'thesis.seminarApplication', 'thesis.seminarApplications', 'examiner1', 'examiner2', 'schedule', 'revisions.messages.sender']);
         
         $actingId = $user->id;
         if (in_array($user->role, ['admin', 'kaprodi'])) {

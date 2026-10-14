@@ -160,6 +160,31 @@
                                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Judul Skripsi</span>
                                 <p class="text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed italic">"{{ $detail->thesis->title }}"</p>
                             </div>
+                            @php
+                                $app = $detail->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
+                                    ?? $detail->thesis?->seminarApplication;
+                                $filePath = $app?->file_skripsi;
+                                $docUrl = null;
+                                if ($filePath) {
+                                    $docUrl = filter_var($filePath, FILTER_VALIDATE_URL) 
+                                        ? $filePath 
+                                        : route('download.private', ['path' => $filePath, 'inline' => 1]);
+                                }
+                            @endphp
+                            @if($docUrl)
+                                <div class="pt-1">
+                                    <a href="{{ $docUrl }}" target="_blank" 
+                                       class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all shadow-xs group/doc">
+                                        <svg class="w-4 h-4 text-indigo-500 group-hover/doc:text-white transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <span>Buka Dokumen Skripsi</span>
+                                        <svg class="w-3.5 h-3.5 opacity-70 group-hover/doc:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="pt-4 border-t border-slate-50 dark:border-slate-700">
                                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Jadwal Seminar</span>
                                 <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">

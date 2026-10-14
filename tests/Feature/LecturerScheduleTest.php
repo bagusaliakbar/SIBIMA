@@ -11,6 +11,9 @@ use App\Models\ThesisDefenseSchedule;
 use App\Models\ThesisDefenseScheduleDetail;
 use App\Models\SeminarRevision;
 use App\Models\ThesisDefenseRevision;
+use App\Models\SeminarApplication;
+use App\Models\ThesisDefenseApplication;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -372,5 +375,148 @@ class LecturerScheduleTest extends TestCase
         
         // Should NOT see schedule for inactive wave
         $response->assertDontSee('Mhs Inactive Wave');
+    }
+
+    public function test_seminar_examiner_page_displays_dokumen_skripsi_column_and_allows_examiner_access()
+    {
+        Storage::fake('local');
+        $filePath = 'SeminarApplication_files/test_seminar_doc.pdf';
+        Storage::disk(config('filesystems.default'))->put($filePath, 'sample content');
+
+        $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Penguji 1']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Seminar Test']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Analisis Perancangan Sistem Cerdas',
+            'status' => 'active',
+        ]);
+
+        $wave = Wave::create([
+            'name' => 'Gelombang Seminar 1',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(5),
+        ]);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $application = SeminarApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'file_skripsi' => $filePath,
+            'file_acc_pembimbing' => 'dummy.pdf',
+            'file_pembayaran' => 'dummy.pdf',
+            'file_kartu_bimbingan' => 'dummy.pdf',
+            'file_formulir' => 'dummy.pdf',
+            'status' => 'approved',
+        ]);
+
+        $schedule = SeminarSchedule::create([
+            'title' => 'Jadwal Seminar Hari Ini',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 101',
+            'wave_id' => $wave->id,
+            'created_by' => $admin->id,
+        ]);
+
+        $detail = SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $thesis->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => now()->setTime(10, 0),
+            'end_time' => now()->setTime(11, 0),
+            'examiner1_id' => $dosen->id,
+            'order' => 1,
+        ]);
+
+        // 1. Visit seminar examiner index page
+        $response = $this->actingAs($dosen)->get(route('seminar-examiner.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Dokumen Skripsi');
+        $response->assertSee('Dokumen');
+        $response->assertSee(route('download.private', ['path' => $filePath, 'inline' => 1]));
+
+        // 2. Examiner can download/view the file securely without 403
+        $downloadResponse = $this->actingAs($dosen)->get(route('download.private', ['path' => $filePath, 'inline' => 1]));
+        $downloadResponse->assertStatus(200);
+    }
+
+    public function test_defense_examiner_page_displays_dokumen_skripsi_column_and_allows_examiner_access()
+    {
+        Storage::fake('local');
+        $filePath = 'ThesisDefenseApplication_files/test_defense_doc.pdf';
+        Storage::disk(config('filesystems.default'))->put($filePath, 'sample defense content');
+
+        $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Penguji Sidang 1']);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Sidang Test']);
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Implementasi Machine Learning untuk Prediksi',
+            'status' => 'active',
+        ]);
+
+        $wave = Wave::create([
+            'name' => 'Gelombang Sidang 1',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(5),
+        ]);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $application = ThesisDefenseApplication::create([
+            'thesis_id' => $thesis->id,
+            'wave_id' => $wave->id,
+            'file_skripsi' => $filePath,
+            'file_formulir' => 'dummy.pdf',
+            'file_transkrip' => 'dummy.pdf',
+            'file_acc_pembimbing' => 'dummy.pdf',
+            'file_logbook' => 'dummy.pdf',
+            'file_pembayaran' => 'dummy.pdf',
+            'file_ktm' => 'dummy.pdf',
+            'file_pkkmb_univ' => 'dummy.pdf',
+            'file_pkkmb_fak' => 'dummy.pdf',
+            'file_makrab' => 'dummy.pdf',
+            'file_cisco' => 'dummy.pdf',
+            'file_workshop' => 'dummy.pdf',
+            'file_organisasi' => 'dummy.pdf',
+            'file_toefl' => 'dummy.pdf',
+            'file_kewirausahaan' => 'dummy.pdf',
+            'file_tahsin' => 'dummy.pdf',
+            'file_komputer' => 'dummy.pdf',
+            'file_perpus_pinjam' => 'dummy.pdf',
+            'file_perpus_sumbang' => 'dummy.pdf',
+            'file_ijazah' => 'dummy.pdf',
+            'status' => 'approved',
+        ]);
+
+        $schedule = ThesisDefenseSchedule::create([
+            'title' => 'Jadwal Sidang Hari Ini',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang Sidang 2',
+            'wave_id' => $wave->id,
+            'created_by' => $admin->id,
+        ]);
+
+        $detail = ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $schedule->id,
+            'thesis_id' => $thesis->id,
+            'activity_name' => 'Sidang Skripsi',
+            'start_time' => now()->setTime(13, 0),
+            'end_time' => now()->setTime(14, 0),
+            'examiner1_id' => $dosen->id,
+            'order' => 1,
+        ]);
+
+        // 1. Visit defense examiner index page
+        $response = $this->actingAs($dosen)->get(route('defense-examiner.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Dokumen Skripsi');
+        $response->assertSee('Dokumen');
+        $response->assertSee(route('download.private', ['path' => $filePath, 'inline' => 1]));
+
+        // 2. Examiner can download/view the file securely without 403
+        $downloadResponse = $this->actingAs($dosen)->get(route('download.private', ['path' => $filePath, 'inline' => 1]));
+        $downloadResponse->assertStatus(200);
     }
 }

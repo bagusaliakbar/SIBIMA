@@ -41,7 +41,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $selectedWaveId = $request->input('wave_id');
 
         $query = ThesisDefenseScheduleDetail::has('thesis.student')
-            ->with(['thesis.student', 'schedule', 'revisions'])
+            ->with(['thesis.student', 'thesis.defenseApplication', 'thesis.defenseApplications', 'thesis.seminarApplication', 'schedule', 'revisions'])
             ->join('thesis_defense_schedules', 'thesis_defense_schedule_details.thesis_defense_schedule_id', '=', 'thesis_defense_schedules.id');
 
         if ($user->role === 'dosen') {
@@ -86,7 +86,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
     public function show(ThesisDefenseScheduleDetail $detail)
     {
         $user = Auth::user();
-        $detail->load(['thesis.student', 'thesis.pembimbing1', 'examiner1', 'examiner2', 'schedule', 'revisions.messages.sender']);
+        $detail->load(['thesis.student', 'thesis.pembimbing1', 'thesis.defenseApplication', 'thesis.defenseApplications', 'thesis.seminarApplication', 'examiner1', 'examiner2', 'schedule', 'revisions.messages.sender']);
 
         $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
             || $detail->examiner1_id === $user->id
@@ -136,7 +136,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
     public function grading(ThesisDefenseScheduleDetail $detail)
     {
         $user = Auth::user();
-        $detail->load(['thesis.student', 'thesis.pembimbing1', 'examiner1', 'examiner2', 'schedule', 'revisions']);
+        $detail->load(['thesis.student', 'thesis.pembimbing1', 'thesis.defenseApplication', 'thesis.defenseApplications', 'thesis.seminarApplication', 'examiner1', 'examiner2', 'schedule', 'revisions']);
 
         $isAuthorized = in_array($user->role, ['admin', 'kaprodi'])
             || $detail->examiner1_id === $user->id
