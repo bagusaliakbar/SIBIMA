@@ -97,7 +97,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
                     'thesis.pembimbing2',
                     'examiner1',
                     'examiner2'
-                ]);
+                ])->orderBy('start_time', 'asc')->orderBy('order', 'asc');
             }
         ]);
 
@@ -198,9 +198,30 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             })->count();
         }
 
-        $sortDirection = ($filterDate === 'upcoming' || $filterDate === 'today') ? 'asc' : 'desc';
+        $startTimeSubquery = SeminarScheduleDetail::select('start_time')
+            ->whereColumn('seminar_schedule_details.seminar_schedule_id', 'seminar_schedules.id')
+            ->when($mySchedules && $user->role === 'dosen', function($sq) use ($user) {
+                $userId = $user->id;
+                $sq->where(function($sub) use ($userId) {
+                    $sub->where('examiner1_id', $userId)
+                        ->orWhere('examiner2_id', $userId)
+                        ->orWhereHas('thesis', function($tq) use ($userId) {
+                            $tq->where('pembimbing1_id', $userId)
+                               ->orWhere('pembimbing2_id', $userId);
+                        })
+                        ->orWhereHas('schedule', function($schQ) use ($userId) {
+                            $schQ->where('chairman_id', $userId)
+                                 ->orWhere('moderator_id', $userId);
+                        });
+                });
+            })
+            ->orderBy('start_time', 'asc')
+            ->limit(1);
+
+        $sortDirection = ($filterDate === 'upcoming' || $filterDate === 'today' || $mySchedules) ? 'asc' : 'desc';
         $schedules = $query->orderBy('date', $sortDirection)
-            ->orderBy('id', 'desc')
+            ->orderBy($startTimeSubquery, 'asc')
+            ->orderBy('id', 'asc')
             ->paginate(10)
             ->appends($request->query());
 

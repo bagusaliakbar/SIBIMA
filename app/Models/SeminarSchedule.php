@@ -34,6 +34,6 @@ class SeminarSchedule extends Model
 
     public function details()
     {
-        return $this->hasMany(SeminarScheduleDetail::class)->orderBy('order');
+        return $this->hasMany(SeminarScheduleDetail::class)->orderBy('start_time', 'asc')->orderBy('order', 'asc');
     }
 }

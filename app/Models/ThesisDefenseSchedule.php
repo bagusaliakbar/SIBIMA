@@ -34,6 +34,6 @@ class ThesisDefenseSchedule extends Model
 
     public function details()
     {
-        return $this->hasMany(ThesisDefenseScheduleDetail::class)->orderBy('order');
+        return $this->hasMany(ThesisDefenseScheduleDetail::class)->orderBy('start_time', 'asc')->orderBy('order', 'asc');
     }
 }

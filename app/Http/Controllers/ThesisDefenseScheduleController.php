@@ -97,7 +97,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
                     'thesis.pembimbing2',
                     'examiner1',
                     'examiner2'
-                ]);
+                ])->orderBy('start_time', 'asc')->orderBy('order', 'asc');
             }
         ]);
 
@@ -198,9 +198,30 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
             })->count();
         }
 
-        $sortDirection = ($filterDate === 'upcoming' || $filterDate === 'today') ? 'asc' : 'desc';
+        $startTimeSubquery = ThesisDefenseScheduleDetail::select('start_time')
+            ->whereColumn('thesis_defense_schedule_details.thesis_defense_schedule_id', 'thesis_defense_schedules.id')
+            ->when($mySchedules && $user->role === 'dosen', function($sq) use ($user) {
+                $userId = $user->id;
+                $sq->where(function($sub) use ($userId) {
+                    $sub->where('examiner1_id', $userId)
+                        ->orWhere('examiner2_id', $userId)
+                        ->orWhereHas('thesis', function($tq) use ($userId) {
+                            $tq->where('pembimbing1_id', $userId)
+                               ->orWhere('pembimbing2_id', $userId);
+                        })
+                        ->orWhereHas('schedule', function($schQ) use ($userId) {
+                            $schQ->where('chairman_id', $userId)
+                                 ->orWhere('moderator_id', $userId);
+                        });
+                });
+            })
+            ->orderBy('start_time', 'asc')
+            ->limit(1);
+
+        $sortDirection = ($filterDate === 'upcoming' || $filterDate === 'today' || $mySchedules) ? 'asc' : 'desc';
         $schedules = $query->orderBy('date', $sortDirection)
-            ->orderBy('id', 'desc')
+            ->orderBy($startTimeSubquery, 'asc')
+            ->orderBy('id', 'asc')
             ->paginate(10)
             ->appends($request->query());
 

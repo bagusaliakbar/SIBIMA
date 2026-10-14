@@ -880,4 +880,158 @@ class LecturerScheduleTest extends TestCase
         // Because dosen is chairman, details should still be visible
         $responseMy->assertSee('Mahasiswa Terdaftar');
     }
+
+    public function test_my_schedules_tab_orders_by_date_asc_and_time_asc_chronologically()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Utama']);
+        $otherDosen = User::factory()->create(['role' => 'dosen']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $wave = Wave::create([
+            'name' => 'Gelombang 1',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(10),
+        ]);
+
+        $student1 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa 1']);
+        $student2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa 2']);
+        $student3 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa 3']);
+
+        $thesis1 = Thesis::create(['student_id' => $student1->id, 'title' => 'Judul 1', 'status' => 'active']);
+        $thesis2 = Thesis::create(['student_id' => $student2->id, 'title' => 'Judul 2', 'status' => 'active']);
+        $thesis3 = Thesis::create(['student_id' => $student3->id, 'title' => 'Judul 3', 'status' => 'active']);
+
+        $tomorrow = now()->addDays(1)->toDateString();
+        $inThreeDays = now()->addDays(3)->toDateString();
+
+        // Sched A: tomorrow afternoon (13:00)
+        $schedA = SeminarSchedule::create([
+            'title' => 'Seminar Besok Siang',
+            'date' => $tomorrow,
+            'location' => 'Ruang 102',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedA->id,
+            'thesis_id' => $thesis1->id,
+            'activity_name' => 'Seminar',
+            'start_time' => '13:00',
+            'end_time' => '14:00',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+            'examiner2_id' => $otherDosen->id,
+        ]);
+
+        // Sched B: tomorrow morning (08:30)
+        $schedB = SeminarSchedule::create([
+            'title' => 'Seminar Besok Pagi',
+            'date' => $tomorrow,
+            'location' => 'Ruang 101',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedB->id,
+            'thesis_id' => $thesis2->id,
+            'activity_name' => 'Seminar',
+            'start_time' => '08:30',
+            'end_time' => '09:30',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+            'examiner2_id' => $otherDosen->id,
+        ]);
+
+        // Sched C: in 3 days morning (09:00)
+        $schedC = SeminarSchedule::create([
+            'title' => 'Seminar Lusa Depan',
+            'date' => $inThreeDays,
+            'location' => 'Ruang 103',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedC->id,
+            'thesis_id' => $thesis3->id,
+            'activity_name' => 'Seminar',
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+            'examiner2_id' => $otherDosen->id,
+        ]);
+
+        // Request Jadwal Saya
+        $response = $this->actingAs($dosen)->get(route('seminar-schedules.index', [
+            'my_schedules' => 1,
+            'filter_date' => 'all',
+        ]));
+
+        $response->assertStatus(200);
+        $schedules = $response->viewData('schedules');
+
+        // Check chronological order: Sched B (08:30) -> Sched A (13:00) -> Sched C (3 days later)
+        $this->assertCount(3, $schedules);
+        $this->assertEquals($schedB->id, $schedules[0]->id, 'First schedule should be tomorrow morning');
+        $this->assertEquals($schedA->id, $schedules[1]->id, 'Second schedule should be tomorrow afternoon');
+        $this->assertEquals($schedC->id, $schedules[2]->id, 'Third schedule should be 3 days later');
+
+        // Test Thesis Defense Jadwal Saya
+        $defSchedA = ThesisDefenseSchedule::create([
+            'title' => 'Sidang Besok Siang',
+            'date' => $tomorrow,
+            'location' => 'Ruang 202',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+        ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $defSchedA->id,
+            'thesis_id' => $thesis1->id,
+            'activity_name' => 'Sidang',
+            'start_time' => '13:00',
+            'end_time' => '14:30',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+            'examiner2_id' => $otherDosen->id,
+        ]);
+
+        $defSchedB = ThesisDefenseSchedule::create([
+            'title' => 'Sidang Besok Pagi',
+            'date' => $tomorrow,
+            'location' => 'Ruang 201',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+        ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $defSchedB->id,
+            'thesis_id' => $thesis2->id,
+            'activity_name' => 'Sidang',
+            'start_time' => '08:30',
+            'end_time' => '10:00',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+            'examiner2_id' => $otherDosen->id,
+        ]);
+
+        $responseDefense = $this->actingAs($dosen)->get(route('thesis-defense-schedules.index', [
+            'my_schedules' => 1,
+            'filter_date' => 'all',
+        ]));
+        $responseDefense->assertStatus(200);
+        $defenseSchedules = $responseDefense->viewData('schedules');
+
+        $this->assertCount(2, $defenseSchedules);
+        $this->assertEquals($defSchedB->id, $defenseSchedules[0]->id, 'First defense schedule should be morning');
+        $this->assertEquals($defSchedA->id, $defenseSchedules[1]->id, 'Second defense schedule should be afternoon');
+    }
 }
