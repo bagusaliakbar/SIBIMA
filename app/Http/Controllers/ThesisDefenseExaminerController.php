@@ -73,14 +73,29 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             });
         }
 
+        $search = trim($request->input('search', ''));
+
+        if (!empty($search)) {
+            $searchTerm = '%' . $search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereHas('thesis.student', function ($sq) use ($searchTerm) {
+                    $sq->where('name', 'like', $searchTerm)
+                       ->orWhere('identifier', 'like', $searchTerm);
+                })->orWhereHas('thesis', function ($tq) use ($searchTerm) {
+                    $tq->where('title', 'like', $searchTerm);
+                })->orWhere('thesis_defense_schedules.location', 'like', $searchTerm);
+            });
+        }
+
         $examinations = $query
             ->orderBy('thesis_defense_schedules.date', 'desc')
             ->select('thesis_defense_schedule_details.*')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('defense-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter'));
+        return view('defense-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter', 'search'));
     }
 
     public function show(ThesisDefenseScheduleDetail $detail)

@@ -211,4 +211,118 @@ class PointByPointRevisionTest extends TestCase
         $studentResponse->assertStatus(200);
         $studentResponse->assertSee('Catatan bebas penguji tanpa format poin angka khusus.');
     }
+
+    public function test_seminar_examiner_search_filters_correctly()
+    {
+        $studentB = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Citra Lestari', 'identifier' => 'D1A220999']);
+        $thesisB = Thesis::create([
+            'student_id' => $studentB->id,
+            'title' => 'Implementasi Machine Learning untuk Deteksi Spam',
+            'status' => 'active',
+        ]);
+
+        $schedule = SeminarSchedule::create([
+            'title' => 'Seminar Proposal Gelombang 1',
+            'date' => now()->toDateString(),
+            'location' => 'Lab Komputer 2',
+            'wave_id' => $this->wave->id,
+            'created_by' => $this->admin->id,
+        ]);
+
+        // Student A
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $this->thesis->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'order' => 1,
+            'examiner1_id' => $this->examiner->id,
+        ]);
+
+        // Student B
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $thesisB->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => '10:00',
+            'end_time' => '11:00',
+            'order' => 2,
+            'examiner1_id' => $this->examiner->id,
+        ]);
+
+        // 1. Search by Student A's name
+        $responseA = $this->actingAs($this->examiner)->get(route('seminar-examiner.index', ['search' => 'Budi Mahasiswa']));
+        $responseA->assertStatus(200);
+        $responseA->assertSee('Budi Mahasiswa');
+        $responseA->assertDontSee('Citra Lestari');
+
+        // 2. Search by Student B's NPM (identifier)
+        $responseB = $this->actingAs($this->examiner)->get(route('seminar-examiner.index', ['search' => 'D1A220999']));
+        $responseB->assertStatus(200);
+        $responseB->assertSee('Citra Lestari');
+        $responseB->assertDontSee('Budi Mahasiswa');
+
+        // 3. Search non-existent
+        $responseEmpty = $this->actingAs($this->examiner)->get(route('seminar-examiner.index', ['search' => 'KataKunciMustahil']));
+        $responseEmpty->assertStatus(200);
+        $responseEmpty->assertSee('Pencarian Tidak Ditemukan');
+    }
+
+    public function test_defense_examiner_search_filters_correctly()
+    {
+        $studentB = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Dewi Anggraeni', 'identifier' => 'D1A220888']);
+        $thesisB = Thesis::create([
+            'student_id' => $studentB->id,
+            'title' => 'Sistem Rekomendasi Pariwisata Berbasis Lokasi',
+            'status' => 'active',
+        ]);
+
+        $schedule = ThesisDefenseSchedule::create([
+            'title' => 'Sidang Skripsi Gelombang 1',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang Sidang Utama',
+            'wave_id' => $this->wave->id,
+            'created_by' => $this->admin->id,
+        ]);
+
+        // Student A
+        ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $schedule->id,
+            'thesis_id' => $this->thesis->id,
+            'activity_name' => 'Sidang Skripsi',
+            'start_time' => '13:00',
+            'end_time' => '14:00',
+            'order' => 1,
+            'examiner1_id' => $this->examiner->id,
+        ]);
+
+        // Student B
+        ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $schedule->id,
+            'thesis_id' => $thesisB->id,
+            'activity_name' => 'Sidang Skripsi',
+            'start_time' => '14:00',
+            'end_time' => '15:00',
+            'order' => 2,
+            'examiner1_id' => $this->examiner->id,
+        ]);
+
+        // 1. Search by Student A's name
+        $responseA = $this->actingAs($this->examiner)->get(route('defense-examiner.index', ['search' => 'Budi Mahasiswa']));
+        $responseA->assertStatus(200);
+        $responseA->assertSee('Budi Mahasiswa');
+        $responseA->assertDontSee('Dewi Anggraeni');
+
+        // 2. Search by Student B's NPM (identifier)
+        $responseB = $this->actingAs($this->examiner)->get(route('defense-examiner.index', ['search' => 'D1A220888']));
+        $responseB->assertStatus(200);
+        $responseB->assertSee('Dewi Anggraeni');
+        $responseB->assertDontSee('Budi Mahasiswa');
+
+        // 3. Search non-existent
+        $responseEmpty = $this->actingAs($this->examiner)->get(route('defense-examiner.index', ['search' => 'TidakAdaDiDatabase']));
+        $responseEmpty->assertStatus(200);
+        $responseEmpty->assertSee('Pencarian Tidak Ditemukan');
+    }
 }

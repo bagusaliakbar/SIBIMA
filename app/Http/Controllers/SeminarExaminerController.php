@@ -69,14 +69,29 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             });
         }
 
+        $search = trim($request->input('search', ''));
+
+        if (!empty($search)) {
+            $searchTerm = '%' . $search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereHas('thesis.student', function ($sq) use ($searchTerm) {
+                    $sq->where('name', 'like', $searchTerm)
+                       ->orWhere('identifier', 'like', $searchTerm);
+                })->orWhereHas('thesis', function ($tq) use ($searchTerm) {
+                    $tq->where('title', 'like', $searchTerm);
+                })->orWhere('seminar_schedules.location', 'like', $searchTerm);
+            });
+        }
+
         $examinations = $query
             ->orderBy('seminar_schedules.date', 'desc')
             ->select('seminar_schedule_details.*')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         $waves = Wave::orderBy('created_at', 'desc')->get();
 
-        return view('seminar-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter'));
+        return view('seminar-examiner.index', compact('examinations', 'waves', 'selectedWaveId', 'activeWave', 'hasWaveFilter', 'search'));
     }
 
     public function show(SeminarScheduleDetail $detail)
