@@ -49,7 +49,7 @@
             <!-- DOSEN VIEW: Standard Top Status Tabs -->
             <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-px custom-scrollbar">
                 <!-- Upcoming Tab -->
-                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
+                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
                    class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' && !$mySchedules ? 'bg-orange-500 animate-pulse' : 'bg-slate-400' }}"></span>
                     Mendatang
@@ -57,7 +57,7 @@
                 </a>
 
                 <!-- Today Tab -->
-                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
+                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
                    class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' && !$mySchedules ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                     Hari Ini
@@ -65,21 +65,21 @@
                 </a>
 
                 <!-- Past Tab -->
-                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
+                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
                    class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     Riwayat
                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
                 </a>
 
                 <!-- All Tab -->
-                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
+                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
                    class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     Semua Agenda
                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
                 </a>
 
                 <!-- "Jadwal Saya" Tab -->
-                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'my_schedules']), ['my_schedules' => $mySchedules ? '0' : '1', 'filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
+                <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'my_schedules', 'filter_date', 'date', 'date_from', 'date_to']), ['my_schedules' => '1', 'filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
                    class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $mySchedules ? 'border-amber-500 text-amber-700 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-500/10 font-bold' : 'border-transparent text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50/40 dark:hover:bg-slate-800' }}"
                    title="Hanya tampilkan jadwal di mana Anda menjadi Penguji, Pembimbing, Ketua Sidang, atau Moderator">
                     <svg class="w-3.5 h-3.5" fill="{{ $mySchedules ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>

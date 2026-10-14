@@ -816,4 +816,68 @@ class LecturerScheduleTest extends TestCase
         $response->assertDontSee('Mahasiswa Masa Lalu');
         $response->assertDontSee('Semua Gelombang');
     }
+
+    public function test_chairman_and_moderator_included_in_my_schedules_filter_and_count()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Ketua']);
+        $otherDosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Lain']);
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $wave = Wave::create([
+            'name' => 'Gelombang Uji',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(5),
+        ]);
+
+        $student = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Terdaftar']);
+        $thesis = Thesis::create(['student_id' => $student->id, 'title' => 'Judul Skripsi', 'status' => 'active']);
+
+        // Schedule 1: Dosen is Chairman
+        $sched1 = SeminarSchedule::create([
+            'title' => 'Seminar Sesi 1',
+            'date' => now()->addDays(1)->toDateString(),
+            'location' => 'Ruang 1',
+            'wave_id' => $wave->id,
+            'chairman_id' => $dosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $sched1->id,
+            'thesis_id' => $thesis->id,
+            'activity_name' => 'Seminar',
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'order' => 1,
+            'examiner1_id' => $otherDosen->id,
+            'examiner2_id' => $otherDosen->id,
+        ]);
+
+        // Schedule 2: Dosen is NOT involved
+        $sched2 = SeminarSchedule::create([
+            'title' => 'Seminar Sesi 2',
+            'date' => now()->addDays(2)->toDateString(),
+            'location' => 'Ruang 2',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'moderator_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+
+        // Visit seminar schedule as dosen
+        $response = $this->actingAs($dosen)->get(route('seminar-schedules.index', ['filter_date' => 'all']));
+        $response->assertStatus(200);
+        $counts = $response->viewData('counts');
+        $this->assertEquals(2, $counts['all']);
+        $this->assertEquals(1, $counts['mySchedules']);
+
+        // Filter by Jadwal Saya
+        $responseMy = $this->actingAs($dosen)->get(route('seminar-schedules.index', ['my_schedules' => 1, 'filter_date' => 'all']));
+        $responseMy->assertStatus(200);
+        $responseMy->assertSee('Seminar Sesi 1');
+        $responseMy->assertDontSee('Seminar Sesi 2');
+        // Because dosen is chairman, details should still be visible
+        $responseMy->assertSee('Mahasiswa Terdaftar');
+    }
 }

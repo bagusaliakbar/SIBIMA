@@ -84,6 +84,10 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
                             ->orWhereHas('thesis', function($tq) use ($userId) {
                                 $tq->where('pembimbing1_id', $userId)
                                    ->orWhere('pembimbing2_id', $userId);
+                            })
+                            ->orWhereHas('schedule', function($sq) use ($userId) {
+                                $sq->where('chairman_id', $userId)
+                                   ->orWhere('moderator_id', $userId);
                             });
                     });
                 }
@@ -118,16 +122,20 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
             $query->whereDate('date', '<', now()->toDateString());
         }
 
-        // "Jadwal Saya" filter: Hanya tampilkan jika dosen jadi pembimbing atau penguji
+        // "Jadwal Saya" filter: Hanya tampilkan jika dosen jadi pembimbing, penguji, ketua sidang, atau moderator
         if ($mySchedules && $user->role === 'dosen') {
             $userId = $user->id;
-            $query->whereHas('details', function($dq) use ($userId) {
-                $dq->where('examiner1_id', $userId)
-                   ->orWhere('examiner2_id', $userId)
-                   ->orWhereHas('thesis', function($tq) use ($userId) {
-                       $tq->where('pembimbing1_id', $userId)
-                          ->orWhere('pembimbing2_id', $userId);
-                   });
+            $query->where(function($q) use ($userId) {
+                $q->where('chairman_id', $userId)
+                  ->orWhere('moderator_id', $userId)
+                  ->orWhereHas('details', function($dq) use ($userId) {
+                      $dq->where('examiner1_id', $userId)
+                         ->orWhere('examiner2_id', $userId)
+                         ->orWhereHas('thesis', function($tq) use ($userId) {
+                             $tq->where('pembimbing1_id', $userId)
+                                ->orWhere('pembimbing2_id', $userId);
+                         });
+                  });
             });
         }
 
@@ -176,13 +184,17 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
 
         if ($user->role === 'dosen') {
             $userId = $user->id;
-            $counts['mySchedules'] = (clone $countBaseQuery)->whereHas('details', function($dq) use ($userId) {
-                $dq->where('examiner1_id', $userId)
-                   ->orWhere('examiner2_id', $userId)
-                   ->orWhereHas('thesis', function($tq) use ($userId) {
-                       $tq->where('pembimbing1_id', $userId)
-                          ->orWhere('pembimbing2_id', $userId);
-                   });
+            $counts['mySchedules'] = (clone $countBaseQuery)->where(function($q) use ($userId) {
+                $q->where('chairman_id', $userId)
+                  ->orWhere('moderator_id', $userId)
+                  ->orWhereHas('details', function($dq) use ($userId) {
+                      $dq->where('examiner1_id', $userId)
+                         ->orWhere('examiner2_id', $userId)
+                         ->orWhereHas('thesis', function($tq) use ($userId) {
+                             $tq->where('pembimbing1_id', $userId)
+                                ->orWhere('pembimbing2_id', $userId);
+                         });
+                  });
             })->count();
         }
 
