@@ -745,4 +745,75 @@ class LecturerScheduleTest extends TestCase
         $batchPdf->assertStatus(200);
         $this->assertStringContainsString('application/pdf', $batchPdf->headers->get('Content-Type'));
     }
+
+    public function test_lecturer_schedule_only_displays_active_ongoing_wave_by_default()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // Inactive Old Wave
+        $oldWave = Wave::create([
+            'name' => 'Gelombang 4 Genap 2025/2026',
+            'is_active' => false,
+            'start_date' => now()->subMonths(6),
+            'end_date' => now()->subMonths(5),
+        ]);
+
+        // Active Current Wave
+        $activeWave = Wave::create([
+            'name' => 'Gelombang 1 Ganjil 2026/2027',
+            'is_active' => true,
+            'start_date' => now()->subDays(2),
+            'end_date' => now()->addDays(10),
+        ]);
+
+        // Seminar in old wave
+        $studentOld = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Masa Lalu']);
+        $thesisOld = Thesis::create(['student_id' => $studentOld->id, 'title' => 'Skripsi Lama Sekali', 'status' => 'active']);
+        $schedOld = SeminarSchedule::create([
+            'title' => 'Seminar Gelombang Lama',
+            'date' => now()->addDays(2)->toDateString(),
+            'location' => 'Ruang Lama',
+            'wave_id' => $oldWave->id,
+            'created_by' => $admin->id,
+        ]);
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedOld->id,
+            'thesis_id' => $thesisOld->id,
+            'activity_name' => 'Seminar',
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+        ]);
+
+        // Seminar in active wave
+        $studentNew = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Gelombang Aktif']);
+        $thesisNew = Thesis::create(['student_id' => $studentNew->id, 'title' => 'Skripsi Gelombang Baru', 'status' => 'active']);
+        $schedNew = SeminarSchedule::create([
+            'title' => 'Seminar Gelombang Aktif',
+            'date' => now()->addDays(2)->toDateString(),
+            'location' => 'Ruang Baru',
+            'wave_id' => $activeWave->id,
+            'created_by' => $admin->id,
+        ]);
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedNew->id,
+            'thesis_id' => $thesisNew->id,
+            'activity_name' => 'Seminar',
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'order' => 1,
+            'examiner1_id' => $dosen->id,
+        ]);
+
+        // Visit seminar schedule as dosen without wave_id parameter
+        $response = $this->actingAs($dosen)->get(route('seminar-schedules.index'));
+        $response->assertStatus(200);
+
+        // Should see active wave student and NOT see old wave student
+        $response->assertSee('Mahasiswa Gelombang Aktif');
+        $response->assertDontSee('Mahasiswa Masa Lalu');
+        $response->assertDontSee('Semua Gelombang');
+    }
 }

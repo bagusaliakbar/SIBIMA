@@ -46,8 +46,14 @@ class SeminarScheduleController extends Controller implements HasMiddleware
     {
         $user = Auth::user();
         $activeWave = Wave::getCurrentActive();
-        $selectedWaveId = $request->input('wave_id');
-        $hasWaveFilter = $request->filled('wave_id');
+
+        if ($user->role === 'dosen') {
+            $selectedWaveId = $request->input('wave_id') ?: $activeWave?->id;
+            $hasWaveFilter = !empty($selectedWaveId);
+        } else {
+            $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+            $hasWaveFilter = $request->filled('wave_id');
+        }
 
         $filterDate = $request->input('filter_date'); // 'all', 'today', 'upcoming', 'past', 'custom'
         $selectedDate = $request->input('date');
@@ -59,7 +65,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         // Default filter_date for dosen if no date filter is explicitly passed
         if (!$request->has('filter_date') && !$request->filled('date') && !$request->filled('date_from') && !$request->filled('date_to')) {
             if ($user->role === 'dosen') {
-                $filterDate = $hasWaveFilter ? 'all' : 'upcoming';
+                $filterDate = ($request->filled('wave_id') && $request->input('wave_id') != $activeWave?->id) ? 'all' : 'upcoming';
             } else {
                 $filterDate = 'all';
             }
@@ -92,17 +98,8 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         ]);
 
         // Wave filter
-        if ($user->role === 'dosen') {
-            if ($hasWaveFilter) {
-                $query->where('wave_id', $selectedWaveId);
-            } elseif ($filterDate === 'upcoming' && $activeWave) {
-                $query->where('wave_id', $activeWave->id);
-            }
-        } else {
-            $selectedWaveId = $request->input('wave_id', $activeWave?->id);
-            if ($selectedWaveId) {
-                $query->where('wave_id', $selectedWaveId);
-            }
+        if ($selectedWaveId) {
+            $query->where('wave_id', $selectedWaveId);
         }
 
         // Date filtering
@@ -157,16 +154,8 @@ class SeminarScheduleController extends Controller implements HasMiddleware
 
         // Count queries for Quick Filter Badges (scoped to current wave context)
         $countBaseQuery = SeminarSchedule::query();
-        if ($user->role === 'dosen') {
-            if ($hasWaveFilter) {
-                $countBaseQuery->where('wave_id', $selectedWaveId);
-            } elseif ($activeWave) {
-                $countBaseQuery->where('wave_id', $activeWave->id);
-            }
-        } else {
-            if ($selectedWaveId) {
-                $countBaseQuery->where('wave_id', $selectedWaveId);
-            }
+        if ($selectedWaveId) {
+            $countBaseQuery->where('wave_id', $selectedWaveId);
         }
 
         $todayStr = now()->toDateString();
