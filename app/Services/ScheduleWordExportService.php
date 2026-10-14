@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use BaconQrCode\Encoder\Encoder;
@@ -102,6 +103,8 @@ class ScheduleWordExportService
      */
     protected function createPhpWordInstance(): PhpWord
     {
+        Settings::setOutputEscapingEnabled(true);
+
         $phpWord = new PhpWord();
         $phpWord->setDefaultFontName('Arial');
         $phpWord->setDefaultFontSize(8);
@@ -115,12 +118,12 @@ class ScheduleWordExportService
     {
         return $phpWord->addSection([
             'orientation'   => 'landscape',
-            'pageSizeW'     => Converter::cmToTwip(29.7),
-            'pageSizeH'     => Converter::cmToTwip(21.0),
-            'marginTop'     => Converter::cmToTwip(0.8),
-            'marginBottom'  => Converter::cmToTwip(0.8),
-            'marginLeft'    => Converter::cmToTwip(1.2),
-            'marginRight'   => Converter::cmToTwip(1.2),
+            'pageSizeW'     => (int) round(Converter::cmToTwip(29.7)),
+            'pageSizeH'     => (int) round(Converter::cmToTwip(21.0)),
+            'marginTop'     => (int) round(Converter::cmToTwip(0.8)),
+            'marginBottom'  => (int) round(Converter::cmToTwip(0.8)),
+            'marginLeft'    => (int) round(Converter::cmToTwip(1.2)),
+            'marginRight'   => (int) round(Converter::cmToTwip(1.2)),
         ]);
     }
 
@@ -138,7 +141,7 @@ class ScheduleWordExportService
         // 2. JUDUL DOKUMEN
         $isDefense = ($type === 'defense');
         $mainTitle = $isDefense ? 'JADWAL SIDANG SKRIPSI' : 'JADWAL SEMINAR SKRIPSI';
-        $subTitle = strtoupper($schedule->title);
+        $subTitle = strtoupper($this->cleanText($schedule->title));
 
         $section->addText($mainTitle, [
             'name' => 'Arial',
@@ -220,7 +223,7 @@ class ScheduleWordExportService
 
         $infoCell->addText('Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025', [
             'name' => 'Times New Roman',
-            'size' => 8.5,
+            'size' => 8,
             'bold' => true,
             'color' => '000000',
         ], ['alignment' => Jc::CENTER, 'spaceBefore' => 0, 'spaceAfter' => 0]);
@@ -262,14 +265,14 @@ class ScheduleWordExportService
         $metaRight = $metaTable->addCell($rightWidth, ['bgColor' => 'F8FAFC', 'valign' => 'center']);
 
         $hariTanggal = Carbon::parse($schedule->date)->locale('id')->translatedFormat('l, d F Y');
-        $metaLeft->addText('Hari / Tanggal  : ' . $hariTanggal, ['bold' => true, 'size' => 8, 'color' => '0F172A'], ['spaceBefore' => 0, 'spaceAfter' => 20]);
-        $metaLeft->addText('Ketua Sidang    : ' . ($schedule->chairman?->name ?? '-'), ['bold' => true, 'size' => 8, 'color' => '0F172A'], ['spaceBefore' => 0, 'spaceAfter' => 20]);
-        $metaLeft->addText('Moderator        : ' . ($schedule->moderator?->name ?? '-'), ['bold' => true, 'size' => 8, 'color' => '0F172A'], ['spaceBefore' => 0, 'spaceAfter' => 0]);
+        $metaLeft->addText('Hari / Tanggal  : ' . $this->cleanText($hariTanggal), ['bold' => true, 'size' => 8, 'color' => '0F172A'], ['spaceBefore' => 0, 'spaceAfter' => 20]);
+        $metaLeft->addText('Ketua Sidang    : ' . $this->cleanText($schedule->chairman?->name ?? '-'), ['bold' => true, 'size' => 8, 'color' => '0F172A'], ['spaceBefore' => 0, 'spaceAfter' => 20]);
+        $metaLeft->addText('Moderator        : ' . $this->cleanText($schedule->moderator?->name ?? '-'), ['bold' => true, 'size' => 8, 'color' => '0F172A'], ['spaceBefore' => 0, 'spaceAfter' => 0]);
 
-        $location = strtoupper($schedule->location ?: 'BELUM DITENTUKAN');
-        $metaRight->addText('RUANGAN: ' . $location, ['bold' => true, 'size' => 8.5, 'color' => '1E3A8A'], ['alignment' => Jc::RIGHT, 'spaceBefore' => 0, 'spaceAfter' => 20]);
+        $location = strtoupper($this->cleanText($schedule->location ?: 'BELUM DITENTUKAN'));
+        $metaRight->addText('RUANGAN: ' . $location, ['bold' => true, 'size' => 8, 'color' => '1E3A8A'], ['alignment' => Jc::RIGHT, 'spaceBefore' => 0, 'spaceAfter' => 20]);
         if ($schedule->meeting_link) {
-            $metaRight->addText('Link: ' . $schedule->meeting_link, ['size' => 7, 'color' => '2563EB', 'underline' => 'single'], ['alignment' => Jc::RIGHT, 'spaceBefore' => 0, 'spaceAfter' => 0]);
+            $metaRight->addText('Link: ' . $this->cleanText($schedule->meeting_link), ['size' => 7, 'color' => '2563EB', 'underline' => 'single'], ['alignment' => Jc::RIGHT, 'spaceBefore' => 0, 'spaceAfter' => 0]);
         }
 
         // Small spacing before table
@@ -302,7 +305,7 @@ class ScheduleWordExportService
         // Header Row
         $table->addRow(null, ['tblHeader' => true, 'cantSplit' => true]);
         $thStyle = ['bgColor' => '0F172A', 'valign' => 'center'];
-        $thFont = ['name' => 'Arial', 'size' => 7.5, 'bold' => true, 'color' => 'FFFFFF'];
+        $thFont = ['name' => 'Arial', 'size' => 8, 'bold' => true, 'color' => 'FFFFFF'];
         $thCenter = ['alignment' => Jc::CENTER, 'spaceBefore' => 20, 'spaceAfter' => 20];
 
         $table->addCell($wNo, $thStyle)->addText('NO', $thFont, $thCenter);
@@ -327,7 +330,7 @@ class ScheduleWordExportService
                 // 1. NO
                 $table->addCell($wNo, $tdStyle)->addText((string)$studentNo++, [
                     'name' => 'Arial',
-                    'size' => 7.5,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '475569',
                 ], ['alignment' => Jc::CENTER, 'spaceBefore' => 0, 'spaceAfter' => 0]);
@@ -337,49 +340,49 @@ class ScheduleWordExportService
                 $endTime = Carbon::parse($detail->end_time)->format('H.i');
                 $table->addCell($wWaktu, $tdStyle)->addText("{$startTime} - {$endTime}", [
                     'name' => 'Arial',
-                    'size' => 7.2,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '0F172A',
                 ], ['alignment' => Jc::CENTER, 'spaceBefore' => 0, 'spaceAfter' => 0]);
 
                 // 3. NPM
-                $npm = $detail->thesis->student->identifier ?? '-';
+                $npm = $this->cleanText($detail->thesis->student->identifier ?? '-');
                 $table->addCell($wNpm, $tdStyle)->addText($npm, [
                     'name' => 'Arial',
-                    'size' => 7.2,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '334155',
                 ], ['alignment' => Jc::CENTER, 'spaceBefore' => 0, 'spaceAfter' => 0]);
 
                 // 4. NAMA MAHASISWA
-                $studentName = strtoupper($detail->thesis->student->name ?? '-');
+                $studentName = strtoupper($this->cleanText($detail->thesis->student->name ?? '-'));
                 $table->addCell($wNama, $tdStyle)->addText($studentName, [
                     'name' => 'Arial',
-                    'size' => 7.8,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '0F172A',
                 ], ['alignment' => Jc::LEFT, 'spaceBefore' => 0, 'spaceAfter' => 0]);
 
                 // 5. JUDUL SKRIPSI
-                $titleText = $detail->thesis->display_title ?? $detail->thesis->title ?? '-';
+                $titleText = $this->cleanText($detail->thesis->display_title ?? $detail->thesis->title ?? '-');
                 $table->addCell($wJudul, $tdStyle)->addText($titleText, [
                     'name' => 'Arial',
-                    'size' => 7.2,
+                    'size' => 8,
                     'color' => '334155',
                 ], ['alignment' => Jc::LEFT, 'spaceBefore' => 0, 'spaceAfter' => 0]);
 
                 // 6. PEMBIMBING
                 $pembimbingCell = $table->addCell($wPembimbing, $tdStyle);
-                $p1 = $detail->thesis->pembimbing1?->name ?? '-';
+                $p1 = $this->cleanText($detail->thesis->pembimbing1?->name ?? '-');
                 $pembimbingCell->addText('1. ' . $p1, [
                     'name' => 'Arial',
-                    'size' => 7.2,
+                    'size' => 8,
                     'color' => '1E293B',
                 ], ['spaceBefore' => 0, 'spaceAfter' => 20]);
                 if ($detail->thesis->pembimbing2) {
-                    $pembimbingCell->addText('2. ' . $detail->thesis->pembimbing2->name, [
+                    $pembimbingCell->addText('2. ' . $this->cleanText($detail->thesis->pembimbing2->name), [
                         'name' => 'Arial',
-                        'size' => 7.2,
+                        'size' => 8,
                         'color' => '1E293B',
                     ], ['spaceBefore' => 0, 'spaceAfter' => 0]);
                 }
@@ -387,23 +390,23 @@ class ScheduleWordExportService
                 // 7. PENGUJI
                 $examinerCell = $table->addCell($wPenguji, $tdStyle);
                 if ($detail->examiner1) {
-                    $examinerCell->addText('1. ' . $detail->examiner1->name, [
+                    $examinerCell->addText('1. ' . $this->cleanText($detail->examiner1->name), [
                         'name' => 'Arial',
-                        'size' => 7.2,
+                        'size' => 8,
                         'color' => '1E293B',
                     ], ['spaceBefore' => 0, 'spaceAfter' => 20]);
                 }
                 if ($detail->examiner2) {
-                    $examinerCell->addText('2. ' . $detail->examiner2->name, [
+                    $examinerCell->addText('2. ' . $this->cleanText($detail->examiner2->name), [
                         'name' => 'Arial',
-                        'size' => 7.2,
+                        'size' => 8,
                         'color' => '1E293B',
                     ], ['spaceBefore' => 0, 'spaceAfter' => 0]);
                 }
                 if (!$detail->examiner1 && !$detail->examiner2) {
                     $examinerCell->addText('-', [
                         'name' => 'Arial',
-                        'size' => 7.2,
+                        'size' => 8,
                         'color' => '64748B',
                     ], ['spaceBefore' => 0, 'spaceAfter' => 0]);
                 }
@@ -414,7 +417,7 @@ class ScheduleWordExportService
 
                 $table->addCell($wNo, $actStyle)->addText('#', [
                     'name' => 'Arial',
-                    'size' => 7.5,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '64748B',
                 ], ['alignment' => Jc::CENTER, 'spaceBefore' => 0, 'spaceAfter' => 0]);
@@ -423,15 +426,15 @@ class ScheduleWordExportService
                 $endTime = Carbon::parse($detail->end_time)->format('H.i');
                 $table->addCell($wWaktu, $actStyle)->addText("{$startTime} - {$endTime}", [
                     'name' => 'Arial',
-                    'size' => 7.2,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '0F172A',
                 ], ['alignment' => Jc::CENTER, 'spaceBefore' => 0, 'spaceAfter' => 0]);
 
                 $mergedWidth = $totalWidth - ($wNo + $wWaktu);
-                $table->addCell($mergedWidth, array_merge($actStyle, ['gridSpan' => 5]))->addText(strtoupper($detail->activity_name), [
+                $table->addCell($mergedWidth, array_merge($actStyle, ['gridSpan' => 5]))->addText(strtoupper($this->cleanText($detail->activity_name)), [
                     'name' => 'Arial',
-                    'size' => 7.5,
+                    'size' => 8,
                     'bold' => true,
                     'color' => '334155',
                 ], ['alignment' => Jc::LEFT, 'spaceBefore' => 20, 'spaceAfter' => 20]);
@@ -486,13 +489,20 @@ class ScheduleWordExportService
         $scheduleDateFormatted = Carbon::parse($schedule->date)->locale('id')->translatedFormat('d F Y');
         $sigCell->addText("Subang, {$scheduleDateFormatted}", [
             'name' => 'Arial',
-            'size' => 8.5,
+            'size' => 8,
             'color' => '0F172A',
         ], ['spaceBefore' => 0, 'spaceAfter' => 15]);
 
-        $sigCell->addText("Mengetahui,\nKetua Program Studi", [
+        $sigCell->addText('Mengetahui,', [
             'name' => 'Arial',
-            'size' => 8.5,
+            'size' => 8,
+            'bold' => true,
+            'color' => '0F172A',
+        ], ['spaceBefore' => 0, 'spaceAfter' => 0]);
+
+        $sigCell->addText('Ketua Program Studi', [
+            'name' => 'Arial',
+            'size' => 8,
             'bold' => true,
             'color' => '0F172A',
         ], ['spaceBefore' => 0, 'spaceAfter' => 30]);
@@ -537,7 +547,7 @@ class ScheduleWordExportService
             $sigCell->addTextBreak(3);
         }
 
-        $kaprodiName = $kaprodi ? $kaprodi->name : '..................................................';
+        $kaprodiName = $kaprodi ? $this->cleanText($kaprodi->name) : '..................................................';
         $sigCell->addText("( {$kaprodiName} )", [
             'name' => 'Arial',
             'size' => 9,
@@ -549,10 +559,23 @@ class ScheduleWordExportService
         if ($kaprodi && $kaprodi->identifier && is_numeric($kaprodi->identifier)) {
             $sigCell->addText("NIDN / NIP. {$kaprodi->identifier}", [
                 'name' => 'Arial',
-                'size' => 7.5,
+                'size' => 8,
                 'color' => '64748B',
             ], ['spaceBefore' => 0, 'spaceAfter' => 0]);
         }
+    }
+
+    /**
+     * Clean and normalize text strings to prevent XML corruption or control char errors.
+     */
+    protected function cleanText(?string $text): string
+    {
+        if ($text === null) {
+            return '';
+        }
+        $text = preg_replace('/[\r\n\t]+/', ' ', $text);
+        $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text);
+        return trim($text);
     }
 
     /**
