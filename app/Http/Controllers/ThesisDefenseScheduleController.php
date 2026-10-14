@@ -356,15 +356,9 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     public function exportPdf(ThesisDefenseSchedule $thesisDefenseSchedule)
     {
         $user = Auth::user();
-        $isAuthorized = $user->role === 'admin' 
-            || $user->role === 'kaprodi'
-            || ($thesisDefenseSchedule->chairman_id && $user->id === $thesisDefenseSchedule->chairman_id)
-            || ($thesisDefenseSchedule->moderator_id && $user->id === $thesisDefenseSchedule->moderator_id)
-            || $thesisDefenseSchedule->details()->where(function($q) use ($user) {
-                $q->where('examiner1_id', $user->id)->orWhere('examiner2_id', $user->id);
-            })->exists();
-
-        if (!$isAuthorized) abort(403);
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+            abort(403);
+        }
 
         $thesisDefenseSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
 

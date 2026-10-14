@@ -581,6 +581,12 @@ class LecturerScheduleTest extends TestCase
 
         $dosenResponse->assertStatus(200);
         $this->assertStringContainsString('application/pdf', $dosenResponse->headers->get('Content-Type'));
+
+        // Test unassigned dosen can export individual schedule PDF without 403
+        $unassignedDosen = User::factory()->create(['role' => 'dosen']);
+        $singlePdfResponse = $this->actingAs($unassignedDosen)->get(route('seminar-schedules.export-pdf', $schedule1));
+        $singlePdfResponse->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $singlePdfResponse->headers->get('Content-Type'));
     }
 
     public function test_batch_pdf_export_thesis_defense_schedules_downloads_successfully()
@@ -643,5 +649,11 @@ class LecturerScheduleTest extends TestCase
 
         $dosenResponse->assertStatus(200);
         $this->assertStringContainsString('application/pdf', $dosenResponse->headers->get('Content-Type'));
+
+        // Test unassigned dosen can export individual schedule PDF without 403
+        $unassignedDosen = User::factory()->create(['role' => 'dosen']);
+        $singlePdfResponse = $this->actingAs($unassignedDosen)->get(route('thesis-defense-schedules.export-pdf', $schedule1));
+        $singlePdfResponse->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $singlePdfResponse->headers->get('Content-Type'));
     }
 }
