@@ -193,9 +193,11 @@ Route::middleware('auth')->group(function () {
     });
 
     // Seminar & Defense Schedules (Accessible by Admin, Kaprodi, and Dosen)
+    Route::get('/seminar-schedules/export-batch-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportBatchPdf'])->name('seminar-schedules.export-batch-pdf');
     Route::resource('seminar-schedules', App\Http\Controllers\SeminarScheduleController::class);
     Route::get('/seminar-schedules/{seminar_schedule}/export-pdf', [App\Http\Controllers\SeminarScheduleController::class, 'exportPdf'])->name('seminar-schedules.export-pdf');
 
+    Route::get('/thesis-defense-schedules/export-batch-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportBatchPdf'])->name('thesis-defense-schedules.export-batch-pdf');
     Route::resource('thesis-defense-schedules', App\Http\Controllers\ThesisDefenseScheduleController::class);
     Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-pdf', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportPdf'])->name('thesis-defense-schedules.export-pdf');
 

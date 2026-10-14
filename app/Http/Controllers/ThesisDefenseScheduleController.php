@@ -33,7 +33,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
                 if (!in_array($userRole, ['admin', 'kaprodi', 'dosen'])) {
                     abort(403);
                 }
-                if ($userRole === 'dosen' && !in_array($request->route()->getName(), ['thesis-defense-schedules.index', 'thesis-defense-schedules.show', 'thesis-defense-schedules.export-pdf'])) {
+                if ($userRole === 'dosen' && !in_array($request->route()->getName(), ['thesis-defense-schedules.index', 'thesis-defense-schedules.show', 'thesis-defense-schedules.export-pdf', 'thesis-defense-schedules.export-batch-pdf'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -307,6 +307,50 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
         $thesisDefenseSchedule->delete();
 
         return redirect()->route('thesis-defense-schedules.index')->with('success', 'Jadwal sidang berhasil dihapus.');
+    }
+
+    public function exportBatchPdf(Request $request)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+            abort(403);
+        }
+
+        $activeWave = Wave::getCurrentActive();
+        $selectedWaveId = $request->input('wave_id', $activeWave?->id);
+
+        $query = ThesisDefenseSchedule::with([
+            'chairman', 
+            'moderator', 
+            'creator', 
+            'details.thesis.student', 
+            'details.thesis.pembimbing1', 
+            'details.thesis.pembimbing2', 
+            'details.examiner1', 
+            'details.examiner2'
+        ]);
+
+        if ($selectedWaveId) {
+            $query->where('wave_id', $selectedWaveId);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->input('date'));
+        }
+
+        $schedules = $query->orderBy('date', 'asc')->orderBy('location', 'asc')->get();
+
+        if ($schedules->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada jadwal sidang yang ditemukan untuk dicetak.');
+        }
+
+        $wave = $selectedWaveId ? Wave::find($selectedWaveId) : null;
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $pdf = Pdf::loadView('thesis_defense_schedules.pdf_batch', compact('schedules', 'wave', 'kaprodi'))->setPaper('a4', 'landscape');
+
+        $waveName = $wave ? str_replace([' ', '/', '\\'], '_', $wave->name) : 'Semua';
+        return $pdf->download("Jadwal_Sidang_Skripsi_Gelombang_{$waveName}_Semua_Ruangan.pdf");
     }
 
     public function exportPdf(ThesisDefenseSchedule $thesisDefenseSchedule)

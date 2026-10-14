@@ -143,8 +143,14 @@
                     </div>
                 </form>
 
-                <!-- Right Side: Expand / Collapse All Controls -->
-                <div class="flex items-center gap-2.5 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end">
+                <!-- Right Side: Controls & Batch PDF -->
+                <div class="flex items-center gap-2.5 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end flex-wrap">
+                    <a href="{{ route('thesis-defense-schedules.export-batch-pdf', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}" 
+                       class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap"
+                       title="Cetak seluruh ruangan dalam 1 file PDF">
+                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Cetak Semua (PDF)</span>
+                    </a>
                     <button type="button" @click="allOpen = true" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap">
                         <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                         <span>Buka Semua</span>
@@ -459,6 +465,16 @@
                             </svg>
                             <span class="whitespace-nowrap">Import Excel</span>
                         </button>
+
+                        <!-- Cetak Semua Ruangan (Batch PDF) Button -->
+                        <a href="{{ route('thesis-defense-schedules.export-batch-pdf', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
+                            title="Cetak seluruh ruangan dalam 1 file PDF">
+                            <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap">Cetak Semua Ruangan (PDF)</span>
+                        </a>
 
                         <!-- Add Button -->
                         <a href="{{ route('thesis-defense-schedules.create', ['wave_id' => $selectedWaveId]) }}" 

@@ -519,4 +519,129 @@ class LecturerScheduleTest extends TestCase
         $downloadResponse = $this->actingAs($dosen)->get(route('download.private', ['path' => $filePath, 'inline' => 1]));
         $downloadResponse->assertStatus(200);
     }
+
+    public function test_batch_pdf_export_seminar_schedules_downloads_successfully()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Sistem Batch PDF Seminar',
+            'status' => 'active',
+        ]);
+
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 2026/2027',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(5),
+        ]);
+
+        $schedule1 = SeminarSchedule::create([
+            'title' => 'Seminar Proposal Ruang 8',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 8',
+            'wave_id' => $wave->id,
+            'chairman_id' => $dosen->id,
+            'created_by' => $admin->id,
+        ]);
+
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule1->id,
+            'thesis_id' => $thesis->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => now()->setTime(8, 0),
+            'end_time' => now()->setTime(9, 0),
+            'order' => 1,
+        ]);
+
+        $schedule2 = SeminarSchedule::create([
+            'title' => 'Seminar Proposal Ruang 9',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 9',
+            'wave_id' => $wave->id,
+            'chairman_id' => $dosen->id,
+            'created_by' => $admin->id,
+        ]);
+
+        // Test export batch PDF as admin
+        $response = $this->actingAs($admin)->get(route('seminar-schedules.export-batch-pdf', [
+            'wave_id' => $wave->id,
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $response->headers->get('Content-Type'));
+
+        // Test export batch PDF as dosen
+        $dosenResponse = $this->actingAs($dosen)->get(route('seminar-schedules.export-batch-pdf', [
+            'wave_id' => $wave->id,
+        ]));
+
+        $dosenResponse->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $dosenResponse->headers->get('Content-Type'));
+    }
+
+    public function test_batch_pdf_export_thesis_defense_schedules_downloads_successfully()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+
+        $thesis = Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Sistem Batch PDF Sidang',
+            'status' => 'active',
+        ]);
+
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 2026/2027',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(5),
+        ]);
+
+        $schedule1 = ThesisDefenseSchedule::create([
+            'title' => 'Sidang Skripsi Ruang 8',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 8',
+            'wave_id' => $wave->id,
+            'created_by' => $admin->id,
+        ]);
+
+        ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $schedule1->id,
+            'thesis_id' => $thesis->id,
+            'activity_name' => 'Sidang Skripsi',
+            'start_time' => now()->setTime(8, 0),
+            'end_time' => now()->setTime(9, 30),
+            'examiner1_id' => $dosen->id,
+            'order' => 1,
+        ]);
+
+        $schedule2 = ThesisDefenseSchedule::create([
+            'title' => 'Sidang Skripsi Ruang 9',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 9',
+            'wave_id' => $wave->id,
+            'created_by' => $admin->id,
+        ]);
+
+        // Test export batch PDF as admin
+        $response = $this->actingAs($admin)->get(route('thesis-defense-schedules.export-batch-pdf', [
+            'wave_id' => $wave->id,
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $response->headers->get('Content-Type'));
+
+        // Test export batch PDF as dosen
+        $dosenResponse = $this->actingAs($dosen)->get(route('thesis-defense-schedules.export-batch-pdf', [
+            'wave_id' => $wave->id,
+        ]));
+
+        $dosenResponse->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $dosenResponse->headers->get('Content-Type'));
+    }
 }
