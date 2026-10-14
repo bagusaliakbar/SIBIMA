@@ -278,41 +278,49 @@
             padding-top: 10px;
         }
         .signature-box {
-            width: 220px;
+            width: 250px;
             float: right;
             text-align: left;
-            font-size: 7.5pt;
+            font-size: 8pt;
             color: #0f172a;
         }
         .sig-city-date {
+            font-size: 8.5pt;
             margin-bottom: 2px;
         }
         .sig-role {
             font-weight: 700;
+            font-size: 8.5pt;
             margin-bottom: 4px;
+            line-height: 1.3;
         }
         .sig-space {
-            min-height: 48px;
+            min-height: 70px;
             margin: 3px 0;
         }
         .sig-img {
-            max-height: 48px;
+            height: 70px;
+            max-height: 75px;
+            max-width: 200px;
             width: auto;
+            display: block;
         }
         .sig-qr {
-            width: 48px;
-            height: 48px;
+            width: 65px;
+            height: 65px;
+            display: block;
         }
         .sig-name {
             font-weight: 700;
-            font-size: 8pt;
+            font-size: 9pt;
             text-decoration: underline;
             color: #0f172a;
-            margin-top: 2px;
+            margin-top: 3px;
         }
         .sig-nip {
-            font-size: 6.8pt;
+            font-size: 7.5pt;
             color: #64748b;
+            margin-top: 1px;
         }
     </style>
 </head>
@@ -460,7 +468,7 @@
                     Fakultas Ilmu Komputer - Universitas Subang<br>
                     Dicetak secara otomatis pada: {{ now()->locale('id')->translatedFormat('d F Y, H:i') }} WIB
                 </td>
-                <td style="width: 230px;">
+                <td style="width: 260px;">
                     <div class="signature-box">
                         <div class="sig-city-date">Subang, {{ \Carbon\Carbon::parse($thesisDefenseSchedule->date)->locale('id')->translatedFormat('d F Y') }}</div>
                         <div class="sig-role">Mengetahui,<br>Ketua Program Studi</div>
@@ -471,7 +479,7 @@
                             @elseif(isset($kaprodi) && $kaprodi && $kaprodi->signature_token)
                                 <img src="data:image/png;base64, {!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(250)->generate(url('/verify-signature/' . $kaprodi->signature_token))) !!} " class="sig-qr">
                             @else
-                                <div style="height: 40px;"></div>
+                                <div style="height: 55px;"></div>
                             @endif
                         </div>
                         
