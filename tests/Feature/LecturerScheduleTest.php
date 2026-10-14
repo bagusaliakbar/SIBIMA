@@ -656,4 +656,93 @@ class LecturerScheduleTest extends TestCase
         $singlePdfResponse->assertStatus(200);
         $this->assertStringContainsString('application/pdf', $singlePdfResponse->headers->get('Content-Type'));
     }
+
+    public function test_my_schedules_summary_only_shows_lecturers_students_and_exams()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $myDosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Penguji Saya']);
+        $otherDosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Lain']);
+        
+        $student1 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Bimbingan Saya']);
+        $student2 = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Orang Lain']);
+
+        $thesis1 = Thesis::create([
+            'student_id' => $student1->id,
+            'title' => 'Judul Skripsi Bimbingan Saya',
+            'pembimbing1_id' => $myDosen->id,
+            'status' => 'active',
+        ]);
+
+        $thesis2 = Thesis::create([
+            'student_id' => $student2->id,
+            'title' => 'Judul Skripsi Mahasiswa Lain',
+            'pembimbing1_id' => $otherDosen->id,
+            'status' => 'active',
+        ]);
+
+        $wave = Wave::create([
+            'name' => 'Gelombang 1 2026/2027',
+            'is_active' => true,
+            'start_date' => now()->subDays(1),
+            'end_date' => now()->addDays(5),
+        ]);
+
+        $schedule = SeminarSchedule::create([
+            'title' => 'Seminar Proposal Ruang 8',
+            'date' => now()->toDateString(),
+            'location' => 'Ruang 8',
+            'wave_id' => $wave->id,
+            'chairman_id' => $otherDosen->id,
+            'created_by' => $admin->id,
+        ]);
+
+        // Detail 1: My student
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $thesis1->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => now()->setTime(8, 0),
+            'end_time' => now()->setTime(9, 0),
+            'examiner1_id' => $otherDosen->id,
+            'order' => 1,
+        ]);
+
+        // Detail 2: Other student (not examined or mentored by myDosen)
+        SeminarScheduleDetail::create([
+            'seminar_schedule_id' => $schedule->id,
+            'thesis_id' => $thesis2->id,
+            'activity_name' => 'Seminar Proposal',
+            'start_time' => now()->setTime(9, 0),
+            'end_time' => now()->setTime(10, 0),
+            'examiner1_id' => $otherDosen->id,
+            'order' => 2,
+        ]);
+
+        // 1. Web view with my_schedules=1: should see thesis1, should NOT see thesis2
+        $response = $this->actingAs($myDosen)->get(route('seminar-schedules.index', [
+            'my_schedules' => 1,
+            'filter_date' => 'all',
+        ]));
+        $response->assertStatus(200);
+        $response->assertSee('Mahasiswa Bimbingan Saya');
+        $response->assertSee('Judul Skripsi Bimbingan Saya');
+        $response->assertDontSee('Mahasiswa Orang Lain');
+        $response->assertDontSee('Judul Skripsi Mahasiswa Lain');
+
+        // 2. Single PDF export with my_schedules=1: should succeed (200)
+        $singlePdf = $this->actingAs($myDosen)->get(route('seminar-schedules.export-pdf', [
+            'seminar_schedule' => $schedule->id,
+            'my_schedules' => 1,
+        ]));
+        $singlePdf->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $singlePdf->headers->get('Content-Type'));
+
+        // 3. Batch PDF export with my_schedules=1: should succeed (200)
+        $batchPdf = $this->actingAs($myDosen)->get(route('seminar-schedules.export-batch-pdf', [
+            'wave_id' => $wave->id,
+            'my_schedules' => 1,
+        ]));
+        $batchPdf->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $batchPdf->headers->get('Content-Type'));
+    }
 }

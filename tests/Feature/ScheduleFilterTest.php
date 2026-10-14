@@ -232,7 +232,7 @@ class ScheduleFilterTest extends TestCase
             'created_by' => $this->admin->id,
         ]);
 
-        // Upcoming defense with Dosen1 as Moderator
+        // Upcoming defense with Dosen1 as Moderator and Examiner
         $upcomingDefense = ThesisDefenseSchedule::create([
             'title' => 'Sidang Skripsi Sesi Mendatang',
             'date' => now()->addDays(4)->toDateString(),
@@ -240,6 +240,14 @@ class ScheduleFilterTest extends TestCase
             'wave_id' => $this->wave->id,
             'moderator_id' => $this->dosen1->id,
             'created_by' => $this->admin->id,
+        ]);
+        ThesisDefenseScheduleDetail::create([
+            'thesis_defense_schedule_id' => $upcomingDefense->id,
+            'thesis_id' => $this->thesis2->id,
+            'start_time' => '13:00',
+            'end_time' => '14:30',
+            'examiner1_id' => $this->dosen1->id,
+            'order' => 1,
         ]);
 
         // Test filter_date=upcoming

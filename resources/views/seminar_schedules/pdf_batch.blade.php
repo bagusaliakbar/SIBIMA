@@ -353,7 +353,7 @@
 
         {{-- JUDUL DOKUMEN --}}
         <div class="header-title-box">
-            <h1 class="doc-title">JADWAL SEMINAR SKRIPSI</h1>
+            <h1 class="doc-title">{{ !empty($mySchedules) ? 'RINGKASAN JADWAL SEMINAR SKRIPSI' : 'JADWAL SEMINAR SKRIPSI' }}</h1>
             <h2 class="doc-subtitle">{{ strtoupper($seminarSchedule->title) }}</h2>
         </div>
 

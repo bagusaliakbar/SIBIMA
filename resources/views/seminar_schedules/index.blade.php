@@ -145,11 +145,11 @@
 
                 <!-- Right Side: Controls & Batch PDF -->
                 <div class="flex items-center gap-2.5 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end flex-wrap">
-                    <a href="{{ route('seminar-schedules.export-batch-pdf', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}" 
+                    <a href="{{ route('seminar-schedules.export-batch-pdf', array_filter(['wave_id' => $selectedWaveId, 'date' => request('date'), 'my_schedules' => $mySchedules ? 1 : null])) }}" 
                        class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap"
-                       title="Cetak seluruh ruangan dalam 1 file PDF">
+                       title="{{ $mySchedules ? 'Cetak ringkasan seluruh jadwal bimbingan dan uji Anda dalam 1 file PDF' : 'Cetak seluruh ruangan dalam 1 file PDF' }}">
                         <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <span>Cetak Semua (PDF)</span>
+                        <span>{{ $mySchedules ? 'Cetak Ringkasan (PDF)' : 'Cetak Semua (PDF)' }}</span>
                     </a>
                     <button type="button" @click="allOpen = true" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap">
                         <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
@@ -222,8 +222,8 @@
                                             </span>
                                         @endif
 
-                                        <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 rounded-full text-[10px] font-bold">
-                                            👥 {{ $studentCount }} Mahasiswa
+                                        <span class="px-2.5 py-0.5 {{ $mySchedules ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-700' }} border rounded-full text-[10px] font-bold">
+                                            👥 {{ $studentCount }} {{ $mySchedules ? 'Mahasiswa Bimbingan/Uji' : 'Mahasiswa' }}
                                         </span>
                                     </div>
 
@@ -235,11 +235,11 @@
 
                                 <!-- Header Action Buttons -->
                                 <div class="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 w-full sm:w-auto pt-1 sm:pt-0">
-                                    <a href="{{ route('seminar-schedules.export-pdf', $schedule) }}" 
+                                    <a href="{{ route('seminar-schedules.export-pdf', array_filter(['seminar_schedule' => $schedule->id, 'my_schedules' => $mySchedules ? 1 : null])) }}" 
                                        class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold shadow-2xs transition-all whitespace-nowrap shrink-0"
-                                       title="Cetak PDF">
-                                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        <span>Cetak PDF</span>
+                                       title="{{ $mySchedules ? 'Cetak ringkasan jadwal ini' : 'Cetak PDF' }}">
+                                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <span>{{ $mySchedules ? 'Cetak Ringkasan' : 'Cetak PDF' }}</span>
                                     </a>
 
                                     <button type="button" @click="open = !open" 

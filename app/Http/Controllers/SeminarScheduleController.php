@@ -68,11 +68,26 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             'chairman', 
             'moderator', 
             'creator', 
-            'details.thesis.student', 
-            'details.thesis.pembimbing1', 
-            'details.thesis.pembimbing2', 
-            'details.examiner1', 
-            'details.examiner2'
+            'details' => function($dq) use ($mySchedules, $user) {
+                if ($mySchedules && $user->role === 'dosen') {
+                    $userId = $user->id;
+                    $dq->where(function($sub) use ($userId) {
+                        $sub->where('examiner1_id', $userId)
+                            ->orWhere('examiner2_id', $userId)
+                            ->orWhereHas('thesis', function($tq) use ($userId) {
+                                $tq->where('pembimbing1_id', $userId)
+                                   ->orWhere('pembimbing2_id', $userId);
+                            });
+                    });
+                }
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
         ]);
 
         // Wave filter
@@ -105,20 +120,16 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             $query->whereDate('date', '<', now()->toDateString());
         }
 
-        // "Jadwal Saya" filter
+        // "Jadwal Saya" filter: Hanya tampilkan jika dosen jadi pembimbing atau penguji
         if ($mySchedules && $user->role === 'dosen') {
             $userId = $user->id;
-            $query->where(function($q) use ($userId) {
-                $q->where('chairman_id', $userId)
-                  ->orWhere('moderator_id', $userId)
-                  ->orWhereHas('details', function($dq) use ($userId) {
-                      $dq->where('examiner1_id', $userId)
-                         ->orWhere('examiner2_id', $userId)
-                         ->orWhereHas('thesis', function($tq) use ($userId) {
-                             $tq->where('pembimbing1_id', $userId)
-                                ->orWhere('pembimbing2_id', $userId);
-                         });
-                  });
+            $query->whereHas('details', function($dq) use ($userId) {
+                $dq->where('examiner1_id', $userId)
+                   ->orWhere('examiner2_id', $userId)
+                   ->orWhereHas('thesis', function($tq) use ($userId) {
+                       $tq->where('pembimbing1_id', $userId)
+                          ->orWhere('pembimbing2_id', $userId);
+                   });
             });
         }
 
@@ -175,17 +186,13 @@ class SeminarScheduleController extends Controller implements HasMiddleware
 
         if ($user->role === 'dosen') {
             $userId = $user->id;
-            $counts['mySchedules'] = (clone $countBaseQuery)->where(function($q) use ($userId) {
-                $q->where('chairman_id', $userId)
-                  ->orWhere('moderator_id', $userId)
-                  ->orWhereHas('details', function($dq) use ($userId) {
-                      $dq->where('examiner1_id', $userId)
-                         ->orWhere('examiner2_id', $userId)
-                         ->orWhereHas('thesis', function($tq) use ($userId) {
-                             $tq->where('pembimbing1_id', $userId)
-                                ->orWhere('pembimbing2_id', $userId);
-                         });
-                  });
+            $counts['mySchedules'] = (clone $countBaseQuery)->whereHas('details', function($dq) use ($userId) {
+                $dq->where('examiner1_id', $userId)
+                   ->orWhere('examiner2_id', $userId)
+                   ->orWhereHas('thesis', function($tq) use ($userId) {
+                       $tq->where('pembimbing1_id', $userId)
+                          ->orWhere('pembimbing2_id', $userId);
+                   });
             })->count();
         }
 
@@ -316,6 +323,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             abort(403);
         }
 
+        $mySchedules = $request->boolean('my_schedules');
         $activeWave = Wave::getCurrentActive();
         $selectedWaveId = $request->input('wave_id', $activeWave?->id);
 
@@ -323,11 +331,26 @@ class SeminarScheduleController extends Controller implements HasMiddleware
             'chairman', 
             'moderator', 
             'creator', 
-            'details.thesis.student', 
-            'details.thesis.pembimbing1', 
-            'details.thesis.pembimbing2', 
-            'details.examiner1', 
-            'details.examiner2'
+            'details' => function($dq) use ($mySchedules, $user) {
+                if ($mySchedules && $user->role === 'dosen') {
+                    $userId = $user->id;
+                    $dq->where(function($sub) use ($userId) {
+                        $sub->where('examiner1_id', $userId)
+                            ->orWhere('examiner2_id', $userId)
+                            ->orWhereHas('thesis', function($tq) use ($userId) {
+                                $tq->where('pembimbing1_id', $userId)
+                                   ->orWhere('pembimbing2_id', $userId);
+                            });
+                    });
+                }
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
         ]);
 
         if ($selectedWaveId) {
@@ -336,6 +359,18 @@ class SeminarScheduleController extends Controller implements HasMiddleware
 
         if ($request->filled('date')) {
             $query->whereDate('date', $request->input('date'));
+        }
+
+        if ($mySchedules && $user->role === 'dosen') {
+            $userId = $user->id;
+            $query->whereHas('details', function($dq) use ($userId) {
+                $dq->where('examiner1_id', $userId)
+                   ->orWhere('examiner2_id', $userId)
+                   ->orWhereHas('thesis', function($tq) use ($userId) {
+                       $tq->where('pembimbing1_id', $userId)
+                          ->orWhere('pembimbing2_id', $userId);
+                   });
+            });
         }
 
         $schedules = $query->orderBy('date', 'asc')->orderBy('location', 'asc')->get();
@@ -347,25 +382,52 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         $wave = $selectedWaveId ? Wave::find($selectedWaveId) : null;
         $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
 
-        $pdf = Pdf::loadView('seminar_schedules.pdf_batch', compact('schedules', 'wave', 'kaprodi'))->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView('seminar_schedules.pdf_batch', compact('schedules', 'wave', 'kaprodi', 'mySchedules'))->setPaper('a4', 'landscape');
 
         $waveName = $wave ? str_replace([' ', '/', '\\'], '_', $wave->name) : 'Semua';
-        return $pdf->download("Jadwal_Seminar_Gelombang_{$waveName}_Semua_Ruangan.pdf");
+        $prefix = ($mySchedules && $user->role === 'dosen') ? 'Ringkasan_Jadwal_Seminar_Saya_' : 'Jadwal_Seminar_Gelombang_';
+        return $pdf->download("{$prefix}{$waveName}.pdf");
     }
 
-    public function exportPdf(SeminarSchedule $seminarSchedule)
+    public function exportPdf(SeminarSchedule $seminarSchedule, Request $request)
     {
         $user = Auth::user();
         if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
             abort(403);
         }
 
-        $seminarSchedule->load(['chairman', 'moderator', 'details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2']);
+        $mySchedules = $request->boolean('my_schedules');
+
+        $seminarSchedule->load([
+            'chairman', 
+            'moderator', 
+            'details' => function($dq) use ($mySchedules, $user) {
+                if ($mySchedules && $user->role === 'dosen') {
+                    $userId = $user->id;
+                    $dq->where(function($sub) use ($userId) {
+                        $sub->where('examiner1_id', $userId)
+                            ->orWhere('examiner2_id', $userId)
+                            ->orWhereHas('thesis', function($tq) use ($userId) {
+                                $tq->where('pembimbing1_id', $userId)
+                                   ->orWhere('pembimbing2_id', $userId);
+                            });
+                    });
+                }
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
+        ]);
 
         $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
-        $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule', 'kaprodi'))->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView('seminar_schedules.pdf', compact('seminarSchedule', 'kaprodi', 'mySchedules'))->setPaper('a4', 'landscape');
 
-        return $pdf->download('Jadwal_Seminar_' . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.pdf');
+        $prefix = ($mySchedules && $user->role === 'dosen') ? 'Ringkasan_Jadwal_Seminar_' : 'Jadwal_Seminar_';
+        return $pdf->download($prefix . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.pdf');
     }
 
     public function downloadTemplate()
