@@ -97,34 +97,7 @@
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $detail->thesis?->student?->identifier ?? '-' }}</p>
                     <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2 italic">"{{ $detail->thesis?->title ?? '-' }}"</p>
                 </div>
-                @php
-                    $app = $detail->thesis?->defenseApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
-                        ?? $detail->thesis?->defenseApplication
-                        ?? $detail->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first()
-                        ?? $detail->thesis?->seminarApplication;
-                    $filePath = $app?->file_skripsi;
-                    $docUrl = null;
-                    if ($filePath) {
-                        $docUrl = filter_var($filePath, FILTER_VALIDATE_URL) 
-                            ? $filePath 
-                            : route('download.private', ['path' => $filePath, 'inline' => 1]);
-                    }
-                @endphp
-                @if($docUrl)
-                    <div class="flex items-center">
-                        <a href="{{ $docUrl }}" target="_blank" 
-                           class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all shadow-xs group/doc"
-                           title="Buka / Baca Dokumen Skripsi">
-                            <svg class="w-4 h-4 text-emerald-500 group-hover/doc:text-white transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span>Buka Dokumen Skripsi</span>
-                            <svg class="w-3.5 h-3.5 opacity-70 group-hover/doc:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                            </svg>
-                        </a>
-                    </div>
-                @endif
+
                 <div class="bg-slate-50 dark:bg-slate-900/50 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
                     <div class="flex items-center text-xs font-bold text-slate-700 dark:text-slate-200">
                         <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
