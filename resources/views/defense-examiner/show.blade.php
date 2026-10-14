@@ -37,22 +37,80 @@
     </x-slot>
 
     <div x-data="{
+        mode: 'points',
+        points: [''],
+        additionalNotes: '',
         notes: '',
         previewModalOpen: false,
         previewUrl: '',
         previewRawUrl: '',
         previewTitle: 'Preview Dokumen',
-        appendTemplate(text) {
-            if (!this.notes || this.notes.trim() === '') {
-                this.notes = text;
-            } else {
-                this.notes = this.notes + '\n\n' + text;
-            }
+        addPoint(text = '') {
+            this.points.push(text);
             this.$nextTick(() => {
-                if (this.$refs.noteInput) {
-                    this.$refs.noteInput.focus();
+                const inputs = this.$refs.pointsListContainer?.querySelectorAll('textarea');
+                if (inputs && inputs.length) {
+                    inputs[inputs.length - 1].focus();
                 }
             });
+        },
+        removePoint(index) {
+            if (this.points.length > 1) {
+                this.points.splice(index, 1);
+            } else {
+                this.points = [''];
+            }
+        },
+        appendTemplate(text) {
+            if (this.mode === 'points') {
+                const lastIdx = this.points.length - 1;
+                if (this.points.length > 0 && this.points[lastIdx].trim() === '') {
+                    this.points[lastIdx] = text;
+                } else {
+                    this.addPoint(text);
+                }
+            } else {
+                if (!this.notes || this.notes.trim() === '') {
+                    this.notes = text;
+                } else {
+                    this.notes = this.notes + '\n\n' + text;
+                }
+                this.$nextTick(() => {
+                    if (this.$refs.noteInput) {
+                        this.$refs.noteInput.focus();
+                    }
+                });
+            }
+        },
+        compiledNotes() {
+            if (this.mode === 'points') {
+                const valid = this.points.map(p => p.trim()).filter(p => p.length > 0);
+                if (valid.length === 0) return '';
+                let result = valid.map((p, i) => `${i + 1}. ${p}`).join('\n');
+                if (this.additionalNotes && this.additionalNotes.trim()) {
+                    result += '\n\nCatatan Tambahan: ' + this.additionalNotes.trim();
+                }
+                return result;
+            }
+            return this.notes;
+        },
+        prepareSubmit(e) {
+            if (this.mode === 'points') {
+                const valid = this.points.filter(p => p.trim().length > 0);
+                if (valid.length === 0) {
+                    alert('Silakan isi minimal 1 poin catatan revisi.');
+                    e.preventDefault();
+                    return false;
+                }
+                this.notes = this.compiledNotes();
+            } else {
+                if (!this.notes || !this.notes.trim()) {
+                    alert('Silakan tuliskan catatan revisi.');
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            return true;
         },
         openPreview(link, title) {
             this.previewTitle = title || 'Preview Dokumen';
@@ -247,7 +305,7 @@
                                             <span class="text-[9px] text-slate-400 font-medium">{{ $msg->created_at->format('H:i, d M') }}</span>
                                         </div>
                                         <div class="p-4 rounded-2xl shadow-sm text-sm font-medium leading-relaxed {{ $isMe ? 'bg-rose-600 text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700' }}">
-                                            {!! nl2br(e($msg->message)) !!}
+                                            <x-revision-message-content :message="$msg->message" :is-me="$isMe" theme="rose" />
                                             
                                             @if($msg->file_path)
                                                 <div class="mt-3 pt-3 border-t {{ $isMe ? 'border-white/10' : 'border-slate-50 dark:border-slate-700' }} flex items-center gap-2 flex-wrap">
@@ -304,7 +362,10 @@
                                 @endif
                             </div>
                         @else
-                            <form action="{{ route('defense-examiner.store-revision', $detail->id) }}" method="POST" class="space-y-4">
+                            <form action="{{ route('defense-examiner.store-revision', $detail->id) }}" 
+                                  method="POST" 
+                                  @submit="prepareSubmit($event)"
+                                  class="space-y-4">
                                 @csrf
                                 @if(isset($actingId))
                                     <input type="hidden" name="target_examiner_id" value="{{ $actingId }}">
@@ -312,54 +373,128 @@
                                 @if(request('redirect_to'))
                                     <input type="hidden" name="redirect_to" value="{{ request('redirect_to') }}">
                                 @endif
+                                <input type="hidden" name="revision_mode" :value="mode">
+                                <input type="hidden" name="revision_notes" :value="compiledNotes()">
 
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between">
-                                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
-                                            Catatan Revisi & Feedback @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser)) (atas nama {{ $targetUser->name }}) @endif
-                                        </label>
-                                        <span class="text-[10px] font-bold text-slate-400">💡 Template balasan cepat:</span>
+                                <div class="space-y-3">
+                                    <!-- Header with Mode Selector Toggle -->
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
+                                        <div>
+                                            <label class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                                                <span>Catatan Revisi & Feedback</span>
+                                                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser))
+                                                    <span class="text-[10px] text-rose-600 dark:text-rose-400 font-bold lowercase">(atas nama {{ $targetUser->name }})</span>
+                                                @endif
+                                            </label>
+                                            <p class="text-[10px] text-slate-400 mt-0.5">Tuliskan butir-butir perbaikan yang wajib diperbaiki mahasiswa</p>
+                                        </div>
+
+                                        <!-- Mode Switcher Tabs -->
+                                        <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 self-start sm:self-auto shadow-xs">
+                                            <button type="button" 
+                                                    @click="mode = 'points'"
+                                                    :class="mode === 'points' ? 'bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-300 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'"
+                                                    class="px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                                <span>Mode Poin</span>
+                                            </button>
+                                            <button type="button" 
+                                                    @click="mode = 'text'"
+                                                    :class="mode === 'text' ? 'bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-300 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'"
+                                                    class="px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                <span>Mode Bebas</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Quick Revision Notes Template Chips -->
-                                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
-                                        <button type="button" 
-                                                @click="appendTemplate('Mohon perbaiki format penulisan, margin, tata bahasa, dan pastikan daftar pustaka telah sesuai dengan format pedoman serta terupdate minimal 5 tahun terakhir.')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-700/60 dark:hover:bg-slate-700 dark:text-slate-200 dark:hover:text-rose-400 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                            <span class="text-rose-500 font-black">+</span>
-                                            <span>Format Penulisan & Daftar Pustaka</span>
-                                        </button>
+                                    <div class="space-y-1">
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">💡 Template Cepat (Klik untuk tambah):</span>
+                                        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                                            <button type="button" 
+                                                    @click="appendTemplate('Mohon perbaiki format penulisan, margin, tata bahasa, dan pastikan daftar pustaka telah sesuai dengan format pedoman serta terupdate minimal 5 tahun terakhir.')"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:text-slate-200 dark:hover:text-rose-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-rose-500 font-black">+</span>
+                                                <span>Format Penulisan & Daftar Pustaka</span>
+                                            </button>
 
-                                        <button type="button" 
-                                                @click="appendTemplate('Perbaiki metodologi penelitian, perjelas teknik penentuan sampel/populasi, dan jelaskan langkah validasi instrumen secara detail.')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-700/60 dark:hover:bg-slate-700 dark:text-slate-200 dark:hover:text-rose-400 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                            <span class="text-rose-500 font-black">+</span>
-                                            <span>Perbaiki Metodologi & Sampel</span>
-                                        </button>
+                                            <button type="button" 
+                                                    @click="appendTemplate('Perbaiki metodologi penelitian, perjelas teknik penentuan sampel/populasi, dan jelaskan langkah validasi instrumen secara detail.')"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:text-slate-200 dark:hover:text-rose-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-rose-500 font-black">+</span>
+                                                <span>Perbaiki Metodologi & Sampel</span>
+                                            </button>
 
-                                        <button type="button" 
-                                                @click="appendTemplate('Lengkapi analisis dan pembahasan pada Bab 4, serta bandingkan temuan hasil pengujian dengan penelitian relevan sebelumnya.')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-700/60 dark:hover:bg-slate-700 dark:text-slate-200 dark:hover:text-rose-400 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                            <span class="text-rose-500 font-black">+</span>
-                                            <span>Lengkapi Hasil Pembahasan Bab 4</span>
-                                        </button>
+                                            <button type="button" 
+                                                    @click="appendTemplate('Lengkapi analisis dan pembahasan pada Bab 4, serta bandingkan temuan hasil pengujian dengan penelitian relevan sebelumnya.')"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:text-slate-200 dark:hover:text-rose-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-rose-500 font-black">+</span>
+                                                <span>Lengkapi Hasil Pembahasan Bab 4</span>
+                                            </button>
 
-                                        <button type="button" 
-                                                @click="appendTemplate('Revisi telah diperiksa dan disetujui. Silakan lanjut ke proses pengesahan naskah final / pencetakan dokumen.')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 dark:text-emerald-300 rounded-xl text-[11px] font-bold border border-emerald-200 dark:border-emerald-800 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                            <span class="text-emerald-600 font-black">✓</span>
-                                            <span>Revisi Disetujui, Silakan Cetak</span>
-                                        </button>
+                                            <button type="button" 
+                                                    @click="appendTemplate('Revisi telah diperiksa dan disetujui. Silakan lanjut ke proses pengesahan naskah final / pencetakan dokumen.')"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 dark:text-emerald-300 rounded-xl text-[11px] font-bold border border-emerald-200 dark:border-emerald-800 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-emerald-600 font-black">✓</span>
+                                                <span>Revisi Disetujui, Silakan Cetak</span>
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div class="relative">
+                                    <!-- 1. MODE POIN-POIN (DEFAULT) -->
+                                    <div x-show="mode === 'points'" class="space-y-3">
+                                        <div x-ref="pointsListContainer" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+                                            <template x-for="(point, idx) in points" :key="idx">
+                                                <div class="flex items-start gap-2.5 p-2 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
+                                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-600 text-white text-xs font-black shrink-0 mt-1 shadow-xs" x-text="idx + 1"></span>
+                                                    <div class="flex-1">
+                                                        <textarea x-model="points[idx]" 
+                                                                  name="revision_points[]" 
+                                                                  rows="2" 
+                                                                  class="block w-full border-0 p-0 bg-transparent text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-0 placeholder:text-slate-400 resize-none leading-relaxed" 
+                                                                  placeholder="Tuliskan poin catatan revisi (misal: Bab 4 tambahkan pembahasan evaluasi)..."></textarea>
+                                                    </div>
+                                                    <button type="button" 
+                                                            @click="removePoint(idx)" 
+                                                            x-show="points.length > 1 || points[0].trim().length > 0"
+                                                            class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-all shrink-0 mt-0.5" 
+                                                            title="Hapus poin ini">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+
+                                        <!-- Add Point Button & Status -->
+                                        <div class="flex items-center justify-between gap-3 pt-1">
+                                            <button type="button" 
+                                                    @click="addPoint()" 
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 dark:text-rose-300 rounded-xl text-xs font-bold border border-rose-200/80 dark:border-rose-800 transition-all shadow-xs">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                                <span>Tambah Poin Revisi</span>
+                                            </button>
+                                            <span class="text-[10px] text-slate-400 font-bold" x-text="points.filter(p => p.trim().length > 0).length + ' poin revisi siap dikirim'"></span>
+                                        </div>
+
+                                        <!-- Optional Additional Notes -->
+                                        <div>
+                                            <input type="text" 
+                                                   x-model="additionalNotes" 
+                                                   name="additional_notes" 
+                                                   placeholder="Catatan tambahan umum (opsional, misal: batas waktu pengumpulan)..." 
+                                                   class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-rose-500 focus:ring-rose-500 text-xs font-medium transition-all">
+                                        </div>
+                                    </div>
+
+                                    <!-- 2. MODE TEKS BEBAS -->
+                                    <div x-show="mode === 'text'" class="relative">
                                         <textarea x-ref="noteInput" 
                                                   x-model="notes" 
-                                                  name="revision_notes" 
                                                   rows="3" 
                                                   class="block w-full rounded-2xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-rose-500 focus:ring-rose-500 text-sm font-medium transition-all" 
-                                                  placeholder="Tuliskan catatan revisi atau klik salah satu template di atas..." 
-                                                  required></textarea>
+                                                  placeholder="Tuliskan catatan revisi bebas..."></textarea>
                                     </div>
                                 </div>
 

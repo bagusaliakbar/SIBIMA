@@ -127,7 +127,44 @@
         <tbody>
             <tr>
                 <td style="font-size: 10pt; line-height: 1.6;">
-                    {!! nl2br(e($firstMessage->message)) !!}
+                    @php
+                        $lines = explode("\n", str_replace("\r", "", (string) $firstMessage->message));
+                        $parsedPoints = [];
+                        $parsedNotes = [];
+                        $isNumbered = false;
+                        foreach ($lines as $line) {
+                            $trimmed = trim($line);
+                            if ($trimmed === '') continue;
+                            if (preg_match('/^(\d+)[\.\)]\s*(.+)$/u', $trimmed, $m)) {
+                                $isNumbered = true;
+                                $parsedPoints[] = ['num' => $m[1], 'text' => $m[2]];
+                            } elseif ($isNumbered && !empty($parsedPoints)) {
+                                $parsedNotes[] = $trimmed;
+                            }
+                        }
+                    @endphp
+
+                    @if($isNumbered && count($parsedPoints) > 0)
+                        <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 12px;">
+                            @foreach($parsedPoints as $p)
+                                <tr>
+                                    <td style="width: 26px; vertical-align: top; border: none; padding: 4px 0; font-weight: bold; font-size: 10pt; height: auto;">
+                                        {{ $p['num'] }}.
+                                    </td>
+                                    <td style="vertical-align: top; border: none; padding: 4px 0; font-size: 10pt; line-height: 1.5; height: auto;">
+                                        {{ $p['text'] }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </table>
+                        @if(!empty($parsedNotes))
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #999; font-size: 9.5pt; font-style: italic; color: #333;">
+                                {!! nl2br(e(implode("\n", $parsedNotes))) !!}
+                            </div>
+                        @endif
+                    @else
+                        {!! nl2br(e($firstMessage->message)) !!}
+                    @endif
                 </td>
             </tr>
         </tbody>

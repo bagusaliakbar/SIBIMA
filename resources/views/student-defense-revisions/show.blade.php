@@ -78,9 +78,9 @@
                                 @endphp
                                 @if($firstExaminerMessage)
                                     <div class="bg-rose-50/50 dark:bg-rose-500/5 p-4 rounded-xl border border-rose-100 dark:border-rose-500/20 shadow-sm">
-                                        <p class="text-[11px] font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
-                                            "{!! nl2br(e($firstExaminerMessage->message)) !!}"
-                                        </p>
+                                        <div class="text-[11px] font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
+                                            <x-revision-message-content :message="$firstExaminerMessage->message" :is-me="false" theme="rose" />
+                                        </div>
                                         <div class="mt-3 flex items-center gap-3">
                                             <a href="{{ route('student-defense-revisions.print-pdf', $revision->id) }}" target="_blank" class="inline-flex items-center px-2 py-1 bg-rose-600 text-white rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-rose-700 transition-all shadow-sm">
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -127,7 +127,7 @@
                                         <span class="text-[9px] text-slate-400 font-medium">{{ $msg->created_at->format('H:i, d M') }}</span>
                                     </div>
                                     <div class="p-4 rounded-2xl shadow-sm text-sm font-medium leading-relaxed {{ $isMe ? 'bg-rose-600 text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700' }}">
-                                        {!! nl2br(e($msg->message)) !!}
+                                        <x-revision-message-content :message="$msg->message" :is-me="$isMe" theme="{{ $isMe ? 'rose' : 'rose' }}" />
                                         
                                         @if($msg->file_path)
                                             <div class="mt-3 pt-3 border-t {{ $isMe ? 'border-white/10' : 'border-slate-50 dark:border-slate-700' }} flex items-center gap-2 flex-wrap">

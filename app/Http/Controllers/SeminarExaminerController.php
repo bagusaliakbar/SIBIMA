@@ -133,6 +133,21 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             abort(403);
         }
 
+        if ($request->has('revision_points') && is_array($request->input('revision_points'))) {
+            $filteredPoints = array_values(array_filter(array_map('trim', $request->input('revision_points')), fn($p) => $p !== ''));
+            if (!empty($filteredPoints)) {
+                $compiled = [];
+                foreach ($filteredPoints as $idx => $point) {
+                    $compiled[] = ($idx + 1) . '. ' . $point;
+                }
+                if ($request->filled('additional_notes')) {
+                    $compiled[] = '';
+                    $compiled[] = 'Catatan Tambahan: ' . trim($request->input('additional_notes'));
+                }
+                $request->merge(['revision_notes' => implode("\n", $compiled)]);
+            }
+        }
+
         $request->validate([
             'revision_notes' => 'required|string',
             'revision_link' => 'nullable|url',
