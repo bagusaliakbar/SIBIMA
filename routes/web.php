@@ -179,9 +179,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:admin,kaprodi'])->group(function () {
         Route::get('/seminar-schedules/template', [App\Http\Controllers\SeminarScheduleController::class, 'downloadTemplate'])->name('seminar-schedules.template');
         Route::post('/seminar-schedules/import', [App\Http\Controllers\SeminarScheduleController::class, 'import'])->name('seminar-schedules.import');
+        Route::get('/seminar-schedules/export-batch-word', [App\Http\Controllers\SeminarScheduleController::class, 'exportBatchWord'])->name('seminar-schedules.export-batch-word');
+        Route::get('/seminar-schedules/{seminar_schedule}/export-word', [App\Http\Controllers\SeminarScheduleController::class, 'exportWord'])->name('seminar-schedules.export-word');
 
         Route::get('/thesis-defense-schedules/template', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'downloadTemplate'])->name('thesis-defense-schedules.template');
         Route::post('/thesis-defense-schedules/import', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'import'])->name('thesis-defense-schedules.import');
+        Route::get('/thesis-defense-schedules/export-batch-word', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportBatchWord'])->name('thesis-defense-schedules.export-batch-word');
+        Route::get('/thesis-defense-schedules/{thesis_defense_schedule}/export-word', [App\Http\Controllers\ThesisDefenseScheduleController::class, 'exportWord'])->name('thesis-defense-schedules.export-word');
 
         Route::get('/seminar-schedules/simulation', [App\Http\Controllers\ScheduleSimulationController::class, 'seminarIndex'])->name('seminar-schedules.simulation');
         Route::post('/seminar-schedules/simulation/run', [App\Http\Controllers\ScheduleSimulationController::class, 'seminarRun'])->name('seminar-schedules.simulation.run');

@@ -10,6 +10,7 @@ use App\Models\Thesis;
 use App\Models\User;
 use App\Models\Wave;
 use App\Services\ScheduleService;
+use App\Services\ScheduleWordExportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -428,6 +429,86 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
 
         $prefix = ($mySchedules && $user->role === 'dosen') ? 'Ringkasan_Jadwal_Sidang_' : 'Jadwal_Sidang_';
         return $pdf->download($prefix . str_replace([' ', '/', '\\'], '_', $thesisDefenseSchedule->title) . '.pdf');
+    }
+
+    public function exportBatchWord(Request $request, ScheduleWordExportService $wordService)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $selectedWaveId = $request->input('wave_id');
+
+        $query = ThesisDefenseSchedule::with([
+            'chairman', 
+            'moderator', 
+            'creator', 
+            'details' => function($dq) {
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
+        ]);
+
+        if ($selectedWaveId) {
+            $query->where('wave_id', $selectedWaveId);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->input('date'));
+        }
+
+        $schedules = $query->orderBy('date', 'asc')->orderBy('location', 'asc')->get();
+
+        if ($schedules->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada jadwal sidang yang ditemukan untuk diexport.');
+        }
+
+        $wave = $selectedWaveId ? Wave::find($selectedWaveId) : null;
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $tempFile = $wordService->exportDefenseBatch($schedules, $wave, $kaprodi);
+        $waveName = $wave ? str_replace([' ', '/', '\\'], '_', $wave->name) : 'Semua';
+        $fileName = "Jadwal_Sidang_Skripsi_Gelombang_{$waveName}.docx";
+
+        return response()->download($tempFile, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
+    }
+
+    public function exportWord(ThesisDefenseSchedule $thesisDefenseSchedule, ScheduleWordExportService $wordService)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $thesisDefenseSchedule->load([
+            'chairman', 
+            'moderator', 
+            'details' => function($dq) {
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
+        ]);
+
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $tempFile = $wordService->exportDefense($thesisDefenseSchedule, $kaprodi);
+        $fileName = 'Jadwal_Sidang_' . str_replace([' ', '/', '\\'], '_', $thesisDefenseSchedule->title) . '.docx';
+
+        return response()->download($tempFile, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
     }
 
     public function downloadTemplate()

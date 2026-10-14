@@ -476,6 +476,16 @@
                             <span class="whitespace-nowrap">Cetak Semua Ruangan (PDF)</span>
                         </a>
 
+                        <!-- Cetak Semua Ruangan (Batch Word) Button -->
+                        <a href="{{ route('seminar-schedules.export-batch-word', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
+                            title="Cetak seluruh ruangan dalam 1 file Word (.docx)">
+                            <svg class="w-4 h-4 text-blue-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap">Cetak Semua (Word)</span>
+                        </a>
+
                         <!-- Add Button -->
                         <a href="{{ route('seminar-schedules.create', ['wave_id' => $selectedWaveId]) }}"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
@@ -539,6 +549,9 @@
                                     <div class="flex justify-end items-center gap-1">
                                         <a href="{{ route('seminar-schedules.export-pdf', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/pdf" title="Export PDF">
                                             <svg class="w-5 h-5 group-hover/pdf:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        </a>
+                                        <a href="{{ route('seminar-schedules.export-word', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 transition-all group/word" title="Export Word (.docx)">
+                                            <svg class="w-5 h-5 group-hover/word:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         </a>
                                         <a href="{{ route('seminar-schedules.show', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 transition-all group/view" title="Detail">
                                             <svg class="w-5 h-5 group-hover/view:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>

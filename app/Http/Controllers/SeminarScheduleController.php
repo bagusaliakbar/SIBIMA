@@ -10,6 +10,7 @@ use App\Models\Thesis;
 use App\Models\User;
 use App\Models\Wave;
 use App\Services\ScheduleService;
+use App\Services\ScheduleWordExportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -428,6 +429,86 @@ class SeminarScheduleController extends Controller implements HasMiddleware
 
         $prefix = ($mySchedules && $user->role === 'dosen') ? 'Ringkasan_Jadwal_Seminar_' : 'Jadwal_Seminar_';
         return $pdf->download($prefix . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.pdf');
+    }
+
+    public function exportBatchWord(Request $request, ScheduleWordExportService $wordService)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $selectedWaveId = $request->input('wave_id');
+
+        $query = SeminarSchedule::with([
+            'chairman', 
+            'moderator', 
+            'creator', 
+            'details' => function($dq) {
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
+        ]);
+
+        if ($selectedWaveId) {
+            $query->where('wave_id', $selectedWaveId);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->input('date'));
+        }
+
+        $schedules = $query->orderBy('date', 'asc')->orderBy('location', 'asc')->get();
+
+        if ($schedules->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada jadwal seminar yang ditemukan untuk diexport.');
+        }
+
+        $wave = $selectedWaveId ? Wave::find($selectedWaveId) : null;
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+
+        $tempFile = $wordService->exportSeminarBatch($schedules, $wave, $kaprodi);
+        $waveName = $wave ? str_replace([' ', '/', '\\'], '_', $wave->name) : 'Semua';
+        $fileName = "Jadwal_Seminar_Gelombang_{$waveName}.docx";
+
+        return response()->download($tempFile, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
+    }
+
+    public function exportWord(SeminarSchedule $seminarSchedule, ScheduleWordExportService $wordService)
+    {
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $seminarSchedule->load([
+            'chairman', 
+            'moderator', 
+            'details' => function($dq) {
+                $dq->with([
+                    'thesis.student',
+                    'thesis.pembimbing1',
+                    'thesis.pembimbing2',
+                    'examiner1',
+                    'examiner2'
+                ]);
+            }
+        ]);
+
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $tempFile = $wordService->exportSeminar($seminarSchedule, $kaprodi);
+        $fileName = 'Jadwal_Seminar_' . str_replace([' ', '/', '\\'], '_', $seminarSchedule->title) . '.docx';
+
+        return response()->download($tempFile, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
     }
 
     public function downloadTemplate()
