@@ -653,7 +653,6 @@
                                     <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai Akhir</span>
                                     <div class="flex items-baseline gap-2">
                                         <span class="text-2xl font-black text-slate-800 dark:text-slate-100" x-text="finalScore">0.00</span>
-                                        <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800" x-text="gradeLetter">A</span>
                                     </div>
                                 </div>
                             </div>
