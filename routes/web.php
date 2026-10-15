@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/seminar-examiner/revisions/{revision}/unapprove', [App\Http\Controllers\SeminarExaminerController::class, 'unapproveRevision'])->name('seminar-examiner.unapprove-revision');
     Route::post('/seminar-examiner/{detail}/approve-direct', [App\Http\Controllers\SeminarExaminerController::class, 'approveRevisionDirect'])->name('seminar-examiner.approve-revision-direct');
     Route::get('/seminar-examiner/{detail}/export-berita-acara', [App\Http\Controllers\SeminarExaminerController::class, 'exportBeritaAcara'])->name('seminar-examiner.export-berita-acara');
+    Route::get('/seminar-examiner/revisions/{revision}/print', [App\Http\Controllers\SeminarExaminerController::class, 'printRevision'])->name('seminar-examiner.print-revision');
 
     // Thesis Defense Examiner Routes
     Route::get('/defense-examiner', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'index'])->name('defense-examiner.index');
@@ -128,6 +129,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/defense-examiner/revisions/{revision}/unapprove', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'unapproveRevision'])->name('defense-examiner.unapprove-revision');
     Route::post('/defense-examiner/{detail}/approve-direct', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'approveRevisionDirect'])->name('defense-examiner.approve-revision-direct');
     Route::get('/defense-examiner/{detail}/export-berita-acara', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'exportBeritaAcara'])->name('defense-examiner.export-berita-acara');
+    Route::get('/defense-examiner/revisions/{revision}/print', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'printRevision'])->name('defense-examiner.print-revision');
 
     // Student Seminar Revision Routes
     Route::get('/student-seminar-revisions', [App\Http\Controllers\StudentSeminarRevisionController::class, 'index'])->name('student-seminar-revisions.index');

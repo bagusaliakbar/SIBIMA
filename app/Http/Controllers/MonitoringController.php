@@ -258,7 +258,7 @@ class MonitoringController extends Controller implements HasMiddleware
         $search = $request->input('search');
         [$activeWave, $selectedWaveId] = $this->monitoringService->getActiveWave($request->input('wave_id'));
 
-        $seminarDetails = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions'])
+        $seminarDetails = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions.messages'])
             ->whereHas('thesis')
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('thesis.seminarApplication', function($query) use ($selectedWaveId) {
@@ -287,7 +287,7 @@ class MonitoringController extends Controller implements HasMiddleware
         $search = $request->input('search');
         [$activeWave, $selectedWaveId] = $this->monitoringService->getActiveWave($request->input('wave_id'));
 
-        $defenseDetails = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions'])
+        $defenseDetails = ThesisDefenseScheduleDetail::with(['thesis.student', 'thesis.pembimbing1', 'schedule', 'examiner1', 'examiner2', 'revisions.messages'])
             ->whereHas('thesis')
             ->when($selectedWaveId, function($q) use ($selectedWaveId) {
                 $q->whereHas('thesis.defenseApplication', function($query) use ($selectedWaveId) {

@@ -80,7 +80,12 @@ class StudentThesisDefenseRevisionController extends Controller implements HasMi
         $user = Auth::user();
         $revision->load(['examiner', 'detail.thesis.student', 'detail.schedule', 'messages']);
 
-        if ($revision->detail->thesis->student_id !== $user->id && $revision->examiner_id !== $user->id) abort(403);
+        $isStudent = $revision->detail->thesis->student_id === $user->id;
+        $isExaminer = $revision->examiner_id === $user->id;
+        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+        $isAdvisor = $revision->detail->thesis && ($revision->detail->thesis->pembimbing1_id === $user->id || $revision->detail->thesis->pembimbing2_id === $user->id);
+
+        if (!$isStudent && !$isExaminer && !$isStaff && !$isAdvisor) abort(403);
 
         $firstMessage = $revision->messages->where('sender_id', $revision->examiner_id)->first();
         if (!$firstMessage) return back()->with('error', 'Belum ada catatan revisi dari penguji.');

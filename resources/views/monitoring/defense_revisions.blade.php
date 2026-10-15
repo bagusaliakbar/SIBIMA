@@ -164,13 +164,22 @@
                                             <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[58px]">
                                                 <div class="flex items-center justify-between gap-1 mb-1">
                                                     <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
-                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
-                                                        <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}" 
-                                                           class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
-                                                           title="Kelola / Input Revisi">
-                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                        </a>
-                                                    @endif
+                                                    <div class="flex items-center gap-1">
+                                                        @if($rev1 && $rev1->messages->where('sender_id', $detail->examiner1_id)->count() > 0)
+                                                            <a href="{{ route('defense-examiner.print-revision', $rev1->id) }}" target="_blank"
+                                                               class="p-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
+                                                               title="Cetak Poin Revisi Penguji 1 (PDF)">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                            </a>
+                                                        @endif
+                                                        @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
+                                                            <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                               class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
+                                                               title="Kelola / Input Revisi">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     @if($rev1 && $rev1->isApproved())
@@ -220,13 +229,22 @@
                                             <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[58px]">
                                                 <div class="flex items-center justify-between gap-1 mb-1">
                                                     <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
-                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
-                                                        <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}" 
-                                                           class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
-                                                           title="Kelola / Input Revisi">
-                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                        </a>
-                                                    @endif
+                                                    <div class="flex items-center gap-1">
+                                                        @if($rev2 && $rev2->messages->where('sender_id', $detail->examiner2_id)->count() > 0)
+                                                            <a href="{{ route('defense-examiner.print-revision', $rev2->id) }}" target="_blank"
+                                                               class="p-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
+                                                               title="Cetak Poin Revisi Penguji 2 (PDF)">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                            </a>
+                                                        @endif
+                                                        @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
+                                                            <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}" 
+                                                               class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
+                                                               title="Kelola / Input Revisi">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     @if($rev2 && $rev2->isApproved())

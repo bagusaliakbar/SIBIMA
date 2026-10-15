@@ -374,4 +374,27 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
         $fileName = 'Berita_Acara_Sidang_' . str_replace(' ', '_', $detail->thesis->student->name) . '.pdf';
         return $pdf->download($fileName);
     }
+
+    public function printRevision(\App\Models\ThesisDefenseRevision $revision)
+    {
+        $user = Auth::user();
+        $revision->load(['examiner', 'detail.thesis.student', 'detail.schedule', 'messages']);
+
+        $isExaminer = $revision->examiner_id === $user->id;
+        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+        $isAdvisor = $revision->detail->thesis && ($revision->detail->thesis->pembimbing1_id === $user->id || $revision->detail->thesis->pembimbing2_id === $user->id);
+        $isStudent = $revision->detail->thesis && $revision->detail->thesis->student_id === $user->id;
+
+        if (!$isExaminer && !$isStaff && !$isAdvisor && !$isStudent) {
+            abort(403);
+        }
+
+        $firstMessage = $revision->messages->where('sender_id', $revision->examiner_id)->first();
+        if (!$firstMessage) {
+            return back()->with('error', 'Belum ada catatan atau poin revisi dari penguji.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('student-defense-revisions.print', compact('revision', 'firstMessage'));
+        return $pdf->stream('Pernyataan_Revisi_Sidang_' . ($revision->detail->thesis->student->identifier ?? 'Mahasiswa') . '.pdf');
+    }
 }
