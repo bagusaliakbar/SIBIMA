@@ -1,45 +1,43 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                @php
-                    $isStaff = in_array(auth()->user()->role, ['admin', 'kaprodi']);
-                    $backUrl = match(request('redirect_to')) {
-                        'monitoring-revisions' => route('monitoring.revisions'),
-                        'monitoring-scores', 'monitoring' => route('monitoring.revisions'),
-                        default => $isStaff ? route('monitoring.revisions') : route('seminar-examiner.index'),
-                    };
-                    $backLabel = match(request('redirect_to')) {
-                        'monitoring-revisions' => 'Monitoring Revisi Seminar',
-                        'monitoring-scores', 'monitoring' => 'Rekap Nilai Seminar',
-                        default => $isStaff ? 'Monitoring Revisi Seminar' : 'Tugas Penguji Seminar',
-                    };
-                @endphp
-                <x-breadcrumb :items="[
-                    ['label' => $backLabel, 'route' => $backUrl],
-                    ['label' => 'Riwayat Revisi', 'route' => null]
-                ]" />
-                <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
-                    Detail Mahasiswa & Riwayat Revisi Seminar
-                </h2>
-                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
-                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser))
-                        Mode {{ ucfirst(auth()->user()->role) }}: Mengelola revisi atas nama <span class="font-black text-indigo-600 dark:text-indigo-400 ml-1">{{ $targetUser->name }}</span>
-                    @else
-                        Pantau progres perbaikan dan berikan feedback berkelanjutan
-                    @endif
-                </p>
-            </div>
-            <div class="flex items-center">
-                <a href="{{ $backUrl }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-sm hover:-translate-x-0.5 group"
-                   title="Kembali ke {{ $backLabel }}">
-                    <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform group-hover:-translate-x-0.5 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    <span>Kembali</span>
-                </a>
-            </div>
+        @php
+            $isStaff = in_array(auth()->user()->role, ['admin', 'kaprodi']);
+            $backUrl = match(request('redirect_to')) {
+                'monitoring-revisions' => route('monitoring.revisions'),
+                'monitoring-scores', 'monitoring' => route('monitoring.revisions'),
+                default => $isStaff ? route('monitoring.revisions') : route('seminar-examiner.index'),
+            };
+            $backLabel = match(request('redirect_to')) {
+                'monitoring-revisions' => 'Monitoring Revisi Seminar',
+                'monitoring-scores', 'monitoring' => 'Rekap Nilai Seminar',
+                default => $isStaff ? 'Monitoring Revisi Seminar' : 'Tugas Penguji Seminar',
+            };
+        @endphp
+        <div>
+            <x-breadcrumb :items="[
+                ['label' => $backLabel, 'route' => $backUrl],
+                ['label' => 'Riwayat Revisi', 'route' => null]
+            ]" />
+            <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight mt-1">
+                Detail Mahasiswa & Riwayat Revisi Seminar
+            </h2>
+            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
+                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser))
+                    Mode {{ ucfirst(auth()->user()->role) }}: Mengelola revisi atas nama <span class="font-black text-indigo-600 dark:text-indigo-400 ml-1">{{ $targetUser->name }}</span>
+                @else
+                    Pantau progres perbaikan dan berikan feedback berkelanjutan
+                @endif
+            </p>
+        </div>
+        <div class="flex items-center shrink-0 mt-3 sm:mt-0">
+            <a href="{{ $backUrl }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-sm hover:-translate-x-0.5 group"
+               title="Kembali ke {{ $backLabel }}">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform group-hover:-translate-x-0.5 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>Kembali</span>
+            </a>
         </div>
     </x-slot>
 
