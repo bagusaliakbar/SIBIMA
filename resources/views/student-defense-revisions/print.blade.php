@@ -4,37 +4,37 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Pernyataan Revisi Sidang</title>
     <style>
-        @page { margin: 1.5cm; }
-        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11pt; color: #000; line-height: 1.4; }
-        .kop-surat { width: 100%; margin-bottom: 20px; text-align: center; }
+        @page { margin: 1.2cm 1.5cm 1cm 1.5cm; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 10pt; color: #000; line-height: 1.35; }
+        .kop-surat { width: 100%; margin-bottom: 12px; text-align: center; }
         .kop-img { width: 100%; height: auto; display: block; }
-        .kop-table-wrapper { border-bottom: 4px double #000; padding-bottom: 10px; }
+        .kop-table-wrapper { border-bottom: 4px double #000; padding-bottom: 8px; }
         .kop-surat table { width: 100%; border-collapse: collapse; }
-        .kop-surat .logo { width: 85px; text-align: left; vertical-align: middle; }
+        .kop-surat .logo { width: 80px; text-align: left; vertical-align: middle; }
         .kop-surat .text { text-align: center; vertical-align: middle; }
-        .kop-surat .text h1 { font-size: 14pt; margin: 0; font-weight: normal; letter-spacing: 1px; }
-        .kop-surat .text h2 { font-size: 19pt; margin: 2px 0; font-weight: bold; }
-        .kop-surat .text p { font-size: 8.5pt; margin: 1px 0; color: #333; }
+        .kop-surat .text h1 { font-size: 13pt; margin: 0; font-weight: normal; letter-spacing: 1px; }
+        .kop-surat .text h2 { font-size: 17pt; margin: 2px 0; font-weight: bold; }
+        .kop-surat .text p { font-size: 8pt; margin: 1px 0; color: #333; }
         
-        .title { text-align: center; font-size: 13pt; font-weight: bold; margin-bottom: 25px; text-decoration: none; }
-        .opening { margin-bottom: 15px; text-align: left; }
+        .title { text-align: center; font-size: 12.5pt; font-weight: bold; margin-bottom: 12px; text-decoration: none; }
+        .opening { margin-bottom: 10px; text-align: left; font-size: 10pt; }
         
-        .biodata { margin-bottom: 25px; }
+        .biodata { margin-bottom: 12px; }
         .biodata table { width: 100%; border-collapse: collapse; }
-        .biodata td { padding: 4px 0; vertical-align: top; font-weight: bold; }
+        .biodata td { padding: 2.5px 0; vertical-align: top; font-weight: bold; font-size: 9.5pt; }
         .biodata .label { width: 130px; }
         .biodata .colon { width: 20px; }
         
-        .opini-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed; }
-        .opini-table th { background-color: #d1d5db; border: 1.5px solid #000; padding: 10px; font-size: 13pt; font-weight: bold; text-align: center; }
-        .opini-table td { border: 1.5px solid #000; padding: 20px; height: 450px; vertical-align: top; word-wrap: break-word; }
+        .opini-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; page-break-inside: avoid; }
+        .opini-table th { background-color: #d1d5db; border: 1.5px solid #000; padding: 7px 10px; font-size: 11pt; font-weight: bold; text-align: center; }
+        .opini-table td { border: 1.5px solid #000; padding: 12px 15px; height: 210px; vertical-align: top; word-wrap: break-word; }
         
-        .footer { width: 100%; margin-top: 10px; }
+        .footer { width: 100%; margin-top: 10px; page-break-inside: avoid; }
         .footer-content { float: right; width: 260px; text-align: left; }
-        .footer-content p { margin: 3px 0; font-size: 11pt; }
-        .signature-space { height: 90px; }
+        .footer-content p { margin: 2px 0; font-size: 10pt; }
+        .signature-space { height: 60px; }
         
-        .note { font-size: 10pt; font-style: italic; margin-top: 50px; }
+        .note { font-size: 8.5pt; font-style: italic; margin-top: 15px; }
     </style>
 </head>
 <body>
