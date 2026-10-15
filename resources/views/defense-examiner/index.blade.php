@@ -15,7 +15,7 @@
             :footer="$examinations->hasPages() ? $examinations->links() : null">
             
             <x-slot name="headerActions">
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div class="flex flex-col sm:flex-row items-center gap-3">
                     <x-search-input 
                         name="search" 
                         :value="$search ?? ''" 
@@ -25,12 +25,13 @@
                             'wave_id' => $selectedWaveId ?? ''
                         ]" />
 
-                    <form action="{{ route('defense-examiner.index') }}" method="GET" class="relative group">
+                    <form action="{{ route('defense-examiner.index') }}" method="GET" class="relative group m-0 p-0 h-10 flex items-center" style="margin: 0 !important; padding: 0 !important; height: 40px !important; display: flex !important; align-items: center !important;">
                         @if(!empty($search))
                             <input type="hidden" name="search" value="{{ $search }}">
                         @endif
                         <select name="wave_id" onchange="this.form.submit()" 
-                                class="w-full sm:w-auto pl-4 pr-10 py-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm min-w-[220px] text-slate-700 dark:text-slate-300">
+                                class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors shadow-2xs min-w-[220px] cursor-pointer"
+                                style="height: 40px !important; margin: 0 !important; box-sizing: border-box !important;">
                             <option value="" {{ empty($selectedWaveId) ? 'selected' : '' }}>
                                 📅 Jadwal Mendatang (Hari Ini+)
                             </option>
