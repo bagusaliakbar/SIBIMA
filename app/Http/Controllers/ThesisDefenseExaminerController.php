@@ -389,7 +389,10 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
             abort(403);
         }
 
-        $firstMessage = $revision->messages->where('sender_id', $revision->examiner_id)->first();
+        $firstMessage = $revision->messages->where('sender_id', $revision->examiner_id)->first()
+            ?? $revision->messages->where('sender_id', '!=', $revision->detail->thesis?->student_id)->first()
+            ?? $revision->messages->first();
+
         if (!$firstMessage) {
             return back()->with('error', 'Belum ada catatan atau poin revisi dari penguji.');
         }

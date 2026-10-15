@@ -165,11 +165,12 @@
                                                 <div class="flex items-center justify-between gap-1 mb-1">
                                                     <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
                                                     <div class="flex items-center gap-1">
-                                                        @if($rev1 && $rev1->messages->where('sender_id', $detail->examiner1_id)->count() > 0)
+                                                        @if($rev1 && $rev1->messages->count() > 0)
                                                             <a href="{{ route('defense-examiner.print-revision', $rev1->id) }}" target="_blank"
-                                                               class="p-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
+                                                               class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
                                                                title="Cetak Poin Revisi Penguji 1 (PDF)">
-                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                                <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                                <span class="text-[8px] font-black uppercase">Cetak</span>
                                                             </a>
                                                         @endif
                                                         @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
@@ -230,11 +231,12 @@
                                                 <div class="flex items-center justify-between gap-1 mb-1">
                                                     <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
                                                     <div class="flex items-center gap-1">
-                                                        @if($rev2 && $rev2->messages->where('sender_id', $detail->examiner2_id)->count() > 0)
+                                                        @if($rev2 && $rev2->messages->count() > 0)
                                                             <a href="{{ route('defense-examiner.print-revision', $rev2->id) }}" target="_blank"
-                                                               class="p-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
+                                                               class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
                                                                title="Cetak Poin Revisi Penguji 2 (PDF)">
-                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                                <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                                <span class="text-[8px] font-black uppercase">Cetak</span>
                                                             </a>
                                                         @endif
                                                         @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
@@ -331,14 +333,42 @@
                                     </div>
                                 </td>
 
-                                <td class="py-4 px-6 text-center">
-                                    <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
-                                       class="inline-flex items-center gap-2.5 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all border border-indigo-100 shadow-sm whitespace-nowrap">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                                        </svg>
-                                        Cetak Berita Acara
-                                    </a>
+                                <td class="py-4 px-6 text-center align-middle">
+                                    <div class="flex flex-col items-center gap-1.5 whitespace-nowrap">
+                                        <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
+                                           class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all border border-indigo-100 dark:border-indigo-800 shadow-xs whitespace-nowrap w-full justify-center">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                            </svg>
+                                            Berita Acara
+                                        </a>
+
+                                        @php
+                                            $hasRev1Notes = $rev1 && $rev1->messages->count() > 0;
+                                            $hasRev2Notes = $rev2 && $rev2->messages->count() > 0;
+                                        @endphp
+
+                                        @if($hasRev1Notes || $hasRev2Notes)
+                                            <div class="flex items-center gap-1 w-full">
+                                                @if($hasRev1Notes)
+                                                    <a href="{{ route('defense-examiner.print-revision', $rev1->id) }}" target="_blank"
+                                                       class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                                       title="Cetak Poin Revisi Penguji 1 ({{ $detail->examiner1?->name }})">
+                                                        <svg class="w-3 h-3 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                        <span>Revisi P1</span>
+                                                    </a>
+                                                @endif
+                                                @if($hasRev2Notes)
+                                                    <a href="{{ route('defense-examiner.print-revision', $rev2->id) }}" target="_blank"
+                                                       class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                                       title="Cetak Poin Revisi Penguji 2 ({{ $detail->examiner2?->name }})">
+                                                        <svg class="w-3 h-3 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                        <span>Revisi P2</span>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
