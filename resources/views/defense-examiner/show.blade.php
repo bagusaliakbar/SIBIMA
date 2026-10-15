@@ -178,8 +178,8 @@
                             $rev = $ex['revision'];
                             $hasRevisionNotes = $rev && $rev->messages->where('sender_id', $ex['user']->id)->count() > 0;
                         @endphp
-                        <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $ex['user']->id, 'redirect_to' => request('redirect_to')]) }}"
-                           class="relative p-4 rounded-xl border transition-all flex flex-col justify-between {{ $isSelected ? 'bg-white dark:bg-slate-800 border-rose-500 shadow-md ring-2 ring-rose-500/20' : 'bg-white/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300' }}">
+                        <div onclick="window.location.href='{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $ex['user']->id, 'redirect_to' => request('redirect_to')]) }}'"
+                             class="cursor-pointer relative p-4 rounded-xl border transition-all flex flex-col justify-between {{ $isSelected ? 'bg-white dark:bg-slate-800 border-rose-500 shadow-md ring-2 ring-rose-500/20' : 'bg-white/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300' }}">
                             <div>
                                 <div class="flex items-center justify-between gap-2 mb-2">
                                     <span class="text-[9px] font-black uppercase tracking-wider {{ $isSelected ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400' }}">
@@ -190,14 +190,14 @@
                                             <a href="{{ route('defense-examiner.print-revision', $rev->id) }}" target="_blank"
                                                class="p-1 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-md transition-all"
                                                title="Cetak Poin Revisi {{ $ex['role_label'] }} (PDF)"
-                                               @click.stop>
+                                               onclick="event.stopPropagation();">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                             </a>
                                         @elseif(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $ex['user'])
                                             <a href="{{ route('monitoring.defense-revisions.print', ['detail' => $detail->id, 'examiner_id' => $ex['user']->id]) }}" target="_blank"
                                                class="p-1 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-md transition-all"
                                                title="Cetak Lembar Revisi {{ $ex['role_label'] }} (PDF)"
-                                               @click.stop>
+                                               onclick="event.stopPropagation();">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                             </a>
                                         @endif
@@ -230,7 +230,7 @@
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
                             @endif
-                        </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
