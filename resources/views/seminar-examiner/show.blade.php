@@ -3,15 +3,16 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 @php
+                    $isStaff = in_array(auth()->user()->role, ['admin', 'kaprodi']);
                     $backUrl = match(request('redirect_to')) {
                         'monitoring-revisions' => route('monitoring.revisions'),
-                        'monitoring-scores' => route('monitoring.revisions'),
-                        default => route('seminar-examiner.index'),
+                        'monitoring-scores', 'monitoring' => route('monitoring.revisions'),
+                        default => $isStaff ? route('monitoring.revisions') : route('seminar-examiner.index'),
                     };
                     $backLabel = match(request('redirect_to')) {
                         'monitoring-revisions' => 'Monitoring Revisi Seminar',
-                        'monitoring-scores' => 'Rekap Nilai Seminar',
-                        default => 'Tugas Penguji Seminar',
+                        'monitoring-scores', 'monitoring' => 'Rekap Nilai Seminar',
+                        default => $isStaff ? 'Monitoring Revisi Seminar' : 'Tugas Penguji Seminar',
                     };
                 @endphp
                 <x-breadcrumb :items="[
@@ -29,25 +30,14 @@
                     @endif
                 </p>
             </div>
-            <div class="flex items-center gap-2.5">
-                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']))
-                    <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $actingId]) }}" target="_blank"
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-indigo-500/20"
-                       title="Cetak Lembar Revisi Penguji Ini (PDF)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        <span>Cetak Revisi</span>
-                    </a>
-                @elseif($myRevision)
-                    <a href="{{ route('seminar-examiner.print-revision', $myRevision->id) }}" target="_blank"
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-indigo-500/20"
-                       title="Cetak Lembar Poin Revisi Penguji Ini (PDF)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        <span>Cetak Revisi</span>
-                    </a>
-                @endif
-                <a href="{{ $backUrl }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Kembali
+            <div class="flex items-center">
+                <a href="{{ $backUrl }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-sm hover:-translate-x-0.5 group"
+                   title="Kembali ke {{ $backLabel }}">
+                    <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform group-hover:-translate-x-0.5 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span>Kembali</span>
                 </a>
             </div>
         </div>

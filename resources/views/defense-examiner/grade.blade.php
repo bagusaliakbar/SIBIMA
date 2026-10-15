@@ -2,8 +2,21 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
+                @php
+                    $isStaff = in_array(auth()->user()->role, ['admin', 'kaprodi']);
+                    $backUrl = match(request('redirect_to')) {
+                        'monitoring-revisions' => route('monitoring.defense-revisions'),
+                        'monitoring', 'monitoring-scores' => route('monitoring.defense-scores'),
+                        default => $isStaff ? route('monitoring.defense-scores') : route('defense-examiner.index'),
+                    };
+                    $backLabel = match(request('redirect_to')) {
+                        'monitoring-revisions' => 'Monitoring Revisi Sidang',
+                        'monitoring', 'monitoring-scores' => 'Rekap Nilai Sidang',
+                        default => $isStaff ? 'Rekap Nilai Sidang' : 'Tugas Penguji Sidang',
+                    };
+                @endphp
                 <x-breadcrumb :items="[
-                    ['label' => request('redirect_to') === 'monitoring' ? 'Rekap Nilai Sidang' : 'Tugas Penguji Sidang', 'route' => request('redirect_to') === 'monitoring' ? route('monitoring.defense-scores') : route('defense-examiner.index')],
+                    ['label' => $backLabel, 'route' => $backUrl],
                     ['label' => 'Input Nilai Sidang', 'route' => null]
                 ]" />
                 <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight flex items-center">
@@ -17,13 +30,16 @@
                     @endif
                 </p>
             </div>
-            @php
-                $backUrl = request('redirect_to') === 'monitoring' ? route('monitoring.defense-scores') : route('defense-examiner.index');
-            @endphp
-            <a href="{{ $backUrl }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Kembali
-            </a>
+            <div class="flex items-center">
+                <a href="{{ $backUrl }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-sm hover:-translate-x-0.5 group"
+                   title="Kembali ke {{ $backLabel }}">
+                    <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform group-hover:-translate-x-0.5 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span>Kembali</span>
+                </a>
+            </div>
         </div>
     </x-slot>
 
