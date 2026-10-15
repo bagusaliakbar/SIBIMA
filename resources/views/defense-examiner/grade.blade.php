@@ -428,13 +428,14 @@
                                 <td colspan="4" class="py-3 px-6 text-right uppercase tracking-wider text-slate-600 dark:text-slate-400">Rata-rata Skor</td>
                                 <td class="py-3 px-4 text-center text-slate-800 dark:text-slate-100 font-black text-xs" x-text="avgScore">0</td>
                             </tr>
-                            <tr class="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400">
-                                <td colspan="4" class="py-3.5 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Akhir</td>
-                                <td class="py-3.5 px-4 text-center font-black text-base">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <span x-text="finalScore">0</span>
-                                        <span class="text-[10px] px-1.5 py-0.5 bg-emerald-600 text-white rounded font-black" x-text="gradeLetter">A</span>
-                                    </div>
+                            <tr class="bg-emerald-50/60 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-t border-emerald-100 dark:border-emerald-800/40">
+                                <td colspan="4" class="py-3 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Akhir</td>
+                                <td class="py-3 px-4 text-center font-black text-base" x-text="finalScore">0</td>
+                            </tr>
+                            <tr class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-t border-emerald-100/80 dark:border-emerald-800/40">
+                                <td colspan="4" class="py-3 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Huruf</td>
+                                <td class="py-3 px-4 text-center font-black text-base">
+                                    <span class="inline-flex items-center justify-center min-w-[28px] px-2.5 py-0.5 bg-emerald-600 text-white rounded-md text-xs font-black shadow-xs" x-text="gradeLetter">A</span>
                                 </td>
                             </tr>
                         </tfoot>
@@ -667,6 +668,7 @@
                                     <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai Akhir</span>
                                     <div class="flex items-baseline gap-2">
                                         <span class="text-2xl font-black text-slate-800 dark:text-slate-100" x-text="finalScore">0.00</span>
+                                        <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800" x-text="gradeLetter">A</span>
                                     </div>
                                 </div>
                             </div>

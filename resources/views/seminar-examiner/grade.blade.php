@@ -419,13 +419,14 @@
                                 <td colspan="4" class="py-3 px-6 text-right uppercase tracking-wider text-slate-600 dark:text-slate-400">Rata-rata Skor</td>
                                 <td class="py-3 px-4 text-center text-slate-800 dark:text-slate-100 font-black text-xs" x-text="avgScore">0</td>
                             </tr>
-                            <tr class="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400">
-                                <td colspan="4" class="py-3.5 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Akhir</td>
-                                <td class="py-3.5 px-4 text-center font-black text-base">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <span x-text="finalScore">0</span>
-                                        <span class="text-[10px] px-1.5 py-0.5 bg-indigo-600 text-white rounded font-black" x-text="gradeLetter">A</span>
-                                    </div>
+                            <tr class="bg-indigo-50/60 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 border-t border-indigo-100 dark:border-indigo-800/40">
+                                <td colspan="4" class="py-3 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Akhir</td>
+                                <td class="py-3 px-4 text-center font-black text-base" x-text="finalScore">0</td>
+                            </tr>
+                            <tr class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border-t border-indigo-100/80 dark:border-indigo-800/40">
+                                <td colspan="4" class="py-3 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Huruf</td>
+                                <td class="py-3 px-4 text-center font-black text-base">
+                                    <span class="inline-flex items-center justify-center min-w-[28px] px-2.5 py-0.5 bg-indigo-600 text-white rounded-md text-xs font-black shadow-xs" x-text="gradeLetter">A</span>
                                 </td>
                             </tr>
                         </tfoot>
