@@ -259,6 +259,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/monitoring/weekly', [App\Http\Controllers\MonitoringController::class, 'weekly'])->name('monitoring.weekly');
         Route::get('/monitoring/revisions', [App\Http\Controllers\MonitoringController::class, 'revisions'])->name('monitoring.revisions');
         Route::get('/monitoring/defense-revisions', [App\Http\Controllers\MonitoringController::class, 'defenseRevisions'])->name('monitoring.defense-revisions');
+        Route::get('/monitoring/seminar-revisions/{detail}/print', [App\Http\Controllers\MonitoringController::class, 'printSeminarRevision'])->name('monitoring.seminar-revisions.print');
+        Route::get('/monitoring/defense-revisions/{detail}/print', [App\Http\Controllers\MonitoringController::class, 'printDefenseRevision'])->name('monitoring.defense-revisions.print');
+        Route::get('/monitoring/batch-export-revisions', [App\Http\Controllers\MonitoringController::class, 'batchExportRevisions'])->name('monitoring.batch-export-revisions');
         Route::get('/monitoring/defense-scores/export-excel', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresExcel'])->name('monitoring.defense-scores.export-excel');
         Route::get('/monitoring/defense-scores/export-pdf', [App\Http\Controllers\MonitoringController::class, 'exportDefenseScoresPdf'])->name('monitoring.defense-scores.export-pdf');
         Route::get('/monitoring/advanced-reporting', [App\Http\Controllers\AdvancedReportingController::class, 'index'])->name('monitoring.advanced-reporting');

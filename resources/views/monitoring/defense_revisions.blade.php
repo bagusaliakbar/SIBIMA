@@ -21,7 +21,14 @@
                 this.selectedIds = [...this.allIds];
             }
         },
-        downloadSelected() {
+        downloadSelectedRevisions() {
+            if (this.selectedIds.length === 0) {
+                alert('Pilih minimal satu mahasiswa.');
+                return;
+            }
+            window.location.href = '{{ route('monitoring.batch-export-revisions') }}?category=defense&ids=' + this.selectedIds.join(',');
+        },
+        downloadSelectedBeritaAcara() {
             if (this.selectedIds.length === 0) {
                 alert('Pilih minimal satu mahasiswa.');
                 return;
@@ -65,20 +72,39 @@
                 </form>
             </div>
 
-            <!-- Right: ZIP Action Buttons -->
+            <!-- Right: ZIP & Export Action Buttons -->
             <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-                <!-- Batch Actions (ZIP Selected) -->
-                <button @click="downloadSelected()" 
+                <!-- Batch Actions (ZIP Lembar Revisi Terpilih) -->
+                <button @click="downloadSelectedRevisions()" 
                         x-show="selectedIds.length > 0"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md animate-in fade-in zoom-in duration-200">
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md animate-in fade-in zoom-in duration-200"
+                        title="Download ZIP Lembar Revisi Sidang Mahasiswa Terpilih">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    ZIP Revisi (<span x-text="selectedIds.length"></span>)
+                </button>
+
+                <!-- ZIP Semua Revisi -->
+                <a href="{{ route('monitoring.batch-export-revisions', ['category' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 rounded-2xl text-xs font-bold transition-all shadow-sm group w-full sm:w-auto justify-center"
+                   title="Download ZIP Semua Lembar Revisi Sidang (Semua Mahasiswa)">
+                    <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    ZIP Semua Revisi
+                </a>
+
+                <!-- Batch Actions (ZIP Berita Acara) -->
+                <button @click="downloadSelectedBeritaAcara()" 
+                        x-show="selectedIds.length > 0"
+                        class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl text-xs font-bold transition-all shadow-md animate-in fade-in zoom-in duration-200"
+                        title="Download ZIP Berita Acara Sidang Mahasiswa Terpilih">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    ZIP Terpilih (<span x-text="selectedIds.length"></span>)
+                    ZIP B.A (<span x-text="selectedIds.length"></span>)
                 </button>
 
                 <a href="{{ route('monitoring.batch-export-berita-acara', ['category' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-bold transition-all shadow-md group w-full sm:w-auto justify-center">
+                   class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-bold transition-all shadow-md group w-full sm:w-auto justify-center"
+                   title="Download ZIP Berita Acara Semua Mahasiswa">
                     <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                    ZIP Semua
+                    ZIP Semua B.A
                 </a>
             </div>
         </div>
@@ -165,11 +191,11 @@
                                                 <div class="flex items-center justify-between gap-1 mb-1">
                                                     <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
                                                     <div class="flex items-center gap-1">
-                                                        @if($rev1 && $rev1->messages->count() > 0)
-                                                            <a href="{{ route('defense-examiner.print-revision', $rev1->id) }}" target="_blank"
-                                                               class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
-                                                               title="Cetak Poin Revisi Penguji 1 (PDF)">
-                                                                <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                        @if($detail->examiner1_id)
+                                                            <a href="{{ route('monitoring.defense-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner1_id]) }}" target="_blank"
+                                                               class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
+                                                               title="Cetak Lembar Revisi Penguji 1 ({{ $detail->examiner1?->name }})">
+                                                                <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                                                 <span class="text-[8px] font-black uppercase">Cetak</span>
                                                             </a>
                                                         @endif
@@ -231,11 +257,11 @@
                                                 <div class="flex items-center justify-between gap-1 mb-1">
                                                     <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
                                                     <div class="flex items-center gap-1">
-                                                        @if($rev2 && $rev2->messages->count() > 0)
-                                                            <a href="{{ route('defense-examiner.print-revision', $rev2->id) }}" target="_blank"
-                                                               class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
-                                                               title="Cetak Poin Revisi Penguji 2 (PDF)">
-                                                                <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                                        @if($detail->examiner2_id)
+                                                            <a href="{{ route('monitoring.defense-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner2_id]) }}" target="_blank"
+                                                               class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
+                                                               title="Cetak Lembar Revisi Penguji 2 ({{ $detail->examiner2?->name }})">
+                                                                <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                                                 <span class="text-[8px] font-black uppercase">Cetak</span>
                                                             </a>
                                                         @endif
@@ -243,7 +269,7 @@
                                                             <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}" 
                                                                class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-all shrink-0" 
                                                                title="Kelola / Input Revisi">
-                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                             </a>
                                                         @endif
                                                     </div>
@@ -334,40 +360,40 @@
                                 </td>
 
                                 <td class="py-4 px-6 text-center align-middle">
-                                    <div class="flex flex-col items-center gap-1.5 whitespace-nowrap">
-                                        <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
-                                           class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all border border-indigo-100 dark:border-indigo-800 shadow-xs whitespace-nowrap w-full justify-center">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="flex flex-col items-center gap-1.5 whitespace-nowrap min-w-[130px]">
+                                        <!-- Tombol Cetak Revisi Lengkap (Penguji 1 & 2) -->
+                                        <a href="{{ route('monitoring.defense-revisions.print', $detail->id) }}" target="_blank"
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all shadow-sm w-full justify-center group"
+                                           title="Cetak Lembar Revisi Sidang Lengkap (Penguji 1 & 2)">
+                                            <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                             </svg>
-                                            Berita Acara
+                                            <span>Cetak Revisi</span>
                                         </a>
 
-                                        @php
-                                            $hasRev1Notes = $rev1 && $rev1->messages->count() > 0;
-                                            $hasRev2Notes = $rev2 && $rev2->messages->count() > 0;
-                                        @endphp
+                                        <!-- Sub-tombol revisi per penguji -->
+                                        <div class="flex items-center gap-1 w-full">
+                                            @if($detail->examiner1_id)
+                                                <a href="{{ route('monitoring.defense-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner1_id]) }}" target="_blank"
+                                                   class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800 rounded-lg text-[8px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                                   title="Cetak Lembar Revisi Penguji 1 ({{ $detail->examiner1?->name }})">
+                                                    <span>Revisi P1</span>
+                                                </a>
+                                            @endif
+                                            @if($detail->examiner2_id)
+                                                <a href="{{ route('monitoring.defense-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner2_id]) }}" target="_blank"
+                                                   class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800 rounded-lg text-[8px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                                   title="Cetak Lembar Revisi Penguji 2 ({{ $detail->examiner2?->name }})">
+                                                    <span>Revisi P2</span>
+                                                </a>
+                                            @endif
+                                        </div>
 
-                                        @if($hasRev1Notes || $hasRev2Notes)
-                                            <div class="flex items-center gap-1 w-full">
-                                                @if($hasRev1Notes)
-                                                    <a href="{{ route('defense-examiner.print-revision', $rev1->id) }}" target="_blank"
-                                                       class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all shadow-xs"
-                                                       title="Cetak Poin Revisi Penguji 1 ({{ $detail->examiner1?->name }})">
-                                                        <svg class="w-3 h-3 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                                        <span>Revisi P1</span>
-                                                    </a>
-                                                @endif
-                                                @if($hasRev2Notes)
-                                                    <a href="{{ route('defense-examiner.print-revision', $rev2->id) }}" target="_blank"
-                                                       class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all shadow-xs"
-                                                       title="Cetak Poin Revisi Penguji 2 ({{ $detail->examiner2?->name }})">
-                                                        <svg class="w-3 h-3 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                                        <span>Revisi P2</span>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        @endif
+                                        <!-- Berita Acara -->
+                                        <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
+                                           class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-[9px] font-extrabold uppercase tracking-wider transition-all border border-slate-200 dark:border-slate-700 w-full justify-center">
+                                            <span>Berita Acara</span>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

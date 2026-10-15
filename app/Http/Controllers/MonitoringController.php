@@ -466,6 +466,179 @@ class MonitoringController extends Controller implements HasMiddleware
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
+    public function printSeminarRevision(SeminarScheduleDetail $detail, Request $request)
+    {
+        $detail->load(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions.messages']);
+
+        if (!$detail->thesis || !$detail->thesis->student) {
+            return back()->with('error', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        $examinerId = $request->input('examiner_id');
+        $pdfData = $this->prepareRevisionPrintData($detail, 'seminar', $examinerId);
+
+        $pdf = Pdf::loadView('monitoring.print_revision_seminar', $pdfData);
+
+        $studentId = $detail->thesis->student->identifier ?? 'Mahasiswa';
+        $studentName = str_replace([' ', '/', '\\'], '_', $detail->thesis->student->name ?? '');
+        $suffix = $examinerId ? ($examinerId == $detail->examiner1_id ? '_P1' : '_P2') : '_Lengkap';
+        $fileName = 'Pernyataan_Revisi_Seminar_' . $studentId . '_' . $studentName . $suffix . '.pdf';
+
+        return $pdf->stream($fileName);
+    }
+
+    public function printDefenseRevision(ThesisDefenseScheduleDetail $detail, Request $request)
+    {
+        $detail->load(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions.messages']);
+
+        if (!$detail->thesis || !$detail->thesis->student) {
+            return back()->with('error', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        $examinerId = $request->input('examiner_id');
+        $pdfData = $this->prepareRevisionPrintData($detail, 'defense', $examinerId);
+
+        $pdf = Pdf::loadView('monitoring.print_revision_defense', $pdfData);
+
+        $studentId = $detail->thesis->student->identifier ?? 'Mahasiswa';
+        $studentName = str_replace([' ', '/', '\\'], '_', $detail->thesis->student->name ?? '');
+        $suffix = $examinerId ? ($examinerId == $detail->examiner1_id ? '_P1' : '_P2') : '_Lengkap';
+        $fileName = 'Pernyataan_Revisi_Sidang_' . $studentId . '_' . $studentName . $suffix . '.pdf';
+
+        return $pdf->stream($fileName);
+    }
+
+    public function batchExportRevisions(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (is_string($ids)) {
+            $ids = array_filter(explode(',', $ids));
+        }
+        $waveId = $request->input('wave_id');
+        $category = $request->input('category', 'defense'); // 'seminar' or 'defense'
+
+        if ($waveId && (!$ids || count($ids) === 0)) {
+            if ($category === 'defense') {
+                $ids = ThesisDefenseScheduleDetail::whereHas('thesis.defenseApplication', function($q) use ($waveId) {
+                    $q->where('wave_id', $waveId);
+                })->pluck('id')->toArray();
+            } else {
+                $ids = SeminarScheduleDetail::whereHas('thesis.seminarApplication', function($q) use ($waveId) {
+                    $q->where('wave_id', $waveId);
+                })->pluck('id')->toArray();
+            }
+        }
+
+        if (empty($ids)) {
+            return back()->with('error', 'Pilih minimal satu data mahasiswa untuk diekspor.');
+        }
+
+        $zipName = 'Lembar_Revisi_' . ucfirst($category) . '_' . now()->format('YmdHis') . '.zip';
+        $zipPath = storage_path('app/public/' . $zipName);
+        $zip = new \ZipArchive;
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
+            foreach ($ids as $id) {
+                if ($category === 'defense') {
+                    $detail = ThesisDefenseScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions.messages'])->find($id);
+                    if ($detail && $detail->thesis && $detail->thesis->student) {
+                        $pdfData = $this->prepareRevisionPrintData($detail, 'defense');
+                        $pdf = Pdf::loadView('monitoring.print_revision_defense', $pdfData);
+                        $fileName = 'Lembar_Revisi_Sidang_' . str_replace([' ', '/', '\\'], '_', $detail->thesis->student->identifier . '_' . $detail->thesis->student->name) . '.pdf';
+                        $zip->addFromString($fileName, $pdf->output());
+                    }
+                } else {
+                    $detail = SeminarScheduleDetail::with(['thesis.student', 'schedule', 'examiner1', 'examiner2', 'revisions.messages'])->find($id);
+                    if ($detail && $detail->thesis && $detail->thesis->student) {
+                        $pdfData = $this->prepareRevisionPrintData($detail, 'seminar');
+                        $pdf = Pdf::loadView('monitoring.print_revision_seminar', $pdfData);
+                        $fileName = 'Lembar_Revisi_Seminar_' . str_replace([' ', '/', '\\'], '_', $detail->thesis->student->identifier . '_' . $detail->thesis->student->name) . '.pdf';
+                        $zip->addFromString($fileName, $pdf->output());
+                    }
+                }
+            }
+            $zip->close();
+        }
+
+        if (!file_exists($zipPath)) {
+            return back()->with('error', 'Gagal membuat file ZIP revisi.');
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    protected function prepareRevisionPrintData($detail, string $type, $examinerId = null): array
+    {
+        $items = [];
+        $examinerList = [];
+
+        if ($examinerId) {
+            if ($detail->examiner1_id == $examinerId) {
+                $examinerList[] = ['examiner' => $detail->examiner1, 'role_label' => 'Penguji 1'];
+            } elseif ($detail->examiner2_id == $examinerId) {
+                $examinerList[] = ['examiner' => $detail->examiner2, 'role_label' => 'Penguji 2'];
+            }
+        } else {
+            if ($detail->examiner1) {
+                $examinerList[] = ['examiner' => $detail->examiner1, 'role_label' => 'Penguji 1'];
+            }
+            if ($detail->examiner2) {
+                $examinerList[] = ['examiner' => $detail->examiner2, 'role_label' => 'Penguji 2'];
+            }
+        }
+
+        foreach ($examinerList as $ex) {
+            $examiner = $ex['examiner'];
+            $roleLabel = $ex['role_label'];
+            $revision = $examiner ? $detail->getRevisionFor($examiner->id) : null;
+
+            $rawMessage = '';
+            if ($revision) {
+                $firstMessage = $revision->messages->where('sender_id', $examiner->id)->first()
+                    ?? $revision->messages->where('sender_id', '!=', $detail->thesis?->student_id)->first()
+                    ?? $revision->messages->first();
+
+                if ($firstMessage && !empty($firstMessage->message)) {
+                    $rawMessage = (string) $firstMessage->message;
+                } elseif (!empty($revision->revision_notes)) {
+                    $rawMessage = (string) $revision->revision_notes;
+                }
+            }
+
+            // Parse points
+            $lines = explode("\n", str_replace("\r", "", $rawMessage));
+            $parsedPoints = [];
+            $parsedNotes = [];
+            $isNumbered = false;
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if ($trimmed === '') continue;
+                if (preg_match('/^(\d+)[\.\)]\s*(.+)$/u', $trimmed, $m)) {
+                    $isNumbered = true;
+                    $parsedPoints[] = ['num' => $m[1], 'text' => $m[2]];
+                } elseif ($isNumbered && !empty($parsedPoints)) {
+                    $parsedNotes[] = $trimmed;
+                }
+            }
+
+            $items[] = [
+                'examiner' => $examiner,
+                'role_label' => $roleLabel,
+                'revision' => $revision,
+                'rawMessage' => $rawMessage,
+                'parsedPoints' => $parsedPoints,
+                'parsedNotes' => $parsedNotes,
+                'isNumbered' => $isNumbered,
+            ];
+        }
+
+        return [
+            'detail' => $detail,
+            'items' => $items,
+            'type' => $type,
+        ];
+    }
+
     /**
      * Display weekly mentoring monitoring page for Kaprodi and Admin.
      */

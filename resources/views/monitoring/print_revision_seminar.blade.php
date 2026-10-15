@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Pernyataan Revisi Seminar</title>
+    <style>
+        @page { margin: 1.5cm; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11pt; color: #000; line-height: 1.4; }
+        .page-break { page-break-after: always; }
+        .kop-surat { width: 100%; margin-bottom: 20px; text-align: center; }
+        .kop-img { width: 100%; height: auto; display: block; }
+        .kop-table-wrapper { border-bottom: 4px double #000; padding-bottom: 10px; }
+        .kop-surat table { width: 100%; border-collapse: collapse; }
+        .kop-surat .logo { width: 85px; text-align: left; vertical-align: middle; }
+        .kop-surat .text { text-align: center; vertical-align: middle; }
+        .kop-surat .text h1 { font-size: 14pt; margin: 0; font-weight: normal; letter-spacing: 1px; }
+        .kop-surat .text h2 { font-size: 19pt; margin: 2px 0; font-weight: bold; }
+        .kop-surat .text p { font-size: 8.5pt; margin: 1px 0; color: #333; }
+        
+        .title { text-align: center; font-size: 13pt; font-weight: bold; margin-bottom: 25px; text-decoration: none; }
+        .opening { margin-bottom: 15px; text-align: left; }
+        
+        .biodata { margin-bottom: 25px; }
+        .biodata table { width: 100%; border-collapse: collapse; }
+        .biodata td { padding: 4px 0; vertical-align: top; font-weight: bold; }
+        .biodata .label { width: 130px; }
+        .biodata .colon { width: 20px; }
+        
+        .opini-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed; }
+        .opini-table th { background-color: #d1d5db; border: 1.5px solid #000; padding: 10px; font-size: 13pt; font-weight: bold; text-align: center; }
+        .opini-table td { border: 1.5px solid #000; padding: 20px; height: 450px; vertical-align: top; word-wrap: break-word; }
+        
+        .footer { width: 100%; margin-top: 10px; }
+        .footer-content { float: right; width: 260px; text-align: left; }
+        .footer-content p { margin: 3px 0; font-size: 11pt; }
+        .signature-space { height: 90px; }
+        
+        .note { font-size: 10pt; font-style: italic; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    @php
+        if (empty($kopBase64)) {
+            $kopCandidates = [
+                public_path('images/kop_fasilkom.png'),
+                public_path('kop_fasilkom.png'),
+                base_path('public/images/kop_fasilkom.png'),
+                base_path('public/kop_fasilkom.png'),
+                resource_path('images/kop_fasilkom.png'),
+            ];
+            foreach ($kopCandidates as $cand) {
+                if (file_exists($cand) && is_readable($cand)) {
+                    $kopBase64 = base64_encode(file_get_contents($cand));
+                    break;
+                }
+            }
+        }
+    @endphp
+
+    @foreach($items as $index => $item)
+        <div class="kop-surat">
+            @if(!empty($kopBase64))
+                <img src="data:image/png;base64,{{ $kopBase64 }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+            @elseif(file_exists(public_path('kop_fasilkom.png')))
+                <img src="{{ public_path('kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+            @elseif(file_exists(public_path('images/kop_fasilkom.png')))
+                <img src="{{ public_path('images/kop_fasilkom.png') }}" class="kop-img" alt="Kop Surat FASILKOM UNSUB">
+            @else
+                <div class="kop-table-wrapper">
+                    <table>
+                        <tr>
+                            <td class="logo">
+                                @php
+                                    $logoPath = public_path('logo_unsub.png');
+                                    $logoData = "";
+                                    if(file_exists($logoPath)) {
+                                        $logoData = base64_encode(file_get_contents($logoPath));
+                                    }
+                                @endphp
+                                @if($logoData)
+                                    <img src="data:image/png;base64,{{ $logoData }}" width="85">
+                                @endif
+                            </td>
+                            <td class="text">
+                                <div style="margin-bottom: 2px;">UNIVERSITAS SUBANG</div>
+                                <div style="font-size: 19pt; font-weight: bold; margin-bottom: 2px;">FAKULTAS ILMU KOMPUTER</div>
+                                <p>Akreditasi BAIK SEKALI No. 110/SK/LAM-INFOKOM/Ak/S/VIII/2025</p>
+                                <p>Jalan R.A Kartini KM 3 Telp (0260) 411415 Subang</p>
+                                <p>E-Mail : <span style="color: #0000EE; text-decoration: underline;">fasilkom@unsub.ac.id</span></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            @endif
+        </div>
+
+        <div class="title">PERNYATAAN REVISI</div>
+
+        <div class="opening">
+            Yang bertandatangan di bawah ini, {{ strtolower($item['role_label'] ?? 'penguji') }} seminar skripsi Fakultas Ilmu Komputer Universitas Subang menerangkan bahwa :
+        </div>
+
+        <div class="biodata">
+            <table>
+                <tr>
+                    <td class="label">NPM</td>
+                    <td class="colon">:</td>
+                    <td>{{ $detail->thesis->student->identifier ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Nama</td>
+                    <td class="colon">:</td>
+                    <td>{{ $detail->thesis->student->name ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Judul Skripsi</td>
+                    <td class="colon">:</td>
+                    <td>{{ $detail->thesis->title ?? '-' }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="opini-table">
+            <thead>
+                <tr>
+                    <th>Opini / Catatan Revisi ({{ $item['role_label'] ?? 'Penguji' }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="font-size: 10pt; line-height: 1.6;">
+                        @if(!empty($item['isNumbered']) && count($item['parsedPoints']) > 0)
+                            <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 12px;">
+                                @foreach($item['parsedPoints'] as $p)
+                                    <tr>
+                                        <td style="width: 26px; vertical-align: top; border: none; padding: 4px 0; font-weight: bold; font-size: 10pt; height: auto;">
+                                            {{ $p['num'] }}.
+                                        </td>
+                                        <td style="vertical-align: top; border: none; padding: 4px 0; font-size: 10pt; line-height: 1.5; height: auto;">
+                                            {{ $p['text'] }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                            @if(!empty($item['parsedNotes']))
+                                <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #999; font-size: 9.5pt; font-style: italic; color: #333;">
+                                    {!! nl2br(e(implode("\n", $item['parsedNotes']))) !!}
+                                </div>
+                            @endif
+                        @elseif(!empty($item['rawMessage']))
+                            {!! nl2br(e($item['rawMessage'])) !!}
+                        @else
+                            {{-- Kosong untuk pengisian manual / catatan fisik --}}
+                        @endif
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <div class="footer-content">
+                <p>Subang, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</p>
+                <p>{{ $item['role_label'] ?? 'Penguji' }}</p>
+                <div class="signature-space"></div>
+                <p><strong>{{ $item['examiner'] ? $item['examiner']->name : '................................................' }}</strong></p>
+                @if($item['examiner'] && $item['examiner']->identifier)
+                    <p style="font-size: 9.5pt; color: #333; margin-top: 2px;">NIDN: {{ $item['examiner']->identifier }}</p>
+                @endif
+            </div>
+        </div>
+
+        <div style="clear: both;"></div>
+        <div class="note">
+            Catatan : Mohon di isi dengan rapi
+        </div>
+
+        @if(!$loop->last)
+            <div class="page-break"></div>
+        @endif
+    @endforeach
+</body>
+</html>

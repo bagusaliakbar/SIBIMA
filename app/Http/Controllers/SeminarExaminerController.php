@@ -369,7 +369,10 @@ class SeminarExaminerController extends Controller implements HasMiddleware
             ?? $revision->messages->first();
 
         if (!$firstMessage) {
-            return back()->with('error', 'Belum ada catatan atau poin revisi dari penguji.');
+            $firstMessage = (object) [
+                'message' => $revision->revision_notes ?? '',
+                'created_at' => $revision->updated_at ?? now(),
+            ];
         }
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('student-seminar-revisions.print', compact('revision', 'firstMessage'));
