@@ -428,85 +428,104 @@
             @endif
         @else
             <!-- KAPRODI / ADMIN VIEW: Advanced Management Table with Search & Status Filter -->
-            <x-table-card title="Daftar Jadwal Sidang Skripsi">
-                <x-slot name="headerActions">
-                    <div class="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full">
-                        <!-- Wave Filter Dropdown -->
-                        <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="relative">
-                            @if(request('search'))
-                                <input type="hidden" name="search" value="{{ request('search') }}">
-                            @endif
-                            <select name="wave_id" onchange="this.form.submit()"
-                                class="pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
-                                <option value="">Semua Gelombang</option>
-                                @foreach($waves as $wave)
-                                    <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
-                                        {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </form>
+            <!-- KAPRODI / ADMIN VIEW: Advanced Management Table with Search & Status Filter -->
+            <x-table-card>
+                <!-- Dedicated Structured Header & Toolbar -->
+                <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/40 dark:bg-slate-800/40 space-y-4">
+                    <!-- Row 1: Title & Main Action Buttons -->
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight">Daftar Jadwal Sidang Skripsi</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Kelola dan atur jadwal pelaksanaan ujian sidang skripsi mahasiswa</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2.5">
+                            <!-- Simulation Button -->
+                            <a href="{{ route('thesis-defense-schedules.simulation', ['wave_id' => $selectedWaveId]) }}"
+                                class="inline-flex items-center gap-2 px-3.5 h-10 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 rounded-xl text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                                title="Generate simulasi jadwal sidang otomatis cerdas">
+                                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 fill-none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <span>Simulasi Otomatis</span>
+                            </a>
 
-                        <!-- Search Input -->
-                        <div class="w-full sm:w-64">
-                            <x-search-input 
-                                name="search" 
-                                :value="request('search', '')" 
-                                placeholder="Cari judul, dosen, ruangan..." 
-                                route="thesis-defense-schedules.index"
-                                :params="['wave_id' => request('wave_id', '')]" />
+                            <!-- Import Excel Button -->
+                            <button type="button" @click="openImportModal = true"
+                                class="inline-flex items-center gap-2 px-3.5 h-10 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-xl text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                                title="Import jadwal sidang skripsi dari file Excel">
+                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 fill-none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                                <span>Import Excel</span>
+                            </button>
+
+                            <!-- Add Button (Primary Action) -->
+                            <a href="{{ route('thesis-defense-schedules.create', ['wave_id' => $selectedWaveId]) }}"
+                                class="inline-flex items-center gap-2 px-4 h-10 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
+                                <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <span>Tambah Jadwal Manual</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Search, Filters & Export Tools -->
+                    <div class="pt-3 border-t border-slate-200/70 dark:border-slate-700/70 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                        <!-- Left: Gelombang & Search Input -->
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                            <!-- Wave Filter Dropdown -->
+                            <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="relative group m-0 p-0 h-10 flex items-center w-full sm:w-auto" style="margin: 0 !important; padding: 0 !important; height: 40px !important; display: flex !important; align-items: center !important;">
+                                @if(request('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                                <select name="wave_id" onchange="this.form.submit()"
+                                    class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors shadow-2xs min-w-[240px] cursor-pointer"
+                                    style="height: 40px !important; margin: 0 !important; box-sizing: border-box !important;">
+                                    <option value="">Semua Gelombang</option>
+                                    @foreach($waves as $wave)
+                                        <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
+                                            {{ $wave->name }} {{ $wave->is_active ? '(Aktif)' : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+
+                            <!-- Search Input -->
+                            <div class="w-full sm:w-64">
+                                <x-search-input 
+                                    name="search" 
+                                    :value="request('search', '')" 
+                                    placeholder="Cari judul, dosen, ruangan..." 
+                                    route="thesis-defense-schedules.index"
+                                    :params="['wave_id' => request('wave_id', '')]" />
+                            </div>
                         </div>
 
-                        <!-- Simulation Button -->
-                        <a href="{{ route('thesis-defense-schedules.simulation', ['wave_id' => $selectedWaveId]) }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
-                            title="Generate simulasi jadwal sidang otomatis cerdas">
-                            <svg class="w-4 h-4 fill-none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap">Simulasi Otomatis</span>
-                        </a>
+                        <!-- Right: Batch Export Buttons (PDF & Word) -->
+                        <div class="flex items-center gap-2.5 w-full lg:w-auto justify-start lg:justify-end">
+                            <!-- Cetak Semua Ruangan (Batch PDF) Button -->
+                            <a href="{{ route('thesis-defense-schedules.export-batch-pdf', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}"
+                                class="inline-flex items-center gap-2 px-3.5 h-10 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 dark:bg-slate-900 dark:hover:bg-rose-950/40 dark:text-slate-200 dark:hover:text-rose-300 border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700/60 font-bold text-xs rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer shrink-0"
+                                title="Cetak seluruh ruangan dalam 1 file PDF">
+                                <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Cetak Semua Ruangan (PDF)</span>
+                            </a>
 
-                        <!-- Import Excel Button -->
-                        <button type="button" @click="openImportModal = true"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm cursor-pointer shrink-0"
-                            title="Import jadwal sidang skripsi dari file Excel">
-                            <svg class="w-4 h-4 fill-none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
-                            <span class="whitespace-nowrap">Import Excel</span>
-                        </button>
-
-                        <!-- Cetak Semua Ruangan (Batch PDF) Button -->
-                        <a href="{{ route('thesis-defense-schedules.export-batch-pdf', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
-                            title="Cetak seluruh ruangan dalam 1 file PDF">
-                            <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap">Cetak Semua Ruangan (PDF)</span>
-                        </a>
-
-                        <!-- Cetak Semua Ruangan (Batch Word) Button -->
-                        <a href="{{ route('thesis-defense-schedules.export-batch-word', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
-                            title="Cetak seluruh ruangan dalam 1 file Word (.docx)">
-                            <svg class="w-4 h-4 text-blue-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap">Cetak Semua (Word)</span>
-                        </a>
-
-                        <!-- Add Button -->
-                        <a href="{{ route('thesis-defense-schedules.create', ['wave_id' => $selectedWaveId]) }}" 
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
-                            <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <span class="whitespace-nowrap">Tambah Jadwal Manual</span>
-                        </a>
+                            <!-- Cetak Semua Ruangan (Batch Word) Button -->
+                            <a href="{{ route('thesis-defense-schedules.export-batch-word', ['wave_id' => $selectedWaveId, 'date' => request('date')]) }}"
+                                class="inline-flex items-center gap-2 px-3.5 h-10 bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 dark:bg-slate-900 dark:hover:bg-blue-950/40 dark:text-slate-200 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700/60 font-bold text-xs rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer shrink-0"
+                                title="Cetak seluruh ruangan dalam 1 file Word (.docx)">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Cetak Semua (Word)</span>
+                            </a>
+                        </div>
                     </div>
-                </x-slot>
+                </div>
 
                 <table class="w-full text-sm text-left">
                     <thead>
