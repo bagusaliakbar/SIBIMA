@@ -211,7 +211,7 @@
                                     <div class="relative w-full md:w-64">
                                         <input type="url" name="student_link" id="student_link" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-orange-500 focus:ring-orange-500 text-xs font-medium transition-all" placeholder="Link File / Google Drive (Opsional)">
                                     </div>
-                                    <button type="submit" class="px-8 py-2.5 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-100 transition-all">
+                                    <button type="submit" class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 dark:hover:bg-orange-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all cursor-pointer">
                                         Kirim Tindak Lanjut
                                     </button>
                                 </div>
