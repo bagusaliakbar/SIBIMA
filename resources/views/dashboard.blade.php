@@ -875,10 +875,15 @@
                                     Jadwal Seminar Skripsi
                                 </h3>
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('seminar-schedules.export-pdf', $mySeminarSchedule->schedule_id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-700 dark:bg-slate-700/60 dark:hover:bg-orange-950/40 dark:hover:text-orange-300 text-slate-600 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 transition-all shadow-2xs" title="Cetak Bukti Jadwal Seminar PDF">
-                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        <span>Cetak PDF</span>
-                                    </a>
+                                    @php
+                                        $semPdfTarget = $mySeminarSchedule->schedule ?? $mySeminarSchedule->seminar_schedule_id;
+                                    @endphp
+                                    @if($semPdfTarget)
+                                        <a href="{{ route('seminar-schedules.export-pdf', $semPdfTarget) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-700 dark:bg-slate-700/60 dark:hover:bg-orange-950/40 dark:hover:text-orange-300 text-slate-600 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 transition-all shadow-2xs" title="Cetak Bukti Jadwal Seminar PDF">
+                                            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            <span>Cetak PDF</span>
+                                        </a>
+                                    @endif
                                     @if($isSeminarFinished)
                                         <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
                                     @elseif($isSeminarOngoing)
@@ -984,10 +989,15 @@
                                     Jadwal Sidang Skripsi
                                 </h3>
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('thesis-defense-schedules.export-pdf', $myDefenseSchedule->schedule_id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-slate-700/60 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300 text-slate-600 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 transition-all shadow-2xs" title="Cetak Bukti Jadwal Sidang PDF">
-                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                        <span>Cetak PDF</span>
-                                    </a>
+                                    @php
+                                        $defPdfTarget = $myDefenseSchedule->schedule ?? $myDefenseSchedule->thesis_defense_schedule_id;
+                                    @endphp
+                                    @if($defPdfTarget)
+                                        <a href="{{ route('thesis-defense-schedules.export-pdf', $defPdfTarget) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-slate-700/60 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300 text-slate-600 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 transition-all shadow-2xs" title="Cetak Bukti Jadwal Sidang PDF">
+                                            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            <span>Cetak PDF</span>
+                                        </a>
+                                    @endif
                                     @if($isDefenseFinished)
                                         <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
                                     @elseif($isDefenseOngoing)
