@@ -57,21 +57,23 @@ class ThesisRepository extends Model
 
         $id = trim($identifier);
 
-        // 1. Pola standar UNSUB: 3 karakter kode prodi (misal D1A, D1B), pemisah opsional, 2 digit angkatan, diikuti nomor urut
-        if (preg_match('/^[A-Za-z0-9]{3}[\.\-_\s]*(\d{2})[\.\-_\s]*\d+/i', $id, $m)) {
-            $yy = (int) $m[1];
-            return ($yy >= 70) ? (1900 + $yy) : (2000 + $yy);
-        }
-
-        // 2. Pola umum: awalan huruf prodi apa saja diikuti 2 digit angkatan dan angka
-        if (preg_match('/^[A-Za-z]+[\.\-_\s]*(\d{2})[\.\-_\s]*\d+/i', $id, $m)) {
-            $yy = (int) $m[1];
-            return ($yy >= 70) ? (1900 + $yy) : (2000 + $yy);
-        }
-
-        // 3. Pola 4 digit tahun (misal 2017xxxx)
-        if (preg_match('/(19\d{2}|20\d{2})/', $id, $m)) {
+        // 1. Pola 4 digit tahun eksplisit (misal IF2021001, 20180123)
+        if (preg_match('/(?:^|[A-Za-z\.\-_\s])(19[7-9]\d|20[0-3]\d)(?:[A-Za-z\.\-_\s]|\d{3,}|$)/', $id, $m)) {
             return (int) $m[1];
+        }
+
+        // 2. Pola standar UNSUB (D1A, D1B) atau kode huruf prodi (IF, SI, TI) diikuti 2 digit angkatan
+        if (preg_match('/^(?:[A-Za-z]\d[A-Za-z]|[A-Za-z]{2,5})[\.\-_\s]*(\d{2})[\.\-_\s]*\d+/i', $id, $m)) {
+            $yy = (int) $m[1];
+            return ($yy >= 70) ? (1900 + $yy) : (2000 + $yy);
+        }
+
+        // 3. Pola numerik murni: 2 digit angkatan di awal (misal 211011003 -> 21 => 2021)
+        if (preg_match('/^(\d{2})\d{4,}/', $id, $m)) {
+            $yy = (int) $m[1];
+            if ($yy >= 10 && $yy <= 35) {
+                return 2000 + $yy;
+            }
         }
 
         return null;
@@ -187,5 +189,92 @@ class ThesisRepository extends Model
     public function getTopicBadgeAttribute(): array
     {
         return self::detectTopic($this->title);
+    }
+
+    /**
+     * Auto-archive a completed thesis from SIBIMA into the repository catalog.
+     */
+    public static function archiveFromThesis(Thesis $thesis): ?self
+    {
+        if (!$thesis->student) {
+            return null;
+        }
+
+        $student = $thesis->student;
+        $title = trim($thesis->final_title ?: $thesis->title);
+        if (empty($title)) {
+            return null;
+        }
+
+        // Determine graduation year
+        $year = null;
+        if ($thesis->relationLoaded('graduation') && $thesis->graduation && $thesis->graduation->graduation_date) {
+            $year = (int) \Carbon\Carbon::parse($thesis->graduation->graduation_date)->year;
+        } elseif ($thesis->graduation && $thesis->graduation->graduation_date) {
+            $year = (int) \Carbon\Carbon::parse($thesis->graduation->graduation_date)->year;
+        } elseif ($thesis->updated_at) {
+            $year = (int) $thesis->updated_at->year;
+        } elseif (!empty($student->identifier)) {
+            $year = self::extractYearFromIdentifier($student->identifier);
+        }
+        if (!$year) {
+            $year = (int) date('Y');
+        }
+
+        // Find best final thesis document (approved revision or submitted defense thesis)
+        $bestFile = null;
+        $latestScheduleDetail = $thesis->defenseScheduleDetails()->latest('id')->first();
+
+        if ($latestScheduleDetail) {
+            $approvedRevision = $latestScheduleDetail->revisions()
+                ->whereNotNull('student_file')
+                ->where('student_file', '!=', '')
+                ->latest('updated_at')
+                ->first();
+            if ($approvedRevision) {
+                $bestFile = $approvedRevision->student_file;
+            }
+        }
+
+        if (!$bestFile) {
+            $defenseApp = $thesis->defenseApplication ?? $thesis->defenseApplications()->latest('id')->first();
+            if ($defenseApp && !empty($defenseApp->file_skripsi)) {
+                $bestFile = $defenseApp->file_skripsi;
+            }
+        }
+
+        // Match criteria: identifier if present, or title & name
+        $match = !empty($student->identifier)
+            ? ['identifier' => $student->identifier]
+            : ['title' => $title, 'name' => $student->name];
+
+        $repo = self::updateOrCreate(
+            $match,
+            [
+                'identifier' => $student->identifier,
+                'name' => $student->name,
+                'title' => $title,
+                'year' => $year,
+                'abstract' => $thesis->abstract,
+                'pembimbing1' => $thesis->pembimbing1?->name,
+                'pembimbing2' => $thesis->pembimbing2?->name,
+                'file_path' => $bestFile ?: null,
+            ]
+        );
+
+        \Illuminate\Support\Facades\Cache::forget('repo_catalog_metadata');
+
+        try {
+            ActivityLog::log(
+                'Arsip Pustaka Otomatis',
+                "Skripsi mahasiswa {$student->name} ({$student->identifier}) berhasil diarsipkan secara otomatis ke Katalog Pustaka.",
+                'Katalog Pustaka',
+                $repo
+            );
+        } catch (\Throwable $e) {
+            // Silently continue if activity log fails
+        }
+
+        return $repo;
     }
 }

@@ -32,6 +32,17 @@
                 </button>
 
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                    <!-- Sync Skripsi Lulus SIBIMA -->
+                    <form action="{{ route('repositories.sync-completed') }}" method="POST" class="inline" onsubmit="return confirm('Tarik dan arsipkan semua skripsi mahasiswa yang telah lulus/completed di SIBIMA ke katalog pustaka?')">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                                title="Sinkronisasi otomatis semua skripsi mahasiswa SIBIMA yang sudah berstatus Lulus / Selesai">
+                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>Sync Skripsi SIBIMA</span>
+                        </button>
+                    </form>
+
                     <!-- Sync Repositori UNSUB (FASILKOM & BAB 1) -->
                     <button type="button"
                             onclick="openUnsubSyncModal()" 

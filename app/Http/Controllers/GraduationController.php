@@ -296,9 +296,16 @@ class GraduationController extends Controller
             $graduation->approved_at = now();
             $graduation->save();
 
-            // Ensure thesis status is completed
-            if ($graduation->thesis && $graduation->thesis->status !== 'completed') {
-                $graduation->thesis->update(['status' => 'completed']);
+            // Ensure thesis status is completed & auto-archive to repository catalog
+            if ($graduation->thesis) {
+                if ($graduation->thesis->status !== 'completed') {
+                    $graduation->thesis->update(['status' => 'completed']);
+                }
+                try {
+                    \App\Models\ThesisRepository::archiveFromThesis($graduation->thesis);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning("Auto-archive to repository failed during graduation approval for thesis {$graduation->thesis->id}: " . $e->getMessage());
+                }
             }
 
             // Send in-app notification to student

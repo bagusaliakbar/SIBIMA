@@ -153,6 +153,13 @@ class ExaminerService
         if (method_exists($detail, 'isRevisionAllApproved') && $detail->isRevisionAllApproved()) {
             $thesis = $detail->thesis;
             $thesis->update(['status' => 'completed']);
+
+            // Auto-archive completed thesis to digital library catalog (Katalog Pustaka)
+            try {
+                \App\Models\ThesisRepository::archiveFromThesis($thesis);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning("Auto-archive to repository failed for thesis {$thesis->id}: " . $e->getMessage());
+            }
             
             $thesis->student->notify(new \App\Notifications\GeneralNotification(
                 'Selamat! Anda Lulus',

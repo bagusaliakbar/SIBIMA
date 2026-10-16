@@ -83,6 +83,11 @@ class DashboardService
             // Auto-sync Graduation
             if ($thesis->status !== 'completed' && $data['progress']['isGraduated']) {
                 $thesis->update(['status' => 'completed']);
+                try {
+                    \App\Models\ThesisRepository::archiveFromThesis($thesis);
+                } catch (\Throwable $e) {
+                    // Silently continue
+                }
             }
         }
 

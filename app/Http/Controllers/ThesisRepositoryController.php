@@ -501,6 +501,41 @@ class ThesisRepositoryController extends Controller
     }
 
     /**
+     * Batch sync all completed/graduated theses from SIBIMA into repository catalog.
+     */
+    public function syncCompletedTheses(Request $request)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+            abort(403);
+        }
+
+        $completedTheses = Thesis::where('status', 'completed')
+            ->with(['student', 'pembimbing1', 'pembimbing2', 'graduation', 'defenseApplication', 'defenseScheduleDetails.revisions'])
+            ->get();
+
+        $syncedCount = 0;
+        foreach ($completedTheses as $thesis) {
+            $repo = ThesisRepository::archiveFromThesis($thesis);
+            if ($repo) {
+                $syncedCount++;
+            }
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'count' => $syncedCount,
+                'message' => "{$syncedCount} skripsi mahasiswa lulus berhasil disinkronisasi ke katalog pustaka.",
+            ]);
+        }
+
+        return redirect()->back()->with('success', "{$syncedCount} skripsi mahasiswa yang telah lulus berhasil disinkronisasi ke katalog pustaka.");
+    }
+
+    /**
      * Get summary info from UNSUB repository before sync.
      */
     public function unsubInfo(UnsubRepositorySyncService $service)

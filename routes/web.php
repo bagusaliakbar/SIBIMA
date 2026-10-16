@@ -99,6 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/repositories/journals/sync-fasilkom', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncFasilkomJournals'])->name('repositories.journals.sync-fasilkom');
         Route::get('/repositories/unsub-info', [\App\Http\Controllers\ThesisRepositoryController::class, 'unsubInfo'])->name('repositories.unsub-info');
         Route::post('/repositories/sync-unsub-chunk', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncUnsubChunk'])->name('repositories.sync-unsub-chunk');
+        Route::post('/repositories/sync-completed', [\App\Http\Controllers\ThesisRepositoryController::class, 'syncCompletedTheses'])->name('repositories.sync-completed');
         Route::get('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'createImport'])->name('repositories.import.create');
         Route::post('/repositories/import', [App\Http\Controllers\ThesisRepositoryController::class, 'storeImport'])->name('repositories.import.store');
         Route::get('/repositories/template', [App\Http\Controllers\ThesisRepositoryController::class, 'downloadTemplate'])->name('repositories.template');
