@@ -2,32 +2,55 @@
 <html>
 
 <head>
-    <title>Rekapitulasi Nilai Sidang</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Rekapitulasi Nilai Sidang Skripsi</title>
     <style>
-        body {
-            font-family: sans-serif;
-            font-size: 10px;
-            color: #333;
+        @page {
+            size: a4 landscape;
+            margin: 10mm 8mm 12mm 8mm;
         }
 
-        table {
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 8.5pt;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+
+        table.main-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 14px;
+            table-layout: fixed;
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        table.main-table th,
+        table.main-table td {
+            border: 1px solid #cbd5e1;
+            padding: 5px 4px;
             text-align: left;
         }
 
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+        table.main-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 8px;
+            font-size: 7.2pt;
+            letter-spacing: 0.3px;
+            color: #0f172a;
+            vertical-align: middle;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        tr.student-row {
+            page-break-inside: avoid !important;
         }
 
         .text-center {
@@ -38,9 +61,69 @@
             font-weight: bold;
         }
 
+        /* Column widths for main table (Total: 100%) */
+        .col-no { width: 3.5%; }
+        .col-npm { width: 9%; }
+        .col-student { width: 25.5%; }
+        .col-penelaah { width: 17%; }
+        .col-persentasi { width: 7%; }
+        .col-penjelasan { width: 7.5%; }
+        .col-penulisan { width: 7.5%; }
+        .col-jml { width: 7%; }
+        .col-total { width: 5.5%; }
+        .col-akhir { width: 5.5%; }
+        .col-huruf { width: 5%; }
+
+        /* Nested table inside td.nested-container (takes columns 4 to 8: 17 + 7 + 7.5 + 7.5 + 7 = 46%) */
+        td.nested-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            vertical-align: top;
+            border: 1px solid #cbd5e1;
+        }
+
+        table.nested-table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none;
+        }
+
+        table.nested-table tr {
+            height: 33.33%;
+        }
+
+        table.nested-table td {
+            padding: 5px 4px;
+            font-size: 8pt;
+            border-top: none;
+            border-left: none;
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+            vertical-align: middle;
+        }
+
+        table.nested-table tr td:last-child {
+            border-right: none;
+        }
+
+        table.nested-table tr.last-tr td {
+            border-bottom: none;
+        }
+
+        /* Proportions for inner 5 columns (Total: 100% of 46%) */
+        .inner-penelaah { width: 36.95%; }
+        .inner-persentasi { width: 15.22%; }
+        .inner-penjelasan { width: 16.30%; }
+        .inner-penulisan { width: 16.30%; }
+        .inner-jml { width: 15.23%; }
+
         .kop-surat {
             width: 100%;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
@@ -83,14 +166,14 @@
         }
 
         .kop-surat .univ-name {
-            font-size: 16px;
+            font-size: 15px;
             margin: 0;
             padding: 0;
             font-family: 'Times New Roman', Times, serif;
         }
 
         .kop-surat .faculty-name {
-            font-size: 20px;
+            font-size: 19px;
             margin: 0;
             padding: 0;
             font-family: 'Times New Roman', Times, serif;
@@ -98,43 +181,40 @@
         }
 
         .kop-surat .accreditation {
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: bold;
             margin: 2px 0;
         }
 
         .kop-surat .address {
-            font-size: 9px;
+            font-size: 8.5px;
             margin: 1px 0;
         }
 
         .kop-surat .email {
-            font-size: 9px;
+            font-size: 8.5px;
             margin: 1px 0;
         }
 
         .report-title {
             text-align: center;
-            margin-bottom: 20px;
+            margin-top: 8px;
+            margin-bottom: 14px;
             text-transform: uppercase;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12pt;
+            letter-spacing: 0.5px;
         }
 
-        .grade-a {
-            color: #059669;
-        }
-
-        .grade-b {
-            color: #2563eb;
-        }
-
-        .grade-c {
-            color: #d97706;
-        }
+        .grade-a { color: #047857; font-weight: 800; font-size: 9.5pt; }
+        .grade-b { color: #1d4ed8; font-weight: 800; font-size: 9.5pt; }
+        .grade-c { color: #b45309; font-weight: 800; font-size: 9.5pt; }
+        .grade-d { color: #b91c1c; font-weight: 800; font-size: 9.5pt; }
+        .grade-e { color: #6b7280; font-weight: 800; font-size: 9.5pt; }
 
         .footer {
-            margin-top: 40px;
+            margin-top: 25px;
+            page-break-inside: avoid;
         }
 
         .footer-table {
@@ -153,7 +233,7 @@
         }
 
         .sign-space {
-            height: 80px;
+            height: 60px;
         }
     </style>
 </head>
@@ -211,31 +291,31 @@
     <div class="report-title">
         Rekapitulasi Nilai Sidang Skripsi
         @if($wave)
-            <br><span style="font-size: 14px; font-weight: bold;">{{ $wave->name }}</span>
+            <br><span style="font-size: 10pt; font-weight: bold; color: #334155;">{{ strtoupper($wave->name) }}</span>
         @endif
     </div>
 
-    <table>
+    <table class="main-table">
         <thead>
             <tr>
-                <th rowspan="2" class="text-center">NO</th>
-                <th rowspan="2" class="text-center">NPM</th>
-                <th rowspan="2">NAMA MAHASISWA</th>
-                <th rowspan="2">TIM PENELAAH</th>
+                <th rowspan="2" class="text-center col-no">NO</th>
+                <th rowspan="2" class="text-center col-npm">NPM</th>
+                <th rowspan="2" class="col-student">NAMA MAHASISWA &amp; JUDUL</th>
+                <th rowspan="2" class="col-penelaah">TIM PENELAAH</th>
                 <th colspan="3" class="text-center">KOMPONEN NILAI</th>
-                <th rowspan="2" class="text-center">JML NILAI</th>
-                <th rowspan="2" class="text-center">TOTAL</th>
-                <th rowspan="2" class="text-center">NILAI AKHIR</th>
-                <th rowspan="2" class="text-center">NILAI HURUF</th>
+                <th rowspan="2" class="text-center col-jml">JML NILAI</th>
+                <th rowspan="2" class="text-center col-total">TOTAL</th>
+                <th rowspan="2" class="text-center col-akhir">NILAI AKHIR</th>
+                <th rowspan="2" class="text-center col-huruf">NILAI HURUF</th>
             </tr>
             <tr>
-                <th class="text-center">PERSENTASI (25%)</th>
-                <th class="text-center">PENJELASAN NASKAH (40%)</th>
-                <th class="text-center">PENULISAN NASKAH (35%)</th>
+                <th class="text-center col-persentasi">PERSENTASI (25%)</th>
+                <th class="text-center col-penjelasan">PENJELASAN NASKAH (40%)</th>
+                <th class="text-center col-penulisan">PENULISAN NASKAH (35%)</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($defenseDetails as $index => $detail)
+            @forelse($defenseDetails as $index => $detail)
                 @php
                     $revP1 = $detail->revisions->where('examiner_id', $detail->thesis->pembimbing1_id)->first();
                     $revE1 = $detail->revisions->where('examiner_id', $detail->examiner1_id)->first();
@@ -253,7 +333,7 @@
 
                     $scores = collect([$scoreP1, $scoreE1, $scoreE2])->filter(fn($s) => $s !== null);
                     $totalScore = $scores->sum();
-                    $finalScore = $scores->count() > 0 ? $totalScore / $scores->count() : 0;
+                    $finalScore = $scores->count() > 0 ? $totalScore / $scores->count() : null;
 
                     $getGrade = function ($s) {
                         if ($s >= 80)
@@ -266,40 +346,55 @@
                             return 'D';
                         return 'E';
                     };
-                    $finalGrade = $scores->count() > 0 ? $getGrade($finalScore) : '-';
+                    $finalGrade = $finalScore !== null ? $getGrade($finalScore) : '-';
                 @endphp
-                <tr>
-                    <td rowspan="3" class="text-center">{{ $index + 1 }}</td>
-                    <td rowspan="3" class="text-center">{{ $detail->thesis->student->identifier }}</td>
-                    <td rowspan="3">
-                        <div class="font-bold">{{ $detail->thesis->student->name }}</div>
-                        <div style="font-style: italic; color: #666; margin-top: 4px;">"{{ $detail->thesis->title }}"</div>
+                <tr class="student-row">
+                    <td class="text-center col-no font-bold">{{ $index + 1 }}</td>
+                    <td class="text-center col-npm font-bold">{{ $detail->thesis->student->identifier }}</td>
+                    <td class="col-student">
+                        <div style="font-weight: bold; font-size: 8.5pt; text-transform: uppercase; color: #0f172a;">{{ $detail->thesis->student->name }}</div>
+                        <div style="font-style: italic; color: #475569; font-size: 7.5pt; margin-top: 3px; line-height: 1.25;">"{{ $detail->thesis->title }}"</div>
                     </td>
-                    <td>{{ $detail->thesis->pembimbing1->name }}</td>
-                    <td class="text-center">{{ $revP1->score_presentation ?? '-' }}</td>
-                    <td class="text-center">{{ $revP1->score_explanation ?? '-' }}</td>
-                    <td class="text-center">{{ $revP1->score_writing ?? '-' }}</td>
-                    <td class="text-center font-bold">{{ $scoreP1 ? number_format($scoreP1, 1) : '-' }}</td>
-                    <td rowspan="3" class="text-center font-bold">{{ number_format($totalScore, 1) }}</td>
-                    <td rowspan="3" class="text-center font-bold" style="font-size: 12px;">
-                        {{ number_format($finalScore, 1) }}</td>
-                    <td rowspan="3" class="text-center font-bold" style="font-size: 14px;">{{ $finalGrade }}</td>
+                    <td colspan="5" class="nested-container">
+                        <table class="nested-table">
+                            <tr>
+                                <td class="inner-penelaah">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</td>
+                                <td class="text-center inner-persentasi">{{ $revP1->score_presentation ?? '-' }}</td>
+                                <td class="text-center inner-penjelasan">{{ $revP1->score_explanation ?? '-' }}</td>
+                                <td class="text-center inner-penulisan">{{ $revP1->score_writing ?? '-' }}</td>
+                                <td class="text-center font-bold inner-jml">{{ $scoreP1 !== null ? number_format($scoreP1, 1) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="inner-penelaah">{{ $detail->examiner1?->name ?? '-' }}</td>
+                                <td class="text-center inner-persentasi">{{ $revE1->score_presentation ?? '-' }}</td>
+                                <td class="text-center inner-penjelasan">{{ $revE1->score_explanation ?? '-' }}</td>
+                                <td class="text-center inner-penulisan">{{ $revE1->score_writing ?? '-' }}</td>
+                                <td class="text-center font-bold inner-jml">{{ $scoreE1 !== null ? number_format($scoreE1, 1) : '-' }}</td>
+                            </tr>
+                            <tr class="last-tr">
+                                <td class="inner-penelaah">{{ $detail->examiner2?->name ?? '-' }}</td>
+                                <td class="text-center inner-persentasi">{{ $revE2->score_presentation ?? '-' }}</td>
+                                <td class="text-center inner-penjelasan">{{ $revE2->score_explanation ?? '-' }}</td>
+                                <td class="text-center inner-penulisan">{{ $revE2->score_writing ?? '-' }}</td>
+                                <td class="text-center font-bold inner-jml">{{ $scoreE2 !== null ? number_format($scoreE2, 1) : '-' }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="text-center font-bold col-total">{{ $scores->count() > 0 ? number_format($totalScore, 1) : '-' }}</td>
+                    <td class="text-center font-bold col-akhir" style="font-size: 9.5pt;">
+                        {{ $finalScore !== null ? number_format($finalScore, 1) : '-' }}
+                    </td>
+                    <td class="text-center font-bold col-huruf {{ $finalGrade === 'A' ? 'grade-a' : ($finalGrade === 'B' ? 'grade-b' : ($finalGrade === 'C' ? 'grade-c' : ($finalGrade === 'D' ? 'grade-d' : '')) ) }}">
+                        {{ $finalGrade }}
+                    </td>
                 </tr>
+            @empty
                 <tr>
-                    <td>{{ $detail->examiner1->name }}</td>
-                    <td class="text-center">{{ $revE1->score_presentation ?? '-' }}</td>
-                    <td class="text-center">{{ $revE1->score_explanation ?? '-' }}</td>
-                    <td class="text-center">{{ $revE1->score_writing ?? '-' }}</td>
-                    <td class="text-center font-bold">{{ $scoreE1 ? number_format($scoreE1, 1) : '-' }}</td>
+                    <td colspan="11" class="text-center" style="padding: 24px; color: #94a3b8; font-style: italic;">
+                        Belum ada data nilai sidang skripsi untuk gelombang / filter ini.
+                    </td>
                 </tr>
-                <tr>
-                    <td>{{ $detail->examiner2->name }}</td>
-                    <td class="text-center">{{ $revE2->score_presentation ?? '-' }}</td>
-                    <td class="text-center">{{ $revE2->score_explanation ?? '-' }}</td>
-                    <td class="text-center">{{ $revE2->score_writing ?? '-' }}</td>
-                    <td class="text-center font-bold">{{ $scoreE2 ? number_format($scoreE2, 1) : '-' }}</td>
-                </tr>
-            @endforeach
+            @endforelse
         </tbody>
     </table>
 
@@ -308,10 +403,10 @@
             <tr>
                 <td></td>
                 <td class="sign-cell">
-                    <p>Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}</p>
-                    <p>BAAK,</p>
+                    <p style="margin: 0; font-size: 8.5pt;">Subang, {{ now()->locale('id')->translatedFormat('d F Y') }}</p>
+                    <p style="margin: 3px 0 0 0; font-weight: bold; font-size: 8.5pt;">BAAK,</p>
                     <div class="sign-space"></div>
-                    <p><strong>(Dina Yuli Nurida, S.AN., M.AP)</strong></p>
+                    <p style="margin: 0; font-weight: bold; font-size: 8.5pt;">(Dina Yuli Nurida, S.AN., M.AP)</p>
                 </td>
             </tr>
         </table>
