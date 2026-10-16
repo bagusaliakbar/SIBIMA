@@ -31,7 +31,10 @@ class SeminarScheduleController extends Controller implements HasMiddleware
         return [
             new Middleware(function ($request, $next) {
                 $userRole = Auth::user()->role;
-                if (!in_array($userRole, ['admin', 'kaprodi', 'dosen'])) {
+                if (!in_array($userRole, ['admin', 'kaprodi', 'dosen', 'mahasiswa'])) {
+                    abort(403);
+                }
+                if ($userRole === 'mahasiswa' && !in_array($request->route()->getName(), ['seminar-schedules.export-pdf'])) {
                     abort(403);
                 }
                 if ($userRole === 'dosen' && !in_array($request->route()->getName(), ['seminar-schedules.index', 'seminar-schedules.show', 'seminar-schedules.export-pdf', 'seminar-schedules.export-batch-pdf'])) {

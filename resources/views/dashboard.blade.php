@@ -874,13 +874,19 @@
                                     <svg class="w-4 h-4 mr-2 {{ $isSeminarFinished ? 'text-emerald-600' : ($isSeminarOngoing ? 'text-blue-600' : 'text-orange-600') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     Jadwal Seminar Skripsi
                                 </h3>
-                                @if($isSeminarFinished)
-                                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
-                                @elseif($isSeminarOngoing)
-                                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80 animate-pulse">Berlangsung</span>
-                                @else
-                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-orange-200 dark:border-orange-800/80">Terjadwal</span>
-                                @endif
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('seminar-schedules.export-pdf', $mySeminarSchedule->schedule_id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-700 dark:bg-slate-700/60 dark:hover:bg-orange-950/40 dark:hover:text-orange-300 text-slate-600 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 transition-all shadow-2xs" title="Cetak Bukti Jadwal Seminar PDF">
+                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <span>Cetak PDF</span>
+                                    </a>
+                                    @if($isSeminarFinished)
+                                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
+                                    @elseif($isSeminarOngoing)
+                                        <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80 animate-pulse">Berlangsung</span>
+                                    @else
+                                        <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-orange-200 dark:border-orange-800/80">Terjadwal</span>
+                                    @endif
+                                </div>
                             </div>
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
@@ -901,6 +907,16 @@
                                     <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ruangan/Tempat</p>
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $mySeminarSchedule->schedule->location ?: '-' }}</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ketua Sidang</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{{ $mySeminarSchedule->schedule->chairman?->name ?? '-' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Moderator</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{{ $mySeminarSchedule->schedule->moderator?->name ?? '-' }}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700/60">
@@ -964,16 +980,22 @@
                         <div class="relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center">
-                                    <svg class="w-4 h-4 mr-2 {{ $isDefenseFinished ? 'text-emerald-600' : ($isDefenseOngoing ? 'text-blue-600' : 'text-indigo-600') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <svg class="w-4 h-4 mr-2 {{ $isDefenseFinished ? 'text-emerald-600' : ($isDefenseOngoing ? 'text-blue-600' : 'text-emerald-600') }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     Jadwal Sidang Skripsi
                                 </h3>
-                                @if($isDefenseFinished)
-                                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
-                                @elseif($isDefenseOngoing)
-                                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80 animate-pulse">Berlangsung</span>
-                                @else
-                                    <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80">Terjadwal</span>
-                                @endif
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('thesis-defense-schedules.export-pdf', $myDefenseSchedule->schedule_id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-slate-700/60 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300 text-slate-600 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 transition-all shadow-2xs" title="Cetak Bukti Jadwal Sidang PDF">
+                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <span>Cetak PDF</span>
+                                    </a>
+                                    @if($isDefenseFinished)
+                                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
+                                    @elseif($isDefenseOngoing)
+                                        <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80 animate-pulse">Berlangsung</span>
+                                    @else
+                                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Terjadwal</span>
+                                    @endif
+                                </div>
                             </div>
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
@@ -994,6 +1016,16 @@
                                     <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ruangan/Tempat</p>
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $myDefenseSchedule->schedule->location ?: '-' }}</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50 dark:border-slate-700/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ketua Sidang</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{{ $myDefenseSchedule->schedule->chairman?->name ?? '-' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Moderator</p>
+                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{{ $myDefenseSchedule->schedule->moderator?->name ?? '-' }}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700/60">

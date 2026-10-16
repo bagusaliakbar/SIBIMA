@@ -31,7 +31,10 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
         return [
             new Middleware(function ($request, $next) {
                 $userRole = Auth::user()->role;
-                if (!in_array($userRole, ['admin', 'kaprodi', 'dosen'])) {
+                if (!in_array($userRole, ['admin', 'kaprodi', 'dosen', 'mahasiswa'])) {
+                    abort(403);
+                }
+                if ($userRole === 'mahasiswa' && !in_array($request->route()->getName(), ['thesis-defense-schedules.export-pdf'])) {
                     abort(403);
                 }
                 if ($userRole === 'dosen' && !in_array($request->route()->getName(), ['thesis-defense-schedules.index', 'thesis-defense-schedules.show', 'thesis-defense-schedules.export-pdf', 'thesis-defense-schedules.export-batch-pdf'])) {

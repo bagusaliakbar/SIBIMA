@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <x-breadcrumb :items="[
-            ['label' => 'Jadwal Sidang', 'route' => null]
+            ['label' => 'Jadwal Sidang Skripsi', 'route' => null]
         ]" />
     </x-slot>
 
@@ -47,45 +47,50 @@
 
         @if(Auth::user()->role === 'dosen')
             <!-- DOSEN VIEW: Standard Top Status Tabs -->
+            <!-- DOSEN VIEW: Standard Top Status Tabs -->
             <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-px custom-scrollbar">
                 <!-- Upcoming Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
-                    <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' && !$mySchedules ? 'bg-orange-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
+                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                    <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                     Mendatang
-                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' && !$mySchedules ? 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
+                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
                 </a>
 
                 <!-- Today Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
-                    <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' && !$mySchedules ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
+                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                    <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                     Hari Ini
-                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ $filterDate === 'today' && !$mySchedules ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
+                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ $filterDate === 'today' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
                 </a>
 
                 <!-- Past Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
+                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     Riwayat
                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
                 </a>
 
                 <!-- All Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to', 'my_schedules']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' && !$mySchedules ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
+                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                     Semua Agenda
                     <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
                 </a>
 
-                <!-- "Jadwal Saya" Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'my_schedules', 'filter_date', 'date', 'date_from', 'date_to']), ['my_schedules' => '1', 'filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $mySchedules ? 'border-amber-500 text-amber-700 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-500/10 font-bold' : 'border-transparent text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50/40 dark:hover:bg-slate-800' }}"
-                   title="Hanya tampilkan jadwal di mana Anda menjadi Penguji, Pembimbing, Ketua Sidang, atau Moderator">
-                    <svg class="w-3.5 h-3.5" fill="{{ $mySchedules ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                    Jadwal Saya
-                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ $mySchedules ? 'bg-amber-200 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 font-black' : 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400' }}">{{ $counts['mySchedules'] }}</span>
-                </a>
+                <!-- "Hanya Jadwal Saya" Toggle Filter Pill -->
+                <div class="ml-auto flex items-center pl-4 py-2 shrink-0">
+                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page']), ['my_schedules' => $mySchedules ? null : '1'])) }}"
+                       class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $mySchedules ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm shadow-emerald-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-600' }}"
+                       title="Filter hanya jadwal bimbingan atau ujian Anda">
+                        <span class="w-2 h-2 rounded-full {{ $mySchedules ? 'bg-white animate-pulse' : 'bg-slate-400' }}"></span>
+                        <span>Hanya Jadwal Saya</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $mySchedules ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            {{ $counts['mySchedules'] }}
+                        </span>
+                    </a>
+                </div>
             </div>
 
             <!-- DOSEN VIEW: Compact Single-Line Filter Toolbar -->
@@ -104,12 +109,12 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </span>
                         <input type="text" name="search" value="{{ $searchQuery }}" placeholder="Cari mahasiswa, judul, dosen, ruangan..."
-                                class="w-full pl-10 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all">
+                                class="w-full pl-10 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
                     </div>
 
                     <!-- Wave Select Dropdown -->
                     <select name="wave_id" onchange="this.form.submit()"
-                            class="w-full sm:w-auto py-2 pl-3 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all sm:min-w-[170px]">
+                            class="w-full sm:w-auto py-2 pl-3 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all sm:min-w-[170px]">
                         @if(auth()->user()->role !== 'dosen')
                             <option value="">Semua Gelombang</option>
                         @endif
@@ -124,15 +129,15 @@
                     <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1 w-full sm:w-auto">
                         <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Tgl:</span>
                         <input type="date" name="date_from" value="{{ $dateFrom }}" title="Dari Tanggal"
-                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 w-[110px] sm:w-[115px] [color-scheme:light] dark:[color-scheme:dark]">
+                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 min-w-[125px] sm:min-w-[130px] [color-scheme:light] dark:[color-scheme:dark]">
                         <span class="text-slate-400 dark:text-slate-500 text-xs font-bold">-</span>
                         <input type="date" name="date_to" value="{{ $dateTo }}" title="Sampai Tanggal"
-                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 w-[110px] sm:w-[115px] [color-scheme:light] dark:[color-scheme:dark]">
+                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 min-w-[125px] sm:min-w-[130px] [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
 
                     <!-- Filter Action Buttons Container -->
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <button type="submit" class="flex-1 sm:flex-initial justify-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5 shrink-0">
+                        <button type="submit" class="flex-1 sm:flex-initial justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5 shrink-0">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                             Filter
                         </button>
@@ -153,14 +158,17 @@
                         <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span>{{ $mySchedules ? 'Cetak Ringkasan (PDF)' : 'Cetak Semua (PDF)' }}</span>
                     </a>
-                    <button type="button" @click="allOpen = true" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap">
-                        <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
-                        <span>Buka Semua</span>
-                    </button>
-                    <button type="button" @click="allOpen = false" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2.5 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap">
-                        <svg class="w-4 h-4 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
-                        <span>Tutup Semua</span>
-                    </button>
+                    <!-- Segmented Buka / Tutup Semua -->
+                    <div class="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <button type="button" @click="allOpen = true" :class="allOpen ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            <span>Buka Semua</span>
+                        </button>
+                        <button type="button" @click="allOpen = false" :class="!allOpen ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+                            <span>Tutup Semua</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -329,7 +337,11 @@
                                                                 <span class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</span>
                                                                 
                                                                 @if($isMyExam)
-                                                                    <span class="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">Anda Menguji</span>
+                                                                    <span class="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">Anda Menguji</span>
+                                                                    <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-500/15 hover:bg-emerald-500 text-emerald-700 hover:text-slate-950 dark:text-emerald-300 dark:hover:text-slate-950 border border-emerald-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
+                                                                        <span>Lembar Nilai / Revisi</span>
+                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                                                    </a>
                                                                 @endif
                                                                 @if($isMyStudent)
                                                                     <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[9px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
@@ -461,7 +473,7 @@
 
                             <!-- Add Button (Primary Action) -->
                             <a href="{{ route('thesis-defense-schedules.create', ['wave_id' => $selectedWaveId]) }}"
-                                class="inline-flex items-center gap-2 px-4 h-10 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
+                                class="inline-flex items-center gap-2 px-4 h-10 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold rounded-xl tracking-wide transition-all shadow-sm active:scale-95 cursor-pointer shrink-0">
                                 <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                                 </svg>
@@ -475,13 +487,12 @@
                         <!-- Left: Gelombang & Search Input -->
                         <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                             <!-- Wave Filter Dropdown -->
-                            <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="relative group m-0 p-0 h-10 flex items-center w-full sm:w-auto" style="margin: 0 !important; padding: 0 !important; height: 40px !important; display: flex !important; align-items: center !important;">
+                            <form action="{{ route('thesis-defense-schedules.index') }}" method="GET" class="relative group m-0 p-0 h-10 flex items-center w-full sm:w-auto">
                                 @if(request('search'))
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                 @endif
                                 <select name="wave_id" onchange="this.form.submit()"
-                                    class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors shadow-2xs min-w-[240px] cursor-pointer"
-                                    style="height: 40px !important; margin: 0 !important; box-sizing: border-box !important;">
+                                    class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors shadow-2xs min-w-[240px] cursor-pointer">
                                     <option value="">Semua Gelombang</option>
                                     @foreach($waves as $wave)
                                         <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -534,6 +545,7 @@
                             <th class="py-4 px-6">Waktu & Tanggal</th>
                             <th class="py-4 px-6">Pimpinan Sidang</th>
                             <th class="py-4 px-6">Lokasi / Tautan</th>
+                            <th class="py-4 px-4 text-center">Peserta</th>
                             <th class="py-4 px-6 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -547,7 +559,7 @@
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col">
                                         <span class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tighter">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('d F Y') }}</span>
-                                        <span class="text-[9px] text-indigo-600 dark:text-indigo-400 uppercase font-black tracking-[0.2em] mt-0.5">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l') }}</span>
+                                        <span class="text-[9px] text-emerald-600 dark:text-emerald-400 uppercase font-black tracking-[0.2em] mt-0.5">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l') }}</span>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
@@ -575,6 +587,16 @@
                                         @endif
                                     </div>
                                 </td>
+                                <td class="py-4 px-4 text-center">
+                                    @php
+                                        $participantCount = $schedule->details->whereNotNull('thesis_id')->count();
+                                        $totalSlots = $schedule->details->count();
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold rounded-lg text-xs">
+                                        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                        <span>{{ $participantCount }} <span class="text-slate-400 font-normal">/ {{ $totalSlots }}</span></span>
+                                    </span>
+                                </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="flex justify-end items-center gap-1">
                                         <a href="{{ route('thesis-defense-schedules.export-pdf', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/pdf" title="Export PDF">
@@ -600,7 +622,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <x-empty-state colspan="5" description="Agenda pelaksanaan sidang skripsi belum tersedia untuk filter atau gelombang ini." icon="calendar" />
+                            <x-empty-state colspan="6" description="Agenda pelaksanaan sidang skripsi belum tersedia untuk filter atau gelombang ini." icon="calendar" />
                         @endforelse
                     </tbody>
                 </table>

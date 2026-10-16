@@ -4,30 +4,32 @@
             ['label' => 'Jadwal Seminar', 'route' => route('seminar-schedules.index')],
             ['label' => 'Detail Jadwal', 'route' => null]
         ]" />
-        <div class="flex justify-end items-center w-full">
-            <a href="{{ route('documents.sk-penguji-seminar', $seminarSchedule) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm mr-2">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                SK Tim Penguji
-            </a>
-            <a href="{{ route('seminar-schedules.export-pdf', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm mr-2">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <div class="flex flex-wrap justify-end items-center gap-2 w-full">
+            @if(in_array(auth()->user()->role, ['admin', 'kaprodi', 'dosen']))
+                <a href="{{ route('documents.sk-penguji-seminar', $seminarSchedule) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-wider hover:bg-blue-700 active:bg-blue-900 transition shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    SK Tim Penguji
+                </a>
+            @endif
+            <a href="{{ route('seminar-schedules.export-pdf', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-rose-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-wider hover:bg-rose-700 active:bg-rose-900 transition shadow-sm">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Export PDF
             </a>
             @if(in_array(auth()->user()->role, ['admin', 'kaprodi']))
-                <a href="{{ route('seminar-schedules.export-word', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm mr-2">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <a href="{{ route('seminar-schedules.export-word', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-sky-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-wider hover:bg-sky-700 active:bg-sky-900 transition shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Export Word
                 </a>
+                <a href="{{ route('seminar-schedules.edit', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-slate-800 dark:bg-slate-700 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-wider hover:bg-slate-700 dark:hover:bg-slate-600 transition shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Edit Jadwal
+                </a>
             @endif
-            <a href="{{ route('seminar-schedules.edit', $seminarSchedule) }}" class="inline-flex items-center px-4 py-2 bg-slate-800 dark:bg-slate-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-slate-700 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                Edit Jadwal
-            </a>
         </div>
     </x-slot>
 
     <div class="w-full mx-auto">
-        <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-6">
+        <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 border-t-4 border-t-amber-500 rounded-lg overflow-hidden mb-6">
             <div class="p-8 text-center border-b border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
                 <h2 class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-[0.2em] mb-2">JADWAL SEMINAR SKRIPSI</h2>
                 <h3 class="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest">{{ $seminarSchedule->title }}</h3>
@@ -123,6 +125,20 @@
                                                     <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->examiner2->name }}</span>
                                                 </div>
+                                                @endif
+
+                                                @php
+                                                    $isExaminer = auth()->user()->role === 'dosen' && (
+                                                        $detail->examiner1_id === auth()->user()->dosen?->id ||
+                                                        $detail->examiner2_id === auth()->user()->dosen?->id
+                                                    );
+                                                @endphp
+                                                @if($isExaminer)
+                                                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300">
+                                                            Lembar Nilai / Revisi &rarr;
+                                                        </a>
+                                                    </div>
                                                 @endif
                                             </div>
                                         </td>
