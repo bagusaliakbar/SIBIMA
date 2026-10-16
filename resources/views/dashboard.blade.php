@@ -107,8 +107,7 @@
                 <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end">
                     <button type="button" 
                             @click="burst()" 
-                            style="background: linear-gradient(135deg, #f59e0b, #e11d48);"
-                            class="px-4 py-2.5 rounded-xl bg-rose-600 hover:opacity-90 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                            class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
                         <span class="text-white font-black">Rayakan Lagi</span>
                         <span>🎉</span>
                     </button>
@@ -311,17 +310,24 @@
             @endif
 
             @if(Auth::user()->is_critical_semester)
-                <div class="bg-gradient-to-r from-red-600 to-rose-700 p-4 rounded-xl mb-6 flex items-center gap-4 shadow-lg shadow-red-200 dark:shadow-none">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md text-white rounded-xl flex items-center justify-center flex-shrink-0 border border-white/30">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div class="bg-rose-50/90 dark:bg-rose-950/40 border border-rose-200/90 dark:border-rose-800/60 rounded-2xl p-4 sm:p-5 shadow-xs mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center gap-3.5">
+                        <div class="w-11 h-11 bg-rose-600 dark:bg-rose-500 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-md shadow-rose-600/20">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h4 class="text-xs font-black uppercase tracking-wider text-rose-950 dark:text-rose-100">Peringatan Masa Studi Kritikal</h4>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60">Semester {{ Auth::user()->current_semester }}</span>
+                            </div>
+                            <p class="text-xs text-rose-800 dark:text-rose-300/90 font-medium mt-0.5 leading-relaxed">
+                                Anda telah memasuki semester batas akhir. Harap prioritaskan penyelesaian skripsi untuk menghindari sanksi Drop Out (DO). Hubungi Koordinator Prodi jika butuh asistensi khusus.
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="text-sm font-black text-white uppercase tracking-wider">Peringatan Masa Studi Kritikal!</h4>
-                        <p class="text-xs text-red-50 font-medium leading-relaxed">Saat ini Anda berada di <b>Semester {{ Auth::user()->current_semester }}</b>. Harap segera menyelesaikan skripsi Anda untuk menghindari potensi Drop Out (DO). Hubungi Koordinator Prodi jika memerlukan bantuan khusus.</p>
-                    </div>
-                    <div class="hidden md:block">
-                        <span class="px-3 py-1 bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-full border border-white/20">Urgent</span>
-                    </div>
+                    <span class="px-3 py-1 bg-rose-200/60 dark:bg-rose-900/40 text-rose-900 dark:text-rose-200 text-[10px] font-black uppercase tracking-widest rounded-xl border border-rose-300/60 dark:border-rose-700/60 shrink-0 self-end sm:self-center">
+                        Perhatian Khusus
+                    </span>
                 </div>
             @endif
             <!-- Road to Graduation (Premium Roadmap) -->
@@ -336,7 +342,7 @@
                             <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-1 max-w-2xl">{{ $thesis->final_title ?? $thesis->title }}</h3>
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Pembimbing: {{ $thesis->pembimbing1->name ?? 'Belum Ditentukan' }} & {{ $thesis->pembimbing2->name ?? 'Belum Ditentukan' }}</p>
                             @if(!$thesis->isAccSidangFinal())
-                                <button onclick="document.getElementById('edit-thesis-modal').classList.remove('hidden')" class="inline-flex items-center px-3 py-1.5 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-200 dark:hover:bg-orange-500/20 transition-colors border border-orange-200 dark:border-orange-500/20 shadow-sm">
+                                <button @click="$dispatch('open-edit-thesis-modal')" onclick="document.getElementById('edit-thesis-modal').classList.remove('hidden'); if(document.getElementById('edit-thesis-modal').__x) { document.getElementById('edit-thesis-modal').__x.$data.open = true; }" class="inline-flex items-center px-3 py-1.5 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-all border border-orange-200/80 dark:border-orange-800/60 shadow-xs cursor-pointer">
                                     <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     Revisi Judul / Deskripsi
                                 </button>
@@ -425,8 +431,12 @@
                                                     <!-- 5. Revisi Selesai -->
                                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                                                 @else
-                                                    <!-- 6. Yudisium -->
-                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
+                                                    <!-- 6. Yudisium / Kelulusan (Toga Akademik) -->
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7"></path>
+                                                    </svg>
                                                 @endif
                                             @endif
                                         </div>
@@ -632,7 +642,7 @@
                 <div class="bg-gradient-to-r from-amber-100/70 via-rose-50/70 to-orange-100/60 dark:from-amber-950/40 dark:via-rose-950/20 dark:to-orange-950/30 rounded-3xl p-6 sm:p-7 shadow-sm relative overflow-hidden mb-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="flex items-start sm:items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/30" style="background-color: #f59e0b;">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/30">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
@@ -666,8 +676,7 @@
 
                         <div class="flex items-center gap-2 shrink-0">
                             <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => ($earlyWarning['critical_count'] > 0 ? 'critical' : 'warning')]) }}" 
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/25 transition-all cursor-pointer"
-                               style="background-color: #d97706;">
+                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/25 transition-all cursor-pointer">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -734,14 +743,14 @@
             </div>
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
             <!-- Advanced Analytics Section -->
-            <div class="mb-10 mt-4">
+            <div class="mb-10 mt-4 space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <!-- Score Distribution -->
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                         <div class="relative z-10">
-                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                                 Distribusi Nilai Akhir (Grade)
                             </h3>
                             <div class="h-64">
@@ -754,8 +763,8 @@
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                         <div class="relative z-10">
-                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 Lama Pengerjaan per Gelombang (Bulan)
                             </h3>
                             <div class="h-64">
@@ -768,8 +777,8 @@
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                         <div class="relative z-10">
-                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 Ketepatan Waktu Lulus
                             </h3>
                             <div class="h-64">
@@ -782,8 +791,8 @@
                     <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-rose-50 dark:bg-rose-900/10 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                         <div class="relative z-10">
-                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                 Kesehatan Masa Studi Mahasiswa
                             </h3>
                             <div class="h-64">
@@ -793,18 +802,16 @@
                     </div>
                 </div>
 
-                </div>
-
                 <!-- Topic Trend Analysis (AI Insights) -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50 dark:bg-orange-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="relative z-10">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                            <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"></path></svg>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
+                                <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"></path></svg>
                                 Analisa Tren Topik (AI Insights)
                             </h3>
-                            <div class="px-3 py-1 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-lg border border-orange-200 dark:border-orange-500/20">
+                            <div class="px-3 py-1 bg-orange-100/80 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-lg border border-orange-200 dark:border-orange-500/20">
                                 Berbasis Data Tren
                             </div>
                         </div>
@@ -815,11 +822,11 @@
                 </div>
 
                 <!-- Cohort Completion (Full Width) -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300 mb-6">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="relative z-10">
-                        <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-8 flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             Rata-rata Masa Studi per Angkatan (Tahun)
                         </h3>
                         <div class="h-80">
@@ -829,11 +836,11 @@
                 </div>
 
                 <!-- Dosen Workload (Full Width) -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group transition-all duration-300">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="relative z-10">
-                        <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-8 flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-6 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Dosen dengan Beban Bimbingan Terbanyak (Top 10)
                         </h3>
                         <div class="h-80">
@@ -868,11 +875,11 @@
                                     Jadwal Seminar Skripsi
                                 </h3>
                                 @if($isSeminarFinished)
-                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
                                 @elseif($isSeminarOngoing)
-                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200 animate-pulse">Berlangsung</span>
+                                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80 animate-pulse">Berlangsung</span>
                                 @else
-                                    <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-orange-200">Terjadwal</span>
+                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-orange-200 dark:border-orange-800/80">Terjadwal</span>
                                 @endif
                             </div>
                             <div class="space-y-4">
@@ -930,7 +937,7 @@
                                 </div>
                                 @if($mySeminarSchedule->schedule->meeting_link && !$isSeminarFinished)
                                     <div class="pt-2">
-                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 {{ $isSeminarOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-orange-600 hover:bg-orange-700' }} text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
+                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2.5 {{ $isSeminarOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-orange-600 hover:bg-orange-700' }} text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xs">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                             {{ $isSeminarOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Gabung Sekarang' }}
                                         </a>
@@ -961,11 +968,11 @@
                                     Jadwal Sidang Skripsi
                                 </h3>
                                 @if($isDefenseFinished)
-                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
                                 @elseif($isDefenseOngoing)
-                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-blue-200 animate-pulse">Berlangsung</span>
+                                    <span class="px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80 animate-pulse">Berlangsung</span>
                                 @else
-                                    <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-indigo-200">Terjadwal</span>
+                                    <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80">Terjadwal</span>
                                 @endif
                             </div>
                             <div class="space-y-4">
@@ -1023,7 +1030,7 @@
                                 </div>
                                 @if($myDefenseSchedule->schedule->meeting_link && !$isDefenseFinished)
                                     <div class="pt-2">
-                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 {{ $isDefenseOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white text-xs font-black uppercase tracking-widest rounded-lg transition-colors shadow-sm">
+                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2.5 {{ $isDefenseOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xs">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                             {{ $isDefenseOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Join Online Meeting' }}
                                         </a>
@@ -1086,7 +1093,7 @@
                                                 || $detailSemEnd->isPast();
                                         @endphp
                                         @if($isFinished)
-                                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
                                         @endif
                                     </div>
                                 </td>
@@ -1103,7 +1110,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-orange-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
+                                    <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm">
                                         Buka Lembar Revisi
                                     </a>
                                 </td>
@@ -1142,7 +1149,7 @@
                                                 || $detailDefEnd->isPast();
                                         @endphp
                                         @if($isFinished)
-                                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>
+                                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>
                                         @endif
                                     </div>
                                 </td>
@@ -1159,7 +1166,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-emerald-600 hover:text-white text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded transition-all">
+                                    <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm">
                                         Buka Lembar Penilaian
                                     </a>
                                 </td>
@@ -1396,32 +1403,39 @@
                 @endif
 
                 <!-- Announcements Card -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
-                    <div class="px-5 py-4 border-b border-slate-50 dark:border-slate-700/50 bg-slate-800 dark:bg-slate-800 text-white flex justify-between items-center">
-                        <h3 class="text-[10px] font-extrabold uppercase tracking-widest">Papan Informasi</h3>
-                        <span class="p-1 bg-white/10 rounded">
-                            <svg class="w-3.5 h-3.5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
+                    <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700/60 bg-slate-50/70 dark:bg-slate-900/50 flex justify-between items-center">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            </div>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">Papan Informasi</h3>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100/80 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/80">
+                            Terbaru
                         </span>
                     </div>
-                    <div class="divide-y divide-slate-50 dark:divide-slate-700">
+                    <div class="divide-y divide-slate-100 dark:divide-slate-700/50">
                         @forelse($announcements as $announcement)
-                        <div class="p-5 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                        <div class="p-5 hover:bg-slate-50/70 dark:hover:bg-slate-700/30 transition-colors">
                             <div class="flex items-center gap-2 mb-2">
                                 @php
                                     $color = $announcement->type === 'important' ? 'red' : ($announcement->type === 'warning' ? 'orange' : 'blue');
                                 @endphp
-                                <span class="px-2 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-tighter border {{ $color === 'red' ? 'bg-red-100 text-red-600 border-red-200' : ($color === 'orange' ? 'bg-orange-100 text-orange-600 border-orange-200' : 'bg-blue-100 text-blue-600 border-blue-200') }}">
+                                <span class="px-2 py-0.5 rounded-full text-[8px] font-extrabold uppercase tracking-wider border {{ $color === 'red' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/80 dark:text-red-300 dark:border-red-800/80' : ($color === 'orange' ? 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/80 dark:text-orange-300 dark:border-orange-800/80' : 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/80 dark:text-blue-300 dark:border-blue-800/80') }}">
                                     {{ $announcement->type }}
                                 </span>
-                                <span class="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">{{ $announcement->created_at->diffForHumans() }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ $announcement->created_at->diffForHumans() }}</span>
                             </div>
                             <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight mb-1">{{ $announcement->title }}</p>
-                            <div class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap">{{ $announcement->content }}</div>
+                            <div class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{{ $announcement->content }}</div>
                         </div>
                         @empty
                         <div class="p-10 text-center">
-                            <svg class="w-10 h-10 text-slate-100 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                            <p class="text-xs text-slate-400 italic">Belum ada pengumuman.</p>
+                            <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-slate-100 dark:border-slate-800">
+                                <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium italic">Belum ada pengumuman.</p>
                         </div>
                         @endforelse
                     </div>
@@ -1870,36 +1884,54 @@
     </script>
 
     @if(Auth::user()->role === 'mahasiswa' && $thesis && !$thesis->isAccSidangFinal())
-    <div id="edit-thesis-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="edit-thesis-modal" 
+         x-data="{ open: false }" 
+         x-show="open" 
+         x-cloak
+         @open-edit-thesis-modal.window="open = true"
+         @keydown.escape.window="open = false"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         aria-labelledby="modal-title" role="dialog" aria-modal="true"
+         style="display: none;">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="document.getElementById('edit-thesis-modal').classList.add('hidden')"></div>
+            <div class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs transition-opacity" 
+                 aria-hidden="true" 
+                 @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100 dark:border-slate-700">
+            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200/80 dark:border-slate-700/80">
                 <form action="{{ route('theses.update', $thesis->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-                        <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight" id="modal-title">Revisi Judul / Deskripsi Skripsi</h3>
+                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/50 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </div>
+                            <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight" id="modal-title">Revisi Judul / Deskripsi Skripsi</h3>
+                        </div>
+                        <button type="button" @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
                     </div>
-                    <div class="px-6 py-6 space-y-6">
+                    <div class="px-6 py-6 space-y-5">
                         <div>
-                            <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Judul Skripsi <span class="text-orange-600">*</span></label>
-                            <textarea name="title" id="title" rows="3" required class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors">{{ old('title', $thesis->final_title ?? $thesis->title) }}</textarea>
+                            <label for="title" class="block text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">Judul Skripsi <span class="text-orange-600">*</span></label>
+                            <textarea name="title" id="title" rows="3" required class="mt-2 block w-full rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 p-3 text-slate-900 dark:text-slate-100 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all font-medium leading-relaxed">{{ old('title', $thesis->final_title ?? $thesis->title) }}</textarea>
                             @error('title')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-medium">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label for="abstract" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Abstrak / Deskripsi</label>
-                            <textarea name="abstract" id="abstract" rows="6" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors">{{ old('abstract', $thesis->abstract) }}</textarea>
+                            <label for="abstract" class="block text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">Abstrak / Deskripsi</label>
+                            <textarea name="abstract" id="abstract" rows="5" class="mt-2 block w-full rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 p-3 text-slate-900 dark:text-slate-100 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all font-medium leading-relaxed">{{ old('abstract', $thesis->abstract) }}</textarea>
                             @error('abstract')
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-medium">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
-                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
-                        <button type="button" onclick="document.getElementById('edit-thesis-modal').classList.add('hidden')" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-bold hover:bg-orange-700 transition-colors shadow-sm">Simpan Perubahan</button>
+                    <div class="px-6 py-4 bg-slate-50/70 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-end gap-2.5">
+                        <button type="button" @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-xs cursor-pointer">Batal</button>
+                        <button type="submit" class="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-orange-600/20 hover:scale-105 active:scale-95 cursor-pointer">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
