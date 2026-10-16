@@ -136,7 +136,7 @@
                                                 @if($isExaminer)
                                                     <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
                                                         <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300">
-                                                            Lembar Nilai / Revisi &rarr;
+                                                            Catatan & Revisi &rarr;
                                                         </a>
                                                     </div>
                                                 @endif

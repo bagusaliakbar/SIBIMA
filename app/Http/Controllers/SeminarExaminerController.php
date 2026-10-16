@@ -62,10 +62,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
                         $q->where('seminar_schedules.date', '>=', now()->toDateString())
                           ->orWhereHas('revisions', function($rq) use ($user) {
                               $rq->where('examiner_id', $user->id)
-                                 ->where(function($sub) {
-                                     $sub->whereNull('score_presentation')
-                                         ->orWhere('status', '!=', 'approved');
-                                 });
+                                 ->where('status', '!=', 'approved');
                           });
                     });
                 }

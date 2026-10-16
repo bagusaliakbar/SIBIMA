@@ -339,7 +339,7 @@
                                                                 @if($isMyExam)
                                                                     <span class="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">Anda Menguji</span>
                                                                     <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/15 hover:bg-amber-500 text-amber-700 hover:text-slate-950 dark:text-amber-300 dark:hover:text-slate-950 border border-amber-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
-                                                                        <span>Lembar Nilai / Revisi</span>
+                                                                        <span>Catatan & Revisi</span>
                                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                                                                     </a>
                                                                 @endif

@@ -137,8 +137,7 @@
                                     $myRev = $exam->revisions->where('examiner_id', Auth::id())->first();
                                     $rev1 = $exam->revisions->where('examiner_id', $exam->examiner1_id)->first();
                                     $rev2 = $exam->revisions->where('examiner_id', $exam->examiner2_id)->first();
-                                    
-                                    $gradedCount = ($rev1?->isGraded() ? 1 : 0) + ($rev2?->isGraded() ? 1 : 0);
+                                    $approvedCount = ($rev1?->status === 'approved' ? 1 : 0) + ($rev2?->status === 'approved' ? 1 : 0);
                                 @endphp
                                 <div class="flex flex-col items-center gap-1.5">
                                     <div class="flex gap-1">
@@ -150,52 +149,42 @@
                                             <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-slate-700">P1 & P2</span>
                                         @endif
                                     </div>
-                                    
-                                    {{-- Score Badge --}}
-                                    @if($isStaff)
-                                        <span class="px-2 py-0.5 {{ $gradedCount === 2 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80' : ($gradedCount === 1 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-800/80' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700') }} text-[9px] font-black rounded-md uppercase border">
-                                            Nilai: {{ $gradedCount }}/2 Penguji
-                                        </span>
-                                    @else
-                                        @if($myRev && $myRev->isGraded())
-                                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-black rounded-md uppercase border border-emerald-200 dark:border-emerald-800/80">
-                                                Nilai: {{ number_format($myRev->total_score, 1) }}
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-black rounded-md uppercase border border-amber-200 dark:border-amber-800/80">
-                                                Belum Dinilai
-                                            </span>
-                                        @endif
-                                    @endif
 
-                                    {{-- Revision Badge --}}
-                                    @php
-                                        $displayRev = $isStaff ? ($rev1 ?? $rev2) : $myRev;
-                                    @endphp
-                                    @if($displayRev)
-                                        @if($displayRev->status === 'approved')
-                                            <x-status-badge type="emerald" label="REVISI SELESAI" />
-                                        @elseif($displayRev->status === 'resubmitted')
+                                    {{-- Revision Status Badge --}}
+                                    @if($isStaff)
+                                        @if($approvedCount === 2)
+                                            <x-status-badge type="emerald" label="REVISI SELESAI (2/2)" />
+                                        @elseif($approvedCount === 1)
+                                            <x-status-badge type="blue" label="1/2 PENGUJI ACC" />
+                                        @elseif(($rev1 && $rev1->status === 'resubmitted') || ($rev2 && $rev2->status === 'resubmitted'))
                                             <x-status-badge type="blue" label="REVISI TERKIRIM" />
+                                        @elseif($rev1 || $rev2)
+                                            <x-status-badge type="orange" label="PROSES REVISI" />
                                         @else
-                                            <x-status-badge type="orange" label="REVISI DIKIRIM" />
+                                            <x-status-badge type="slate" label="BELUM ADA CATATAN" />
                                         @endif
                                     @else
-                                        <x-status-badge type="slate" label="BELUM ADA CATATAN" />
+                                        @if($myRev)
+                                            @if($myRev->status === 'approved')
+                                                <x-status-badge type="emerald" label="REVISI SELESAI" />
+                                            @elseif($myRev->status === 'resubmitted')
+                                                <x-status-badge type="blue" label="REVISI TERKIRIM" />
+                                            @else
+                                                <x-status-badge type="orange" label="REVISI DIKIRIM" />
+                                            @endif
+                                        @else
+                                            <x-status-badge type="slate" label="BELUM ADA CATATAN" />
+                                        @endif
                                     @endif
                                 </div>
                             </td>
                             <td class="px-6 py-5 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('seminar-examiner.grading', $exam->id) }}" 
-                                       class="inline-flex items-center px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm shadow-amber-500/20"
-                                       title="Buka Lembar Penilaian Seminar">
-                                        Input Nilai
-                                    </a>
                                     <a href="{{ route('seminar-examiner.show', $exam->id) }}" 
-                                       class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-2xs"
-                                       title="Buka Catatan & Thread Revisi">
-                                        Revisi
+                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm shadow-amber-500/20"
+                                       title="Buka Lembar Catatan & Revisi Seminar">
+                                        <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        <span>Catatan Revisi</span>
                                     </a>
                                 </div>
                             </td>

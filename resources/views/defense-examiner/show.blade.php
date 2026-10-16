@@ -169,6 +169,8 @@
                 </a>
             @endif
         </div>
+
+        @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($examiners))
             <!-- Admin / Kaprodi Examiner Selector Card -->
             <div class="bg-gradient-to-r from-rose-500/10 via-purple-500/10 to-indigo-500/10 border border-rose-200/60 dark:border-rose-800/40 rounded-2xl p-5 shadow-sm">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
