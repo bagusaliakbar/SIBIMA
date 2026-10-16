@@ -84,16 +84,11 @@
 
         table.nested-table {
             width: 100%;
-            height: 100%;
             border-collapse: collapse;
             table-layout: fixed;
             margin: 0 !important;
             padding: 0 !important;
             border: none;
-        }
-
-        table.nested-table tr {
-            height: 33.33%;
         }
 
         table.nested-table td {
