@@ -42,6 +42,34 @@
     </x-slot>
 
     <div class="w-full space-y-6">
+
+        {{-- Integrated Workflow Navigation Tabs --}}
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800/60 p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
+            <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                <a href="{{ route('defense-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => request('target_examiner_id'), 'redirect_to' => request('redirect_to')]) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-xs rounded-lg transition-colors">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    <span>Catatan & Lembar Revisi</span>
+                </a>
+                <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => request('target_examiner_id'), 'redirect_to' => request('redirect_to')]) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 font-black text-xs rounded-lg shadow-xs border border-emerald-500/20">
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Formulir Penilaian</span>
+                    @if($myRevision && $myRevision->isGraded())
+                        <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 text-[8px] font-black rounded uppercase">
+                            {{ number_format($myRevision->total_score, 1) }}
+                        </span>
+                    @endif
+                </a>
+            </div>
+            @if($detail->schedule->meeting_link)
+                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-700 dark:text-emerald-300 hover:text-white text-xs font-bold rounded-xl border border-emerald-500/20 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <span>Join GMeet Sidang</span>
+                </a>
+            @endif
+        </div>
+
         @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($examiners))
             <!-- Admin / Kaprodi Examiner Selector Card -->
             <div class="bg-gradient-to-r from-emerald-500/10 via-indigo-500/10 to-purple-500/10 border border-emerald-200/60 dark:border-emerald-800/40 rounded-2xl p-5 shadow-sm">
@@ -112,8 +140,30 @@
                     <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2 italic">"{{ $detail->thesis?->title ?? '-' }}"</p>
                 </div>
 
-                <div class="bg-slate-50 dark:bg-slate-900/50 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                    <div class="flex items-center text-xs font-bold text-slate-700 dark:text-slate-200">
+                @php
+                    $app = $detail->thesis?->defenseApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
+                        ?? $detail->thesis?->defenseApplication
+                        ?? $detail->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first()
+                        ?? $detail->thesis?->seminarApplication;
+                    $filePath = $app?->file_skripsi;
+                    $docUrl = null;
+                    if ($filePath) {
+                        $docUrl = filter_var($filePath, FILTER_VALIDATE_URL) 
+                            ? $filePath 
+                            : route('download.private', ['path' => $filePath, 'inline' => 1]);
+                    }
+                @endphp
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                    @if($docUrl)
+                        <a href="{{ $docUrl }}" target="_blank" 
+                           class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white dark:hover:text-white border border-emerald-500/30 text-xs font-bold transition-all shadow-2xs group/doc"
+                           title="Buka / Baca Naskah Skripsi Mahasiswa">
+                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover/doc:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span>Buka Naskah Skripsi</span>
+                            <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    @endif
+                    <div class="bg-slate-50 dark:bg-slate-900/50 px-4 py-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50 flex items-center justify-center text-xs font-bold text-slate-700 dark:text-slate-200">
                         <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         {{ \Carbon\Carbon::parse($detail->schedule->date)->format('d F Y') }}
                     </div>

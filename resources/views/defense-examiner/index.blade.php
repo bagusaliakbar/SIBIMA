@@ -25,15 +25,14 @@
                             'wave_id' => $selectedWaveId ?? ''
                         ]" />
 
-                    <form action="{{ route('defense-examiner.index') }}" method="GET" class="relative group m-0 p-0 h-10 flex items-center" style="margin: 0 !important; padding: 0 !important; height: 40px !important; display: flex !important; align-items: center !important;">
+                    <form action="{{ route('defense-examiner.index') }}" method="GET" class="relative group m-0 p-0 flex items-center">
                         @if(!empty($search))
                             <input type="hidden" name="search" value="{{ $search }}">
                         @endif
                         <select name="wave_id" onchange="this.form.submit()" 
-                                class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors shadow-2xs min-w-[220px] cursor-pointer"
-                                style="height: 40px !important; margin: 0 !important; box-sizing: border-box !important;">
+                                class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors shadow-2xs min-w-[220px] cursor-pointer">
                             <option value="" {{ empty($selectedWaveId) ? 'selected' : '' }}>
-                                📅 Jadwal Mendatang (Hari Ini+)
+                                📅 Gelombang Aktif ({{ $activeWave?->name ?? 'Berjalan' }})
                             </option>
                             @foreach($waves as $wave)
                                 <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -138,9 +137,16 @@
                                     $isSupervisor2 = ($exam->thesis->pembimbing2_id === Auth::id());
                                     $isExaminer = $isExaminer1 || $isExaminer2;
                                     $isSupervisor = $isSupervisor1 || $isSupervisor2;
-                                    $revision = $exam->revisions()->where('examiner_id', Auth::id())->first();
+                                    $isStaff = in_array(Auth::user()->role, ['admin', 'kaprodi']);
+
+                                    $myRev = $exam->revisions->where('examiner_id', Auth::id())->first();
+                                    $revP1 = $exam->revisions->where('examiner_id', $exam->thesis->pembimbing1_id)->first();
+                                    $revE1 = $exam->revisions->where('examiner_id', $exam->examiner1_id)->first();
+                                    $revE2 = $exam->revisions->where('examiner_id', $exam->examiner2_id)->first();
+
+                                    $gradedCount = ($revP1?->isGraded() ? 1 : 0) + ($revE1?->isGraded() ? 1 : 0) + ($revE2?->isGraded() ? 1 : 0);
                                 @endphp
-                                <div class="flex flex-col items-center gap-2">
+                                <div class="flex flex-col items-center gap-1.5">
                                     <div class="flex gap-1">
                                         @if($isSupervisor1)
                                             <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100 dark:border-indigo-500/20">Pembimbing 1</span>
@@ -148,37 +154,65 @@
                                             <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[8px] font-black uppercase rounded border border-indigo-100 dark:border-indigo-500/20">Pembimbing 2</span>
                                         @endif
                                         @if($isExaminer1)
-                                            <span class="px-1.5 py-0.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-[8px] font-black uppercase rounded border border-rose-100 dark:border-rose-500/20">Penguji 1</span>
+                                            <span class="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100 dark:border-emerald-500/20">Penguji 1</span>
                                         @elseif($isExaminer2)
-                                            <span class="px-1.5 py-0.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-[8px] font-black uppercase rounded border border-rose-100 dark:border-rose-500/20">Penguji 2</span>
+                                            <span class="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[8px] font-black uppercase rounded border border-emerald-100 dark:border-emerald-500/20">Penguji 2</span>
+                                        @elseif($isStaff)
+                                            <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-slate-700">P1 & Penguji</span>
                                         @endif
                                     </div>
-                                    @if($isExaminer)
-                                        @if($revision)
-                                            @if($revision->status === 'approved')
+
+                                    {{-- Score Status Badge --}}
+                                    @if($isStaff)
+                                        <span class="px-2 py-0.5 {{ $gradedCount === 3 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80' : ($gradedCount > 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-800/80' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700') }} text-[9px] font-black rounded-md uppercase border">
+                                            Nilai: {{ $gradedCount }}/3 Penilai
+                                        </span>
+                                    @else
+                                        @if($myRev && $myRev->isGraded())
+                                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-black rounded-md uppercase border border-emerald-200 dark:border-emerald-800/80">
+                                                Nilai: {{ number_format($myRev->total_score, 1) }}
+                                            </span>
+                                        @else
+                                            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-black rounded-md uppercase border border-amber-200 dark:border-amber-800/80">
+                                                Belum Dinilai
+                                            </span>
+                                        @endif
+                                    @endif
+
+                                    {{-- Revision Status Badge --}}
+                                    @if($isExaminer || $isStaff)
+                                        @php
+                                            $displayRev = $isStaff ? ($revE1 ?? $revE2) : $myRev;
+                                        @endphp
+                                        @if($displayRev)
+                                            @if($displayRev->status === 'approved')
                                                 <x-status-badge type="emerald" label="REVISI SELESAI" />
-                                            @elseif($revision->status === 'resubmitted')
+                                            @elseif($displayRev->status === 'resubmitted')
                                                 <x-status-badge type="blue" label="REVISI TERKIRIM" />
                                             @else
                                                 <x-status-badge type="orange" label="REVISI DIKIRIM" />
                                             @endif
                                         @else
-                                            <x-status-badge type="amber" label="BELUM ADA REVISI" />
+                                            <x-status-badge type="slate" label="BELUM ADA CATATAN" />
                                         @endif
                                     @else
-                                        <x-status-badge type="blue" label="HANYA NILAI" />
+                                        <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-[8px] font-bold rounded uppercase border border-indigo-200/80 dark:border-indigo-800/80">
+                                            Hanya Penilaian
+                                        </span>
                                     @endif
                                 </div>
                             </td>
                             <td class="px-6 py-5 text-right">
-                                <div class="flex justify-end gap-2">
+                                <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('defense-examiner.grading', $exam->id) }}" 
-                                       class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
+                                       class="inline-flex items-center px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm shadow-emerald-600/20"
+                                       title="Buka Lembar Penilaian Sidang">
                                         Input Nilai
                                     </a>
-                                    @if($isExaminer)
+                                    @if($isExaminer || $isStaff)
                                         <a href="{{ route('defense-examiner.show', $exam->id) }}" 
-                                           class="inline-flex items-center px-4 py-2 bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-all shadow-lg shadow-rose-500/20">
+                                           class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-2xs"
+                                           title="Buka Catatan & Thread Revisi">
                                             Revisi
                                         </a>
                                     @endif

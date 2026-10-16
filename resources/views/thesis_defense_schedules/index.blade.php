@@ -345,6 +345,12 @@
                                                                 @endif
                                                                 @if($isMyStudent)
                                                                     <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[9px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
+                                                                    @if($detail->thesis && $detail->thesis->pembimbing1_id === $currentUserId)
+                                                                        <a href="{{ route('defense-examiner.grading', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-500/15 hover:bg-indigo-600 text-indigo-700 hover:text-white dark:text-indigo-300 dark:hover:text-white border border-indigo-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
+                                                                            <span>Input Nilai P1</span>
+                                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                                                        </a>
+                                                                    @endif
                                                                 @endif
                                                             </div>
                                                             <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">

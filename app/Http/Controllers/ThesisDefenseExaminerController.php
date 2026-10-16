@@ -57,13 +57,22 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
                 // Dosen memilih gelombang secara eksplisit untuk melihat riwayat/arsip gelombang tersebut
                 $query->where('thesis_defense_schedules.wave_id', $selectedWaveId);
             } else {
-                // Dosen belum memilih gelombang:
-                // Jangan tampilkan jadwal yang tanggal pelaksanaannya sudah lewat (date < today).
-                // Hanya tampilkan jadwal aktif / mendatang (date >= today).
-                $query->where('thesis_defense_schedules.date', '>=', now()->toDateString())
-                      ->when($activeWave, function($q) use ($activeWave) {
-                          $q->where('thesis_defense_schedules.wave_id', $activeWave->id);
-                      });
+                // Default: tampilkan seluruh tugas pada gelombang aktif yang sedang berjalan.
+                // Jika tidak ada gelombang aktif yang diset, tampilkan jadwal hari ini ke depan atau tugas yang belum tuntas.
+                if ($activeWave) {
+                    $query->where('thesis_defense_schedules.wave_id', $activeWave->id);
+                } else {
+                    $query->where(function($q) use ($user) {
+                        $q->where('thesis_defense_schedules.date', '>=', now()->toDateString())
+                          ->orWhereHas('revisions', function($rq) use ($user) {
+                              $rq->where('examiner_id', $user->id)
+                                 ->where(function($sub) {
+                                     $sub->whereNull('score_presentation')
+                                         ->orWhere('status', '!=', 'approved');
+                                 });
+                          });
+                    });
+                }
             }
         } else {
             // Admin & Kaprodi: default to activeWave if no wave is selected

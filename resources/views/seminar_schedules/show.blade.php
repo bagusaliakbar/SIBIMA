@@ -129,8 +129,8 @@
 
                                                 @php
                                                     $isExaminer = auth()->user()->role === 'dosen' && (
-                                                        $detail->examiner1_id === auth()->user()->dosen?->id ||
-                                                        $detail->examiner2_id === auth()->user()->dosen?->id
+                                                        $detail->examiner1_id === auth()->id() ||
+                                                        $detail->examiner2_id === auth()->id()
                                                     );
                                                 @endphp
                                                 @if($isExaminer)
