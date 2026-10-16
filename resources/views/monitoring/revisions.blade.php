@@ -164,23 +164,13 @@
                                         <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px] flex flex-col justify-between min-h-[58px]">
                                             <div class="flex items-center justify-between gap-1 mb-1">
                                                 <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
-                                                <div class="flex items-center gap-1">
-                                                    @if($detail->examiner1_id)
-                                                        <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner1_id]) }}" target="_blank"
-                                                           class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
-                                                           title="Cetak Lembar Revisi Penguji 1 ({{ $detail->examiner1?->name }})">
-                                                            <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                                            <span class="text-[8px] font-black uppercase">Cetak</span>
-                                                        </a>
-                                                    @endif
-                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
-                                                        <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}"
-                                                           class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
-                                                           title="Kelola / Input Revisi">
-                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                        </a>
-                                                    @endif
-                                                </div>
+                                                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
+                                                    <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}"
+                                                       class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
+                                                       title="Kelola / Input Revisi">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    </a>
+                                                @endif
                                             </div>
                                             <div>
                                                 @if($rev1)
@@ -208,23 +198,13 @@
                                         <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px] flex flex-col justify-between min-h-[58px]">
                                             <div class="flex items-center justify-between gap-1 mb-1">
                                                 <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
-                                                <div class="flex items-center gap-1">
-                                                    @if($detail->examiner2_id)
-                                                        <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner2_id]) }}" target="_blank"
-                                                           class="inline-flex items-center gap-1 px-1.5 py-0.5 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0 border border-slate-200/60 dark:border-slate-700" 
-                                                           title="Cetak Lembar Revisi Penguji 2 ({{ $detail->examiner2?->name }})">
-                                                            <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                                            <span class="text-[8px] font-black uppercase">Cetak</span>
-                                                        </a>
-                                                    @endif
-                                                    @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
-                                                        <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}"
-                                                           class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
-                                                           title="Kelola / Input Revisi">
-                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                        </a>
-                                                    @endif
-                                                </div>
+                                                @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
+                                                    <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}"
+                                                       class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
+                                                       title="Kelola / Input Revisi">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    </a>
+                                                @endif
                                             </div>
                                             <div>
                                                 @if($rev2)
