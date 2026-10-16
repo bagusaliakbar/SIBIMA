@@ -43,11 +43,11 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
 
         $revisions = SeminarRevision::whereHas('detail', function ($q) use ($thesis) {
             $q->where('thesis_id', $thesis->id);
-        })->with(['examiner', 'detail.schedule', 'messages' => function($q) {
+        })->with(['examiner', 'detail.schedule', 'detail.thesis', 'messages' => function($q) {
             $q->latest()->limit(1);
         }])->get();
 
-        return view('student-seminar-revisions.index', compact('revisions'));
+        return view('student-seminar-revisions.index', compact('revisions', 'thesis'));
     }
 
     public function show(SeminarRevision $revision)

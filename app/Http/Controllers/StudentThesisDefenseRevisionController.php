@@ -43,11 +43,11 @@ class StudentThesisDefenseRevisionController extends Controller implements HasMi
 
         $revisions = ThesisDefenseRevision::whereHas('detail', function ($q) use ($thesis) {
             $q->where('thesis_id', $thesis->id);
-        })->with(['examiner', 'detail.schedule', 'messages' => function($q) {
+        })->with(['examiner', 'detail.schedule', 'detail.thesis', 'messages' => function($q) {
             $q->latest()->limit(1);
         }])->get();
 
-        return view('student-defense-revisions.index', compact('revisions'));
+        return view('student-defense-revisions.index', compact('revisions', 'thesis'));
     }
 
     public function show(ThesisDefenseRevision $revision)
