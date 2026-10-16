@@ -101,59 +101,6 @@
             </div>
         </div>
 
-        <!-- 2. Academic Milestone Workflow Bar -->
-        <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-700/80 shadow-2xs">
-            <div class="flex items-center justify-between mb-3 text-xs font-bold text-slate-700 dark:text-slate-300">
-                <span class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                    Alur Tahapan Seminar & Revisi Proposal
-                </span>
-                <span class="text-[11px] text-slate-400">Tahap 3 dari 4</span>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 flex items-center gap-2.5">
-                    <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center text-xs font-black shrink-0">
-                        ✓
-                    </div>
-                    <div class="min-w-0">
-                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Tahap 1</span>
-                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">Pendaftaran Seminar</p>
-                    </div>
-                </div>
-
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 flex items-center gap-2.5">
-                    <div class="w-6 h-6 rounded-full {{ $firstSchedule ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300' }} flex items-center justify-center text-xs font-black shrink-0">
-                        {{ $firstSchedule ? '✓' : '2' }}
-                    </div>
-                    <div class="min-w-0">
-                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Tahap 2</span>
-                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">Pelaksanaan Seminar</p>
-                    </div>
-                </div>
-
-                <div class="p-3 rounded-xl bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200/80 dark:border-orange-900/40 flex items-center gap-2.5">
-                    <div class="w-6 h-6 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                        3
-                    </div>
-                    <div class="min-w-0">
-                        <span class="block text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase">Tahap 3 • Aktif</span>
-                        <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">Catatan & Revisi</p>
-                    </div>
-                </div>
-
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 flex items-center gap-2.5 opacity-60">
-                    <div class="w-6 h-6 rounded-full bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300 flex items-center justify-center text-xs font-black shrink-0">
-                        4
-                    </div>
-                    <div class="min-w-0">
-                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Tahap 4</span>
-                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">Pengesahan Proposal</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         @if($totalRevisions > 0)
             <!-- Section Title -->
             <div class="flex items-center justify-between pt-1">
