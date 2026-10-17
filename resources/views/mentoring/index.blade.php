@@ -2316,16 +2316,16 @@
                                         </div>
 
                                         @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                                            <div class="flex flex-wrap gap-2">
+                                            <div class="flex flex-wrap items-center gap-2.5">
                                                 @php
                                                     $studentActionableIds = $studentSessions->filter(fn($s) => $s->status !== 'completed' || $s->is_absent)->pluck('id')->values()->all();
                                                 @endphp
                                                 @if(count($studentActionableIds) > 0)
                                                     <button type="button" 
                                                             @click="toggleSelectGroup(@json($studentActionableIds))"
-                                                            :class="isGroupSelected(@json($studentActionableIds)) ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50'"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm cursor-pointer">
-                                                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                                            :class="isGroupSelected(@json($studentActionableIds)) ? 'bg-orange-600 text-white border-orange-600 shadow-xs' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700 hover:bg-slate-50'"
+                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all shadow-2xs cursor-pointer">
+                                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                                                         <span x-text="isGroupSelected(@json($studentActionableIds)) ? 'Lepas Pilihan' : 'Pilih Sesi'">Pilih Sesi</span>
                                                     </button>
                                                 @endif
@@ -2337,7 +2337,7 @@
                                                     $isP2 = Auth::id() === $studentThesis->pembimbing2_id;
                                                     $hasAccUp = $isAdminOrKaprodi ? ($studentThesis->acc_up_p1 && $studentThesis->acc_up_p2) : ($isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false));
                                                 @endphp
-                                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                <div class="inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                                                     <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
                                                         onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?')">
                                                         @csrf
@@ -2346,15 +2346,26 @@
                                                         @endif
                                                         <button type="submit" 
                                                             title="{{ $hasAccUp ? 'Batalkan ACC Seminar' : 'Berikan ACC Seminar' }}"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
-                                                            {{ $hasAccUp ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50' }}">
-                                                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                            ACC SEMINAR
+                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all cursor-pointer
+                                                            {{ $hasAccUp 
+                                                                ? 'bg-emerald-600 text-white hover:bg-emerald-700' 
+                                                                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                                                            <svg class="w-3.5 h-3.5 shrink-0 {{ $hasAccUp ? 'text-white' : 'text-emerald-600 dark:text-emerald-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                            <span>ACC Seminar</span>
                                                         </button>
                                                     </form>
-                                                    <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
+                                                    <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800/60 border-l border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+                                                        <span class="inline-flex items-center gap-1 {{ $studentThesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500' }}" title="Status ACC P1: {{ $studentThesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                            <span class="w-2 h-2 rounded-full shrink-0 {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                            P1
+                                                        </span>
+                                                        <span class="text-slate-300 dark:text-slate-600 font-normal">•</span>
+                                                        <span class="inline-flex items-center gap-1 {{ $studentThesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-slate-400 dark:text-slate-500' }}" title="Status ACC P2: {{ $studentThesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                            <span class="w-2 h-2 rounded-full shrink-0 {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                            P2
+                                                        </span>
                                                     </div>
                                                 </div>
 
@@ -2362,7 +2373,7 @@
                                                 @php
                                                     $hasAccSidang = $isAdminOrKaprodi ? ($studentThesis->acc_sidang_p1 && $studentThesis->acc_sidang_p2) : ($isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false));
                                                 @endphp
-                                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                <div class="inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                                                     <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
                                                         onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?')">
                                                         @csrf
@@ -2371,15 +2382,26 @@
                                                         @endif
                                                         <button type="submit" 
                                                             title="{{ $hasAccSidang ? 'Batalkan ACC Sidang' : 'Berikan ACC Sidang' }}"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm
-                                                            {{ $hasAccSidang ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50' }}">
-                                                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                            ACC SIDANG
+                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition-all cursor-pointer
+                                                            {{ $hasAccSidang 
+                                                                ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                                                                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                                                            <svg class="w-3.5 h-3.5 shrink-0 {{ $hasAccSidang ? 'text-white' : 'text-indigo-600 dark:text-indigo-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                            <span>ACC Sidang</span>
                                                         </button>
                                                     </form>
-                                                    <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
+                                                    <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800/60 border-l border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+                                                        <span class="inline-flex items-center gap-1 {{ $studentThesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-extrabold' : 'text-slate-400 dark:text-slate-500' }}" title="Status ACC P1: {{ $studentThesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                            <span class="w-2 h-2 rounded-full shrink-0 {{ $studentThesis->acc_sidang_p1 ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                            P1
+                                                        </span>
+                                                        <span class="text-slate-300 dark:text-slate-600 font-normal">•</span>
+                                                        <span class="inline-flex items-center gap-1 {{ $studentThesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-extrabold' : 'text-slate-400 dark:text-slate-500' }}" title="Status ACC P2: {{ $studentThesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                            <span class="w-2 h-2 rounded-full shrink-0 {{ $studentThesis->acc_sidang_p2 ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                                            P2
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
