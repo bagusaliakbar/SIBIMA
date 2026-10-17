@@ -7,6 +7,10 @@
    ========================================================================== */
 
 /* 1. Global Reset for All Form Controls */
+form {
+    margin: 0;
+}
+
 input,
 textarea,
 select,

@@ -2337,8 +2337,8 @@
                                                     $isP2 = Auth::id() === $studentThesis->pembimbing2_id;
                                                     $hasAccUp = $isAdminOrKaprodi ? ($studentThesis->acc_up_p1 && $studentThesis->acc_up_p2) : ($isP1 ? $studentThesis->acc_up_p1 : ($isP2 ? $studentThesis->acc_up_p2 : false));
                                                 @endphp
-                                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                                    <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="inline"
+                                                <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                    <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                                         onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?')">
                                                         @csrf
                                                         @if($isAdminOrKaprodi)
@@ -2352,7 +2352,7 @@
                                                             ACC SEMINAR
                                                         </button>
                                                     </form>
-                                                    <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
+                                                    <div class="inline-flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1 self-center">
                                                         <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
                                                         <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
                                                     </div>
@@ -2362,8 +2362,8 @@
                                                 @php
                                                     $hasAccSidang = $isAdminOrKaprodi ? ($studentThesis->acc_sidang_p1 && $studentThesis->acc_sidang_p2) : ($isP1 ? $studentThesis->acc_sidang_p1 : ($isP2 ? $studentThesis->acc_sidang_p2 : false));
                                                 @endphp
-                                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                                    <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="inline"
+                                                <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                                    <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                                         onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?')">
                                                         @csrf
                                                         @if($isAdminOrKaprodi)
@@ -2377,7 +2377,7 @@
                                                             ACC SIDANG
                                                         </button>
                                                     </form>
-                                                    <div class="flex gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1">
+                                                    <div class="inline-flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1 self-center">
                                                         <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
                                                         <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
                                                     </div>

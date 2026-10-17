@@ -333,9 +333,9 @@
 
                 <div class="flex flex-wrap items-center gap-3">
                     {{-- ACC SEMINAR (UP) GROUP --}}
-                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                         @if($canToggleAcc)
-                            <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline"
+                            <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                 onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar Proposal untuk {{ addslashes($thesis->student->name) }}?')">
                                 @csrf
                                 @if($isAdminOrKaprodi)
@@ -343,7 +343,7 @@
                                 @endif
                                 <button type="submit" 
                                     title="{{ $hasAccUp ? 'Klik untuk membatalkan ACC Seminar' : 'Klik untuk memberikan ACC Seminar' }}"
-                                    class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all shadow-xs
+                                    class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all shadow-xs cursor-pointer
                                     {{ $hasAccUp 
                                         ? 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800' 
                                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800' }}">
@@ -363,32 +363,32 @@
                         @endif
 
                         {{-- Status P1 & P2 Indicator Dots with Tooltip --}}
-                        <div class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5">
+                        <div class="inline-flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5 self-center">
                             @if($isAdminOrKaprodi)
-                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline"
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                     onsubmit="return confirm('Toggle ACC Seminar P1 untuk {{ addslashes($thesis->student->name) }}?')">
                                     @csrf
                                     <input type="hidden" name="slot" value="p1">
-                                    <button type="submit" class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P1">
+                                    <button type="submit" class="inline-flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P1">
                                         <span class="text-[10px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
-                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="inline"
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                     onsubmit="return confirm('Toggle ACC Seminar P2 untuk {{ addslashes($thesis->student->name) }}?')">
                                     @csrf
                                     <input type="hidden" name="slot" value="p2">
-                                    <button type="submit" class="flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P2">
+                                    <button type="submit" class="inline-flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P2">
                                         <span class="text-[10px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
                             @else
-                                <div class="flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                <div class="inline-flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
                                     <span class="text-[10px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
-                                <div class="flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                <div class="inline-flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
                                     <span class="text-[10px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
@@ -397,9 +397,9 @@
                     </div>
 
                     {{-- ACC SIDANG GROUP --}}
-                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                         @if($canToggleAcc)
-                            <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline"
+                            <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                 onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang Akhir untuk {{ addslashes($thesis->student->name) }}?')">
                                 @csrf
                                 @if($isAdminOrKaprodi)
@@ -407,7 +407,7 @@
                                 @endif
                                 <button type="submit" 
                                     title="{{ $hasAccSidang ? 'Klik untuk membatalkan ACC Sidang' : 'Klik untuk memberikan ACC Sidang' }}"
-                                    class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all shadow-xs
+                                    class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all shadow-xs cursor-pointer
                                     {{ $hasAccSidang 
                                         ? 'bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800' 
                                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 dark:hover:bg-indigo-950/40 dark:hover:border-indigo-800' }}">
@@ -427,32 +427,32 @@
                         @endif
 
                         {{-- Status P1 & P2 Indicator Dots with Tooltip --}}
-                        <div class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5">
+                        <div class="inline-flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5 self-center">
                             @if($isAdminOrKaprodi)
-                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline"
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                     onsubmit="return confirm('Toggle ACC Sidang P1 untuk {{ addslashes($thesis->student->name) }}?')">
                                     @csrf
                                     <input type="hidden" name="slot" value="p1">
-                                    <button type="submit" class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P1">
+                                    <button type="submit" class="inline-flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P1">
                                         <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p1 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
-                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="inline"
+                                <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
                                     onsubmit="return confirm('Toggle ACC Sidang P2 untuk {{ addslashes($thesis->student->name) }}?')">
                                     @csrf
                                     <input type="hidden" name="slot" value="p2">
-                                    <button type="submit" class="flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P2">
+                                    <button type="submit" class="inline-flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P2">
                                         <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p2 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
                             @else
-                                <div class="flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                <div class="inline-flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
                                     <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p1 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
-                                <div class="flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                <div class="inline-flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
                                     <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p2 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
