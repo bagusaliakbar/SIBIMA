@@ -102,9 +102,12 @@
             border-collapse: collapse;
             margin-bottom: 30px;
         }
+        .log-table tr {
+            page-break-inside: avoid;
+        }
         .log-table th, .log-table td {
             border: 1px solid #333;
-            padding: 8px;
+            padding: 7px 8px;
             text-align: left;
         }
         .log-table th {
@@ -113,6 +116,13 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 10px;
+        }
+        .signature-img {
+            max-height: 55px;
+            max-width: 110px;
+            width: auto;
+            height: auto;
+            display: inline-block;
         }
         .text-center {
             text-align: center;
@@ -186,6 +196,11 @@
 
     <div class="report-title">
         LOGBOOK BIMBINGAN SKRIPSI
+        @if(!empty($filterDosenLabel) && $filterDosenLabel !== 'Semua Pembimbing')
+            <div style="font-size: 11px; font-weight: bold; margin-top: 3px; color: #334155; text-decoration: none;">
+                LEMBAR {{ strtoupper($filterDosenLabel) }}
+            </div>
+        @endif
     </div>
 
     <div class="student-info">
@@ -215,6 +230,11 @@
                 <td class="separator">:</td>
                 <td>{{ $thesis->pembimbing2->name ?? '-' }}</td>
             </tr>
+            <tr>
+                <td class="label">Total Sesi Tercatat</td>
+                <td class="separator">:</td>
+                <td><strong>{{ $sessions->count() }} Sesi Bimbingan Selesai</strong></td>
+            </tr>
         </table>
     </div>
 
@@ -222,7 +242,7 @@
         <thead>
             <tr>
                 <th style="width: 30px;">No</th>
-                <th style="width: 100px;">Tanggal</th>
+                <th style="width: 85px;">Tanggal</th>
                 <th>Topik & Hasil Bimbingan</th>
                 <th style="width: 120px;">Paraf Dosen</th>
             </tr>
@@ -234,7 +254,7 @@
                     <td class="text-center">{{ $session->scheduled_at->format('d/m/Y') }}</td>
                     <td>
                         <strong>Topik:</strong> {{ $session->topic }}<br>
-                        <div style="margin-top: 5px;">
+                        <div style="margin-top: 4px;">
                             <strong>Hasil:</strong> {{ $session->feedback ?: '-' }}
                         </div>
                         @if($session->feedback_document_url)
@@ -243,17 +263,17 @@
                             </div>
                         @endif
                         @if($session->notes)
-                            <div style="margin-top: 5px; color: #777; font-size: 10px; font-style: italic;">
+                            <div style="margin-top: 4px; color: #666; font-size: 10px; font-style: italic;">
                                 <strong>Ket. Pengajuan:</strong> {{ $session->notes }}
                             </div>
                         @endif
-                        <div style="margin-top: 5px; font-size: 10px; color: #555;">
+                        <div style="margin-top: 4px; font-size: 10px; color: #555;">
                             <strong>Dosen:</strong> {{ $session->dosen->name ?? '-' }} ({{ $session->dosen_id === $thesis->pembimbing1_id ? 'Pembimbing 1' : ($session->dosen_id === $thesis->pembimbing2_id ? 'Pembimbing 2' : 'Dosen') }})
                         </div>
                     </td>
                     <td class="text-center" style="vertical-align: middle;">
                         @if($session->dosen && $session->dosen->signature)
-                            <img src="{{ $session->dosen->decrypted_signature }}" style="height: 100px; width: auto;">
+                            <img src="{{ $session->dosen->decrypted_signature }}" class="signature-img">
                         @elseif($session->dosen && $session->dosen->signature_token)
                             {{-- Fallback to QR if no image but has token --}}
                             <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(40)->generate(url('/verify-signature/' . $session->dosen->signature_token))) !!} ">

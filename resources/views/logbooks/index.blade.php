@@ -234,6 +234,45 @@
                     </div>
                 </div>
             </div>
+
+            @php
+                $isFullAccUp = $thesis->acc_up_p1 && $thesis->acc_up_p2;
+                $isFullAccSidang = $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2;
+            @endphp
+
+            @if($isFullAccSidang)
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900 dark:text-slate-100">Bimbingan Telah Di-ACC untuk Sidang Skripsi!</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Kedua dosen pembimbing telah menyetujui naskah skripsi Anda untuk didaftarkan ke Sidang Skripsi.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/30 shrink-0">
+                        <span>Daftar Sidang Skripsi</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            @elseif($isFullAccUp)
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-indigo-500/15 via-blue-500/10 to-transparent border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900 dark:text-slate-100">Bimbingan Telah Di-ACC untuk Seminar Proposal!</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Kedua dosen pembimbing telah menyetujui proposal skripsi Anda untuk didaftarkan ke Seminar Proposal.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm shadow-indigo-600/30 shrink-0">
+                        <span>Daftar Seminar Proposal</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            @endif
         @endif
 
         <!-- 2. KARTU UTAMA LOGBOOK (FILTER, PENCARIAN, EXPORT, TIMELINE) -->

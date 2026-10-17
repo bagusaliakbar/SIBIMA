@@ -93,8 +93,8 @@ class LogbookController extends Controller
             ));
         }
 
-        if ($user->role === 'dosen') {
-            return app(\App\Http\Controllers\ThesisController::class)->index($request);
+        if (in_array($user->role, ['dosen', 'admin', 'kaprodi'])) {
+            return redirect()->route('theses.index');
         }
 
         abort(403);
@@ -112,6 +112,7 @@ class LogbookController extends Controller
             
         $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
+        $search = $request->input('search');
         $filterDosen = $request->input('dosen', 'all');
 
         // Query sesi aktif / mendatang
@@ -123,7 +124,7 @@ class LogbookController extends Controller
             ->where('status', 'completed')
             ->where('is_absent', false);
 
-        // Ambil seluruh sesi selesai untuk perhitungan statistik & penomoran resmi
+        // Ambil seluruh sesi selesai untuk perhitungan statistik & penomoran resmi (tanpa filter search/dosen)
         $allCompletedSessions = (clone $completedSessionsQuery)
             ->orderBy('scheduled_at', 'asc')
             ->orderBy('id', 'asc')
@@ -141,6 +142,15 @@ class LogbookController extends Controller
             $dId = $sess->dosen_id;
             $dosenSessionCounts[$dId] = ($dosenSessionCounts[$dId] ?? 0) + 1;
             $sessionDosenOrderMap[$sess->id] = $dosenSessionCounts[$dId];
+        }
+
+        // Terapkan filter pencarian jika diisi
+        if (!empty($search)) {
+            $completedSessionsQuery->where(function ($q) use ($search) {
+                $q->where('topic', 'like', "%{$search}%")
+                  ->orWhere('notes', 'like', "%{$search}%")
+                  ->orWhere('feedback', 'like', "%{$search}%");
+            });
         }
 
         // Terapkan filter pembimbing jika dipilih 'p1', 'p2', atau dosen_id numerik
@@ -170,6 +180,7 @@ class LogbookController extends Controller
             'activeSessions', 
             'completedSessions', 
             'filterDosen', 
+            'search',
             'totalCompletedCount', 
             'p1SessionCount', 
             'p2SessionCount',
@@ -285,6 +296,13 @@ class LogbookController extends Controller
         $thesis->load(['student', 'pembimbing1', 'pembimbing2']);
 
         $filterDosen = $request->input('dosen');
+        $filterDosenLabel = 'Semua Pembimbing';
+        if ($filterDosen === 'p1' && $thesis->pembimbing1) {
+            $filterDosenLabel = 'Pembimbing 1 (' . $thesis->pembimbing1->name . ')';
+        } elseif ($filterDosen === 'p2' && $thesis->pembimbing2) {
+            $filterDosenLabel = 'Pembimbing 2 (' . $thesis->pembimbing2->name . ')';
+        }
+
         $sessions = MentoringSession::where('thesis_id', $thesis->id)
             ->when($filterDosen === 'p1' && $thesis->pembimbing1_id, function($q) use ($thesis) {
                 $q->where('dosen_id', $thesis->pembimbing1_id);
@@ -300,7 +318,7 @@ class LogbookController extends Controller
             ->orderBy('scheduled_at', 'asc')
             ->get();
 
-        $pdf = Pdf::loadView('logbooks.pdf', compact('thesis', 'sessions'));
+        $pdf = Pdf::loadView('logbooks.pdf', compact('thesis', 'sessions', 'filterDosen', 'filterDosenLabel'));
         
         \App\Models\ActivityLog::log('Export Logbook', "User mengekspor logbook mahasiswa {$thesis->student->name} ke PDF.", 'Logbook');
 
