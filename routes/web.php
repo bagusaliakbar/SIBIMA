@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/seminar-examiner/{detail}/grading', [App\Http\Controllers\SeminarExaminerController::class, 'grading'])->name('seminar-examiner.grading');
     Route::post('/seminar-examiner/{detail}/grading', [App\Http\Controllers\SeminarExaminerController::class, 'storeGrading'])->name('seminar-examiner.store-grading');
     Route::post('/seminar-examiner/{detail}/revision', [App\Http\Controllers\SeminarExaminerController::class, 'storeRevision'])->name('seminar-examiner.store-revision');
+    Route::put('/seminar-examiner/messages/{message}', [App\Http\Controllers\SeminarExaminerController::class, 'updateRevisionMessage'])->name('seminar-examiner.update-message');
     Route::post('/seminar-examiner/revisions/{revision}/approve', [App\Http\Controllers\SeminarExaminerController::class, 'approveRevision'])->name('seminar-examiner.approve-revision');
     Route::post('/seminar-examiner/revisions/{revision}/unapprove', [App\Http\Controllers\SeminarExaminerController::class, 'unapproveRevision'])->name('seminar-examiner.unapprove-revision');
     Route::post('/seminar-examiner/{detail}/approve-direct', [App\Http\Controllers\SeminarExaminerController::class, 'approveRevisionDirect'])->name('seminar-examiner.approve-revision-direct');
@@ -126,6 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/defense-examiner/{detail}/grading', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'grading'])->name('defense-examiner.grading');
     Route::post('/defense-examiner/{detail}/grading', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'storeGrading'])->name('defense-examiner.store-grading');
     Route::post('/defense-examiner/{detail}/revision', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'storeRevision'])->name('defense-examiner.store-revision');
+    Route::put('/defense-examiner/messages/{message}', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'updateRevisionMessage'])->name('defense-examiner.update-message');
     Route::post('/defense-examiner/revisions/{revision}/approve', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'approveRevision'])->name('defense-examiner.approve-revision');
     Route::post('/defense-examiner/revisions/{revision}/unapprove', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'unapproveRevision'])->name('defense-examiner.unapprove-revision');
     Route::post('/defense-examiner/{detail}/approve-direct', [App\Http\Controllers\ThesisDefenseExaminerController::class, 'approveRevisionDirect'])->name('defense-examiner.approve-revision-direct');

@@ -173,4 +173,63 @@ class ExaminerService
             ActivityLog::log('Kelulusan', "Mahasiswa {$thesis->student->name} dinyatakan LULUS (Yudisium).", 'Yudisium', $thesis, ['status' => 'completed']);
         }
     }
+
+    /**
+     * Update an examiner revision message.
+     */
+    public function updateRevisionMessage($message, array $data, $file = null, $actingUser = null)
+    {
+        $user = $actingUser ?? Auth::user();
+        $revision = $message->revision;
+
+        // Check authorization: only the message sender, or admin/kaprodi can update
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi']) || $message->sender_id === $user->id;
+        if (!$isAuthorized) {
+            throw new \Exception('Anda tidak memiliki izin untuk mengedit catatan revisi ini.', 403);
+        }
+
+        // Check if revision is already approved (final)
+        if ($revision && $revision->status === 'approved') {
+            throw new \Exception('Catatan revisi tidak dapat diedit karena status revisi sudah disetujui (Final).', 422);
+        }
+
+        $oldMessage = $message->message;
+        $message->message = $data['revision_notes'];
+
+        if ($file !== null) {
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $revisionKey = str_contains(get_class($message), 'ThesisDefense') ? 'thesisdefenserevisionmessages' : 'seminarrevisionmessages';
+                $path = $file->store($revisionKey, config('filesystems.default'));
+                $message->file_path = $path;
+            } else {
+                $message->file_path = $file;
+            }
+        } elseif (array_key_exists('clear_file', $data) && $data['clear_file']) {
+            $message->file_path = null;
+        }
+
+        $message->save();
+
+        // Also sync revision_notes on the parent revision if it exists
+        if ($revision && isset($revision->revision_notes)) {
+            $revision->update(['revision_notes' => $data['revision_notes']]);
+        }
+
+        $moduleName = str_contains(get_class($message), 'ThesisDefense') ? 'Sidang Akhir' : 'Seminar';
+        $actorName = $user->name . (in_array($user->role, ['admin', 'kaprodi']) ? ' (' . ucfirst($user->role) . ')' : '');
+        ActivityLog::log(
+            'Edit Catatan Revisi', 
+            "{$actorName} memperbarui butir catatan revisi {$moduleName}.", 
+            $moduleName, 
+            $revision, 
+            [
+                'message_id' => $message->id,
+                'old_message' => $oldMessage,
+                'new_message' => $message->message,
+            ]
+        );
+
+        return $message;
+    }
 }
+

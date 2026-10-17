@@ -199,6 +199,43 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         }
     }
 
+    public function updateRevisionMessage(Request $request, SeminarRevisionMessage $message)
+    {
+        $user = Auth::user();
+
+        if ($request->has('revision_points') && is_array($request->input('revision_points'))) {
+            $filteredPoints = array_values(array_filter(array_map('trim', $request->input('revision_points')), fn($p) => $p !== ''));
+            if (!empty($filteredPoints)) {
+                $compiled = [];
+                foreach ($filteredPoints as $idx => $point) {
+                    $compiled[] = ($idx + 1) . '. ' . $point;
+                }
+                if ($request->filled('additional_notes')) {
+                    $compiled[] = '';
+                    $compiled[] = 'Catatan Tambahan: ' . trim($request->input('additional_notes'));
+                }
+                $request->merge(['revision_notes' => implode("\n", $compiled)]);
+            }
+        }
+
+        $request->validate([
+            'revision_notes' => 'required|string',
+            'revision_link' => 'nullable|url',
+        ]);
+
+        try {
+            $this->examinerService->updateRevisionMessage(
+                $message,
+                $request->only('revision_notes'),
+                $request->input('revision_link'),
+                $user
+            );
+            return redirect()->back()->with('success', 'Catatan revisi berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui catatan revisi: ' . $e->getMessage());
+        }
+    }
+
     public function approveRevision(SeminarRevision $revision)
     {
         try {
