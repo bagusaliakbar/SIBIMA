@@ -54,32 +54,101 @@
                 $accSidangP1 = (bool) ($thesis?->acc_sidang_p1);
                 $accSidangP2 = (bool) ($thesis?->acc_sidang_p2);
                 $isPassedSeminar = $thesis && ($thesis->isAccUpFinal() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists());
+                $hasActiveWave = !empty($activeWave);
+
+                $criteria = [
+                    [
+                        'number' => 1,
+                        'title' => 'Tahap Seminar Proposal Selesai',
+                        'desc' => $isPassedSeminar ? 'Telah menyelesaikan ujian seminar proposal skripsi.' : 'Belum menyelesaikan atau belum lulus ujian seminar proposal.',
+                        'is_met' => $isPassedSeminar,
+                        'status_text' => $isPassedSeminar ? 'Terpenuhi' : 'Belum Selesai',
+                        'badge_type' => $isPassedSeminar ? 'emerald' : 'amber',
+                        'action_hint' => $isPassedSeminar ? null : 'Selesaikan seminar proposal dan pastikan revisi naskah telah disetujui para penguji.',
+                        'action_url' => $isPassedSeminar ? null : route('seminar-applications.index'),
+                        'action_label' => $isPassedSeminar ? null : 'Cek Seminar',
+                    ],
+                    [
+                        'number' => 2,
+                        'title' => 'Aktivitas Bimbingan Skripsi (Minimal 8x Sesi)',
+                        'desc' => "Tercatat {$totalSessions} sesi bimbingan selesai disetujui (P1: {$p1Sessions} sesi • P2: {$p2Sessions} sesi).",
+                        'is_met' => $totalSessions >= 8,
+                        'status_text' => $totalSessions >= 8 ? "Terpenuhi ({$totalSessions} Sesi)" : "{$totalSessions} / 8 Sesi (" . max(0, 8 - $totalSessions) . " Sesi Lagi)",
+                        'badge_type' => $totalSessions >= 8 ? 'emerald' : 'amber',
+                        'action_hint' => $totalSessions >= 8 ? null : 'Lanjutkan bimbingan lanjutan bab 4–5 dan pastikan minimal 8 sesi telah tervalidasi dosen.',
+                        'action_url' => route('mentoring-sessions.index'),
+                        'action_label' => 'Buka Logbook',
+                    ],
+                    [
+                        'number' => 3,
+                        'title' => 'Persetujuan (ACC Sidang Skripsi) Pembimbing 1',
+                        'desc' => $p1 ? "Dosen Pembimbing 1: {$p1->name}" : 'Dosen Pembimbing 1 belum ditetapkan.',
+                        'is_met' => $accSidangP1,
+                        'status_text' => $accSidangP1 ? 'Disetujui (ACC Sidang)' : 'Menunggu Persetujuan',
+                        'badge_type' => $accSidangP1 ? 'emerald' : 'amber',
+                        'action_hint' => $accSidangP1 ? null : ($p1 ? "Silakan konsultasikan naskah lengkap Bab 1–5 kepada Bpk/Ibu {$p1->name} untuk mendapatkan ACC Sidang." : 'Menunggu penetapan dosen pembimbing oleh Kaprodi.'),
+                        'action_url' => route('mentoring-sessions.index'),
+                        'action_label' => 'Jadwalkan Konsultasi',
+                    ],
+                    [
+                        'number' => 4,
+                        'title' => 'Persetujuan (ACC Sidang Skripsi) Pembimbing 2',
+                        'desc' => $p2 ? "Dosen Pembimbing 2: {$p2->name}" : ($thesis?->pembimbing2_id ? 'Dosen tidak aktif' : 'Belum ditugaskan / Opsional'),
+                        'is_met' => $accSidangP2,
+                        'status_text' => $accSidangP2 ? 'Disetujui (ACC Sidang)' : 'Menunggu Persetujuan',
+                        'badge_type' => $accSidangP2 ? 'emerald' : 'amber',
+                        'action_hint' => $accSidangP2 ? null : ($p2 ? "Silakan konsultasikan naskah lengkap Bab 1–5 kepada Bpk/Ibu {$p2->name} untuk mendapatkan ACC Sidang." : 'Menunggu penetapan dosen pembimbing oleh Kaprodi.'),
+                        'action_url' => route('mentoring-sessions.index'),
+                        'action_label' => 'Jadwalkan Konsultasi',
+                    ],
+                ];
+
+                $metCount = count(array_filter($criteria, fn($c) => $c['is_met']));
+                $totalCriteria = count($criteria);
+                $percentMet = round(($metCount / $totalCriteria) * 100);
             @endphp
 
             <div class="space-y-6">
-                <!-- Main Status & Hero Guidance Card -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 p-6 sm:p-8">
-                    <div class="mb-6 space-y-1.5">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
-                                Progres Menuju Pendaftaran Sidang Skripsi
-                            </h3>
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-                                Belum Memenuhi Syarat
-                            </span>
+                <!-- Pre-requisite Checklist Master Card -->
+                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 p-6 sm:p-8 relative overflow-hidden">
+                    <!-- Subtle Glow Decoration -->
+                    <div class="absolute -top-20 -right-20 w-56 h-56 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <!-- Header & Overall Progress -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-700/80 relative z-10">
+                        <div>
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+                                    📋 Kesiapan Pendaftaran Sidang Skripsi
+                                </h3>
+                                <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider {{ $metCount === $totalCriteria ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80' }}">
+                                    {{ $metCount }} dari {{ $totalCriteria }} Prasyarat Terpenuhi
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed max-w-2xl">
+                                Formulir pendaftaran sidang skripsi akan <strong class="text-slate-700 dark:text-slate-200">terbuka secara otomatis</strong> setelah seluruh checklist prasyarat di bawah ini berstatus terpenuhi.
+                            </p>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                            Formulir pendaftaran sidang skripsi akan otomatis aktif setelah Anda memperoleh persetujuan (<strong class="text-slate-700 dark:text-slate-200 font-bold">ACC Sidang Skripsi</strong>) dari <strong class="text-slate-700 dark:text-slate-200 font-bold">kedua dosen pembimbing</strong>.
-                        </p>
+
+                        <!-- Progress Bar & Percentage Pill -->
+                        <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/60 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shrink-0">
+                            <div class="text-right">
+                                <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Status Kesiapan</p>
+                                <p class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ $percentMet }}%</p>
+                            </div>
+                            <div class="w-16 sm:w-20 bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                <div class="h-2.5 rounded-full transition-all duration-700 {{ $metCount === $totalCriteria ? 'bg-emerald-500' : 'bg-amber-500' }}" style="width: {{ $percentMet }}%"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Dual Supervisor Status Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/80 mb-6">
+                    <!-- Dual Supervisor Direct Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 relative z-10">
                         <!-- Pembimbing 1 -->
-                        <div class="p-4 rounded-xl border transition-all {{ $accSidangP1 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
+                        <div class="p-4 rounded-2xl border transition-all {{ $accSidangP1 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-3">
-                                    <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40 flex items-center justify-center text-xs font-black shrink-0">
+                                    <span class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40 flex items-center justify-center text-xs font-black shrink-0">
                                         P1
                                     </span>
                                     <div>
@@ -91,12 +160,12 @@
                                 </div>
                                 <div>
                                     @if($accSidangP1)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-2xs">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-2xs">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                             <span>Sudah ACC</span>
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
                                             <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             <span>Belum ACC</span>
                                         </span>
@@ -110,10 +179,10 @@
                         </div>
 
                         <!-- Pembimbing 2 -->
-                        <div class="p-4 rounded-xl border transition-all {{ $accSidangP2 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
+                        <div class="p-4 rounded-2xl border transition-all {{ $accSidangP2 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-3">
-                                    <span class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40 flex items-center justify-center text-xs font-black shrink-0">
+                                    <span class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/40 flex items-center justify-center text-xs font-black shrink-0">
                                         P2
                                     </span>
                                     <div>
@@ -125,12 +194,12 @@
                                 </div>
                                 <div>
                                     @if($accSidangP2)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white shadow-2xs">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-2xs">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                             <span>Sudah ACC</span>
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
                                             <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             <span>Belum ACC</span>
                                         </span>
@@ -144,96 +213,90 @@
                         </div>
                     </div>
 
-                    <!-- Checklist Prasyarat & Action CTA -->
-                    <div class="bg-slate-50/70 dark:bg-slate-900/40 rounded-xl p-5 border border-slate-200/70 dark:border-slate-700/60">
-                        <h4 class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-3.5 flex items-center gap-2">
-                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                            Checklist Kesiapan Sidang Skripsi
-                        </h4>
-
-                        <div class="space-y-3">
-                            <!-- Item 1: Lulus Seminar Proposal -->
-                            <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-200/40 dark:border-slate-800">
-                                <div class="flex items-center gap-2.5">
-                                    <span class="w-5 h-5 rounded-full {{ $isPassedSeminar ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
-                                        @if($isPassedSeminar)
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <!-- Detailed Interactive Criteria List -->
+                    <div class="space-y-3 mb-6 relative z-10">
+                        @foreach($criteria as $c)
+                            <div class="p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 {{ $c['is_met'] ? 'bg-emerald-50/30 dark:bg-emerald-950/15 border-emerald-200/70 dark:border-emerald-800/40' : 'bg-slate-50/60 dark:bg-slate-900/40 border-slate-200/70 dark:border-slate-700/60' }}">
+                                <div class="flex items-start gap-3.5">
+                                    <!-- Indicator Icon -->
+                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 {{ $c['is_met'] ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }}">
+                                        @if($c['is_met'])
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                         @else
-                                            <span class="text-[9px] font-black">1</span>
+                                            <span class="text-xs font-black">{{ $c['number'] }}</span>
                                         @endif
-                                    </span>
-                                    <span class="font-semibold text-slate-700 dark:text-slate-200">Tahap Seminar Proposal Selesai</span>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
+                                                {{ $c['title'] }}
+                                            </h4>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
+                                                {{ $c['status_text'] }}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                            {{ $c['desc'] }}
+                                        </p>
+                                        @if($c['action_hint'])
+                                            <p class="text-[11px] font-medium text-amber-600 dark:text-amber-400 mt-1.5 flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                <span>{{ $c['action_hint'] }}</span>
+                                            </p>
+                                        @endif
+                                    </div>
                                 </div>
-                                <span class="text-[11px] font-bold {{ $isPassedSeminar ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
-                                    {{ $isPassedSeminar ? 'Terpenuhi' : 'Belum Selesai' }}
-                                </span>
+
+                                @if($c['action_url'])
+                                    <div class="shrink-0 self-end sm:self-center">
+                                        <a href="{{ $c['action_url'] }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs transition-all">
+                                            <span>{{ $c['action_label'] }}</span>
+                                            <span>➔</span>
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
+                        @endforeach
+                    </div>
 
-                            <!-- Item 2: Sesi Bimbingan Minimal -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs py-1.5 border-b border-slate-200/40 dark:border-slate-800">
-                                <div class="flex items-center gap-2.5">
-                                    <span class="w-5 h-5 rounded-full {{ $totalSessions >= 8 ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
-                                        @if($totalSessions >= 8)
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                        @else
-                                            <span class="text-[9px] font-black">2</span>
-                                        @endif
-                                    </span>
-                                    <span class="font-semibold text-slate-700 dark:text-slate-200">Total Bimbingan Skripsi</span>
-                                </div>
-                                <div class="flex items-center gap-2 pl-7 sm:pl-0">
-                                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">{{ $totalSessions }} Sesi Terlaksana</span>
-                                </div>
+                    <!-- Wave Availability Info Banner -->
+                    <div class="mb-6 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs border {{ $hasActiveWave ? 'bg-blue-50/60 dark:bg-blue-950/30 border-blue-200/70 dark:border-blue-800/40 text-blue-800 dark:text-blue-200' : 'bg-slate-100/70 dark:bg-slate-900/40 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400' }}">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full {{ $hasActiveWave ? 'bg-blue-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                            <span class="font-bold">Status Periode Gelombang Sidang:</span>
+                            <span>{{ $hasActiveWave ? "{$activeWave->name} (Sedang Dibuka)" : 'Belum Ada Gelombang Sidang yang Dibuka' }}</span>
+                        </div>
+                        <span class="text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-md bg-white/70 dark:bg-slate-800/70 border border-slate-200/50 dark:border-slate-700/50">
+                            {{ $hasActiveWave ? 'Aktif' : 'Tutup' }}
+                        </span>
+                    </div>
+
+                    <!-- Contextual Action Bar (Replaces dead disabled button) -->
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             </div>
-
-                            <!-- Item 3: ACC Sidang Pembimbing 1 -->
-                            <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-200/40 dark:border-slate-800">
-                                <div class="flex items-center gap-2.5">
-                                    <span class="w-5 h-5 rounded-full {{ $accSidangP1 ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
-                                        @if($accSidangP1)
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                        @else
-                                            <span class="text-[9px] font-black">3</span>
-                                        @endif
-                                    </span>
-                                    <span class="font-semibold text-slate-700 dark:text-slate-200">ACC Sidang dari Pembimbing 1</span>
-                                </div>
-                                <span class="text-[11px] font-bold {{ $accSidangP1 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
-                                    {{ $accSidangP1 ? 'Disetujui' : 'Menunggu Dosen' }}
-                                </span>
-                            </div>
-
-                            <!-- Item 4: ACC Sidang Pembimbing 2 -->
-                            <div class="flex items-center justify-between text-xs py-1.5">
-                                <div class="flex items-center gap-2.5">
-                                    <span class="w-5 h-5 rounded-full {{ $accSidangP2 ? 'bg-emerald-500 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center shrink-0">
-                                        @if($accSidangP2)
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                        @else
-                                            <span class="text-[9px] font-black">4</span>
-                                        @endif
-                                    </span>
-                                    <span class="font-semibold text-slate-700 dark:text-slate-200">ACC Sidang dari Pembimbing 2</span>
-                                </div>
-                                <span class="text-[11px] font-bold {{ $accSidangP2 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
-                                    {{ $accSidangP2 ? 'Disetujui' : 'Menunggu Dosen' }}
-                                </span>
+                            <div>
+                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
+                                    Formulir Pendaftaran Sidang Terkunci
+                                </h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    Masih ada <strong class="text-amber-600 dark:text-amber-400">{{ $totalCriteria - $metCount }} prasyarat</strong> yang belum lengkap. Tombol akan aktif otomatis begitu syarat terpenuhi.
+                                </p>
                             </div>
                         </div>
 
-                        <!-- CTA Action Buttons -->
-                        <div class="mt-5 pt-4 border-t border-slate-200/60 dark:border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
-                            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span>Segera koordinasikan dan selesaikan bimbingan naskah akhir dengan dosen pembimbing Anda.</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('mentoring-sessions.index') }}" 
-                                   class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-orange-500/20">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <span>Buka Jadwal Bimbingan</span>
-                                </a>
-                            </div>
+                        <div class="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
+                            <button type="button" disabled class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 dark:bg-slate-700/60 text-slate-400 dark:text-slate-500 rounded-xl text-xs font-black uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 shadow-2xs">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                <span>Daftar Terkunci</span>
+                            </button>
+                            <a href="{{ route('mentoring-sessions.index') }}" class="w-full sm:w-auto px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                                <span>Buka Bimbingan</span>
+                                <span>➔</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -618,9 +681,15 @@
                         <div>
                             <div class="flex items-center gap-2">
                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Form Pengajuan Sidang Skripsi</h3>
-                                <span class="px-2.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black rounded-lg uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
-                                    {{ $activeWave->name ?? 'Gelombang Aktif' }}
-                                </span>
+                                @if($activeWave)
+                                    <span class="px-2.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black rounded-lg uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
+                                        {{ $activeWave->name }}
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-0.5 bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 text-[10px] font-black rounded-lg uppercase tracking-widest border border-rose-200 dark:border-rose-800/80">
+                                        Gelombang Belum Dibuka
+                                    </span>
+                                @endif
                             </div>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Lengkapi 20 berkas persyaratan di bawah ini dengan tautan Google Drive yang dapat diakses publik.</p>
                         </div>
@@ -640,6 +709,20 @@
                         @endif
                     </div>
                 </div>
+
+                @if(!$activeWave)
+                    <div class="m-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-start gap-3">
+                        <div class="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black uppercase tracking-wider text-amber-900 dark:text-amber-100">Gelombang Pendaftaran Belum Dibuka</h4>
+                            <p class="text-xs text-amber-700 dark:text-amber-300 mt-0.5 leading-relaxed">
+                                Seluruh persetujuan (ACC Sidang) dari dosen pembimbing Anda telah berstatus lengkap ✅. Namun, saat ini periode gelombang pendaftaran sidang skripsi belum dibuka oleh Program Studi. Tombol kirim pengajuan sidang akan aktif secara otomatis saat gelombang dibuka.
+                            </p>
+                        </div>
+                    </div>
+                @endif
 
                 <form action="{{ route('thesis-defense-applications.store') }}" method="POST" class="p-6 space-y-6">
                     @csrf
@@ -864,9 +947,18 @@
                         <div class="text-xs text-slate-500 dark:text-slate-400">
                             Pastikan seluruh link Google Drive telah disetel ke mode <b class="text-slate-700 dark:text-slate-200">"Anyone with the link can view" (Siapa saja yang memiliki link dapat melihat)</b>.
                         </div>
-                        <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">
-                            Kirim Pengajuan Sidang
-                        </button>
+                        @if($activeWave)
+                            <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 cursor-pointer">
+                                Kirim Pengajuan Sidang
+                            </button>
+                        @else
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <button type="button" disabled class="w-full sm:w-auto px-8 py-3 bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 text-xs font-black uppercase tracking-widest rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    <span>Pendaftaran Belum Dibuka</span>
+                                </button>
+                            </div>
+                        @endif
                     </div>
                 </form>
             </div>
