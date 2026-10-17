@@ -59,47 +59,58 @@
                 $criteria = [
                     [
                         'number' => 1,
-                        'title' => 'Tahap Seminar Proposal Selesai',
-                        'desc' => $isPassedSeminar ? 'Telah menyelesaikan ujian seminar proposal skripsi.' : 'Belum menyelesaikan atau belum lulus ujian seminar proposal.',
+                        'tag' => 'Seminar Proposal',
+                        'title' => 'Tahap Seminar Proposal Selesai & Revisi Disetujui',
+                        'desc' => $isPassedSeminar 
+                            ? 'Telah menyelesaikan ujian seminar proposal skripsi dan revisi telah divalidasi.' 
+                            : 'Belum menyelesaikan atau belum lulus ujian seminar proposal.',
                         'is_met' => $isPassedSeminar,
                         'status_text' => $isPassedSeminar ? 'Terpenuhi' : 'Belum Selesai',
                         'badge_type' => $isPassedSeminar ? 'emerald' : 'amber',
-                        'action_hint' => $isPassedSeminar ? null : 'Selesaikan seminar proposal dan pastikan revisi naskah telah disetujui para penguji.',
+                        'action_hint' => $isPassedSeminar ? null : 'Selesaikan seminar proposal dan pastikan revisi naskah telah disetujui para penelaah/penguji.',
                         'action_url' => $isPassedSeminar ? null : route('seminar-applications.index'),
                         'action_label' => $isPassedSeminar ? null : 'Cek Seminar',
                     ],
                     [
                         'number' => 2,
+                        'tag' => 'Bimbingan',
                         'title' => 'Aktivitas Bimbingan Skripsi (Minimal 8x Sesi)',
-                        'desc' => "Tercatat {$totalSessions} sesi bimbingan selesai disetujui (P1: {$p1Sessions} sesi • P2: {$p2Sessions} sesi).",
+                        'desc' => $totalSessions >= 8
+                            ? "Tercatat {$totalSessions} sesi bimbingan selesai disetujui (P1: {$p1Sessions} sesi • P2: {$p2Sessions} sesi). Kuota bimbingan terpenuhi."
+                            : "Tercatat {$totalSessions} dari minimal 8 sesi bimbingan skripsi selesai (kurang " . max(0, 8 - $totalSessions) . " sesi lagi).",
                         'is_met' => $totalSessions >= 8,
-                        'status_text' => $totalSessions >= 8 ? "Terpenuhi ({$totalSessions} Sesi)" : "{$totalSessions} / 8 Sesi (" . max(0, 8 - $totalSessions) . " Sesi Lagi)",
+                        'status_text' => $totalSessions >= 8 ? "Terpenuhi ({$totalSessions} Sesi)" : "{$totalSessions} / 8 Sesi",
                         'badge_type' => $totalSessions >= 8 ? 'emerald' : 'amber',
+                        'extra_info' => "Progres Sesi: P1 ({$p1Sessions} Sesi) • P2 ({$p2Sessions} Sesi)",
                         'action_hint' => $totalSessions >= 8 ? null : 'Lanjutkan bimbingan lanjutan bab 4–5 dan pastikan minimal 8 sesi telah tervalidasi dosen.',
                         'action_url' => route('mentoring-sessions.index'),
                         'action_label' => 'Buka Logbook',
                     ],
                     [
                         'number' => 3,
+                        'tag' => 'Pembimbing 1',
                         'title' => 'Persetujuan (ACC Sidang Skripsi) Pembimbing 1',
                         'desc' => $p1 ? "Dosen Pembimbing 1: {$p1->name}" : 'Dosen Pembimbing 1 belum ditetapkan.',
                         'is_met' => $accSidangP1,
-                        'status_text' => $accSidangP1 ? 'Disetujui (ACC Sidang)' : 'Menunggu Persetujuan',
+                        'status_text' => $accSidangP1 ? 'Sudah ACC' : 'Belum ACC',
                         'badge_type' => $accSidangP1 ? 'emerald' : 'amber',
+                        'extra_info' => $p1 ? "Bimbingan Selesai: {$p1Sessions} Sesi" : null,
                         'action_hint' => $accSidangP1 ? null : ($p1 ? "Silakan konsultasikan naskah lengkap Bab 1–5 kepada Bpk/Ibu {$p1->name} untuk mendapatkan ACC Sidang." : 'Menunggu penetapan dosen pembimbing oleh Kaprodi.'),
-                        'action_url' => route('mentoring-sessions.index'),
-                        'action_label' => 'Jadwalkan Konsultasi',
+                        'action_url' => $p1 ? route('mentoring-sessions.index') : null,
+                        'action_label' => $p1 ? 'Jadwalkan Konsultasi' : null,
                     ],
                     [
                         'number' => 4,
+                        'tag' => 'Pembimbing 2',
                         'title' => 'Persetujuan (ACC Sidang Skripsi) Pembimbing 2',
                         'desc' => $p2 ? "Dosen Pembimbing 2: {$p2->name}" : ($thesis?->pembimbing2_id ? 'Dosen tidak aktif' : 'Belum ditugaskan / Opsional'),
                         'is_met' => $accSidangP2,
-                        'status_text' => $accSidangP2 ? 'Disetujui (ACC Sidang)' : 'Menunggu Persetujuan',
+                        'status_text' => $accSidangP2 ? 'Sudah ACC' : 'Belum ACC',
                         'badge_type' => $accSidangP2 ? 'emerald' : 'amber',
+                        'extra_info' => $p2 ? "Bimbingan Selesai: {$p2Sessions} Sesi" : null,
                         'action_hint' => $accSidangP2 ? null : ($p2 ? "Silakan konsultasikan naskah lengkap Bab 1–5 kepada Bpk/Ibu {$p2->name} untuk mendapatkan ACC Sidang." : 'Menunggu penetapan dosen pembimbing oleh Kaprodi.'),
-                        'action_url' => route('mentoring-sessions.index'),
-                        'action_label' => 'Jadwalkan Konsultasi',
+                        'action_url' => $p2 ? route('mentoring-sessions.index') : null,
+                        'action_label' => $p2 ? 'Jadwalkan Konsultasi' : null,
                     ],
                 ];
 
@@ -142,75 +153,14 @@
                         </div>
                     </div>
 
-                    <!-- Dual Supervisor Direct Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 relative z-10">
-                        <!-- Pembimbing 1 -->
-                        <div class="p-4 rounded-2xl border transition-all {{ $accSidangP1 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <span class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40 flex items-center justify-center text-xs font-black shrink-0">
-                                        P1
-                                    </span>
-                                    <div>
-                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Dosen Pembimbing 1</p>
-                                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
-                                            {{ $p1 ? $p1->name : 'Belum Ditugaskan' }}
-                                        </h4>
-                                    </div>
-                                </div>
-                                <div>
-                                    @if($accSidangP1)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-2xs">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                            <span>Sudah ACC</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
-                                            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <span>Belum ACC</span>
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="mt-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                                <span>Bimbingan Selesai:</span>
-                                <span class="font-bold text-slate-700 dark:text-slate-200">{{ $p1Sessions }} Sesi</span>
-                            </div>
-                        </div>
-
-                        <!-- Pembimbing 2 -->
-                        <div class="p-4 rounded-2xl border transition-all {{ $accSidangP2 ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50' : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-700/80' }}">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <span class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/40 flex items-center justify-center text-xs font-black shrink-0">
-                                        P2
-                                    </span>
-                                    <div>
-                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Dosen Pembimbing 2</p>
-                                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
-                                            {{ $p2 ? $p2->name : ($thesis?->pembimbing2_id ? '-' : 'Belum Ditugaskan') }}
-                                        </h4>
-                                    </div>
-                                </div>
-                                <div>
-                                    @if($accSidangP2)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-2xs">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                            <span>Sudah ACC</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
-                                            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <span>Belum ACC</span>
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="mt-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                                <span>Bimbingan Selesai:</span>
-                                <span class="font-bold text-slate-700 dark:text-slate-200">{{ $p2Sessions }} Sesi</span>
-                            </div>
-                        </div>
+                    <!-- Criteria Subtitle -->
+                    <div class="flex items-center justify-between my-5 pt-1">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                            Checklist Prasyarat Pendaftaran
+                        </span>
+                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                            Lengkapi seluruh poin di bawah untuk membuka form
+                        </span>
                     </div>
 
                     <!-- Detailed Interactive Criteria List -->
@@ -229,16 +179,28 @@
 
                                     <div>
                                         <div class="flex items-center gap-2 flex-wrap">
+                                            @if(!empty($c['tag']))
+                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' }}">
+                                                    {{ $c['tag'] }}
+                                                </span>
+                                            @endif
                                             <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                                                 {{ $c['title'] }}
                                             </h4>
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
                                                 {{ $c['status_text'] }}
                                             </span>
                                         </div>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                                             {{ $c['desc'] }}
                                         </p>
+                                        @if(!empty($c['extra_info']))
+                                            <div class="mt-1.5 flex items-center gap-2 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-2xs">
+                                                    📌 {{ $c['extra_info'] }}
+                                                </span>
+                                            </div>
+                                        @endif
                                         @if($c['action_hint'])
                                             <p class="text-[11px] font-medium text-amber-600 dark:text-amber-400 mt-1.5 flex items-center gap-1.5">
                                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
