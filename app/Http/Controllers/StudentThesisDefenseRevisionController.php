@@ -65,11 +65,37 @@ class StudentThesisDefenseRevisionController extends Controller implements HasMi
     public function show(ThesisDefenseRevision $revision)
     {
         $user = Auth::user();
-        $revision->load(['examiner', 'detail.thesis', 'detail.schedule', 'messages.sender']);
+        $revision->load([
+            'examiner',
+            'detail.thesis.student',
+            'detail.thesis.pembimbing1',
+            'detail.thesis.pembimbing2',
+            'detail.thesis.defenseApplication',
+            'detail.schedule',
+            'messages.sender'
+        ]);
 
         if ($revision->detail->thesis->student_id !== $user->id) abort(403);
 
-        return view('student-defense-revisions.show', compact('revision'));
+        // Mark unread examiner messages as read by student
+        $revision->messages()
+            ->where('sender_id', '!=', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        // Load all examiner revisions for this schedule detail so student can switch channel tabs seamlessly
+        $allRevisions = ThesisDefenseRevision::where('thesis_defense_schedule_detail_id', $revision->thesis_defense_schedule_detail_id)
+            ->with(['examiner', 'messages' => fn($q) => $q->latest()])
+            ->get();
+
+        // Determine default PDF document URL for left column preview
+        $latestMessageFile = $revision->messages->whereNotNull('file_path')->last()?->file_path;
+        $defaultPdfUrl = $latestMessageFile
+            ?: ($revision->revision_file
+            ?: ($revision->student_file
+            ?: ($revision->detail->thesis?->defenseApplication?->file_skripsi ?? null)));
+
+        return view('student-defense-revisions.show', compact('revision', 'allRevisions', 'defaultPdfUrl'));
     }
 
     public function storeReply(Request $request, ThesisDefenseRevision $revision)

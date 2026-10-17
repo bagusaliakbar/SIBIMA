@@ -161,18 +161,30 @@
                                     <div class="shrink-0">
                                         @if($isApproved)
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                Disetujui
+                                                <span class="font-bold text-emerald-600">✓✓</span>
+                                                <span>Disetujui</span>
                                             </span>
                                         @elseif($isResubmitted)
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/40">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-                                                Menunggu Review
-                                            </span>
+                                            @php
+                                                $studentMessages = $revision->messages->where('sender_id', Auth::id());
+                                                $lastStudentMsg = $studentMessages->last();
+                                                $isReadByDosen = $lastStudentMsg && !empty($lastStudentMsg->read_at);
+                                            @endphp
+                                            @if($isReadByDosen)
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/40" title="Revisi telah dibaca dosen">
+                                                    <span class="font-bold text-sky-600">✓✓</span>
+                                                    <span>Dibaca Dosen</span>
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-50 text-slate-700 dark:bg-slate-900/60 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60" title="Revisi terkirim, menunggu dosen">
+                                                    <span class="font-bold text-slate-400">✓</span>
+                                                    <span>Terkirim</span>
+                                                </span>
+                                            @endif
                                         @else
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                Perlu Revisi
+                                                <span>Perlu Revisi</span>
                                             </span>
                                         @endif
                                     </div>
@@ -215,7 +227,7 @@
                             <!-- Card Actions -->
                             <div class="pt-5 mt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
                                 <a href="{{ route('student-defense-revisions.show', $revision->id) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shadow-rose-500/20">
-                                    <span>Detail Revisi</span>
+                                    <span>Buka Revisi Room</span>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
 

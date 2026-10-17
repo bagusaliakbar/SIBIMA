@@ -14,6 +14,11 @@ class SeminarRevisionMessage extends Model
         'sender_id',
         'message',
         'file_path',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'read_at' => 'datetime',
     ];
 
     public function revision()
