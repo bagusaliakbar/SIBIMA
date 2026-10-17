@@ -106,6 +106,14 @@
                     <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                     ZIP Semua B.A
                 </a>
+
+                <!-- Broadcast WA Penguji Seminar Belum Input Catatan Revisi -->
+                <a href="{{ route('wa-broadcasts.create', ['target_type' => 'dosen_penguji_belum_revisi', 'exam_type' => 'seminar', 'scope' => 'yesterday', 'wave_id' => $selectedWaveId]) }}" 
+                   class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md group w-full sm:w-auto justify-center"
+                   title="Kirim Pesan WhatsApp Pengingat ke Dosen Penguji Seminar yang Belum Mengisi Catatan Revisi">
+                    <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span>Broadcast WA Penguji</span>
+                </a>
             </div>
         </div>
 

@@ -179,7 +179,25 @@
                                 </p>
                             </label>
 
-                            <!-- 9. Seluruh Mahasiswa Aktif -->
+                            <!-- 9. Dosen Penguji Belum Input Catatan Revisi -->
+                            <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
+                                   :class="targetType === 'dosen_penguji_belum_revisi' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
+                                <input type="radio" name="target_type" value="dosen_penguji_belum_revisi" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-xs font-black text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                                        <span>📝</span> Penguji Belum Revisi
+                                    </span>
+                                    <span class="w-4 h-4 rounded-full border flex items-center justify-center"
+                                          :class="targetType === 'dosen_penguji_belum_revisi' ? 'border-orange-500 bg-orange-500 text-white' : 'border-slate-300 dark:border-slate-600'">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white" x-show="targetType === 'dosen_penguji_belum_revisi'"></span>
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                                    Dosen penguji seminar/sidang yang belum menginputkan catatan revisi kepada mahasiswa.
+                                </p>
+                            </label>
+
+                            <!-- 10. Seluruh Mahasiswa Aktif -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'all_mahasiswa_aktif' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
                                 <input type="radio" name="target_type" value="all_mahasiswa_aktif" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
@@ -239,6 +257,47 @@
                                         <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }}) - {{ $wave->start_date ? \Carbon\Carbon::parse($wave->start_date)->format('d M Y') : '' }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <!-- Filter Khusus Dosen Penguji Belum Input Catatan Revisi -->
+                            <div x-show="targetType === 'dosen_penguji_belum_revisi'" class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Jenis Ujian
+                                    </label>
+                                    <select name="exam_type" x-model="examType" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="all">Semua Ujian (Seminar & Sidang)</option>
+                                        <option value="seminar">Seminar Proposal</option>
+                                        <option value="defense">Sidang Skripsi</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Waktu Ujian
+                                    </label>
+                                    <select name="scope" x-model="scope" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="yesterday">Ujian Kemarin (Rekomendasi)</option>
+                                        <option value="past">Semua Ujian Terlewat</option>
+                                        <option value="today">Ujian Hari Ini</option>
+                                        <option value="all">Semua Jadwal Ujian</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Gelombang (Opsional)
+                                    </label>
+                                    <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="">Semua Gelombang</option>
+                                        @foreach($waves as $wave)
+                                            <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -521,13 +580,15 @@
     <script>
         function waBroadcastComposer() {
             return {
-                targetType: '{{ request('target_type', 'mahasiswa_belum_seminar') }}',
+                targetType: '{{ $initialTarget ?? request('target_type', 'mahasiswa_belum_seminar') }}',
+                examType: '{{ $initialExamType ?? request('exam_type', 'all') }}',
+                scope: '{{ $initialScope ?? request('scope', 'yesterday') }}',
                 cohort: 'all',
                 days: 30,
-                waveId: '',
+                waveId: '{{ $initialWaveId ?? request('wave_id', '') }}',
                 delaySeconds: 4,
-                title: @json($presets[request('target_type', 'mahasiswa_belum_seminar')]['title'] ?? 'Pengingat Pendaftaran Seminar Proposal Skripsi'),
-                messageTemplate: @json($presets[request('target_type', 'mahasiswa_belum_seminar')]['message'] ?? ''),
+                title: @json($presets[$initialTarget ?? request('target_type', 'mahasiswa_belum_seminar')]['title'] ?? 'Pengingat Pendaftaran Seminar Proposal Skripsi'),
+                messageTemplate: @json($presets[$initialTarget ?? request('target_type', 'mahasiswa_belum_seminar')]['message'] ?? ''),
                 presets: @json($presets),
                 recipients: [],
                 selectedUserIds: [],
@@ -562,6 +623,8 @@
                             return ['{nama}', '{nidn}', '{jumlah_sesi}', '{jumlah_lewat_jadwal}', '{daftar_mahasiswa}', '{mahasiswa_ringkas}', '{sesi_terlama}', '{link_bimbingan}', '{link_dashboard}', '{link_login}'];
                         case 'dosen_penguji_gelombang':
                             return ['{nama}', '{nidn}', '{gelombang}', '{link_dashboard}', '{link_login}'];
+                        case 'dosen_penguji_belum_revisi':
+                            return ['{nama}', '{nidn}', '{jumlah_mahasiswa}', '{kategori_ujian}', '{daftar_mahasiswa}', '{mahasiswa_ringkas}', '{link_tugas}', '{link_seminar}', '{link_sidang}', '{link_dashboard}', '{link_login}'];
                         case 'all_mahasiswa_aktif':
                             return ['{nama}', '{npm}', '{angkatan}', '{link_dashboard}', '{link_login}'];
                         default:
@@ -589,6 +652,7 @@
                         'dosen_pembimbing_aktif': 'Dosen Pembimbing Aktif',
                         'dosen_belum_selesai_bimbingan': 'Dosen Sesi Belum Selesai',
                         'dosen_penguji_gelombang': 'Dosen Penguji Gelombang',
+                        'dosen_penguji_belum_revisi': 'Penguji Belum Revisi',
                         'all_mahasiswa_aktif': 'Semua Mahasiswa Aktif',
                     };
                     return map[this.targetType] || this.targetType;
@@ -598,7 +662,7 @@
                     if (this.recipients.length > 0) {
                         return this.recipients[0].name;
                     }
-                    const isDosen = ['dosen_pembimbing_aktif', 'dosen_belum_selesai_bimbingan', 'dosen_penguji_gelombang'].includes(this.targetType);
+                    const isDosen = ['dosen_pembimbing_aktif', 'dosen_belum_selesai_bimbingan', 'dosen_penguji_gelombang', 'dosen_penguji_belum_revisi'].includes(this.targetType);
                     return isDosen ? 'Nama Dosen' : 'Nama Mahasiswa';
                 },
 
@@ -619,7 +683,7 @@
                     
                     // Replace sample tags
                     const first = this.recipients.length > 0 ? this.recipients[0] : null;
-                    const isDosen = ['dosen_pembimbing_aktif', 'dosen_belum_selesai_bimbingan', 'dosen_penguji_gelombang'].includes(this.targetType);
+                    const isDosen = ['dosen_pembimbing_aktif', 'dosen_belum_selesai_bimbingan', 'dosen_penguji_gelombang', 'dosen_penguji_belum_revisi'].includes(this.targetType);
                     const sampleNama = first ? first.name : (isDosen ? 'Bagus Ali Akbar, S.SI., M.Kom' : 'Aditya Pratama Putra');
                     const sampleNpm = first ? first.identifier : 'D1A210045';
                     const sampleNidn = first ? first.identifier : '0410019202';
@@ -645,6 +709,9 @@
                     msg = msg.replace(/\{jumlah_bimbingan\}/g, '8');
                     msg = msg.replace(/\{jumlah_sesi\}/g, '2');
                     msg = msg.replace(/\{jumlah_lewat_jadwal\}/g, '2');
+                    msg = msg.replace(/\{jumlah_mahasiswa\}/g, '2');
+                    msg = msg.replace(/\{kategori_ujian\}/g, this.examType === 'seminar' ? 'Seminar Proposal' : (this.examType === 'defense' ? 'Sidang Skripsi' : 'Seminar Proposal & Sidang'));
+                    msg = msg.replace(/\{link_tugas\}/g, '{{ route('monitoring.revisions') }}');
                     msg = msg.replace(/\{daftar_mahasiswa\}/g, '• Aditya Pratama: "Sistem Informasi Pelayanan..." (24 Sep 2026)\n• Bella Safitri: "Implementasi Machine Learning..." (26 Sep 2026)');
                     msg = msg.replace(/\{mahasiswa_ringkas\}/g, 'Aditya Pratama, Bella Safitri');
                     msg = msg.replace(/\{sesi_terlama\}/g, '24 Sep 2026');
@@ -668,7 +735,9 @@
                             target_type: this.targetType,
                             cohort: this.cohort,
                             days: this.days,
-                            wave_id: this.waveId
+                            wave_id: this.waveId,
+                            exam_type: this.examType,
+                            scope: this.scope
                         })
                     })
                     .then(res => res.json())
@@ -740,7 +809,10 @@
                             phone: this.testPhone,
                             message: this.messageTemplate,
                             target_type: this.targetType,
-                            cohort: this.cohort
+                            cohort: this.cohort,
+                            wave_id: this.waveId,
+                            exam_type: this.examType,
+                            scope: this.scope
                         })
                     })
                     .then(res => res.json())

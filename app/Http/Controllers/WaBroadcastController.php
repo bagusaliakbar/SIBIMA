@@ -127,6 +127,10 @@ class WaBroadcastController extends Controller implements HasMiddleware
                 'title' => 'Pemberitahuan Tugas Penguji Ujian Skripsi',
                 'message' => "⚖️ *PEMBERITAHUAN TUGAS PENGUJI UJIAN SKRIPSI*\n\nYth. Bpk/Ibu *{nama}*,\n\nDengan hormat kami sampaikan bahwa jadwal penguji untuk *{gelombang}* telah diterbitkan pada sistem SIBIMA.\n\nBpk/Ibu terdaftar sebagai *Dosen Penguji* pada gelombang tersebut. Mohon kesediaan Bpk/Ibu untuk meninjau jadwal, berkas naskah mahasiswa, dan menghadiri sesi ujian sesuai waktu yang telah diagendakan.\n\nDetail jadwal ujian dan berkas skripsi dapat diakses melalui Dashboard SIBIMA:\n{link_dashboard}\n\nTerima kasih atas dedikasi dan kerja sama Bpk/Ibu dalam mengawal mutu kelulusan mahasiswa.\n_Program Studi FASILKOM UNSUB_",
             ],
+            'dosen_penguji_belum_revisi' => [
+                'title' => 'Pengingat Input Catatan Revisi Penguji Seminar & Sidang',
+                'message' => "🔔 *PENGINGAT INPUT CATATAN REVISI UJIAN*\n\nYth. Bpk/Ibu *{nama}*,\n\nBerdasarkan pantauan sistem SIBIMA, tercatat terdapat *{jumlah_mahasiswa} mahasiswa* ujian yang telah selesai melaksanakan {kategori_ujian}, namun *belum menerima butir catatan revisi* dari Bpk/Ibu selaku Dosen Penguji:\n\n{daftar_mahasiswa}\n\nMohon kesediaan Bpk/Ibu untuk menginputkan catatan/arahan revisi melalui portal SIBIMA agar mahasiswa dapat segera menindaklanjuti perbaikan naskah:\n{link_tugas}\n\nTerima kasih atas dedikasi dan kerja sama Bpk/Ibu.\n_Program Studi FASILKOM UNSUB_",
+            ],
             'all_mahasiswa_aktif' => [
                 'title' => 'Pengumuman Akademik Skripsi FASILKOM UNSUB',
                 'message' => "📢 *PENGUMUMAN AKADEMIK SKRIPSI*\n\nHalo *{nama}* (NPM: {npm}),\n\nBerikut kami sampaikan pengumuman penting terkait progres skripsi, jadwal gelombang seminar & sidang, serta ketertiban administrasi bimbingan di lingkungan FASILKOM UNSUB.\n\nPastikan Anda selalu memantau perkembangan status skripsi dan melengkapi logbook bimbingan secara berkala di portal SIBIMA:\n{link_dashboard}\n\nTetap semangat dalam menyelesaikan tugas akhir Anda! 🎓✨\n_Program Studi FASILKOM UNSUB_",
@@ -144,7 +148,15 @@ class WaBroadcastController extends Controller implements HasMiddleware
         }
         unset($presetData);
 
-        return view('wa_broadcasts.create', compact('waves', 'cohorts', 'senderPhone', 'presets', 'isWhatsAppEnabled'));
+        $initialTarget = request('target_type', 'mahasiswa_belum_seminar');
+        $initialExamType = request('exam_type', 'all');
+        $initialScope = request('scope', 'yesterday');
+        $initialWaveId = request('wave_id', '');
+
+        return view('wa_broadcasts.create', compact(
+            'waves', 'cohorts', 'senderPhone', 'presets', 'isWhatsAppEnabled',
+            'initialTarget', 'initialExamType', 'initialScope', 'initialWaveId'
+        ));
     }
 
     /**
@@ -157,6 +169,8 @@ class WaBroadcastController extends Controller implements HasMiddleware
             'cohort' => $request->input('cohort', 'all'),
             'days' => (int) $request->input('days', 30),
             'wave_id' => $request->input('wave_id'),
+            'exam_type' => $request->input('exam_type', 'all'),
+            'scope' => $request->input('scope', 'yesterday'),
         ];
 
         $recipients = $this->broadcastService->getTargetRecipients($targetType, $filters);
@@ -206,6 +220,10 @@ class WaBroadcastController extends Controller implements HasMiddleware
         $targetType = $request->input('target_type', 'mahasiswa_belum_seminar');
         $sample = $this->broadcastService->getTargetRecipients($targetType, [
             'cohort' => $request->input('cohort', 'all'),
+            'days' => (int) $request->input('days', 30),
+            'wave_id' => $request->input('wave_id'),
+            'exam_type' => $request->input('exam_type', 'all'),
+            'scope' => $request->input('scope', 'yesterday'),
         ])->first();
 
         $context = $sample['context'] ?? [
@@ -259,6 +277,8 @@ class WaBroadcastController extends Controller implements HasMiddleware
             'cohort' => $request->input('cohort', 'all'),
             'days' => (int) $request->input('days', 30),
             'wave_id' => $request->input('wave_id'),
+            'exam_type' => $request->input('exam_type', 'all'),
+            'scope' => $request->input('scope', 'yesterday'),
         ];
 
         // Cegah pengiriman siaran duplikat dalam rentang 2 menit (Idempotency / Double-Submit Protection)

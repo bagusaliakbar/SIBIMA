@@ -43,6 +43,7 @@ class WaBroadcastService
             'dosen_pembimbing_aktif' => $this->getDosenPembimbingAktif($filters),
             'dosen_belum_selesai_bimbingan' => $this->getDosenBelumSelesaiBimbingan($filters),
             'dosen_penguji_gelombang' => $this->getDosenPengujiGelombang($filters),
+            'dosen_penguji_belum_revisi' => $this->getDosenPengujiBelumRevisi($filters),
             'all_mahasiswa_aktif' => $this->getAllMahasiswaAktif($filters),
             'custom' => $this->getCustomRecipients($filters),
             default => collect(),
@@ -461,6 +462,228 @@ class WaBroadcastService
                 ],
             ];
         });
+    }
+
+    /**
+     * Dosen penguji seminar atau sidang yang belum menginputkan catatan/poin revisi kepada mahasiswa.
+     */
+    protected function getDosenPengujiBelumRevisi(array $filters): Collection
+    {
+        $examType = $filters['exam_type'] ?? 'all'; // 'all', 'seminar', 'defense'
+        $scope = $filters['scope'] ?? 'yesterday'; // 'yesterday', 'past', 'today', 'all'
+        $waveId = !empty($filters['wave_id']) ? $filters['wave_id'] : null;
+        $dosenIdFilter = !empty($filters['dosen_id']) ? $filters['dosen_id'] : null;
+
+        $pendingTasks = collect();
+
+        // 1. Periksa Seminar Proposal jika examType 'all' atau 'seminar'
+        if (in_array($examType, ['all', 'seminar'])) {
+            $seminarQuery = SeminarScheduleDetail::with([
+                'thesis.student',
+                'schedule.wave',
+                'examiner1',
+                'examiner2',
+                'revisions.messages',
+            ])->whereHas('schedule', function ($q) use ($scope, $waveId) {
+                if ($waveId) {
+                    $q->where('wave_id', $waveId);
+                }
+                if ($scope === 'yesterday') {
+                    $q->whereDate('date', Carbon::yesterday());
+                } elseif ($scope === 'past') {
+                    $q->whereDate('date', '<=', Carbon::today());
+                } elseif ($scope === 'today') {
+                    $q->whereDate('date', Carbon::today());
+                }
+            });
+
+            $seminarDetails = $seminarQuery->get();
+
+            foreach ($seminarDetails as $detail) {
+                $scheduleDate = $detail->schedule?->date ? $detail->schedule->date->locale('id')->translatedFormat('d M Y') : '-';
+                $student = $detail->thesis?->student;
+                if (!$student) continue;
+
+                // Penguji 1
+                if ($detail->examiner1_id && (!$dosenIdFilter || $detail->examiner1_id == $dosenIdFilter)) {
+                    $rev1 = $detail->revisions->where('examiner_id', $detail->examiner1_id)->first();
+                    $hasRevision = false;
+                    if ($rev1) {
+                        $hasMessage = $rev1->messages->where('sender_id', $detail->examiner1_id)->isNotEmpty();
+                        $hasNotes = !empty(trim($rev1->revision_notes ?? ''));
+                        $isApproved = $rev1->status === 'approved';
+                        $hasRevision = $hasMessage || $hasNotes || $isApproved;
+                    }
+                    if (!$hasRevision && $detail->examiner1) {
+                        $pendingTasks->push([
+                            'dosen_id' => $detail->examiner1_id,
+                            'dosen' => $detail->examiner1,
+                            'student_name' => $student->name,
+                            'student_npm' => $student->identifier ?? '-',
+                            'thesis_title' => $detail->thesis->final_title ?: $detail->thesis->title,
+                            'exam_category' => 'Seminar Proposal',
+                            'role_label' => 'Penguji 1',
+                            'schedule_date' => $scheduleDate,
+                            'detail_id' => $detail->id,
+                        ]);
+                    }
+                }
+
+                // Penguji 2
+                if ($detail->examiner2_id && (!$dosenIdFilter || $detail->examiner2_id == $dosenIdFilter)) {
+                    $rev2 = $detail->revisions->where('examiner_id', $detail->examiner2_id)->first();
+                    $hasRevision = false;
+                    if ($rev2) {
+                        $hasMessage = $rev2->messages->where('sender_id', $detail->examiner2_id)->isNotEmpty();
+                        $hasNotes = !empty(trim($rev2->revision_notes ?? ''));
+                        $isApproved = $rev2->status === 'approved';
+                        $hasRevision = $hasMessage || $hasNotes || $isApproved;
+                    }
+                    if (!$hasRevision && $detail->examiner2) {
+                        $pendingTasks->push([
+                            'dosen_id' => $detail->examiner2_id,
+                            'dosen' => $detail->examiner2,
+                            'student_name' => $student->name,
+                            'student_npm' => $student->identifier ?? '-',
+                            'thesis_title' => $detail->thesis->final_title ?: $detail->thesis->title,
+                            'exam_category' => 'Seminar Proposal',
+                            'role_label' => 'Penguji 2',
+                            'schedule_date' => $scheduleDate,
+                            'detail_id' => $detail->id,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // 2. Periksa Sidang Skripsi jika examType 'all' atau 'defense'
+        if (in_array($examType, ['all', 'defense'])) {
+            $defenseQuery = ThesisDefenseScheduleDetail::with([
+                'thesis.student',
+                'schedule.wave',
+                'examiner1',
+                'examiner2',
+                'revisions.messages',
+            ])->whereHas('schedule', function ($q) use ($scope, $waveId) {
+                if ($waveId) {
+                    $q->where('wave_id', $waveId);
+                }
+                if ($scope === 'yesterday') {
+                    $q->whereDate('date', Carbon::yesterday());
+                } elseif ($scope === 'past') {
+                    $q->whereDate('date', '<=', Carbon::today());
+                } elseif ($scope === 'today') {
+                    $q->whereDate('date', Carbon::today());
+                }
+            });
+
+            $defenseDetails = $defenseQuery->get();
+
+            foreach ($defenseDetails as $detail) {
+                $scheduleDate = $detail->schedule?->date ? $detail->schedule->date->locale('id')->translatedFormat('d M Y') : '-';
+                $student = $detail->thesis?->student;
+                if (!$student) continue;
+
+                // Penguji 1
+                if ($detail->examiner1_id && (!$dosenIdFilter || $detail->examiner1_id == $dosenIdFilter)) {
+                    $rev1 = $detail->revisions->where('examiner_id', $detail->examiner1_id)->first();
+                    $hasRevision = false;
+                    if ($rev1) {
+                        $hasMessage = $rev1->messages->where('sender_id', $detail->examiner1_id)->isNotEmpty();
+                        $hasNotes = !empty(trim($rev1->revision_notes ?? ''));
+                        $isApproved = $rev1->status === 'approved';
+                        $hasRevision = $hasMessage || $hasNotes || $isApproved;
+                    }
+                    if (!$hasRevision && $detail->examiner1) {
+                        $pendingTasks->push([
+                            'dosen_id' => $detail->examiner1_id,
+                            'dosen' => $detail->examiner1,
+                            'student_name' => $student->name,
+                            'student_npm' => $student->identifier ?? '-',
+                            'thesis_title' => $detail->thesis->final_title ?: $detail->thesis->title,
+                            'exam_category' => 'Sidang Skripsi',
+                            'role_label' => 'Penguji 1',
+                            'schedule_date' => $scheduleDate,
+                            'detail_id' => $detail->id,
+                        ]);
+                    }
+                }
+
+                // Penguji 2
+                if ($detail->examiner2_id && (!$dosenIdFilter || $detail->examiner2_id == $dosenIdFilter)) {
+                    $rev2 = $detail->revisions->where('examiner_id', $detail->examiner2_id)->first();
+                    $hasRevision = false;
+                    if ($rev2) {
+                        $hasMessage = $rev2->messages->where('sender_id', $detail->examiner2_id)->isNotEmpty();
+                        $hasNotes = !empty(trim($rev2->revision_notes ?? ''));
+                        $isApproved = $rev2->status === 'approved';
+                        $hasRevision = $hasMessage || $hasNotes || $isApproved;
+                    }
+                    if (!$hasRevision && $detail->examiner2) {
+                        $pendingTasks->push([
+                            'dosen_id' => $detail->examiner2_id,
+                            'dosen' => $detail->examiner2,
+                            'student_name' => $student->name,
+                            'student_npm' => $student->identifier ?? '-',
+                            'thesis_title' => $detail->thesis->final_title ?: $detail->thesis->title,
+                            'exam_category' => 'Sidang Skripsi',
+                            'role_label' => 'Penguji 2',
+                            'schedule_date' => $scheduleDate,
+                            'detail_id' => $detail->id,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // Kelompokkan berdasarkan dosen
+        $groupedByDosen = $pendingTasks->groupBy('dosen_id');
+
+        return $groupedByDosen->map(function ($items, $dosenId) {
+            $firstItem = $items->first();
+            $dosen = $firstItem['dosen'] ?? User::find($dosenId);
+            if (!$dosen) return null;
+
+            $totalCount = $items->count();
+
+            $detailList = $items->take(5)->map(function ($task, $idx) {
+                return "• " . ($idx + 1) . ". {$task['student_name']} (NPM: {$task['student_npm']}) - {$task['exam_category']} ({$task['schedule_date']})";
+            })->implode("\n");
+
+            if ($totalCount > 5) {
+                $detailList .= "\n• ...dan " . ($totalCount - 5) . " mahasiswa lainnya.";
+            }
+
+            $studentNames = $items->pluck('student_name')->unique()->take(3)->implode(', ');
+            if ($items->pluck('student_name')->unique()->count() > 3) {
+                $studentNames .= ' dkk.';
+            }
+
+            $categories = $items->pluck('exam_category')->unique()->implode(' & ');
+
+            return [
+                'user_id' => $dosen->id,
+                'name' => $dosen->name,
+                'identifier' => $dosen->identifier ?? '-',
+                'phone' => $dosen->phone_number,
+                'role' => 'dosen',
+                'cohort' => '-',
+                'status_info' => "{$totalCount} Mahasiswa Belum Diberi Catatan Revisi",
+                'context' => [
+                    'nama' => $dosen->name,
+                    'nidn' => $dosen->identifier ?? '-',
+                    'jumlah_mahasiswa' => (string) $totalCount,
+                    'daftar_mahasiswa' => $detailList,
+                    'mahasiswa_ringkas' => $studentNames,
+                    'kategori_ujian' => $categories,
+                    'link_tugas' => url('/dashboard'),
+                    'link_seminar' => route('seminar-examiner.index'),
+                    'link_sidang' => route('defense-examiner.index'),
+                    'link_dashboard' => url('/dashboard'),
+                    'link_login' => url('/login'),
+                ],
+            ];
+        })->filter()->values();
     }
 
     /**
