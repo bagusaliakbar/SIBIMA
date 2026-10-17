@@ -65,11 +65,37 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
     public function show(SeminarRevision $revision)
     {
         $user = Auth::user();
-        $revision->load(['examiner', 'detail.thesis', 'detail.schedule', 'messages.sender']);
+        $revision->load([
+            'examiner',
+            'detail.thesis.student',
+            'detail.thesis.pembimbing1',
+            'detail.thesis.pembimbing2',
+            'detail.thesis.seminarApplication',
+            'detail.schedule',
+            'messages.sender'
+        ]);
 
         if ($revision->detail->thesis->student_id !== $user->id) abort(403);
 
-        return view('student-seminar-revisions.show', compact('revision'));
+        // Mark unread examiner messages as read by student
+        $revision->messages()
+            ->where('sender_id', '!=', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        // Load all examiner revisions for this seminar schedule detail so student can switch channel tabs seamlessly
+        $allRevisions = SeminarRevision::where('seminar_schedule_detail_id', $revision->seminar_schedule_detail_id)
+            ->with(['examiner', 'messages' => fn($q) => $q->latest()])
+            ->get();
+
+        // Determine default PDF document URL for left column preview
+        $latestMessageFile = $revision->messages->whereNotNull('file_path')->last()?->file_path;
+        $defaultPdfUrl = $latestMessageFile
+            ?: ($revision->revision_file
+            ?: ($revision->student_file
+            ?: ($revision->detail->thesis?->seminarApplication?->file_skripsi ?? null)));
+
+        return view('student-seminar-revisions.show', compact('revision', 'allRevisions', 'defaultPdfUrl'));
     }
 
     public function storeReply(Request $request, SeminarRevision $revision)

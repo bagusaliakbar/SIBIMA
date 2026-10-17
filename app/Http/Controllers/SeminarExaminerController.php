@@ -127,6 +127,12 @@ class SeminarExaminerController extends Controller implements HasMiddleware
         }
 
         $myRevision = $detail->revisions->where('examiner_id', $actingId)->first();
+        if ($myRevision) {
+            $myRevision->messages()
+                ->where('sender_id', '!=', $actingId)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+        }
         $targetUser = \App\Models\User::find($actingId);
 
         $examiners = collect([
