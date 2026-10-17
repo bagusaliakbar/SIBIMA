@@ -1,30 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div class="flex items-center space-x-3">
-                <a href="{{ Auth::user()->role === 'mahasiswa' ? route('logbooks.index') : route('theses.index') }}" 
-                   class="w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-200 dark:hover:border-orange-800 transition-all shadow-xs" 
-                   title="Kembali ke {{ Auth::user()->role === 'mahasiswa' ? 'Logbook Mandiri' : 'Daftar Mahasiswa Bimbingan' }}">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                </a>
-                <div>
-                    <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-                        <span>Monitoring Logbook Bimbingan</span>
-                        <span class="px-2.5 py-0.5 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider border border-orange-500/20">
-                            {{ $thesis->student->name }}
-                        </span>
-                    </h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                        Pantau seluruh arahan, catatan revisi, dan kemajuan bimbingan skripsi mahasiswa.
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 self-start sm:self-auto">
-                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">NPM:</span>
-                <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-xs font-bold border border-slate-200 dark:border-slate-700">
-                    {{ $thesis->student->identifier ?? '-' }}
-                </span>
+        <div class="flex items-center space-x-3">
+            <a href="{{ Auth::user()->role === 'mahasiswa' ? route('logbooks.index') : route('theses.index') }}" 
+               class="w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 hover:text-orange-600 dark:hover:text-orange-400 hover:border-orange-200 dark:hover:border-orange-800 transition-all shadow-xs" 
+               title="Kembali ke {{ Auth::user()->role === 'mahasiswa' ? 'Logbook Mandiri' : 'Daftar Mahasiswa Bimbingan' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            <div>
+                <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 tracking-tight">
+                    Monitoring Logbook Bimbingan
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Pantau seluruh arahan, catatan revisi, dan kemajuan bimbingan skripsi mahasiswa.
+                </p>
             </div>
         </div>
     </x-slot>
