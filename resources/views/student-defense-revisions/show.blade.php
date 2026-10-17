@@ -1,31 +1,42 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <x-breadcrumb :items="[
-                    ['label' => 'Revisi Hasil Sidang', 'route' => route('student-defense-revisions.index')],
-                    ['label' => 'Revisi Room: ' . $revision->examiner->name, 'route' => null]
-                ]" />
-                <div class="flex items-center gap-2.5 mt-1 flex-wrap">
-                    <h2 class="font-black text-xl sm:text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight">
-                        Revisi Room Sidang Skripsi
-                    </h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
-                        Modern Workspace
-                    </span>
-                </div>
+        <div>
+            <x-breadcrumb :items="[
+                ['label' => 'Revisi Hasil Sidang', 'route' => route('student-defense-revisions.index')],
+                ['label' => 'Revisi Room: ' . $revision->examiner->name, 'route' => null]
+            ]" />
+            <div class="flex items-center gap-2.5 mt-1 flex-wrap">
+                <h2 class="font-black text-xl sm:text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight">
+                    Revisi Room Sidang Skripsi
+                </h2>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
+                    Modern Workspace
+                </span>
             </div>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+                Ruang diskusi dan konsultasi perbaikan naskah skripsi bersama dewan penguji.
+            </p>
+        </div>
 
-            <!-- Back to Overview & Print PDF -->
-            <div class="flex items-center gap-2">
-                <a href="{{ route('student-defense-revisions.print-pdf', $revision->id) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs">
-                    <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
-                    <span>Cetak PDF</span>
-                </a>
-                <a href="{{ route('student-defense-revisions.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition-all">
-                    <span>Kembali</span>
-                </a>
-            </div>
+        <!-- Action Buttons: Cetak PDF & Kembali (Aligned to far right) -->
+        <div class="flex items-center gap-2.5 shrink-0 mt-3 sm:mt-0">
+            <a href="{{ route('student-defense-revisions.print-pdf', $revision->id) }}" target="_blank" 
+               class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-sm"
+               title="Cetak Lembar Catatan Revisi PDF">
+                <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/>
+                </svg>
+                <span>Cetak PDF</span>
+            </a>
+            <a href="{{ route('student-defense-revisions.index') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-sm hover:-translate-x-0.5 group"
+               title="Kembali ke Daftar Revisi">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform group-hover:-translate-x-0.5 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span>Kembali</span>
+            </a>
         </div>
     </x-slot>
 
