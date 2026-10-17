@@ -513,7 +513,7 @@
                     if (!$seminarDone) {
                         // Target Milestone: Seminar Proposal
                         $targetMilestone = 'Seminar Proposal';
-                        $targetRoute = route('seminars.index');
+                        $targetRoute = route('seminar-applications.index');
                         $isTargetEligible = $thesis->isAccUpFinal();
                         
                         $milestoneCriteria = [
@@ -536,7 +536,7 @@
                     } elseif (!$defenseDone) {
                         // Target Milestone: Sidang Skripsi
                         $targetMilestone = 'Sidang Akhir Skripsi';
-                        $targetRoute = route('thesis-defenses.index');
+                        $targetRoute = route('thesis-defense-applications.index');
                         $isTargetEligible = $thesis->isAccSidangFinal();
                         
                         $milestoneCriteria = [
@@ -564,7 +564,7 @@
                     } else {
                         // Defense done, awaiting revision approval
                         $targetMilestone = 'Penyelesaian Revisi Sidang & Yudisium';
-                        $targetRoute = route('defense-revisions.index');
+                        $targetRoute = route('student-defense-revisions.index');
                         $isTargetEligible = !empty($progress['revisionDone']);
                         
                         $milestoneCriteria = [
