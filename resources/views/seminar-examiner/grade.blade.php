@@ -698,22 +698,23 @@
                 <div class="sticky bottom-4 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-2xl shadow-slate-900/15 dark:shadow-black/50 transition-all">
                     <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
                         <!-- Live Score & Dynamic Status Badge -->
-                        <div class="flex items-center justify-between w-full lg:w-auto gap-4">
-                            <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-between w-full lg:w-auto gap-4 sm:gap-6">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black shadow-xs shrink-0 border border-indigo-500/20">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Nilai Akhir</span>
+                                <div class="flex items-center gap-3.5 sm:gap-4">
+                                    <div>
+                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai</span>
+                                        <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight block -mt-0.5" x-text="finalScore">0.00</span>
                                     </div>
-                                    <div class="flex items-baseline gap-2 mt-0.5">
-                                        <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight" x-text="finalScore">0.00</span>
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Huruf:</span>
-                                            <span class="text-xs font-black px-2.5 py-0.5 rounded-lg transition-all"
+                                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+                                    <div>
+                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Nilai Huruf</span>
+                                        <div class="mt-0.5">
+                                            <span class="inline-flex items-center justify-center min-w-[34px] h-7 px-2.5 rounded-xl text-xs sm:text-sm font-black uppercase transition-all shadow-xs"
                                                   :class="gradeBadgeClass"
-                                                  x-text="gradeLetter">A</span>
+                                                  x-text="gradeLetter">-</span>
                                         </div>
                                     </div>
                                 </div>
