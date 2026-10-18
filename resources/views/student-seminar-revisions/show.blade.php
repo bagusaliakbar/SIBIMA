@@ -7,7 +7,7 @@
             ]" />
             <div class="flex items-center gap-2.5 mt-1 flex-wrap">
                 <h2 class="font-black text-xl sm:text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight">
-                    Revisi Room Seminar Proposal
+                    Revisi Seminar Proposal
                 </h2>
             </div>
             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
