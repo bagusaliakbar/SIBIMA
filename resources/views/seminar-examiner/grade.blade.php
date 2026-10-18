@@ -655,46 +655,50 @@
                 <!-- Clean Sticky Bottom Save & Live Dynamic Recap Bar -->
                 <div class="sticky bottom-4 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-2xl shadow-slate-900/15 dark:shadow-black/50 transition-all">
                     <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
-                        <!-- Live Score & Dynamic Status Badge -->
-                        <div class="flex items-center justify-between w-full lg:w-auto gap-4 sm:gap-6">
-                            <div class="flex items-center gap-3 sm:gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black shadow-xs shrink-0 border border-indigo-500/20">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <div class="flex items-center gap-3.5 sm:gap-4">
-                                    <div>
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai</span>
-                                        <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight block -mt-0.5" x-text="finalScore">0.00</span>
-                                    </div>
-                                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
-                                    <div>
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Nilai Huruf</span>
-                                        <div class="mt-0.5">
-                                            <span class="inline-flex items-center justify-center min-w-[34px] h-7 px-2.5 rounded-xl text-xs sm:text-sm font-black uppercase transition-all shadow-xs"
-                                                  :class="gradeBadgeClass"
-                                                  x-text="gradeLetter">-</span>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- Live Score & Nilai Huruf -->
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black shadow-xs shrink-0 border border-indigo-500/20">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-
-                            <!-- Mobile Quick Component Chips -->
-                            <div class="flex lg:hidden items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-bold bg-slate-100/80 dark:bg-slate-900/60 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
-                                <span>P: <b class="text-slate-800 dark:text-slate-200" x-text="scores.presentation || 0"></b></span>
-                                <span>•</span>
-                                <span>M: <b class="text-slate-800 dark:text-slate-200" x-text="scores.explanation || 0"></b></span>
-                                <span>•</span>
-                                <span>N: <b class="text-slate-800 dark:text-slate-200" x-text="scores.writing || 0"></b></span>
+                            <div class="flex items-center gap-3.5 sm:gap-4">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai</span>
+                                    <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight block -mt-0.5" x-text="finalScore">0.00</span>
+                                </div>
+                                <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Nilai Huruf</span>
+                                    <div class="mt-0.5">
+                                        <span class="inline-flex items-center justify-center min-w-[34px] h-7 px-2.5 rounded-xl text-xs sm:text-sm font-black uppercase transition-all shadow-xs"
+                                              :class="gradeBadgeClass"
+                                              x-text="gradeLetter">-</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Desktop Detail Chips -->
-                        <div class="hidden lg:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 border-l border-slate-200 dark:border-slate-700 pl-4">
-                            <span>Presentasi: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.presentation || 0"></b> <span class="text-[10px] text-slate-400">(<span x-text="weightedPresentation"></span>)</span></span>
-                            <span class="text-slate-300 dark:text-slate-700">•</span>
-                            <span>Materi: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.explanation || 0"></b> <span class="text-[10px] text-slate-400">(<span x-text="weightedExplanation"></span>)</span></span>
-                            <span class="text-slate-300 dark:text-slate-700">•</span>
-                            <span>Naskah: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.writing || 0"></b> <span class="text-[10px] text-slate-400">(<span x-text="weightedWriting"></span>)</span></span>
+                        <!-- Unified Component Breakdown Chips (Responsive Mobile & Desktop) -->
+                        <div class="w-full sm:w-auto justify-center flex items-center gap-2 sm:gap-3 text-xs text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-400 dark:text-slate-500 font-medium hidden sm:inline text-[11px]">Presentasi:</span>
+                                <span class="text-slate-400 dark:text-slate-500 font-medium sm:hidden text-[11px]">P:</span>
+                                <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.presentation || 0">0</b>
+                                <span class="hidden md:inline text-[10px] text-slate-400 font-normal">(<span x-text="weightedPresentation">0.00</span>)</span>
+                            </div>
+                            <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-400 dark:text-slate-500 font-medium hidden sm:inline text-[11px]">Materi:</span>
+                                <span class="text-slate-400 dark:text-slate-500 font-medium sm:hidden text-[11px]">M:</span>
+                                <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.explanation || 0">0</b>
+                                <span class="hidden md:inline text-[10px] text-slate-400 font-normal">(<span x-text="weightedExplanation">0.00</span>)</span>
+                            </div>
+                            <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-400 dark:text-slate-500 font-medium hidden sm:inline text-[11px]">Naskah:</span>
+                                <span class="text-slate-400 dark:text-slate-500 font-medium sm:hidden text-[11px]">N:</span>
+                                <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.writing || 0">0</b>
+                                <span class="hidden md:inline text-[10px] text-slate-400 font-normal">(<span x-text="weightedWriting">0.00</span>)</span>
+                            </div>
                         </div>
 
                         <!-- Action Button -->
