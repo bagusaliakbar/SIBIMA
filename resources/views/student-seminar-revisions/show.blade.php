@@ -3,15 +3,12 @@
         <div>
             <x-breadcrumb :items="[
                 ['label' => 'Revisi Hasil Seminar', 'route' => route('student-seminar-revisions.index')],
-                ['label' => 'Revisi Room: ' . $revision->examiner->name, 'route' => null]
+                ['label' => 'Revisi: ' . $revision->examiner->name, 'route' => null]
             ]" />
             <div class="flex items-center gap-2.5 mt-1 flex-wrap">
                 <h2 class="font-black text-xl sm:text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight">
                     Revisi Room Seminar Proposal
                 </h2>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
-                    Modern Workspace
-                </span>
             </div>
             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
                 Ruang diskusi dan konsultasi perbaikan naskah proposal bersama dosen penguji.

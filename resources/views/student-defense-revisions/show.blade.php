@@ -3,18 +3,15 @@
         <div>
             <x-breadcrumb :items="[
                 ['label' => 'Revisi Hasil Sidang', 'route' => route('student-defense-revisions.index')],
-                ['label' => 'Revisi Room: ' . $revision->examiner->name, 'route' => null]
+                ['label' => 'Revisi: ' . $revision->examiner->name, 'route' => null]
             ]" />
             <div class="flex items-center gap-2.5 mt-1 flex-wrap">
                 <h2 class="font-black text-xl sm:text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight">
-                    Revisi Room Sidang Skripsi
+                    Revisi Sidang Skripsi
                 </h2>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
-                    Modern Workspace
-                </span>
             </div>
             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
-                Ruang diskusi dan konsultasi perbaikan naskah skripsi bersama dewan penguji.
+                Ruang diskusi dan konsultasi perbaikan naskah skripsi bersama dosen penguji.
             </p>
         </div>
 
