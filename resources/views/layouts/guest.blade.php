@@ -162,11 +162,8 @@
     </head>
     <body class="font-sans antialiased min-h-screen flex flex-col {{ $card ? 'justify-center items-center p-3 sm:p-6' : 'justify-between items-stretch p-0' }} transition-colors duration-300 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
         
-        <!-- Tech Dot-Grid Background & Soft Warm Halo -->
+        <!-- Tech Dot-Grid Background -->
         <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-            <!-- Subtle Top Center SIBIMA Orange Ambient Glow -->
-            <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[350px] rounded-full bg-orange-500/10 dark:bg-orange-500/15 blur-3xl pointer-events-none"></div>
-
             <!-- Crisp Tech Dot-Grid (Native SVG pattern: 100% reliable across all browsers & devices) -->
             <svg class="absolute inset-0 w-full h-full dot-pattern" xmlns="http://www.w3.org/2000/svg">
                 <defs>
