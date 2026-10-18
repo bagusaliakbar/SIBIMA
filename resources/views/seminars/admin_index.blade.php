@@ -33,6 +33,24 @@
              selectedThesisData: null,
              bypassFiles: true,
              isRegistering: false,
+             regBatchFolderUrl: '',
+             regFiles: {
+                 file_formulir: '',
+                 file_pembayaran: '',
+                 file_acc_pembimbing: '',
+                 file_kartu_bimbingan: '',
+                 file_skripsi: ''
+             },
+             applyRegBatchFolder() {
+                 if (!this.regBatchFolderUrl || !this.regBatchFolderUrl.trim().startsWith('http')) {
+                     alert('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)');
+                     return;
+                 }
+                 const url = this.regBatchFolderUrl.trim();
+                 Object.keys(this.regFiles).forEach(k => {
+                     this.regFiles[k] = url;
+                 });
+             },
              onSelectThesis(id) {
                  this.selectedThesisId = id;
                  this.selectedThesisData = this.candidateTheses.find(t => t.id == id) || null;
@@ -1114,11 +1132,11 @@
                                     <label class="flex items-center gap-2.5 cursor-pointer">
                                         <input type="checkbox" name="bypass_files" value="1" x-model="bypassFiles" class="rounded text-orange-600 focus:ring-orange-500 w-4 h-4">
                                         <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
-                                            Dispensasi Berkas Persyaratan (Didaftarkan Langsung oleh Admin / Kaprodi)
+                                            Dispensasi 5 Berkas Persyaratan (Didaftarkan Langsung oleh Admin / Kaprodi)
                                         </span>
                                     </label>
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 pl-6 leading-relaxed">
-                                        Jika dicentang, pengunggahan 5 file tidak diwajibkan. Berkas akan ditandai sebagai dispensasi administratif resmi dari Prodi.
+                                        Jika dicentang, pengisian tautan berkas tidak diwajibkan. Berkas akan ditandai sebagai dispensasi administratif resmi dari Prodi.
                                     </p>
 
                                     <div>
@@ -1134,30 +1152,81 @@
                                     </div>
                                 </div>
 
-                                {{-- Upload Manual Berkas jika tidak dispensasi --}}
-                                <div x-show="!bypassFiles" x-collapse class="space-y-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
-                                    <h4 class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Unggah Berkas (Opsional)</h4>
+                                {{-- Input Tautan Link Google Drive jika tidak dispensasi --}}
+                                <div x-show="!bypassFiles" x-collapse class="space-y-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
+                                    {{-- Batch Google Drive Folder Filler --}}
+                                    <div class="p-3.5 bg-orange-50/80 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded-xl space-y-2">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">💡 1 Link Folder Drive untuk Semua Berkas Seminar</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 dark:text-slate-400">Jika mahasiswa memiliki folder Google Drive berisi seluruh berkasnya, tempelkan di sini:</p>
+                                        <div class="flex items-center gap-2">
+                                            <input type="url" 
+                                                   name="batch_folder_url"
+                                                   x-model="regBatchFolderUrl" 
+                                                   placeholder="https://drive.google.com/drive/folders/..." 
+                                                   class="flex-1 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 focus:ring-orange-500 py-2 px-3">
+                                            <button type="button" 
+                                                    @click="applyRegBatchFolder()" 
+                                                    class="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs shrink-0 cursor-pointer">
+                                                Terapkan
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <h4 class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">Tautan Dokumen Seminar (5 Berkas)</h4>
                                     
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                    <div class="space-y-3 text-xs">
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">1. Bukti ACC Pembimbing</label>
-                                            <input type="file" name="file_acc_pembimbing" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                                1. Formulir Pendaftaran Seminar
+                                            </label>
+                                            <input type="url" 
+                                                   name="file_formulir" 
+                                                   x-model="regFiles.file_formulir"
+                                                   placeholder="https://drive.google.com/file/d/.../view" 
+                                                   class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">2. Bukti Pembayaran</label>
-                                            <input type="file" name="file_pembayaran" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                                2. Scan Bukti Pembayaran Seminar
+                                            </label>
+                                            <input type="url" 
+                                                   name="file_pembayaran" 
+                                                   x-model="regFiles.file_pembayaran"
+                                                   placeholder="https://drive.google.com/file/d/.../view" 
+                                                   class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">3. Kartu Bimbingan / Logbook</label>
-                                            <input type="file" name="file_kartu_bimbingan" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                                3. Scan Bukti ACC Seminar UP
+                                            </label>
+                                            <input type="url" 
+                                                   name="file_acc_pembimbing" 
+                                                   x-model="regFiles.file_acc_pembimbing"
+                                                   placeholder="https://drive.google.com/file/d/.../view" 
+                                                   class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">4. Draf Skripsi (PDF/DOCX)</label>
-                                            <input type="file" name="file_skripsi" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                                4. Scan Kartu Bimbingan / Logbook Proposal
+                                            </label>
+                                            <input type="url" 
+                                                   name="file_kartu_bimbingan" 
+                                                   x-model="regFiles.file_kartu_bimbingan"
+                                                   placeholder="https://drive.google.com/file/d/.../view" 
+                                                   class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">5. Formulir Pendaftaran</label>
-                                            <input type="file" name="file_formulir" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                                5. Dokumen Draf Proposal Skripsi (Bab 1–3)
+                                            </label>
+                                            <input type="url" 
+                                                   name="file_skripsi" 
+                                                   x-model="regFiles.file_skripsi"
+                                                   placeholder="https://drive.google.com/file/d/.../view" 
+                                                   class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                     </div>
                                 </div>

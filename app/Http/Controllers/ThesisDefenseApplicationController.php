@@ -600,18 +600,26 @@ class ThesisDefenseApplicationController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
+        $allFileKeys = [
+            'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
+            'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',
+            'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
+            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
+        ];
+
+        $rules = [
             'thesis_id' => 'required|exists:theses,id',
             'wave_id' => 'required|exists:waves,id',
             'status' => 'required|in:pending,approved',
             'bypass_files' => 'nullable|boolean',
             'admin_notes' => 'nullable|string|max:1000',
-            'file_formulir' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'file_acc_pembimbing' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'file_pembayaran' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'file_skripsi' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'file_transkrip' => 'nullable|file|mimes:pdf|max:5120',
-        ], [
+            'batch_folder_url' => 'nullable|string|max:1000',
+        ];
+        foreach ($allFileKeys as $key) {
+            $rules[$key] = 'nullable|string|max:1000';
+        }
+
+        $validated = $request->validate($rules, [
             'thesis_id.required' => 'Silakan pilih mahasiswa yang akan didaftarkan.',
             'wave_id.required' => 'Silakan pilih gelombang pelaksanaan.',
             'status.required' => 'Pilih status pendaftaran awal.',
@@ -628,18 +636,16 @@ class ThesisDefenseApplicationController extends Controller
             return redirect()->back()->with('error', "Mahasiswa {$thesis->student->name} sudah terdaftar dan disetujui / dijadwalkan pada sidang skripsi.");
         }
 
-        $allFileKeys = [
-            'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
-            'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',
-            'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
-            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
-        ];
-
         $uploadedFiles = [];
         $bypassFiles = $request->boolean('bypass_files');
+        $batchFolder = $request->input('batch_folder_url');
 
         foreach ($allFileKeys as $field) {
-            if ($request->hasFile($field)) {
+            if ($request->filled($field)) {
+                $uploadedFiles[$field] = $request->input($field);
+            } elseif (!empty($batchFolder)) {
+                $uploadedFiles[$field] = $batchFolder;
+            } elseif ($request->hasFile($field)) {
                 $uploadedFiles[$field] = $request->file($field)->store('thesis_defense_applications/' . $field, config('filesystems.default', 'local'));
             } elseif ($bypassFiles) {
                 $uploadedFiles[$field] = 'DISPENSASI_ADMIN: ' . ($validated['admin_notes'] ?: 'Didaftarkan langsung oleh ' . ucfirst($user->role));

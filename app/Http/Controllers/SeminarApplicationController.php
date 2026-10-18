@@ -581,11 +581,12 @@ class SeminarApplicationController extends Controller
             'status' => 'required|in:pending,approved',
             'bypass_files' => 'nullable|boolean',
             'admin_notes' => 'nullable|string|max:1000',
-            'file_acc_pembimbing' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'file_pembayaran' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'file_kartu_bimbingan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'file_skripsi' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'file_formulir' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            'batch_folder_url' => 'nullable|string|max:1000',
+            'file_formulir' => 'nullable|string|max:1000',
+            'file_pembayaran' => 'nullable|string|max:1000',
+            'file_acc_pembimbing' => 'nullable|string|max:1000',
+            'file_kartu_bimbingan' => 'nullable|string|max:1000',
+            'file_skripsi' => 'nullable|string|max:1000',
         ], [
             'thesis_id.required' => 'Silakan pilih mahasiswa yang akan didaftarkan.',
             'wave_id.required' => 'Silakan pilih gelombang pelaksanaan.',
@@ -603,12 +604,17 @@ class SeminarApplicationController extends Controller
             return redirect()->back()->with('error', "Mahasiswa {$thesis->student->name} sudah terdaftar dan disetujui / dijadwalkan pada seminar proposal.");
         }
 
-        $fileFields = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
+        $fileFields = ['file_formulir', 'file_pembayaran', 'file_acc_pembimbing', 'file_kartu_bimbingan', 'file_skripsi'];
         $uploadedFiles = [];
         $bypassFiles = $request->boolean('bypass_files');
+        $batchFolder = $request->input('batch_folder_url');
 
         foreach ($fileFields as $field) {
-            if ($request->hasFile($field)) {
+            if ($request->filled($field)) {
+                $uploadedFiles[$field] = $request->input($field);
+            } elseif (!empty($batchFolder)) {
+                $uploadedFiles[$field] = $batchFolder;
+            } elseif ($request->hasFile($field)) {
                 $uploadedFiles[$field] = $request->file($field)->store('seminar_applications/' . $field, config('filesystems.default', 'local'));
             } elseif ($bypassFiles) {
                 $uploadedFiles[$field] = 'DISPENSASI_ADMIN: ' . ($validated['admin_notes'] ?: 'Didaftarkan langsung oleh ' . ucfirst($user->role));

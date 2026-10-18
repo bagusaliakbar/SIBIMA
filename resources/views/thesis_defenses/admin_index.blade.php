@@ -49,6 +49,40 @@
              selectedThesisData: null,
              bypassFiles: true,
              isRegistering: false,
+             regBatchFolderUrl: '',
+             regActiveTab: 'utama',
+             regFiles: {
+                 file_formulir: '',
+                 file_transkrip: '',
+                 file_acc_pembimbing: '',
+                 file_logbook: '',
+                 file_pembayaran: '',
+                 file_skripsi: '',
+                 file_ktm: '',
+                 file_pkkmb_univ: '',
+                 file_pkkmb_fak: '',
+                 file_makrab: '',
+                 file_cisco: '',
+                 file_workshop: '',
+                 file_organisasi: '',
+                 file_toefl: '',
+                 file_kewirausahaan: '',
+                 file_tahsin: '',
+                 file_komputer: '',
+                 file_perpus_pinjam: '',
+                 file_perpus_sumbang: '',
+                 file_ijazah: ''
+             },
+             applyRegBatchFolder() {
+                 if (!this.regBatchFolderUrl || !this.regBatchFolderUrl.trim().startsWith('http')) {
+                     alert('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)');
+                     return;
+                 }
+                 const url = this.regBatchFolderUrl.trim();
+                 Object.keys(this.regFiles).forEach(k => {
+                     this.regFiles[k] = url;
+                 });
+             },
              onSelectThesis(id) {
                  this.selectedThesisId = id;
                  this.selectedThesisData = this.candidateTheses.find(t => t.id == id) || null;
@@ -1265,7 +1299,7 @@
                                         </span>
                                     </label>
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 pl-6 leading-relaxed">
-                                        Jika dicentang, pengunggahan 20 berkas tidak diwajibkan. Berkas akan ditandai sebagai dispensasi administratif resmi dari Prodi.
+                                        Jika dicentang, pengisian tautan berkas tidak diwajibkan. Berkas akan ditandai sebagai dispensasi administratif resmi dari Prodi.
                                     </p>
 
                                     <div>
@@ -1281,34 +1315,146 @@
                                     </div>
                                 </div>
 
-                                {{-- Upload Manual Berkas jika tidak dispensasi --}}
-                                <div x-show="!bypassFiles" x-collapse class="space-y-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
-                                    <h4 class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Unggah Dokumen Kunci (Opsional)</h4>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                {{-- Input Tautan Link Google Drive jika tidak dispensasi --}}
+                                <div x-show="!bypassFiles" x-collapse class="space-y-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
+                                    {{-- Batch Google Drive Folder Filler --}}
+                                    <div class="p-3.5 bg-orange-50/80 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded-xl space-y-2">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">💡 1 Link Folder Drive untuk Semua 20 Berkas Sidang</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 dark:text-slate-400">Jika mahasiswa memiliki folder Google Drive berisi seluruh 20 berkasnya, tempelkan link foldernya di sini:</p>
+                                        <div class="flex items-center gap-2">
+                                            <input type="url" 
+                                                   name="batch_folder_url"
+                                                   x-model="regBatchFolderUrl" 
+                                                   placeholder="https://drive.google.com/drive/folders/..." 
+                                                   class="flex-1 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 focus:ring-orange-500 py-2 px-3">
+                                            <button type="button" 
+                                                    @click="applyRegBatchFolder()" 
+                                                    class="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs shrink-0 cursor-pointer">
+                                                Terapkan ke Semua
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {{-- Kategori Tabs --}}
+                                    <div class="flex items-center gap-1.5 p-1 bg-slate-200/70 dark:bg-slate-800 rounded-xl overflow-x-auto custom-scrollbar">
+                                        <button type="button" @click="regActiveTab = 'utama'" 
+                                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer"
+                                                :class="regActiveTab === 'utama' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'">
+                                            1. Berkas Utama (4)
+                                        </button>
+                                        <button type="button" @click="regActiveTab = 'skripsi'" 
+                                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer"
+                                                :class="regActiveTab === 'skripsi' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'">
+                                            2. Skripsi & Akademik (4)
+                                        </button>
+                                        <button type="button" @click="regActiveTab = 'kemahasiswaan'" 
+                                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer"
+                                                :class="regActiveTab === 'kemahasiswaan' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'">
+                                            3. Kemahasiswaan (6)
+                                        </button>
+                                        <button type="button" @click="regActiveTab = 'kompetensi'" 
+                                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer"
+                                                :class="regActiveTab === 'kompetensi' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'">
+                                            4. Sertifikat & Perpus (6)
+                                        </button>
+                                    </div>
+
+                                    {{-- Tab 1: Berkas Utama (4) --}}
+                                    <div x-show="regActiveTab === 'utama'" class="space-y-3 text-xs">
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">1. Formulir Pendaftaran Sidang</label>
-                                            <input type="file" name="file_formulir" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">1. Formulir Pendaftaran Sidang</label>
+                                            <input type="url" name="file_formulir" x-model="regFiles.file_formulir" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">2. Scan Transkrip Nilai Akhir</label>
-                                            <input type="file" name="file_transkrip" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">5. Scan Bukti Pembayaran Sidang</label>
+                                            <input type="url" name="file_pembayaran" x-model="regFiles.file_pembayaran" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">3. Scan Bukti ACC Pembimbing</label>
-                                            <input type="file" name="file_acc_pembimbing" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">7. Scan Kartu Tanda Mahasiswa (KTM)</label>
+                                            <input type="url" name="file_ktm" x-model="regFiles.file_ktm" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">4. Scan Kartu Bimbingan / Logbook</label>
-                                            <input type="file" name="file_logbook" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">20. Scan Ijazah SMA/SMK</label>
+                                            <input type="url" name="file_ijazah" x-model="regFiles.file_ijazah" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                    </div>
+
+                                    {{-- Tab 2: Skripsi & Akademik (4) --}}
+                                    <div x-show="regActiveTab === 'skripsi'" class="space-y-3 text-xs">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">2. Scan Transkrip Nilai Akhir</label>
+                                            <input type="url" name="file_transkrip" x-model="regFiles.file_transkrip" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">5. Scan Bukti Pembayaran Sidang</label>
-                                            <input type="file" name="file_pembayaran" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">3. Scan Bukti ACC Pembimbing</label>
+                                            <input type="url" name="file_acc_pembimbing" x-model="regFiles.file_acc_pembimbing" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-slate-500 mb-1">6. Dokumen Soft File Skripsi</label>
-                                            <input type="file" name="file_skripsi" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-200 dark:file:bg-slate-700">
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">4. Scan Kartu Bimbingan / Logbook</label>
+                                            <input type="url" name="file_logbook" x-model="regFiles.file_logbook" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">6. Dokumen Soft File Skripsi Final</label>
+                                            <input type="url" name="file_skripsi" x-model="regFiles.file_skripsi" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                    </div>
+
+                                    {{-- Tab 3: Kemahasiswaan & Organisasi (6) --}}
+                                    <div x-show="regActiveTab === 'kemahasiswaan'" class="space-y-3 text-xs">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">8. Scan Sertifikat PKKMB Universitas</label>
+                                            <input type="url" name="file_pkkmb_univ" x-model="regFiles.file_pkkmb_univ" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">9. Scan Sertifikat PKKMB Fakultas</label>
+                                            <input type="url" name="file_pkkmb_fak" x-model="regFiles.file_pkkmb_fak" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">10. Scan Sertifikat Makrab</label>
+                                            <input type="url" name="file_makrab" x-model="regFiles.file_makrab" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">13. Scan Sertifikat Organisasi</label>
+                                            <input type="url" name="file_organisasi" x-model="regFiles.file_organisasi" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">15. Scan Sertifikat Wirausaha</label>
+                                            <input type="url" name="file_kewirausahaan" x-model="regFiles.file_kewirausahaan" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">16. Scan Sertifikat Tahsin</label>
+                                            <input type="url" name="file_tahsin" x-model="regFiles.file_tahsin" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                    </div>
+
+                                    {{-- Tab 4: Kompetensi & Perpustakaan (6) --}}
+                                    <div x-show="regActiveTab === 'kompetensi'" class="space-y-3 text-xs">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">11. Scan Sertifikat Cisco IPv6</label>
+                                            <input type="url" name="file_cisco" x-model="regFiles.file_cisco" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">12. Scan Sertifikat Workshop</label>
+                                            <input type="url" name="file_workshop" x-model="regFiles.file_workshop" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">14. Scan Sertifikat TOEFL</label>
+                                            <input type="url" name="file_toefl" x-model="regFiles.file_toefl" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">17. Scan Sertifikat Komputer</label>
+                                            <input type="url" name="file_komputer" x-model="regFiles.file_komputer" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">18. Scan Bebas Pinjam Perpustakaan</label>
+                                            <input type="url" name="file_perpus_pinjam" x-model="regFiles.file_perpus_pinjam" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">19. Scan Sumbang Buku Perpustakaan</label>
+                                            <input type="url" name="file_perpus_sumbang" x-model="regFiles.file_perpus_sumbang" placeholder="https://drive.google.com/file/d/.../view" class="w-full text-xs rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2 px-3">
                                         </div>
                                     </div>
                                 </div>
