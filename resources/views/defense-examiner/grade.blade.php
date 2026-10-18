@@ -203,7 +203,7 @@
                 }
             </style>
 
-            <form action="{{ route('defense-examiner.store-grading', $detail->id) }}" method="POST" class="p-6 space-y-6" x-data="{
+            <form action="{{ route('defense-examiner.store-grading', $detail->id) }}" method="POST" class="p-4 sm:p-6 space-y-6" x-data="{
                 scores: {
                     presentation: '{{ old('score_presentation', $myRevision->score_presentation ?? '') }}',
                     explanation: '{{ old('score_explanation', $myRevision->score_explanation ?? '') }}',
@@ -214,7 +214,7 @@
                     explanation: 0.40,
                     writing: 0.35,
                 },
-                presets: [70, 75, 80, 85, 90, 95],
+                presets: [60, 65, 70, 75, 80, 85, 90, 95, 100],
                 get weightedPresentation() {
                     const val = parseFloat(this.scores.presentation) || 0;
                     return (val * this.weights.presentation).toFixed(2);
@@ -251,8 +251,56 @@
                     if (s >= 50) return 'D';
                     return 'E';
                 },
+                get graduationStatus() {
+                    const p = this.scores.presentation;
+                    const e = this.scores.explanation;
+                    const w = this.scores.writing;
+                    if (p === '' || e === '' || w === '') {
+                        return {
+                            status: 'incomplete',
+                            badge: 'BELUM LENGKAP',
+                            sublabel: 'Lengkapi semua nilai komponen',
+                            color: 'slate',
+                            badgeClass: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                        };
+                    }
+                    const s = parseFloat(this.finalScore);
+                    if (s >= 80) {
+                        return {
+                            status: 'passed_excellent',
+                            badge: 'LULUS (A - SANGAT MEMUASKAN)',
+                            sublabel: 'Memenuhi syarat kelulusan yudisium predikat pujian',
+                            color: 'emerald',
+                            badgeClass: 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 ring-2 ring-emerald-500/30'
+                        };
+                    } else if (s >= 70) {
+                        return {
+                            status: 'passed_good',
+                            badge: 'LULUS (B - MEMUASKAN)',
+                            sublabel: 'Memenuhi syarat kelulusan yudisium predikat memuaskan',
+                            color: 'sky',
+                            badgeClass: 'bg-sky-600 text-white shadow-sm shadow-sky-600/30 ring-2 ring-sky-500/30'
+                        };
+                    } else if (s >= 60) {
+                        return {
+                            status: 'passed_conditional',
+                            badge: 'LULUS BERSYARAT (C)',
+                            sublabel: 'Wajib menyelesaikan revisi sebelum penetapan kelulusan',
+                            color: 'amber',
+                            badgeClass: 'bg-amber-600 text-white shadow-sm shadow-amber-600/30 ring-2 ring-amber-500/30'
+                        };
+                    } else {
+                        return {
+                            status: 'failed',
+                            badge: 'TIDAK LULUS (MENGULANG)',
+                            sublabel: 'Nilai di bawah batas kelulusan minimal sidang skripsi',
+                            color: 'rose',
+                            badgeClass: 'bg-rose-600 text-white shadow-sm shadow-rose-600/30 ring-2 ring-rose-500/30'
+                        };
+                    }
+                },
                 setScore(component, value) {
-                    this.scores[component] = Math.max(0, Math.min(100, value));
+                    this.scores[component] = Math.max(0, Math.min(100, Math.round(value)));
                 },
                 adjustScore(component, delta) {
                     const current = parseFloat(this.scores[component]) || 0;
@@ -271,460 +319,454 @@
                 <input type="hidden" name="score_presentation" :value="scores.presentation">
                 <input type="hidden" name="score_explanation" :value="scores.explanation">
                 <input type="hidden" name="score_writing" :value="scores.writing">
-                
-                <!-- DESKTOP VIEW: Table Layout (Hidden on Mobile) -->
-                <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
-                    <table class="w-full text-[11px] text-left border-collapse" id="gradingTable">
-                        <thead>
-                            <tr class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest">
-                                <th class="py-3.5 px-4 border-b border-slate-200 dark:border-slate-700 w-12 text-center">NO</th>
-                                <th class="py-3.5 px-4 border-b border-slate-200 dark:border-slate-700">KOMPONEN PENILAIAN TUGAS AKHIR</th>
-                                <th class="py-3.5 px-4 border-b border-slate-200 dark:border-slate-700 w-24 text-center">Bobot (%)</th>
-                                <th class="py-3.5 px-4 border-b border-slate-200 dark:border-slate-700 w-52 text-center">Nilai (0-100)</th>
-                                <th class="py-3.5 px-4 border-b border-slate-200 dark:border-slate-700 w-28 text-center">Jumlah</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                            <!-- 1. Presentasi -->
-                            <tr>
-                                <td class="py-4 px-4 text-center font-bold align-top">1</td>
-                                <td class="py-4 px-4 align-top">
-                                    <div class="font-bold text-slate-700 dark:text-slate-200 uppercase">Presentasi</div>
-                                    <ul class="mt-1 space-y-1 text-slate-500 dark:text-slate-400 list-none">
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">a.</span>
-                                            <span>Penyajian materi presentasi</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">b.</span>
-                                            <span>Penggunaan bahasa saat presentasi</span>
-                                        </li>
-                                    </ul>
-                                </td>
-                                <td class="py-4 px-4 text-center font-bold text-slate-500 text-xs align-top">25</td>
-                                <td class="py-4 px-4 align-top">
-                                    <div class="space-y-2 max-w-[190px] mx-auto">
-                                        <!-- Stepper Input Row -->
-                                        <div class="flex items-center justify-center gap-1.5">
-                                            <button type="button" 
-                                                    @click="adjustScore('presentation', -5)" 
-                                                    title="Kurangi 5"
-                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
-                                                -5
-                                            </button>
-                                            <input type="number" 
-                                                   id="score_presentation" 
-                                                   x-model="scores.presentation" 
-                                                   min="0" max="100" 
-                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs" 
-                                                   placeholder="0">
-                                            <button type="button" 
-                                                    @click="adjustScore('presentation', 5)" 
-                                                    title="Tambah 5"
-                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
-                                                +5
-                                            </button>
-                                        </div>
-                                        <!-- Quick Presets -->
-                                        <div class="flex items-center justify-center gap-1 flex-wrap">
-                                            <template x-for="val in presets" :key="val">
-                                                <button type="button" 
-                                                        @click="setScore('presentation', val)" 
-                                                        :class="scores.presentation == val ? 'bg-emerald-600 text-white font-black shadow-xs ring-1 ring-emerald-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-slate-700/60'" 
-                                                        class="px-1.5 py-0.5 rounded-md text-[9px] font-bold transition-all" 
-                                                        x-text="val">
-                                                </button>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="py-4 px-4 text-center font-black text-slate-700 dark:text-slate-200 align-top text-xs" x-text="weightedPresentation">
-                                    0
-                                </td>
-                            </tr>
-                            <!-- 2. Kemampuan Menjelaskan -->
-                            <tr>
-                                <td class="py-4 px-4 text-center font-bold align-top">2</td>
-                                <td class="py-4 px-4 align-top">
-                                    <div class="font-bold text-slate-700 dark:text-slate-200 uppercase">Kemampuan Menjelaskan Naskah Skripsi</div>
-                                    <ul class="mt-1 space-y-1 text-slate-500 dark:text-slate-400 list-none">
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">a.</span>
-                                            <span>Relevansi teori dengan masalah</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">b.</span>
-                                            <span>Argumentasi teoritis dalam penyusunan kerangka berpikir</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">c.</span>
-                                            <span>Kedalaman dan keluasan teori keilmuan yang relevan</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">d.</span>
-                                            <span>Teknik pengumpulan dan keabsahan instrumen analisis data</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">e.</span>
-                                            <span>Pembahasan hasil penelitian, penarikan kesimpulan dan pengajuan saran</span>
-                                        </li>
-                                    </ul>
-                                </td>
-                                <td class="py-4 px-4 text-center font-bold text-slate-500 text-xs align-top">40</td>
-                                <td class="py-4 px-4 align-top">
-                                    <div class="space-y-2 max-w-[190px] mx-auto">
-                                        <!-- Stepper Input Row -->
-                                        <div class="flex items-center justify-center gap-1.5">
-                                            <button type="button" 
-                                                    @click="adjustScore('explanation', -5)" 
-                                                    title="Kurangi 5"
-                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
-                                                -5
-                                            </button>
-                                            <input type="number" 
-                                                   id="score_explanation" 
-                                                   x-model="scores.explanation" 
-                                                   min="0" max="100" 
-                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs" 
-                                                   placeholder="0">
-                                            <button type="button" 
-                                                    @click="adjustScore('explanation', 5)" 
-                                                    title="Tambah 5"
-                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
-                                                +5
-                                            </button>
-                                        </div>
-                                        <!-- Quick Presets -->
-                                        <div class="flex items-center justify-center gap-1 flex-wrap">
-                                            <template x-for="val in presets" :key="val">
-                                                <button type="button" 
-                                                        @click="setScore('explanation', val)" 
-                                                        :class="scores.explanation == val ? 'bg-emerald-600 text-white font-black shadow-xs ring-1 ring-emerald-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-slate-700/60'" 
-                                                        class="px-1.5 py-0.5 rounded-md text-[9px] font-bold transition-all" 
-                                                        x-text="val">
-                                                </button>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="py-4 px-4 text-center font-black text-slate-700 dark:text-slate-200 align-top text-xs" x-text="weightedExplanation">
-                                    0
-                                </td>
-                            </tr>
-                            <!-- 3. Penulisan Naskah -->
-                            <tr>
-                                <td class="py-4 px-4 text-center font-bold align-top">3</td>
-                                <td class="py-4 px-4 align-top">
-                                    <div class="font-bold text-slate-700 dark:text-slate-200 uppercase">Penulisan Naskah Skripsi</div>
-                                    <ul class="mt-1 space-y-1 text-slate-500 dark:text-slate-400 list-none">
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">a.</span>
-                                            <span>Struktur, bahasa, logika dan penulisan</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-1.5">b.</span>
-                                            <span>Orisinalitas</span>
-                                        </li>
-                                    </ul>
-                                </td>
-                                <td class="py-4 px-4 text-center font-bold text-slate-500 text-xs align-top">35</td>
-                                <td class="py-4 px-4 align-top">
-                                    <div class="space-y-2 max-w-[190px] mx-auto">
-                                        <!-- Stepper Input Row -->
-                                        <div class="flex items-center justify-center gap-1.5">
-                                            <button type="button" 
-                                                    @click="adjustScore('writing', -5)" 
-                                                    title="Kurangi 5"
-                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
-                                                -5
-                                            </button>
-                                            <input type="number" 
-                                                   id="score_writing" 
-                                                   x-model="scores.writing" 
-                                                   min="0" max="100" 
-                                                   class="score-input w-20 py-1.5 px-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs" 
-                                                   placeholder="0">
-                                            <button type="button" 
-                                                    @click="adjustScore('writing', 5)" 
-                                                    title="Tambah 5"
-                                                    class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-black text-xs flex items-center justify-center transition-all active:scale-95 shrink-0 shadow-xs">
-                                                +5
-                                            </button>
-                                        </div>
-                                        <!-- Quick Presets -->
-                                        <div class="flex items-center justify-center gap-1 flex-wrap">
-                                            <template x-for="val in presets" :key="val">
-                                                <button type="button" 
-                                                        @click="setScore('writing', val)" 
-                                                        :class="scores.writing == val ? 'bg-emerald-600 text-white font-black shadow-xs ring-1 ring-emerald-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-slate-700/60'" 
-                                                        class="px-1.5 py-0.5 rounded-md text-[9px] font-bold transition-all" 
-                                                        x-text="val">
-                                                </button>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="py-4 px-4 text-center font-black text-slate-700 dark:text-slate-200 align-top text-xs" x-text="weightedWriting">
-                                    0
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot class="bg-slate-100/50 dark:bg-slate-800/50 font-bold border-t-2 border-slate-200 dark:border-slate-700">
-                            <tr>
-                                <td colspan="4" class="py-3 px-6 text-right uppercase tracking-wider text-slate-600 dark:text-slate-400">Jumlah Skor</td>
-                                <td class="py-3 px-4 text-center text-slate-800 dark:text-slate-100 font-black text-xs" x-text="sumScore">0</td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="py-3 px-6 text-right uppercase tracking-wider text-slate-600 dark:text-slate-400">Rata-rata Skor</td>
-                                <td class="py-3 px-4 text-center text-slate-800 dark:text-slate-100 font-black text-xs" x-text="avgScore">0</td>
-                            </tr>
-                            <tr class="bg-emerald-50/60 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-t border-emerald-100 dark:border-emerald-800/40">
-                                <td colspan="4" class="py-3 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Akhir</td>
-                                <td class="py-3 px-4 text-center font-black text-base" x-text="finalScore">0</td>
-                            </tr>
-                            <tr class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-t border-emerald-100/80 dark:border-emerald-800/40">
-                                <td colspan="4" class="py-3 px-6 text-right font-black uppercase tracking-[0.2em] text-[12px]">Nilai Huruf</td>
-                                <td class="py-3 px-4 text-center font-black text-base">
-                                    <span class="inline-flex items-center justify-center min-w-[28px] px-2.5 py-0.5 bg-emerald-600 text-white rounded-md text-xs font-black shadow-xs" x-text="gradeLetter">A</span>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
 
-                <!-- MOBILE VIEW: Dedicated Responsive Component Cards (Visible on Mobile Only) -->
-                <div class="md:hidden space-y-4">
-                    <!-- 1. Presentasi Card -->
-                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700 shadow-xs space-y-3.5">
-                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/60 pb-3">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black text-xs flex items-center justify-center">1</span>
-                                <h4 class="font-black text-xs uppercase tracking-wider text-slate-800 dark:text-slate-100">Presentasi</h4>
+                <!-- Dynamic Real-Time Scorecard Header Banner -->
+                <div class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-lg relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    Touch-Friendly Scoring
+                                </span>
+                                <span class="text-xs text-slate-400">•</span>
+                                <span class="text-xs text-slate-300 font-bold">
+                                    Bobot: 25% + 40% + 35% = 100%
+                                </span>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800">
-                                Bobot 25%
-                            </span>
+                            <h4 class="text-base sm:text-lg font-black text-white tracking-tight">
+                                Rubrik Penilaian Sidang Tugas Akhir
+                            </h4>
+                            <p class="text-xs text-slate-400" x-text="graduationStatus.sublabel">
+                                Ketuk tombol pil skor untuk penilaian cepat dan akurat di tablet/iPad.
+                            </p>
                         </div>
 
-                        <ul class="text-[11px] text-slate-500 dark:text-slate-400 space-y-1.5 pl-1">
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">a.</span>
-                                <span>Penyajian materi presentasi</span>
-                            </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">b.</span>
-                                <span>Penggunaan bahasa saat presentasi</span>
-                            </li>
-                        </ul>
+                        <!-- Live Indicator Badge & Score Hero -->
+                        <div class="flex items-center gap-4 bg-white/5 dark:bg-black/20 p-3 sm:p-4 rounded-2xl border border-white/10 shrink-0">
+                            <div class="text-right">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Prediksi Kelulusan</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider transition-all mt-1"
+                                      :class="graduationStatus.badgeClass"
+                                      x-text="graduationStatus.badge">
+                                    BELUM LENGKAP
+                                </span>
+                            </div>
+                            <div class="border-l border-white/10 pl-4 flex items-baseline gap-2">
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nilai Akhir</span>
+                                    <span class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight" x-text="finalScore">0.00</span>
+                                </div>
+                                <span class="px-2.5 py-1 bg-white/10 text-white rounded-lg text-sm font-black border border-white/20" x-text="gradeLetter">A</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="pt-2 border-t border-dashed border-slate-100 dark:border-slate-700/60 space-y-2.5">
-                            <!-- Stepper Row -->
-                            <div class="flex items-center justify-center gap-3">
+                <!-- Touch-Friendly Scoring Cards Grid -->
+                <div class="space-y-5">
+
+                    <!-- ========================================== -->
+                    <!-- CARD 1: PRESENTASI (Bobot 25%) -->
+                    <!-- ========================================== -->
+                    <div x-data="{ showRubric: false }"
+                         class="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-xs space-y-4 transition-all hover:border-slate-300 dark:hover:border-slate-600">
+                        
+                        <!-- Card Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-sm flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-xs">
+                                    1
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                                            Presentasi
+                                        </h4>
+                                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                            Bobot 25%
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                        Sistematika penyajian materi dan penggunaan bahasa saat pemaparan sidang
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Live Subtotal Calculation -->
+                            <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
+                                <span class="text-[11px] text-slate-400 font-medium">Subtotal Terbobot:</span>
+                                <div class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1">
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="scores.presentation || 0">0</span>
+                                    <span class="text-slate-400 font-normal">× 25% =</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm" x-text="weightedPresentation">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible Rubric Guidance -->
+                        <div>
+                            <button type="button" 
+                                    @click="showRubric = !showRubric"
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors cursor-pointer">
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': showRubric }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                <span x-text="showRubric ? 'Sembunyikan Kriteria Rubrik' : 'Lihat Kriteria Rubrik Penilaian (2 Indikator)'"></span>
+                            </button>
+
+                            <div x-show="showRubric" x-collapse x-cloak class="mt-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">a.</span>
+                                    <span>Penyajian materi presentasi (kejelasan slide, intonasi, penguasaan urutan presentasi).</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">b.</span>
+                                    <span>Penggunaan bahasa Indonesia yang baik, lugas, santun, dan komunikatif.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Pills & Stepper Touch Controls -->
+                        <div class="space-y-3 pt-1">
+                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                Ketuk Skor Pil Cepat:
+                            </label>
+                            
+                            <!-- Finger-Friendly Pills -->
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <template x-for="val in presets" :key="val">
+                                    <button type="button" 
+                                            @click="setScore('presentation', val)"
+                                            :class="scores.presentation == val 
+                                                ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-black shadow-md shadow-emerald-500/25 ring-2 ring-emerald-500/50 scale-105' 
+                                                : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500 hover:text-emerald-600 font-bold'"
+                                            class="py-2.5 px-3.5 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm font-mono min-w-[50px] sm:min-w-[56px] text-center transition-all duration-150 active:scale-95 cursor-pointer">
+                                        <span x-text="val"></span>
+                                    </button>
+                                </template>
+                            </div>
+
+                            <!-- Stepper & Direct Custom Number Field -->
+                            <div class="flex items-center gap-2 pt-2 flex-wrap">
+                                <span class="text-xs text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
                                 <button type="button" 
                                         @click="adjustScore('presentation', -5)" 
-                                        class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-sm flex items-center justify-center transition-all active:scale-90 shrink-0">
+                                        title="Kurangi 5"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
                                     -5
                                 </button>
-                                <input type="number" 
-                                       x-model="scores.presentation" 
-                                       min="0" max="100" 
-                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-inner" 
-                                       placeholder="0">
+                                <button type="button" 
+                                        @click="adjustScore('presentation', -1)" 
+                                        title="Kurangi 1"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
+                                    -1
+                                </button>
+                                
+                                <div class="relative">
+                                    <input type="number" 
+                                           id="score_presentation" 
+                                           x-model="scores.presentation" 
+                                           min="0" max="100" 
+                                           placeholder="0"
+                                           class="score-input w-24 h-10 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-base focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-inner">
+                                </div>
+
+                                <button type="button" 
+                                        @click="adjustScore('presentation', 1)" 
+                                        title="Tambah 1"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
+                                    +1
+                                </button>
                                 <button type="button" 
                                         @click="adjustScore('presentation', 5)" 
-                                        class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-sm flex items-center justify-center transition-all active:scale-90 shrink-0">
+                                        title="Tambah 5"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
                                     +5
                                 </button>
-                            </div>
-                            <!-- Preset Chips -->
-                            <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                                <template x-for="val in presets" :key="val">
-                                    <button type="button" 
-                                            @click="setScore('presentation', val)" 
-                                            :class="scores.presentation == val ? 'bg-emerald-600 text-white font-black ring-2 ring-emerald-500/50 shadow-xs' : 'bg-slate-100 dark:bg-slate-700/70 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-slate-700/60'" 
-                                            class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all active:scale-95" 
-                                            x-text="val">
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Card Footer Subtotal -->
-                        <div class="pt-2 flex items-center justify-between text-xs bg-slate-50/80 dark:bg-slate-900/50 -mx-4 -mb-4 p-3 rounded-b-2xl border-t border-slate-100 dark:border-slate-700/60">
-                            <span class="text-slate-400 dark:text-slate-500 font-medium">Subtotal Terbobot:</span>
-                            <div class="flex items-center gap-1 font-black text-slate-800 dark:text-slate-100">
-                                <span x-text="scores.presentation || 0">0</span>
-                                <span class="text-slate-400 font-normal">× 25% =</span>
-                                <span class="text-emerald-600 dark:text-emerald-400" x-text="weightedPresentation">0.00</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. Kemampuan Menjelaskan Card -->
-                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700 shadow-xs space-y-3.5">
-                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/60 pb-3">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black text-xs flex items-center justify-center">2</span>
-                                <h4 class="font-black text-xs uppercase tracking-wider text-slate-800 dark:text-slate-100">Kemampuan Menjelaskan</h4>
+                    <!-- ========================================== -->
+                    <!-- CARD 2: KEMAMPUAN MENJELASKAN (Bobot 40%) -->
+                    <!-- ========================================== -->
+                    <div x-data="{ showRubric: false }"
+                         class="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-xs space-y-4 transition-all hover:border-slate-300 dark:hover:border-slate-600">
+                        
+                        <!-- Card Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-sm flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-xs">
+                                    2
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                                            Kemampuan Menjelaskan Naskah Skripsi
+                                        </h4>
+                                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                            Bobot 40%
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                        Penguasaan materi teori, kerangka berpikir, instrumen analisis, dan argumentasi jawaban
+                                    </p>
+                                </div>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800">
-                                Bobot 40%
-                            </span>
+
+                            <!-- Live Subtotal Calculation -->
+                            <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
+                                <span class="text-[11px] text-slate-400 font-medium">Subtotal Terbobot:</span>
+                                <div class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1">
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="scores.explanation || 0">0</span>
+                                    <span class="text-slate-400 font-normal">× 40% =</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm" x-text="weightedExplanation">0.00</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <ul class="text-[11px] text-slate-500 dark:text-slate-400 space-y-1.5 pl-1">
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">a.</span>
-                                <span>Relevansi teori dengan masalah</span>
-                            </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">b.</span>
-                                <span>Argumentasi teoritis kerangka berpikir</span>
-                            </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">c.</span>
-                                <span>Kedalaman dan keluasan teori keilmuan</span>
-                            </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">d.</span>
-                                <span>Teknik instrumen & analisis data</span>
-                            </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">e.</span>
-                                <span>Pembahasan hasil, kesimpulan & saran</span>
-                            </li>
-                        </ul>
+                        <!-- Collapsible Rubric Guidance -->
+                        <div>
+                            <button type="button" 
+                                    @click="showRubric = !showRubric"
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors cursor-pointer">
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': showRubric }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                <span x-text="showRubric ? 'Sembunyikan Kriteria Rubrik' : 'Lihat Kriteria Rubrik Penilaian (5 Indikator)'"></span>
+                            </button>
 
-                        <div class="pt-2 border-t border-dashed border-slate-100 dark:border-slate-700/60 space-y-2.5">
-                            <!-- Stepper Row -->
-                            <div class="flex items-center justify-center gap-3">
+                            <div x-show="showRubric" x-collapse x-cloak class="mt-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">a.</span>
+                                    <span>Relevansi teori yang digunakan dengan masalah penelitian yang diangkat.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">b.</span>
+                                    <span>Argumentasi teoritis yang dibangun dalam penyusunan kerangka berpikir.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">c.</span>
+                                    <span>Kedalaman dan keluasan penguasaan teori keilmuan yang relevan.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">d.</span>
+                                    <span>Teknik pengumpulan data dan keabsahan instrumen analisis data.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">e.</span>
+                                    <span>Pembahasan hasil penelitian, penarikan kesimpulan serta ketajaman saran.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Pills & Stepper Touch Controls -->
+                        <div class="space-y-3 pt-1">
+                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                Ketuk Skor Pil Cepat:
+                            </label>
+                            
+                            <!-- Finger-Friendly Pills -->
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <template x-for="val in presets" :key="val">
+                                    <button type="button" 
+                                            @click="setScore('explanation', val)"
+                                            :class="scores.explanation == val 
+                                                ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-black shadow-md shadow-emerald-500/25 ring-2 ring-emerald-500/50 scale-105' 
+                                                : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500 hover:text-emerald-600 font-bold'"
+                                            class="py-2.5 px-3.5 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm font-mono min-w-[50px] sm:min-w-[56px] text-center transition-all duration-150 active:scale-95 cursor-pointer">
+                                        <span x-text="val"></span>
+                                    </button>
+                                </template>
+                            </div>
+
+                            <!-- Stepper & Direct Custom Number Field -->
+                            <div class="flex items-center gap-2 pt-2 flex-wrap">
+                                <span class="text-xs text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
                                 <button type="button" 
                                         @click="adjustScore('explanation', -5)" 
-                                        class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-sm flex items-center justify-center transition-all active:scale-90 shrink-0">
+                                        title="Kurangi 5"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
                                     -5
                                 </button>
-                                <input type="number" 
-                                       x-model="scores.explanation" 
-                                       min="0" max="100" 
-                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-inner" 
-                                       placeholder="0">
+                                <button type="button" 
+                                        @click="adjustScore('explanation', -1)" 
+                                        title="Kurangi 1"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
+                                    -1
+                                </button>
+                                
+                                <div class="relative">
+                                    <input type="number" 
+                                           id="score_explanation" 
+                                           x-model="scores.explanation" 
+                                           min="0" max="100" 
+                                           placeholder="0"
+                                           class="score-input w-24 h-10 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-base focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-inner">
+                                </div>
+
+                                <button type="button" 
+                                        @click="adjustScore('explanation', 1)" 
+                                        title="Tambah 1"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
+                                    +1
+                                </button>
                                 <button type="button" 
                                         @click="adjustScore('explanation', 5)" 
-                                        class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-sm flex items-center justify-center transition-all active:scale-90 shrink-0">
+                                        title="Tambah 5"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
                                     +5
                                 </button>
-                            </div>
-                            <!-- Preset Chips -->
-                            <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                                <template x-for="val in presets" :key="val">
-                                    <button type="button" 
-                                            @click="setScore('explanation', val)" 
-                                            :class="scores.explanation == val ? 'bg-emerald-600 text-white font-black ring-2 ring-emerald-500/50 shadow-xs' : 'bg-slate-100 dark:bg-slate-700/70 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-slate-700/60'" 
-                                            class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all active:scale-95" 
-                                            x-text="val">
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Card Footer Subtotal -->
-                        <div class="pt-2 flex items-center justify-between text-xs bg-slate-50/80 dark:bg-slate-900/50 -mx-4 -mb-4 p-3 rounded-b-2xl border-t border-slate-100 dark:border-slate-700/60">
-                            <span class="text-slate-400 dark:text-slate-500 font-medium">Subtotal Terbobot:</span>
-                            <div class="flex items-center gap-1 font-black text-slate-800 dark:text-slate-100">
-                                <span x-text="scores.explanation || 0">0</span>
-                                <span class="text-slate-400 font-normal">× 40% =</span>
-                                <span class="text-emerald-600 dark:text-emerald-400" x-text="weightedExplanation">0.00</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 3. Penulisan Naskah Card -->
-                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700 shadow-xs space-y-3.5">
-                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/60 pb-3">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black text-xs flex items-center justify-center">3</span>
-                                <h4 class="font-black text-xs uppercase tracking-wider text-slate-800 dark:text-slate-100">Penulisan Naskah</h4>
+                    <!-- ========================================== -->
+                    <!-- CARD 3: PENULISAN NASKAH (Bobot 35%) -->
+                    <!-- ========================================== -->
+                    <div x-data="{ showRubric: false }"
+                         class="bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-xs space-y-4 transition-all hover:border-slate-300 dark:hover:border-slate-600">
+                        
+                        <!-- Card Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-sm flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-xs">
+                                    3
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                                            Penulisan Naskah Skripsi
+                                        </h4>
+                                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                            Bobot 35%
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                        Struktur tata tulis ilmiah, logika penulisan, sitasi standar, dan orisinalitas karya
+                                    </p>
+                                </div>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800">
-                                Bobot 35%
-                            </span>
+
+                            <!-- Live Subtotal Calculation -->
+                            <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
+                                <span class="text-[11px] text-slate-400 font-medium">Subtotal Terbobot:</span>
+                                <div class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1">
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="scores.writing || 0">0</span>
+                                    <span class="text-slate-400 font-normal">× 35% =</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm" x-text="weightedWriting">0.00</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <ul class="text-[11px] text-slate-500 dark:text-slate-400 space-y-1.5 pl-1">
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">a.</span>
-                                <span>Struktur, bahasa, logika dan penulisan</span>
-                            </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="text-slate-400 font-bold">b.</span>
-                                <span>Orisinalitas</span>
-                            </li>
-                        </ul>
+                        <!-- Collapsible Rubric Guidance -->
+                        <div>
+                            <button type="button" 
+                                    @click="showRubric = !showRubric"
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors cursor-pointer">
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': showRubric }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                <span x-text="showRubric ? 'Sembunyikan Kriteria Rubrik' : 'Lihat Kriteria Rubrik Penilaian (2 Indikator)'"></span>
+                            </button>
 
-                        <div class="pt-2 border-t border-dashed border-slate-100 dark:border-slate-700/60 space-y-2.5">
-                            <!-- Stepper Row -->
-                            <div class="flex items-center justify-center gap-3">
+                            <div x-show="showRubric" x-collapse x-cloak class="mt-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">a.</span>
+                                    <span>Struktur penulisan, kerapian format baku, tata bahasa akademik, logika alur bahasan.</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <span class="font-bold text-emerald-600">b.</span>
+                                    <span>Orisinalitas ide dan bebas dari indikasi plagiarisme (similarity test).</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Pills & Stepper Touch Controls -->
+                        <div class="space-y-3 pt-1">
+                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                Ketuk Skor Pil Cepat:
+                            </label>
+                            
+                            <!-- Finger-Friendly Pills -->
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <template x-for="val in presets" :key="val">
+                                    <button type="button" 
+                                            @click="setScore('writing', val)"
+                                            :class="scores.writing == val 
+                                                ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-black shadow-md shadow-emerald-500/25 ring-2 ring-emerald-500/50 scale-105' 
+                                                : 'bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-500 hover:text-emerald-600 font-bold'"
+                                            class="py-2.5 px-3.5 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm font-mono min-w-[50px] sm:min-w-[56px] text-center transition-all duration-150 active:scale-95 cursor-pointer">
+                                        <span x-text="val"></span>
+                                    </button>
+                                </template>
+                            </div>
+
+                            <!-- Stepper & Direct Custom Number Field -->
+                            <div class="flex items-center gap-2 pt-2 flex-wrap">
+                                <span class="text-xs text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
                                 <button type="button" 
                                         @click="adjustScore('writing', -5)" 
-                                        class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-sm flex items-center justify-center transition-all active:scale-90 shrink-0">
+                                        title="Kurangi 5"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
                                     -5
                                 </button>
-                                <input type="number" 
-                                       x-model="scores.writing" 
-                                       min="0" max="100" 
-                                       class="score-input w-28 py-2 px-2 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-inner" 
-                                       placeholder="0">
+                                <button type="button" 
+                                        @click="adjustScore('writing', -1)" 
+                                        title="Kurangi 1"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
+                                    -1
+                                </button>
+                                
+                                <div class="relative">
+                                    <input type="number" 
+                                           id="score_writing" 
+                                           x-model="scores.writing" 
+                                           min="0" max="100" 
+                                           placeholder="0"
+                                           class="score-input w-24 h-10 bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-300 dark:border-slate-700 rounded-xl text-center font-black text-base focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-inner">
+                                </div>
+
+                                <button type="button" 
+                                        @click="adjustScore('writing', 1)" 
+                                        title="Tambah 1"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
+                                    +1
+                                </button>
                                 <button type="button" 
                                         @click="adjustScore('writing', 5)" 
-                                        class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-sm flex items-center justify-center transition-all active:scale-90 shrink-0">
+                                        title="Tambah 5"
+                                        class="h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 font-black text-xs transition-all active:scale-90 shadow-2xs">
                                     +5
                                 </button>
                             </div>
-                            <!-- Preset Chips -->
-                            <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                                <template x-for="val in presets" :key="val">
-                                    <button type="button" 
-                                            @click="setScore('writing', val)" 
-                                            :class="scores.writing == val ? 'bg-emerald-600 text-white font-black ring-2 ring-emerald-500/50 shadow-xs' : 'bg-slate-100 dark:bg-slate-700/70 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-slate-700/60'" 
-                                            class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all active:scale-95" 
-                                            x-text="val">
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Card Footer Subtotal -->
-                        <div class="pt-2 flex items-center justify-between text-xs bg-slate-50/80 dark:bg-slate-900/50 -mx-4 -mb-4 p-3 rounded-b-2xl border-t border-slate-100 dark:border-slate-700/60">
-                            <span class="text-slate-400 dark:text-slate-500 font-medium">Subtotal Terbobot:</span>
-                            <div class="flex items-center gap-1 font-black text-slate-800 dark:text-slate-100">
-                                <span x-text="scores.writing || 0">0</span>
-                                <span class="text-slate-400 font-normal">× 35% =</span>
-                                <span class="text-emerald-600 dark:text-emerald-400" x-text="weightedWriting">0.00</span>
-                            </div>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- Clean Sticky Bottom Save & Live Recap Bar -->
-                <div class="sticky bottom-4 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl shadow-slate-900/10 dark:shadow-black/40 transition-all">
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <!-- Live Score Summary -->
-                        <div class="flex items-center justify-between w-full md:w-auto gap-4">
+                <!-- Clean Sticky Bottom Save & Live Dynamic Recap Bar -->
+                <div class="sticky bottom-4 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-2xl shadow-slate-900/15 dark:shadow-black/50 transition-all">
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                        <!-- Live Score & Dynamic Status Badge -->
+                        <div class="flex items-center justify-between w-full lg:w-auto gap-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black shadow-xs shrink-0">
+                                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black shadow-xs shrink-0 border border-emerald-500/20">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
                                 <div>
-                                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai Akhir</span>
-                                    <div class="flex items-baseline gap-2">
-                                        <span class="text-2xl font-black text-slate-800 dark:text-slate-100" x-text="finalScore">0.00</span>
-                                        <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800" x-text="gradeLetter">A</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Nilai Akhir</span>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all"
+                                              :class="graduationStatus.badgeClass"
+                                              x-text="graduationStatus.badge">
+                                            BELUM LENGKAP
+                                        </span>
+                                    </div>
+                                    <div class="flex items-baseline gap-2 mt-0.5">
+                                        <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight" x-text="finalScore">0.00</span>
+                                        <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800" x-text="gradeLetter">A</span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Mobile Quick Component Chips -->
-                            <div class="flex md:hidden items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 font-bold bg-slate-100/80 dark:bg-slate-900/60 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                            <div class="flex lg:hidden items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-bold bg-slate-100/80 dark:bg-slate-900/60 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
                                 <span>P: <b class="text-slate-800 dark:text-slate-200" x-text="scores.presentation || 0"></b></span>
                                 <span>•</span>
                                 <span>M: <b class="text-slate-800 dark:text-slate-200" x-text="scores.explanation || 0"></b></span>
@@ -734,19 +776,19 @@
                         </div>
 
                         <!-- Desktop Detail Chips -->
-                        <div class="hidden md:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 border-l border-slate-200 dark:border-slate-700 pl-4">
-                            <span>Presentasi: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.presentation || 0"></b></span>
+                        <div class="hidden lg:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 border-l border-slate-200 dark:border-slate-700 pl-4">
+                            <span>Presentasi: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.presentation || 0"></b> <span class="text-[10px] text-slate-400">(<span x-text="weightedPresentation"></span>)</span></span>
                             <span class="text-slate-300 dark:text-slate-700">•</span>
-                            <span>Materi: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.explanation || 0"></b></span>
+                            <span>Materi: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.explanation || 0"></b> <span class="text-[10px] text-slate-400">(<span x-text="weightedExplanation"></span>)</span></span>
                             <span class="text-slate-300 dark:text-slate-700">•</span>
-                            <span>Naskah: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.writing || 0"></b></span>
+                            <span>Naskah: <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.writing || 0"></b> <span class="text-[10px] text-slate-400">(<span x-text="weightedWriting"></span>)</span></span>
                         </div>
 
                         <!-- Action Button -->
-                        <div class="flex items-center gap-3 w-full md:w-auto">
-                            <button type="submit" class="w-full md:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/25 dark:shadow-none hover:shadow-emerald-500/40 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <div class="flex items-center gap-3 w-full lg:w-auto">
+                            <button type="submit" class="w-full lg:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                <span>Simpan Penilaian</span>
+                                <span>Simpan Penilaian Sidang</span>
                             </button>
                         </div>
                     </div>
