@@ -97,11 +97,11 @@
                                         <div class="flex items-center gap-2 flex-wrap">
                                             <h4 class="font-bold text-slate-900 dark:text-slate-100 text-sm tracking-tight">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
                                             @if($isExaminer1)
-                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700/80">Penguji 1</span>
+                                                <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-md border border-indigo-200/60 dark:border-indigo-800/60">Penguji 1</span>
                                             @elseif($isExaminer2)
-                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700/80">Penguji 2</span>
+                                                <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[10px] font-bold rounded-md border border-sky-200/60 dark:border-sky-800/60">Penguji 2</span>
                                             @elseif($isStaff)
-                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700/80">P1 & P2</span>
+                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded-md border border-slate-200 dark:border-slate-700">P1 & P2</span>
                                             @endif
                                         </div>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 italic font-normal" title="{{ $exam->thesis?->title ?? '-' }}">
@@ -149,10 +149,10 @@
                             <td class="px-6 py-5 text-center">
                                 @if($docUrl)
                                     <a href="{{ $docUrl }}" target="_blank" 
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition-all shadow-2xs group/doc"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50/80 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 border border-rose-200/70 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs font-semibold transition-all shadow-2xs group/doc"
                                        title="Buka / Baca Dokumen Skripsi">
-                                        <svg class="w-3.5 h-3.5 text-slate-400 group-hover/doc:text-slate-600 dark:group-hover/doc:text-slate-200 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        <svg class="w-3.5 h-3.5 text-rose-500 group-hover/doc:scale-110 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                         </svg>
                                         <span>Dokumen</span>
                                     </a>
@@ -161,17 +161,9 @@
                                 @endif
                             </td>
 
-                            <!-- Status & Nilai -->
+                            <!-- Status Revisi -->
                             <td class="px-6 py-5 text-center">
                                 <div class="flex flex-col items-center gap-1.5">
-                                    {{-- Score if graded --}}
-                                    @if($myRev && $myRev->isGraded())
-                                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
-                                            <span class="text-slate-400 font-normal">Nilai:</span>
-                                            <b class="text-slate-800 dark:text-slate-100">{{ number_format($myRev->total_score, 1) }}</b>
-                                        </span>
-                                    @endif
-
                                     {{-- Revision Status Badge (Purposeful Subtle Colors) --}}
                                     @if($isStaff)
                                         @if($approvedCount === 2)
@@ -226,7 +218,7 @@
                             <td class="px-6 py-5 text-right">
                                 <div class="flex items-center justify-end">
                                     <a href="{{ route('seminar-examiner.show', $exam->id) }}" 
-                                       class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-semibold transition-all shadow-2xs hover:shadow-xs active:scale-95"
+                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-orange-600/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
                                        title="Buka Catatan & Thread Revisi">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         <span>Catatan Revisi</span>
