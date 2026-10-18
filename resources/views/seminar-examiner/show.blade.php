@@ -23,7 +23,7 @@
             </h2>
             <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest flex items-center">
                 @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser))
-                    Mode {{ ucfirst(auth()->user()->role) }}: Mengelola revisi atas nama <span class="font-black text-indigo-600 dark:text-indigo-400 ml-1">{{ $targetUser->name }}</span>
+                    Mode {{ ucfirst(auth()->user()->role) }}: Mengelola revisi atas nama <span class="font-black text-orange-600 dark:text-orange-400 ml-1">{{ $targetUser->name }}</span>
                 @else
                     Pantau progres perbaikan dan berikan feedback berkelanjutan
                 @endif
@@ -250,10 +250,10 @@
 
         @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($examiners))
             <!-- Admin / Kaprodi Examiner Selector Card -->
-            <div class="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-200/60 dark:border-indigo-800/40 rounded-2xl p-5 shadow-sm">
+            <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border border-orange-200/60 dark:border-orange-800/40 rounded-2xl p-5 shadow-sm">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-1 bg-indigo-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-sm">
+                        <span class="px-2.5 py-1 bg-gradient-to-r from-orange-600 to-amber-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-sm">
                             Mode {{ ucfirst(auth()->user()->role) }}
                         </span>
                         <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">
@@ -273,23 +273,23 @@
                             $hasRevisionNotes = $rev && $rev->messages->where('sender_id', $ex['user']->id)->count() > 0;
                         @endphp
                         <div onclick="window.location.href='{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $ex['user']->id, 'redirect_to' => request('redirect_to')]) }}'"
-                             class="cursor-pointer relative p-4 rounded-xl border transition-all flex flex-col justify-between {{ $isSelected ? 'bg-white dark:bg-slate-800 border-indigo-500 shadow-md ring-2 ring-indigo-500/20' : 'bg-white/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300' }}">
+                             class="cursor-pointer relative p-4 rounded-xl border transition-all flex flex-col justify-between {{ $isSelected ? 'bg-white dark:bg-slate-800 border-orange-500 shadow-md ring-2 ring-orange-500/20' : 'bg-white/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300' }}">
                             <div>
                                 <div class="flex items-center justify-between gap-2 mb-2">
-                                    <span class="text-[9px] font-black uppercase tracking-wider {{ $isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400' }}">
+                                    <span class="text-[9px] font-black uppercase tracking-wider {{ $isSelected ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400' }}">
                                         {{ $ex['role_label'] }}
                                     </span>
                                     <div class="flex items-center gap-1.5">
                                         @if($hasRevisionNotes)
                                             <a href="{{ route('seminar-examiner.print-revision', $rev->id) }}" target="_blank"
-                                               class="p-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 rounded-md transition-all"
+                                               class="p-1 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/60 rounded-md transition-all"
                                                title="Cetak Poin Revisi {{ $ex['role_label'] }} (PDF)"
                                                onclick="event.stopPropagation();">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
                                             </a>
                                         @elseif(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $ex['user'])
                                             <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $ex['user']->id]) }}" target="_blank"
-                                               class="p-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 rounded-md transition-all"
+                                               class="p-1 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/60 rounded-md transition-all"
                                                title="Cetak Lembar Revisi {{ $ex['role_label'] }} (PDF)"
                                                onclick="event.stopPropagation();">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
@@ -319,7 +319,7 @@
                                 </div>
                             </div>
                             @if($isSelected)
-                                <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tighter">
+                                <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-tighter">
                                     <span>Sedang Aktif Dipilih</span>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
@@ -334,7 +334,7 @@
             <!-- Student Info -->
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden sticky top-6">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/10 rounded-full -mr-12 -mt-12"></div>
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50/70 dark:bg-orange-950/20 rounded-full -mr-12 -mt-12"></div>
                     <div class="relative">
                         <div class="w-16 h-16 rounded-2xl overflow-hidden mb-6 border border-slate-200 dark:border-slate-700 shadow-md">
                             <img src="{{ $detail->thesis?->student?->avatar_url }}" alt="{{ $detail->thesis?->student?->name ?? 'Mahasiswa' }}" class="w-full h-full object-cover">
@@ -361,12 +361,12 @@
                             @if($docUrl)
                                 <div class="pt-1">
                                     <a href="{{ $docUrl }}" target="_blank" 
-                                       class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all shadow-xs group/doc">
-                                        <svg class="w-4 h-4 text-indigo-500 group-hover/doc:text-white transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl text-xs font-bold transition-all shadow-xs group/doc">
+                                        <svg class="w-4 h-4 text-orange-500 group-hover/doc:text-white transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         <span>Buka Dokumen Skripsi</span>
-                                        <svg class="w-3.5 h-3.5 opacity-70 group-hover/doc:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3.5 h-3.5 opacity-60 group-hover/doc:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                                         </svg>
                                     </a>
@@ -376,11 +376,11 @@
                                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Jadwal Seminar</span>
                                 <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
                                     <div class="flex items-center text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
-                                        <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         {{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('l, d F Y') }}
                                     </div>
                                     <div class="flex items-center text-[11px] font-medium text-slate-500">
-                                        <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         {{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H:i') }} WIB
                                     </div>
                                 </div>
@@ -397,7 +397,7 @@
                     <div class="p-5 sm:p-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                                <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                                 Diskusi Revisi Seminar
                             </h3>
                             @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser))
@@ -407,16 +407,16 @@
                         <div class="flex items-center gap-2">
                             @if(in_array(auth()->user()->role, ['admin', 'kaprodi']))
                                 <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $actingId]) }}" target="_blank"
-                                   class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
                                    title="Cetak Lembar Revisi Penguji Ini (PDF)">
-                                    <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
+                                    <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
                                     <span>Cetak Revisi</span>
                                 </a>
                             @elseif($myRevision)
                                 <a href="{{ route('seminar-examiner.print-revision', $myRevision->id) }}" target="_blank"
-                                   class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
                                    title="Cetak Lembar Poin Revisi Penguji Ini (PDF)">
-                                    <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
+                                    <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
                                     <span>Cetak Revisi</span>
                                 </a>
                             @endif
@@ -453,35 +453,35 @@
                                             </span>
                                             <span class="text-[9px] text-slate-400 font-medium">{{ $msg->created_at?->format('H:i, d M') }}</span>
                                             @if($msg->updated_at && $msg->created_at && $msg->updated_at->gt($msg->created_at))
-                                                <span class="text-[9px] text-indigo-500 dark:text-indigo-400 font-bold italic" title="Terakhir diperbarui: {{ $msg->updated_at->format('d M Y H:i') }}">
+                                                <span class="text-[9px] text-orange-500 dark:text-orange-400 font-bold italic" title="Terakhir diperbarui: {{ $msg->updated_at->format('d M Y H:i') }}">
                                                     (diedit {{ $msg->updated_at->format('H:i') }})
                                                 </span>
                                             @endif
                                             @if($canEditMessage)
                                                 <button type="button" 
                                                     @click="openEditModal({{ $msg->id }}, '{{ route('seminar-examiner.update-message', $msg->id) }}', {{ json_encode($msg->message) }}, {{ json_encode($msg->file_path) }})"
-                                                    class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 hover:bg-indigo-50 dark:bg-slate-800 dark:hover:bg-slate-700 px-1.5 py-0.5 rounded-md transition-all shadow-2xs cursor-pointer"
+                                                    class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-slate-700 px-1.5 py-0.5 rounded-md transition-all shadow-2xs cursor-pointer"
                                                     title="Edit butir catatan revisi ini">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                                     <span>Edit</span>
                                                 </button>
                                             @endif
                                         </div>
-                                        <div class="p-4 rounded-2xl shadow-sm text-sm font-medium leading-relaxed {{ $isMe ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700' }}">
-                                            <x-revision-message-content :message="$msg->message" :is-me="$isMe" theme="indigo" />
+                                        <div class="p-4 rounded-2xl shadow-sm text-sm font-medium leading-relaxed {{ $isMe ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-tr-none shadow-sm shadow-orange-600/15' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-700' }}">
+                                            <x-revision-message-content :message="$msg->message" :is-me="$isMe" theme="orange" />
                                             
                                             @if($msg->file_path)
                                                 <div class="mt-3 pt-3 border-t {{ $isMe ? 'border-white/10' : 'border-slate-50 dark:border-slate-700' }} flex items-center gap-2 flex-wrap">
                                                     <!-- Modal Preview Button -->
                                                     <button type="button" 
                                                             @click="openPreview('{{ $msg->file_path }}', 'Dokumen dari {{ $isMe ? ($msg->sender?->name ?? 'Penguji') : ($msg->sender?->name ?? $detail->thesis->student->name) }}')"
-                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs {{ $isMe ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60' }}">
+                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs {{ $isMe ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60' }}">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                                         <span>Lihat Preview</span>
                                                     </button>
 
                                                     <!-- Direct Tab Link -->
-                                                    <a href="{{ $msg->file_path }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-bold transition-all {{ $isMe ? 'text-indigo-100 hover:text-white underline' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200' }}">
+                                                    <a href="{{ $msg->file_path }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-bold transition-all {{ $isMe ? 'text-orange-100 hover:text-white underline' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200' }}">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                         <span>Tab Baru</span>
                                                     </a>
@@ -544,10 +544,10 @@
                                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
                                         <div>
                                             <label class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
-                                                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                                                <span class="w-2 h-2 rounded-full bg-orange-600"></span>
                                                 <span>Catatan Revisi & Feedback</span>
                                                 @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($targetUser))
-                                                    <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold lowercase">(atas nama {{ $targetUser->name }})</span>
+                                                    <span class="text-[10px] text-orange-600 dark:text-orange-400 font-bold lowercase">(atas nama {{ $targetUser->name }})</span>
                                                 @endif
                                             </label>
                                             <p class="text-[10px] text-slate-400 mt-0.5">Tuliskan butir-butir perbaikan yang wajib diperbaiki mahasiswa</p>
@@ -557,14 +557,14 @@
                                         <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 self-start sm:self-auto shadow-xs">
                                             <button type="button" 
                                                     @click="mode = 'points'"
-                                                    :class="mode === 'points' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'"
+                                                    :class="mode === 'points' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'"
                                                     class="px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                                 <span>Mode Poin</span>
                                             </button>
                                             <button type="button" 
                                                     @click="mode = 'text'"
-                                                    :class="mode === 'text' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'"
+                                                    :class="mode === 'text' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'"
                                                     class="px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 <span>Mode Bebas</span>
@@ -578,22 +578,22 @@
                                         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                                             <button type="button" 
                                                     @click="appendTemplate('Mohon perbaiki format penulisan, margin, tata bahasa, dan pastikan daftar pustaka telah sesuai dengan format pedoman serta terupdate minimal 5 tahun terakhir.')"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 dark:bg-slate-800 dark:hover:bg-indigo-950/40 dark:text-slate-200 dark:hover:text-indigo-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                                <span class="text-indigo-500 font-black">+</span>
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-orange-600 dark:bg-slate-800 dark:hover:bg-orange-950/40 dark:text-slate-200 dark:hover:text-orange-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-orange-500 font-black">+</span>
                                                 <span>Format Penulisan & Daftar Pustaka</span>
                                             </button>
 
                                             <button type="button" 
                                                     @click="appendTemplate('Perbaiki metodologi penelitian, perjelas teknik penentuan sampel/populasi, dan jelaskan langkah validasi instrumen secara detail.')"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 dark:bg-slate-800 dark:hover:bg-indigo-950/40 dark:text-slate-200 dark:hover:text-indigo-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                                <span class="text-indigo-500 font-black">+</span>
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-orange-600 dark:bg-slate-800 dark:hover:bg-orange-950/40 dark:text-slate-200 dark:hover:text-orange-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-orange-500 font-black">+</span>
                                                 <span>Perbaiki Metodologi & Sampel</span>
                                             </button>
 
                                             <button type="button" 
                                                     @click="appendTemplate('Lengkapi analisis dan pembahasan pada Bab 4, serta bandingkan temuan hasil pengujian dengan penelitian relevan sebelumnya.')"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 dark:bg-slate-800 dark:hover:bg-indigo-950/40 dark:text-slate-200 dark:hover:text-indigo-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
-                                                <span class="text-indigo-500 font-black">+</span>
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-orange-600 dark:bg-slate-800 dark:hover:bg-orange-950/40 dark:text-slate-200 dark:hover:text-orange-300 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-700 transition-all shrink-0 hover:scale-[1.02] active:scale-95 shadow-xs">
+                                                <span class="text-orange-500 font-black">+</span>
                                                 <span>Lengkapi Hasil Pembahasan Bab 4</span>
                                             </button>
 
@@ -610,8 +610,8 @@
                                     <div x-show="mode === 'points'" class="space-y-3">
                                         <div x-ref="pointsListContainer" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
                                             <template x-for="(point, idx) in points" :key="idx">
-                                                <div class="flex items-start gap-2.5 p-2 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
-                                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-black shrink-0 mt-1 shadow-xs" x-text="idx + 1"></span>
+                                                <div class="flex items-start gap-2.5 p-2 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all">
+                                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-black shrink-0 mt-1 shadow-xs" x-text="idx + 1"></span>
                                                     <div class="flex-1">
                                                         <textarea x-model="points[idx]" 
                                                                   name="revision_points[]" 
@@ -634,7 +634,7 @@
                                         <div class="flex items-center justify-between gap-3 pt-1">
                                             <button type="button" 
                                                     @click="addPoint()" 
-                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 rounded-xl text-xs font-bold border border-indigo-200/80 dark:border-indigo-800 transition-all shadow-xs">
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 dark:text-orange-300 rounded-xl text-xs font-bold border border-orange-200/80 dark:border-orange-800 transition-all shadow-xs">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                                                 <span>Tambah Poin Revisi</span>
                                             </button>
@@ -647,7 +647,7 @@
                                                    x-model="additionalNotes" 
                                                    name="additional_notes" 
                                                    placeholder="Catatan tambahan umum (opsional, misal: batas waktu pengumpulan)..." 
-                                                   class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-xs font-medium transition-all">
+                                                   class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-orange-500 focus:ring-orange-500 text-xs font-medium transition-all">
                                         </div>
                                     </div>
 
@@ -656,14 +656,14 @@
                                         <textarea x-ref="noteInput" 
                                                   x-model="notes" 
                                                   rows="3" 
-                                                  class="block w-full rounded-2xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm font-medium transition-all" 
+                                                  class="block w-full rounded-2xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-orange-500 focus:ring-orange-500 text-sm font-medium transition-all" 
                                                   placeholder="Tuliskan catatan revisi bebas..."></textarea>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div class="relative w-full md:w-64">
-                                        <input type="url" name="revision_link" id="revision_link" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-xs font-medium transition-all" placeholder="Link File / Google Drive (Opsional)">
+                                        <input type="url" name="revision_link" id="revision_link" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200 focus:border-orange-500 focus:ring-orange-500 text-xs font-medium transition-all" placeholder="Link File / Google Drive (Opsional)">
                                     </div>
                                     <div class="flex items-center gap-3">
                                         @if($myRevision && $myRevision->status !== 'approved')
@@ -681,7 +681,7 @@
                                                 </button>
                                             </form>
                                         @endif
-                                        <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all">
+                                        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-orange-600/20 active:scale-95">
                                             Kirim Feedback
                                         </button>
                                     </div>
@@ -727,7 +727,7 @@
                     <!-- Modal Header -->
                     <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-500/20">
+                            <div class="w-10 h-10 rounded-2xl bg-orange-500/10 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/20">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
                             <div class="min-w-0">
@@ -750,7 +750,7 @@
                     <!-- Modal Body (Iframe) -->
                     <div class="relative bg-slate-100 dark:bg-slate-950 h-[72vh] w-full flex items-center justify-center">
                         <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none text-slate-400">
-                            <svg class="w-8 h-8 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <svg class="w-8 h-8 animate-spin text-orange-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             <span class="text-xs font-bold uppercase tracking-wider">Memuat Dokumen...</span>
                         </div>
                         
@@ -801,7 +801,7 @@
                         <!-- Modal Header -->
                         <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-500/20">
+                                <div class="w-10 h-10 rounded-2xl bg-orange-500/10 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/20">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </div>
                                 <div>
@@ -814,13 +814,13 @@
                             <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-xs self-start sm:self-auto">
                                 <button type="button" 
                                         @click="editMode = 'points'" 
-                                        :class="editMode === 'points' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'" 
+                                        :class="editMode === 'points' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'" 
                                         class="px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all">
                                     Mode Poin
                                 </button>
                                 <button type="button" 
                                         @click="editMode = 'free'" 
-                                        :class="editMode === 'free' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'" 
+                                        :class="editMode === 'free' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs font-black' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'" 
                                         class="px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all">
                                     Mode Bebas
                                 </button>
@@ -834,10 +834,10 @@
                                 <div class="space-y-2.5">
                                     <template x-for="(point, index) in editPoints" :key="index">
                                         <div class="flex items-start gap-2.5 p-2 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
-                                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-[11px] font-black shrink-0 mt-1.5 shadow-xs" x-text="index + 1"></span>
+                                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-orange-600 to-amber-600 text-white text-[11px] font-black shrink-0 mt-1.5 shadow-xs" x-text="index + 1"></span>
                                             <textarea x-model="editPoints[index]"
                                                       rows="2"
-                                                      class="flex-1 rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-indigo-500 font-medium leading-relaxed"
+                                                      class="flex-1 rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-orange-500 font-medium leading-relaxed"
                                                       placeholder="Tuliskan butir poin revisi..."></textarea>
                                             <button type="button" 
                                                     @click="removeEditPoint(index)" 
@@ -851,7 +851,7 @@
 
                                 <button type="button" 
                                         @click="addEditPoint('')"
-                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 dark:text-indigo-300 text-xs font-bold rounded-xl border border-indigo-200/80 dark:border-indigo-800/60 transition-all cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 dark:text-orange-300 text-xs font-bold rounded-xl border border-orange-200/80 dark:border-orange-800/60 transition-all cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                                     <span>Tambah Poin Revisi</span>
                                 </button>
@@ -859,19 +859,19 @@
                                 <!-- Catatan Tambahan (Opsional) -->
                                 <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
                                     <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Catatan Tambahan Umum (Opsional):</label>
-                                    <textarea x-model="editAdditionalNotes" rows="2" class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="Misal: batas waktu pengumpulan revisi..."></textarea>
+                                    <textarea x-model="editAdditionalNotes" rows="2" class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-orange-500 font-medium" placeholder="Misal: batas waktu pengumpulan revisi..."></textarea>
                                 </div>
                             </div>
 
                             <!-- Mode Bebas -->
                             <div x-show="editMode === 'free'">
-                                <textarea x-model="editNotes" rows="7" class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-indigo-500 font-medium leading-relaxed" placeholder="Tuliskan catatan revisi lengkap..."></textarea>
+                                <textarea x-model="editNotes" rows="7" class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-orange-500 font-medium leading-relaxed" placeholder="Tuliskan catatan revisi lengkap..."></textarea>
                             </div>
 
                             <!-- Tautan File / Google Drive -->
                             <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
                                 <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">Tautan Dokumen / Google Drive (Opsional):</label>
-                                <input type="url" x-model="editLink" name="revision_link" class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="https://drive.google.com/...">
+                                <input type="url" x-model="editLink" name="revision_link" class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:ring-2 focus:ring-orange-500 font-medium" placeholder="https://drive.google.com/...">
                             </div>
                         </div>
 
@@ -880,7 +880,7 @@
                             <button type="button" @click="closeEditModal()" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">
                                 Batal
                             </button>
-                            <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-indigo-600/20 cursor-pointer">
+                            <button type="submit" class="px-5 py-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-orange-600/20 active:scale-95 cursor-pointer">
                                 Simpan Perubahan
                             </button>
                         </div>
