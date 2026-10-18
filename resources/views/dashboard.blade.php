@@ -339,14 +339,6 @@
                 <!-- Hero Section Header: Title, Pembimbing, and Progress Gauge -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
                     <div>
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
-                                Roadmap Perjalanan Skripsi
-                            </span>
-                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">• 5 Tahap Menuju Kelulusan</span>
-                        </div>
-
                         @if($thesis)
                             <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight mb-1 max-w-2xl leading-snug">
                                 {{ $thesis->final_title ?? $thesis->title }}
