@@ -57,134 +57,183 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
                     @forelse($examinations as $exam)
-                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group">
+                        @php
+                            $currentUserId = Auth::id();
+                            $isExaminer1 = ($exam->examiner1_id === $currentUserId);
+                            $isExaminer2 = ($exam->examiner2_id === $currentUserId);
+                            $isExaminer = $isExaminer1 || $isExaminer2;
+                            $isStaff = in_array(Auth::user()->role, ['admin', 'kaprodi']);
+                            
+                            $myRev = $exam->revisions->where('examiner_id', $currentUserId)->first();
+                            $rev1 = $exam->revisions->where('examiner_id', $exam->examiner1_id)->first();
+                            $rev2 = $exam->revisions->where('examiner_id', $exam->examiner2_id)->first();
+                            $approvedCount = ($rev1?->status === 'approved' ? 1 : 0) + ($rev2?->status === 'approved' ? 1 : 0);
+
+                            $semDate = \Carbon\Carbon::parse($exam->schedule->date)->format('Y-m-d');
+                            $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($exam->end_time)->format('H:i:s'));
+                            $isFinished = ($exam->thesis && $exam->thesis->seminarApplication && $exam->thesis->seminarApplication->status === 'completed')
+                                || $exam->isGraded()
+                                || $exam->isAllRevisionsApproved()
+                                || $semEnd->isPast();
+
+                            $app = $exam->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
+                                ?? $exam->thesis?->seminarApplication;
+                            $filePath = $app?->file_skripsi;
+                            $docUrl = null;
+                            if ($filePath) {
+                                $docUrl = filter_var($filePath, FILTER_VALIDATE_URL) 
+                                    ? $filePath 
+                                    : route('download.private', ['path' => $filePath, 'inline' => 1]);
+                            }
+                        @endphp
+                        <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors group">
+                            <!-- Mahasiswa & Judul -->
                             <td class="px-6 py-5">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-xl overflow-hidden mr-4 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-110 transition-transform flex items-center justify-center bg-slate-50 dark:bg-slate-800">
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-xl overflow-hidden mr-3.5 border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0 flex items-center justify-center bg-slate-100 dark:bg-slate-800">
                                         <img src="{{ $exam->thesis?->student?->avatar_url }}" alt="{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}" class="w-full h-full object-cover">
                                     </div>
-                                    <div class="max-w-xs md:max-w-md">
-                                        <h4 class="font-black text-slate-800 dark:text-slate-100 text-sm group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
-                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 uppercase font-bold tracking-tighter">"{{ $exam->thesis?->title ?? '-' }}"</p>
+                                    <div class="max-w-xs md:max-w-md min-w-0">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h4 class="font-bold text-slate-900 dark:text-slate-100 text-sm tracking-tight">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
+                                            @if($isExaminer1)
+                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700/80">Penguji 1</span>
+                                            @elseif($isExaminer2)
+                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700/80">Penguji 2</span>
+                                            @elseif($isStaff)
+                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold rounded-md border border-slate-200 dark:border-slate-700/80">P1 & P2</span>
+                                            @endif
+                                        </div>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 italic font-normal" title="{{ $exam->thesis?->title ?? '-' }}">
+                                            "{{ $exam->thesis?->title ?? '-' }}"
+                                        </p>
                                     </div>
                                 </div>
                             </td>
+
+                            <!-- Jadwal Seminar -->
                             <td class="px-6 py-5 text-center">
-                                @php
-                                    $semDate = \Carbon\Carbon::parse($exam->schedule->date)->format('Y-m-d');
-                                    $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($exam->end_time)->format('H:i:s'));
-                                    $isFinished = ($exam->thesis && $exam->thesis->seminarApplication && $exam->thesis->seminarApplication->status === 'completed')
-                                        || $exam->isGraded()
-                                        || $exam->isAllRevisionsApproved()
-                                        || $semEnd->isPast();
-                                @endphp
-                                <div class="flex flex-col items-center gap-1.5">
-                                    <span class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase">{{ \Carbon\Carbon::parse($exam->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
-                                    <span class="text-[10px] text-slate-400 flex items-center font-bold uppercase">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div class="flex flex-col items-center gap-1">
+                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ \Carbon\Carbon::parse($exam->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
+                                    <span class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center font-medium">
+                                        <svg class="w-3 h-3 mr-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         {{ \Carbon\Carbon::parse($exam->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($exam->end_time)->format('H:i') }}
                                     </span>
                                     @if($isFinished)
-                                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200 mt-1">Selesai</span>
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                            Selesai
+                                        </span>
                                     @endif
                                 </div>
                             </td>
+
+                            <!-- Lokasi -->
                             <td class="px-6 py-5 text-center">
-                                @if($exam->schedule->meeting_link && !$isFinished)
-                                    <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="group/link inline-block">
-                                        <x-status-badge type="indigo" :label="$exam->schedule->location" />
-                                        <div class="text-[9px] text-indigo-500 font-black mt-1 uppercase tracking-tighter opacity-0 group-hover/link:opacity-100 transition-opacity">Klik Buka Link</div>
-                                    </a>
-                                @else
-                                    <x-status-badge type="slate" :label="$exam->schedule->location" />
-                                @endif
+                                <div class="inline-flex items-center justify-center">
+                                    @if($exam->schedule->meeting_link && !$isFinished)
+                                        <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 text-xs font-medium transition-colors" title="Buka tautan meeting">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            <span>{{ $exam->schedule->location }}</span>
+                                        </a>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            <span>{{ $exam->schedule->location }}</span>
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
+
+                            <!-- Dokumen Skripsi -->
                             <td class="px-6 py-5 text-center">
-                                @php
-                                    $app = $exam->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
-                                        ?? $exam->thesis?->seminarApplication;
-                                    $filePath = $app?->file_skripsi;
-                                    $docUrl = null;
-                                    if ($filePath) {
-                                        $docUrl = filter_var($filePath, FILTER_VALIDATE_URL) 
-                                            ? $filePath 
-                                            : route('download.private', ['path' => $filePath, 'inline' => 1]);
-                                    }
-                                @endphp
                                 @if($docUrl)
                                     <a href="{{ $docUrl }}" target="_blank" 
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white text-xs font-bold transition-all shadow-xs group/doc"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition-all shadow-2xs group/doc"
                                        title="Buka / Baca Dokumen Skripsi">
-                                        <svg class="w-4 h-4 text-indigo-500 group-hover/doc:text-white transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        <svg class="w-3.5 h-3.5 text-slate-400 group-hover/doc:text-slate-600 dark:group-hover/doc:text-slate-200 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         <span>Dokumen</span>
-                                        <svg class="w-3 h-3 text-indigo-400 group-hover/doc:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                        </svg>
                                     </a>
                                 @else
-                                    <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium italic">-</span>
+                                    <span class="text-xs text-slate-400 dark:text-slate-500 font-medium italic">-</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-5 text-center">
-                                @php
-                                    $isExaminer1 = ($exam->examiner1_id === Auth::id());
-                                    $isExaminer2 = ($exam->examiner2_id === Auth::id());
-                                    $isExaminer = $isExaminer1 || $isExaminer2;
-                                    $isStaff = in_array(Auth::user()->role, ['admin', 'kaprodi']);
-                                    
-                                    $myRev = $exam->revisions->where('examiner_id', Auth::id())->first();
-                                    $rev1 = $exam->revisions->where('examiner_id', $exam->examiner1_id)->first();
-                                    $rev2 = $exam->revisions->where('examiner_id', $exam->examiner2_id)->first();
-                                    $approvedCount = ($rev1?->status === 'approved' ? 1 : 0) + ($rev2?->status === 'approved' ? 1 : 0);
-                                @endphp
-                                <div class="flex flex-col items-center gap-1.5">
-                                    <div class="flex gap-1">
-                                        @if($isExaminer1)
-                                            <span class="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[8px] font-black uppercase rounded border border-amber-200 dark:border-amber-500/20">Penguji 1</span>
-                                        @elseif($isExaminer2)
-                                            <span class="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[8px] font-black uppercase rounded border border-amber-200 dark:border-amber-500/20">Penguji 2</span>
-                                        @elseif($isStaff)
-                                            <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase rounded border border-slate-200 dark:border-slate-700">P1 & P2</span>
-                                        @endif
-                                    </div>
 
-                                    {{-- Revision Status Badge --}}
+                            <!-- Status & Nilai -->
+                            <td class="px-6 py-5 text-center">
+                                <div class="flex flex-col items-center gap-1.5">
+                                    {{-- Score if graded --}}
+                                    @if($myRev && $myRev->isGraded())
+                                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                                            <span class="text-slate-400 font-normal">Nilai:</span>
+                                            <b class="text-slate-800 dark:text-slate-100">{{ number_format($myRev->total_score, 1) }}</b>
+                                        </span>
+                                    @endif
+
+                                    {{-- Revision Status Badge (Purposeful Subtle Colors) --}}
                                     @if($isStaff)
                                         @if($approvedCount === 2)
-                                            <x-status-badge type="emerald" label="REVISI SELESAI (2/2)" />
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Selesai (2/2)
+                                            </span>
                                         @elseif($approvedCount === 1)
-                                            <x-status-badge type="blue" label="1/2 PENGUJI ACC" />
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                1/2 Penguji ACC
+                                            </span>
                                         @elseif(($rev1 && $rev1->status === 'resubmitted') || ($rev2 && $rev2->status === 'resubmitted'))
-                                            <x-status-badge type="blue" label="REVISI TERKIRIM" />
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                Revisi Masuk
+                                            </span>
                                         @elseif($rev1 || $rev2)
-                                            <x-status-badge type="orange" label="PROSES REVISI" />
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                Menunggu Mahasiswa
+                                            </span>
                                         @else
-                                            <x-status-badge type="slate" label="BELUM ADA CATATAN" />
+                                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Belum ada catatan</span>
                                         @endif
                                     @else
                                         @if($myRev)
                                             @if($myRev->status === 'approved')
-                                                <x-status-badge type="emerald" label="REVISI SELESAI" />
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    Revisi Selesai
+                                                </span>
                                             @elseif($myRev->status === 'resubmitted')
-                                                <x-status-badge type="blue" label="REVISI TERKIRIM" />
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                    Revisi Masuk
+                                                </span>
                                             @else
-                                                <x-status-badge type="orange" label="REVISI DIKIRIM" />
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                    Menunggu Mahasiswa
+                                                </span>
                                             @endif
                                         @else
-                                            <x-status-badge type="slate" label="BELUM ADA CATATAN" />
+                                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Belum ada catatan</span>
                                         @endif
                                     @endif
                                 </div>
                             </td>
+
+                            <!-- Aksi -->
                             <td class="px-6 py-5 text-right">
                                 <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('seminar-examiner.grading', $exam->id) }}" 
+                                       class="inline-flex items-center px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs active:scale-95"
+                                       title="Buka Lembar Penilaian Seminar">
+                                        Input Nilai
+                                    </a>
                                     <a href="{{ route('seminar-examiner.show', $exam->id) }}" 
-                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm shadow-amber-500/20"
-                                       title="Buka Lembar Catatan & Revisi Seminar">
-                                        <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                        <span>Catatan Revisi</span>
+                                       class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs"
+                                       title="Buka Catatan & Thread Revisi">
+                                        Revisi
                                     </a>
                                 </div>
                             </td>
