@@ -244,6 +244,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/logs/export', [App\Http\Controllers\ActivityLogController::class, 'export'])->name('admin.logs.export');
         Route::get('/admin/logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.logs');
 
+        // Database Backup & Restore
+        Route::get('/admin/backups', [App\Http\Controllers\BackupController::class, 'index'])->name('admin.backups.index');
+        Route::post('/admin/backups/create', [App\Http\Controllers\BackupController::class, 'createBackup'])->name('admin.backups.create');
+        Route::get('/admin/backups/{filename}/download', [App\Http\Controllers\BackupController::class, 'download'])->name('admin.backups.download');
+        Route::post('/admin/backups/{filename}/restore', [App\Http\Controllers\BackupController::class, 'restore'])->name('admin.backups.restore');
+        Route::post('/admin/backups/upload-restore', [App\Http\Controllers\BackupController::class, 'uploadAndRestore'])->name('admin.backups.upload-restore');
+        Route::delete('/admin/backups/{filename}', [App\Http\Controllers\BackupController::class, 'destroy'])->name('admin.backups.destroy');
+
         // Analytics & Charts
         Route::get('/analytics/export-excel', [App\Http\Controllers\AnalyticsChartController::class, 'exportExcel'])->name('analytics.export-excel');
         Route::get('/analytics/export-pdf', [App\Http\Controllers\AnalyticsChartController::class, 'exportPdf'])->name('analytics.export-pdf');

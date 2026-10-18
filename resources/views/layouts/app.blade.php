@@ -749,6 +749,14 @@
                             <span class="sidebar-text">Log Sistem</span>
                         </a>
 
+                        <!-- Direct Link: Backup & Restore Database -->
+                        <a href="{{ route('admin.backups.index') }}" 
+                           data-tooltip="Backup & Restore" title="Backup & Restore"
+                           class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('admin.backups.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                            <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('admin.backups.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                            <span class="sidebar-text">Backup & Restore</span>
+                        </a>
+
                         <!-- Direct Link: Laporan Bug Sistem -->
                         @php 
                             $openBugCount = cache()->remember('sidebar_open_bug_count', 30, function() {
