@@ -224,16 +224,12 @@
 
                             <!-- Aksi -->
                             <td class="px-6 py-5 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('seminar-examiner.grading', $exam->id) }}" 
-                                       class="inline-flex items-center px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs active:scale-95"
-                                       title="Buka Lembar Penilaian Seminar">
-                                        Input Nilai
-                                    </a>
+                                <div class="flex items-center justify-end">
                                     <a href="{{ route('seminar-examiner.show', $exam->id) }}" 
-                                       class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-2xs"
+                                       class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-semibold transition-all shadow-2xs hover:shadow-xs active:scale-95"
                                        title="Buka Catatan & Thread Revisi">
-                                        Revisi
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        <span>Catatan Revisi</span>
                                     </a>
                                 </div>
                             </td>
