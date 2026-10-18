@@ -243,7 +243,11 @@
                     const w = (parseFloat(this.scores.writing) || 0) * this.weights.writing;
                     return (p + e + w).toFixed(2);
                 },
+                get isComplete() {
+                    return this.scores.presentation !== '' && this.scores.explanation !== '' && this.scores.writing !== '';
+                },
                 get gradeLetter() {
+                    if (!this.isComplete) return '-';
                     const s = parseFloat(this.finalScore);
                     if (s >= 80) return 'A';
                     if (s >= 70) return 'B';
@@ -251,53 +255,15 @@
                     if (s >= 50) return 'D';
                     return 'E';
                 },
-                get graduationStatus() {
-                    const p = this.scores.presentation;
-                    const e = this.scores.explanation;
-                    const w = this.scores.writing;
-                    if (p === '' || e === '' || w === '') {
-                        return {
-                            status: 'incomplete',
-                            badge: 'BELUM LENGKAP',
-                            sublabel: 'Lengkapi semua nilai komponen',
-                            color: 'slate',
-                            badgeClass: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
-                        };
+                get gradeBadgeClass() {
+                    if (!this.isComplete) {
+                        return 'bg-slate-700/60 text-slate-300 border border-slate-600/60';
                     }
-                    const s = parseFloat(this.finalScore);
-                    if (s >= 80) {
-                        return {
-                            status: 'passed_excellent',
-                            badge: 'LULUS (A - SANGAT MEMUASKAN)',
-                            sublabel: 'Memenuhi syarat kelulusan yudisium predikat pujian',
-                            color: 'emerald',
-                            badgeClass: 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 ring-2 ring-emerald-500/30'
-                        };
-                    } else if (s >= 70) {
-                        return {
-                            status: 'passed_good',
-                            badge: 'LULUS (B - MEMUASKAN)',
-                            sublabel: 'Memenuhi syarat kelulusan yudisium predikat memuaskan',
-                            color: 'sky',
-                            badgeClass: 'bg-sky-600 text-white shadow-sm shadow-sky-600/30 ring-2 ring-sky-500/30'
-                        };
-                    } else if (s >= 60) {
-                        return {
-                            status: 'passed_conditional',
-                            badge: 'LULUS BERSYARAT (C)',
-                            sublabel: 'Wajib menyelesaikan revisi sebelum penetapan kelulusan',
-                            color: 'amber',
-                            badgeClass: 'bg-amber-600 text-white shadow-sm shadow-amber-600/30 ring-2 ring-amber-500/30'
-                        };
-                    } else {
-                        return {
-                            status: 'failed',
-                            badge: 'TIDAK LULUS (MENGULANG)',
-                            sublabel: 'Nilai di bawah batas kelulusan minimal sidang skripsi',
-                            color: 'rose',
-                            badgeClass: 'bg-rose-600 text-white shadow-sm shadow-rose-600/30 ring-2 ring-rose-500/30'
-                        };
-                    }
+                    const letter = this.gradeLetter;
+                    if (letter === 'A') return 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 ring-2 ring-emerald-500/30';
+                    if (letter === 'B') return 'bg-sky-600 text-white shadow-sm shadow-sky-600/30 ring-2 ring-sky-500/30';
+                    if (letter === 'C') return 'bg-amber-600 text-white shadow-sm shadow-amber-600/30 ring-2 ring-amber-500/30';
+                    return 'bg-rose-600 text-white shadow-sm shadow-rose-600/30 ring-2 ring-rose-500/30';
                 },
                 setScore(component, value) {
                     this.scores[component] = Math.max(0, Math.min(100, Math.round(value)));
@@ -337,27 +303,26 @@
                             <h4 class="text-base sm:text-lg font-black text-white tracking-tight">
                                 Rubrik Penilaian Sidang Tugas Akhir
                             </h4>
-                            <p class="text-xs text-slate-400" x-text="graduationStatus.sublabel">
+                            <p class="text-xs text-slate-400">
                                 Ketuk tombol pil skor untuk penilaian cepat dan akurat di tablet/iPad.
                             </p>
                         </div>
 
-                        <!-- Live Indicator Badge & Score Hero -->
+                        <!-- Live Score Hero -->
                         <div class="flex items-center gap-4 bg-white/5 dark:bg-black/20 p-3 sm:p-4 rounded-2xl border border-white/10 shrink-0">
                             <div class="text-right">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Prediksi Kelulusan</span>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider transition-all mt-1"
-                                      :class="graduationStatus.badgeClass"
-                                      x-text="graduationStatus.badge">
-                                    BELUM LENGKAP
-                                </span>
-                            </div>
-                            <div class="border-l border-white/10 pl-4 flex items-baseline gap-2">
-                                <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nilai Akhir</span>
-                                    <span class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight" x-text="finalScore">0.00</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nilai Huruf</span>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center justify-center min-w-[38px] h-8 px-3 rounded-xl text-base font-black uppercase tracking-wider transition-all"
+                                          :class="gradeBadgeClass"
+                                          x-text="gradeLetter">
+                                        -
+                                    </span>
                                 </div>
-                                <span class="px-2.5 py-1 bg-white/10 text-white rounded-lg text-sm font-black border border-white/20" x-text="gradeLetter">A</span>
+                            </div>
+                            <div class="border-l border-white/10 pl-4">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nilai Akhir</span>
+                                <span class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight" x-text="finalScore">0.00</span>
                             </div>
                         </div>
                     </div>
@@ -751,16 +716,16 @@
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Nilai Akhir</span>
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all"
-                                              :class="graduationStatus.badgeClass"
-                                              x-text="graduationStatus.badge">
-                                            BELUM LENGKAP
-                                        </span>
+                                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Nilai Akhir</span>
                                     </div>
                                     <div class="flex items-baseline gap-2 mt-0.5">
                                         <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight" x-text="finalScore">0.00</span>
-                                        <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800" x-text="gradeLetter">A</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Huruf:</span>
+                                            <span class="text-xs font-black px-2.5 py-0.5 rounded-lg transition-all"
+                                                  :class="gradeBadgeClass"
+                                                  x-text="gradeLetter">A</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
