@@ -44,7 +44,8 @@ class StudentThesisDefenseRevisionController extends Controller implements HasMi
             return view('student-defense-revisions.index', [
                 'revisions' => collect(),
                 'thesis' => null,
-                'scheduleDetail' => null
+                'scheduleDetail' => null,
+                'examiners' => collect(),
             ]);
         }
 
@@ -59,7 +60,48 @@ class StudentThesisDefenseRevisionController extends Controller implements HasMi
             $q->latest()->limit(1);
         }])->get();
 
-        return view('student-defense-revisions.index', compact('revisions', 'thesis', 'scheduleDetail'));
+        // Build complete list of examiners/reviewers for thesis defense
+        $examiners = collect();
+        if ($scheduleDetail) {
+            if ($scheduleDetail->examiner1) {
+                $examiners->push([
+                    'role_label' => 'Penguji 1',
+                    'user' => $scheduleDetail->examiner1,
+                    'revision' => $revisions->where('examiner_id', $scheduleDetail->examiner1_id)->first(),
+                ]);
+            }
+            if ($scheduleDetail->examiner2) {
+                $examiners->push([
+                    'role_label' => 'Penguji 2',
+                    'user' => $scheduleDetail->examiner2,
+                    'revision' => $revisions->where('examiner_id', $scheduleDetail->examiner2_id)->first(),
+                ]);
+            }
+            if ($thesis && $thesis->pembimbing1 && $thesis->pembimbing1_id !== $scheduleDetail->examiner1_id && $thesis->pembimbing1_id !== $scheduleDetail->examiner2_id) {
+                $examiners->push([
+                    'role_label' => 'Pembimbing 1',
+                    'user' => $thesis->pembimbing1,
+                    'revision' => $revisions->where('examiner_id', $thesis->pembimbing1_id)->first(),
+                ]);
+            }
+        }
+
+        // Include any additional examiners with existing revision records
+        foreach ($revisions as $rev) {
+            if ($rev->examiner && !$examiners->contains('user.id', $rev->examiner_id)) {
+                $roleLabel = 'Dosen Penguji';
+                if ($thesis && $rev->examiner_id === $thesis->pembimbing2_id) {
+                    $roleLabel = 'Pembimbing 2';
+                }
+                $examiners->push([
+                    'role_label' => $roleLabel,
+                    'user' => $rev->examiner,
+                    'revision' => $rev,
+                ]);
+            }
+        }
+
+        return view('student-defense-revisions.index', compact('revisions', 'thesis', 'scheduleDetail', 'examiners'));
     }
 
     public function show(ThesisDefenseRevision $revision)

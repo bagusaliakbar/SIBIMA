@@ -44,7 +44,8 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
             return view('student-seminar-revisions.index', [
                 'revisions' => collect(),
                 'thesis' => null,
-                'scheduleDetail' => null
+                'scheduleDetail' => null,
+                'examiners' => collect(),
             ]);
         }
 
@@ -59,7 +60,37 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
             $q->latest()->limit(1);
         }])->get();
 
-        return view('student-seminar-revisions.index', compact('revisions', 'thesis', 'scheduleDetail'));
+        // Build complete list of examiners (including those who have not yet submitted revisions)
+        $examiners = collect();
+        if ($scheduleDetail) {
+            if ($scheduleDetail->examiner1) {
+                $examiners->push([
+                    'role_label' => 'Penguji 1',
+                    'user' => $scheduleDetail->examiner1,
+                    'revision' => $revisions->where('examiner_id', $scheduleDetail->examiner1_id)->first(),
+                ]);
+            }
+            if ($scheduleDetail->examiner2) {
+                $examiners->push([
+                    'role_label' => 'Penguji 2',
+                    'user' => $scheduleDetail->examiner2,
+                    'revision' => $revisions->where('examiner_id', $scheduleDetail->examiner2_id)->first(),
+                ]);
+            }
+        }
+
+        // Include any additional examiners with existing revision records
+        foreach ($revisions as $rev) {
+            if ($rev->examiner && !$examiners->contains('user.id', $rev->examiner_id)) {
+                $examiners->push([
+                    'role_label' => 'Dosen Penguji',
+                    'user' => $rev->examiner,
+                    'revision' => $rev,
+                ]);
+            }
+        }
+
+        return view('student-seminar-revisions.index', compact('revisions', 'thesis', 'scheduleDetail', 'examiners'));
     }
 
     public function show(SeminarRevision $revision)
