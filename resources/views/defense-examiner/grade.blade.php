@@ -286,39 +286,6 @@
                 <input type="hidden" name="score_explanation" :value="scores.explanation">
                 <input type="hidden" name="score_writing" :value="scores.writing">
 
-                <!-- Dynamic Real-Time Scorecard Header Banner -->
-                <div class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-lg relative overflow-hidden">
-                    <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
-                        <div class="space-y-1.5">
-                            <h4 class="text-base sm:text-lg font-black text-white tracking-tight">
-                                Rubrik Penilaian Sidang Tugas Akhir
-                            </h4>
-                            <p class="text-xs text-slate-400">
-                                Ketuk tombol pil skor untuk penilaian cepat.
-                            </p>
-                        </div>
-
-                        <!-- Live Score Hero -->
-                        <div class="flex items-center gap-4 bg-white/5 dark:bg-black/20 p-3 sm:p-4 rounded-2xl border border-white/10 shrink-0">
-                            <div class="text-right">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nilai Huruf</span>
-                                <div class="mt-1">
-                                    <span class="inline-flex items-center justify-center min-w-[38px] h-8 px-3 rounded-xl text-base font-black uppercase tracking-wider transition-all"
-                                          :class="gradeBadgeClass"
-                                          x-text="gradeLetter">
-                                        -
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="border-l border-white/10 pl-4">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nilai Akhir</span>
-                                <span class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight" x-text="finalScore">0.00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Touch-Friendly Scoring Cards Grid -->
                 <div class="space-y-5">
 
