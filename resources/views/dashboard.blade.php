@@ -393,7 +393,7 @@
                     </div>
                 </div>
 
-                <!-- Linear Progress Stepper (5 Visual Stages) -->
+                <!-- Linear Progress Stepper (6 Visual Stages) -->
                 <div class="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x snap-mandatory">
                     <div class="min-w-[680px] sm:min-w-0 py-3">
                         <div class="flex items-start justify-between">
@@ -445,25 +445,27 @@
                                                 <!-- Terkunci (Locked): Lock Icon -->
                                                 <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                             @else
-                                                <!-- Sedang Berjalan (Active): Specific Stage Visual Icon -->
+                                                <!-- Sedang Berjalan (Active): Specific Stage Visual Icon matching Sidebar -->
                                                 @if($stageNum == 1)
                                                     <!-- 1. Pengajuan Judul -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                 @elseif($stageNum == 2)
-                                                    <!-- 2. Bimbingan Logbook -->
-                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                    <!-- 2. Pendaftaran Seminar -->
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                 @elseif($stageNum == 3)
-                                                    <!-- 3. Seminar Proposal -->
-                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 4v4h4"></path></svg>
+                                                    <!-- 3. Revisi Seminar -->
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 @elseif($stageNum == 4)
-                                                    <!-- 4. Sidang Akhir Skripsi -->
-                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                                                    <!-- 4. Pendaftaran Sidang -->
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                                @elseif($stageNum == 5)
+                                                    <!-- 5. Revisi Sidang -->
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 @else
-                                                    <!-- 5. SKL & Yudisium (Toga Kelulusan) -->
+                                                    <!-- 6. Yudisium & SKL -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7"></path>
                                                     </svg>
                                                 @endif
                                             @endif
@@ -522,7 +524,7 @@
                             Tahap Aktif Anda Saat Ini
                         </span>
                         <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-900/60 text-orange-800 dark:text-orange-200 border border-orange-300/80 dark:border-orange-700/60">
-                            Tahap {{ $activeStageItem['number'] }} dari 5
+                            Tahap {{ $activeStageItem['number'] }} dari 6
                         </span>
                     </div>
                     <div class="flex items-center justify-between gap-3">
@@ -547,12 +549,14 @@
                             @if($currentStage == 1)
                                 Judul skripsi Anda sedang dalam tahap pengajuan. Pastikan proposal awal dipersiapkan dan pantau persetujuan dari Koordinator Skripsi / Pembimbing.
                             @elseif($currentStage == 2)
-                                Anda sedang dalam tahap bimbingan aktif. Lakukan bimbingan rutin (minimal 8 sesi bimbingan logbook) hingga mendapatkan <span class="text-orange-600 dark:text-orange-400 font-bold">ACC Seminar Proposal</span> dari kedua pembimbing.
+                                Tahap Pendaftaran Seminar. Lakukan bimbingan rutin (minimal 8 sesi bimbingan logbook) dan daftarkan diri untuk pelaksanaan Seminar Proposal jika kuota & syarat telah terpenuhi.
                             @elseif($currentStage == 3)
-                                Tahap Seminar Proposal. Silakan ajukan pendaftaran jadwal Sempro dan persiapkan naskah proposal untuk diuji oleh tim penelaah/penguji.
+                                Tahap Revisi Seminar. Silakan diskusikan dan tuntaskan seluruh catatan revisi dari tim dosen penguji seminar hingga mendapatkan persetujuan (ACC).
                             @elseif($currentStage == 4)
-                                Tahap Sidang Akhir Skripsi. Persiapkan materi presentasi, berkas sidang lengkap, serta selesaikan seluruh revisi naskah bersama tim dosen penguji.
+                                Tahap Pendaftaran Sidang. Selesaikan naskah skripsi lengkap (Bab 4-5) serta konsultasikan dengan pembimbing untuk pendaftaran Sidang Akhir Skripsi.
                             @elseif($currentStage == 5)
+                                Tahap Revisi Sidang. Tuntaskan catatan perbaikan naskah dari penguji sidang skripsi dan minta persetujuan revisi dari seluruh dosen penguji.
+                            @elseif($currentStage == 6)
                                 Tahap Yudisium & SKL. Lengkapi berkas bebas tanggungan (hardcover skripsi, bebas perpus, bebas lab, dan repositori) untuk menerbitkan <span class="text-emerald-600 dark:text-emerald-400 font-bold">Surat Keterangan Lulus (SKL) Resmi</span>.
                             @else
                                 Silakan ajukan judul skripsi untuk memulai perjalanan akademik skripsi Anda di SIBIMA.

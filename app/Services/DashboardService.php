@@ -170,33 +170,62 @@ class DashboardService
                 || ($defEnd->isPast() && $hasDefenseRevisions);
         }
 
-        // 1. Stage 1 (Judul): Thesis exists and is active or completed
+        // 1. Stage 1 (1. Pengajuan Judul): Thesis exists and is active or completed
         $stage1Done = $thesis && in_array($thesis->status, ['active', 'completed']);
-        
-        // Stage 3 check for prior stages
+
+        // Check seminar revisions
+        $hasSeminarRevisions = false;
+        $allSeminarRevisionsApproved = false;
+        if ($mySeminarSchedule) {
+            $hasSeminarRevisions = $mySeminarSchedule->isRevisionStarted();
+            $allSeminarRevisionsApproved = $mySeminarSchedule->isAllRevisionsApproved();
+        }
+
+        // Check if student reached sidang or beyond
         $hasReachedSidang = ($defense && in_array($defense->status, ['pending', 'approved', 'completed', 'finished']))
             || ($thesis && (($thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2) || $thesis->isAccSidangFinal()))
+            || $myDefenseSchedule !== null
             || $hasDefenseRevisions
             || $isGraduated;
 
-        $stage3Done = $hasReachedSidang 
-            || ($seminar && in_array($seminar->status, ['completed', 'finished']))
-            || $isSeminarScheduleFinished;
+        // 2. Stage 2 (2. Pendaftaran Seminar):
+        // Seminar application is approved / scheduled / completed, or has seminar schedule, or has reached beyond
+        $hasSeminarScheduled = ($seminar && in_array($seminar->status, ['approved', 'completed', 'finished']))
+            || $mySeminarSchedule !== null
+            || $hasSeminarRevisions
+            || $hasReachedSidang
+            || $isGraduated;
+        $stage2Done = $stage1Done && $hasSeminarScheduled;
 
-        // 2. Stage 2 (Bimbingan): 8+ sessions completed OR ACC Sempro given OR reached seminar/beyond
-        $hasAccSempro = $thesis && (($thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2) || $thesis->isAccUpFinal());
-        $stage2Done = $stage1Done && ($pastSessions >= 8 || $hasAccSempro || $seminar || $stage3Done);
+        // 3. Stage 3 (3. Revisi Seminar):
+        // Seminar revisions all approved OR student has progressed to sidang / graduated
+        $stage3Done = $stage2Done && (
+            $allSeminarRevisionsApproved 
+            || (!$hasSeminarRevisions && $isSeminarScheduleFinished)
+            || $hasReachedSidang 
+            || $isGraduated
+        );
 
-        // 4. Stage 4 (Sidang): Defense exam passed AND (all revisions approved or no revisions needed)
+        // 4. Stage 4 (4. Pendaftaran Sidang):
+        // Defense application is approved / scheduled / completed, or has defense schedule, or defense revisions exist, or graduated
+        $hasDefenseScheduled = ($defense && in_array($defense->status, ['approved', 'completed', 'finished']))
+            || $myDefenseSchedule !== null
+            || $hasDefenseRevisions
+            || $isGraduated;
+        $stage4Done = $stage3Done && $hasDefenseScheduled;
+
+        // 5. Stage 5 (5. Revisi Sidang):
+        // Defense exam passed AND (all revisions approved or no revisions needed and exam passed) or graduated
         $defenseExamPassed = ($defense && in_array($defense->status, ['completed', 'finished']))
             || $isDefenseScheduleFinished
             || $hasDefenseRevisions
             || $isGraduated;
         $defenseRevisionsDone = (!$hasDefenseRevisions && $defenseExamPassed) || ($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated;
-        $stage4Done = $defenseExamPassed && $defenseRevisionsDone;
+        $stage5Done = $stage4Done && $defenseExamPassed && $defenseRevisionsDone;
 
-        // 5. Stage 5 (SKL): Bebas Tanggungan approved & SKL official number issued, or graduated
-        $stage5Done = ($graduation && $graduation->status === 'approved') || $isGraduated;
+        // 6. Stage 6 (6. Yudisium & SKL):
+        // Bebas Tanggungan approved & SKL official number issued, or graduated
+        $stage6Done = ($graduation && $graduation->status === 'approved') || $isGraduated;
 
         // If graduated, all prior steps are completed
         if ($isGraduated) {
@@ -205,26 +234,30 @@ class DashboardService
             $stage3Done = true;
             $stage4Done = true;
             $stage5Done = true;
+            $stage6Done = true;
         }
 
-        // Determine current active stage (1 to 5)
+        // Determine current active stage (1 to 6)
         if (!$stage1Done) {
             $currentStage = 1;
             $progressPercent = $thesis ? 10 : 0;
         } elseif (!$stage2Done) {
             $currentStage = 2;
-            $progressPercent = 15 + min(20, ($pastSessions / 8) * 20); // 15% - 35%
+            $progressPercent = 15 + min(15, ($pastSessions / 8) * 15) + ($seminar ? 5 : 0); // 15% - 35%
         } elseif (!$stage3Done) {
             $currentStage = 3;
-            $progressPercent = 40 + ($seminar ? 15 : 0); // 40% - 55%
+            $progressPercent = 40 + ($allSeminarRevisionsApproved ? 10 : 5); // 40% - 50%
         } elseif (!$stage4Done) {
             $currentStage = 4;
-            $progressPercent = 60 + ($defense ? 15 : 0) + ($hasDefenseRevisions && $allDefenseRevisionsApproved ? 10 : 0); // 60% - 85%
+            $progressPercent = 55 + min(15, ($pastSessions / 8) * 15) + ($defense ? 5 : 0); // 55% - 70%
         } elseif (!$stage5Done) {
             $currentStage = 5;
-            $progressPercent = 85 + ($graduation ? 5 : 0); // 85% - 90%
+            $progressPercent = 75 + ($hasDefenseRevisions && $allDefenseRevisionsApproved ? 10 : 0); // 75% - 85%
+        } elseif (!$stage6Done) {
+            $currentStage = 6;
+            $progressPercent = 90 + ($graduation ? 5 : 0); // 90% - 95%
         } else {
-            $currentStage = 5;
+            $currentStage = 6;
             $progressPercent = 100;
         }
 
@@ -234,12 +267,13 @@ class DashboardService
         $stage3Status = $stage3Done ? 'completed' : ($stage2Done ? 'active' : 'locked');
         $stage4Status = $stage4Done ? 'completed' : ($stage3Done ? 'active' : 'locked');
         $stage5Status = $stage5Done ? 'completed' : ($stage4Done ? 'active' : 'locked');
+        $stage6Status = $stage6Done ? 'completed' : ($stage5Done ? 'active' : 'locked');
 
         $stages = [
             [
                 'number' => 1,
-                'name' => 'Pengajuan Judul',
-                'short_name' => 'Judul',
+                'name' => '1. Pengajuan Judul',
+                'short_name' => 'Pengajuan Judul',
                 'desc' => 'Pengajuan judul & penetapan pembimbing skripsi',
                 'url' => $thesis ? route('theses.index') : route('theses.create'),
                 'status_type' => $stage1Status,
@@ -251,55 +285,68 @@ class DashboardService
             ],
             [
                 'number' => 2,
-                'name' => 'Bimbingan',
-                'short_name' => 'Bimbingan',
-                'desc' => 'Bimbingan berkala & logbook Bab 1-5',
-                'url' => route('mentoring-sessions.index'),
+                'name' => '2. Pendaftaran Seminar',
+                'short_name' => 'Pendaftaran Seminar',
+                'desc' => 'Bimbingan berkala & pendaftaran jadwal Sempro',
+                'url' => route('seminar-applications.index'),
                 'status_type' => $stage2Status,
                 'status_label' => $stage2Status === 'completed' ? 'Selesai' : ($stage2Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
-                'badge' => $stage2Status !== 'locked' ? ($pastSessions . '/8 Sesi') : null,
+                'badge' => $stage2Status === 'completed' ? 'Terjadwal' : ($stage2Status === 'active' ? ($seminar ? ($seminar->status === 'approved' ? 'Terjadwal' : 'Diajukan') : ($pastSessions . '/8 Sesi')) : null),
                 'is_completed' => $stage2Status === 'completed',
                 'is_current' => $stage2Status === 'active',
                 'is_locked' => $stage2Status === 'locked',
             ],
             [
                 'number' => 3,
-                'name' => 'Seminar',
-                'short_name' => 'Seminar',
-                'desc' => 'Pendaftaran & ujian Seminar Proposal',
-                'url' => route('seminar-applications.index'),
+                'name' => '3. Revisi Seminar',
+                'short_name' => 'Revisi Seminar',
+                'desc' => 'Pelaksanaan ujian Sempro & approval revisi penguji',
+                'url' => route('student-seminar-revisions.index'),
                 'status_type' => $stage3Status,
                 'status_label' => $stage3Status === 'completed' ? 'Selesai' : ($stage3Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
-                'badge' => $stage3Status === 'completed' ? 'Lulus Sempro' : ($seminar ? ($seminar->status === 'approved' ? 'Terjadwal' : 'Diajukan') : null),
+                'badge' => $stage3Status === 'completed' ? 'Revisi Selesai' : ($stage3Status === 'active' ? ($allSeminarRevisionsApproved ? 'ACC' : 'Proses Revisi') : null),
                 'is_completed' => $stage3Status === 'completed',
                 'is_current' => $stage3Status === 'active',
                 'is_locked' => $stage3Status === 'locked',
             ],
             [
                 'number' => 4,
-                'name' => 'Sidang',
-                'short_name' => 'Sidang',
-                'desc' => 'Ujian sidang skripsi & revisi naskah',
+                'name' => '4. Pendaftaran Sidang',
+                'short_name' => 'Pendaftaran Sidang',
+                'desc' => 'Bimbingan Bab 4-5 & pendaftaran sidang skripsi',
                 'url' => route('thesis-defense-applications.index'),
                 'status_type' => $stage4Status,
                 'status_label' => $stage4Status === 'completed' ? 'Selesai' : ($stage4Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
-                'badge' => $stage4Status === 'completed' ? 'Lulus Sidang' : ($hasDefenseRevisions ? ($allDefenseRevisionsApproved ? 'Revisi ACC' : 'Revisi') : ($defense ? ($defense->status === 'approved' ? 'Terjadwal' : 'Diajukan') : null)),
+                'badge' => $stage4Status === 'completed' ? 'Terjadwal' : ($stage4Status === 'active' ? ($defense ? ($defense->status === 'approved' ? 'Terjadwal' : 'Diajukan') : 'Bimbingan') : null),
                 'is_completed' => $stage4Status === 'completed',
                 'is_current' => $stage4Status === 'active',
                 'is_locked' => $stage4Status === 'locked',
             ],
             [
                 'number' => 5,
-                'name' => 'SKL',
-                'short_name' => 'SKL',
-                'desc' => 'Bebas tanggungan & Surat Keterangan Lulus',
-                'url' => route('student.graduation'),
+                'name' => '5. Revisi Sidang',
+                'short_name' => 'Revisi Sidang',
+                'desc' => 'Ujian sidang skripsi & approval revisi dosen penguji',
+                'url' => route('student-defense-revisions.index'),
                 'status_type' => $stage5Status,
                 'status_label' => $stage5Status === 'completed' ? 'Selesai' : ($stage5Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
-                'badge' => $stage5Status === 'completed' ? 'SKL Terbit' : ($graduation ? ($graduation->status === 'approved' ? 'Lulus' : ($graduation->status === 'pending' ? 'Verifikasi' : 'Bebas Tanggungan')) : null),
+                'badge' => $stage5Status === 'completed' ? 'Revisi Selesai' : ($stage5Status === 'active' ? ($hasDefenseRevisions ? ($allDefenseRevisionsApproved ? 'Revisi ACC' : 'Proses Revisi') : 'Persiapan') : null),
                 'is_completed' => $stage5Status === 'completed',
                 'is_current' => $stage5Status === 'active',
                 'is_locked' => $stage5Status === 'locked',
+            ],
+            [
+                'number' => 6,
+                'name' => '6. Yudisium & SKL',
+                'short_name' => 'Yudisium & SKL',
+                'desc' => 'Verifikasi bebas tanggungan & Surat Keterangan Lulus',
+                'url' => route('student.graduation'),
+                'status_type' => $stage6Status,
+                'status_label' => $stage6Status === 'completed' ? 'Selesai' : ($stage6Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
+                'badge' => $stage6Status === 'completed' ? 'SKL Terbit' : ($stage6Status === 'active' ? ($graduation ? ($graduation->status === 'approved' ? 'Lulus' : ($graduation->status === 'pending' ? 'Verifikasi' : 'Bebas Tanggungan')) : 'Bebas Tanggungan') : null),
+                'is_completed' => $stage6Status === 'completed',
+                'is_current' => $stage6Status === 'active',
+                'is_locked' => $stage6Status === 'locked',
             ],
         ];
 
