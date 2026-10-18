@@ -47,48 +47,47 @@
 
         @if(Auth::user()->role === 'dosen')
             <!-- DOSEN VIEW: Standard Top Status Tabs -->
-            <!-- DOSEN VIEW: Standard Top Status Tabs -->
-            <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-px custom-scrollbar">
-                <!-- Upcoming Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
-                    <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
-                    Mendatang
-                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
-                </a>
+            <div class="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-px overflow-x-auto custom-scrollbar">
+                <div class="flex items-center gap-1 shrink-0">
+                    <!-- Upcoming Tab -->
+                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                        <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                        Mendatang
+                        <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
+                    </a>
 
-                <!-- Today Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
-                    <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
-                    Hari Ini
-                    <span class="px-2 py-0.5 text-[10px] rounded-full {{ $filterDate === 'today' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
-                </a>
+                    <!-- Today Tab -->
+                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                        <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                        Hari Ini
+                        <span class="px-2 py-0.5 text-[10px] rounded-full {{ $filterDate === 'today' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
+                    </a>
 
-                <!-- Past Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
-                    Riwayat
-                    <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
-                </a>
+                    <!-- Past Tab -->
+                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                        Riwayat
+                        <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
+                    </a>
 
-                <!-- All Tab -->
-                <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
-                   class="px-5 py-3.5 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
-                    Semua Agenda
-                    <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
-                </a>
+                    <!-- All Tab -->
+                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' && !$mySchedules ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                        Semua Agenda
+                        <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
+                    </a>
+                </div>
 
-                <!-- "Hanya Jadwal Saya" Toggle Filter Pill -->
-                <div class="ml-auto flex items-center pl-4 py-2 shrink-0">
-                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page']), ['my_schedules' => $mySchedules ? null : '1'])) }}"
-                       class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border {{ $mySchedules ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm shadow-emerald-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-600' }}"
-                       title="Filter hanya jadwal bimbingan atau ujian Anda">
-                        <span class="w-2 h-2 rounded-full {{ $mySchedules ? 'bg-white animate-pulse' : 'bg-slate-400' }}"></span>
-                        <span>Hanya Jadwal Saya</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $mySchedules ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                            {{ $counts['mySchedules'] }}
-                        </span>
+                <!-- Independent "Hanya Jadwal Saya" Toggle Pill (Works with Any Tab!) -->
+                <div class="shrink-0 pb-1">
+                    <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'my_schedules']), $mySchedules ? [] : ['my_schedules' => '1'])) }}"
+                       class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shrink-0 border {{ $mySchedules ? 'border-amber-500 bg-amber-500 text-slate-950 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-amber-400 hover:text-amber-600' }}"
+                       title="Klik untuk {{ $mySchedules ? 'menampilkan semua jadwal' : 'hanya menampilkan jadwal bimbingan & uji Anda' }}">
+                        <svg class="w-3.5 h-3.5 {{ $mySchedules ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        <span>{{ $mySchedules ? 'Jadwal Saya (Aktif)' : 'Hanya Jadwal Saya' }}</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $mySchedules ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold' }}">{{ $counts['mySchedules'] }}</span>
                     </a>
                 </div>
             </div>
@@ -153,20 +152,21 @@
                 <!-- Right Side: Controls & Batch PDF -->
                 <div class="flex items-center gap-2.5 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end flex-wrap">
                     <a href="{{ route('thesis-defense-schedules.export-batch-pdf', array_filter(['wave_id' => $selectedWaveId, 'date' => request('date'), 'my_schedules' => $mySchedules ? 1 : null])) }}" 
-                       class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap"
+                       class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-2xs transition-all whitespace-nowrap"
                        title="{{ $mySchedules ? 'Cetak ringkasan seluruh jadwal bimbingan dan uji Anda dalam 1 file PDF' : 'Cetak seluruh ruangan dalam 1 file PDF' }}">
                         <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span>{{ $mySchedules ? 'Cetak Ringkasan (PDF)' : 'Cetak Semua (PDF)' }}</span>
                     </a>
-                    <!-- Segmented Buka / Tutup Semua -->
-                    <div class="inline-flex items-center p-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
-                        <button type="button" @click="allOpen = true" :class="allOpen ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+
+                    <!-- Segmented Buka/Tutup Control -->
+                    <div class="inline-flex rounded-xl p-0.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xs">
+                        <button type="button" @click="allOpen = true" :class="allOpen ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
-                            <span>Buka Semua</span>
+                            <span>Buka</span>
                         </button>
-                        <button type="button" @click="allOpen = false" :class="!allOpen ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                        <button type="button" @click="allOpen = false" :class="!allOpen ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
-                            <span>Tutup Semua</span>
+                            <span>Tutup</span>
                         </button>
                     </div>
                 </div>
