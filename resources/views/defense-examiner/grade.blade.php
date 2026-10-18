@@ -291,20 +291,11 @@
                     <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
                     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
                         <div class="space-y-1.5">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    Touch-Friendly Scoring
-                                </span>
-                                <span class="text-xs text-slate-400">•</span>
-                                <span class="text-xs text-slate-300 font-bold">
-                                    Bobot: 25% + 40% + 35% = 100%
-                                </span>
-                            </div>
                             <h4 class="text-base sm:text-lg font-black text-white tracking-tight">
                                 Rubrik Penilaian Sidang Tugas Akhir
                             </h4>
                             <p class="text-xs text-slate-400">
-                                Ketuk tombol pil skor untuk penilaian cepat dan akurat di tablet/iPad.
+                                Ketuk tombol pil skor untuk penilaian cepat.
                             </p>
                         </div>
 
