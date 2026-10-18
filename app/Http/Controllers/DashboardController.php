@@ -80,14 +80,13 @@ class DashboardController extends Controller
                 'isGraduated' => false, 
                 'seminarDone' => false, 
                 'defenseDone' => false,
-                'currentStage' => 0,
+                'currentStage' => 1,
                 'stages' => [
-                    ['name' => 'Judul', 'desc' => 'Pengajuan judul skripsi'],
-                    ['name' => 'Bimbingan', 'desc' => 'Proses bimbingan Bab 1-3'],
-                    ['name' => 'Seminar', 'desc' => 'Seminar proposal/hasil'],
-                    ['name' => 'Penelitian', 'desc' => 'Pengolahan data & bimbingan Bab 4-5'],
-                    ['name' => 'Sidang', 'desc' => 'Ujian sidang akhir skripsi'],
-                    ['name' => 'Yudisium', 'desc' => 'Pernyataan kelulusan final']
+                    ['number' => 1, 'name' => 'Pengajuan Judul', 'short_name' => 'Judul', 'desc' => 'Pengajuan judul & penetapan pembimbing', 'url' => '#', 'status_type' => 'active', 'status_label' => 'Sedang Berjalan', 'badge' => null, 'is_completed' => false, 'is_current' => true, 'is_locked' => false],
+                    ['number' => 2, 'name' => 'Bimbingan', 'short_name' => 'Bimbingan', 'desc' => 'Logbook & bimbingan berkala Bab 1-5', 'url' => '#', 'status_type' => 'locked', 'status_label' => 'Terkunci', 'badge' => null, 'is_completed' => false, 'is_current' => false, 'is_locked' => true],
+                    ['number' => 3, 'name' => 'Seminar', 'short_name' => 'Seminar', 'desc' => 'Pendaftaran & ujian Seminar Proposal', 'url' => '#', 'status_type' => 'locked', 'status_label' => 'Terkunci', 'badge' => null, 'is_completed' => false, 'is_current' => false, 'is_locked' => true],
+                    ['number' => 4, 'name' => 'Sidang', 'short_name' => 'Sidang', 'desc' => 'Ujian sidang skripsi & revisi naskah', 'url' => '#', 'status_type' => 'locked', 'status_label' => 'Terkunci', 'badge' => null, 'is_completed' => false, 'is_current' => false, 'is_locked' => true],
+                    ['number' => 5, 'name' => 'SKL', 'short_name' => 'SKL', 'desc' => 'Bebas tanggungan & Surat Keterangan Lulus', 'url' => '#', 'status_type' => 'locked', 'status_label' => 'Terkunci', 'badge' => null, 'is_completed' => false, 'is_current' => false, 'is_locked' => true],
                 ]
             ],
         ];

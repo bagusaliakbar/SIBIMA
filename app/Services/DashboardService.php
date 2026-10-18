@@ -63,6 +63,7 @@ class DashboardService
 
             $data['seminar'] = SeminarApplication::where('thesis_id', $thesis->id)->first();
             $data['defense'] = ThesisDefenseApplication::where('thesis_id', $thesis->id)->first();
+            $data['graduation'] = \App\Models\Graduation::where('thesis_id', $thesis->id)->first();
 
             $data['mySeminarSchedule'] = SeminarScheduleDetail::with(['schedule', 'examiner1', 'examiner2', 'thesis.pembimbing1', 'thesis.pembimbing2'])
                 ->where('thesis_id', $thesis->id)->first();
@@ -78,7 +79,15 @@ class DashboardService
             $data['isCriticalStale'] = $data['daysSinceLastSession'] !== null && $data['daysSinceLastSession'] > 14;
 
             // Calculate Progress Data
-            $data['progress'] = $this->calculateStudentProgress($thesis, $data['pastSessionsCount'], $data['seminar'], $data['defense'], $data['mySeminarSchedule'], $data['myDefenseSchedule']);
+            $data['progress'] = $this->calculateStudentProgress(
+                $thesis, 
+                $data['pastSessionsCount'], 
+                $data['seminar'], 
+                $data['defense'], 
+                $data['mySeminarSchedule'], 
+                $data['myDefenseSchedule'],
+                $data['graduation']
+            );
 
             // Auto-sync Graduation
             if ($thesis->status !== 'completed' && $data['progress']['isGraduated']) {
@@ -110,9 +119,13 @@ class DashboardService
         return $data;
     }
 
-    public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense, $mySeminarSchedule = null, $myDefenseSchedule = null)
+    public function calculateStudentProgress($thesis, $pastSessionsCount, $seminar, $defense, $mySeminarSchedule = null, $myDefenseSchedule = null, $graduation = null)
     {
-        $isGraduated = $thesis && $thesis->status === 'completed';
+        if ($thesis && $graduation === null) {
+            $graduation = \App\Models\Graduation::where('thesis_id', $thesis->id)->first();
+        }
+
+        $isGraduated = ($thesis && $thesis->status === 'completed') || ($graduation && $graduation->status === 'approved' && !empty($graduation->skl_number));
         $pastSessions = (int)($pastSessionsCount ?? 0);
 
         // Revisions Check
@@ -157,11 +170,10 @@ class DashboardService
                 || ($defEnd->isPast() && $hasDefenseRevisions);
         }
 
-        // Determine step completion in chronological order
-        // 1. Judul Selesai: Thesis exists and is active or completed
+        // 1. Stage 1 (Judul): Thesis exists and is active or completed
         $stage1Done = $thesis && in_array($thesis->status, ['active', 'completed']);
         
-        // Has student reached or completed seminar (Stage 3 done)
+        // Stage 3 check for prior stages
         $hasReachedSidang = ($defense && in_array($defense->status, ['pending', 'approved', 'completed', 'finished']))
             || ($thesis && (($thesis->is_acc_sidang_p1 && $thesis->is_acc_sidang_p2) || $thesis->isAccSidangFinal()))
             || $hasDefenseRevisions
@@ -171,21 +183,20 @@ class DashboardService
             || ($seminar && in_array($seminar->status, ['completed', 'finished']))
             || $isSeminarScheduleFinished;
 
-        // 2. Bimbingan Done: 8 or more sessions completed OR ACC Sempro given OR already reached seminar/beyond
+        // 2. Stage 2 (Bimbingan): 8+ sessions completed OR ACC Sempro given OR reached seminar/beyond
         $hasAccSempro = $thesis && (($thesis->is_acc_seminar_p1 && $thesis->is_acc_seminar_p2) || $thesis->isAccUpFinal());
         $stage2Done = $stage1Done && ($pastSessions >= 8 || $hasAccSempro || $seminar || $stage3Done);
 
-        // 4. Sidang Done: Defense graded/completed OR Revisions exist OR Graduated
-        $stage4Done = ($defense && in_array($defense->status, ['completed', 'finished']))
+        // 4. Stage 4 (Sidang): Defense exam passed AND (all revisions approved or no revisions needed)
+        $defenseExamPassed = ($defense && in_array($defense->status, ['completed', 'finished']))
             || $isDefenseScheduleFinished
             || $hasDefenseRevisions
             || $isGraduated;
+        $defenseRevisionsDone = (!$hasDefenseRevisions && $defenseExamPassed) || ($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated;
+        $stage4Done = $defenseExamPassed && $defenseRevisionsDone;
 
-        // 5. Revisi Done: Defense done and (all revisions approved or no revisions needed and defense is completed)
-        $stage5Done = $stage4Done && (($hasDefenseRevisions && $allDefenseRevisionsApproved) || $isGraduated);
-
-        // 6. Yudisium Done: Graduated
-        $stage6Done = $isGraduated;
+        // 5. Stage 5 (SKL): Bebas Tanggungan approved & SKL official number issued, or graduated
+        $stage5Done = ($graduation && $graduation->status === 'approved') || $isGraduated;
 
         // If graduated, all prior steps are completed
         if ($isGraduated) {
@@ -194,102 +205,112 @@ class DashboardService
             $stage3Done = true;
             $stage4Done = true;
             $stage5Done = true;
-            $stage6Done = true;
         }
 
-        // Determine current active stage (1 to 6)
+        // Determine current active stage (1 to 5)
         if (!$stage1Done) {
             $currentStage = 1;
             $progressPercent = $thesis ? 10 : 0;
         } elseif (!$stage2Done) {
             $currentStage = 2;
-            $progressPercent = 15 + min(25, ($pastSessions / 8) * 25);
+            $progressPercent = 15 + min(20, ($pastSessions / 8) * 20); // 15% - 35%
         } elseif (!$stage3Done) {
             $currentStage = 3;
-            $progressPercent = 45;
+            $progressPercent = 40 + ($seminar ? 15 : 0); // 40% - 55%
         } elseif (!$stage4Done) {
             $currentStage = 4;
-            $progressPercent = 70;
+            $progressPercent = 60 + ($defense ? 15 : 0) + ($hasDefenseRevisions && $allDefenseRevisionsApproved ? 10 : 0); // 60% - 85%
         } elseif (!$stage5Done) {
             $currentStage = 5;
-            $progressPercent = 85;
-        } elseif (!$stage6Done) {
-            $currentStage = 6;
-            $progressPercent = 95;
+            $progressPercent = 85 + ($graduation ? 5 : 0); // 85% - 90%
         } else {
-            $currentStage = 6;
+            $currentStage = 5;
             $progressPercent = 100;
         }
+
+        // Determine Status Types ('completed', 'active', 'locked')
+        $stage1Status = $stage1Done ? 'completed' : 'active';
+        $stage2Status = $stage2Done ? 'completed' : ($stage1Done ? 'active' : 'locked');
+        $stage3Status = $stage3Done ? 'completed' : ($stage2Done ? 'active' : 'locked');
+        $stage4Status = $stage4Done ? 'completed' : ($stage3Done ? 'active' : 'locked');
+        $stage5Status = $stage5Done ? 'completed' : ($stage4Done ? 'active' : 'locked');
+
+        $stages = [
+            [
+                'number' => 1,
+                'name' => 'Pengajuan Judul',
+                'short_name' => 'Judul',
+                'desc' => 'Pengajuan judul & penetapan pembimbing skripsi',
+                'url' => $thesis ? route('theses.index') : route('theses.create'),
+                'status_type' => $stage1Status,
+                'status_label' => $stage1Status === 'completed' ? 'Selesai' : 'Sedang Berjalan',
+                'badge' => $stage1Done ? 'Disetujui' : ($thesis ? 'Menunggu ACC' : null),
+                'is_completed' => $stage1Status === 'completed',
+                'is_current' => $stage1Status === 'active',
+                'is_locked' => false,
+            ],
+            [
+                'number' => 2,
+                'name' => 'Bimbingan',
+                'short_name' => 'Bimbingan',
+                'desc' => 'Bimbingan berkala & logbook Bab 1-5',
+                'url' => route('mentoring-sessions.index'),
+                'status_type' => $stage2Status,
+                'status_label' => $stage2Status === 'completed' ? 'Selesai' : ($stage2Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
+                'badge' => $stage2Status !== 'locked' ? ($pastSessions . '/8 Sesi') : null,
+                'is_completed' => $stage2Status === 'completed',
+                'is_current' => $stage2Status === 'active',
+                'is_locked' => $stage2Status === 'locked',
+            ],
+            [
+                'number' => 3,
+                'name' => 'Seminar',
+                'short_name' => 'Seminar',
+                'desc' => 'Pendaftaran & ujian Seminar Proposal',
+                'url' => route('seminar-applications.index'),
+                'status_type' => $stage3Status,
+                'status_label' => $stage3Status === 'completed' ? 'Selesai' : ($stage3Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
+                'badge' => $stage3Status === 'completed' ? 'Lulus Sempro' : ($seminar ? ($seminar->status === 'approved' ? 'Terjadwal' : 'Diajukan') : null),
+                'is_completed' => $stage3Status === 'completed',
+                'is_current' => $stage3Status === 'active',
+                'is_locked' => $stage3Status === 'locked',
+            ],
+            [
+                'number' => 4,
+                'name' => 'Sidang',
+                'short_name' => 'Sidang',
+                'desc' => 'Ujian sidang skripsi & revisi naskah',
+                'url' => route('thesis-defense-applications.index'),
+                'status_type' => $stage4Status,
+                'status_label' => $stage4Status === 'completed' ? 'Selesai' : ($stage4Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
+                'badge' => $stage4Status === 'completed' ? 'Lulus Sidang' : ($hasDefenseRevisions ? ($allDefenseRevisionsApproved ? 'Revisi ACC' : 'Revisi') : ($defense ? ($defense->status === 'approved' ? 'Terjadwal' : 'Diajukan') : null)),
+                'is_completed' => $stage4Status === 'completed',
+                'is_current' => $stage4Status === 'active',
+                'is_locked' => $stage4Status === 'locked',
+            ],
+            [
+                'number' => 5,
+                'name' => 'SKL',
+                'short_name' => 'SKL',
+                'desc' => 'Bebas tanggungan & Surat Keterangan Lulus',
+                'url' => route('student.graduation'),
+                'status_type' => $stage5Status,
+                'status_label' => $stage5Status === 'completed' ? 'Selesai' : ($stage5Status === 'active' ? 'Sedang Berjalan' : 'Terkunci'),
+                'badge' => $stage5Status === 'completed' ? 'SKL Terbit' : ($graduation ? ($graduation->status === 'approved' ? 'Lulus' : ($graduation->status === 'pending' ? 'Verifikasi' : 'Bebas Tanggungan')) : null),
+                'is_completed' => $stage5Status === 'completed',
+                'is_current' => $stage5Status === 'active',
+                'is_locked' => $stage5Status === 'locked',
+            ],
+        ];
 
         return [
             'percent' => $progressPercent,
             'isGraduated' => $isGraduated,
             'seminarDone' => $stage3Done,
-            'defenseDone' => $stage4Done,
-            'revisionDone' => $stage5Done,
+            'defenseDone' => $defenseExamPassed,
+            'revisionDone' => $defenseRevisionsDone,
             'currentStage' => $currentStage,
-            'stages' => [
-                [
-                    'number' => 1,
-                    'name' => 'Pengajuan Judul',
-                    'short_name' => 'Judul',
-                    'desc' => 'Pengajuan judul skripsi',
-                    'url' => $thesis ? route('theses.index') : route('theses.create'),
-                    'badge' => null,
-                    'is_completed' => $stage1Done,
-                    'is_current' => $currentStage === 1,
-                ],
-                [
-                    'number' => 2,
-                    'name' => 'Bimbingan',
-                    'short_name' => 'Bimbingan',
-                    'desc' => 'Proses bimbingan berkala',
-                    'url' => route('mentoring-sessions.index'),
-                    'badge' => $pastSessions . '/8',
-                    'is_completed' => $stage2Done,
-                    'is_current' => $currentStage === 2,
-                ],
-                [
-                    'number' => 3,
-                    'name' => 'Seminar Proposal',
-                    'short_name' => 'Sempro',
-                    'desc' => 'Ujian seminar proposal',
-                    'url' => route('seminar-applications.index'),
-                    'badge' => null,
-                    'is_completed' => $stage3Done,
-                    'is_current' => $currentStage === 3,
-                ],
-                [
-                    'number' => 4,
-                    'name' => 'Sidang Akhir',
-                    'short_name' => 'Sidang',
-                    'desc' => 'Ujian sidang skripsi',
-                    'url' => route('thesis-defense-applications.index'),
-                    'badge' => null,
-                    'is_completed' => $stage4Done,
-                    'is_current' => $currentStage === 4,
-                ],
-                [
-                    'number' => 5,
-                    'name' => 'Revisi Selesai',
-                    'short_name' => 'Revisi',
-                    'desc' => 'Penyelesaian revisi sidang',
-                    'url' => route('student-defense-revisions.index'),
-                    'badge' => null,
-                    'is_completed' => $stage5Done,
-                    'is_current' => $currentStage === 5,
-                ],
-                [
-                    'number' => 6,
-                    'name' => 'Yudisium',
-                    'short_name' => 'Yudisium',
-                    'desc' => 'Pernyataan kelulusan final',
-                    'url' => route('student.history'),
-                    'badge' => $isGraduated ? 'Lulus' : null,
-                    'is_completed' => $stage6Done,
-                    'is_current' => $currentStage === 6 && !$stage6Done,
-                ]
-            ]
+            'stages' => $stages,
         ];
     }
 
