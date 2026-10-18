@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/seminar-applications/{application}/validate', [App\Http\Controllers\SeminarApplicationController::class, 'validateApplication'])->name('seminar-applications.validate');
     Route::get('/seminar-applications/{application}/download-zip', [App\Http\Controllers\SeminarApplicationController::class, 'downloadZip'])->name('seminar-applications.download-zip');
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
+    Route::post('/seminar-applications/admin-register', [App\Http\Controllers\SeminarApplicationController::class, 'adminRegister'])->name('seminar-applications.admin-register')->middleware('role:admin,kaprodi');
 
     // Digital Repository & External Academic Journals & Books
     Route::get('/repositories/journals', [\App\Http\Controllers\ThesisRepositoryController::class, 'journals'])->name('repositories.journals');
@@ -162,6 +163,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/thesis-defense-applications/{application}/validate', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'validateApplication'])->name('thesis-defense-applications.validate');
     Route::get('/thesis-defense-applications/{application}/download-zip', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'downloadZip'])->name('thesis-defense-applications.download-zip');
     Route::delete('/thesis-defense-applications/{application}', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'destroy'])->name('thesis-defense-applications.destroy');
+    Route::post('/thesis-defense-applications/admin-register', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'adminRegister'])->name('thesis-defense-applications.admin-register')->middleware('role:admin,kaprodi');
 
     Route::resource('mentoring-sessions', App\Http\Controllers\MentoringSessionController::class);
     Route::get('/mentoring-sessions-student', [App\Http\Controllers\MentoringSessionController::class, 'index'])->name('mentoring.student_index');

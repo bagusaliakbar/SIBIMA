@@ -16,8 +16,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\SeminarApplicationsExport;
+use App\Models\ActivityLog;
+use App\Notifications\GeneralNotification;
 
 class SeminarApplicationController extends Controller
 {
@@ -123,8 +124,19 @@ class SeminarApplicationController extends Controller
             
             $waves = Wave::withCount('seminarApplications as app_count')->orderBy('created_at', 'desc')->get();
             $template = SeminarTemplate::where('is_active', true)->latest()->first();
+
+            // Candidate theses for manual registration by Admin/Kaprodi
+            $candidateTheses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+                ->whereDoesntHave('seminarApplications', function($q) {
+                    $q->whereIn('status', ['approved', 'completed', 'finished']);
+                })
+                ->whereDoesntHave('seminarScheduleDetails')
+                ->get()
+                ->filter(fn($t) => $t->student !== null)
+                ->sortBy(fn($t) => $t->student->name)
+                ->values();
             
-            return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats'));
+            return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats', 'candidateTheses'));
         }
 
         abort(403);
@@ -551,5 +563,107 @@ class SeminarApplicationController extends Controller
         }
 
         return redirect()->back()->with('error', 'Gagal membuat file ZIP.');
+    }
+
+    /**
+     * Daftarkan mahasiswa ke seminar proposal secara manual oleh Admin/Kaprodi
+     */
+    public function adminRegister(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi') {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'thesis_id' => 'required|exists:theses,id',
+            'wave_id' => 'required|exists:waves,id',
+            'status' => 'required|in:pending,approved',
+            'bypass_files' => 'nullable|boolean',
+            'admin_notes' => 'nullable|string|max:1000',
+            'file_acc_pembimbing' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'file_pembayaran' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'file_kartu_bimbingan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'file_skripsi' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'file_formulir' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+        ], [
+            'thesis_id.required' => 'Silakan pilih mahasiswa yang akan didaftarkan.',
+            'wave_id.required' => 'Silakan pilih gelombang pelaksanaan.',
+            'status.required' => 'Pilih status pendaftaran awal.',
+        ]);
+
+        $thesis = Thesis::with('student')->findOrFail($validated['thesis_id']);
+
+        // Check if student already has an approved or scheduled seminar
+        $hasApprovedSeminar = SeminarApplication::where('thesis_id', $thesis->id)
+            ->whereIn('status', ['approved', 'completed', 'finished'])
+            ->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists();
+
+        if ($hasApprovedSeminar) {
+            return redirect()->back()->with('error', "Mahasiswa {$thesis->student->name} sudah terdaftar dan disetujui / dijadwalkan pada seminar proposal.");
+        }
+
+        $fileFields = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
+        $uploadedFiles = [];
+        $bypassFiles = $request->boolean('bypass_files');
+
+        foreach ($fileFields as $field) {
+            if ($request->hasFile($field)) {
+                $uploadedFiles[$field] = $request->file($field)->store('seminar_applications/' . $field, config('filesystems.default', 'local'));
+            } elseif ($bypassFiles) {
+                $uploadedFiles[$field] = 'DISPENSASI_ADMIN: ' . ($validated['admin_notes'] ?: 'Didaftarkan langsung oleh ' . ucfirst($user->role));
+            } else {
+                $uploadedFiles[$field] = null;
+            }
+        }
+
+        $adminNote = $validated['admin_notes'] ?? null;
+        $feedbackText = "Didaftarkan langsung oleh " . ucfirst($user->role) . " ({$user->name})" . ($adminNote ? " - Catatan: {$adminNote}" : "");
+
+        $application = SeminarApplication::where('thesis_id', $thesis->id)
+            ->where('wave_id', $validated['wave_id'])
+            ->first();
+
+        if ($application) {
+            $dataToUpdate = array_filter($uploadedFiles, fn($val) => !is_null($val));
+            $dataToUpdate['status'] = $validated['status'];
+            $dataToUpdate['admin_feedback'] = $feedbackText;
+            $application->update($dataToUpdate);
+        } else {
+            $application = SeminarApplication::create(array_merge([
+                'thesis_id' => $thesis->id,
+                'wave_id' => $validated['wave_id'],
+                'status' => $validated['status'],
+                'admin_feedback' => $feedbackText,
+            ], $uploadedFiles));
+        }
+
+        // Activity log
+        try {
+            ActivityLog::log(
+                activity: 'Pendaftaran Seminar oleh Admin',
+                description: "Mendaftarkan mahasiswa {$thesis->student->name} ({$thesis->student->identifier}) ke Seminar Proposal dengan status: " . strtoupper($validated['status']),
+                module: 'Seminar',
+                subject: $application
+            );
+        } catch (\Throwable $e) {}
+
+        // Notification to student
+        try {
+            $thesis->student->notify(new GeneralNotification(
+                title: 'Pendaftaran Seminar Berhasil',
+                message: "Anda telah didaftarkan ke Seminar Proposal oleh Administrator/Kaprodi (" . ($validated['status'] === 'approved' ? 'Siap Dijadwalkan' : 'Menunggu Validasi') . ").",
+                url: route('seminar-applications.index'),
+                type: 'success'
+            ));
+        } catch (\Throwable $e) {}
+
+        $wave = Wave::find($validated['wave_id']);
+        $waveName = $wave ? $wave->name : '';
+
+        return redirect()->route('seminar-applications.index', ['wave_id' => $validated['wave_id']])->with(
+            'success',
+            "Mahasiswa {$thesis->student->name} ({$thesis->student->identifier}) berhasil didaftarkan ke Seminar Proposal pada {$waveName} dengan status " . strtoupper($validated['status']) . "!"
+        );
     }
 }

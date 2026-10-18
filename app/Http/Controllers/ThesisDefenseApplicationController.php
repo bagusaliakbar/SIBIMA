@@ -16,8 +16,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\ThesisDefenseApplicationsExport;
+use App\Models\ActivityLog;
+use App\Notifications\GeneralNotification;
 
 class ThesisDefenseApplicationController extends Controller
 {
@@ -123,8 +124,19 @@ class ThesisDefenseApplicationController extends Controller
             
             $waves = Wave::withCount('defenseApplications as app_count')->orderBy('created_at', 'desc')->get();
             $template = ThesisDefenseTemplate::where('is_active', true)->latest()->first();
+
+            // Candidate theses for manual registration by Admin/Kaprodi
+            $candidateTheses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+                ->whereDoesntHave('defenseApplications', function($q) {
+                    $q->whereIn('status', ['approved', 'completed', 'finished']);
+                })
+                ->whereDoesntHave('defenseScheduleDetails')
+                ->get()
+                ->filter(fn($t) => $t->student !== null)
+                ->sortBy(fn($t) => $t->student->name)
+                ->values();
             
-            return view('thesis_defenses.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats'));
+            return view('thesis_defenses.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats', 'candidateTheses'));
         }
 
         abort(403);
@@ -576,5 +588,113 @@ class ThesisDefenseApplicationController extends Controller
         }
 
         return redirect()->back()->with('error', 'Gagal membuat file ZIP.');
+    }
+
+    /**
+     * Daftarkan mahasiswa ke sidang skripsi secara manual oleh Admin/Kaprodi
+     */
+    public function adminRegister(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'kaprodi') {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'thesis_id' => 'required|exists:theses,id',
+            'wave_id' => 'required|exists:waves,id',
+            'status' => 'required|in:pending,approved',
+            'bypass_files' => 'nullable|boolean',
+            'admin_notes' => 'nullable|string|max:1000',
+            'file_formulir' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            'file_acc_pembimbing' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'file_pembayaran' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'file_skripsi' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'file_transkrip' => 'nullable|file|mimes:pdf|max:5120',
+        ], [
+            'thesis_id.required' => 'Silakan pilih mahasiswa yang akan didaftarkan.',
+            'wave_id.required' => 'Silakan pilih gelombang pelaksanaan.',
+            'status.required' => 'Pilih status pendaftaran awal.',
+        ]);
+
+        $thesis = Thesis::with('student')->findOrFail($validated['thesis_id']);
+
+        // Check if student already has an approved or scheduled defense
+        $hasApprovedDefense = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+            ->whereIn('status', ['approved', 'completed', 'finished'])
+            ->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists();
+
+        if ($hasApprovedDefense) {
+            return redirect()->back()->with('error', "Mahasiswa {$thesis->student->name} sudah terdaftar dan disetujui / dijadwalkan pada sidang skripsi.");
+        }
+
+        $allFileKeys = [
+            'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
+            'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',
+            'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
+            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
+        ];
+
+        $uploadedFiles = [];
+        $bypassFiles = $request->boolean('bypass_files');
+
+        foreach ($allFileKeys as $field) {
+            if ($request->hasFile($field)) {
+                $uploadedFiles[$field] = $request->file($field)->store('thesis_defense_applications/' . $field, config('filesystems.default', 'local'));
+            } elseif ($bypassFiles) {
+                $uploadedFiles[$field] = 'DISPENSASI_ADMIN: ' . ($validated['admin_notes'] ?: 'Didaftarkan langsung oleh ' . ucfirst($user->role));
+            } else {
+                $uploadedFiles[$field] = null;
+            }
+        }
+
+        $adminNote = $validated['admin_notes'] ?? null;
+        $feedbackText = "Didaftarkan langsung oleh " . ucfirst($user->role) . " ({$user->name})" . ($adminNote ? " - Catatan: {$adminNote}" : "");
+
+        $application = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+            ->where('wave_id', $validated['wave_id'])
+            ->first();
+
+        if ($application) {
+            $dataToUpdate = array_filter($uploadedFiles, fn($val) => !is_null($val));
+            $dataToUpdate['status'] = $validated['status'];
+            $dataToUpdate['admin_feedback'] = $feedbackText;
+            $application->update($dataToUpdate);
+        } else {
+            $application = ThesisDefenseApplication::create(array_merge([
+                'thesis_id' => $thesis->id,
+                'wave_id' => $validated['wave_id'],
+                'status' => $validated['status'],
+                'admin_feedback' => $feedbackText,
+            ], $uploadedFiles));
+        }
+
+        // Activity log
+        try {
+            ActivityLog::log(
+                activity: 'Pendaftaran Sidang oleh Admin',
+                description: "Mendaftarkan mahasiswa {$thesis->student->name} ({$thesis->student->identifier}) ke Sidang Skripsi dengan status: " . strtoupper($validated['status']),
+                module: 'Sidang',
+                subject: $application
+            );
+        } catch (\Throwable $e) {}
+
+        // Notification to student
+        try {
+            $thesis->student->notify(new GeneralNotification(
+                title: 'Pendaftaran Sidang Skripsi Berhasil',
+                message: "Anda telah didaftarkan ke Sidang Skripsi oleh Administrator/Kaprodi (" . ($validated['status'] === 'approved' ? 'Siap Dijadwalkan' : 'Menunggu Validasi') . ").",
+                url: route('thesis-defense-applications.index'),
+                type: 'success'
+            ));
+        } catch (\Throwable $e) {}
+
+        $wave = Wave::find($validated['wave_id']);
+        $waveName = $wave ? $wave->name : '';
+
+        return redirect()->route('thesis-defense-applications.index', ['wave_id' => $validated['wave_id']])->with(
+            'success',
+            "Mahasiswa {$thesis->student->name} ({$thesis->student->identifier}) berhasil didaftarkan ke Sidang Skripsi pada {$waveName} dengan status " . strtoupper($validated['status']) . "!"
+        );
     }
 }
