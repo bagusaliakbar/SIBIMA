@@ -394,9 +394,9 @@
                 </div>
 
                 {{-- Row 2: Search Bar (Left) & Action Buttons (Right) --}}
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-700/60">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/60">
                     {{-- Search Bar Form --}}
-                    <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2 w-full lg:w-96">
+                    <form action="{{ route('seminar-applications.index') }}" method="GET" class="relative flex items-center w-full sm:w-72 md:w-80 lg:w-96 min-w-0">
                         @if(!empty($selectedWaveId))
                             <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}">
                         @endif
@@ -404,60 +404,64 @@
                             <input type="hidden" name="status" value="{{ $status }}">
                         @endif
 
-                        <div class="relative flex-1">
+                        <div class="relative w-full">
+                            {{-- Search Icon / Submit Button --}}
+                            <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-500 transition-colors cursor-pointer" title="Cari">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+
+                            {{-- Input Field --}}
                             <input type="text" name="search" value="{{ $search }}"
                                    placeholder="Cari nama mahasiswa, NPM, judul skripsi..."
-                                   class="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
-                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
+                                   class="w-full h-9 pl-9 pr-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
+
+                            {{-- Reset / Clear Button --}}
                             @if($search)
                                 <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}" 
-                                   class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold"
+                                   class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors"
                                    title="Reset Pencarian">
                                     ✕
                                 </a>
                             @endif
                         </div>
-                        <button type="submit" class="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-xl text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-2xs shrink-0 cursor-pointer">
-                            Cari
-                        </button>
                     </form>
 
                     {{-- Action Buttons: Daftarkan Mahasiswa, Export Excel, Rekap Pembayaran Dropdown --}}
-                    <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-start lg:justify-end">
+                    <div class="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
                         {{-- Daftarkan Mahasiswa Button --}}
                         <button type="button" 
                                 @click="openRegisterModal = true"
-                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                                class="h-9 inline-flex items-center justify-center gap-1.5 px-3.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
                                 title="Daftarkan Mahasiswa ke Seminar Proposal">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                             </svg>
-                            <span>Daftarkan Mahasiswa</span>
+                            <span class="whitespace-nowrap">Daftarkan Mahasiswa</span>
                         </button>
 
                         {{-- Export Excel Button --}}
                         <a href="{{ route('seminar-applications.export-excel', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
-                           class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                           class="h-9 inline-flex items-center justify-center gap-1.5 px-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
                            title="Export Data Validasi Seminar ke Excel">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            <span>Export Excel</span>
+                            <span class="whitespace-nowrap">Export Excel</span>
                         </a>
 
                         {{-- Dropdown Rekap Pembayaran (PDF & Word) --}}
-                        <div x-data="{ openRekap: false }" @click.away="openRekap = false" class="relative">
+                        <div x-data="{ openRekap: false }" @click.away="openRekap = false" class="relative shrink-0">
                             <button type="button" 
                                     @click="openRekap = !openRekap"
-                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                                    class="h-9 inline-flex items-center justify-center gap-1.5 px-3.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
                                     title="Unduh Rekap Bukti Pembayaran">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                <span>Rekap Pembayaran</span>
-                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': openRekap }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="whitespace-nowrap">Rekap Pembayaran</span>
+                                <svg class="w-3.5 h-3.5 text-white/80 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': openRekap }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
