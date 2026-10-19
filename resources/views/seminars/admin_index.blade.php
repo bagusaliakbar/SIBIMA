@@ -341,52 +341,62 @@
 
         {{-- TABLE CARD WITH INTEGRATED SEARCH & STATUS FILTER --}}
         <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs overflow-hidden">
-            {{-- Toolbar: Status Tabs & Search Bar --}}
-            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/30">
-                {{-- Status Filter Tabs --}}
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">Status:</span>
+            {{-- Toolbar: Status Tabs & Action Controls --}}
+            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col gap-3.5">
+                {{-- Row 1: Status Filter Tabs (Left) & Quick Wave Summary (Right) --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    {{-- Status Filter Tabs (Capsule / Segmented Control) --}}
+                    <div class="inline-flex items-center gap-1 p-1 bg-slate-200/60 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-x-auto max-w-full">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-2 hidden md:inline">Status:</span>
 
-                    {{-- Semua Status --}}
-                    <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'all', 'search' => $search]) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($status ?? 'all') === 'all' ? 'bg-orange-500 text-white border-orange-500 shadow-2xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>Semua</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                            {{ $stats['total'] ?? 0 }}
-                        </span>
-                    </a>
+                        {{-- Semua Status --}}
+                        <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'all', 'search' => $search]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
+                            <span>Semua</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-300/60 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">
+                                {{ $stats['total'] ?? 0 }}
+                            </span>
+                        </a>
 
-                    {{-- Menunggu --}}
-                    <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'pending', 'search' => $search]) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($status ?? '') === 'pending' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>⏳ Menunggu</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
-                            {{ $stats['pending'] ?? 0 }}
-                        </span>
-                    </a>
+                        {{-- Menunggu --}}
+                        <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'pending', 'search' => $search]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' }}">
+                            <span>⏳ Menunggu</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
+                                {{ $stats['pending'] ?? 0 }}
+                            </span>
+                        </a>
 
-                    {{-- Disetujui --}}
-                    <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'approved', 'search' => $search]) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($status ?? '') === 'approved' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>✓ Disetujui</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'approved' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200' }}">
-                            {{ $stats['approved'] ?? 0 }}
-                        </span>
-                    </a>
+                        {{-- Disetujui --}}
+                        <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'approved', 'search' => $search]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'approved' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-950/40' }}">
+                            <span>✓ Disetujui</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'approved' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200' }}">
+                                {{ $stats['approved'] ?? 0 }}
+                            </span>
+                        </a>
 
-                    {{-- Ditolak / Revisi --}}
-                    <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'rejected', 'search' => $search]) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($status ?? '') === 'rejected' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-rose-700 dark:text-rose-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>✕ Perlu Revisi</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'rejected' ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200' }}">
-                            {{ $stats['rejected'] ?? 0 }}
-                        </span>
-                    </a>
+                        {{-- Ditolak / Revisi --}}
+                        <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'rejected', 'search' => $search]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'rejected' ? 'bg-rose-600 text-white shadow-xs' : 'text-rose-700 dark:text-rose-400 hover:text-rose-900 dark:hover:text-rose-200 hover:bg-rose-100/50 dark:hover:bg-rose-950/40' }}">
+                            <span>✕ Perlu Revisi</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'rejected' ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200' }}">
+                                {{ $stats['rejected'] ?? 0 }}
+                            </span>
+                        </a>
+                    </div>
+
+                    {{-- Wave & Filter Indicator (Right) --}}
+                    <div class="text-[11px] font-bold text-slate-400 dark:text-slate-500 hidden sm:flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>{{ $activeWave ? $activeWave->title : 'Semua Gelombang' }}</span>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-2 w-full md:w-auto flex-wrap">
+                {{-- Row 2: Search Bar (Left) & Action Buttons (Right) --}}
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-700/60">
                     {{-- Search Bar Form --}}
-                    <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2 flex-1 md:flex-initial">
+                    <form action="{{ route('seminar-applications.index') }}" method="GET" class="flex items-center gap-2 w-full lg:w-96">
                         @if(!empty($selectedWaveId))
                             <input type="hidden" name="wave_id" value="{{ $selectedWaveId }}">
                         @endif
@@ -394,16 +404,17 @@
                             <input type="hidden" name="status" value="{{ $status }}">
                         @endif
 
-                        <div class="relative w-full md:w-72">
+                        <div class="relative flex-1">
                             <input type="text" name="search" value="{{ $search }}"
-                                   placeholder="Cari nama, NPM, judul..."
+                                   placeholder="Cari nama mahasiswa, NPM, judul skripsi..."
                                    class="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
                             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                             @if($search)
                                 <a href="{{ route('seminar-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}" 
-                                   class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
+                                   class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold"
+                                   title="Reset Pencarian">
                                     ✕
                                 </a>
                             @endif
@@ -413,46 +424,91 @@
                         </button>
                     </form>
 
-                    {{-- Daftarkan Mahasiswa Button --}}
-                    <button type="button" 
-                            @click="openRegisterModal = true"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
-                            title="Daftarkan Mahasiswa ke Seminar Proposal">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span>Daftarkan Mahasiswa</span>
-                    </button>
+                    {{-- Action Buttons: Daftarkan Mahasiswa, Export Excel, Rekap Pembayaran Dropdown --}}
+                    <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-start lg:justify-end">
+                        {{-- Daftarkan Mahasiswa Button --}}
+                        <button type="button" 
+                                @click="openRegisterModal = true"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                                title="Daftarkan Mahasiswa ke Seminar Proposal">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span>Daftarkan Mahasiswa</span>
+                        </button>
 
-                    {{-- Export Excel Button --}}
-                    <a href="{{ route('seminar-applications.export-excel', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
-                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
-                       title="Export Data Validasi Seminar ke Excel">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span>Export Excel</span>
-                    </a>
+                        {{-- Export Excel Button --}}
+                        <a href="{{ route('seminar-applications.export-excel', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
+                           class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                           title="Export Data Validasi Seminar ke Excel">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span>Export Excel</span>
+                        </a>
 
-                    {{-- Export Rekap Pembayaran PDF Button --}}
-                    <a href="{{ route('seminar-applications.export-payment-pdf', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
-                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
-                       title="Export Rekap Bukti Pembayaran Seminar ke PDF">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>Rekap Pembayaran (PDF)</span>
-                    </a>
+                        {{-- Dropdown Rekap Pembayaran (PDF & Word) --}}
+                        <div x-data="{ openRekap: false }" @click.away="openRekap = false" class="relative">
+                            <button type="button" 
+                                    @click="openRekap = !openRekap"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+                                    title="Unduh Rekap Bukti Pembayaran">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Rekap Pembayaran</span>
+                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': openRekap }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
 
-                    {{-- Export Rekap Pembayaran Word Button --}}
-                    <a href="{{ route('seminar-applications.export-payment-word', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
-                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
-                       title="Export Rekap Bukti Pembayaran Seminar ke Word (.doc)">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span>Rekap Pembayaran (Word)</span>
-                    </a>
+                            {{-- Dropdown Menu --}}
+                            <div x-show="openRekap" 
+                                 x-cloak 
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95 -translate-y-1"
+                                 x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave-end="transform opacity-0 scale-95 -translate-y-1"
+                                 class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-30">
+                                
+                                <div class="px-3.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                    Pilih Format Dokumen
+                                </div>
+
+                                {{-- PDF --}}
+                                <a href="{{ route('seminar-applications.export-payment-pdf', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
+                                   class="flex items-center gap-3 px-3.5 py-2.5 text-xs text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 transition-colors">
+                                    <span class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </span>
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100">Format PDF (.pdf)</p>
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-normal">Layout resmi siap cetak & arsip</p>
+                                    </div>
+                                </a>
+
+                                <div class="my-1 border-t border-slate-100 dark:border-slate-700/60"></div>
+
+                                {{-- Word --}}
+                                <a href="{{ route('seminar-applications.export-payment-word', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
+                                   class="flex items-center gap-3 px-3.5 py-2.5 text-xs text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                    <span class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </span>
+                                    <div>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100">Format Word (.doc)</p>
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-normal">Dapat disunting & disesuaikan</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
