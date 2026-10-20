@@ -624,7 +624,7 @@
 
                                     <!-- 1. MODE POIN-POIN (DEFAULT) -->
                                     <div x-show="mode === 'points'" class="space-y-3">
-                                        <div x-ref="pointsListContainer" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+                                        <div x-ref="pointsListContainer" class="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
                                             <template x-for="(point, idx) in points" :key="idx">
                                                 <div class="flex items-start gap-2.5 p-2 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all">
                                                     <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-black shrink-0 mt-1 shadow-xs" x-text="idx + 1"></span>
