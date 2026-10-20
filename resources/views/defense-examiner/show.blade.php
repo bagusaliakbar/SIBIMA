@@ -233,7 +233,10 @@
             this.previewModalOpen = false;
             this.previewUrl = '';
         }
-    }" class="space-y-6">
+    }" x-init="$nextTick(() => {
+        const el = document.getElementById('defense-revision-messages-container');
+        if (el) el.scrollTop = el.scrollHeight;
+    })" class="space-y-6">
 
         {{-- Integrated Workflow Navigation Tabs --}}
         <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800/60 p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
@@ -409,7 +412,7 @@
             <!-- Chat History -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Messages Container -->
-                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col h-[640px]">
+                <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col h-[780px] lg:h-[calc(100vh-9.5rem)] min-h-[680px]">
                     <div class="p-5 sm:p-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest flex items-center">
@@ -448,7 +451,7 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 bg-slate-50/30 dark:bg-slate-900/10">
+                    <div id="defense-revision-messages-container" class="flex-1 min-h-[360px] overflow-y-auto p-5 sm:p-6 space-y-6 bg-slate-50/30 dark:bg-slate-900/10">
                         @if($myRevision && $myRevision->messages->count() > 0)
                             @foreach($myRevision->messages as $msg)
                                 @php 
@@ -518,7 +521,7 @@
                     </div>
 
                     <!-- Input Area -->
-                    <div class="p-5 sm:p-6 border-t border-slate-50 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-b-2xl">
+                    <div class="p-4 sm:p-5 border-t border-slate-50 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-b-2xl">
                         @if($myRevision?->status === 'approved')
                             <div class="p-4 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div class="flex items-center gap-3">
