@@ -369,6 +369,14 @@ class Thesis extends Model
         });
     }
 
+    public function scopeNotGraduated($query)
+    {
+        return $query->where('status', '!=', 'completed')
+            ->whereDoesntHave('graduation', function ($q) {
+                $q->where('status', 'approved');
+            });
+    }
+
     public function isOldCohort(): bool
     {
         if (!$this->student || !$this->student->entry_year) {

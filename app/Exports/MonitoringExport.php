@@ -41,6 +41,7 @@ class MonitoringExport extends DefaultValueBinder implements
     protected $pembimbingId;
     protected $entryYear;
     protected $search;
+    protected $graduationStatus;
     protected int $rowNumber = 0;
     protected int $totalCount = 0;
 
@@ -51,7 +52,8 @@ class MonitoringExport extends DefaultValueBinder implements
         $accStatus = 'all', 
         $pembimbingId = null, 
         $entryYear = null, 
-        $search = null
+        $search = null,
+        $graduationStatus = 'active'
     ) {
         $this->type = $type ?? 'akademik';
         $this->startDate = $startDate;
@@ -60,6 +62,7 @@ class MonitoringExport extends DefaultValueBinder implements
         $this->pembimbingId = $pembimbingId;
         $this->entryYear = $entryYear;
         $this->search = $search;
+        $this->graduationStatus = $graduationStatus ?? 'active';
     }
 
     public function collection()
@@ -91,11 +94,13 @@ class MonitoringExport extends DefaultValueBinder implements
         }
 
         // Monitoring Theses (akademik, mahasiswa, kelulusan)
-        $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+        $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'graduation'])
             ->withMentoringCounts();
 
-        if ($this->type === 'kelulusan') {
-            $query->where('status', 'completed');
+        if ($this->type === 'kelulusan' || $this->graduationStatus === 'graduated') {
+            $query->graduated();
+        } elseif ($this->graduationStatus === 'active') {
+            $query->notGraduated();
         }
 
         if ($this->startDate && $this->endDate) {
@@ -139,7 +144,11 @@ class MonitoringExport extends DefaultValueBinder implements
             'dosen' => 'Beban Dosen',
             'logs' => 'Log Aktivitas',
             'kelulusan' => 'Data Kelulusan',
-            default => 'Monitoring Bimbingan'
+            default => match($this->graduationStatus) {
+                'graduated' => 'Mahasiswa Lulus',
+                'all' => 'Semua Mahasiswa',
+                default => 'Mahasiswa Aktif',
+            }
         };
     }
 
@@ -166,6 +175,7 @@ class MonitoringExport extends DefaultValueBinder implements
                     'TOTAL SESI',
                     'STATUS ACC SEMINAR (UP)',
                     'STATUS ACC SIDANG',
+                    'STATUS KELULUSAN',
                     'STATUS BIMBINGAN',
                 ];
         }
@@ -225,11 +235,13 @@ class MonitoringExport extends DefaultValueBinder implements
             default => 'Belum ACC',
         };
 
-        $statusLabel = match($item->status) {
-            'active' => 'Bimbingan Aktif',
-            'completed' => 'Lulus / Selesai',
-            'pending' => 'Menunggu Pembimbing',
-            'rejected' => 'Ditolak',
+        $graduationLabel = $item->isGraduated() ? 'Lulus / Selesai' : 'Aktif / Belum Lulus';
+
+        $statusLabel = match(true) {
+            $item->isGraduated() => 'Selesai',
+            $item->status === 'active' => 'Bimbingan Aktif',
+            $item->status === 'pending' => 'Menunggu Pembimbing',
+            $item->status === 'rejected' => 'Ditolak',
             default => ucfirst($item->status ?? 'Aktif'),
         };
 
@@ -250,6 +262,7 @@ class MonitoringExport extends DefaultValueBinder implements
             $totalSessions,
             $accUpLabel,
             $accSidangLabel,
+            $graduationLabel,
             $statusLabel,
         ];
     }
@@ -311,7 +324,8 @@ class MonitoringExport extends DefaultValueBinder implements
                     'J' => 12,  // TOTAL SESI
                     'K' => 25,  // STATUS ACC UP
                     'L' => 25,  // STATUS ACC SIDANG
-                    'M' => 18,  // STATUS BIMBINGAN
+                    'M' => 20,  // STATUS KELULUSAN
+                    'N' => 20,  // STATUS BIMBINGAN
                 ];
         }
     }
@@ -331,7 +345,7 @@ class MonitoringExport extends DefaultValueBinder implements
                     'dosen' => 'F',
                     'logs' => 'E',
                     'kelulusan' => 'I',
-                    default => 'M',
+                    default => 'N',
                 };
 
                 // Title Banner (Row 1)
@@ -393,9 +407,14 @@ class MonitoringExport extends DefaultValueBinder implements
                     'in_mentoring' => 'Dalam Bimbingan',
                 ];
                 $accLabel = $accLabels[$this->accStatus] ?? 'Semua Status ACC';
+                $gradLabel = match($this->graduationStatus) {
+                    'graduated' => 'Sudah Lulus',
+                    'all' => 'Semua Mahasiswa',
+                    default => 'Belum Lulus (Aktif)',
+                };
                 $exportDate = now()->translatedFormat('d F Y, H:i') . ' WIB';
 
-                $metaText = "Dosen Pembimbing: {$pembimbingName}   |   Angkatan: {$entryYearLabel}   |   Status ACC: {$accLabel}   |   Total: {$this->totalCount} Mahasiswa   |   Waktu Unduh: {$exportDate}";
+                $metaText = "Status: {$gradLabel}   |   Dosen Pembimbing: {$pembimbingName}   |   Angkatan: {$entryYearLabel}   |   Status ACC: {$accLabel}   |   Total: {$this->totalCount} Mahasiswa   |   Waktu Unduh: {$exportDate}";
                 $sheet->setCellValue('A3', $metaText);
                 $sheet->getRowDimension(3)->setRowHeight(22);
                 $sheet->getStyle("A3:{$highestCol}3")->applyFromArray([
@@ -482,6 +501,7 @@ class MonitoringExport extends DefaultValueBinder implements
                         $sheet->getStyle("K6:K{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                         $sheet->getStyle("L6:L{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                         $sheet->getStyle("M6:M{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                        $sheet->getStyle("N6:N{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                     }
 
                     // Row Heights & Zebra striping

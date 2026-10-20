@@ -39,7 +39,7 @@
                     <td>{{ $item->final_title ?? $item->title }}</td>
                     <td>{{ $item->pembimbing1->name ?? '-' }}</td>
                     <td>{{ $item->pembimbing2->name ?? '-' }}</td>
-                    <td>{{ strtoupper($item->status) }}</td>
+                    <td>{{ $item->isGraduated() ? 'LULUS / SELESAI' : strtoupper($item->status) }}</td>
                 </tr>
             @endforeach
         </tbody>

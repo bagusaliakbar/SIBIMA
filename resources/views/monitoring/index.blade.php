@@ -16,13 +16,25 @@
                         <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         Grafik Distribusi Bimbingan per Dosen
                     </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pemetaan tahapan mahasiswa yang belum lulus disaring berdasarkan Dosen & Angkatan.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Pemetaan tahapan mahasiswa 
+                        <span class="font-bold text-orange-600 dark:text-orange-400">
+                            {{ ($graduationStatus ?? 'active') === 'graduated' ? 'yang sudah lulus' : (($graduationStatus ?? 'active') === 'all' ? 'seluruh angkatan (aktif & lulus)' : 'aktif (belum lulus)') }}
+                        </span> 
+                        disaring berdasarkan Dosen & Angkatan.
+                    </p>
                 </div>
 
                 <!-- Combined Filters for Chart & Table -->
                 <form action="{{ route('monitoring.index') }}" method="GET" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     @if(request('search'))
                         <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    @if(request('graduation_status'))
+                        <input type="hidden" name="graduation_status" value="{{ request('graduation_status') }}">
+                    @endif
+                    @if(request('acc_status'))
+                        <input type="hidden" name="acc_status" value="{{ request('acc_status') }}">
                     @endif
 
                     <!-- Filter Angkatan -->
@@ -47,7 +59,7 @@
                         @endforeach
                     </select>
 
-                    @if(request('entry_year') || request('pembimbing_id'))
+                    @if(request('entry_year') || request('pembimbing_id') || request('acc_status') || (request('graduation_status') && request('graduation_status') !== 'active') || request('search'))
                         <a href="{{ route('monitoring.index') }}" class="px-3 py-2 text-xs font-bold text-red-500 hover:text-red-700 transition-colors">Reset Filter</a>
                     @endif
                 </form>
@@ -218,70 +230,99 @@
             :footer="$theses->links()">
             
             <x-slot name="headerActions">
-                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 w-full">
-                    <!-- Search Input -->
-                    <div class="w-full sm:w-60">
-                        <x-search-input 
-                            name="search" 
-                            :value="$search ?? ''" 
-                            placeholder="Cari mahasiswa, judul..." 
-                            route="monitoring.index"
-                            :params="['pembimbing_id' => $pembimbingId ?? '', 'entry_year' => $entryYear ?? '', 'acc_status' => $accStatus ?? 'all']" />
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 w-full">
+                    <!-- Segmented Filter Status Kelulusan (Left) -->
+                    <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-xs font-bold w-fit">
+                        <a href="{{ route('monitoring.index', array_merge(request()->query(), ['graduation_status' => 'active'])) }}"
+                           class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 {{ ($graduationStatus ?? 'active') === 'active' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span>Belum Lulus</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($graduationStatus ?? 'active') === 'active' ? 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['active'] ?? 0 }}</span>
+                        </a>
+                        <a href="{{ route('monitoring.index', array_merge(request()->query(), ['graduation_status' => 'graduated'])) }}"
+                           class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 {{ ($graduationStatus ?? 'active') === 'graduated' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>Sudah Lulus</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($graduationStatus ?? 'active') === 'graduated' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['graduated'] ?? 0 }}</span>
+                        </a>
+                        <a href="{{ route('monitoring.index', array_merge(request()->query(), ['graduation_status' => 'all'])) }}"
+                           class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 {{ ($graduationStatus ?? 'active') === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span>Semua</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($graduationStatus ?? 'active') === 'all' ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['all'] ?? 0 }}</span>
+                        </a>
                     </div>
 
-                    <!-- Dropdown Filter ACC Status -->
-                    <form action="{{ route('monitoring.index') }}" method="GET" class="relative">
-                        @if($search)
-                            <input type="hidden" name="search" value="{{ $search }}">
-                        @endif
-                        @if($pembimbingId)
-                            <input type="hidden" name="pembimbing_id" value="{{ $pembimbingId }}">
-                        @endif
-                        @if($entryYear)
-                            <input type="hidden" name="entry_year" value="{{ $entryYear }}">
-                        @endif
-                        <select name="acc_status" onchange="this.form.submit()" 
-                                style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
-                                class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-bold shadow-2xs cursor-pointer">
-                            <option value="all" {{ ($accStatus ?? 'all') === 'all' ? 'selected' : '' }}>
-                                Semua Status ACC ({{ $accCounts['all'] ?? 0 }})
-                            </option>
-                            <option value="ready_seminar" {{ ($accStatus ?? '') === 'ready_seminar' ? 'selected' : '' }}>
-                                🎓 Siap Seminar UP ({{ $accCounts['ready_seminar'] ?? 0 }})
-                            </option>
-                            <option value="ready_defense" {{ ($accStatus ?? '') === 'ready_defense' ? 'selected' : '' }}>
-                                🏛️ Siap Sidang Akhir ({{ $accCounts['ready_defense'] ?? 0 }})
-                            </option>
-                            <option value="partial_acc" {{ ($accStatus ?? '') === 'partial_acc' ? 'selected' : '' }}>
-                                ⏳ ACC Parsial 1/2 ({{ $accCounts['partial_acc'] ?? 0 }})
-                            </option>
-                            <option value="in_mentoring" {{ ($accStatus ?? '') === 'in_mentoring' ? 'selected' : '' }}>
-                                📝 Dalam Bimbingan ({{ $accCounts['in_mentoring'] ?? 0 }})
-                            </option>
-                        </select>
-                    </form>
+                    <!-- Right Controls: Search, Dropdown ACC, Reset, Export -->
+                    <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                        <!-- Search Input -->
+                        <div class="w-full sm:w-56">
+                            <x-search-input 
+                                name="search" 
+                                :value="$search ?? ''" 
+                                placeholder="Cari mahasiswa, judul..." 
+                                route="monitoring.index"
+                                :params="['pembimbing_id' => $pembimbingId ?? '', 'entry_year' => $entryYear ?? '', 'acc_status' => $accStatus ?? 'all', 'graduation_status' => $graduationStatus ?? 'active']" />
+                        </div>
 
-                    @if(($accStatus ?? 'all') !== 'all')
-                        <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => 'all'])) }}" 
-                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 hover:bg-orange-100 transition-colors"
-                           title="Reset filter status ACC">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            <span>Reset ACC</span>
+                        <!-- Dropdown Filter ACC Status -->
+                        <form action="{{ route('monitoring.index') }}" method="GET" class="relative">
+                            @if($search)
+                                <input type="hidden" name="search" value="{{ $search }}">
+                            @endif
+                            @if($pembimbingId)
+                                <input type="hidden" name="pembimbing_id" value="{{ $pembimbingId }}">
+                            @endif
+                            @if($entryYear)
+                                <input type="hidden" name="entry_year" value="{{ $entryYear }}">
+                            @endif
+                            @if(($graduationStatus ?? 'active') !== 'active')
+                                <input type="hidden" name="graduation_status" value="{{ $graduationStatus }}">
+                            @endif
+                            <select name="acc_status" onchange="this.form.submit()" 
+                                    style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
+                                    class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-bold shadow-2xs cursor-pointer">
+                                <option value="all" {{ ($accStatus ?? 'all') === 'all' ? 'selected' : '' }}>
+                                    Semua Status ACC ({{ $accCounts['all'] ?? 0 }})
+                                </option>
+                                <option value="ready_seminar" {{ ($accStatus ?? '') === 'ready_seminar' ? 'selected' : '' }}>
+                                    🎓 Siap Seminar UP ({{ $accCounts['ready_seminar'] ?? 0 }})
+                                </option>
+                                <option value="ready_defense" {{ ($accStatus ?? '') === 'ready_defense' ? 'selected' : '' }}>
+                                    🏛️ Siap Sidang Akhir ({{ $accCounts['ready_defense'] ?? 0 }})
+                                </option>
+                                <option value="partial_acc" {{ ($accStatus ?? '') === 'partial_acc' ? 'selected' : '' }}>
+                                    ⏳ ACC Parsial 1/2 ({{ $accCounts['partial_acc'] ?? 0 }})
+                                </option>
+                                <option value="in_mentoring" {{ ($accStatus ?? '') === 'in_mentoring' ? 'selected' : '' }}>
+                                    📝 Dalam Bimbingan ({{ $accCounts['in_mentoring'] ?? 0 }})
+                                </option>
+                            </select>
+                        </form>
+
+                        @if(($accStatus ?? 'all') !== 'all')
+                            <a href="{{ route('monitoring.index', array_merge(request()->query(), ['acc_status' => 'all'])) }}" 
+                               class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 hover:bg-orange-100 transition-colors"
+                               title="Reset filter status ACC">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <span>Reset ACC</span>
+                            </a>
+                        @endif
+
+                        <!-- Export Data Button -->
+                        <a href="{{ route('monitoring.export', array_merge(request()->query(), [
+                            'type' => 'akademik',
+                            'graduation_status' => $graduationStatus ?? request('graduation_status', 'active'),
+                            'acc_status' => $accStatus ?? request('acc_status', 'all'),
+                            'pembimbing_id' => $pembimbingId ?? request('pembimbing_id', ''),
+                            'entry_year' => $entryYear ?? request('entry_year', ''),
+                            'search' => $search ?? request('search', '')
+                        ])) }}" 
+                           class="inline-flex items-center px-3.5 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-2xs whitespace-nowrap gap-1.5 group"
+                           title="Export Excel data bimbingan">
+                            <svg class="w-3.5 h-3.5 text-emerald-100 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span>Export Data ({{ ($graduationStatus ?? 'active') === 'graduated' ? 'Lulus' : (($graduationStatus ?? 'active') === 'all' ? 'Semua' : 'Aktif') }})</span>
                         </a>
-                    @endif
-
-                    <!-- Export Data Button -->
-                    <a href="{{ route('monitoring.export', array_merge(request()->query(), [
-                        'type' => 'akademik',
-                        'acc_status' => $accStatus ?? request('acc_status', 'all'),
-                        'pembimbing_id' => $pembimbingId ?? request('pembimbing_id', ''),
-                        'entry_year' => $entryYear ?? request('entry_year', ''),
-                        'search' => $search ?? request('search', '')
-                    ])) }}" 
-                       class="inline-flex items-center px-3.5 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-2xs whitespace-nowrap gap-1.5 group">
-                        <svg class="w-3.5 h-3.5 text-emerald-100 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <span>Export Data</span>
-                    </a>
+                    </div>
                 </div>
             </x-slot>
 
@@ -301,14 +342,26 @@
                         @forelse($theses as $thesis)
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors align-top group">
                                 <td class="py-4 px-6">
-                                    <div class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors tracking-tight">
-                                        {{ ucwords(strtolower($thesis->student->name)) }}
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors tracking-tight">
+                                            {{ ucwords(strtolower($thesis->student->name)) }}
+                                        </div>
+                                        @if($thesis->isGraduated())
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 shrink-0">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                <span>Lulus</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
                                         <span class="font-mono">{{ $thesis->student->identifier }}</span>
                                         @if($thesis->student->entry_year)
                                             <span class="text-slate-300 dark:text-slate-700">•</span>
                                             <span>Angkatan {{ $thesis->student->entry_year }}</span>
+                                        @endif
+                                        @if(!$thesis->isGraduated())
+                                            <span class="text-slate-300 dark:text-slate-700">•</span>
+                                            <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Aktif</span>
                                         @endif
                                     </div>
                                     <p class="text-xs text-slate-600 dark:text-slate-300 mt-1.5 line-clamp-2 max-w-[280px] leading-relaxed font-normal" title="{{ $thesis->final_title ?? $thesis->title }}">
@@ -339,104 +392,118 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-4 text-center">
-                                    <div class="flex flex-col items-center gap-1.5">
-                                        <!-- Dual Micro-Pill Status -->
-                                        <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccUpFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
-                                                <span>P1</span>
-                                            </span>
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
-                                                <span>P2</span>
-                                            </span>
-                                        </div>
-
-                                        <!-- Overall Badge & Action Trigger -->
-                                        <div class="inline-flex items-center gap-1">
-                                            @if($thesis->isAccUpFinal())
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                    Siap Seminar
+                                    @if($thesis->isGraduated())
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/50">
+                                            <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                            <span>Selesai</span>
+                                        </span>
+                                    @else
+                                        <div class="flex flex-col items-center gap-1.5">
+                                            <!-- Dual Micro-Pill Status -->
+                                            <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccUpFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                    <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                    <span>P1</span>
                                                 </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
-                                                    <span>Progres</span>
-                                                    <span class="font-bold text-[9px]">({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)</span>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                    <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                    <span>P2</span>
                                                 </span>
-                                            @endif
+                                            </div>
 
-                                            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                                                <button type="button" 
-                                                        @click="openModal({
-                                                            thesisId: {{ $thesis->id }},
-                                                            type: 'up',
-                                                            typeName: 'Seminar UP',
-                                                            studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
-                                                            studentNpm: '{{ $thesis->student->identifier }}',
-                                                            isFinal: {{ $thesis->isAccUpFinal() ? 'true' : 'false' }},
-                                                            accP1: {{ $thesis->acc_up_p1 ? 'true' : 'false' }},
-                                                            accP2: {{ $thesis->acc_up_p2 ? 'true' : 'false' }},
-                                                            p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
-                                                            p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
-                                                        })"
-                                                        class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
-                                                        title="Aksi Cepat Kaprodi: Kelola ACC Seminar">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                </button>
-                                            @endif
+                                            <!-- Overall Badge & Action Trigger -->
+                                            <div class="inline-flex items-center gap-1">
+                                                @if($thesis->isAccUpFinal())
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                        Siap Seminar
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                                                        <span>Progres</span>
+                                                        <span class="font-bold text-[9px]">({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)</span>
+                                                    </span>
+                                                @endif
+
+                                                @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                                    <button type="button" 
+                                                            @click="openModal({
+                                                                thesisId: {{ $thesis->id }},
+                                                                type: 'up',
+                                                                typeName: 'Seminar UP',
+                                                                studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
+                                                                studentNpm: '{{ $thesis->student->identifier }}',
+                                                                isFinal: {{ $thesis->isAccUpFinal() ? 'true' : 'false' }},
+                                                                accP1: {{ $thesis->acc_up_p1 ? 'true' : 'false' }},
+                                                                accP2: {{ $thesis->acc_up_p2 ? 'true' : 'false' }},
+                                                                p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
+                                                                p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
+                                                            })"
+                                                            class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
+                                                            title="Aksi Cepat Kaprodi: Kelola ACC Seminar">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                                 <td class="py-4 px-4 text-center">
-                                    <div class="flex flex-col items-center gap-1.5">
-                                        <!-- Dual Micro-Pill Status -->
-                                        <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccSidangFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
-                                                <span>P1</span>
-                                            </span>
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                                <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
-                                                <span>P2</span>
-                                            </span>
+                                    @if($thesis->isGraduated())
+                                        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs shadow-2xs">
+                                            <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span>Lulus Sidang</span>
                                         </div>
-
-                                        <!-- Overall Badge & Action Trigger -->
-                                        <div class="inline-flex items-center gap-1">
-                                            @if($thesis->isAccSidangFinal())
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                    Siap Sidang
+                                    @else
+                                        <div class="flex flex-col items-center gap-1.5">
+                                            <!-- Dual Micro-Pill Status -->
+                                            <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccSidangFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                    <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                    <span>P1</span>
                                                 </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
-                                                    <span>Progres</span>
-                                                    <span class="font-bold text-[9px]">({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)</span>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                    <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
+                                                    <span>P2</span>
                                                 </span>
-                                            @endif
+                                            </div>
 
-                                            @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
-                                                <button type="button" 
-                                                        @click="openModal({
-                                                            thesisId: {{ $thesis->id }},
-                                                            type: 'sidang',
-                                                            typeName: 'Sidang Akhir',
-                                                            studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
-                                                            studentNpm: '{{ $thesis->student->identifier }}',
-                                                            isFinal: {{ $thesis->isAccSidangFinal() ? 'true' : 'false' }},
-                                                            accP1: {{ $thesis->acc_sidang_p1 ? 'true' : 'false' }},
-                                                            accP2: {{ $thesis->acc_sidang_p2 ? 'true' : 'false' }},
-                                                            p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
-                                                            p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
-                                                        })"
-                                                        class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
-                                                        title="Aksi Cepat Kaprodi: Kelola ACC Sidang">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                </button>
-                                            @endif
+                                            <!-- Overall Badge & Action Trigger -->
+                                            <div class="inline-flex items-center gap-1">
+                                                @if($thesis->isAccSidangFinal())
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                        Siap Sidang
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                                                        <span>Progres</span>
+                                                        <span class="font-bold text-[9px]">({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)</span>
+                                                    </span>
+                                                @endif
+
+                                                @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                                    <button type="button" 
+                                                            @click="openModal({
+                                                                thesisId: {{ $thesis->id }},
+                                                                type: 'sidang',
+                                                                typeName: 'Sidang Akhir',
+                                                                studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
+                                                                studentNpm: '{{ $thesis->student->identifier }}',
+                                                                isFinal: {{ $thesis->isAccSidangFinal() ? 'true' : 'false' }},
+                                                                accP1: {{ $thesis->acc_sidang_p1 ? 'true' : 'false' }},
+                                                                accP2: {{ $thesis->acc_sidang_p2 ? 'true' : 'false' }},
+                                                                p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
+                                                                p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
+                                                            })"
+                                                            class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
+                                                            title="Aksi Cepat Kaprodi: Kelola ACC Sidang">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
                                     <a href="{{ route('theses.logbooks', $thesis->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 dark:hover:bg-slate-700 dark:hover:text-orange-400 transition-all shadow-2xs">
