@@ -270,78 +270,78 @@
                                 </label>
                                 <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
                                         class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
-                                    <option value="">Gelombang Sedang Aktif</option>
-                                    @foreach($waves as $wave)
-                                        <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }}) - {{ $wave->start_date ? \Carbon\Carbon::parse($wave->start_date)->format('d M Y') : '' }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Filter Khusus Dosen Penguji Belum Input Catatan Revisi -->
-                            <div x-show="targetType === 'dosen_penguji_belum_revisi'" class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                                        Jenis Ujian
-                                    </label>
-                                    <select name="exam_type" x-model="examType" @change="fetchRecipients()"
-                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
-                                        <option value="all">Semua Ujian (Seminar & Sidang)</option>
-                                        <option value="seminar">Seminar Proposal</option>
-                                        <option value="defense">Sidang Skripsi</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                                        Waktu Ujian
-                                    </label>
-                                    <select name="scope" x-model="scope" @change="fetchRecipients()"
-                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
-                                        <option value="yesterday">Ujian Kemarin (Rekomendasi)</option>
-                                        <option value="past">Semua Ujian Terlewat</option>
-                                        <option value="today">Ujian Hari Ini</option>
-                                        <option value="all">Semua Jadwal Ujian</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                                        Gelombang (Opsional)
-                                    </label>
-                                    <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
-                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
-                                        <option value="">Semua Gelombang</option>
+                                        <option value="">Gelombang Sedang Aktif</option>
                                         @foreach($waves as $wave)
-                                            <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }})</option>
+                                            <option value="{{ $wave->id }}">{{ $wave->name }}{{ !empty($wave->type) ? ' (' . ucfirst($wave->type) . ')' : '' }}{{ $wave->start_date ? ' - ' . \Carbon\Carbon::parse($wave->start_date)->format('d M Y') : '' }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
 
-                            <!-- Filter Khusus Mahasiswa Belum Balas Catatan Revisi -->
-                            <div x-show="targetType === 'mahasiswa_belum_balas_revisi'" class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-4 gap-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                                        Jenis Ujian
-                                    </label>
-                                    <select name="exam_type" x-model="examType" @change="fetchRecipients()"
-                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
-                                        <option value="all">Semua (Seminar & Sidang)</option>
-                                        <option value="seminar">Seminar Proposal</option>
-                                        <option value="defense">Sidang Skripsi</option>
-                                    </select>
+                                <!-- Filter Khusus Dosen Penguji Belum Input Catatan Revisi -->
+                                <div x-show="targetType === 'dosen_penguji_belum_revisi'" class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Jenis Ujian
+                                        </label>
+                                        <select name="exam_type" x-model="examType" @change="fetchRecipients()"
+                                                class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                            <option value="all">Semua Ujian (Seminar & Sidang)</option>
+                                            <option value="seminar">Seminar Proposal</option>
+                                            <option value="defense">Sidang Skripsi</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Waktu Ujian
+                                        </label>
+                                        <select name="scope" x-model="scope" @change="fetchRecipients()"
+                                                class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                            <option value="yesterday">Ujian Kemarin (Rekomendasi)</option>
+                                            <option value="past">Semua Ujian Terlewat</option>
+                                            <option value="today">Ujian Hari Ini</option>
+                                            <option value="all">Semua Jadwal Ujian</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Gelombang (Opsional)
+                                        </label>
+                                        <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
+                                                class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                            <option value="">Semua Gelombang</option>
+                                            @foreach($waves as $wave)
+                                                <option value="{{ $wave->id }}">{{ $wave->name }}{{ !empty($wave->type) ? ' (' . ucfirst($wave->type) . ')' : '' }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                                        Gelombang Ujian
-                                    </label>
-                                    <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
-                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
-                                        <option value="">Semua Gelombang</option>
-                                        @foreach($waves as $wave)
-                                            <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }})</option>
-                                        @endforeach
+                                <!-- Filter Khusus Mahasiswa Belum Balas Catatan Revisi -->
+                                <div x-show="targetType === 'mahasiswa_belum_balas_revisi'" class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Jenis Ujian
+                                        </label>
+                                        <select name="exam_type" x-model="examType" @change="fetchRecipients()"
+                                                class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                            <option value="all">Semua (Seminar & Sidang)</option>
+                                            <option value="seminar">Seminar Proposal</option>
+                                            <option value="defense">Sidang Skripsi</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Gelombang Ujian
+                                        </label>
+                                        <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
+                                                class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                            <option value="">Semua Gelombang</option>
+                                            @foreach($waves as $wave)
+                                                <option value="{{ $wave->id }}">{{ $wave->name }}{{ !empty($wave->type) ? ' (' . ucfirst($wave->type) . ')' : '' }}</option>
+                                            @endforeach
                                     </select>
                                 </div>
 
@@ -442,8 +442,14 @@
                                         </tr>
                                     </template>
                                     <tr x-show="recipients.length === 0">
-                                        <td colspan="4" class="p-6 text-center text-slate-400">
-                                            Tidak ada kontak yang cocok dengan filter sasaran ini.
+                                        <td colspan="4" class="p-8 text-center">
+                                            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700/60 text-slate-400 mb-2">
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                                            </div>
+                                            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tidak ada kontak yang cocok dengan filter sasaran ini.</p>
+                                            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1" x-show="targetType === 'mahasiswa_belum_balas_revisi'">
+                                                💡 <em>Tips: Coba atur <strong>Gelombang Ujian</strong> ke "Semua Gelombang" atau <strong>Tenggat Catatan</strong> ke "Semua Waktu Catatan" jika belum menemukan mahasiswa.</em>
+                                            </p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -656,7 +662,7 @@
                 examType: '{{ $initialExamType ?? request('exam_type', 'all') }}',
                 scope: '{{ $initialScope ?? request('scope', 'yesterday') }}',
                 cohort: 'all',
-                days: 30,
+                days: '{{ ($initialTarget ?? request('target_type')) === 'mahasiswa_bimbingan_pasif' ? 30 : '' }}',
                 waveId: '{{ $initialWaveId ?? request('wave_id', '') }}',
                 delaySeconds: 4,
                 title: @json($presets[$initialTarget ?? request('target_type', 'mahasiswa_belum_seminar')]['title'] ?? 'Pengingat Pendaftaran Seminar Proposal Skripsi'),
@@ -707,6 +713,11 @@
                 },
 
                 handleTargetTypeChange() {
+                    if (this.targetType === 'mahasiswa_bimbingan_pasif') {
+                        this.days = 30;
+                    } else {
+                        this.days = '';
+                    }
                     this.fetchRecipients();
                     // Jika pesan belum dimodifikasi atau cocok dengan salah satu preset bawaan, otomatis muat template target baru
                     const isUnmodified = !this.messageTemplate || Object.values(this.presets).some(p => p.message.trim() === this.messageTemplate.trim());

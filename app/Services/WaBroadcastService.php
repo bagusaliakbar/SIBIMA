@@ -472,7 +472,7 @@ class WaBroadcastService
     {
         $examType = $filters['exam_type'] ?? 'all'; // 'all', 'seminar', 'defense'
         $scope = $filters['scope'] ?? 'yesterday'; // 'yesterday', 'past', 'today', 'all'
-        $waveId = !empty($filters['wave_id']) ? $filters['wave_id'] : null;
+        $waveId = (!empty($filters['wave_id']) && $filters['wave_id'] !== 'all') ? $filters['wave_id'] : null;
         $dosenIdFilter = !empty($filters['dosen_id']) ? $filters['dosen_id'] : null;
 
         $pendingTasks = collect();
@@ -694,7 +694,7 @@ class WaBroadcastService
     protected function getMahasiswaBelumBalasRevisi(array $filters): Collection
     {
         $examType = $filters['exam_type'] ?? 'all'; // 'all', 'seminar', 'defense'
-        $waveId = !empty($filters['wave_id']) ? $filters['wave_id'] : null;
+        $waveId = (!empty($filters['wave_id']) && $filters['wave_id'] !== 'all') ? $filters['wave_id'] : null;
         $cohort = !empty($filters['cohort']) ? $filters['cohort'] : 'all';
         $minDays = !empty($filters['days']) && is_numeric($filters['days']) ? (int) $filters['days'] : null;
 
@@ -711,8 +711,12 @@ class WaBroadcastService
             ]);
 
             if ($waveId) {
-                $seminarQuery->whereHas('schedule', function ($q) use ($waveId) {
-                    $q->where('wave_id', $waveId);
+                $seminarQuery->where(function ($sq) use ($waveId) {
+                    $sq->whereHas('schedule', function ($q) use ($waveId) {
+                        $q->where('wave_id', $waveId);
+                    })->orWhereHas('thesis.seminarApplications', function ($q) use ($waveId) {
+                        $q->where('wave_id', $waveId);
+                    });
                 });
             }
 
@@ -794,8 +798,12 @@ class WaBroadcastService
             ]);
 
             if ($waveId) {
-                $defenseQuery->whereHas('schedule', function ($q) use ($waveId) {
-                    $q->where('wave_id', $waveId);
+                $defenseQuery->where(function ($dq) use ($waveId) {
+                    $dq->whereHas('schedule', function ($q) use ($waveId) {
+                        $q->where('wave_id', $waveId);
+                    })->orWhereHas('thesis.defenseApplications', function ($q) use ($waveId) {
+                        $q->where('wave_id', $waveId);
+                    });
                 });
             }
 
