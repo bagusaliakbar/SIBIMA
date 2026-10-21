@@ -114,6 +114,14 @@
                     <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                     <span>Broadcast WA Penguji</span>
                 </a>
+
+                <!-- Broadcast WA Mahasiswa Sidang Belum Mengirimkan Balasan Revisi -->
+                <a href="{{ route('wa-broadcasts.create', ['target_type' => 'mahasiswa_belum_balas_revisi', 'exam_type' => 'defense', 'wave_id' => $selectedWaveId]) }}" 
+                   class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md group w-full sm:w-auto justify-center"
+                   title="Kirim Pesan WhatsApp Pengingat ke Mahasiswa yang Belum Mengirimkan Balasan Revisi Sidang">
+                    <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Broadcast WA Mahasiswa Belum Revisi</span>
+                </a>
             </div>
         </div>
 

@@ -44,6 +44,7 @@ class WaBroadcastService
             'dosen_belum_selesai_bimbingan' => $this->getDosenBelumSelesaiBimbingan($filters),
             'dosen_penguji_gelombang' => $this->getDosenPengujiGelombang($filters),
             'dosen_penguji_belum_revisi' => $this->getDosenPengujiBelumRevisi($filters),
+            'mahasiswa_belum_balas_revisi' => $this->getMahasiswaBelumBalasRevisi($filters),
             'all_mahasiswa_aktif' => $this->getAllMahasiswaAktif($filters),
             'custom' => $this->getCustomRecipients($filters),
             default => collect(),
@@ -679,6 +680,241 @@ class WaBroadcastService
                     'link_tugas' => url('/dashboard'),
                     'link_seminar' => route('seminar-examiner.index'),
                     'link_sidang' => route('defense-examiner.index'),
+                    'link_dashboard' => url('/dashboard'),
+                    'link_login' => url('/login'),
+                ],
+            ];
+        })->filter()->values();
+    }
+
+    /**
+     * Mahasiswa yang telah menerima catatan revisi dari dosen penguji (Seminar / Sidang)
+     * namun belum mengirimkan balasan / unggahan perbaikan revisi.
+     */
+    protected function getMahasiswaBelumBalasRevisi(array $filters): Collection
+    {
+        $examType = $filters['exam_type'] ?? 'all'; // 'all', 'seminar', 'defense'
+        $waveId = !empty($filters['wave_id']) ? $filters['wave_id'] : null;
+        $cohort = !empty($filters['cohort']) ? $filters['cohort'] : 'all';
+        $minDays = !empty($filters['days']) && is_numeric($filters['days']) ? (int) $filters['days'] : null;
+
+        $pendingTasks = collect();
+
+        // 1. Periksa Seminar Proposal
+        if (in_array($examType, ['all', 'seminar'])) {
+            $seminarQuery = SeminarScheduleDetail::with([
+                'thesis.student',
+                'schedule.wave',
+                'examiner1',
+                'examiner2',
+                'revisions.messages',
+            ]);
+
+            if ($waveId) {
+                $seminarQuery->whereHas('schedule', function ($q) use ($waveId) {
+                    $q->where('wave_id', $waveId);
+                });
+            }
+
+            if ($cohort !== 'all') {
+                $seminarQuery->whereHas('thesis.student', function ($q) use ($cohort) {
+                    $q->where('entry_year', $cohort);
+                });
+            }
+
+            $seminarDetails = $seminarQuery->get();
+
+            foreach ($seminarDetails as $detail) {
+                $student = $detail->thesis?->student;
+                if (!$student) continue;
+
+                $examiners = [
+                    ['id' => $detail->examiner1_id, 'user' => $detail->examiner1, 'label' => 'Penguji 1'],
+                    ['id' => $detail->examiner2_id, 'user' => $detail->examiner2, 'label' => 'Penguji 2'],
+                ];
+
+                foreach ($examiners as $ex) {
+                    if (!$ex['id'] || !$ex['user']) continue;
+
+                    $rev = $detail->revisions->where('examiner_id', $ex['id'])->first();
+                    if (!$rev) continue;
+
+                    // Apakah dosen penguji sudah memberikan catatan/file/pesan revisi?
+                    $hasNotes = !empty(trim($rev->revision_notes ?? ''))
+                        || !empty($rev->revision_file)
+                        || $rev->messages->where('sender_id', $ex['id'])->isNotEmpty();
+
+                    if (!$hasNotes) continue;
+
+                    // Sudah disetujui penguji? Lewati
+                    if ($rev->status === 'approved') continue;
+
+                    // Mahasiswa sudah mengunggah perbaikan (resubmitted)?
+                    if ($rev->status === 'resubmitted') {
+                        // Jika pesan terakhir dalam percakapan adalah dari mahasiswa, mahasiswa sedang menunggu dosen
+                        $lastMsg = $rev->messages->sortBy('created_at')->last();
+                        if ($lastMsg && $lastMsg->sender_id === $student->id) {
+                            continue;
+                        }
+                    }
+
+                    // Tentukan tanggal catatan revisi dari penguji
+                    $latestExaminerMsg = $rev->messages->where('sender_id', $ex['id'])->sortBy('created_at')->last();
+                    $revisionDate = $latestExaminerMsg ? $latestExaminerMsg->created_at : ($rev->updated_at ?? $rev->created_at);
+
+                    // Filter batas hari minimal jika diatur
+                    if ($minDays !== null && $minDays > 0) {
+                        if ($revisionDate && $revisionDate > Carbon::now()->subDays($minDays)) {
+                            continue;
+                        }
+                    }
+
+                    $pendingTasks->push([
+                        'student_id' => $student->id,
+                        'student' => $student,
+                        'thesis_title' => $detail->thesis->final_title ?: $detail->thesis->title,
+                        'exam_category' => 'Seminar Proposal',
+                        'examiner_name' => $ex['user']->name,
+                        'examiner_label' => $ex['label'],
+                        'revision_date' => $revisionDate,
+                        'wave_name' => $detail->schedule?->wave?->name ?? 'Gelombang Seminar',
+                    ]);
+                }
+            }
+        }
+
+        // 2. Periksa Sidang Skripsi
+        if (in_array($examType, ['all', 'defense'])) {
+            $defenseQuery = ThesisDefenseScheduleDetail::with([
+                'thesis.student',
+                'schedule.wave',
+                'examiner1',
+                'examiner2',
+                'revisions.messages',
+            ]);
+
+            if ($waveId) {
+                $defenseQuery->whereHas('schedule', function ($q) use ($waveId) {
+                    $q->where('wave_id', $waveId);
+                });
+            }
+
+            if ($cohort !== 'all') {
+                $defenseQuery->whereHas('thesis.student', function ($q) use ($cohort) {
+                    $q->where('entry_year', $cohort);
+                });
+            }
+
+            $defenseDetails = $defenseQuery->get();
+
+            foreach ($defenseDetails as $detail) {
+                $student = $detail->thesis?->student;
+                if (!$student) continue;
+
+                $examiners = [
+                    ['id' => $detail->examiner1_id, 'user' => $detail->examiner1, 'label' => 'Penguji 1'],
+                    ['id' => $detail->examiner2_id, 'user' => $detail->examiner2, 'label' => 'Penguji 2'],
+                ];
+
+                foreach ($examiners as $ex) {
+                    if (!$ex['id'] || !$ex['user']) continue;
+
+                    $rev = $detail->revisions->where('examiner_id', $ex['id'])->first();
+                    if (!$rev) continue;
+
+                    $hasNotes = !empty(trim($rev->revision_notes ?? ''))
+                        || !empty($rev->revision_file)
+                        || $rev->messages->where('sender_id', $ex['id'])->isNotEmpty();
+
+                    if (!$hasNotes) continue;
+
+                    if ($rev->status === 'approved') continue;
+
+                    if ($rev->status === 'resubmitted') {
+                        $lastMsg = $rev->messages->sortBy('created_at')->last();
+                        if ($lastMsg && $lastMsg->sender_id === $student->id) {
+                            continue;
+                        }
+                    }
+
+                    $latestExaminerMsg = $rev->messages->where('sender_id', $ex['id'])->sortBy('created_at')->last();
+                    $revisionDate = $latestExaminerMsg ? $latestExaminerMsg->created_at : ($rev->updated_at ?? $rev->created_at);
+
+                    if ($minDays !== null && $minDays > 0) {
+                        if ($revisionDate && $revisionDate > Carbon::now()->subDays($minDays)) {
+                            continue;
+                        }
+                    }
+
+                    $pendingTasks->push([
+                        'student_id' => $student->id,
+                        'student' => $student,
+                        'thesis_title' => $detail->thesis->final_title ?: $detail->thesis->title,
+                        'exam_category' => 'Sidang Skripsi',
+                        'examiner_name' => $ex['user']->name,
+                        'examiner_label' => $ex['label'],
+                        'revision_date' => $revisionDate,
+                        'wave_name' => $detail->schedule?->wave?->name ?? 'Gelombang Sidang',
+                    ]);
+                }
+            }
+        }
+
+        // Kelompokkan per mahasiswa (1 mahasiswa hanya menerima 1 pesan WhatsApp ringkas)
+        $groupedByStudent = $pendingTasks->groupBy('student_id');
+
+        return $groupedByStudent->map(function ($items, $studentId) {
+            $firstItem = $items->first();
+            $student = $firstItem['student'] ?? User::find($studentId);
+            if (!$student) return null;
+
+            $totalCount = $items->count();
+
+            // Format daftar penguji yang belum dibalas
+            $detailList = $items->take(5)->map(function ($task, $idx) {
+                $timeAgo = $task['revision_date'] ? Carbon::parse($task['revision_date'])->locale('id')->diffForHumans() : '-';
+                return "• " . ($idx + 1) . ". {$task['examiner_name']} ({$task['examiner_label']} - {$task['exam_category']}) [Catatan: {$timeAgo}]";
+            })->implode("\n");
+
+            if ($totalCount > 5) {
+                $detailList .= "\n• ...dan " . ($totalCount - 5) . " butir revisi penguji lainnya.";
+            }
+
+            $categories = $items->pluck('exam_category')->unique()->implode(' & ');
+            $waves = $items->pluck('wave_name')->unique()->filter()->implode(', ') ?: 'Gelombang Ujian';
+
+            // Hitung hari berlalu dari catatan tertua
+            $oldestDate = $items->filter(fn($i) => !empty($i['revision_date']))->sortBy('revision_date')->first()['revision_date'] ?? null;
+            $hariBerlalu = $oldestDate ? Carbon::parse($oldestDate)->locale('id')->diffForHumans() : 'beberapa hari yang lalu';
+
+            // Tentukan link revisi yang paling relevan
+            $hasSeminar = $items->contains('exam_category', 'Seminar Proposal');
+            $hasDefense = $items->contains('exam_category', 'Sidang Skripsi');
+            $linkRevisi = ($hasDefense && !$hasSeminar)
+                ? route('student-defense-revisions.index')
+                : route('student-seminar-revisions.index');
+
+            return [
+                'user_id' => $student->id,
+                'name' => $student->name,
+                'identifier' => $student->identifier ?? '-',
+                'phone' => $student->phone_number,
+                'role' => 'mahasiswa',
+                'cohort' => $student->entry_year ?? '-',
+                'status_info' => "Belum Balas Revisi ({$totalCount} Penguji)",
+                'context' => [
+                    'nama' => $student->name,
+                    'npm' => $student->identifier ?? '-',
+                    'angkatan' => $student->entry_year ?? '-',
+                    'judul' => $firstItem['thesis_title'],
+                    'kategori_ujian' => $categories,
+                    'gelombang' => $waves,
+                    'daftar_penguji' => $detailList,
+                    'jumlah_penguji' => (string) $totalCount,
+                    'hari_berlalu' => $hariBerlalu,
+                    'link_revisi' => $linkRevisi,
+                    'link_seminar' => route('student-seminar-revisions.index'),
+                    'link_sidang' => route('student-defense-revisions.index'),
                     'link_dashboard' => url('/dashboard'),
                     'link_login' => url('/login'),
                 ],

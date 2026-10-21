@@ -131,6 +131,10 @@ class WaBroadcastController extends Controller implements HasMiddleware
                 'title' => 'Pengingat Input Catatan Revisi Penguji Seminar & Sidang',
                 'message' => "🔔 *PENGINGAT INPUT CATATAN REVISI UJIAN*\n\nYth. Bpk/Ibu *{nama}*,\n\nBerdasarkan pantauan sistem SIBIMA, tercatat terdapat *{jumlah_mahasiswa} mahasiswa* ujian yang telah selesai melaksanakan {kategori_ujian}, namun *belum menerima butir catatan revisi* dari Bpk/Ibu selaku Dosen Penguji:\n\n{daftar_mahasiswa}\n\nMohon kesediaan Bpk/Ibu untuk menginputkan catatan/arahan revisi melalui portal SIBIMA agar mahasiswa dapat segera menindaklanjuti perbaikan naskah:\n{link_tugas}\n\nTerima kasih atas dedikasi dan kerja sama Bpk/Ibu.\n_Program Studi FASILKOM UNSUB_",
             ],
+            'mahasiswa_belum_balas_revisi' => [
+                'title' => 'Pengingat Pengerjaan Revisi Ujian Mahasiswa',
+                'message' => "🔔 *PENGINGAT PENYELESAIAN REVISI {kategori_ujian}*\n\nHalo *{nama}* (NPM: {npm}),\n\nBerdasarkan pantauan sistem SIBIMA, Dosen Penguji telah mengirimkan butir catatan revisi untuk judul skripsi Anda:\n\"_{judul}_\"\n\nNamun hingga saat ini Anda *belum mengirimkan/mengunggah balasan revisi* kepada Dosen Penguji berikut:\n{daftar_penguji}\n\n⚠️ *Penting*: Segera selesaikan dan unggah berkas perbaikan naskah Anda agar Dosen Penguji dapat meninjau dan memberikan persetujuan (ACC revisi) tepat waktu.\n\nUnggah tanggapan revisi Anda melalui tautan SIBIMA berikut:\n{link_revisi}\n\nTetap semangat menyelesaikan tugas akhir Anda! 🎓\n_Program Studi FASILKOM UNSUB_",
+            ],
             'all_mahasiswa_aktif' => [
                 'title' => 'Pengumuman Akademik Skripsi FASILKOM UNSUB',
                 'message' => "📢 *PENGUMUMAN AKADEMIK SKRIPSI*\n\nHalo *{nama}* (NPM: {npm}),\n\nBerikut kami sampaikan pengumuman penting terkait progres skripsi, jadwal gelombang seminar & sidang, serta ketertiban administrasi bimbingan di lingkungan FASILKOM UNSUB.\n\nPastikan Anda selalu memantau perkembangan status skripsi dan melengkapi logbook bimbingan secara berkala di portal SIBIMA:\n{link_dashboard}\n\nTetap semangat dalam menyelesaikan tugas akhir Anda! 🎓✨\n_Program Studi FASILKOM UNSUB_",
@@ -167,7 +171,7 @@ class WaBroadcastController extends Controller implements HasMiddleware
         $targetType = $request->input('target_type', 'mahasiswa_belum_seminar');
         $filters = [
             'cohort' => $request->input('cohort', 'all'),
-            'days' => (int) $request->input('days', 30),
+            'days' => $request->filled('days') ? (int) $request->input('days') : ($targetType === 'mahasiswa_bimbingan_pasif' ? 30 : null),
             'wave_id' => $request->input('wave_id'),
             'exam_type' => $request->input('exam_type', 'all'),
             'scope' => $request->input('scope', 'yesterday'),
@@ -220,7 +224,7 @@ class WaBroadcastController extends Controller implements HasMiddleware
         $targetType = $request->input('target_type', 'mahasiswa_belum_seminar');
         $sample = $this->broadcastService->getTargetRecipients($targetType, [
             'cohort' => $request->input('cohort', 'all'),
-            'days' => (int) $request->input('days', 30),
+            'days' => $request->filled('days') ? (int) $request->input('days') : ($targetType === 'mahasiswa_bimbingan_pasif' ? 30 : null),
             'wave_id' => $request->input('wave_id'),
             'exam_type' => $request->input('exam_type', 'all'),
             'scope' => $request->input('scope', 'yesterday'),
@@ -233,7 +237,15 @@ class WaBroadcastController extends Controller implements HasMiddleware
             'judul' => 'Rancang Bangun Sistem Informasi SIBIMA Berbasis Web',
             'pembimbing_1' => 'Bagus Ali Akbar, S.SI., M.Kom',
             'pembimbing_2' => 'Tazkia Salsabila Ardan, M.Kom',
-            'link_seminar' => route('seminar-applications.create'),
+            'kategori_ujian' => 'Seminar Proposal & Sidang Skripsi',
+            'gelombang' => 'Gelombang 1 Genap 2025/2026',
+            'daftar_penguji' => "• 1. Maya Destriani, M.Kom (Penguji 1 - Seminar Proposal) [Catatan: 3 hari yang lalu]\n• 2. Bambang Tjahjo Utomo, MT (Penguji 2 - Seminar Proposal) [Catatan: 2 hari yang lalu]",
+            'jumlah_penguji' => '2',
+            'hari_berlalu' => '3 hari yang lalu',
+            'link_revisi' => route('student-seminar-revisions.index'),
+            'link_seminar' => route('student-seminar-revisions.index'),
+            'link_sidang' => route('student-defense-revisions.index'),
+            'link_dashboard' => url('/dashboard'),
             'link_login' => url('/login'),
         ];
 
@@ -275,7 +287,7 @@ class WaBroadcastController extends Controller implements HasMiddleware
 
         $filters = [
             'cohort' => $request->input('cohort', 'all'),
-            'days' => (int) $request->input('days', 30),
+            'days' => $request->filled('days') ? (int) $request->input('days') : ($request->input('target_type') === 'mahasiswa_bimbingan_pasif' ? 30 : null),
             'wave_id' => $request->input('wave_id'),
             'exam_type' => $request->input('exam_type', 'all'),
             'scope' => $request->input('scope', 'yesterday'),

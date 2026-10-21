@@ -197,7 +197,25 @@
                                 </p>
                             </label>
 
-                            <!-- 10. Seluruh Mahasiswa Aktif -->
+                            <!-- 10. Mahasiswa Belum Mengerjakan/Balas Revisi -->
+                            <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
+                                   :class="targetType === 'mahasiswa_belum_balas_revisi' ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
+                                <input type="radio" name="target_type" value="mahasiswa_belum_balas_revisi" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                                        <span>⏳</span> Belum Balas Revisi
+                                    </span>
+                                    <span class="w-4 h-4 rounded-full border flex items-center justify-center"
+                                          :class="targetType === 'mahasiswa_belum_balas_revisi' ? 'border-amber-500 bg-amber-500 text-white' : 'border-slate-300 dark:border-slate-600'">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white" x-show="targetType === 'mahasiswa_belum_balas_revisi'"></span>
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                                    Mahasiswa yang belum mengirim balasan/perbaikan revisi seminar atau sidang setelah menerima catatan penguji.
+                                </p>
+                            </label>
+
+                            <!-- 11. Seluruh Mahasiswa Aktif -->
                             <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
                                    :class="targetType === 'all_mahasiswa_aktif' ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 shadow-sm' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
                                 <input type="radio" name="target_type" value="all_mahasiswa_aktif" x-model="targetType" @change="handleTargetTypeChange()" class="sr-only">
@@ -296,6 +314,60 @@
                                         @foreach($waves as $wave)
                                             <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }})</option>
                                         @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Filter Khusus Mahasiswa Belum Balas Catatan Revisi -->
+                            <div x-show="targetType === 'mahasiswa_belum_balas_revisi'" class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Jenis Ujian
+                                    </label>
+                                    <select name="exam_type" x-model="examType" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="all">Semua (Seminar & Sidang)</option>
+                                        <option value="seminar">Seminar Proposal</option>
+                                        <option value="defense">Sidang Skripsi</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Gelombang Ujian
+                                    </label>
+                                    <select name="wave_id" x-model="waveId" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="">Semua Gelombang</option>
+                                        @foreach($waves as $wave)
+                                            <option value="{{ $wave->id }}">{{ $wave->name }} ({{ ucfirst($wave->type) }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Tahun Angkatan
+                                    </label>
+                                    <select name="cohort" x-model="cohort" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="all">Semua Angkatan</option>
+                                        @foreach($cohorts as $year)
+                                            <option value="{{ $year }}">Angkatan {{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                                        Tenggat Catatan
+                                    </label>
+                                    <select name="days" x-model="days" @change="fetchRecipients()"
+                                            class="w-full text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:border-orange-500 focus:ring-orange-500">
+                                        <option value="">Semua Waktu Catatan</option>
+                                        <option value="1">> 1 Hari Sejak Dikirim</option>
+                                        <option value="3">> 3 Hari Sejak Dikirim (Rekomendasi)</option>
+                                        <option value="7">> 7 Hari Sejak Dikirim (Mendesak)</option>
                                     </select>
                                 </div>
                             </div>
@@ -625,6 +697,8 @@
                             return ['{nama}', '{nidn}', '{gelombang}', '{link_dashboard}', '{link_login}'];
                         case 'dosen_penguji_belum_revisi':
                             return ['{nama}', '{nidn}', '{jumlah_mahasiswa}', '{kategori_ujian}', '{daftar_mahasiswa}', '{mahasiswa_ringkas}', '{link_tugas}', '{link_seminar}', '{link_sidang}', '{link_dashboard}', '{link_login}'];
+                        case 'mahasiswa_belum_balas_revisi':
+                            return ['{nama}', '{npm}', '{angkatan}', '{judul}', '{kategori_ujian}', '{gelombang}', '{daftar_penguji}', '{jumlah_penguji}', '{hari_berlalu}', '{link_revisi}', '{link_seminar}', '{link_sidang}', '{link_dashboard}', '{link_login}'];
                         case 'all_mahasiswa_aktif':
                             return ['{nama}', '{npm}', '{angkatan}', '{link_dashboard}', '{link_login}'];
                         default:
@@ -653,6 +727,7 @@
                         'dosen_belum_selesai_bimbingan': 'Dosen Sesi Belum Selesai',
                         'dosen_penguji_gelombang': 'Dosen Penguji Gelombang',
                         'dosen_penguji_belum_revisi': 'Penguji Belum Revisi',
+                        'mahasiswa_belum_balas_revisi': 'Mahasiswa Belum Revisi',
                         'all_mahasiswa_aktif': 'Semua Mahasiswa Aktif',
                     };
                     return map[this.targetType] || this.targetType;
@@ -715,6 +790,10 @@
                     msg = msg.replace(/\{daftar_mahasiswa\}/g, '• Aditya Pratama: "Sistem Informasi Pelayanan..." (24 Sep 2026)\n• Bella Safitri: "Implementasi Machine Learning..." (26 Sep 2026)');
                     msg = msg.replace(/\{mahasiswa_ringkas\}/g, 'Aditya Pratama, Bella Safitri');
                     msg = msg.replace(/\{sesi_terlama\}/g, '24 Sep 2026');
+                    msg = msg.replace(/\{daftar_penguji\}/g, '• 1. Maya Destriani, M.Kom (Penguji 1 - ' + (this.examType === 'defense' ? 'Sidang Skripsi' : 'Seminar Proposal') + ') [Catatan: 3 hari yang lalu]\n• 2. Bambang Tjahjo Utomo, MT (Penguji 2 - ' + (this.examType === 'defense' ? 'Sidang Skripsi' : 'Seminar Proposal') + ') [Catatan: 2 hari yang lalu]');
+                    msg = msg.replace(/\{jumlah_penguji\}/g, '2');
+                    msg = msg.replace(/\{hari_berlalu\}/g, '3 hari yang lalu');
+                    msg = msg.replace(/\{link_revisi\}/g, this.examType === 'defense' ? '{{ route('student-defense-revisions.index') }}' : '{{ route('student-seminar-revisions.index') }}');
 
                     // Format bold and italic for preview
                     msg = msg.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
