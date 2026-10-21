@@ -369,46 +369,72 @@ class DashboardService
 
         $activeWave = Wave::getCurrentActive();
 
-        $seminarQuery = SeminarScheduleDetail::with(['schedule', 'thesis.student'])
+        $seminarQuery = SeminarScheduleDetail::with(['schedule', 'thesis.student', 'revisions.messages'])
             ->where(function($q) use ($dosenId) {
                 $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId)
                 ->orWhereHas('thesis', fn($sq) => $sq->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
-            })
-            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()));
+            });
 
         if ($activeWave) {
-            $seminarQuery->whereHas('schedule', fn($q) => $q->where('wave_id', $activeWave->id));
+            $seminarQuery->where(function($q) use ($activeWave, $dosenId) {
+                $q->whereHas('schedule', fn($sq) => $sq->where('wave_id', $activeWave->id))
+                  ->orWhereHas('schedule', fn($sq) => $sq->where('date', '>=', now()->toDateString()))
+                  ->orWhereHas('revisions', fn($rq) => $rq->where('examiner_id', $dosenId)->where('status', '!=', 'approved'));
+            });
         }
 
         $data['examinerSeminarSchedules'] = $seminarQuery->orderBy('start_time', 'asc')->get()
-            ->reject(function (SeminarScheduleDetail $detail) {
+            ->reject(function (SeminarScheduleDetail $detail) use ($dosenId) {
+                $rev = $detail->getRevisionFor($dosenId);
                 $semDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
                 $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
-                return ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
-                    || $detail->isGraded()
-                    || $detail->isAllRevisionsApproved()
-                    || $semEnd->isPast();
+
+                if ($semEnd->isFuture()) {
+                    return false;
+                }
+
+                $needsGrade = !$detail->isGraded();
+                $needsRev = $rev && $rev->status !== 'approved';
+
+                if ($needsGrade || $needsRev) {
+                    return false;
+                }
+
+                return true;
             });
 
-        $defenseQuery = ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student'])
+        $defenseQuery = ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student', 'revisions.messages'])
             ->where(function($q) use ($dosenId) {
                 $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId)
                 ->orWhereHas('thesis', fn($sq) => $sq->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId));
-            })
-            ->whereHas('schedule', fn($q) => $q->where('date', '>=', now()->toDateString()));
+            });
 
         if ($activeWave) {
-            $defenseQuery->whereHas('schedule', fn($q) => $q->where('wave_id', $activeWave->id));
+            $defenseQuery->where(function($q) use ($activeWave, $dosenId) {
+                $q->whereHas('schedule', fn($sq) => $sq->where('wave_id', $activeWave->id))
+                  ->orWhereHas('schedule', fn($sq) => $sq->where('date', '>=', now()->toDateString()))
+                  ->orWhereHas('revisions', fn($rq) => $rq->where('examiner_id', $dosenId)->where('status', '!=', 'approved'));
+            });
         }
 
         $data['examinerDefenseSchedules'] = $defenseQuery->orderBy('start_time', 'asc')->get()
-            ->reject(function (ThesisDefenseScheduleDetail $detail) {
+            ->reject(function (ThesisDefenseScheduleDetail $detail) use ($dosenId) {
+                $rev = $detail->getRevisionFor($dosenId);
                 $defDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
                 $defEnd = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
-                return ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
-                    || $detail->isGradingComplete()
-                    || $detail->isRevisionAllApproved()
-                    || $defEnd->isPast();
+
+                if ($defEnd->isFuture()) {
+                    return false;
+                }
+
+                $needsGrade = !$detail->isGradingComplete();
+                $needsRev = $rev && $rev->status !== 'approved';
+
+                if ($needsGrade || $needsRev) {
+                    return false;
+                }
+
+                return true;
             });
 
         $activeTheses = Thesis::where('status', 'active')
@@ -575,12 +601,15 @@ class DashboardService
                 $needInputList[] = [
                     'type' => 'seminar',
                     'category' => 'Seminar Proposal',
-                    'title' => 'Input Catatan/Nilai Seminar',
+                    'title' => 'Input Catatan & Nilai Seminar',
                     'student_name' => $student->name,
                     'student_identifier' => $student->identifier,
+                    'thesis_title' => $detail->thesis?->title ?? '-',
                     'detail_id' => $detail->id,
                     'url' => route('seminar-examiner.show', $detail->id),
                     'date' => $detail->schedule->date,
+                    'time' => \Carbon\Carbon::parse($detail->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i') . ' WIB',
+                    'location' => $detail->schedule->location ?? '-',
                 ];
             } elseif ($rev) {
                 $lastMsg = $rev->messages->sortBy('created_at')->last();
@@ -592,9 +621,12 @@ class DashboardService
                         'title' => 'Tinjau Revisi Seminar',
                         'student_name' => $student->name,
                         'student_identifier' => $student->identifier,
+                        'thesis_title' => $detail->thesis?->title ?? '-',
                         'detail_id' => $detail->id,
                         'url' => route('seminar-examiner.show', $detail->id),
                         'date' => $rev->resubmitted_at ?? $rev->updated_at,
+                        'time' => \Carbon\Carbon::parse($detail->start_time)->format('H:i') . ' WIB',
+                        'location' => $detail->schedule->location ?? '-',
                     ];
                 }
             }
@@ -620,12 +652,15 @@ class DashboardService
                 $needInputList[] = [
                     'type' => 'defense',
                     'category' => 'Sidang Skripsi',
-                    'title' => 'Input Catatan/Nilai Sidang',
+                    'title' => 'Input Catatan & Nilai Sidang',
                     'student_name' => $student->name,
                     'student_identifier' => $student->identifier,
+                    'thesis_title' => $detail->thesis?->title ?? '-',
                     'detail_id' => $detail->id,
                     'url' => route('defense-examiner.show', $detail->id),
                     'date' => $detail->schedule->date,
+                    'time' => \Carbon\Carbon::parse($detail->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i') . ' WIB',
+                    'location' => $detail->schedule->location ?? '-',
                 ];
             } elseif ($rev) {
                 $lastMsg = $rev->messages->sortBy('created_at')->last();
@@ -637,9 +672,12 @@ class DashboardService
                         'title' => 'Tinjau Revisi Sidang',
                         'student_name' => $student->name,
                         'student_identifier' => $student->identifier,
+                        'thesis_title' => $detail->thesis?->title ?? '-',
                         'detail_id' => $detail->id,
                         'url' => route('defense-examiner.show', $detail->id),
                         'date' => $rev->resubmitted_at ?? $rev->updated_at,
+                        'time' => \Carbon\Carbon::parse($detail->start_time)->format('H:i') . ' WIB',
+                        'location' => $detail->schedule->location ?? '-',
                     ];
                 }
             }

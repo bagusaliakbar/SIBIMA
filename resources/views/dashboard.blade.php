@@ -650,7 +650,7 @@
                     <span class="p-1.5 rounded-lg bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </span>
-                    <span class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-200">Aksi Cepat Dosen</span>
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-200">Aksi Cepat</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-black rounded-xl transition-all shadow-xs hover:shadow-md hover:scale-102 active:scale-98 cursor-pointer">
@@ -681,8 +681,17 @@
                 </div>
             </div>
 
-            <!-- Actionable Task Center Dosen (3 Dynamic Cards) -->
-            <div class="mb-6">
+            <!-- Actionable Task Center Dosen (3 Dynamic Cards with Instant Action Modals) -->
+            <div x-data="{ 
+                showInputModal: false, 
+                showReviewModal: false,
+                scrollToTable() {
+                    const el = document.getElementById('jadwal-menguji');
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }" class="mb-6">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
@@ -694,7 +703,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Card 1: Permintaan Bimbingan Menunggu -->
-                    <a href="{{ route('mentoring-sessions.index') }}" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'border-amber-300 dark:border-amber-700/80 bg-gradient-to-br from-amber-50/50 via-white to-amber-50/20 dark:from-amber-950/20 dark:via-slate-800 dark:to-slate-800' : 'border-slate-200/80 dark:border-slate-700/80' }} shadow-xs hover:shadow-lg transition-all duration-300">
+                    <a href="{{ route('mentoring-sessions.index') }}" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'border-amber-300 dark:border-amber-700/80 bg-gradient-to-br from-amber-50/50 via-white to-amber-50/20 dark:from-amber-950/20 dark:via-slate-800 dark:to-slate-800' : 'border-slate-200/80 dark:border-slate-700/80' }} shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="w-10 h-10 rounded-xl {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -717,53 +726,285 @@
                         </div>
                     </a>
 
-                    <!-- Card 2: Catatan Ujian Belum Diisi -->
-                    <a href="#jadwal-menguji" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border {{ ($dosenActionCenter['need_input_count'] ?? 0) > 0 ? 'border-rose-300 dark:border-rose-700/80 bg-gradient-to-br from-rose-50/50 via-white to-rose-50/20 dark:from-rose-950/20 dark:via-slate-800 dark:to-slate-800' : 'border-slate-200/80 dark:border-slate-700/80' }} shadow-xs hover:shadow-lg transition-all duration-300">
+                    <!-- Card 2: Catatan & Nilai Ujian Belum Diisi -->
+                    @php
+                        $inputCount = $dosenActionCenter['need_input_count'] ?? 0;
+                        $firstInputUrl = ($inputCount === 1 && !empty($dosenActionCenter['need_input_revisions'][0]['url'])) ? $dosenActionCenter['need_input_revisions'][0]['url'] : null;
+                    @endphp
+                    @if($inputCount === 1)
+                        <a href="{{ $firstInputUrl }}" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-rose-300 dark:border-rose-700/80 bg-gradient-to-br from-rose-50/50 via-white to-rose-50/20 dark:from-rose-950/20 dark:via-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    @elseif($inputCount > 1)
+                        <div role="button" tabindex="0" @click="showInputModal = true" @keydown.enter="showInputModal = true" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-rose-300 dark:border-rose-700/80 bg-gradient-to-br from-rose-50/50 via-white to-rose-50/20 dark:from-rose-950/20 dark:via-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    @else
+                        <a href="{{ route('seminar-examiner.index') }}" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    @endif
                         <div class="flex items-start justify-between gap-3 mb-3">
-                            <div class="w-10 h-10 rounded-xl {{ ($dosenActionCenter['need_input_count'] ?? 0) > 0 ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
+                            <div class="w-10 h-10 rounded-xl {{ $inputCount > 0 ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ ($dosenActionCenter['need_input_count'] ?? 0) > 0 ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300 dark:border-rose-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
-                                {{ ($dosenActionCenter['need_input_count'] ?? 0) > 0 ? 'Segera Lengkapi' : 'Lengkap' }}
+                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ $inputCount > 0 ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300 dark:border-rose-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                                {{ $inputCount > 0 ? 'Segera Lengkapi' : 'Lengkap' }}
                             </span>
                         </div>
                         <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Catatan &amp; Nilai Ujian</h4>
                         <div class="flex items-baseline gap-2 mt-1 mb-2">
-                            <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $dosenActionCenter['need_input_count'] ?? 0 }}</span>
+                            <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $inputCount }}</span>
                             <span class="text-xs font-semibold text-slate-400">Ujian Belum Diisi</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                            {{ ($dosenActionCenter['need_input_count'] ?? 0) > 0 ? 'Ujian telah terlaksana tapi catatan atau nilai penguji belum disubmit.' : 'Seluruh berita acara ujian & penilaian telah Anda selesaikan.' }}
+                            {{ $inputCount > 0 ? 'Ujian telah terlaksana tapi catatan atau nilai penguji belum disubmit.' : 'Seluruh berita acara ujian & penilaian telah Anda selesaikan.' }}
                         </p>
                         <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs font-bold text-rose-600 dark:text-rose-400 group-hover:translate-x-0.5 transition-transform">
-                            <span>Buka Lembar Catatan Ujian</span>
+                            <span>
+                                @if($inputCount > 1)
+                                    Buka {{ $inputCount }} Lembar Ujian
+                                @elseif($inputCount === 1)
+                                    Buka Lembar Catatan Ujian
+                                @else
+                                    Lihat Riwayat Penguji
+                                @endif
+                            </span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                         </div>
-                    </a>
+                    @if($inputCount > 1)
+                        </div>
+                    @else
+                        </a>
+                    @endif
 
                     <!-- Card 3: Perbaikan Mahasiswa Masuk Butuh Review -->
-                    <a href="#jadwal-menguji" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border {{ ($dosenActionCenter['need_review_count'] ?? 0) > 0 ? 'border-indigo-300 dark:border-indigo-700/80 bg-gradient-to-br from-indigo-50/50 via-white to-indigo-50/20 dark:from-indigo-950/20 dark:via-slate-800 dark:to-slate-800' : 'border-slate-200/80 dark:border-slate-700/80' }} shadow-xs hover:shadow-lg transition-all duration-300">
+                    @php
+                        $reviewCount = $dosenActionCenter['need_review_count'] ?? 0;
+                        $firstReviewUrl = ($reviewCount === 1 && !empty($dosenActionCenter['need_review_revisions'][0]['url'])) ? $dosenActionCenter['need_review_revisions'][0]['url'] : null;
+                    @endphp
+                    @if($reviewCount === 1)
+                        <a href="{{ $firstReviewUrl }}" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-indigo-300 dark:border-indigo-700/80 bg-gradient-to-br from-indigo-50/50 via-white to-indigo-50/20 dark:from-indigo-950/20 dark:via-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    @elseif($reviewCount > 1)
+                        <div role="button" tabindex="0" @click="showReviewModal = true" @keydown.enter="showReviewModal = true" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-indigo-300 dark:border-indigo-700/80 bg-gradient-to-br from-indigo-50/50 via-white to-indigo-50/20 dark:from-indigo-950/20 dark:via-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    @else
+                        <a href="{{ route('seminar-examiner.index') }}" class="group relative bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    @endif
                         <div class="flex items-start justify-between gap-3 mb-3">
-                            <div class="w-10 h-10 rounded-xl {{ ($dosenActionCenter['need_review_count'] ?? 0) > 0 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
+                            <div class="w-10 h-10 rounded-xl {{ $reviewCount > 0 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ ($dosenActionCenter['need_review_count'] ?? 0) > 0 ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
-                                {{ ($dosenActionCenter['need_review_count'] ?? 0) > 0 ? 'Perlu ACC' : 'Tuntas' }}
+                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ $reviewCount > 0 ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                                {{ $reviewCount > 0 ? 'Perlu ACC' : 'Tuntas' }}
                             </span>
                         </div>
                         <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Revisi Mahasiswa Masuk</h4>
                         <div class="flex items-baseline gap-2 mt-1 mb-2">
-                            <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $dosenActionCenter['need_review_count'] ?? 0 }}</span>
+                            <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $reviewCount }}</span>
                             <span class="text-xs font-semibold text-slate-400">Berkas Masuk</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                            {{ ($dosenActionCenter['need_review_count'] ?? 0) > 0 ? 'Mahasiswa telah mengunggah revisi naskah dan menunggu persetujuan (ACC).' : 'Tidak ada berkas perbaikan naskah yang menunggu ditinjau.' }}
+                            {{ $reviewCount > 0 ? 'Mahasiswa telah mengunggah revisi naskah dan menunggu persetujuan (ACC).' : 'Tidak ada berkas perbaikan naskah yang menunggu ditinjau.' }}
                         </p>
                         <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform">
-                            <span>Tinjau Perbaikan Naskah</span>
+                            <span>
+                                @if($reviewCount > 1)
+                                    Tinjau {{ $reviewCount }} Berkas Revisi
+                                @elseif($reviewCount === 1)
+                                    Tinjau Perbaikan Naskah
+                                @else
+                                    Lihat Penguji Seminar
+                                @endif
+                            </span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                         </div>
-                    </a>
+                    @if($reviewCount > 1)
+                        </div>
+                    @else
+                        </a>
+                    @endif
+                </div>
+
+                <!-- MODAL 1: DAFTAR UJIAN BUTUH INPUT NILAI & CATATAN -->
+                <div x-show="showInputModal" x-cloak 
+                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     aria-labelledby="modal-title-input" role="dialog" aria-modal="true">
+                    <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+                        <div x-show="showInputModal" 
+                             x-transition:enter="ease-out duration-300" 
+                             x-transition:enter-start="opacity-0" 
+                             x-transition:enter-end="opacity-100" 
+                             x-transition:leave="ease-in duration-200" 
+                             x-transition:leave-start="opacity-100" 
+                             x-transition:leave-end="opacity-0" 
+                             @click="showInputModal = false"
+                             class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"></div>
+
+                        <div x-show="showInputModal" 
+                             x-transition:enter="ease-out duration-300" 
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                             x-transition:leave="ease-in duration-200" 
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                             class="relative bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl sm:w-full border border-slate-200 dark:border-slate-700">
+                            
+                            <div class="p-6 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-800 dark:text-white" id="modal-title-input">
+                                            Catatan &amp; Nilai Ujian Belum Diisi
+                                        </h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                            Terdapat {{ $inputCount }} ujian yang memerlukan input catatan revisi atau penilaian Anda.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button type="button" @click="showInputModal = false" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+
+                            <div class="p-6 max-h-[60vh] overflow-y-auto space-y-3">
+                                @forelse($dosenActionCenter['need_input_revisions'] ?? [] as $item)
+                                    <div class="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-rose-300 dark:hover:border-rose-700 bg-slate-50/50 dark:bg-slate-900/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                        <div class="space-y-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ ($item['type'] ?? '') === 'defense' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' }}">
+                                                    {{ $item['category'] ?? 'Ujian' }}
+                                                </span>
+                                                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $item['student_name'] }}</span>
+                                                <span class="text-[10px] text-slate-400">({{ $item['student_identifier'] }})</span>
+                                            </div>
+                                            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 italic">
+                                                {{ $item['thesis_title'] ?? '-' }}
+                                            </p>
+                                            <div class="flex items-center gap-3 text-[10px] text-slate-400 pt-0.5">
+                                                <span>{{ \Carbon\Carbon::parse($item['date'])->locale('id')->translatedFormat('d M Y') }}</span>
+                                                @if(!empty($item['time']))
+                                                    <span>• {{ $item['time'] }}</span>
+                                                @endif
+                                                @if(!empty($item['location']) && $item['location'] !== '-')
+                                                    <span>• {{ $item['location'] }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <a href="{{ $item['url'] }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-md shadow-rose-600/20 active:scale-95 transition-all shrink-0 cursor-pointer">
+                                            <span>Isi Catatan &amp; Nilai</span>
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                        </a>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-8 text-slate-400 text-xs">
+                                        Tidak ada catatan atau nilai ujian yang tertunda.
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-2">
+                                <button type="button" @click="showInputModal = false; scrollToTable()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    <span>Lihat di Tabel Dashboard</span>
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('seminar-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-orange-600 hover:underline">Halaman Penguji Seminar</a>
+                                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                                    <a href="{{ route('defense-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:underline">Halaman Penguji Sidang</a>
+                                    <button type="button" @click="showInputModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer ml-2">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODAL 2: DAFTAR REVISI MAHASISWA MASUK MENUNGGU REVIEW -->
+                <div x-show="showReviewModal" x-cloak 
+                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     aria-labelledby="modal-title-review" role="dialog" aria-modal="true">
+                    <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+                        <div x-show="showReviewModal" 
+                             x-transition:enter="ease-out duration-300" 
+                             x-transition:enter-start="opacity-0" 
+                             x-transition:enter-end="opacity-100" 
+                             x-transition:leave="ease-in duration-200" 
+                             x-transition:leave-start="opacity-100" 
+                             x-transition:leave-end="opacity-0" 
+                             @click="showReviewModal = false"
+                             class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"></div>
+
+                        <div x-show="showReviewModal" 
+                             x-transition:enter="ease-out duration-300" 
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                             x-transition:leave="ease-in duration-200" 
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                             class="relative bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl sm:w-full border border-slate-200 dark:border-slate-700">
+                            
+                            <div class="p-6 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-800 dark:text-white" id="modal-title-review">
+                                            Revisi Mahasiswa Masuk Menunggu ACC
+                                        </h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                            Terdapat {{ $reviewCount }} berkas perbaikan naskah yang telah diunggah mahasiswa dan siap ditinjau.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button type="button" @click="showReviewModal = false" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+
+                            <div class="p-6 max-h-[60vh] overflow-y-auto space-y-3">
+                                @forelse($dosenActionCenter['need_review_revisions'] ?? [] as $item)
+                                    <div class="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-700 bg-slate-50/50 dark:bg-slate-900/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                        <div class="space-y-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ ($item['type'] ?? '') === 'defense' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' }}">
+                                                    {{ $item['category'] ?? 'Revisi' }}
+                                                </span>
+                                                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $item['student_name'] }}</span>
+                                                <span class="text-[10px] text-slate-400">({{ $item['student_identifier'] }})</span>
+                                            </div>
+                                            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 italic">
+                                                {{ $item['thesis_title'] ?? '-' }}
+                                            </p>
+                                            <div class="flex items-center gap-3 text-[10px] text-slate-400 pt-0.5">
+                                                <span>Diunggah: {{ \Carbon\Carbon::parse($item['date'])->locale('id')->translatedFormat('d M Y, H:i') }} WIB</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ $item['url'] }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md shadow-indigo-600/20 active:scale-95 transition-all shrink-0 cursor-pointer">
+                                            <span>Tinjau Perbaikan</span>
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                        </a>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-8 text-slate-400 text-xs">
+                                        Tidak ada berkas perbaikan naskah yang menunggu ditinjau.
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-2">
+                                <button type="button" @click="showReviewModal = false; scrollToTable()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    <span>Lihat di Tabel Dashboard</span>
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('seminar-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-orange-600 hover:underline">Halaman Penguji Seminar</a>
+                                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                                    <a href="{{ route('defense-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:underline">Halaman Penguji Sidang</a>
+                                    <button type="button" @click="showReviewModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer ml-2">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -899,6 +1140,256 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Jadwal & Tugas Menguji Seminar & Sidang Dosen -->
+            <div id="jadwal-menguji" class="scroll-mt-24 mb-6">
+                @if($examinerSeminarSchedules->count() > 0 || $examinerDefenseSchedules->count() > 0)
+                    <x-table-card 
+                        title="Jadwal &amp; Tugas Menguji (Seminar &amp; Sidang)"
+                        subtitle="Daftar Mahasiswa yang Anda bimbing dan uji pada periode ini.">
+                        <x-slot name="headerActions">
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('seminar-examiner.index') }}" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
+                                    <span>Penguji Seminar</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                                <span class="text-slate-300 dark:text-slate-600">|</span>
+                                <a href="{{ route('defense-examiner.index') }}" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                                    <span>Penguji Sidang</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </x-slot>
+                        
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
+                                    <th class="px-6 py-3">Mahasiswa</th>
+                                    <th class="px-6 py-3">Posisi</th>
+                                    <th class="px-6 py-3">Jenis Ujian</th>
+                                    <th class="px-6 py-3">Status Revisi / Nilai</th>
+                                    <th class="px-6 py-3">Waktu &amp; Tempat</th>
+                                    <th class="px-6 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                                @foreach($examinerSeminarSchedules as $detail)
+                                    @php
+                                        $rev = $detail->getRevisionFor(Auth::id());
+                                        $detailSemDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
+                                        $detailSemEnd = \Carbon\Carbon::parse($detailSemDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
+                                        $isFinished = ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
+                                            || $detail->isGraded()
+                                            || $detail->isAllRevisionsApproved()
+                                            || $detailSemEnd->isPast();
+                                    @endphp
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div>
+                                                <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
+                                                <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1" title="{{ $detail->thesis->title }}">{{ $detail->thesis->title }}</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($detail->thesis->pembimbing1_id == Auth::id())
+                                                <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
+                                            @elseif($detail->thesis->pembimbing2_id == Auth::id())
+                                                <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
+                                            @elseif($detail->examiner1_id == Auth::id())
+                                                <x-status-badge type="indigo" label="Penguji 1" size="sm" />
+                                            @elseif($detail->examiner2_id == Auth::id())
+                                                <x-status-badge type="indigo" label="Penguji 2" size="sm" />
+                                            @else
+                                                <x-status-badge type="indigo" label="Penguji" size="sm" />
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-1.5">
+                                                <x-status-badge type="orange" label="Seminar" size="sm" />
+                                                @if($isFinished)
+                                                    <span class="px-2 py-0.5 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-extrabold rounded-md uppercase tracking-wider">Terlaksana</span>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($rev && $rev->status === 'approved')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    Revisi ACC
+                                                </span>
+                                            @elseif($rev && $rev->status === 'resubmitted')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80 animate-pulse">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+                                                    Perbaikan Masuk
+                                                </span>
+                                            @elseif($rev && !empty($rev->revision_notes))
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                    Menunggu Mahasiswa
+                                                </span>
+                                            @elseif($isFinished)
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-rose-200 dark:border-rose-800/80 animate-pulse">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                                                    Catatan Belum Diisi
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80">
+                                                    Terjadwal
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-[11px]">
+                                                <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
+                                                <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
+                                                @if($detail->schedule->meeting_link && !$isFinished)
+                                                    <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
+                                                        <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                        Link Google Meet
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            @if($rev && $rev->status === 'resubmitted')
+                                                <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
+                                                    <span>Tinjau Perbaikan</span>
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                </a>
+                                            @elseif(!$rev || empty($rev->revision_notes))
+                                                <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
+                                                    <span>Isi Catatan &amp; Nilai</span>
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                </a>
+                                            @else
+                                                <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer">
+                                                    Buka Lembar Revisi
+                                                </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @foreach($examinerDefenseSchedules as $detail)
+                                    @php
+                                        $rev = $detail->getRevisionFor(Auth::id());
+                                        $detailDefDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
+                                        $detailDefEnd = \Carbon\Carbon::parse($detailDefDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
+                                        $isFinished = ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
+                                            || $detail->isGradingComplete()
+                                            || $detail->isRevisionAllApproved()
+                                            || $detailDefEnd->isPast();
+                                    @endphp
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div>
+                                                <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
+                                                <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1" title="{{ $detail->thesis->title }}">{{ $detail->thesis->title }}</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($detail->thesis->pembimbing1_id == Auth::id())
+                                                <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
+                                            @elseif($detail->thesis->pembimbing2_id == Auth::id())
+                                                <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
+                                            @elseif($detail->examiner1_id == Auth::id())
+                                                <x-status-badge type="indigo" label="Penguji 1" size="sm" />
+                                            @elseif($detail->examiner2_id == Auth::id())
+                                                <x-status-badge type="indigo" label="Penguji 2" size="sm" />
+                                            @else
+                                                <x-status-badge type="indigo" label="Penguji" size="sm" />
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-1.5">
+                                                <x-status-badge type="emerald" label="Sidang" size="sm" />
+                                                @if($isFinished)
+                                                    <span class="px-2 py-0.5 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-extrabold rounded-md uppercase tracking-wider">Terlaksana</span>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($rev && $rev->status === 'approved')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    Revisi ACC
+                                                </span>
+                                            @elseif($rev && $rev->status === 'resubmitted')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80 animate-pulse">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+                                                    Perbaikan Masuk
+                                                </span>
+                                            @elseif($rev && !empty($rev->revision_notes))
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                    Menunggu Mahasiswa
+                                                </span>
+                                            @elseif($isFinished && (!$rev || !$rev->isGraded()))
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-rose-200 dark:border-rose-800/80 animate-pulse">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                                                    Catatan / Nilai Belum
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
+                                                    Terjadwal
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-[11px]">
+                                                <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
+                                                <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
+                                                @if($detail->schedule->meeting_link && !$isFinished)
+                                                    <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
+                                                        <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                        Link Google Meet
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            @if($rev && $rev->status === 'resubmitted')
+                                                <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
+                                                    <span>Tinjau Perbaikan</span>
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                </a>
+                                            @elseif(!$rev || !$rev->isGraded())
+                                                <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
+                                                    <span>Input Nilai Sidang</span>
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                </a>
+                                            @else
+                                                <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer">
+                                                    Buka Lembar Penilaian
+                                                </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </x-table-card>
+                @else
+                    <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-slate-800 dark:text-white">Jadwal &amp; Tugas Menguji Tuntas</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tidak ada jadwal menguji aktif atau catatan ujian yang perlu dilengkapi saat ini.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <a href="{{ route('seminar-examiner.index') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">
+                                Riwayat Penguji Seminar
+                            </a>
+                            <a href="{{ route('defense-examiner.index') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">
+                                Riwayat Penguji Sidang
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </div>
 
             <!-- Dosen Charts: Distribusi Progres & Tren Aktivitas -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -1626,222 +2117,6 @@
                     </div>
                 @endif
             </div>
-        @endif
-
-        @if(Auth::user()->role === 'dosen' && ($examinerSeminarSchedules->count() > 0 || $examinerDefenseSchedules->count() > 0))
-            <x-table-card 
-                id="jadwal-menguji"
-                title="Jadwal Menguji Seminar & Sidang"
-                subtitle="Daftar Mahasiswa yang Anda bimbing dan uji pada periode ini."
-                class="mb-6 scroll-mt-24">
-                
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
-                            <th class="px-6 py-3">Mahasiswa</th>
-                            <th class="px-6 py-3">Posisi</th>
-                            <th class="px-6 py-3">Jenis Ujian</th>
-                            <th class="px-6 py-3">Status Revisi / Nilai</th>
-                            <th class="px-6 py-3">Waktu & Tempat</th>
-                            <th class="px-6 py-3 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
-                        @foreach($examinerSeminarSchedules as $detail)
-                            @php
-                                $rev = $detail->getRevisionFor(Auth::id());
-                                $detailSemDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
-                                $detailSemEnd = \Carbon\Carbon::parse($detailSemDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
-                                $isFinished = ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
-                                    || $detail->isGraded()
-                                    || $detail->isAllRevisionsApproved()
-                                    || $detailSemEnd->isPast();
-                            @endphp
-                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div>
-                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
-                                        <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1" title="{{ $detail->thesis->title }}">{{ $detail->thesis->title }}</p>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($detail->thesis->pembimbing1_id == Auth::id())
-                                        <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
-                                    @elseif($detail->thesis->pembimbing2_id == Auth::id())
-                                        <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
-                                    @elseif($detail->examiner1_id == Auth::id())
-                                        <x-status-badge type="indigo" label="Penguji 1" size="sm" />
-                                    @elseif($detail->examiner2_id == Auth::id())
-                                        <x-status-badge type="indigo" label="Penguji 2" size="sm" />
-                                    @else
-                                        <x-status-badge type="indigo" label="Penguji" size="sm" />
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-1.5">
-                                        <x-status-badge type="orange" label="Seminar" size="sm" />
-                                        @if($isFinished)
-                                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-extrabold rounded-md uppercase tracking-wider">Terlaksana</span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($rev && $rev->status === 'approved')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            Revisi ACC
-                                        </span>
-                                    @elseif($rev && $rev->status === 'resubmitted')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80 animate-pulse">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
-                                            Perbaikan Masuk
-                                        </span>
-                                    @elseif($rev && !empty($rev->revision_notes))
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            Menunggu Mahasiswa
-                                        </span>
-                                    @elseif($isFinished)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-rose-200 dark:border-rose-800/80 animate-pulse">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                                            Catatan Belum Diisi
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80">
-                                            Terjadwal
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-[11px]">
-                                        <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
-                                        <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                        @if($detail->schedule->meeting_link && !$isFinished)
-                                            <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
-                                                <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                Link Google Meet
-                                            </a>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    @if($rev && $rev->status === 'resubmitted')
-                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
-                                            <span>Tinjau Perbaikan</span>
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                                        </a>
-                                    @elseif(!$rev || empty($rev->revision_notes))
-                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
-                                            <span>Isi Catatan &amp; Nilai</span>
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer">
-                                            Buka Lembar Revisi
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                        @foreach($examinerDefenseSchedules as $detail)
-                            @php
-                                $rev = $detail->getRevisionFor(Auth::id());
-                                $detailDefDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
-                                $detailDefEnd = \Carbon\Carbon::parse($detailDefDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
-                                $isFinished = ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
-                                    || $detail->isGradingComplete()
-                                    || $detail->isRevisionAllApproved()
-                                    || $detailDefEnd->isPast();
-                            @endphp
-                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div>
-                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
-                                        <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1" title="{{ $detail->thesis->title }}">{{ $detail->thesis->title }}</p>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($detail->thesis->pembimbing1_id == Auth::id())
-                                        <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
-                                    @elseif($detail->thesis->pembimbing2_id == Auth::id())
-                                        <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
-                                    @elseif($detail->examiner1_id == Auth::id())
-                                        <x-status-badge type="indigo" label="Penguji 1" size="sm" />
-                                    @elseif($detail->examiner2_id == Auth::id())
-                                        <x-status-badge type="indigo" label="Penguji 2" size="sm" />
-                                    @else
-                                        <x-status-badge type="indigo" label="Penguji" size="sm" />
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-1.5">
-                                        <x-status-badge type="emerald" label="Sidang" size="sm" />
-                                        @if($isFinished)
-                                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-extrabold rounded-md uppercase tracking-wider">Terlaksana</span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($rev && $rev->status === 'approved')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            Revisi ACC
-                                        </span>
-                                    @elseif($rev && $rev->status === 'resubmitted')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80 animate-pulse">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
-                                            Perbaikan Masuk
-                                        </span>
-                                    @elseif($rev && !empty($rev->revision_notes))
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            Menunggu Mahasiswa
-                                        </span>
-                                    @elseif($isFinished && (!$rev || !$rev->isGraded()))
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-rose-200 dark:border-rose-800/80 animate-pulse">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                                            Catatan / Nilai Belum
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
-                                            Terjadwal
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-[11px]">
-                                        <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
-                                        <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                        @if($detail->schedule->meeting_link && !$isFinished)
-                                            <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
-                                                <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                Link Google Meet
-                                            </a>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    @if($rev && $rev->status === 'resubmitted')
-                                        <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
-                                            <span>Tinjau Perbaikan</span>
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                                        </a>
-                                    @elseif(!$rev || !$rev->isGraded())
-                                        <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
-                                            <span>Input Nilai Sidang</span>
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer">
-                                            Buka Lembar Penilaian
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </x-table-card>
         @endif
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
