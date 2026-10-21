@@ -664,7 +664,7 @@
                             <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-amber-500 text-white leading-none">{{ $dosenActionCenter['pending_mentoring_count'] }}</span>
                         @endif
                     </a>
-                    <a href="#jadwal-menguji" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer">
+                    <a href="{{ route('seminar-examiner.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span>Jadwal Menguji Ujian</span>
                         @if((($dosenActionCenter['need_input_count'] ?? 0) + ($dosenActionCenter['need_review_count'] ?? 0)) > 0)
@@ -682,16 +682,7 @@
             </div>
 
             <!-- Actionable Task Center Dosen (3 Dynamic Cards with Instant Action Modals) -->
-            <div x-data="{ 
-                showInputModal: false, 
-                showReviewModal: false,
-                scrollToTable() {
-                    const el = document.getElementById('jadwal-menguji');
-                    if (el) {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }
-            }" class="mb-6">
+            <div x-data="{ showInputModal: false, showReviewModal: false }" class="mb-6">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
@@ -899,18 +890,14 @@
                             </div>
 
                             <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-2">
-                                <button type="button" @click="showInputModal = false; scrollToTable()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                    <span>Lihat di Tabel Dashboard</span>
-                                </button>
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('seminar-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-orange-600 hover:underline">Halaman Penguji Seminar</a>
                                     <span class="text-slate-300 dark:text-slate-600">|</span>
                                     <a href="{{ route('defense-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:underline">Halaman Penguji Sidang</a>
-                                    <button type="button" @click="showInputModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer ml-2">
-                                        Tutup
-                                    </button>
                                 </div>
+                                <button type="button" @click="showInputModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                                    Tutup
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -990,18 +977,14 @@
                             </div>
 
                             <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-2">
-                                <button type="button" @click="showReviewModal = false; scrollToTable()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                    <span>Lihat di Tabel Dashboard</span>
-                                </button>
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('seminar-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-orange-600 hover:underline">Halaman Penguji Seminar</a>
                                     <span class="text-slate-300 dark:text-slate-600">|</span>
                                     <a href="{{ route('defense-examiner.index') }}" class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:underline">Halaman Penguji Sidang</a>
-                                    <button type="button" @click="showReviewModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer ml-2">
-                                        Tutup
-                                    </button>
                                 </div>
+                                <button type="button" @click="showReviewModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                                    Tutup
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1141,255 +1124,7 @@
                 </div>
             @endif
 
-            <!-- Jadwal & Tugas Menguji Seminar & Sidang Dosen -->
-            <div id="jadwal-menguji" class="scroll-mt-24 mb-6">
-                @if($examinerSeminarSchedules->count() > 0 || $examinerDefenseSchedules->count() > 0)
-                    <x-table-card 
-                        title="Jadwal &amp; Tugas Menguji (Seminar &amp; Sidang)"
-                        subtitle="Daftar Mahasiswa yang Anda bimbing dan uji pada periode ini.">
-                        <x-slot name="headerActions">
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('seminar-examiner.index') }}" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">
-                                    <span>Penguji Seminar</span>
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                </a>
-                                <span class="text-slate-300 dark:text-slate-600">|</span>
-                                <a href="{{ route('defense-examiner.index') }}" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
-                                    <span>Penguji Sidang</span>
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                </a>
-                            </div>
-                        </x-slot>
-                        
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
-                                    <th class="px-6 py-3">Mahasiswa</th>
-                                    <th class="px-6 py-3">Posisi</th>
-                                    <th class="px-6 py-3">Jenis Ujian</th>
-                                    <th class="px-6 py-3">Status Revisi / Nilai</th>
-                                    <th class="px-6 py-3">Waktu &amp; Tempat</th>
-                                    <th class="px-6 py-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
-                                @foreach($examinerSeminarSchedules as $detail)
-                                    @php
-                                        $rev = $detail->getRevisionFor(Auth::id());
-                                        $detailSemDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
-                                        $detailSemEnd = \Carbon\Carbon::parse($detailSemDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
-                                        $isFinished = ($detail->thesis && $detail->thesis->seminarApplication && $detail->thesis->seminarApplication->status === 'completed')
-                                            || $detail->isGraded()
-                                            || $detail->isAllRevisionsApproved()
-                                            || $detailSemEnd->isPast();
-                                    @endphp
-                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                                        <td class="px-6 py-4">
-                                            <div>
-                                                <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
-                                                <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1" title="{{ $detail->thesis->title }}">{{ $detail->thesis->title }}</p>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($detail->thesis->pembimbing1_id == Auth::id())
-                                                <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
-                                            @elseif($detail->thesis->pembimbing2_id == Auth::id())
-                                                <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
-                                            @elseif($detail->examiner1_id == Auth::id())
-                                                <x-status-badge type="indigo" label="Penguji 1" size="sm" />
-                                            @elseif($detail->examiner2_id == Auth::id())
-                                                <x-status-badge type="indigo" label="Penguji 2" size="sm" />
-                                            @else
-                                                <x-status-badge type="indigo" label="Penguji" size="sm" />
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center gap-1.5">
-                                                <x-status-badge type="orange" label="Seminar" size="sm" />
-                                                @if($isFinished)
-                                                    <span class="px-2 py-0.5 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-extrabold rounded-md uppercase tracking-wider">Terlaksana</span>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($rev && $rev->status === 'approved')
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                    Revisi ACC
-                                                </span>
-                                            @elseif($rev && $rev->status === 'resubmitted')
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80 animate-pulse">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
-                                                    Perbaikan Masuk
-                                                </span>
-                                            @elseif($rev && !empty($rev->revision_notes))
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                    Menunggu Mahasiswa
-                                                </span>
-                                            @elseif($isFinished)
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-rose-200 dark:border-rose-800/80 animate-pulse">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                                                    Catatan Belum Diisi
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800/80">
-                                                    Terjadwal
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="text-[11px]">
-                                                <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
-                                                <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                                @if($detail->schedule->meeting_link && !$isFinished)
-                                                    <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
-                                                        <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                        Link Google Meet
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            @if($rev && $rev->status === 'resubmitted')
-                                                <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
-                                                    <span>Tinjau Perbaikan</span>
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                                                </a>
-                                            @elseif(!$rev || empty($rev->revision_notes))
-                                                <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
-                                                    <span>Isi Catatan &amp; Nilai</span>
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                                </a>
-                                            @else
-                                                <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer">
-                                                    Buka Lembar Revisi
-                                                </a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                @foreach($examinerDefenseSchedules as $detail)
-                                    @php
-                                        $rev = $detail->getRevisionFor(Auth::id());
-                                        $detailDefDate = \Carbon\Carbon::parse($detail->schedule->date)->format('Y-m-d');
-                                        $detailDefEnd = \Carbon\Carbon::parse($detailDefDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
-                                        $isFinished = ($detail->thesis && $detail->thesis->defenseApplication && $detail->thesis->defenseApplication->status === 'completed')
-                                            || $detail->isGradingComplete()
-                                            || $detail->isRevisionAllApproved()
-                                            || $detailDefEnd->isPast();
-                                    @endphp
-                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                                        <td class="px-6 py-4">
-                                            <div>
-                                                <p class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</p>
-                                                <p class="text-[10px] text-slate-400 italic mt-0.5 line-clamp-1" title="{{ $detail->thesis->title }}">{{ $detail->thesis->title }}</p>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($detail->thesis->pembimbing1_id == Auth::id())
-                                                <x-status-badge type="blue" label="Pembimbing 1" size="sm" />
-                                            @elseif($detail->thesis->pembimbing2_id == Auth::id())
-                                                <x-status-badge type="blue" label="Pembimbing 2" size="sm" />
-                                            @elseif($detail->examiner1_id == Auth::id())
-                                                <x-status-badge type="indigo" label="Penguji 1" size="sm" />
-                                            @elseif($detail->examiner2_id == Auth::id())
-                                                <x-status-badge type="indigo" label="Penguji 2" size="sm" />
-                                            @else
-                                                <x-status-badge type="indigo" label="Penguji" size="sm" />
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center gap-1.5">
-                                                <x-status-badge type="emerald" label="Sidang" size="sm" />
-                                                @if($isFinished)
-                                                    <span class="px-2 py-0.5 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-extrabold rounded-md uppercase tracking-wider">Terlaksana</span>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            @if($rev && $rev->status === 'approved')
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                    Revisi ACC
-                                                </span>
-                                            @elseif($rev && $rev->status === 'resubmitted')
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-indigo-200 dark:border-indigo-800/80 animate-pulse">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
-                                                    Perbaikan Masuk
-                                                </span>
-                                            @elseif($rev && !empty($rev->revision_notes))
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-amber-200 dark:border-amber-800/80">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                    Menunggu Mahasiswa
-                                                </span>
-                                            @elseif($isFinished && (!$rev || !$rev->isGraded()))
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 text-[9px] font-black rounded-full uppercase tracking-wider border border-rose-200 dark:border-rose-800/80 animate-pulse">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
-                                                    Catatan / Nilai Belum
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">
-                                                    Terjadwal
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="text-[11px]">
-                                                <p class="font-bold text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</p>
-                                                <p class="text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} WIB @ {{ $detail->schedule->location ?: '-' }}</p>
-                                                @if($detail->schedule->meeting_link && !$isFinished)
-                                                    <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="text-[9px] text-blue-600 dark:text-blue-400 font-black flex items-center mt-1 hover:underline">
-                                                        <svg class="w-2.5 h-2.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                        Link Google Meet
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            @if($rev && $rev->status === 'resubmitted')
-                                                <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer">
-                                                    <span>Tinjau Perbaikan</span>
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                                                </a>
-                                            @elseif(!$rev || !$rev->isGraded())
-                                                <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-black rounded-xl transition-all shadow-md shadow-rose-600/20 active:scale-95 cursor-pointer">
-                                                    <span>Input Nilai Sidang</span>
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                                </a>
-                                            @else
-                                                <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center px-3.5 py-1.5 bg-slate-100 dark:bg-slate-700/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-xs hover:shadow-sm cursor-pointer">
-                                                    Buka Lembar Penilaian
-                                                </a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </x-table-card>
-                @else
-                    <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-black text-slate-800 dark:text-white">Jadwal &amp; Tugas Menguji Tuntas</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tidak ada jadwal menguji aktif atau catatan ujian yang perlu dilengkapi saat ini.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <a href="{{ route('seminar-examiner.index') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">
-                                Riwayat Penguji Seminar
-                            </a>
-                            <a href="{{ route('defense-examiner.index') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">
-                                Riwayat Penguji Sidang
-                            </a>
-                        </div>
-                    </div>
-                @endif
-            </div>
+
 
             <!-- Dosen Charts: Distribusi Progres & Tren Aktivitas -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
