@@ -671,11 +671,11 @@
                             <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-500 text-white leading-none">{{ ($dosenActionCenter['need_input_count'] ?? 0) + ($dosenActionCenter['need_review_count'] ?? 0) }}</span>
                         @endif
                     </a>
-                    <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'warning']) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer">
+                    <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                         <span>Monitoring Bimbingan Pasif</span>
-                        @if(isset($earlyWarning) && ($earlyWarning['total_inactive'] ?? 0) > 0)
-                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-600 text-white leading-none">{{ $earlyWarning['total_inactive'] }}</span>
+                        @if(($stalledThesesCount ?? $earlyWarning['stalled_count'] ?? 0) > 0)
+                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-600 text-white leading-none">{{ $stalledThesesCount ?? $earlyWarning['stalled_count'] }}</span>
                         @endif
                     </a>
                 </div>
@@ -1094,16 +1094,16 @@
                                 </div>
                                 <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1.5 leading-relaxed">
                                     Terdapat 
-                                    <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'warning']) }}" 
+                                    <a href="{{ route('theses.index', ['mentoring_health' => 'warning']) }}" 
                                        class="underline decoration-amber-400 font-bold text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors" 
                                        title="Klik untuk filter mahasiswa pasif (8–14 hari)">
                                         {{ $earlyWarning['warning_count'] }} mahasiswa pasif (8–14 hari)
                                     </a> 
                                     dan 
-                                    <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'critical']) }}" 
+                                    <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" 
                                        class="underline decoration-rose-400 font-bold text-slate-800 dark:text-white hover:text-rose-600 dark:hover:text-rose-400 transition-colors" 
-                                       title="Klik untuk filter mahasiswa macet (&gt;14 hari)">
-                                        {{ $earlyWarning['critical_count'] }} mahasiswa macet (&gt;14 hari)
+                                       title="Klik untuk filter mahasiswa macet (>14 hari)">
+                                        {{ $stalledThesesCount ?? $earlyWarning['stalled_count'] ?? $earlyWarning['critical_count'] }} mahasiswa macet (&gt;14 hari)
                                     </a> 
                                     yang belum melakukan bimbingan rutin (standar prodi: min 1x/pekan).
                                 </p>
@@ -1111,7 +1111,7 @@
                         </div>
 
                         <div class="flex items-center gap-2 shrink-0">
-                            <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => ($earlyWarning['critical_count'] > 0 ? 'critical' : 'warning')]) }}" 
+                            <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" 
                                class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/25 transition-all cursor-pointer">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -1452,16 +1452,16 @@
                                         </div>
                                         <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1.5 leading-relaxed">
                                             Terdapat 
-                                            <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'warning']) }}" 
+                                            <a href="{{ route('theses.index', ['mentoring_health' => 'warning']) }}" 
                                                class="underline decoration-amber-400 font-bold text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors" 
                                                title="Klik untuk filter mahasiswa pasif (8–14 hari)">
                                                 {{ $earlyWarning['warning_count'] }} mahasiswa pasif (8–14 hari)
                                             </a> 
                                             dan 
-                                            <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => 'critical']) }}" 
+                                            <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" 
                                                class="underline decoration-rose-400 font-bold text-slate-800 dark:text-white hover:text-rose-600 dark:hover:text-rose-400 transition-colors" 
-                                               title="Klik untuk filter mahasiswa macet (&gt;14 hari)">
-                                                {{ $earlyWarning['critical_count'] }} mahasiswa macet (&gt;14 hari)
+                                               title="Klik untuk filter mahasiswa macet (>14 hari)">
+                                                {{ $stalledThesesCount ?? $earlyWarning['stalled_count'] ?? $earlyWarning['critical_count'] }} mahasiswa macet (&gt;14 hari)
                                             </a> 
                                             yang belum melakukan bimbingan rutin (standar prodi: min 1x/pekan).
                                         </p>
@@ -1469,7 +1469,7 @@
                                 </div>
 
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <a href="{{ route('theses.index', ['status' => 'active', 'mentoring_health' => ($earlyWarning['critical_count'] > 0 ? 'critical' : 'warning')]) }}" 
+                                    <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" 
                                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/25 transition-all cursor-pointer">
                                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

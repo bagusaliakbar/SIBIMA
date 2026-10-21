@@ -445,6 +445,9 @@ class ThesisController extends Controller
             if ($status !== 'all') {
                 $thesesQuery->where('status', $status);
             }
+            if ($filter === 'stalled') {
+                $thesesQuery->mentoringHealth('stalled');
+            }
         }
 
         if ($user->role === 'dosen' && in_array($roleFilter, ['p1', 'p2'])) {

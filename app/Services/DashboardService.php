@@ -437,8 +437,32 @@ class DashboardService
                 return true;
             });
 
-        $activeTheses = Thesis::where('status', 'active')
-            ->where(fn($q) => $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId))->get();
+        $activeTheses = Thesis::where('status', '!=', 'completed')
+            ->where('status', '!=', 'rejected')
+            ->where(fn($q) => $q->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId))
+            ->with(['student', 'mentoringSessions' => function($q) {
+                $q->where('status', 'completed')->where('is_absent', false)->orderBy('scheduled_at', 'desc');
+            }])
+            ->get();
+
+        $stalledIds = [];
+        foreach ($activeTheses as $t) {
+            $completedCount = $t->mentoringSessions ? $t->mentoringSessions->count() : 0;
+            if ($completedCount === 0) {
+                $stalledIds[] = $t->id;
+            } else {
+                $lastSession = $t->mentoringSessions->first();
+                if ($lastSession && $lastSession->scheduled_at) {
+                    $daysSince = (int) \Carbon\Carbon::parse($lastSession->scheduled_at)->startOfDay()->diffInDays(now()->startOfDay());
+                    if ($daysSince > 14) {
+                        $stalledIds[] = $t->id;
+                    }
+                }
+            }
+        }
+        $stalledCount = count($stalledIds);
+        $data['stalledThesesCount'] = $stalledCount;
+        $data['stalledCount'] = $stalledCount;
 
         $data['activeThesesCount'] = $activeTheses->count();
         $data['totalActiveStudentsP1'] = $activeTheses->where('pembimbing1_id', $dosenId)->count();
@@ -569,6 +593,7 @@ class DashboardService
 
         $data['earlyWarning'] = [
             'total_inactive' => count($inactiveThesesList),
+            'stalled_count' => $stalledCount,
             'warning_count' => $dosenWarningCount,
             'critical_count' => $dosenCriticalCount,
             'students' => $inactiveThesesList,
@@ -853,12 +878,31 @@ class DashboardService
         }
 
         // Early Warning System: Global Inactive Mentoring Students (> 7 days)
-        $allActiveTheses = Thesis::where('status', 'active')->with(['student', 'pembimbing1', 'pembimbing2'])->get();
+        $allActiveTheses = Thesis::where('status', '!=', 'completed')
+            ->where('status', '!=', 'rejected')
+            ->with(['student', 'pembimbing1', 'pembimbing2', 'mentoringSessions' => function($q) {
+                $q->where('status', 'completed')->where('is_absent', false)->orderBy('scheduled_at', 'desc');
+            }])
+            ->get();
         $globalInactiveList = [];
         $globalWarningCount = 0;
         $globalCriticalCount = 0;
+        $globalStalledIds = [];
 
         foreach ($allActiveTheses as $t) {
+            $completedCount = $t->mentoringSessions ? $t->mentoringSessions->count() : 0;
+            if ($completedCount === 0) {
+                $globalStalledIds[] = $t->id;
+            } else {
+                $lastSession = $t->mentoringSessions->first();
+                if ($lastSession && $lastSession->scheduled_at) {
+                    $daysSince = (int) \Carbon\Carbon::parse($lastSession->scheduled_at)->startOfDay()->diffInDays(now()->startOfDay());
+                    if ($daysSince > 14) {
+                        $globalStalledIds[] = $t->id;
+                    }
+                }
+            }
+
             $days = $t->days_since_last_mentoring;
             if ($days !== null && $days > 7 && !$t->isAccSidangFinal()) {
                 $status = $days > 14 ? 'critical' : 'warning';
@@ -893,10 +937,15 @@ class DashboardService
             }
         }
 
+        $globalStalledCount = count($globalStalledIds);
+        $data['stalledThesesCount'] = $globalStalledCount;
+        $data['stalledCount'] = $globalStalledCount;
+
         usort($globalInactiveList, fn($a, $b) => $b['days_inactive'] <=> $a['days_inactive']);
 
         $data['earlyWarning'] = [
             'total_inactive' => count($globalInactiveList),
+            'stalled_count' => $globalStalledCount,
             'warning_count' => $globalWarningCount,
             'critical_count' => $globalCriticalCount,
             'students' => $globalInactiveList,
