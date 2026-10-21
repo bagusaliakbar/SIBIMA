@@ -75,6 +75,23 @@ class DashboardController extends Controller
             'onlineUsers' => collect(),
             'onlineUsersCount' => 0,
             'onlineUsersByRole' => ['mahasiswa' => 0, 'dosen' => 0, 'kaprodi' => 0, 'admin' => 0],
+            'dosenActionCenter' => [
+                'pending_mentoring_count' => 0,
+                'need_input_revisions' => [],
+                'need_input_count' => 0,
+                'need_review_revisions' => [],
+                'need_review_count' => 0,
+                'total_actions' => 0,
+            ],
+            'adminApprovals' => [
+                'theses' => 0,
+                'unassigned_theses' => 0,
+                'seminars' => 0,
+                'defenses' => 0,
+                'graduations' => 0,
+                'total' => 0,
+            ],
+            'activeWaveInfo' => null,
             'progress' => [
                 'percent' => 0, 
                 'isGraduated' => false, 

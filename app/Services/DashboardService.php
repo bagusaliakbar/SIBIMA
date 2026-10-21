@@ -549,6 +549,137 @@ class DashboardService
         ];
 
         $data['topicTrends'] = $topicTrendsResult;
+
+        // Actionable Task Center for Dosen
+        $pendingMentoringCount = MentoringSession::where('dosen_id', $dosenId)->where('status', 'pending')->count();
+        $needInputList = [];
+        $needReviewList = [];
+
+        // 1. Seminar Exam Details as Examiner
+        $semDetails = SeminarScheduleDetail::with(['schedule', 'thesis.student', 'revisions.messages'])
+            ->where(function($q) use ($dosenId) {
+                $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId);
+            })->get();
+
+        foreach ($semDetails as $detail) {
+            $student = $detail->thesis?->student;
+            if (!$student) continue;
+            $semDate = \Carbon\Carbon::parse($detail->schedule->date ?? now())->format('Y-m-d');
+            $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
+            $rev = $detail->revisions->where('examiner_id', $dosenId)->first();
+            if ($rev && $rev->status === 'approved') continue;
+
+            $hasNotes = $rev && (!empty(trim($rev->revision_notes ?? '')) || !empty($rev->revision_file) || $rev->messages->where('sender_id', $dosenId)->isNotEmpty());
+
+            if ($semEnd->isPast() && !$hasNotes && !$detail->isGraded()) {
+                $needInputList[] = [
+                    'type' => 'seminar',
+                    'category' => 'Seminar Proposal',
+                    'title' => 'Input Catatan/Nilai Seminar',
+                    'student_name' => $student->name,
+                    'student_identifier' => $student->identifier,
+                    'detail_id' => $detail->id,
+                    'url' => route('seminar-examiner.show', $detail->id),
+                    'date' => $detail->schedule->date,
+                ];
+            } elseif ($rev) {
+                $lastMsg = $rev->messages->sortBy('created_at')->last();
+                $isResubmitted = ($rev->status === 'resubmitted') || ($lastMsg && $lastMsg->sender_id === $student->id);
+                if ($isResubmitted) {
+                    $needReviewList[] = [
+                        'type' => 'seminar',
+                        'category' => 'Seminar Proposal',
+                        'title' => 'Tinjau Revisi Seminar',
+                        'student_name' => $student->name,
+                        'student_identifier' => $student->identifier,
+                        'detail_id' => $detail->id,
+                        'url' => route('seminar-examiner.show', $detail->id),
+                        'date' => $rev->resubmitted_at ?? $rev->updated_at,
+                    ];
+                }
+            }
+        }
+
+        // 2. Defense Exam Details as Examiner
+        $defDetails = ThesisDefenseScheduleDetail::with(['schedule', 'thesis.student', 'revisions.messages'])
+            ->where(function($q) use ($dosenId) {
+                $q->where('examiner1_id', $dosenId)->orWhere('examiner2_id', $dosenId);
+            })->get();
+
+        foreach ($defDetails as $detail) {
+            $student = $detail->thesis?->student;
+            if (!$student) continue;
+            $defDate = \Carbon\Carbon::parse($detail->schedule->date ?? now())->format('Y-m-d');
+            $defEnd = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($detail->end_time)->format('H:i:s'));
+            $rev = $detail->revisions->where('examiner_id', $dosenId)->first();
+            if ($rev && $rev->status === 'approved') continue;
+
+            $hasNotes = $rev && (!empty(trim($rev->revision_notes ?? '')) || !empty($rev->revision_file) || $rev->messages->where('sender_id', $dosenId)->isNotEmpty());
+
+            if ($defEnd->isPast() && !$hasNotes && !$detail->isGradingComplete()) {
+                $needInputList[] = [
+                    'type' => 'defense',
+                    'category' => 'Sidang Skripsi',
+                    'title' => 'Input Catatan/Nilai Sidang',
+                    'student_name' => $student->name,
+                    'student_identifier' => $student->identifier,
+                    'detail_id' => $detail->id,
+                    'url' => route('defense-examiner.show', $detail->id),
+                    'date' => $detail->schedule->date,
+                ];
+            } elseif ($rev) {
+                $lastMsg = $rev->messages->sortBy('created_at')->last();
+                $isResubmitted = ($rev->status === 'resubmitted') || ($lastMsg && $lastMsg->sender_id === $student->id);
+                if ($isResubmitted) {
+                    $needReviewList[] = [
+                        'type' => 'defense',
+                        'category' => 'Sidang Skripsi',
+                        'title' => 'Tinjau Revisi Sidang',
+                        'student_name' => $student->name,
+                        'student_identifier' => $student->identifier,
+                        'detail_id' => $detail->id,
+                        'url' => route('defense-examiner.show', $detail->id),
+                        'date' => $rev->resubmitted_at ?? $rev->updated_at,
+                    ];
+                }
+            }
+        }
+
+        $data['dosenActionCenter'] = [
+            'pending_mentoring_count' => $pendingMentoringCount,
+            'need_input_revisions' => $needInputList,
+            'need_input_count' => count($needInputList),
+            'need_review_revisions' => $needReviewList,
+            'need_review_count' => count($needReviewList),
+            'total_actions' => $pendingMentoringCount + count($needInputList) + count($needReviewList),
+            'total_action_needed' => $pendingMentoringCount + count($needInputList) + count($needReviewList),
+        ];
+
+        // Active Wave Info for Dosen
+        $activeWaveInfo = null;
+        if ($activeWave) {
+            $endDate = \Carbon\Carbon::parse($activeWave->end_date)->endOfDay();
+            $daysRemaining = (int)now()->startOfDay()->diffInDays($endDate, false);
+            $semCount = SeminarApplication::where('wave_id', $activeWave->id)->count();
+            $defCount = ThesisDefenseApplication::where('wave_id', $activeWave->id)->count();
+            $activeWaveInfo = [
+                'id' => $activeWave->id,
+                'name' => $activeWave->name,
+                'academic_year' => $activeWave->academic_year,
+                'semester' => $activeWave->semester,
+                'start_date' => $activeWave->start_date,
+                'end_date' => $activeWave->end_date,
+                'days_remaining' => $daysRemaining,
+                'is_active' => $activeWave->is_active,
+                'is_expired' => $endDate->isPast(),
+                'seminar_count' => $semCount,
+                'seminar_applicant_count' => $semCount,
+                'defense_count' => $defCount,
+                'defense_applicant_count' => $defCount,
+                'total_applicant_count' => $semCount + $defCount,
+            ];
+        }
+        $data['activeWaveInfo'] = $activeWaveInfo;
         
         return $data;
     }
@@ -734,6 +865,54 @@ class DashboardService
         ];
 
         $data['topicTrends'] = $topicTrendsResult;
+
+        // Pending Operational Approvals for Admin & Kaprodi
+        $thesesPending = Thesis::where('status', 'pending')->count();
+        $unassignedTheses = Thesis::where('status', 'active')->whereNull('pembimbing1_id')->count();
+        $seminarsPending = SeminarApplication::where('status', 'pending')->count();
+        $defensesPending = ThesisDefenseApplication::where('status', 'pending')->count();
+        $graduationsPending = \App\Models\Graduation::where('status', 'pending')->count();
+
+        $data['adminApprovals'] = [
+            'theses' => $thesesPending,
+            'pending_theses' => $thesesPending,
+            'unassigned_theses' => $unassignedTheses,
+            'seminars' => $seminarsPending,
+            'pending_seminars' => $seminarsPending,
+            'defenses' => $defensesPending,
+            'pending_defenses' => $defensesPending,
+            'graduations' => $graduationsPending,
+            'pending_graduations' => $graduationsPending,
+            'total' => $thesesPending + $unassignedTheses + $seminarsPending + $defensesPending + $graduationsPending,
+            'total_pending' => $thesesPending + $unassignedTheses + $seminarsPending + $defensesPending + $graduationsPending,
+        ];
+
+        // Active Wave Info for Admin & Kaprodi
+        $activeWave = Wave::getCurrentActive();
+        $activeWaveInfo = null;
+        if ($activeWave) {
+            $endDate = \Carbon\Carbon::parse($activeWave->end_date)->endOfDay();
+            $daysRemaining = (int)now()->startOfDay()->diffInDays($endDate, false);
+            $semCount = SeminarApplication::where('wave_id', $activeWave->id)->count();
+            $defCount = ThesisDefenseApplication::where('wave_id', $activeWave->id)->count();
+            $activeWaveInfo = [
+                'id' => $activeWave->id,
+                'name' => $activeWave->name,
+                'academic_year' => $activeWave->academic_year,
+                'semester' => $activeWave->semester,
+                'start_date' => $activeWave->start_date,
+                'end_date' => $activeWave->end_date,
+                'days_remaining' => $daysRemaining,
+                'is_active' => $activeWave->is_active,
+                'is_expired' => $endDate->isPast(),
+                'seminar_count' => $semCount,
+                'seminar_applicant_count' => $semCount,
+                'defense_count' => $defCount,
+                'defense_applicant_count' => $defCount,
+                'total_applicant_count' => $semCount + $defCount,
+            ];
+        }
+        $data['activeWaveInfo'] = $activeWaveInfo;
         
         return $data;
     }
