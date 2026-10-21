@@ -134,6 +134,8 @@ class WaTemplateController extends Controller implements HasMiddleware
             'mahasiswa_belum_skripsi',
             'dosen_penguji_gelombang',
             'dosen_pembimbing_aktif',
+            'dosen_penguji_belum_revisi',
+            'mahasiswa_belum_balas_revisi',
             'all_mahasiswa_aktif',
         ];
 
