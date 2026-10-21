@@ -194,72 +194,207 @@ class MonitoringController extends Controller implements HasMiddleware
         $graduationStatus = $request->input('graduation_status', 'active');
         $pembimbingId = $request->input('pembimbing_id');
         $entryYear = $request->input('entry_year');
+        $waveId = $request->input('wave_id');
         $search = $request->input('search');
 
-        $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'graduation'])->withMentoringCounts();
-
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+        $kaprodi = User::where('role', 'kaprodi')->first() ?? User::where('role', 'admin')->first();
+        $waveName = 'Semua Gelombang';
+        if ($waveId) {
+            $w = Wave::find($waveId);
+            if ($w) $waveName = $w->name;
         }
 
-        if (!empty($pembimbingId)) {
-            $query->where(function($q) use ($pembimbingId) {
-                $q->where('pembimbing1_id', $pembimbingId)
-                  ->orWhere('pembimbing2_id', $pembimbingId);
-            });
-        }
-
-        if (!empty($entryYear)) {
-            $query->whereHas('student', function($q) use ($entryYear) {
-                $q->where('entry_year', $entryYear);
-            });
-        }
-
-        if (!empty($accStatus) && $accStatus !== 'all') {
-            $query->accStatus($accStatus);
-        }
-
-        if (!empty($search)) {
-            $query->search($search);
-        }
-
-        // Apply graduation status filter
-        if ($graduationStatus === 'active') {
-            $query->notGraduated();
-        } elseif ($graduationStatus === 'graduated') {
-            $query->graduated();
+        $pembimbingName = 'Semua Pembimbing';
+        if ($pembimbingId) {
+            $p = User::find($pembimbingId);
+            if ($p) $pembimbingName = $p->name;
         }
 
         switch ($type) {
-            case 'mahasiswa':
-                $data = $query->get();
+            case 'nilai_sidang':
+                $query = ThesisDefenseScheduleDetail::with([
+                    'thesis.student', 
+                    'thesis.pembimbing1', 
+                    'thesis.pembimbing2', 
+                    'schedule.wave', 
+                    'examiner1', 
+                    'examiner2', 
+                    'revisions'
+                ])->whereHas('thesis');
+
+                if ($waveId) {
+                    $query->whereHas('schedule', fn($q) => $q->where('wave_id', $waveId));
+                }
+                if ($entryYear) {
+                    $query->whereHas('thesis.student', fn($q) => $q->where('entry_year', $entryYear));
+                }
+                if ($pembimbingId) {
+                    $query->whereHas('thesis', function($q) use ($pembimbingId) {
+                        $q->where('pembimbing1_id', $pembimbingId)->orWhere('pembimbing2_id', $pembimbingId);
+                    });
+                }
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                }
+                if ($search) {
+                    $query->whereHas('thesis.student', function($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")->orWhere('identifier', 'like', "%{$search}%");
+                    });
+                }
+                $data = $query->orderBy('id', 'desc')->get();
                 break;
-            case 'kelulusan':
-                $data = $query->graduated()->get();
-                break;
+
             case 'dosen':
-                $data = User::where('role', 'dosen')->withCount(['thesesAsP1', 'thesesAsP2'])->get();
+            case 'beban_dosen':
+                $type = 'beban_dosen';
+                $query = User::where('role', 'dosen')->withCount(['thesesAsP1', 'thesesAsP2']);
+                if ($pembimbingId) {
+                    $query->where('id', $pembimbingId);
+                }
+                if ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                }
+                $data = $query->orderBy('name')->get();
+                $data->each(function($dosen) use ($waveId, $startDate, $endDate) {
+                    $semQuery = SeminarScheduleDetail::where(fn($q) => $q->where('examiner1_id', $dosen->id)->orWhere('examiner2_id', $dosen->id));
+                    if ($waveId) $semQuery->whereHas('schedule', fn($q) => $q->where('wave_id', $waveId));
+                    if ($startDate && $endDate) $semQuery->whereBetween('created_at', [$startDate, $endDate]);
+                    $dosen->seminar_examiner_count = $semQuery->count();
+
+                    $defQuery = ThesisDefenseScheduleDetail::where(fn($q) => $q->where('examiner1_id', $dosen->id)->orWhere('examiner2_id', $dosen->id));
+                    if ($waveId) $defQuery->whereHas('schedule', fn($q) => $q->where('wave_id', $waveId));
+                    if ($startDate && $endDate) $defQuery->whereBetween('created_at', [$startDate, $endDate]);
+                    $dosen->defense_examiner_count = $defQuery->count();
+
+                    $dosen->total_workload = ($dosen->theses_as_p1_count ?? 0) + ($dosen->theses_as_p2_count ?? 0) + $dosen->seminar_examiner_count + $dosen->defense_examiner_count;
+                });
                 break;
+
+            case 'kepatuhan':
+                $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+                    ->where('status', 'active')
+                    ->withMentoringCounts();
+                if ($pembimbingId) {
+                    $query->where(fn($q) => $q->where('pembimbing1_id', $pembimbingId)->orWhere('pembimbing2_id', $pembimbingId));
+                }
+                if ($entryYear) {
+                    $query->whereHas('student', fn($q) => $q->where('entry_year', $entryYear));
+                }
+                if ($search) {
+                    $query->search($search);
+                }
+                $data = $query->get()->sortByDesc(fn($t) => $t->days_since_last_mentoring ?? 0)->values();
+                break;
+
+            case 'topik':
+                $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])->whereNotNull('title');
+                if ($graduationStatus === 'graduated') {
+                    $query->graduated();
+                } elseif ($graduationStatus === 'active') {
+                    $query->notGraduated();
+                }
+                if ($entryYear) {
+                    $query->whereHas('student', fn($q) => $q->where('entry_year', $entryYear));
+                }
+                if ($pembimbingId) {
+                    $query->where(fn($q) => $q->where('pembimbing1_id', $pembimbingId)->orWhere('pembimbing2_id', $pembimbingId));
+                }
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                }
+                if ($search) {
+                    $query->search($search);
+                }
+                $data = $query->orderBy('topic')->orderBy('created_at', 'desc')->get();
+                break;
+
+            case 'waktu':
+                $waves = Wave::with(['defenseApplications.thesis' => function($q) {
+                    $q->where('status', 'completed');
+                }])->get();
+                $data = collect();
+                foreach ($waves as $wave) {
+                    $completed = $wave->defenseApplications->map(fn($app) => $app->thesis)->filter(fn($t) => $t && $t->status === 'completed');
+                    $count = $completed->count();
+                    $avgMonths = 0; $onTimeCount = 0; $lateCount = 0;
+                    if ($count > 0) {
+                        $totalDays = $completed->sum(fn($t) => $t->created_at->diffInDays($t->updated_at));
+                        $avgMonths = round(($totalDays / $count) / 30, 1);
+                        foreach ($completed as $t) {
+                            if ($t->student && $t->student->entry_year) {
+                                ($t->updated_at->year - $t->student->entry_year <= 4) ? $onTimeCount++ : $lateCount++;
+                            }
+                        }
+                    }
+                    $data->push((object)[
+                        'wave_name' => $wave->name,
+                        'period' => ($wave->start_date?->format('d/m/Y') ?? '-') . ' s/d ' . ($wave->end_date?->format('d/m/Y') ?? '-'),
+                        'completed_count' => $count,
+                        'avg_duration_months' => $avgMonths,
+                        'on_time_count' => $onTimeCount,
+                        'late_count' => $lateCount,
+                        'on_time_percent' => $count > 0 ? round(($onTimeCount / $count) * 100, 1) . '%' : '0%',
+                    ]);
+                }
+                break;
+
+            case 'kelulusan':
+                $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'graduation'])->graduated();
+                if ($startDate && $endDate) $query->whereBetween('updated_at', [$startDate, $endDate]);
+                if ($pembimbingId) $query->where(fn($q) => $q->where('pembimbing1_id', $pembimbingId)->orWhere('pembimbing2_id', $pembimbingId));
+                if ($entryYear) $query->whereHas('student', fn($q) => $q->where('entry_year', $entryYear));
+                if ($search) $query->search($search);
+                $data = $query->orderBy('updated_at', 'desc')->get();
+                break;
+
             case 'logs':
                 $data = \App\Models\ActivityLog::with('user')
-                    ->when($startDate && $endDate, function($q) use ($startDate, $endDate) {
-                        $q->whereBetween('created_at', [$startDate, $endDate]);
-                    })->latest()->get();
+                    ->when($startDate && $endDate, fn($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                    ->when($search, fn($q) => $q->where('description', 'like', "%{$search}%"))
+                    ->latest()->get();
                 break;
+
+            case 'mahasiswa':
+            case 'akademik':
             default:
-                $data = $query->get();
+                $type = 'akademik';
+                $query = Thesis::with(['student', 'pembimbing1', 'pembimbing2', 'graduation'])->withMentoringCounts();
+                if ($graduationStatus === 'active') {
+                    $query->notGraduated();
+                } elseif ($graduationStatus === 'graduated') {
+                    $query->graduated();
+                }
+                if ($startDate && $endDate) $query->whereBetween('created_at', [$startDate, $endDate]);
+                if ($pembimbingId) $query->where(fn($q) => $q->where('pembimbing1_id', $pembimbingId)->orWhere('pembimbing2_id', $pembimbingId));
+                if ($entryYear) $query->whereHas('student', fn($q) => $q->where('entry_year', $entryYear));
+                if (!empty($accStatus) && $accStatus !== 'all') $query->accStatus($accStatus);
+                if ($search) $query->search($search);
+                $data = $query->orderBy('created_at', 'desc')->get();
                 break;
         }
 
         if ($format === 'pdf') {
-            $pdf = Pdf::loadView('monitoring.reports.' . $type . '_pdf', compact('data', 'startDate', 'endDate'))
-                ->setPaper('a4', 'landscape');
+            $viewName = 'monitoring.reports.' . $type . '_pdf';
+            if (!view()->exists($viewName)) {
+                $viewName = 'monitoring.reports.akademik_pdf';
+            }
+
+            $pdf = Pdf::loadView($viewName, compact(
+                'data', 
+                'startDate', 
+                'endDate', 
+                'waveName', 
+                'pembimbingName', 
+                'entryYear', 
+                'graduationStatus', 
+                'kaprodi'
+            ))->setPaper('a4', 'landscape');
+
             return $pdf->download('Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.pdf');
         }
 
-        // Default to Excel using MonitoringExport with all active filters
         return Excel::download(
-            new MonitoringExport($type, $startDate, $endDate, $accStatus, $pembimbingId, $entryYear, $search, $graduationStatus),
+            new MonitoringExport($type, $startDate, $endDate, $accStatus, $pembimbingId, $entryYear, $search, $graduationStatus, $waveId),
             'Laporan_' . ucfirst($type) . '_' . now()->format('Ymd') . '.xlsx'
         );
     }
