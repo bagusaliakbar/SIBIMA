@@ -91,6 +91,7 @@
     @endphp
 
     <div x-data="{
+        isMobile: window.innerWidth < 1024,
         mobileActiveTab: 'chat', // 'document' or 'chat' on mobile
         currentDocUrl: '{{ $initialViewerUrl }}',
         currentDocLabel: '{{ $documents->first()['label'] ?? 'Draf Proposal' }}',
@@ -148,7 +149,7 @@
                 alert('Gunakan Ctrl+V untuk menempelkan link.');
             }
         }
-    }" class="space-y-4">
+    }" @resize.window.debounce.100ms="isMobile = window.innerWidth < 1024" class="space-y-4">
 
         <!-- Top Channel Bar: Multi-Examiner Channel Switcher -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-3 sm:p-4 border border-slate-200/90 dark:border-slate-700/80 shadow-2xs">
@@ -195,7 +196,7 @@
                 </div>
 
                 <!-- Mobile View Switcher (Visible only on mobile/tablet) -->
-                <div class="flex lg:hidden items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
+                <div x-show="isMobile" x-cloak class="flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
                     <button type="button" 
                             @click="mobileActiveTab = 'document'" 
                             :class="mobileActiveTab === 'document' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 dark:text-slate-400'"
@@ -220,7 +221,7 @@
             <!-- ========================================== -->
             <!-- SISI KIRI (7/12): Live PDF & Proposal Viewer -->
             <!-- ========================================== -->
-            <div :class="mobileActiveTab === 'document' ? 'block' : 'hidden lg:block'"
+            <div x-show="!isMobile || mobileActiveTab === 'document'"
                  class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col h-[650px] lg:h-[calc(100vh-14rem)] min-h-[580px] overflow-hidden">
                 
                 <!-- Viewer Header & Toolstrip -->
@@ -323,7 +324,7 @@
             <!-- ========================================== -->
             <!-- SISI KANAN (5/12): Timeline Chat Revisi & Input -->
             <!-- ========================================== -->
-            <div :class="mobileActiveTab === 'chat' ? 'block' : 'hidden lg:block'"
+            <div x-show="!isMobile || mobileActiveTab === 'chat'"
                  class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col h-[650px] lg:h-[calc(100vh-14rem)] min-h-[580px] overflow-hidden">
                 
                 <!-- Chat Header: Examiner Details & Status Badge -->
