@@ -68,7 +68,10 @@ class SupervisorAssigned extends Notification implements ShouldQueue
     {
         return [
             'thesis_id' => $this->thesis->id,
-            'message' => "Anda ditugaskan sebagai {$this->role} untuk {$this->thesis->student->name}",
+            'title'     => 'Penugasan Dosen Pembimbing',
+            'message'   => "Anda ditugaskan sebagai {$this->role} untuk {$this->thesis->student->name}",
+            'url'       => route('theses.index'),
+            'type'      => 'info',
         ];
     }
 }

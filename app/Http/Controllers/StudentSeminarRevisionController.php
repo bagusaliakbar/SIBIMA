@@ -26,6 +26,9 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
         return [
             new Middleware(function ($request, $next) {
                 if (Auth::user()->role !== 'mahasiswa' && !in_array($request->route()->getName(), ['student-seminar-revisions.print-pdf'])) {
+                    if (Auth::user()->role === 'dosen') {
+                        return redirect()->route('seminar-examiner.index')->with('info', 'Anda dialihkan ke halaman penilaian & revisi seminar penguji.');
+                    }
                     abort(403);
                 }
                 return $next($request);

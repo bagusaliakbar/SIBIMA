@@ -211,12 +211,12 @@ class Thesis extends Model
 
     public function isAccUpFinal()
     {
-        return $this->acc_up_p1 && $this->acc_up_p2;
+        return (bool) ($this->acc_up_p1 && ($this->pembimbing2_id ? $this->acc_up_p2 : true));
     }
 
     public function isAccSidangFinal()
     {
-        return $this->acc_sidang_p1 && $this->acc_sidang_p2;
+        return (bool) ($this->acc_sidang_p1 && ($this->pembimbing2_id ? $this->acc_sidang_p2 : true));
     }
 
     public function hasPassedSeminar(): bool

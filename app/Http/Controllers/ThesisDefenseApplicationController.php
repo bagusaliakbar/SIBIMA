@@ -139,6 +139,10 @@ class ThesisDefenseApplicationController extends Controller
             return view('thesis_defenses.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats', 'candidateTheses'));
         }
 
+        if ($user->role === 'dosen') {
+            return redirect()->route('theses.index')->with('info', 'Halaman pendaftaran sidang khusus mahasiswa dan admin. Anda dialihkan ke data bimbingan skripsi.');
+        }
+
         abort(403);
     }
 

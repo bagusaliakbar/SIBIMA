@@ -28,3 +28,4 @@ Saat membuat, mengedit, atau merefaktor antarmuka (Blade, CSS, Tailwind), patuhi
 - **Clean Enterprise SaaS**: Gunakan palet semantik SIBIMA (`orange-600` untuk primary action, `slate` untuk surface/netral, dan warna semantik `emerald`/`amber`/`blue`/`rose` untuk badge/status).
 - **Light & Dark Mode**: Pastikan kontras memenuhi WCAG AA di kedua mode (`dark:` class wajib konsisten).
 - **Ikon SVG**: Gunakan SVG (Heroicons/Lucide), hindari penggunaan emoji pada komponen UI.
+

@@ -151,26 +151,55 @@
                                 $category = 'schedule';
                             }
 
-                            // Deep Linking URL Resolver
+                            // Role-Aware Deep Linking URL Resolver
+                            $userRole = Auth::user()->role;
+                            $isLecturer = $userRole === 'dosen';
+                            $isStaff = in_array($userRole, ['admin', 'kaprodi']);
+
                             $targetUrl = $data['url'] ?? null;
-                            if (str_contains($lowerTitle, 'acc') || str_contains($lowerMsg, 'acc')) {
-                                if (str_contains($lowerTitle, 'up') || str_contains($lowerMsg, 'up') || $accType === 'up') {
-                                    $targetUrl = route('seminar-applications.index');
-                                } elseif (str_contains($lowerTitle, 'sidang') || str_contains($lowerMsg, 'sidang') || $accType === 'sidang') {
-                                    $targetUrl = route('thesis-defense-applications.index');
+
+                            // If explicit URL exists, check role compatibility
+                            if ($targetUrl && $targetUrl !== '#') {
+                                if ($isLecturer) {
+                                    if (str_contains($targetUrl, 'student-defense-revisions')) {
+                                        $targetUrl = route('defense-examiner.index');
+                                    } elseif (str_contains($targetUrl, 'student-seminar-revisions')) {
+                                        $targetUrl = route('seminar-examiner.index');
+                                    } elseif (str_contains($targetUrl, 'seminar-applications') || str_contains($targetUrl, 'thesis-defense-applications')) {
+                                        $targetUrl = route('theses.index');
+                                    }
+                                }
+                            } else {
+                                if (str_contains($lowerTitle, 'revisi') || str_contains($lowerMsg, 'revisi') || $type === 'revision') {
+                                    $isSidang = str_contains($lowerTitle, 'sidang') || str_contains($lowerMsg, 'sidang');
+                                    if ($isLecturer) {
+                                        $targetUrl = $isSidang ? route('defense-examiner.index') : route('seminar-examiner.index');
+                                    } elseif ($isStaff) {
+                                        $targetUrl = $isSidang ? route('thesis-defense-schedules.index') : route('seminar-schedules.index');
+                                    } else {
+                                        $targetUrl = $isSidang ? route('student-defense-revisions.index') : route('student-seminar-revisions.index');
+                                    }
+                                } elseif (str_contains($lowerTitle, 'acc') || str_contains($lowerMsg, 'acc')) {
+                                    if ($isLecturer) {
+                                        $targetUrl = route('theses.index');
+                                    } else {
+                                        $isSidang = str_contains($lowerTitle, 'sidang') || str_contains($lowerMsg, 'sidang') || $accType === 'sidang';
+                                        $targetUrl = $isSidang ? route('thesis-defense-applications.index') : route('seminar-applications.index');
+                                    }
+                                } elseif ($mentoringId) {
+                                    $targetUrl = route('mentoring-sessions.index', ['highlight' => $mentoringId]) . '#session-' . $mentoringId;
+                                } elseif (str_contains($lowerTitle, 'jadwal') || str_contains($lowerMsg, 'jadwal') || str_contains($lowerTitle, 'penugasan') || str_contains($lowerMsg, 'penugasan')) {
+                                    $isSidang = str_contains($lowerTitle, 'sidang') || str_contains($lowerMsg, 'sidang');
+                                    if ($isLecturer) {
+                                        $targetUrl = $isSidang ? route('defense-examiner.index') : route('seminar-examiner.index');
+                                    } else {
+                                        $targetUrl = route('mentoring-sessions.index');
+                                    }
+                                } elseif ($thesisId) {
+                                    $targetUrl = route('theses.index');
                                 } else {
-                                    $targetUrl = route('seminar-applications.index');
+                                    $targetUrl = route('mentoring-sessions.index');
                                 }
-                            } elseif (str_contains($lowerTitle, 'revisi') || str_contains($lowerMsg, 'revisi') || $type === 'revision') {
-                                if (empty($targetUrl) || $targetUrl === '#' || !str_contains($targetUrl, 'revision')) {
-                                    $targetUrl = (str_contains($lowerTitle, 'sidang') || str_contains($lowerMsg, 'sidang'))
-                                        ? route('student-defense-revisions.index')
-                                        : route('student-seminar-revisions.index');
-                                }
-                            } elseif ($mentoringId) {
-                                $targetUrl = route('mentoring-sessions.index', ['highlight' => $mentoringId]) . '#session-' . $mentoringId;
-                            } elseif (empty($targetUrl) || $targetUrl === '#') {
-                                $targetUrl = route('mentoring-sessions.index');
                             }
 
                             // Check if student attendance is actionable

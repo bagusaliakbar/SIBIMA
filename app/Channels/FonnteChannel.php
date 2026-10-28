@@ -176,15 +176,14 @@ class FonnteChannel
     protected function applyAntiSpamDecorators(string $message): string
     {
         // 1. Process Spintax if present: e.g. {Halo|Hai|Yth.|Salam}
-        while (preg_match('/\{([^{}]+)\}/', $message)) {
-            $message = preg_replace_callback('/\{([^{}]+)\}/', function ($matches) {
-                // Only treat as spintax if it contains pipe separator '|'
-                if (!str_contains($matches[1], '|')) {
-                    return $matches[0];
-                }
+        $maxLoops = 10;
+        $loopCount = 0;
+        while ($loopCount < $maxLoops && preg_match('/\{([^{}|]+\|[^{}]+)\}/', $message)) {
+            $message = preg_replace_callback('/\{([^{}|]+\|[^{}]+)\}/', function ($matches) {
                 $options = explode('|', $matches[1]);
                 return $options[array_rand($options)];
             }, $message);
+            $loopCount++;
         }
 
         // 2. Append a subtle unique transaction code & timestamp to ensure 100% unique hash per message

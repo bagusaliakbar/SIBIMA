@@ -193,10 +193,18 @@ class SchedulePublished extends Notification implements ShouldQueue
             ? "Penugasan jadwal {$this->type} ({$this->schedule->title}) telah dirilis."
             : "Jadwal {$this->type} Anda telah dirilis.";
 
+        $isDefense = $this->type === 'Sidang Akhir';
+        $url = $isLecturer
+            ? ($isDefense ? route('defense-examiner.index') : route('seminar-examiner.index'))
+            : ($isDefense ? route('student-defense-revisions.index') : route('student-seminar-revisions.index'));
+
         return [
-            'schedule_id' => $this->schedule->id,
+            'schedule_id'   => $this->schedule->id,
             'schedule_type' => $this->type,
-            'message' => $message,
+            'title'         => "Jadwal {$this->type} Dirilis",
+            'message'       => $message,
+            'url'           => $url,
+            'type'          => 'schedule',
         ];
     }
 }

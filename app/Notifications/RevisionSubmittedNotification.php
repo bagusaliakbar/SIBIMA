@@ -68,9 +68,21 @@ class RevisionSubmittedNotification extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
+        $isDefense = str_contains(get_class($this->revision), 'ThesisDefense');
+        $detailId = $isDefense
+            ? ($this->revision->thesis_defense_schedule_detail_id ?? null)
+            : ($this->revision->seminar_schedule_detail_id ?? null);
+
+        $url = $detailId
+            ? ($isDefense ? route('defense-examiner.show', $detailId) : route('seminar-examiner.show', $detailId))
+            : ($isDefense ? route('defense-examiner.index') : route('seminar-examiner.index'));
+
         return [
             'revision_id' => $this->revision->id,
-            'message' => "Mahasiswa {$this->studentName} telah mengunggah perbaikan revisi {$this->type}.",
+            'title'       => "Revisi {$this->type} Dikirim",
+            'message'     => "Mahasiswa {$this->studentName} telah mengunggah perbaikan revisi {$this->type}.",
+            'url'         => $url,
+            'type'        => 'revision',
         ];
     }
 }

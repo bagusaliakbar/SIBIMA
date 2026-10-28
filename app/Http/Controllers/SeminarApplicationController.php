@@ -139,6 +139,10 @@ class SeminarApplicationController extends Controller
             return view('seminars.admin_index', compact('applications', 'template', 'waves', 'selectedWaveId', 'activeWave', 'search', 'status', 'stats', 'candidateTheses'));
         }
 
+        if ($user->role === 'dosen') {
+            return redirect()->route('theses.index')->with('info', 'Halaman pendaftaran seminar khusus mahasiswa dan admin. Anda dialihkan ke data bimbingan skripsi.');
+        }
+
         abort(403);
     }
 

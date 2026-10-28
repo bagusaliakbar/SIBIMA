@@ -26,6 +26,9 @@ class StudentThesisDefenseRevisionController extends Controller implements HasMi
         return [
             new Middleware(function ($request, $next) {
                 if (Auth::user()->role !== 'mahasiswa' && !in_array($request->route()->getName(), ['student-defense-revisions.print-pdf'])) {
+                    if (Auth::user()->role === 'dosen') {
+                        return redirect()->route('defense-examiner.index')->with('info', 'Anda dialihkan ke halaman penilaian & revisi sidang penguji.');
+                    }
                     abort(403);
                 }
                 return $next($request);

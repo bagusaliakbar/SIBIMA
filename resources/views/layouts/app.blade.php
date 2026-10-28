@@ -1179,6 +1179,7 @@
                                     unreadCount: 0,
                                     lastCount: 0,
                                     activeTab: 'all',
+                                    userRole: '{{ Auth::user()->role }}',
                                     isStudent: {{ Auth::user()->role === 'mahasiswa' ? 'true' : 'false' }},
                                     soundEnabled: localStorage.getItem('sibima_notif_sound_enabled') !== 'false',
                                     attendanceLoading: {},
@@ -1344,30 +1345,49 @@
                                     },
 
                                     getUrl(notif) {
-                                        const url = notif.data?.url;
+                                        let url = notif.data?.url;
                                         const title = (notif.data?.title || '').toLowerCase();
                                         const msg = (notif.data?.message || '').toLowerCase();
+                                        const isLecturer = this.userRole === 'dosen';
+                                        const isStaff = this.userRole === 'admin' || this.userRole === 'kaprodi';
 
-                                        // 1. ACC Notifications: Deep link to Seminar UP or Sidang registration
-                                        if (title.includes('acc') || msg.includes('acc')) {
-                                            if (title.includes('up') || msg.includes('seminar up') || notif.data?.acc_type === 'up') {
-                                                return '{{ route("seminar-applications.index") }}';
+                                        // If explicit URL is provided in notification data, validate role compatibility
+                                        if (url && url !== '#') {
+                                            if (isLecturer) {
+                                                // Prevent lecturer from opening student-only revision routes
+                                                if (url.includes('student-defense-revisions')) {
+                                                    return '{{ route("defense-examiner.index") }}';
+                                                }
+                                                if (url.includes('student-seminar-revisions')) {
+                                                    return '{{ route("seminar-examiner.index") }}';
+                                                }
+                                                // Prevent lecturer from opening student/admin-only application routes
+                                                if (url.includes('seminar-applications') || url.includes('thesis-defense-applications')) {
+                                                    return '{{ route("theses.index") }}';
+                                                }
                                             }
-                                            if (title.includes('sidang') || msg.includes('sidang') || notif.data?.acc_type === 'sidang') {
-                                                return '{{ route("thesis-defense-applications.index") }}';
-                                            }
-                                            return '{{ route("seminar-applications.index") }}';
+                                            return url;
                                         }
 
-                                        // 2. Revision Notifications: Deep link to student revision reply page
+                                        // 1. Revision Notifications: Role-aware deep link
                                         if (title.includes('revisi') || msg.includes('revisi') || notif.data?.type === 'revision') {
-                                            if (url && url.includes('revision') && !url.endsWith('#')) {
-                                                return url;
+                                            const isSidang = title.includes('sidang') || msg.includes('sidang');
+                                            if (isLecturer) {
+                                                return isSidang ? '{{ route("defense-examiner.index") }}' : '{{ route("seminar-examiner.index") }}';
                                             }
-                                            if (title.includes('sidang') || msg.includes('sidang')) {
-                                                return '{{ route("student-defense-revisions.index") }}';
+                                            if (isStaff) {
+                                                return isSidang ? '{{ route("thesis-defense-schedules.index") }}' : '{{ route("seminar-schedules.index") }}';
                                             }
-                                            return '{{ route("student-seminar-revisions.index") }}';
+                                            return isSidang ? '{{ route("student-defense-revisions.index") }}' : '{{ route("student-seminar-revisions.index") }}';
+                                        }
+
+                                        // 2. ACC Notifications: Role-aware deep link
+                                        if (title.includes('acc') || msg.includes('acc')) {
+                                            if (isLecturer) {
+                                                return '{{ route("theses.index") }}';
+                                            }
+                                            const isSidang = title.includes('sidang') || msg.includes('sidang') || notif.data?.acc_type === 'sidang';
+                                            return isSidang ? '{{ route("thesis-defense-applications.index") }}' : '{{ route("seminar-applications.index") }}';
                                         }
 
                                         // 3. Status Bimbingan / Jadwal: Deep link to mentoring-sessions.index with anchor/highlight
@@ -1375,8 +1395,15 @@
                                             return '{{ route("mentoring-sessions.index") }}?highlight=' + notif.data.mentoring_id + '#session-' + notif.data.mentoring_id;
                                         }
 
-                                        if (url && url !== '#') return url;
-                                        if (notif.data?.thesis_id) return '{{ route("mentoring-sessions.index") }}';
+                                        // 4. Jadwal / Penugasan
+                                        if (title.includes('jadwal') || msg.includes('jadwal') || title.includes('penugasan') || msg.includes('penugasan')) {
+                                            const isSidang = title.includes('sidang') || msg.includes('sidang');
+                                            if (isLecturer) {
+                                                return isSidang ? '{{ route("defense-examiner.index") }}' : '{{ route("seminar-examiner.index") }}';
+                                            }
+                                        }
+
+                                        if (notif.data?.thesis_id) return '{{ route("theses.index") }}';
                                         return '#';
                                     },
 
