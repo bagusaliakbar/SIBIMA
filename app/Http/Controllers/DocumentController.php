@@ -59,7 +59,10 @@ class DocumentController extends Controller
     public function generateSKTimPengujiSeminar(SeminarSchedule $schedule)
     {
         $schedule->load(['details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2', 'chairman', 'moderator']);
-        $letterNumber = $this->getNextLetterNumber('sk_penguji_seminar');
+        $letterNumber = \Illuminate\Support\Facades\Cache::rememberForever(
+            "letter_number_sk_penguji_seminar_schedule_{$schedule->id}",
+            fn () => $this->getNextLetterNumber('sk_penguji_seminar')
+        );
         
         $pdf = Pdf::loadView('documents.sk_penguji_seminar_pdf', [
             'schedule' => $schedule,
@@ -73,7 +76,10 @@ class DocumentController extends Controller
     public function generateSKTimPengujiSidang(ThesisDefenseSchedule $schedule)
     {
         $schedule->load(['details.thesis.student', 'details.thesis.pembimbing1', 'details.thesis.pembimbing2', 'details.examiner1', 'details.examiner2', 'chairman', 'moderator']);
-        $letterNumber = $this->getNextLetterNumber('sk_penguji_sidang');
+        $letterNumber = \Illuminate\Support\Facades\Cache::rememberForever(
+            "letter_number_sk_penguji_sidang_schedule_{$schedule->id}",
+            fn () => $this->getNextLetterNumber('sk_penguji_sidang')
+        );
 
         $pdf = Pdf::loadView('documents.sk_penguji_pdf', [
             'schedule' => $schedule,

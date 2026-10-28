@@ -73,6 +73,7 @@ class LoginRequest extends FormRequest
 
         if (! $user || ! Hash::check($password, $user->password)) {
             RateLimiter::hit($this->throttleKey());
+            RateLimiter::hit($this->accountThrottleKey(), 300);
 
             throw ValidationException::withMessages([
                 'username' => 'Username, NPM, Email, atau password yang Anda masukkan tidak sesuai.',
@@ -89,6 +90,7 @@ class LoginRequest extends FormRequest
         Auth::login($user, $this->boolean('remember'));
 
         RateLimiter::clear($this->throttleKey());
+        RateLimiter::clear($this->accountThrottleKey());
     }
 
     /**
@@ -98,7 +100,10 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        $ipLimited = RateLimiter::tooManyAttempts($this->throttleKey(), 5);
+        $accountLimited = RateLimiter::tooManyAttempts($this->accountThrottleKey(), 15);
+
+        if (! $ipLimited && ! $accountLimited) {
             return;
         }
 
@@ -113,7 +118,10 @@ class LoginRequest extends FormRequest
             'user_agent' => $this->userAgent(),
         ]);
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        $seconds = max(
+            $ipLimited ? RateLimiter::availableIn($this->throttleKey()) : 0,
+            $accountLimited ? RateLimiter::availableIn($this->accountThrottleKey()) : 0
+        );
 
         throw ValidationException::withMessages([
             'username' => "Terlalu banyak percobaan masuk. Silakan coba lagi dalam {$seconds} detik.",
@@ -121,11 +129,19 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Get the rate limiting throttle key for the request.
+     * Get the rate limiting throttle key for the request (per username + IP).
      */
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
+    }
+
+    /**
+     * Secondary account-level throttle key (protects against IP spoofing / distributed brute-force).
+     */
+    public function accountThrottleKey(): string
+    {
+        return 'login_account|'.Str::transliterate(Str::lower($this->string('username')));
     }
 }
 

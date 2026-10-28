@@ -15,7 +15,15 @@ class UploadMentoringDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document' => 'required|url',
+            'document' => [
+                'required',
+                'url',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (!\App\Support\UrlSecurity::isSafeUserSubmittedUrl((string) $value)) {
+                        $fail('Tautan tidak diizinkan (harus berupa URL publik HTTP/HTTPS yang valid).');
+                    }
+                },
+            ],
         ];
     }
 

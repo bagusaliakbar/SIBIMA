@@ -5,6 +5,22 @@
 
     RewriteEngine On
 
+    # 1. Block access to all dot-files and dot-directories (.env, .git, .agents, .htaccess, etc.)
+    RewriteRule (^|/)\. - [F,L]
+
+    # 2. Block direct HTTP access to internal Laravel directories (while allowing public storage assets)
+    RewriteRule ^(app|bootstrap|config|database|docs|node_modules|resources|routes|scratch|temp_migrations|tests|vendor)(/|$) - [F,L,NC]
+    RewriteRule ^storage/(?!app/public/) - [F,L,NC]
+
+    # 3. Block direct HTTP access to root project configuration & build files
+    RewriteRule ^(artisan|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|(postcss|tailwind|vite)\.config\.js|README\.md|TECH_STACK\.md|LICENSE)$ - [F,L,NC]
+
+    # 4. Block direct HTTP access to sensitive file extensions anywhere
+    RewriteRule \.(env|sqlite|sqlite3|sql|gz|log|bak|sh|bat|cmd|yml|yaml)$ - [F,L,NC]
+
+    # 5. Prevent direct execution of any PHP file in subdirectories (allow only root index.php)
+    RewriteRule ^(?!index\.php$).+\.php$ - [F,L,NC]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -28,3 +44,14 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Additional Apache protection for sensitive files
+<FilesMatch "^(\.env|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|artisan)$|\.(sqlite|sqlite3|sql|log|bak)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

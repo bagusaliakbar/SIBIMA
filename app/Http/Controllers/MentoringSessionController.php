@@ -553,6 +553,17 @@ class MentoringSessionController extends Controller
         if ($request->isMethod('get')) {
             $status = $request->query('status');
 
+            // Ignore browser prefetchers (e.g. instantpage.js) and cross-site subresource requests on GET
+            $isPrefetch = $request->header('Purpose') === 'prefetch'
+                || str_contains((string) $request->header('Sec-Purpose'), 'prefetch')
+                || $request->header('X-Moz') === 'prefetch';
+            $isCrossSiteOrSubresource = ($request->header('Sec-Fetch-Site') === 'cross-site' && !$request->hasValidSignature())
+                || ($request->header('Sec-Fetch-Mode') && !in_array($request->header('Sec-Fetch-Mode'), ['navigate', 'same-origin'], true));
+
+            if ($isPrefetch || $isCrossSiteOrSubresource) {
+                $status = null;
+            }
+
             if (in_array($status, ['attending', 'permission'])) {
                 $this->authorize('confirmAttendance', $session);
 

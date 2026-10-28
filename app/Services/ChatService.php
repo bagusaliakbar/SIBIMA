@@ -43,6 +43,23 @@ class ChatService
     }
 
     /**
+     * Determine whether the currently authenticated user is allowed to chat with the target user.
+     */
+    public function canChatWith(User $targetUser): bool
+    {
+        $user = Auth::user();
+        if (!$user || $user->id === $targetUser->id) {
+            return false;
+        }
+
+        if (in_array($user->role, ['admin', 'kaprodi'], true) || in_array($targetUser->role, ['admin', 'kaprodi'], true)) {
+            return true;
+        }
+
+        return $this->getAllowedUsers()->contains('id', $targetUser->id);
+    }
+
+    /**
      * Send a new message.
      */
     public function sendMessage(User $receiver, array $data)

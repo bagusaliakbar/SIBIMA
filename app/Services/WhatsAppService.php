@@ -146,12 +146,10 @@ class WhatsAppService
     protected function applyAntiSpamDecorators(string $message): string
     {
         // 1. Process Spintax if present: e.g. {Halo|Hai|Yth.|Salam}
-        while (preg_match('/\{([^{}]+)\}/', $message)) {
-            $message = preg_replace_callback('/\{([^{}]+)\}/', function ($matches) {
-                // Only treat as spintax if it contains pipe separator '|'
-                if (!str_contains($matches[1], '|')) {
-                    return $matches[0];
-                }
+        // Only match braces that contain at least one pipe '|' to prevent infinite loops on regular {text}
+        $maxIterations = 10;
+        while ($maxIterations-- > 0 && preg_match('/\{([^{}|]+\|[^{}]+)\}/', $message)) {
+            $message = preg_replace_callback('/\{([^{}|]+\|[^{}]+)\}/', function ($matches) {
                 $options = explode('|', $matches[1]);
                 return $options[array_rand($options)];
             }, $message);

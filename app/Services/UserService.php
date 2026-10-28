@@ -120,6 +120,11 @@ class UserService
     public function toggleStatus(User $user)
     {
         $user->update(['is_active' => !$user->is_active]);
+        if (!$user->is_active) {
+            try {
+                \Illuminate\Support\Facades\DB::table('sessions')->where('user_id', $user->id)->delete();
+            } catch (\Throwable $e) {}
+        }
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
         ActivityLog::log('Toggle Status User', "Status akun pengguna {$user->name} {$status}.", 'User');
         return $status;

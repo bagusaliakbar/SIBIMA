@@ -329,10 +329,11 @@ class ThesisDefenseApplicationController extends Controller
                         }
                     }
                 }
-            } else {
-                // Direct image URL
+            } elseif (\App\Support\UrlSecurity::isSafeExternalUrl($rawPath)) {
+                // Direct image URL (validated against SSRF)
                 try {
                     $resp = Http::withoutVerifying()
+                        ->withOptions(['allow_redirects' => false])
                         ->timeout(4)
                         ->get($rawPath);
 

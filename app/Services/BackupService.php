@@ -371,6 +371,12 @@ class BackupService
         $queryBuffer = '';
         $executedCount = 0;
 
+        // Snapshot existing admin accounts if restore is executed by a non-admin (e.g. kaprodi)
+        $isCallerNonAdmin = auth()->check() && auth()->user()->role !== 'admin';
+        $adminSnapshot = $isCallerNonAdmin
+            ? DB::table('users')->where('role', 'admin')->get()->keyBy('id')
+            : collect();
+
         try {
             while (!($isGz ? gzeof($handle) : feof($handle))) {
                 $line = $isGz ? gzgets($handle, 40960) : fgets($handle, 40960);
@@ -400,6 +406,7 @@ class BackupService
                 if (str_ends_with($trimmed, ';')) {
                     $sqlToExecute = trim($queryBuffer);
                     if ($sqlToExecute !== '') {
+                        $this->assertSafeBackupStatement($sqlToExecute);
                         $pdo->exec($sqlToExecute);
                         $executedCount++;
                     }
@@ -409,8 +416,29 @@ class BackupService
 
             // Execute remaining buffer if any
             if (trim($queryBuffer) !== '') {
-                $pdo->exec(trim($queryBuffer));
+                $remainingSql = trim($queryBuffer);
+                $this->assertSafeBackupStatement($remainingSql);
+                $pdo->exec($remainingSql);
                 $executedCount++;
+            }
+
+            // Ensure non-admin restore cannot tamper with or inject admin accounts
+            if ($isCallerNonAdmin && $adminSnapshot->isNotEmpty()) {
+                $allowedAdminIds = $adminSnapshot->keys()->all();
+                DB::table('users')
+                    ->where('role', 'admin')
+                    ->whereNotIn('id', $allowedAdminIds)
+                    ->update(['role' => 'dosen']);
+
+                foreach ($adminSnapshot as $adminId => $adminRow) {
+                    DB::table('users')->where('id', $adminId)->update([
+                        'role' => 'admin',
+                        'email' => $adminRow->email,
+                        'username' => $adminRow->username,
+                        'password' => $adminRow->password,
+                        'is_active' => $adminRow->is_active,
+                    ]);
+                }
             }
         } finally {
             if ($isGz) {
@@ -462,7 +490,38 @@ class BackupService
 
         $file->move($dir, $newFilename);
 
-        return $this->restoreBackup($newFilename);
+        try {
+            return $this->restoreBackup($newFilename);
+        } catch (\Throwable $e) {
+            @unlink($dir . DIRECTORY_SEPARATOR . $newFilename);
+            throw $e;
+        }
+    }
+
+    /**
+     * Validate that a SQL statement from a backup file does not contain
+     * dangerous filesystem, OS, or database-user escalation commands.
+     */
+    protected function assertSafeBackupStatement(string $sql): void
+    {
+        $forbiddenPatterns = [
+            '/\bINTO\s+(OUTFILE|DUMPFILE)\b/i',
+            '/\bLOAD_FILE\s*\(/i',
+            '/\bLOAD\s+DATA\b/i',
+            '/\b(GRANT|REVOKE)\s+/i',
+            '/\b(CREATE|ALTER|DROP|RENAME)\s+USER\b/i',
+            '/\bCREATE\s+(AGGREGATE\s+)?FUNCTION\b/i',
+            '/\bINSTALL\s+PLUGIN\b/i',
+            '/\bSET\s+GLOBAL\b/i',
+            '/\bATTACH\s+DATABASE\b/i',
+            '/\bPRAGMA\s+writable_schema\b/i',
+        ];
+
+        foreach ($forbiddenPatterns as $pattern) {
+            if (preg_match($pattern, $sql)) {
+                throw new \RuntimeException('File backup mengandung instruksi SQL sistem/file yang dilarang oleh kebijakan keamanan.');
+            }
+        }
     }
 
     /**

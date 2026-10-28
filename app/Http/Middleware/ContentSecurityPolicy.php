@@ -17,17 +17,26 @@ class ContentSecurityPolicy
     {
         $response = $next($request);
 
+        // Standard defensive HTTP security headers
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $response->headers->set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)');
+
         // Only add CSP to responses that are actually returning HTML
         if ($response->headers->get('Content-Type') && str_contains($response->headers->get('Content-Type'), 'text/html')) {
-            // Highly permissive CSP for local development to avoid breaking Vite/Metronic
+            $isLocal = app()->environment('local', 'testing');
+            $localDevOrigins = $isLocal ? ' http://localhost:* http://127.0.0.1:* http://[::1]:* ws://localhost:* ws://127.0.0.1:*' : '';
+
             $csp = [
-                "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
-                "script-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
-                "style-src * 'unsafe-inline' data: blob:",
-                "img-src * data: blob: https:",
-                "font-src * data: https:",
-                "connect-src * ws: wss: http://localhost:* http://127.0.0.1:* http://[::1] https:",
-                "frame-src *",
+                "default-src 'self' https: data: blob:{$localDevOrigins}",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com data: blob:{$localDevOrigins}",
+                "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data: blob:{$localDevOrigins}",
+                "img-src 'self' data: blob: https:{$localDevOrigins}",
+                "font-src 'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://cdnjs.cloudflare.com{$localDevOrigins}",
+                "connect-src 'self' https: wss: ws:{$localDevOrigins}",
+                "frame-src 'self' https://challenges.cloudflare.com https://drive.google.com https://docs.google.com blob: data:",
+                "frame-ancestors 'self'",
                 "object-src 'none'",
                 "base-uri 'self'",
                 "form-action 'self'",

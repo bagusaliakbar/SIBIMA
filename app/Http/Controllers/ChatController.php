@@ -37,6 +37,12 @@ class ChatController extends Controller
     public function show(User $user)
     {
         $this->touchOnlineStatus();
+        $users = $this->chatService->getAllowedUsers();
+
+        if (!$users->contains('id', $user->id)) {
+            abort(403, 'Anda tidak memiliki akses percakapan dengan pengguna ini.');
+        }
+
         $this->chatService->markAsRead($user);
 
         $messages = Message::where(function ($query) use ($user) {
@@ -47,7 +53,6 @@ class ChatController extends Controller
         ->orderBy('created_at', 'asc')
         ->get();
 
-        $users = $this->chatService->getAllowedUsers();
         $unreadCounts = $this->chatService->getUnreadCounts();
 
         return view('chat.show', compact('messages', 'user', 'users', 'unreadCounts'));
@@ -56,6 +61,10 @@ class ChatController extends Controller
     public function status(User $user)
     {
         $this->touchOnlineStatus();
+
+        if (!$this->chatService->canChatWith($user)) {
+            abort(403, 'Anda tidak memiliki akses percakapan dengan pengguna ini.');
+        }
 
         // 1. Fetch unread incoming messages from $user BEFORE marking them as read
         $newIncomingMessages = Message::where('sender_id', $user->id)
@@ -83,6 +92,10 @@ class ChatController extends Controller
     public function store(Request $request, User $user)
     {
         $this->touchOnlineStatus();
+
+        if (!$this->chatService->canChatWith($user)) {
+            abort(403, 'Anda tidak memiliki akses percakapan dengan pengguna ini.');
+        }
 
         try {
             $request->validate(['message' => 'required|string|max:1000']);

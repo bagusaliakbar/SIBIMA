@@ -31,7 +31,7 @@ class BugReportController extends Controller
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            $attachmentPath = $file->store('bug_reports', 'public');
+            $attachmentPath = $file->store('bug_reports', config('filesystems.default'));
         }
 
         // Generate unique ticket number: BUG-YYYYMMDD-XXXX
@@ -301,7 +301,10 @@ class BugReportController extends Controller
             abort(404, 'Lampiran tidak ditemukan.');
         }
 
+        $defaultDisk = config('filesystems.default');
         $candidatePaths = [
+            Storage::disk($defaultDisk)->path($bugReport->attachment_path),
+            storage_path('app/private/' . $bugReport->attachment_path),
             Storage::disk('public')->path($bugReport->attachment_path),
             storage_path('app/public/' . $bugReport->attachment_path),
             storage_path('app/' . $bugReport->attachment_path),
@@ -339,8 +342,14 @@ class BugReportController extends Controller
             abort(403, 'Hanya Administrator yang berhak menghapus laporan bug.');
         }
 
-        if ($bugReport->attachment_path && Storage::disk('public')->exists($bugReport->attachment_path)) {
-            Storage::disk('public')->delete($bugReport->attachment_path);
+        if ($bugReport->attachment_path) {
+            $defaultDisk = config('filesystems.default');
+            if (Storage::disk($defaultDisk)->exists($bugReport->attachment_path)) {
+                Storage::disk($defaultDisk)->delete($bugReport->attachment_path);
+            }
+            if (Storage::disk('public')->exists($bugReport->attachment_path)) {
+                Storage::disk('public')->delete($bugReport->attachment_path);
+            }
         }
 
         $ticket = $bugReport->ticket_number;

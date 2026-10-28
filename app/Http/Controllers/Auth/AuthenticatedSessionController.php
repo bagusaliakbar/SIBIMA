@@ -33,6 +33,14 @@ class AuthenticatedSessionController extends Controller
         }
 
         $request->session()->regenerate();
+
+        if ($user && filled($user->identifier) && (string) $request->input('password') === (string) $user->identifier) {
+            $request->session()->put('using_default_password', true);
+            $request->session()->flash(
+                'warning',
+                'Keamanan Akun: Anda masih menggunakan password standar (NPM/NIDN). Demi keamanan akun Anda, silakan segera ganti password melalui menu Profil.'
+            );
+        }
         
         ActivityLog::log('Login', 'User berhasil login ke sistem.', 'Auth');
 

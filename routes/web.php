@@ -364,9 +364,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'destroy'])->name('advisor-decrees.destroy');
 });
 
-// Clear Cache & Migrate Endpoint (Useful for Shared Hosting / Auto-deploy without direct terminal)
+// Clear Cache & Migrate Endpoint (Restricted to Admin or valid DEPLOY_SECRET_KEY)
 Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
-    if (!auth()->check() && $request->get('key') !== 'sibima2026') {
+    $isAdmin = auth()->check() && auth()->user()->role === 'admin';
+    $deployKey = (string) config('app.deploy_secret_key', '');
+    $providedKey = (string) $request->query('key', '');
+    $hasValidKey = $deployKey !== '' && $providedKey !== '' && hash_equals($deployKey, $providedKey);
+
+    if (!$isAdmin && !$hasValidKey) {
         abort(403, 'Unauthorized access to cache clear');
     }
 
@@ -444,66 +449,36 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
         $migrationOutput = null;
         if ($request->has('migrate')) {
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-            $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
+            $migrationOutput = trim(\Illuminate\Support\Facades\Artisan::output());
         }
 
         // Recompile all views fresh so hosting serves updated templates
         \Illuminate\Support\Facades\Artisan::call('view:cache');
-        $viewCacheOutput = \Illuminate\Support\Facades\Artisan::output();
+        $viewCacheOutput = trim(\Illuminate\Support\Facades\Artisan::output());
 
         if (function_exists('opcache_reset')) {
             @opcache_reset();
         }
 
-        $appBladeContent = @file_get_contents(resource_path('views/layouts/app.blade.php'));
-        $hasWidgetTag = strpos($appBladeContent, 'x-bug-report-widget') !== false;
-        
-        $widgetComponentContent = @file_get_contents(resource_path('views/components/bug-report-widget.blade.php'));
-        $hasWidgetFile = !empty($widgetComponentContent);
-
-        $renderedCheck = 'none';
-        try {
-            $user = \App\Models\User::where('role', 'dosen')->first() ?: \App\Models\User::first();
-            if ($user) {
-                auth()->login($user);
-                $rendered = view('layouts.app', ['slot' => 'test-slot', 'errors' => new \Illuminate\Support\ViewErrorBag])->render();
-                $pos = strpos($rendered, 'Toolbar Pelaporan Bug');
-                $renderedCheck = [
-                    'has_dock' => $pos !== false,
-                    'user' => $user->name . ' (' . $user->role . ')',
-                    'snippet' => $pos !== false ? substr($rendered, $pos - 50, 150) : 'NOT FOUND IN RENDERED HTML',
-                ];
-            }
-        } catch (\Throwable $e) {
-            $renderedCheck = 'Render error: ' . $e->getMessage();
-        }
-
         return response()->json([
             'status' => 'success',
             'message' => 'Semua cache berhasil dibersihkan, OPcache di-reset, dan views berhasil dikompilasi ulang!',
-            'has_widget_tag_in_app_blade' => $hasWidgetTag,
-            'has_widget_file' => $hasWidgetFile,
-            'widget_file_size' => strlen($widgetComponentContent ?: ''),
-            'view_cache_output' => trim($viewCacheOutput),
+            'cleared_views_count' => $clearedViews,
+            'view_cache_output' => $viewCacheOutput,
             'opcache_reset_executed' => function_exists('opcache_reset'),
             'public_manifest_exists' => file_exists(public_path('build/manifest.json')),
-            'public_manifest_content' => file_exists(public_path('build/manifest.json')) ? json_decode(file_get_contents(public_path('build/manifest.json')), true) : null,
-            'root_manifest_exists' => file_exists(base_path('build/manifest.json')),
-            'root_manifest_content' => file_exists(base_path('build/manifest.json')) ? json_decode(file_get_contents(base_path('build/manifest.json')), true) : null,
-            'rendered_check' => $renderedCheck,
             'git_pull_output' => $gitPullOutput,
             'migration_output' => $migrationOutput,
             'timestamp' => now()->toIso8601String(),
         ]);
     } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('Clear cache endpoint error: ' . $e->getMessage());
         return response()->json([
             'status' => 'error',
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
+            'message' => 'Terjadi kesalahan saat membersihkan cache.',
         ], 500);
     }
-})->name('system.clear-cache');
+})->middleware('throttle:5,1')->name('system.clear-cache');
 
 require __DIR__ . '/auth.php';
 

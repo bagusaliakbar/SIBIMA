@@ -701,6 +701,10 @@ class ThesisRepositoryController extends Controller
 
         // 2. If it's a remote URL (e.g. from UNSUB repository proxy)
         if (str_starts_with($filePath, 'http://') || str_starts_with($filePath, 'https://')) {
+            if (!\App\Support\UrlSecurity::isSafeExternalUrl($filePath)) {
+                abort(403, 'URL naskah eksternal tidak diizinkan oleh kebijakan keamanan.');
+            }
+
             $cacheKey = md5($filePath);
             $cachedRelPath = "theses_cache/bab{$chapterNumber}/{$cacheKey}.pdf";
 
@@ -718,7 +722,7 @@ class ThesisRepositoryController extends Controller
             try {
                 $remoteRes = Http::withHeaders([
                     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                ])->timeout(25)->withoutVerifying()->get($filePath);
+                ])->withOptions(['allow_redirects' => ['max' => 3]])->timeout(25)->withoutVerifying()->get($filePath);
 
                 if ($remoteRes->successful()) {
                     $body = $remoteRes->body();

@@ -328,9 +328,19 @@ class UserController extends Controller implements HasMiddleware
             return redirect()->route('users.index')->with('error', 'Tidak dapat mereset password administrator.');
         }
 
-        $newPassword = $user->identifier;
+        $newPassword = filled($user->identifier) ? (string) $user->identifier : \Illuminate\Support\Str::random(10);
         $user->password = bcrypt($newPassword);
         $user->save();
+
+        // Invalidate active database sessions for the user whose password was reset
+        try {
+            \Illuminate\Support\Facades\DB::table('sessions')->where('user_id', $user->id)->delete();
+            \App\Models\ActivityLog::log(
+                'Reset Password',
+                "Admin mereset password untuk pengguna {$user->name} ({$user->identifier}).",
+                'Users'
+            );
+        } catch (\Throwable $e) {}
 
         return redirect()->route('users.index')->with('success', "Password untuk pengguna {$user->name} berhasil di-reset menjadi: {$newPassword}");
     }

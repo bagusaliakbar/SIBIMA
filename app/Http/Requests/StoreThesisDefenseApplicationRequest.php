@@ -28,6 +28,12 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
             'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
         ];
 
+        $safeUrlRule = function (string $attribute, mixed $value, \Closure $fail) {
+            if ($value !== null && $value !== '' && !\App\Support\UrlSecurity::isSafeUserSubmittedUrl((string) $value)) {
+                $fail('Tautan tidak diizinkan (harus berupa URL publik HTTP/HTTPS yang valid).');
+            }
+        };
+
         $rules = [];
         foreach ($files as $file) {
             $isRejected = isset($existingApplication->file_reviews[$file]['status']) && $existingApplication->file_reviews[$file]['status'] === 'rejected';
@@ -35,9 +41,9 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
             $hasSession = session()->has('defense_uploads.path.' . $file);
 
             if (($isMissing || $isRejected) && !$hasSession) {
-                $rules[$file] = 'required|url';
+                $rules[$file] = ['required', 'url', $safeUrlRule];
             } else {
-                $rules[$file] = 'nullable|url';
+                $rules[$file] = ['nullable', 'url', $safeUrlRule];
             }
         }
 

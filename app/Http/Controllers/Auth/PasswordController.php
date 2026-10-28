@@ -15,14 +15,27 @@ class PasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        $user = $request->user();
+
         $validated = $request->validateWithBag('updatePassword', [
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password' => [
+                'required',
+                Password::defaults(),
+                'confirmed',
+                function (string $attribute, mixed $value, \Closure $fail) use ($user) {
+                    if ($user && filled($user->identifier) && (string) $value === (string) $user->identifier) {
+                        $fail('Password baru tidak boleh sama dengan NPM/NIDN Anda.');
+                    }
+                },
+            ],
         ]);
 
-        $request->user()->update([
+        $user->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        $request->session()->forget('using_default_password');
 
         return back()->with('status', 'password-updated');
     }
