@@ -5,7 +5,7 @@
 | :--- | :--- |
 | **Nama Sistem** | SIBIMA (Sistem Informasi Bimbingan Tugas Akhir Mahasiswa) |
 | **Institusi** | Program Studi Sistem Informasi & Informatika, Fakultas Ilmu Komputer, Universitas Subang |
-| **Versi Dokumen** | 2.1 (Pembaruan Skema Relasi Fisik Lengkap & ERD Terklaster) |
+| **Versi Dokumen** | 3.0 (Relasi Skema Keseluruhan, Desainer Drag & Drop Visual, & Klaster Lengkap) |
 | **Basis Data Engine** | MySQL 8.0+ / MariaDB 10.4+ (Storage Engine: InnoDB) |
 | **Total Entitas Tabel** | **35 Tabel Operasional** |
 | **Total Foreign Key Aktif** | **57 Kunci Asing Terdaftar** |
@@ -40,11 +40,598 @@ Perancangan basis data SIBIMA dibangun di atas fondasi prinsip arsitektur sistem
 
 ## 2. DIAGRAM RELASI ENTITAS (ENTITY-RELATIONSHIP DIAGRAM / ERD)
 
-Sebagaimana standar perancangan visual skema basis data (seperti pada phpMyAdmin Designer, MySQL Workbench, dan DBeaver), bagian ini memaparkan **struktur tabel visual lengkap beserta kolom, tipe data, atribut primary key (`PK`), atribut foreign key (`FK`), dan garis relasi antar-kolom kunci**.
+Sebagaimana standar perancangan visual skema basis data profesional (seperti pada phpMyAdmin Designer, MySQL Workbench, dan DBeaver), bagian ini memaparkan **struktur tabel visual lengkap beserta nama kolom, tipe data, atribut primary key (`PK`), atribut foreign key (`FK`), dan garis relasi fisik antar-tabel**.
 
-Untuk menjaga keterbacaan yang optimal dan menghindari jalinan garis kusut (*hairball diagram*), diagram ERD dikelompokkan ke dalam 5 klaster fungsional utama:
+### 2.1 Diagram Relasi Entitas Keseluruhan (Unified Database Schema - 35 Tabel)
+Berikut merupakan representasi fisik terpadu seluruh basis data SIBIMA. Diagram ini memetakan seluruh **35 entitas tabel operasional** dan **57 relasi kunci asing aktif** secara utuh dalam satu rancangan skema global tanpa pemisahan klaster:
 
-### 2.1 Klaster 1: Relasi Tugas Akhir & Bimbingan Mahasiswa
+```mermaid
+erDiagram
+    ACTIVITY_LOGS {
+        bigint id PK
+        bigint user_id FK
+        varchar activity
+        text description
+        varchar module
+        varchar subject_type
+        bigint subject_id
+        longtext properties
+        varchar ip_address
+        text user_agent
+        timestamp created_at
+        timestamp updated_at
+    }
+    ADVISOR_DECREES {
+        bigint id PK
+        varchar decree_number
+        varchar title
+        varchar academic_year
+        varchar semester
+        varchar target_type
+        bigint dosen_id FK
+        bigint wave_id FK
+        date decree_date
+        varchar signatory_title
+        varchar signatory_name
+        varchar signatory_identifier
+        tinyint include_stamp
+        bigint signer_user_id FK
+        longtext theses_data
+        int total_students
+        varchar verification_token
+        bigint created_by FK
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+    ANNOUNCEMENTS {
+        bigint id PK
+        varchar title
+        text content
+        enum type
+        tinyint is_active
+        bigint user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    BUG_REPORTS {
+        bigint id PK
+        varchar ticket_number
+        bigint user_id FK
+        varchar title
+        varchar category
+        enum severity
+        enum status
+        varchar page_url
+        text description
+        text steps_to_reproduce
+        text device_info
+        varchar attachment_path
+        text admin_notes
+        bigint resolved_by FK
+        timestamp resolved_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    FAQS {
+        bigint id PK
+        varchar question
+        text answer
+        varchar category
+        varchar target_role
+        int order
+        tinyint is_active
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    FASILKOM_JOURNALS {
+        bigint id PK
+        varchar identifier
+        bigint article_id
+        text title
+        longtext authors
+        varchar authors_string
+        longtext abstract
+        longtext subjects
+        varchar publication_date
+        int year
+        varchar volume
+        varchar issue
+        varchar pages
+        varchar landing_page_url
+        varchar pdf_url
+        varchar doi
+        varchar publisher
+        varchar issn
+        timestamp created_at
+        timestamp updated_at
+    }
+    GRADUATIONS {
+        bigint id PK
+        bigint thesis_id FK
+        bigint student_id FK
+        enum status
+        text rejection_reason
+        text final_thesis_file
+        text journal_article_file
+        text publication_link
+        text plagiarism_file
+        text student_notes
+        tinyint hardcover_collected
+        timestamp hardcover_collected_at
+        tinyint library_clearance
+        timestamp library_clearance_at
+        tinyint lab_clearance
+        timestamp lab_clearance_at
+        tinyint cd_or_repository_collected
+        timestamp cd_or_repository_collected_at
+        varchar skl_number
+        date graduation_date
+        decimal gpa
+        varchar predicate
+        varchar verification_token
+        bigint approved_by FK
+        timestamp approved_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    GUIDANCE_DOCUMENTS {
+        bigint id PK
+        varchar title
+        text description
+        varchar category
+        varchar file_path
+        varchar original_name
+        bigint file_size
+        varchar file_extension
+        int download_count
+        tinyint is_active
+        bigint uploaded_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    JOURNAL_BOOKMARKS {
+        bigint id PK
+        bigint user_id FK
+        bigint folder_id FK
+        varchar journal_identifier
+        text title
+        longtext authors
+        text authors_string
+        smallint_5__unsigned year
+        varchar venue
+        varchar publisher
+        varchar doi
+        text url
+        text pdf_url
+        longtext abstract
+        varchar source
+        varchar source_label
+        longtext citations
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+    JOURNAL_BOOKMARK_FOLDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar name
+        varchar color
+        text description
+        timestamp created_at
+        timestamp updated_at
+    }
+    LETTER_SETTINGS {
+        bigint id PK
+        varchar type
+        varchar format
+        int last_number
+        varchar title
+        timestamp created_at
+        timestamp updated_at
+    }
+    LOGBOOKS {
+        bigint id PK
+        bigint thesis_id FK
+        date date
+        text progress_notes
+        text lecturer_notes
+        tinyint is_approved
+        timestamp created_at
+        timestamp updated_at
+    }
+    MENTORING_SESSIONS {
+        bigint id PK
+        bigint thesis_id FK
+        bigint dosen_id FK
+        datetime scheduled_at
+        varchar topic
+        enum status
+        enum student_attendance_status
+        text student_attendance_reason
+        timestamp student_confirmed_at
+        tinyint is_absent
+        enum type
+        varchar location
+        text notes
+        text feedback
+        varchar feedback_document_url
+        varchar document_path
+        varchar document_original_name
+        timestamp created_at
+        timestamp updated_at
+    }
+    MESSAGES {
+        bigint id PK
+        bigint sender_id FK
+        bigint receiver_id FK
+        text message
+        tinyint is_read
+        timestamp created_at
+        timestamp updated_at
+    }
+    NOTIFICATIONS {
+        char_36 id PK
+        varchar type
+        varchar notifiable_type
+        bigint notifiable_id
+        text data
+        timestamp read_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_APPLICATIONS {
+        bigint id PK
+        bigint thesis_id FK
+        varchar file_acc_pembimbing
+        varchar file_pembayaran
+        varchar file_kartu_bimbingan
+        varchar file_skripsi
+        varchar file_formulir
+        enum status
+        text admin_feedback
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        longtext file_reviews
+    }
+    SEMINAR_REVISIONS {
+        bigint id PK
+        bigint seminar_schedule_detail_id FK
+        bigint examiner_id FK
+        text revision_notes
+        varchar revision_file
+        text student_notes
+        varchar student_file
+        timestamp resubmitted_at
+        varchar status
+        int score_presentation
+        int score_explanation
+        int score_writing
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_REVISION_MESSAGES {
+        bigint id PK
+        bigint seminar_revision_id FK
+        bigint sender_id FK
+        text message
+        varchar file_path
+        timestamp read_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_SCHEDULES {
+        bigint id PK
+        varchar title
+        date date
+        bigint chairman_id FK
+        bigint moderator_id FK
+        varchar location
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        varchar meeting_link
+    }
+    SEMINAR_SCHEDULE_DETAILS {
+        bigint id PK
+        varchar verification_token
+        bigint seminar_schedule_id FK
+        bigint thesis_id FK
+        varchar activity_name
+        time start_time
+        time end_time
+        bigint examiner1_id FK
+        bigint examiner2_id FK
+        int order
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_TEMPLATES {
+        bigint id PK
+        varchar title
+        varchar file_path
+        varchar original_name
+        tinyint is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    SETTINGS {
+        bigint id PK
+        varchar key
+        text value
+        varchar type
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESES {
+        bigint id PK
+        bigint student_id FK
+        bigint pembimbing1_id FK
+        bigint pembimbing2_id FK
+        bigint requested_pembimbing1_id FK
+        bigint requested_pembimbing2_id FK
+        varchar title
+        varchar final_title
+        text abstract
+        varchar topic
+        tinyint is_migrated
+        enum status
+        tinyint acc_up_p1
+        tinyint acc_up_p2
+        tinyint acc_sidang_p1
+        tinyint acc_sidang_p2
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_APPLICATIONS {
+        bigint id PK
+        bigint thesis_id FK
+        varchar file_formulir
+        varchar file_transkrip
+        varchar file_acc_pembimbing
+        varchar file_logbook
+        varchar file_pembayaran
+        varchar file_skripsi
+        varchar file_ktm
+        varchar file_pkkmb_univ
+        varchar file_pkkmb_fak
+        varchar file_makrab
+        varchar file_cisco
+        varchar file_workshop
+        varchar file_organisasi
+        varchar file_toefl
+        varchar file_kewirausahaan
+        varchar file_tahsin
+        varchar file_komputer
+        varchar file_perpus_pinjam
+        varchar file_perpus_sumbang
+        varchar file_ijazah
+        varchar status
+        text admin_feedback
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        longtext file_reviews
+    }
+    THESIS_DEFENSE_REVISIONS {
+        bigint id PK
+        bigint thesis_defense_schedule_detail_id FK
+        bigint examiner_id FK
+        text revision_notes
+        varchar revision_file
+        text student_notes
+        varchar student_file
+        timestamp resubmitted_at
+        varchar status
+        int score_presentation
+        int score_explanation
+        int score_writing
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_REVISION_MESSAGES {
+        bigint id PK
+        bigint thesis_defense_revision_id FK
+        bigint sender_id FK
+        text message
+        varchar file_path
+        timestamp read_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_SCHEDULES {
+        bigint id PK
+        varchar title
+        date date
+        bigint chairman_id FK
+        bigint moderator_id FK
+        varchar location
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        varchar meeting_link
+    }
+    THESIS_DEFENSE_SCHEDULE_DETAILS {
+        bigint id PK
+        varchar verification_token
+        bigint thesis_defense_schedule_id FK
+        bigint thesis_id FK
+        varchar activity_name
+        time start_time
+        time end_time
+        bigint examiner1_id FK
+        bigint examiner2_id FK
+        int order
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_TEMPLATES {
+        bigint id PK
+        varchar title
+        varchar file_path
+        varchar original_name
+        tinyint is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_REPOSITORIES {
+        bigint id PK
+        varchar identifier
+        varchar name
+        int year
+        varchar title
+        text abstract
+        varchar pembimbing1
+        varchar pembimbing2
+        varchar file_path
+        varchar file_path_bab2
+        varchar file_path_bab3
+        varchar file_path_bab4
+        varchar file_path_bab5
+        varchar file_path_bab6
+        timestamp created_at
+        timestamp updated_at
+    }
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar username
+        varchar phone_number
+        longtext signature
+        varchar signature_token
+        enum role
+        tinyint is_active
+        varchar identifier
+        text research_interests
+        int max_quota
+        int entry_year
+        date birth_date
+        smallint_6 last_birthday_wished_year
+        longtext avatar
+        timestamp email_verified_at
+        varchar password
+        varchar remember_token
+        timestamp last_login_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    WAVES {
+        bigint id PK
+        varchar name
+        tinyint is_active
+        text description
+        timestamp created_at
+        timestamp updated_at
+        date start_date
+        date end_date
+    }
+    WA_BROADCASTS {
+        bigint id PK
+        bigint sender_id FK
+        varchar title
+        varchar target_type
+        longtext target_filter
+        text message_template
+        int delay_seconds
+        int total_recipients
+        int successful_count
+        int failed_count
+        varchar status
+        timestamp sent_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    WA_BROADCAST_LOGS {
+        bigint id PK
+        bigint wa_broadcast_id FK
+        bigint recipient_id FK
+        varchar recipient_name
+        varchar recipient_identifier
+        varchar recipient_phone
+        text message_content
+        varchar status
+        text error_message
+        timestamp sent_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    WA_TEMPLATES {
+        bigint id PK
+        varchar code
+        varchar name
+        varchar category
+        text content
+        longtext available_variables
+        tinyint is_customized
+        tinyint is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    USERS ||--o{ ACTIVITY_LOGS : "user_id"
+    USERS ||--o{ ADVISOR_DECREES : "created_by"
+    USERS ||--o{ ADVISOR_DECREES : "dosen_id"
+    USERS ||--o{ ADVISOR_DECREES : "signer_user_id"
+    WAVES ||--o{ ADVISOR_DECREES : "wave_id"
+    USERS ||--o{ ANNOUNCEMENTS : "user_id"
+    USERS ||--o{ BUG_REPORTS : "resolved_by"
+    USERS ||--o{ BUG_REPORTS : "user_id"
+    USERS ||--o{ FAQS : "created_by"
+    USERS ||--o{ GRADUATIONS : "approved_by"
+    USERS ||--o{ GRADUATIONS : "student_id"
+    THESES ||--o{ GRADUATIONS : "thesis_id"
+    USERS ||--o{ GUIDANCE_DOCUMENTS : "uploaded_by"
+    JOURNAL_BOOKMARK_FOLDERS ||--o{ JOURNAL_BOOKMARKS : "folder_id"
+    USERS ||--o{ JOURNAL_BOOKMARKS : "user_id"
+    USERS ||--o{ JOURNAL_BOOKMARK_FOLDERS : "user_id"
+    THESES ||--o{ LOGBOOKS : "thesis_id"
+    USERS ||--o{ MENTORING_SESSIONS : "dosen_id"
+    THESES ||--o{ MENTORING_SESSIONS : "thesis_id"
+    USERS ||--o{ MESSAGES : "receiver_id"
+    USERS ||--o{ MESSAGES : "sender_id"
+    THESES ||--o{ SEMINAR_APPLICATIONS : "thesis_id"
+    WAVES ||--o{ SEMINAR_APPLICATIONS : "wave_id"
+    USERS ||--o{ SEMINAR_REVISIONS : "examiner_id"
+    SEMINAR_SCHEDULE_DETAILS ||--o{ SEMINAR_REVISIONS : "seminar_schedule_detail_id"
+    SEMINAR_REVISIONS ||--o{ SEMINAR_REVISION_MESSAGES : "seminar_revision_id"
+    USERS ||--o{ SEMINAR_REVISION_MESSAGES : "sender_id"
+    USERS ||--o{ SEMINAR_SCHEDULES : "chairman_id"
+    USERS ||--o{ SEMINAR_SCHEDULES : "created_by"
+    USERS ||--o{ SEMINAR_SCHEDULES : "moderator_id"
+    WAVES ||--o{ SEMINAR_SCHEDULES : "wave_id"
+    USERS ||--o{ SEMINAR_SCHEDULE_DETAILS : "examiner1_id"
+    USERS ||--o{ SEMINAR_SCHEDULE_DETAILS : "examiner2_id"
+    SEMINAR_SCHEDULES ||--o{ SEMINAR_SCHEDULE_DETAILS : "seminar_schedule_id"
+    THESES ||--o{ SEMINAR_SCHEDULE_DETAILS : "thesis_id"
+    USERS ||--o{ THESES : "pembimbing1_id"
+    USERS ||--o{ THESES : "pembimbing2_id"
+    USERS ||--o{ THESES : "requested_pembimbing1_id"
+    USERS ||--o{ THESES : "requested_pembimbing2_id"
+    USERS ||--o{ THESES : "student_id"
+    THESES ||--o{ THESIS_DEFENSE_APPLICATIONS : "thesis_id"
+    WAVES ||--o{ THESIS_DEFENSE_APPLICATIONS : "wave_id"
+    THESIS_DEFENSE_SCHEDULE_DETAILS ||--o{ THESIS_DEFENSE_REVISIONS : "thesis_defense_schedule_detail_id"
+    USERS ||--o{ THESIS_DEFENSE_REVISIONS : "examiner_id"
+    THESIS_DEFENSE_REVISIONS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "thesis_defense_revision_id"
+    USERS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "sender_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULES : "chairman_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULES : "created_by"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULES : "moderator_id"
+    WAVES ||--o{ THESIS_DEFENSE_SCHEDULES : "wave_id"
+    THESIS_DEFENSE_SCHEDULES ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "thesis_defense_schedule_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "examiner1_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "examiner2_id"
+    THESES ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "thesis_id"
+    USERS ||--o{ WA_BROADCASTS : "sender_id"
+    USERS ||--o{ WA_BROADCAST_LOGS : "recipient_id"
+    WA_BROADCASTS ||--o{ WA_BROADCAST_LOGS : "wa_broadcast_id"
+```
+
+### 2.2 Klaster 1: Relasi Tugas Akhir & Bimbingan Mahasiswa
 Klaster ini menghubungkan mahasiswa (`users`), tugas akhir (`theses`), logbook kegiatan harian (`logbooks`), dan sesi bimbingan bersama dosen pembimbing (`mentoring_sessions`). Garis relasi menghubungkan `users.id` ke `theses.student_id`, `theses.pembimbing1_id`, dan `theses.pembimbing2_id`, serta `theses.id` ke `logbooks.thesis_id` dan `mentoring_sessions.thesis_id`.
 
 ```mermaid
@@ -134,7 +721,7 @@ erDiagram
     THESES ||--o{ LOGBOOKS : "thesis_id"
 ```
 
-### 2.2 Klaster 2: Relasi Seminar Proposal (Pendaftaran, Jadwal, Penilaian & Revisi)
+### 2.3 Klaster 2: Relasi Seminar Proposal (Pendaftaran, Jadwal, Penilaian & Revisi)
 Klaster ini memetakan pendaftaran seminar proposal (`seminar_applications`), gelombang pendaftaran (`waves`), master jadwal seminar (`seminar_schedules`), alokasi dewan penguji (`seminar_schedule_details`), revisi pasca-seminar (`seminar_revisions`), dan thread percakapan revisi (`seminar_revision_messages`).
 
 ```mermaid
@@ -282,7 +869,7 @@ erDiagram
     USERS ||--o{ SEMINAR_REVISION_MESSAGES : "sender_id"
 ```
 
-### 2.3 Klaster 3: Relasi Sidang Skripsi (Pendaftaran, Jadwal, Penilaian & Revisi)
+### 2.4 Klaster 3: Relasi Sidang Skripsi (Pendaftaran, Jadwal, Penilaian & Revisi)
 Klaster ini memetakan permohonan ujian akhir sidang (`thesis_defense_applications`), gelombang aktif (`waves`), jadwal sidang (`thesis_defense_schedules`), alokasi dewan penguji sidang (`thesis_defense_schedule_details`), revisi sidang (`thesis_defense_revisions`), dan thread percakapan revisi sidang skripsi (`thesis_defense_revision_messages`).
 
 ```mermaid
@@ -445,7 +1032,7 @@ erDiagram
     USERS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "sender_id"
 ```
 
-### 2.4 Klaster 4: Relasi Kelulusan Yudisium, SK Dosen Pembimbing & Repositori
+### 2.5 Klaster 4: Relasi Kelulusan Yudisium, SK Dosen Pembimbing & Repositori
 Klaster ini mengatur kelulusan yudisium (`graduations`), penerbitan SK dosen pembimbing (`advisor_decrees`), pengaturan format nomor surat resmi (`letter_settings`), repositori skripsi alumni (`thesis_repositories`), dan koleksi referensi jurnal (`journal_bookmarks`, `journal_bookmark_folders`).
 
 ```mermaid
@@ -604,7 +1191,7 @@ erDiagram
     USERS ||--o{ JOURNAL_BOOKMARKS : "user_id"
 ```
 
-### 2.5 Klaster 5: Relasi Komunikasi, Gateway WhatsApp, Log Audit & Bug Report
+### 2.6 Klaster 5: Relasi Komunikasi, Gateway WhatsApp, Log Audit & Bug Report
 Klaster ini mengelola perpesanan internal (`messages`), siaran massal WhatsApp (`wa_broadcasts`, `wa_broadcast_logs`), template pesan notifikasi (`wa_templates`), log audit keamanan pengguna (`activity_logs`), dan tiket pelaporan kendala/usulan fitur baru (`bug_reports`).
 
 ```mermaid
@@ -715,8 +1302,8 @@ erDiagram
     USERS ||--o{ ACTIVITY_LOGS : "user_id"
 ```
 
-### 2.6 Matriks Rinci Relasi Antar-Tabel (*Relational Cardinality Matrix*)
-Tabel berikut menyajikan seluruh hubungan referensial kunci asing aktif pada basis data SIBIMA beserta kardinalitas dan aturan perlindungan integritas datanya:
+### 2.7 Matriks Rinci Relasi Antar-Tabel (*Relational Cardinality Matrix*)
+Tabel berikut menyajikan seluruh 57 hubungan referensial kunci asing aktif pada basis data SIBIMA beserta kardinalitas dan aturan perlindungan integritas datanya:
 
 | No | Tabel Sumber (*Child*) | Kolom Foreign Key (FK) | Tabel Rujukan (*Parent*) | Kolom Primary Key (PK) | Kardinalitas | Aturan `ON DELETE` | Makna & Aturan Relasi Bisnis |
 | :---: | :--- | :--- | :--- | :--- | :---: | :--- | :--- |

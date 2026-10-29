@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dokumen Rancangan Basis Data SIBIMA (35 Tabel & ERD Visual) - FASILKOM UNSUB</title>
+    <title>Dokumen Rancangan Basis Data SIBIMA (35 Tabel & Interactive Visual Designer) - FASILKOM UNSUB</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +23,12 @@
             --orange-500: #f97316;
             --orange-600: #ea580c;
             --orange-700: #c2410c;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --emerald-500: #10b981;
+            --emerald-600: #059669;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
         }
 
         * {
@@ -42,9 +48,9 @@
         .top-bar {
             position: sticky;
             top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--slate-200);
             padding: 12px 32px;
             display: flex;
@@ -115,7 +121,7 @@
         }
 
         .document-wrapper {
-            max-width: 1200px;
+            max-width: 1220px;
             margin: 32px auto;
             background: #ffffff;
             border-radius: 20px;
@@ -261,6 +267,407 @@
             justify-content: center;
         }
 
+        /* =======================================================
+           INTERACTIVE ERD DESIGNER STYLES (DRAGGABLE CANVAS)
+           ======================================================= */
+        .designer-wrapper {
+            background: #ffffff;
+            border: 1px solid var(--slate-300);
+            border-radius: 20px;
+            margin: 32px 0 44px 0;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .designer-wrapper.is-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            z-index: 99999;
+        }
+
+        .designer-header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--slate-200);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .designer-tag {
+            font-size: 10.5px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            color: #ea580c;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .designer-title {
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--slate-900);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .designer-desc {
+            font-size: 12px;
+            color: var(--slate-500);
+            margin: 3px 0 0 0;
+        }
+
+        .designer-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-group {
+            display: inline-flex;
+            align-items: center;
+            background: var(--slate-100);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            padding: 3px;
+            gap: 4px;
+        }
+
+        .btn-ctrl {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            color: var(--slate-700);
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-ctrl:hover {
+            background: var(--slate-50);
+            color: var(--slate-900);
+            border-color: var(--slate-300);
+        }
+
+        .btn-ctrl.btn-accent {
+            background: #ea580c;
+            color: #ffffff;
+            border-color: #c2410c;
+            box-shadow: 0 2px 4px rgba(234, 88, 12, 0.25);
+        }
+        .btn-ctrl.btn-accent:hover {
+            background: #c2410c;
+        }
+
+        .zoom-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--slate-600);
+            padding: 0 8px;
+            min-width: 44px;
+            text-align: center;
+        }
+
+        .designer-toolbar {
+            background: var(--slate-50);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid var(--slate-300);
+            border-radius: 8px;
+            padding: 6px 12px;
+            width: 320px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .search-box svg {
+            color: var(--slate-400);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            font-size: 12px;
+            font-family: inherit;
+            color: var(--slate-800);
+            width: 100%;
+        }
+
+        .legend-pills {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-pill {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--slate-600);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+        .dot-thesis { background: #ea580c; }
+        .dot-seminar { background: #0284c7; }
+        .dot-defense { background: #059669; }
+        .dot-academic { background: #9333ea; }
+        .dot-comm { background: #eab308; }
+        .dot-system { background: #64748b; }
+
+        .canvas-viewport {
+            position: relative;
+            height: 720px;
+            background-color: #0b1120;
+            background-image: 
+                radial-gradient(rgba(148, 163, 184, 0.15) 1.5px, transparent 1.5px),
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 28px 28px, 140px 140px, 140px 140px;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .canvas-viewport.is-dragging-canvas {
+            cursor: grabbing;
+        }
+
+        .canvas-world {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4500px;
+            height: 3200px;
+            transform-origin: 0 0;
+        }
+
+        .connections-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4500px;
+            height: 3200px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .relation-line {
+            fill: none;
+            stroke: #38bdf8;
+            stroke-width: 2;
+            stroke-opacity: 0.65;
+            transition: stroke-width 0.15s, stroke-opacity 0.15s, stroke 0.15s;
+        }
+
+        .relation-line:hover,
+        .relation-line.is-highlighted {
+            stroke: #f97316 !important;
+            stroke-width: 3.5 !important;
+            stroke-opacity: 1 !important;
+        }
+
+        .tables-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4500px;
+            height: 3200px;
+            z-index: 20;
+        }
+
+        /* Table Card Node */
+        .erd-table-card {
+            position: absolute;
+            width: 290px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid #334155;
+            overflow: hidden;
+            font-size: 11.5px;
+            cursor: default;
+            transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+        }
+
+        .erd-table-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 0 2px #38bdf8;
+            z-index: 50 !important;
+        }
+
+        .erd-table-card.is-active-focus {
+            box-shadow: 0 0 0 3px #f97316, 0 15px 40px rgba(249, 115, 22, 0.4) !important;
+            z-index: 60 !important;
+        }
+
+        .erd-table-card.is-dimmed {
+            opacity: 0.25;
+        }
+
+        .card-header {
+            padding: 8px 12px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 800;
+            cursor: move;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            overflow: hidden;
+        }
+
+        .table-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .col-count-badge {
+            background: rgba(0, 0, 0, 0.25);
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 999px;
+        }
+
+        /* Color thematic themes for table headers */
+        .theme-core { background: linear-gradient(135deg, #ea580c, #c2410c); }
+        .theme-thesis { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .theme-seminar { background: linear-gradient(135deg, #0284c7, #0369a1); }
+        .theme-defense { background: linear-gradient(135deg, #059669, #047857); }
+        .theme-academic { background: linear-gradient(135deg, #9333ea, #7e22ce); }
+        .theme-comm { background: linear-gradient(135deg, #d97706, #b45309); }
+        .theme-content { background: linear-gradient(135deg, #475569, #334155); }
+        .theme-system { background: linear-gradient(135deg, #1e293b, #0f172a); }
+
+        .card-columns {
+            max-height: 280px;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+
+        .col-row {
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #334155;
+            transition: background 0.1s ease;
+        }
+
+        .col-row:hover {
+            background: #f8fafc;
+        }
+
+        .col-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow: hidden;
+        }
+
+        .col-key-icon {
+            font-size: 10px;
+            width: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .col-key-pk {
+            color: #d97706;
+            font-weight: 800;
+        }
+
+        .col-key-fk {
+            color: #0284c7;
+            font-weight: 800;
+        }
+
+        .col-key-none {
+            color: #cbd5e1;
+        }
+
+        .col-name {
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .col-name.is-pk {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .col-type {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #64748b;
+            flex-shrink: 0;
+            margin-left: 6px;
+        }
+
+        .designer-footer {
+            background: #ffffff;
+            border-top: 1px solid var(--slate-200);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11.5px;
+            color: var(--slate-500);
+        }
+
+        .status-msg {
+            color: #059669;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
         @media print {
             .no-print {
                 display: none !important;
@@ -316,7 +723,7 @@
     <div class="top-bar no-print">
         <div class="brand-info">
             <span class="badge-fasilkom">FASILKOM UNSUB</span>
-            <div class="brand-title">Dokumen Rancangan Basis Data SIBIMA (35 Tabel & ERD Visual)</div>
+            <div class="brand-title">Dokumen Rancangan Basis Data SIBIMA (35 Tabel & Desainer Drag & Drop)</div>
         </div>
         <div class="btn-group">
             <button onclick="window.print()" class="btn btn-primary" title="Cetak atau Simpan sebagai PDF">
@@ -355,7 +762,7 @@
 </tr>
 <tr>
 <td align="left"><strong>Versi Dokumen</strong></td>
-<td align="left">2.1 (Pembaruan Skema Relasi Fisik Lengkap &amp; ERD Terklaster)</td>
+<td align="left">3.0 (Relasi Skema Keseluruhan, Desainer Drag &amp; Drop Visual, &amp; Klaster Lengkap)</td>
 </tr>
 <tr>
 <td align="left"><strong>Basis Data Engine</strong></td>
@@ -438,11 +845,674 @@
 </table>
 <hr />
 <h2>2. DIAGRAM RELASI ENTITAS (ENTITY-RELATIONSHIP DIAGRAM / ERD)</h2>
-<p>Sebagaimana standar perancangan visual skema basis data (seperti pada phpMyAdmin Designer, MySQL Workbench, dan DBeaver), bagian ini memaparkan <strong>struktur tabel visual lengkap beserta kolom, tipe data, atribut primary key (<code>PK</code>), atribut foreign key (<code>FK</code>), dan garis relasi antar-kolom kunci</strong>.</p>
-<p>Untuk menjaga keterbacaan yang optimal dan menghindari jalinan garis kusut (<em>hairball diagram</em>), diagram ERD dikelompokkan ke dalam 5 klaster fungsional utama:</p>
-<h3>2.1 Klaster 1: Relasi Tugas Akhir &amp; Bimbingan Mahasiswa</h3>
+<p>Sebagaimana standar perancangan visual skema basis data profesional (seperti pada phpMyAdmin Designer, MySQL Workbench, dan DBeaver), bagian ini memaparkan <strong>struktur tabel visual lengkap beserta nama kolom, tipe data, atribut primary key (<code>PK</code>), atribut foreign key (<code>FK</code>), dan garis relasi fisik antar-tabel</strong>.</p>
+<div class="designer-wrapper no-print" id="interactive-designer-section">
+    <div class="designer-header">
+        <div class="designer-brand">
+            <div class="designer-tag">INTERACTIVE ERD DESIGNER</div>
+            <h3 class="designer-title">Desainer Visual Relasi Basis Data (Drag & Drop Canvas)</h3>
+            <p class="designer-desc">Anda dapat <strong>menggeser (drag & drop) posisi tabel</strong> layaknya pada phpMyAdmin Designer / MySQL Workbench. Garis konektor relasi antar-kunci asing akan otomatis mengikuti pergerakan tabel secara dinamis.</p>
+        </div>
+        <div class="designer-controls">
+            <div class="control-group">
+                <button type="button" class="btn-ctrl" id="btn-zoom-out" title="Perkecil (-)">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                </button>
+                <span class="zoom-indicator" id="zoom-text">85%</span>
+                <button type="button" class="btn-ctrl" id="btn-zoom-in" title="Perbesar (+)">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </button>
+                <button type="button" class="btn-ctrl" id="btn-reset-view" title="Pusatkan Tampilan">Fit</button>
+            </div>
+            <div class="control-group">
+                <button type="button" class="btn-ctrl btn-accent" id="btn-save-layout" title="Simpan Tata Letak Baru ke Browser">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                    <span>Simpan Posisi</span>
+                </button>
+                <button type="button" class="btn-ctrl" id="btn-reset-layout" title="Kembalikan Posisi ke Default">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>Reset Posisi</span>
+                </button>
+                <button type="button" class="btn-ctrl" id="btn-fullscreen" title="Buka Mode Layar Penuh">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    <span>Fullscreen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Search & Legend Filter -->
+    <div class="designer-toolbar">
+        <div class="search-box">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="table-search" placeholder="Cari nama tabel (misal: theses, users, waves)..." />
+        </div>
+        <div class="legend-pills">
+            <span class="legend-pill"><span class="dot dot-thesis"></span> Skripsi & Bimbingan</span>
+            <span class="legend-pill"><span class="dot dot-seminar"></span> Seminar Proposal</span>
+            <span class="legend-pill"><span class="dot dot-defense"></span> Sidang Skripsi</span>
+            <span class="legend-pill"><span class="dot dot-academic"></span> Yudisium & SK</span>
+            <span class="legend-pill"><span class="dot dot-comm"></span> Komunikasi & WA</span>
+            <span class="legend-pill"><span class="dot dot-system"></span> Sistem & Log</span>
+        </div>
+    </div>
+
+    <!-- Main Canvas Viewport -->
+    <div class="canvas-viewport" id="erd-viewport">
+        <div class="canvas-world" id="erd-world">
+            <svg class="connections-layer" id="erd-svg" width="4500" height="3200">
+                <defs>
+                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#0284c7" />
+                        <stop offset="100%" stop-color="#ea580c" />
+                    </linearGradient>
+                    <marker id="arrow-start" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <circle cx="5" cy="5" r="3.5" fill="#0284c7" />
+                    </marker>
+                    <marker id="arrow-end" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                        <polygon points="0 1, 10 5, 0 9" fill="#ea580c" />
+                    </marker>
+                </defs>
+                <g id="svg-paths-group"></g>
+            </svg>
+            <div class="tables-layer" id="erd-tables-layer"></div>
+        </div>
+    </div>
+
+    <div class="designer-footer">
+        <span>💡 <em>Tips:</em> Klik dan geser header tabel untuk memindahkan posisi. Drag area kosong untuk menggeser kanvas (pan), dan gunakan roda mouse untuk zoom in/out.</span>
+        <span id="pos-status" class="status-msg"></span>
+    </div>
+</div>
+<h3>2.1 Diagram Relasi Entitas Keseluruhan (Unified Database Schema - 35 Tabel)</h3>
+<p>Berikut merupakan representasi fisik terpadu seluruh basis data SIBIMA. Diagram ini memetakan seluruh <strong>35 entitas tabel operasional</strong> dan <strong>57 relasi kunci asing aktif</strong> secara utuh dalam satu rancangan skema global tanpa pemisahan klaster:</p>
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (MERMAID ERD)</div><div class="mermaid">erDiagram
+    ACTIVITY_LOGS {
+        bigint id PK
+        bigint user_id FK
+        varchar activity
+        text description
+        varchar module
+        varchar subject_type
+        bigint subject_id
+        longtext properties
+        varchar ip_address
+        text user_agent
+        timestamp created_at
+        timestamp updated_at
+    }
+    ADVISOR_DECREES {
+        bigint id PK
+        varchar decree_number
+        varchar title
+        varchar academic_year
+        varchar semester
+        varchar target_type
+        bigint dosen_id FK
+        bigint wave_id FK
+        date decree_date
+        varchar signatory_title
+        varchar signatory_name
+        varchar signatory_identifier
+        tinyint include_stamp
+        bigint signer_user_id FK
+        longtext theses_data
+        int total_students
+        varchar verification_token
+        bigint created_by FK
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+    ANNOUNCEMENTS {
+        bigint id PK
+        varchar title
+        text content
+        enum type
+        tinyint is_active
+        bigint user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    BUG_REPORTS {
+        bigint id PK
+        varchar ticket_number
+        bigint user_id FK
+        varchar title
+        varchar category
+        enum severity
+        enum status
+        varchar page_url
+        text description
+        text steps_to_reproduce
+        text device_info
+        varchar attachment_path
+        text admin_notes
+        bigint resolved_by FK
+        timestamp resolved_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    FAQS {
+        bigint id PK
+        varchar question
+        text answer
+        varchar category
+        varchar target_role
+        int order
+        tinyint is_active
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    FASILKOM_JOURNALS {
+        bigint id PK
+        varchar identifier
+        bigint article_id
+        text title
+        longtext authors
+        varchar authors_string
+        longtext abstract
+        longtext subjects
+        varchar publication_date
+        int year
+        varchar volume
+        varchar issue
+        varchar pages
+        varchar landing_page_url
+        varchar pdf_url
+        varchar doi
+        varchar publisher
+        varchar issn
+        timestamp created_at
+        timestamp updated_at
+    }
+    GRADUATIONS {
+        bigint id PK
+        bigint thesis_id FK
+        bigint student_id FK
+        enum status
+        text rejection_reason
+        text final_thesis_file
+        text journal_article_file
+        text publication_link
+        text plagiarism_file
+        text student_notes
+        tinyint hardcover_collected
+        timestamp hardcover_collected_at
+        tinyint library_clearance
+        timestamp library_clearance_at
+        tinyint lab_clearance
+        timestamp lab_clearance_at
+        tinyint cd_or_repository_collected
+        timestamp cd_or_repository_collected_at
+        varchar skl_number
+        date graduation_date
+        decimal gpa
+        varchar predicate
+        varchar verification_token
+        bigint approved_by FK
+        timestamp approved_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    GUIDANCE_DOCUMENTS {
+        bigint id PK
+        varchar title
+        text description
+        varchar category
+        varchar file_path
+        varchar original_name
+        bigint file_size
+        varchar file_extension
+        int download_count
+        tinyint is_active
+        bigint uploaded_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+    JOURNAL_BOOKMARKS {
+        bigint id PK
+        bigint user_id FK
+        bigint folder_id FK
+        varchar journal_identifier
+        text title
+        longtext authors
+        text authors_string
+        smallint_5__unsigned year
+        varchar venue
+        varchar publisher
+        varchar doi
+        text url
+        text pdf_url
+        longtext abstract
+        varchar source
+        varchar source_label
+        longtext citations
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+    JOURNAL_BOOKMARK_FOLDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar name
+        varchar color
+        text description
+        timestamp created_at
+        timestamp updated_at
+    }
+    LETTER_SETTINGS {
+        bigint id PK
+        varchar type
+        varchar format
+        int last_number
+        varchar title
+        timestamp created_at
+        timestamp updated_at
+    }
+    LOGBOOKS {
+        bigint id PK
+        bigint thesis_id FK
+        date date
+        text progress_notes
+        text lecturer_notes
+        tinyint is_approved
+        timestamp created_at
+        timestamp updated_at
+    }
+    MENTORING_SESSIONS {
+        bigint id PK
+        bigint thesis_id FK
+        bigint dosen_id FK
+        datetime scheduled_at
+        varchar topic
+        enum status
+        enum student_attendance_status
+        text student_attendance_reason
+        timestamp student_confirmed_at
+        tinyint is_absent
+        enum type
+        varchar location
+        text notes
+        text feedback
+        varchar feedback_document_url
+        varchar document_path
+        varchar document_original_name
+        timestamp created_at
+        timestamp updated_at
+    }
+    MESSAGES {
+        bigint id PK
+        bigint sender_id FK
+        bigint receiver_id FK
+        text message
+        tinyint is_read
+        timestamp created_at
+        timestamp updated_at
+    }
+    NOTIFICATIONS {
+        char_36 id PK
+        varchar type
+        varchar notifiable_type
+        bigint notifiable_id
+        text data
+        timestamp read_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_APPLICATIONS {
+        bigint id PK
+        bigint thesis_id FK
+        varchar file_acc_pembimbing
+        varchar file_pembayaran
+        varchar file_kartu_bimbingan
+        varchar file_skripsi
+        varchar file_formulir
+        enum status
+        text admin_feedback
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        longtext file_reviews
+    }
+    SEMINAR_REVISIONS {
+        bigint id PK
+        bigint seminar_schedule_detail_id FK
+        bigint examiner_id FK
+        text revision_notes
+        varchar revision_file
+        text student_notes
+        varchar student_file
+        timestamp resubmitted_at
+        varchar status
+        int score_presentation
+        int score_explanation
+        int score_writing
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_REVISION_MESSAGES {
+        bigint id PK
+        bigint seminar_revision_id FK
+        bigint sender_id FK
+        text message
+        varchar file_path
+        timestamp read_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_SCHEDULES {
+        bigint id PK
+        varchar title
+        date date
+        bigint chairman_id FK
+        bigint moderator_id FK
+        varchar location
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        varchar meeting_link
+    }
+    SEMINAR_SCHEDULE_DETAILS {
+        bigint id PK
+        varchar verification_token
+        bigint seminar_schedule_id FK
+        bigint thesis_id FK
+        varchar activity_name
+        time start_time
+        time end_time
+        bigint examiner1_id FK
+        bigint examiner2_id FK
+        int order
+        timestamp created_at
+        timestamp updated_at
+    }
+    SEMINAR_TEMPLATES {
+        bigint id PK
+        varchar title
+        varchar file_path
+        varchar original_name
+        tinyint is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    SETTINGS {
+        bigint id PK
+        varchar key
+        text value
+        varchar type
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESES {
+        bigint id PK
+        bigint student_id FK
+        bigint pembimbing1_id FK
+        bigint pembimbing2_id FK
+        bigint requested_pembimbing1_id FK
+        bigint requested_pembimbing2_id FK
+        varchar title
+        varchar final_title
+        text abstract
+        varchar topic
+        tinyint is_migrated
+        enum status
+        tinyint acc_up_p1
+        tinyint acc_up_p2
+        tinyint acc_sidang_p1
+        tinyint acc_sidang_p2
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_APPLICATIONS {
+        bigint id PK
+        bigint thesis_id FK
+        varchar file_formulir
+        varchar file_transkrip
+        varchar file_acc_pembimbing
+        varchar file_logbook
+        varchar file_pembayaran
+        varchar file_skripsi
+        varchar file_ktm
+        varchar file_pkkmb_univ
+        varchar file_pkkmb_fak
+        varchar file_makrab
+        varchar file_cisco
+        varchar file_workshop
+        varchar file_organisasi
+        varchar file_toefl
+        varchar file_kewirausahaan
+        varchar file_tahsin
+        varchar file_komputer
+        varchar file_perpus_pinjam
+        varchar file_perpus_sumbang
+        varchar file_ijazah
+        varchar status
+        text admin_feedback
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        longtext file_reviews
+    }
+    THESIS_DEFENSE_REVISIONS {
+        bigint id PK
+        bigint thesis_defense_schedule_detail_id FK
+        bigint examiner_id FK
+        text revision_notes
+        varchar revision_file
+        text student_notes
+        varchar student_file
+        timestamp resubmitted_at
+        varchar status
+        int score_presentation
+        int score_explanation
+        int score_writing
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_REVISION_MESSAGES {
+        bigint id PK
+        bigint thesis_defense_revision_id FK
+        bigint sender_id FK
+        text message
+        varchar file_path
+        timestamp read_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_SCHEDULES {
+        bigint id PK
+        varchar title
+        date date
+        bigint chairman_id FK
+        bigint moderator_id FK
+        varchar location
+        bigint created_by FK
+        timestamp created_at
+        timestamp updated_at
+        bigint wave_id FK
+        varchar meeting_link
+    }
+    THESIS_DEFENSE_SCHEDULE_DETAILS {
+        bigint id PK
+        varchar verification_token
+        bigint thesis_defense_schedule_id FK
+        bigint thesis_id FK
+        varchar activity_name
+        time start_time
+        time end_time
+        bigint examiner1_id FK
+        bigint examiner2_id FK
+        int order
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_DEFENSE_TEMPLATES {
+        bigint id PK
+        varchar title
+        varchar file_path
+        varchar original_name
+        tinyint is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    THESIS_REPOSITORIES {
+        bigint id PK
+        varchar identifier
+        varchar name
+        int year
+        varchar title
+        text abstract
+        varchar pembimbing1
+        varchar pembimbing2
+        varchar file_path
+        varchar file_path_bab2
+        varchar file_path_bab3
+        varchar file_path_bab4
+        varchar file_path_bab5
+        varchar file_path_bab6
+        timestamp created_at
+        timestamp updated_at
+    }
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar username
+        varchar phone_number
+        longtext signature
+        varchar signature_token
+        enum role
+        tinyint is_active
+        varchar identifier
+        text research_interests
+        int max_quota
+        int entry_year
+        date birth_date
+        smallint_6 last_birthday_wished_year
+        longtext avatar
+        timestamp email_verified_at
+        varchar password
+        varchar remember_token
+        timestamp last_login_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    WAVES {
+        bigint id PK
+        varchar name
+        tinyint is_active
+        text description
+        timestamp created_at
+        timestamp updated_at
+        date start_date
+        date end_date
+    }
+    WA_BROADCASTS {
+        bigint id PK
+        bigint sender_id FK
+        varchar title
+        varchar target_type
+        longtext target_filter
+        text message_template
+        int delay_seconds
+        int total_recipients
+        int successful_count
+        int failed_count
+        varchar status
+        timestamp sent_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    WA_BROADCAST_LOGS {
+        bigint id PK
+        bigint wa_broadcast_id FK
+        bigint recipient_id FK
+        varchar recipient_name
+        varchar recipient_identifier
+        varchar recipient_phone
+        text message_content
+        varchar status
+        text error_message
+        timestamp sent_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    WA_TEMPLATES {
+        bigint id PK
+        varchar code
+        varchar name
+        varchar category
+        text content
+        longtext available_variables
+        tinyint is_customized
+        tinyint is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+    USERS ||--o{ ACTIVITY_LOGS : "user_id"
+    USERS ||--o{ ADVISOR_DECREES : "created_by"
+    USERS ||--o{ ADVISOR_DECREES : "dosen_id"
+    USERS ||--o{ ADVISOR_DECREES : "signer_user_id"
+    WAVES ||--o{ ADVISOR_DECREES : "wave_id"
+    USERS ||--o{ ANNOUNCEMENTS : "user_id"
+    USERS ||--o{ BUG_REPORTS : "resolved_by"
+    USERS ||--o{ BUG_REPORTS : "user_id"
+    USERS ||--o{ FAQS : "created_by"
+    USERS ||--o{ GRADUATIONS : "approved_by"
+    USERS ||--o{ GRADUATIONS : "student_id"
+    THESES ||--o{ GRADUATIONS : "thesis_id"
+    USERS ||--o{ GUIDANCE_DOCUMENTS : "uploaded_by"
+    JOURNAL_BOOKMARK_FOLDERS ||--o{ JOURNAL_BOOKMARKS : "folder_id"
+    USERS ||--o{ JOURNAL_BOOKMARKS : "user_id"
+    USERS ||--o{ JOURNAL_BOOKMARK_FOLDERS : "user_id"
+    THESES ||--o{ LOGBOOKS : "thesis_id"
+    USERS ||--o{ MENTORING_SESSIONS : "dosen_id"
+    THESES ||--o{ MENTORING_SESSIONS : "thesis_id"
+    USERS ||--o{ MESSAGES : "receiver_id"
+    USERS ||--o{ MESSAGES : "sender_id"
+    THESES ||--o{ SEMINAR_APPLICATIONS : "thesis_id"
+    WAVES ||--o{ SEMINAR_APPLICATIONS : "wave_id"
+    USERS ||--o{ SEMINAR_REVISIONS : "examiner_id"
+    SEMINAR_SCHEDULE_DETAILS ||--o{ SEMINAR_REVISIONS : "seminar_schedule_detail_id"
+    SEMINAR_REVISIONS ||--o{ SEMINAR_REVISION_MESSAGES : "seminar_revision_id"
+    USERS ||--o{ SEMINAR_REVISION_MESSAGES : "sender_id"
+    USERS ||--o{ SEMINAR_SCHEDULES : "chairman_id"
+    USERS ||--o{ SEMINAR_SCHEDULES : "created_by"
+    USERS ||--o{ SEMINAR_SCHEDULES : "moderator_id"
+    WAVES ||--o{ SEMINAR_SCHEDULES : "wave_id"
+    USERS ||--o{ SEMINAR_SCHEDULE_DETAILS : "examiner1_id"
+    USERS ||--o{ SEMINAR_SCHEDULE_DETAILS : "examiner2_id"
+    SEMINAR_SCHEDULES ||--o{ SEMINAR_SCHEDULE_DETAILS : "seminar_schedule_id"
+    THESES ||--o{ SEMINAR_SCHEDULE_DETAILS : "thesis_id"
+    USERS ||--o{ THESES : "pembimbing1_id"
+    USERS ||--o{ THESES : "pembimbing2_id"
+    USERS ||--o{ THESES : "requested_pembimbing1_id"
+    USERS ||--o{ THESES : "requested_pembimbing2_id"
+    USERS ||--o{ THESES : "student_id"
+    THESES ||--o{ THESIS_DEFENSE_APPLICATIONS : "thesis_id"
+    WAVES ||--o{ THESIS_DEFENSE_APPLICATIONS : "wave_id"
+    THESIS_DEFENSE_SCHEDULE_DETAILS ||--o{ THESIS_DEFENSE_REVISIONS : "thesis_defense_schedule_detail_id"
+    USERS ||--o{ THESIS_DEFENSE_REVISIONS : "examiner_id"
+    THESIS_DEFENSE_REVISIONS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "thesis_defense_revision_id"
+    USERS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "sender_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULES : "chairman_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULES : "created_by"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULES : "moderator_id"
+    WAVES ||--o{ THESIS_DEFENSE_SCHEDULES : "wave_id"
+    THESIS_DEFENSE_SCHEDULES ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "thesis_defense_schedule_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "examiner1_id"
+    USERS ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "examiner2_id"
+    THESES ||--o{ THESIS_DEFENSE_SCHEDULE_DETAILS : "thesis_id"
+    USERS ||--o{ WA_BROADCASTS : "sender_id"
+    USERS ||--o{ WA_BROADCAST_LOGS : "recipient_id"
+    WA_BROADCASTS ||--o{ WA_BROADCAST_LOGS : "wa_broadcast_id"
+</div></div>
+<h3>2.2 Klaster 1: Relasi Tugas Akhir &amp; Bimbingan Mahasiswa</h3>
 <p>Klaster ini menghubungkan mahasiswa (<code>users</code>), tugas akhir (<code>theses</code>), logbook kegiatan harian (<code>logbooks</code>), dan sesi bimbingan bersama dosen pembimbing (<code>mentoring_sessions</code>). Garis relasi menghubungkan <code>users.id</code> ke <code>theses.student_id</code>, <code>theses.pembimbing1_id</code>, dan <code>theses.pembimbing2_id</code>, serta <code>theses.id</code> ke <code>logbooks.thesis_id</code> dan <code>mentoring_sessions.thesis_id</code>.</p>
-<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (ERD)</div><div class="mermaid">erDiagram
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (MERMAID ERD)</div><div class="mermaid">erDiagram
     USERS {
         bigint id PK
         varchar name
@@ -527,9 +1597,9 @@
     THESES ||--o{ MENTORING_SESSIONS : "thesis_id"
     THESES ||--o{ LOGBOOKS : "thesis_id"
 </div></div>
-<h3>2.2 Klaster 2: Relasi Seminar Proposal (Pendaftaran, Jadwal, Penilaian &amp; Revisi)</h3>
+<h3>2.3 Klaster 2: Relasi Seminar Proposal (Pendaftaran, Jadwal, Penilaian &amp; Revisi)</h3>
 <p>Klaster ini memetakan pendaftaran seminar proposal (<code>seminar_applications</code>), gelombang pendaftaran (<code>waves</code>), master jadwal seminar (<code>seminar_schedules</code>), alokasi dewan penguji (<code>seminar_schedule_details</code>), revisi pasca-seminar (<code>seminar_revisions</code>), dan thread percakapan revisi (<code>seminar_revision_messages</code>).</p>
-<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (ERD)</div><div class="mermaid">erDiagram
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (MERMAID ERD)</div><div class="mermaid">erDiagram
     WAVES {
         bigint id PK
         varchar name
@@ -672,9 +1742,9 @@
     SEMINAR_REVISIONS ||--o{ SEMINAR_REVISION_MESSAGES : "seminar_revision_id"
     USERS ||--o{ SEMINAR_REVISION_MESSAGES : "sender_id"
 </div></div>
-<h3>2.3 Klaster 3: Relasi Sidang Skripsi (Pendaftaran, Jadwal, Penilaian &amp; Revisi)</h3>
+<h3>2.4 Klaster 3: Relasi Sidang Skripsi (Pendaftaran, Jadwal, Penilaian &amp; Revisi)</h3>
 <p>Klaster ini memetakan permohonan ujian akhir sidang (<code>thesis_defense_applications</code>), gelombang aktif (<code>waves</code>), jadwal sidang (<code>thesis_defense_schedules</code>), alokasi dewan penguji sidang (<code>thesis_defense_schedule_details</code>), revisi sidang (<code>thesis_defense_revisions</code>), dan thread percakapan revisi sidang skripsi (<code>thesis_defense_revision_messages</code>).</p>
-<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (ERD)</div><div class="mermaid">erDiagram
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (MERMAID ERD)</div><div class="mermaid">erDiagram
     WAVES {
         bigint id PK
         varchar name
@@ -832,9 +1902,9 @@
     THESIS_DEFENSE_REVISIONS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "thesis_defense_revision_id"
     USERS ||--o{ THESIS_DEFENSE_REVISION_MESSAGES : "sender_id"
 </div></div>
-<h3>2.4 Klaster 4: Relasi Kelulusan Yudisium, SK Dosen Pembimbing &amp; Repositori</h3>
+<h3>2.5 Klaster 4: Relasi Kelulusan Yudisium, SK Dosen Pembimbing &amp; Repositori</h3>
 <p>Klaster ini mengatur kelulusan yudisium (<code>graduations</code>), penerbitan SK dosen pembimbing (<code>advisor_decrees</code>), pengaturan format nomor surat resmi (<code>letter_settings</code>), repositori skripsi alumni (<code>thesis_repositories</code>), dan koleksi referensi jurnal (<code>journal_bookmarks</code>, <code>journal_bookmark_folders</code>).</p>
-<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (ERD)</div><div class="mermaid">erDiagram
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (MERMAID ERD)</div><div class="mermaid">erDiagram
     USERS {
         bigint id PK
         varchar name
@@ -988,9 +2058,9 @@
     JOURNAL_BOOKMARK_FOLDERS ||--o{ JOURNAL_BOOKMARKS : "folder_id"
     USERS ||--o{ JOURNAL_BOOKMARKS : "user_id"
 </div></div>
-<h3>2.5 Klaster 5: Relasi Komunikasi, Gateway WhatsApp, Log Audit &amp; Bug Report</h3>
+<h3>2.6 Klaster 5: Relasi Komunikasi, Gateway WhatsApp, Log Audit &amp; Bug Report</h3>
 <p>Klaster ini mengelola perpesanan internal (<code>messages</code>), siaran massal WhatsApp (<code>wa_broadcasts</code>, <code>wa_broadcast_logs</code>), template pesan notifikasi (<code>wa_templates</code>), log audit keamanan pengguna (<code>activity_logs</code>), dan tiket pelaporan kendala/usulan fitur baru (<code>bug_reports</code>).</p>
-<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (ERD)</div><div class="mermaid">erDiagram
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM RELASI ENTITAS (MERMAID ERD)</div><div class="mermaid">erDiagram
     USERS {
         bigint id PK
         varchar name
@@ -1096,8 +2166,8 @@
     USERS ||--o{ BUG_REPORTS : "user_id"
     USERS ||--o{ ACTIVITY_LOGS : "user_id"
 </div></div>
-<h3>2.6 Matriks Rinci Relasi Antar-Tabel (<em>Relational Cardinality Matrix</em>)</h3>
-<p>Tabel berikut menyajikan seluruh hubungan referensial kunci asing aktif pada basis data SIBIMA beserta kardinalitas dan aturan perlindungan integritas datanya:</p>
+<h3>2.7 Matriks Rinci Relasi Antar-Tabel (<em>Relational Cardinality Matrix</em>)</h3>
+<p>Tabel berikut menyajikan seluruh 57 hubungan referensial kunci asing aktif pada basis data SIBIMA beserta kardinalitas dan aturan perlindungan integritas datanya:</p>
 <table>
 <thead>
 <tr>
@@ -6697,8 +7767,14 @@
 
     </div>
 
+    <!-- Pass Schema Data to Designer Script -->
+    <script>
+        window.SIBIMA_SCHEMA = {"tables":{"activity_logs":{"name":"activity_logs","title":"Tabel Log Audit Aktivitas Sistem","category":"system","x":1100,"y":100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"user_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"activity","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"description","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"module","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"subject_type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"subject_id","type":"bigint(20) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"properties","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"ip_address","type":"varchar(45)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"user_agent","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"advisor_decrees":{"name":"advisor_decrees","title":"Tabel Surat Keputusan (SK) Dosen Pembimbing","category":"academic","x":2300,"y":950,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"decree_number","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"academic_year","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"semester","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"target_type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"dosen_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"wave_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"waves","ref_col":"id","nullable":true},{"name":"decree_date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"signatory_title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"signatory_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"signatory_identifier","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"include_stamp","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"signer_user_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"theses_data","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"total_students","type":"int(10) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"verification_token","type":"varchar(64)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"announcements":{"name":"announcements","title":"Tabel Pengumuman \u0026 Informasi Program Studi","category":"content","x":200,"y":50,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"content","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"type","type":"enum(\u0027info\u0027,\u0027warning\u0027,\u0027important\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"user_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"bug_reports":{"name":"bug_reports","title":"Tabel Laporan Kendala Sistem \u0026 Usulan Fitur Baru","category":"system","x":650,"y":50,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"ticket_number","type":"varchar(32)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"user_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"category","type":"varchar(50)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"severity","type":"enum(\u0027low\u0027,\u0027medium\u0027,\u0027high\u0027,\u0027critical\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"status","type":"enum(\u0027open\u0027,\u0027in_progress\u0027,\u0027resolved\u0027,\u0027rejected\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"page_url","type":"varchar(500)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"description","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"steps_to_reproduce","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"device_info","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"attachment_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"admin_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"resolved_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"resolved_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"faqs":{"name":"faqs","title":"Tabel Tanya Jawab Umum (FAQ)","category":"content","x":200,"y":450,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"question","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"answer","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"category","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"target_role","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"order","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"fasilkom_journals":{"name":"fasilkom_journals","title":"fasilkom_journals","category":"system","x":100,"y":100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"identifier","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"article_id","type":"bigint(20) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"title","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"authors","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"authors_string","type":"varchar(1000)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"abstract","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"subjects","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"publication_date","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"year","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"volume","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"issue","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"pages","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"landing_page_url","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"pdf_url","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"doi","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"publisher","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"issn","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"graduations":{"name":"graduations","title":"Tabel Pendaftaran Yudisium \u0026 Kelulusan","category":"academic","x":2300,"y":500,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":false},{"name":"student_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"status","type":"enum(\u0027pending\u0027,\u0027approved\u0027,\u0027rejected\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"rejection_reason","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"final_thesis_file","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"journal_article_file","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"publication_link","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"plagiarism_file","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"student_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"hardcover_collected","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"hardcover_collected_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"library_clearance","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"library_clearance_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"lab_clearance","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"lab_clearance_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"cd_or_repository_collected","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"cd_or_repository_collected_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"skl_number","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"graduation_date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"gpa","type":"decimal(3,2)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"predicate","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"verification_token","type":"varchar(64)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"approved_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"approved_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"guidance_documents":{"name":"guidance_documents","title":"Tabel Dokumen Panduan \u0026 Pedoman Akademik","category":"content","x":200,"y":800,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"description","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"category","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"original_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_size","type":"bigint(20) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_extension","type":"varchar(10)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"download_count","type":"int(10) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"uploaded_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"journal_bookmarks":{"name":"journal_bookmarks","title":"Tabel Bookmark Artikel Jurnal \u0026 Referensi","category":"academic","x":3300,"y":150,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"user_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"folder_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"journal_bookmark_folders","ref_col":"id","nullable":true},{"name":"journal_identifier","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"authors","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"authors_string","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"year","type":"smallint(5) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"venue","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"publisher","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"doi","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"url","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"pdf_url","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"abstract","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"source","type":"varchar(50)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"source_label","type":"varchar(100)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"citations","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"journal_bookmark_folders":{"name":"journal_bookmark_folders","title":"Tabel Folder Koleksi Referensi Jurnal","category":"academic","x":2800,"y":150,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"user_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"color","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"description","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"letter_settings":{"name":"letter_settings","title":"Tabel Konfigurasi Format Surat Resmi","category":"academic","x":2800,"y":950,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"format","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"last_number","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"logbooks":{"name":"logbooks","title":"Tabel Catatan Harian Bimbingan (Logbook)","category":"thesis","x":650,"y":700,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":false},{"name":"date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"progress_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"lecturer_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"is_approved","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"mentoring_sessions":{"name":"mentoring_sessions","title":"Tabel Sesi Bimbingan Skripsi","category":"thesis","x":650,"y":300,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":false},{"name":"dosen_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"scheduled_at","type":"datetime","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"topic","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"status","type":"enum(\u0027pending\u0027,\u0027approved\u0027,\u0027rejected\u0027,\u0027completed\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"student_attendance_status","type":"enum(\u0027pending\u0027,\u0027attending\u0027,\u0027permission\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"student_attendance_reason","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"student_confirmed_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"is_absent","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"type","type":"enum(\u0027offline\u0027,\u0027online\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"location","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"feedback","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"feedback_document_url","type":"varchar(1000)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"document_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"document_original_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"messages":{"name":"messages","title":"Tabel Pesan Komunikasi Internal Pengguna","category":"communication","x":1700,"y":100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"sender_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"receiver_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"message","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_read","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"notifications":{"name":"notifications","title":"Tabel Notifikasi Sistem Pengguna","category":"communication","x":100,"y":100,"columns":[{"name":"id","type":"char(36)","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"notifiable_type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"notifiable_id","type":"bigint(20) unsigned","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"data","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"read_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"seminar_applications":{"name":"seminar_applications","title":"Tabel Pendaftaran Seminar Proposal","category":"seminar","x":650,"y":1100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":false},{"name":"file_acc_pembimbing","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_pembayaran","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_kartu_bimbingan","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_skripsi","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_formulir","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"status","type":"enum(\u0027pending\u0027,\u0027approved\u0027,\u0027rejected\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"admin_feedback","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"wave_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"waves","ref_col":"id","nullable":true},{"name":"file_reviews","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"seminar_revisions":{"name":"seminar_revisions","title":"Tabel Catatan Revisi Seminar Proposal","category":"seminar","x":200,"y":1550,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"seminar_schedule_detail_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"seminar_schedule_details","ref_col":"id","nullable":false},{"name":"examiner_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"revision_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"revision_file","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"student_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"student_file","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"resubmitted_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"status","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"score_presentation","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"score_explanation","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"score_writing","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"seminar_revision_messages":{"name":"seminar_revision_messages","title":"Tabel Pesan Thread Revisi Seminar","category":"seminar","x":200,"y":1950,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"seminar_revision_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"seminar_revisions","ref_col":"id","nullable":false},{"name":"sender_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"message","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"read_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"seminar_schedules":{"name":"seminar_schedules","title":"Tabel Master Jadwal Seminar Proposal","category":"seminar","x":1100,"y":1550,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"chairman_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"moderator_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"location","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"wave_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"waves","ref_col":"id","nullable":true},{"name":"meeting_link","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"seminar_schedule_details":{"name":"seminar_schedule_details","title":"Tabel Rincian Alokasi Peserta \u0026 Penguji Seminar","category":"seminar","x":650,"y":1550,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"verification_token","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"seminar_schedule_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"seminar_schedules","ref_col":"id","nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":true},{"name":"activity_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"start_time","type":"time","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"end_time","type":"time","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"examiner1_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"examiner2_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"order","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"seminar_templates":{"name":"seminar_templates","title":"Tabel Template Dokumen Seminar Proposal","category":"seminar","x":650,"y":1950,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"original_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"settings":{"name":"settings","title":"Tabel Konfigurasi Sistem Global","category":"system","x":200,"y":1150,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"key","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"value","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"theses":{"name":"theses","title":"Tabel Tugas Akhir \/ Skripsi Mahasiswa","category":"thesis","x":1100,"y":500,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"student_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"pembimbing1_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"pembimbing2_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"requested_pembimbing1_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"requested_pembimbing2_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"final_title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"abstract","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"topic","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"is_migrated","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"status","type":"enum(\u0027pending\u0027,\u0027active\u0027,\u0027completed\u0027,\u0027rejected\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"acc_up_p1","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"acc_up_p2","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"acc_sidang_p1","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"acc_sidang_p2","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_defense_applications":{"name":"thesis_defense_applications","title":"Tabel Pendaftaran Sidang Skripsi","category":"defense","x":1650,"y":1100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":false},{"name":"file_formulir","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_transkrip","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_acc_pembimbing","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_logbook","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_pembayaran","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_skripsi","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_ktm","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_pkkmb_univ","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_pkkmb_fak","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_makrab","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_cisco","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_workshop","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_organisasi","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_toefl","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_kewirausahaan","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_tahsin","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_komputer","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_perpus_pinjam","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_perpus_sumbang","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_ijazah","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"status","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"admin_feedback","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"wave_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"waves","ref_col":"id","nullable":true},{"name":"file_reviews","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_defense_revisions":{"name":"thesis_defense_revisions","title":"Tabel Catatan Revisi Sidang Skripsi","category":"defense","x":2650,"y":1550,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_defense_schedule_detail_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"thesis_defense_schedule_details","ref_col":"id","nullable":false},{"name":"examiner_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"revision_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"revision_file","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"student_notes","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"student_file","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"resubmitted_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"status","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"score_presentation","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"score_explanation","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"score_writing","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_defense_revision_messages":{"name":"thesis_defense_revision_messages","title":"Tabel Pesan Thread Revisi Sidang Skripsi","category":"defense","x":2650,"y":1950,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"thesis_defense_revision_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"thesis_defense_revisions","ref_col":"id","nullable":false},{"name":"sender_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"message","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"read_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_defense_schedules":{"name":"thesis_defense_schedules","title":"Tabel Master Jadwal Sidang Skripsi","category":"defense","x":1650,"y":1550,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"chairman_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"moderator_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"location","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_by","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"wave_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"waves","ref_col":"id","nullable":true},{"name":"meeting_link","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_defense_schedule_details":{"name":"thesis_defense_schedule_details","title":"Tabel Rincian Peserta \u0026 Dewan Penguji Sidang","category":"defense","x":2150,"y":1550,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"verification_token","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"thesis_defense_schedule_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"thesis_defense_schedules","ref_col":"id","nullable":false},{"name":"thesis_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"theses","ref_col":"id","nullable":true},{"name":"activity_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"start_time","type":"time","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"end_time","type":"time","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"examiner1_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"examiner2_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"order","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_defense_templates":{"name":"thesis_defense_templates","title":"Tabel Template Dokumen Sidang Skripsi","category":"defense","x":1650,"y":1950,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"file_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"original_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"thesis_repositories":{"name":"thesis_repositories","title":"Tabel Repositori Skripsi \u0026 Karya Ilmiah","category":"academic","x":2800,"y":500,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"identifier","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"year","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"abstract","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"pembimbing1","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"pembimbing2","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_path","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_path_bab2","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_path_bab3","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_path_bab4","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_path_bab5","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"file_path_bab6","type":"varchar(1000)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"users":{"name":"users","title":"Tabel Pengguna \u0026 Kredensial Akun","category":"core","x":1700,"y":500,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"email","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"username","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"phone_number","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"signature","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"signature_token","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"role","type":"enum(\u0027admin\u0027,\u0027kaprodi\u0027,\u0027dosen\u0027,\u0027mahasiswa\u0027)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"identifier","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"research_interests","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"max_quota","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"entry_year","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"birth_date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"last_birthday_wished_year","type":"smallint(6)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"avatar","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"email_verified_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"password","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"remember_token","type":"varchar(100)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"last_login_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"waves":{"name":"waves","title":"Tabel Gelombang Pendaftaran Ujian","category":"exam","x":1100,"y":1100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"description","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"start_date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"end_date","type":"date","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"wa_broadcasts":{"name":"wa_broadcasts","title":"Tabel Kampanye Siaran WhatsApp Massal","category":"communication","x":2200,"y":100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"sender_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":false},{"name":"title","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"target_type","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"target_filter","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"message_template","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"delay_seconds","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"total_recipients","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"successful_count","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"failed_count","type":"int(11)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"status","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"sent_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"wa_broadcast_logs":{"name":"wa_broadcast_logs","title":"Tabel Log Pengiriman Pesan WhatsApp","category":"communication","x":2700,"y":100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"wa_broadcast_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"wa_broadcasts","ref_col":"id","nullable":false},{"name":"recipient_id","type":"bigint(20) unsigned","pk":false,"fk":true,"ref_table":"users","ref_col":"id","nullable":true},{"name":"recipient_name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"recipient_identifier","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"recipient_phone","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"message_content","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"status","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"error_message","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"sent_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]},"wa_templates":{"name":"wa_templates","title":"Tabel Template Pesan Notifikasi WhatsApp","category":"communication","x":3200,"y":100,"columns":[{"name":"id","type":"bigint(20) unsigned","pk":true,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"code","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"name","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"category","type":"varchar(255)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"content","type":"text","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"available_variables","type":"longtext","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"is_customized","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"is_active","type":"tinyint(1)","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":false},{"name":"created_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true},{"name":"updated_at","type":"timestamp","pk":false,"fk":false,"ref_table":null,"ref_col":null,"nullable":true}]}},"relations":[{"from_table":"activity_logs","from_col":"user_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"advisor_decrees","from_col":"created_by","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"advisor_decrees","from_col":"dosen_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"advisor_decrees","from_col":"signer_user_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"advisor_decrees","from_col":"wave_id","to_table":"waves","to_col":"id","on_delete":"SET NULL"},{"from_table":"announcements","from_col":"user_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"bug_reports","from_col":"resolved_by","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"bug_reports","from_col":"user_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"faqs","from_col":"created_by","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"graduations","from_col":"approved_by","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"graduations","from_col":"student_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"graduations","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"guidance_documents","from_col":"uploaded_by","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"journal_bookmarks","from_col":"folder_id","to_table":"journal_bookmark_folders","to_col":"id","on_delete":"SET NULL"},{"from_table":"journal_bookmarks","from_col":"user_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"journal_bookmark_folders","from_col":"user_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"logbooks","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"mentoring_sessions","from_col":"dosen_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"mentoring_sessions","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"messages","from_col":"receiver_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"messages","from_col":"sender_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_applications","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_applications","from_col":"wave_id","to_table":"waves","to_col":"id","on_delete":"SET NULL"},{"from_table":"seminar_revisions","from_col":"examiner_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_revisions","from_col":"seminar_schedule_detail_id","to_table":"seminar_schedule_details","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_revision_messages","from_col":"seminar_revision_id","to_table":"seminar_revisions","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_revision_messages","from_col":"sender_id","to_table":"users","to_col":"id","on_delete":"RESTRICT"},{"from_table":"seminar_schedules","from_col":"chairman_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_schedules","from_col":"created_by","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_schedules","from_col":"moderator_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_schedules","from_col":"wave_id","to_table":"waves","to_col":"id","on_delete":"SET NULL"},{"from_table":"seminar_schedule_details","from_col":"examiner1_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_schedule_details","from_col":"examiner2_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_schedule_details","from_col":"seminar_schedule_id","to_table":"seminar_schedules","to_col":"id","on_delete":"CASCADE"},{"from_table":"seminar_schedule_details","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"theses","from_col":"pembimbing1_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"theses","from_col":"pembimbing2_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"theses","from_col":"requested_pembimbing1_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"theses","from_col":"requested_pembimbing2_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"theses","from_col":"student_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_applications","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_applications","from_col":"wave_id","to_table":"waves","to_col":"id","on_delete":"SET NULL"},{"from_table":"thesis_defense_revisions","from_col":"thesis_defense_schedule_detail_id","to_table":"thesis_defense_schedule_details","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_revisions","from_col":"examiner_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_revision_messages","from_col":"thesis_defense_revision_id","to_table":"thesis_defense_revisions","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_revision_messages","from_col":"sender_id","to_table":"users","to_col":"id","on_delete":"RESTRICT"},{"from_table":"thesis_defense_schedules","from_col":"chairman_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_schedules","from_col":"created_by","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_schedules","from_col":"moderator_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_schedules","from_col":"wave_id","to_table":"waves","to_col":"id","on_delete":"SET NULL"},{"from_table":"thesis_defense_schedule_details","from_col":"thesis_defense_schedule_id","to_table":"thesis_defense_schedules","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_schedule_details","from_col":"examiner1_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_schedule_details","from_col":"examiner2_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"thesis_defense_schedule_details","from_col":"thesis_id","to_table":"theses","to_col":"id","on_delete":"CASCADE"},{"from_table":"wa_broadcasts","from_col":"sender_id","to_table":"users","to_col":"id","on_delete":"CASCADE"},{"from_table":"wa_broadcast_logs","from_col":"recipient_id","to_table":"users","to_col":"id","on_delete":"SET NULL"},{"from_table":"wa_broadcast_logs","from_col":"wa_broadcast_id","to_table":"wa_broadcasts","to_col":"id","on_delete":"CASCADE"}]};
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 1. Initialize Mermaid for static diagrams
             if (window.mermaid) {
                 mermaid.initialize({
                     startOnLoad: true,
@@ -6714,7 +7790,411 @@
                     securityLevel: 'loose'
                 });
             }
+
+            // 2. Initialize Interactive ERD Designer
+            initErdDesigner();
         });
+
+        function initErdDesigner() {
+            const data = window.SIBIMA_SCHEMA;
+            if (!data) return;
+
+            const viewport = document.getElementById('erd-viewport');
+            const world = document.getElementById('erd-world');
+            const tablesLayer = document.getElementById('erd-tables-layer');
+            const pathsGroup = document.getElementById('svg-paths-group');
+            const zoomText = document.getElementById('zoom-text');
+            const posStatus = document.getElementById('pos-status');
+            const searchInput = document.getElementById('table-search');
+
+            // Viewport transformation state
+            let scale = 0.85;
+            let panX = 40;
+            let panY = 40;
+            let isPanning = false;
+            let startPanX = 0;
+            let startPanY = 0;
+
+            // Load saved positions if any
+            const STORAGE_KEY = 'sibima_erd_table_positions_v1';
+            let savedPositions = {};
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) savedPositions = JSON.parse(stored);
+            } catch (e) {
+                console.warn('Could not read saved positions', e);
+            }
+
+            // Render tables
+            const tableCards = {};
+            for (const [tName, tInfo] of Object.entries(data.tables)) {
+                const card = document.createElement('div');
+                card.className = 'erd-table-card';
+                card.id = 'table-card-' + tName;
+                card.dataset.table = tName;
+
+                const posX = (savedPositions[tName] && savedPositions[tName].x) || tInfo.x || 100;
+                const posY = (savedPositions[tName] && savedPositions[tName].y) || tInfo.y || 100;
+
+                card.style.left = posX + 'px';
+                card.style.top = posY + 'px';
+
+                // Header
+                const header = document.createElement('div');
+                header.className = 'card-header theme-' + (tInfo.category || 'system');
+                header.innerHTML = `
+                    <div class="card-header-left">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span class="table-name" title="${tName}">${tName}</span>
+                    </div>
+                    <span class="col-count-badge">${tInfo.columns.length}</span>
+                `;
+                card.appendChild(header);
+
+                // Column list
+                const colList = document.createElement('div');
+                colList.className = 'card-columns';
+
+                tInfo.columns.forEach(c => {
+                    const row = document.createElement('div');
+                    row.className = 'col-row';
+
+                    let icon = '<span class="col-key-icon col-key-none">•</span>';
+                    if (c.pk) {
+                        icon = '<span class="col-key-icon col-key-pk" title="Primary Key">🔑</span>';
+                    } else if (c.fk) {
+                        icon = `<span class="col-key-icon col-key-fk" title="Foreign Key -> ${c.ref_table}">🔗</span>`;
+                    }
+
+                    row.innerHTML = `
+                        <div class="col-left">
+                            ${icon}
+                            <span class="col-name ${c.pk ? 'is-pk' : ''}">${c.name}</span>
+                        </div>
+                        <span class="col-type">${c.type}</span>
+                    `;
+                    colList.appendChild(row);
+                });
+                card.appendChild(colList);
+
+                tablesLayer.appendChild(card);
+                tableCards[tName] = card;
+
+                // Dragging table card
+                makeTableDraggable(card, header, tName);
+            }
+
+            function makeTableDraggable(card, handle, tName) {
+                let startX = 0, startY = 0, initLeft = 0, initTop = 0;
+                let isDragging = false;
+
+                handle.addEventListener('mousedown', function(e) {
+                    if (e.button !== 0) return; // Only left click
+                    e.stopPropagation();
+
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initLeft = parseInt(card.style.left, 10) || 0;
+                    initTop = parseInt(card.style.top, 10) || 0;
+
+                    // Bring to front
+                    card.style.zIndex = 50;
+
+                    function onMouseMove(ev) {
+                        if (!isDragging) return;
+                        const dx = (ev.clientX - startX) / scale;
+                        const dy = (ev.clientY - startY) / scale;
+                        const newX = Math.round(initLeft + dx);
+                        const newY = Math.round(initTop + dy);
+
+                        card.style.left = newX + 'px';
+                        card.style.top = newY + 'px';
+
+                        // Save in memory
+                        if (!savedPositions[tName]) savedPositions[tName] = {};
+                        savedPositions[tName].x = newX;
+                        savedPositions[tName].y = newY;
+
+                        drawConnections();
+                    }
+
+                    function onMouseUp() {
+                        if (!isDragging) return;
+                        isDragging = false;
+                        card.style.zIndex = '';
+                        window.removeEventListener('mousemove', onMouseMove);
+                        window.removeEventListener('mouseup', onMouseUp);
+                        showStatus('Posisi tabel "' + tName + '" diubah (Klik "Simpan Posisi" untuk menyimpan).');
+                    }
+
+                    window.addEventListener('mousemove', onMouseMove);
+                    window.addEventListener('mouseup', onMouseUp);
+                });
+
+                // Hover highlight connections
+                card.addEventListener('mouseenter', function() {
+                    highlightRelationsFor(tName);
+                });
+                card.addEventListener('mouseleave', function() {
+                    clearRelationHighlights();
+                });
+            }
+
+            // Draw SVG connection lines
+            function drawConnections() {
+                pathsGroup.innerHTML = '';
+
+                data.relations.forEach((rel, idx) => {
+                    const fromCard = tableCards[rel.from_table];
+                    const toCard = tableCards[rel.to_table];
+                    if (!fromCard || !toCard) return;
+
+                    const fromX = parseInt(fromCard.style.left, 10);
+                    const fromY = parseInt(fromCard.style.top, 10);
+                    const fromW = fromCard.offsetWidth || 290;
+                    const fromH = fromCard.offsetHeight || 200;
+
+                    const toX = parseInt(toCard.style.left, 10);
+                    const toY = parseInt(toCard.style.top, 10);
+                    const toW = toCard.offsetWidth || 290;
+                    const toH = toCard.offsetHeight || 200;
+
+                    // Determine best anchor points (left or right edges)
+                    let p1x, p1y, p2x, p2y;
+
+                    if (fromX + fromW < toX) {
+                        // fromCard is to the left of toCard
+                        p1x = fromX + fromW;
+                        p1y = fromY + Math.min(fromH / 2, 80);
+                        p2x = toX;
+                        p2y = toY + Math.min(toH / 2, 80);
+                    } else if (toX + toW < fromX) {
+                        // toCard is to the left of fromCard
+                        p1x = fromX;
+                        p1y = fromY + Math.min(fromH / 2, 80);
+                        p2x = toX + toW;
+                        p2y = toY + Math.min(toH / 2, 80);
+                    } else {
+                        // Vertically stacked or overlapping
+                        p1x = fromX + fromW / 2;
+                        p1y = fromY < toY ? fromY + fromH : fromY;
+                        p2x = toX + toW / 2;
+                        p2y = toY < fromY ? toY + toH : toY;
+                    }
+
+                    // Cubic Bezier curve control points
+                    const dx = Math.abs(p2x - p1x) * 0.55;
+                    const cp1x = p1x < p2x ? p1x + dx : p1x - dx;
+                    const cp1y = p1y;
+                    const cp2x = p2x > p1x ? p2x - dx : p2x + dx;
+                    const cp2y = p2y;
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const d = `M ${p1x} ${p1y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2x} ${p2y}`;
+                    path.setAttribute('d', d);
+                    path.setAttribute('class', 'relation-line');
+                    path.setAttribute('id', `rel-${idx}`);
+                    path.dataset.from = rel.from_table;
+                    path.dataset.to = rel.to_table;
+                    path.dataset.info = `${rel.from_table}.${rel.from_col} -> ${rel.to_table}.${rel.to_col}`;
+
+                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                    title.textContent = `Relasi FK: ${rel.from_table}.${rel.from_col} -> ${rel.to_table}.${rel.to_col} (ON DELETE ${rel.on_delete})`;
+                    path.appendChild(title);
+
+                    pathsGroup.appendChild(path);
+                });
+            }
+
+            function highlightRelationsFor(tName) {
+                const lines = pathsGroup.querySelectorAll('.relation-line');
+                const connectedTables = new Set([tName]);
+
+                lines.forEach(line => {
+                    if (line.dataset.from === tName || line.dataset.to === tName) {
+                        line.classList.add('is-highlighted');
+                        connectedTables.add(line.dataset.from);
+                        connectedTables.add(line.dataset.to);
+                    } else {
+                        line.style.strokeOpacity = '0.08';
+                    }
+                });
+
+                for (const [tbl, card] of Object.entries(tableCards)) {
+                    if (!connectedTables.has(tbl)) {
+                        card.classList.add('is-dimmed');
+                    } else {
+                        card.classList.remove('is-dimmed');
+                    }
+                }
+            }
+
+            function clearRelationHighlights() {
+                const lines = pathsGroup.querySelectorAll('.relation-line');
+                lines.forEach(line => {
+                    line.classList.remove('is-highlighted');
+                    line.style.strokeOpacity = '';
+                });
+
+                for (const card of Object.values(tableCards)) {
+                    card.classList.remove('is-dimmed');
+                }
+            }
+
+            function updateTransform() {
+                world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+                zoomText.textContent = Math.round(scale * 100) + '%';
+            }
+
+            // Pan canvas by dragging background
+            viewport.addEventListener('mousedown', function(e) {
+                if (e.target !== viewport && e.target !== world && e.target.tagName !== 'svg') return;
+                isPanning = true;
+                viewport.classList.add('is-dragging-canvas');
+                startPanX = e.clientX - panX;
+                startPanY = e.clientY - panY;
+
+                function onPanMove(ev) {
+                    if (!isPanning) return;
+                    panX = ev.clientX - startPanX;
+                    panY = ev.clientY - startPanY;
+                    updateTransform();
+                }
+
+                function onPanUp() {
+                    isPanning = false;
+                    viewport.classList.remove('is-dragging-canvas');
+                    window.removeEventListener('mousemove', onPanMove);
+                    window.removeEventListener('mouseup', onPanUp);
+                }
+
+                window.addEventListener('mousemove', onPanMove);
+                window.addEventListener('mouseup', onPanUp);
+            });
+
+            // Zoom via Wheel
+            viewport.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                const rect = viewport.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+                const newScale = Math.min(Math.max(scale * zoomFactor, 0.25), 1.8);
+
+                // Zoom towards mouse pointer
+                panX = mouseX - (mouseX - panX) * (newScale / scale);
+                panY = mouseY - (mouseY - panY) * (newScale / scale);
+                scale = newScale;
+
+                updateTransform();
+            }, { passive: false });
+
+            // Button controls
+            document.getElementById('btn-zoom-in').addEventListener('click', () => {
+                scale = Math.min(scale * 1.15, 1.8);
+                updateTransform();
+            });
+
+            document.getElementById('btn-zoom-out').addEventListener('click', () => {
+                scale = Math.max(scale * 0.85, 0.25);
+                updateTransform();
+            });
+
+            document.getElementById('btn-reset-view').addEventListener('click', () => {
+                scale = 0.75;
+                panX = 20;
+                panY = 20;
+                updateTransform();
+            });
+
+            document.getElementById('btn-save-layout').addEventListener('click', () => {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPositions));
+                    showStatus('✓ Tata letak berhasil disimpan secara permanen di browser!');
+                } catch (e) {
+                    showStatus('Gagal menyimpan ke localStorage.');
+                }
+            });
+
+            document.getElementById('btn-reset-layout').addEventListener('click', () => {
+                if (confirm('Kembalikan posisi seluruh tabel ke tata letak default SIBIMA?')) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    savedPositions = {};
+                    for (const [tName, tInfo] of Object.entries(data.tables)) {
+                        const card = tableCards[tName];
+                        if (card) {
+                            card.style.left = (tInfo.x || 100) + 'px';
+                            card.style.top = (tInfo.y || 100) + 'px';
+                        }
+                    }
+                    drawConnections();
+                    showStatus('✓ Posisi tabel telah dikembalikan ke default.');
+                }
+            });
+
+            const fsBtn = document.getElementById('btn-fullscreen');
+            const designerSec = document.getElementById('interactive-designer-section');
+            fsBtn.addEventListener('click', () => {
+                designerSec.classList.toggle('is-fullscreen');
+                if (designerSec.classList.contains('is-fullscreen')) {
+                    fsBtn.querySelector('span').textContent = 'Keluar Fullscreen';
+                    viewport.style.height = 'calc(100vh - 120px)';
+                } else {
+                    fsBtn.querySelector('span').textContent = 'Fullscreen';
+                    viewport.style.height = '720px';
+                }
+                drawConnections();
+            });
+
+            // Search Table Feature
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
+                if (!term) {
+                    clearRelationHighlights();
+                    for (const card of Object.values(tableCards)) {
+                        card.classList.remove('is-active-focus');
+                    }
+                    return;
+                }
+
+                let found = null;
+                for (const [tName, card] of Object.entries(tableCards)) {
+                    if (tName.toLowerCase().includes(term)) {
+                        card.classList.add('is-active-focus');
+                        if (!found) found = { name: tName, card: card };
+                    } else {
+                        card.classList.remove('is-active-focus');
+                    }
+                }
+
+                if (found) {
+                    // Smoothly center on the found table
+                    const tx = parseInt(found.card.style.left, 10);
+                    const ty = parseInt(found.card.style.top, 10);
+                    const vpW = viewport.clientWidth;
+                    const vpH = viewport.clientHeight;
+
+                    panX = (vpW / 2) - (tx + 145) * scale;
+                    panY = (vpH / 2) - (ty + 100) * scale;
+                    updateTransform();
+                    highlightRelationsFor(found.name);
+                }
+            });
+
+            function showStatus(msg) {
+                posStatus.textContent = msg;
+                setTimeout(() => {
+                    posStatus.textContent = '';
+                }, 4000);
+            }
+
+            // Initial view update & connection lines
+            updateTransform();
+            setTimeout(drawConnections, 100);
+            window.addEventListener('resize', drawConnections);
+        }
     </script>
 </body>
 </html>
