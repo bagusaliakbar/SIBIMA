@@ -11,21 +11,21 @@
             </div>
             
             <div class="flex items-center w-full md:w-auto">
-                <div class="flex flex-wrap items-center gap-2.5 sm:gap-4 px-3 sm:px-4 py-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-700 text-[10px] font-bold w-full md:w-auto justify-between sm:justify-start">
+                <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-700 text-[10px] font-bold w-full md:w-auto">
                     <div class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
                         <span class="text-slate-600 dark:text-slate-300">Gelombang</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-violet-500 shrink-0"></span>
                         <span class="text-slate-600 dark:text-slate-300">Bimbingan</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
                         <span class="text-slate-600 dark:text-slate-300">Seminar</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0"></span>
                         <span class="text-slate-600 dark:text-slate-300">Sidang</span>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
         </div>
     </x-slot>
 
-    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 p-3.5 sm:p-6 lg:p-8">
+    <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 p-2.5 sm:p-6 lg:p-8">
         <div id="calendar-container" class="min-h-[500px] sm:min-h-[700px]">
             <div id="calendar"></div>
         </div>
@@ -119,15 +119,61 @@
             filter: brightness(0.95);
         }
 
+        /* Segmented Button Group */
+        .fc .fc-button-group {
+            display: inline-flex !important;
+            border-radius: 0.75rem !important;
+            overflow: hidden !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+            border: 1px solid #e2e8f0;
+        }
+        .dark .fc .fc-button-group {
+            border-color: #334155;
+        }
+        .fc .fc-button-group .fc-button {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+        .fc .fc-button-group .fc-button:not(:first-child) {
+            border-left: 1px solid #e2e8f0 !important;
+        }
+        .dark .fc .fc-button-group .fc-button:not(:first-child) {
+            border-left-color: #334155 !important;
+        }
+
         /* Popover & List Dark Mode */
+        .fc-popover {
+            border-radius: 1rem !important;
+            overflow: hidden !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #e2e8f0 !important;
+            z-index: 1000 !important;
+            max-width: 90vw !important;
+        }
+        .fc-popover-header {
+            background-color: #f8fafc !important;
+            padding: 0.625rem 0.875rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #1e293b !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        .fc-popover-body {
+            padding: 0.625rem !important;
+            max-height: 280px !important;
+            overflow-y: auto !important;
+        }
         .dark .fc-popover {
             background-color: #1e293b !important;
             border-color: #334155 !important;
             color: #f1f5f9 !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4) !important;
         }
         .dark .fc-popover-header {
             background-color: #0f172a !important;
+            border-bottom-color: #334155 !important;
             color: #f1f5f9 !important;
         }
         .dark .fc-list-day-cushion {
@@ -144,40 +190,149 @@
 
         /* Mobile Responsive Adjustments */
         @media (max-width: 640px) {
+            /* Clean 2-Tier Grid Toolbar */
             .fc .fc-toolbar {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                gap: 0.625rem !important;
+                display: grid !important;
+                grid-template-columns: 1fr auto !important;
+                grid-template-areas: 
+                    "title title"
+                    "nav views" !important;
+                gap: 0.75rem 0.5rem !important;
                 margin-bottom: 1rem !important;
+                align-items: center !important;
             }
-            .fc .fc-toolbar-title {
-                font-size: 1.05rem !important;
-                text-align: center !important;
+            .fc .fc-toolbar-chunk:nth-child(1) {
+                grid-area: nav !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 0.375rem !important;
             }
-            .fc .fc-toolbar-chunk {
+            .fc .fc-toolbar-chunk:nth-child(2) {
+                grid-area: title !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                flex-wrap: wrap !important;
-                gap: 0.25rem !important;
+            }
+            .fc .fc-toolbar-chunk:nth-child(3) {
+                grid-area: views !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+            }
+            .fc .fc-toolbar-title {
+                font-size: 1.15rem !important;
+                font-weight: 900 !important;
+                text-align: center !important;
+                letter-spacing: -0.02em !important;
+                color: #0f172a !important;
+            }
+            .dark .fc .fc-toolbar-title {
+                color: #f8fafc !important;
             }
             .fc .fc-button {
-                padding: 0.35rem 0.65rem !important;
-                font-size: 0.65rem !important;
-                border-radius: 0.5rem !important;
+                padding: 0.4rem 0.65rem !important;
+                font-size: 0.6875rem !important;
+                border-radius: 0.625rem !important;
+                font-weight: 700 !important;
             }
+            .fc .fc-button-group {
+                border-radius: 0.625rem !important;
+            }
+
+            /* Prevent inner table vertical scrollbar */
+            .fc .fc-scroller {
+                overflow: hidden !important;
+                height: auto !important;
+            }
+            .fc .fc-scroller-liquid-absolute {
+                position: relative !important;
+                overflow: hidden !important;
+            }
+
+            /* Month Grid day cell optimization */
             .fc .fc-col-header-cell-cushion {
-                font-size: 0.6rem !important;
+                font-size: 0.65rem !important;
+                font-weight: 800 !important;
                 padding: 0.4rem 0 !important;
+                letter-spacing: 0.02em !important;
             }
-            .fc-event {
-                font-size: 9px !important;
-                padding: 1px 3px !important;
+            .fc .fc-daygrid-day-frame {
+                min-height: 56px !important;
+                padding: 1px !important;
+            }
+            .fc .fc-daygrid-day-top {
+                flex-direction: row !important;
+                justify-content: flex-end !important;
+                padding: 2px 3px 0 3px !important;
             }
             .fc .fc-daygrid-day-number {
-                font-size: 0.7rem !important;
-                padding: 2px 4px !important;
+                font-size: 0.75rem !important;
+                font-weight: 800 !important;
+                line-height: 1 !important;
+                padding: 0 !important;
+            }
+            .fc-day-today .fc-daygrid-day-number {
+                background-color: #ea580c !important;
+                color: white !important;
+                border-radius: 9999px !important;
+                width: 17px !important;
+                height: 17px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 0.65rem !important;
+            }
+            .fc .fc-daygrid-event {
+                font-size: 8px !important;
+                line-height: 1.15 !important;
+                padding: 1px 2px !important;
+                margin: 1px 0 !important;
+                border-radius: 3px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .fc .fc-daygrid-event-dot {
+                margin: 0 2px 0 0 !important;
+                border-width: 3px !important;
+            }
+            .fc .fc-daygrid-event-time {
+                font-size: 7.5px !important;
+                font-weight: 800 !important;
+                margin-right: 2px !important;
+            }
+            .fc .fc-daygrid-event-title {
+                font-weight: 700 !important;
+            }
+            .fc-daygrid-block-event {
+                padding: 1px 2px !important;
+                border-radius: 3px !important;
+            }
+            .fc-daygrid-block-event .fc-event-title {
+                font-size: 7.5px !important;
+                font-weight: 800 !important;
+                letter-spacing: -0.01em !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .fc .fc-daygrid-more-link {
+                font-size: 8px !important;
+                font-weight: 900 !important;
+                padding: 0.5px 3.5px !important;
+                border-radius: 4px !important;
+                background-color: #fff7ed !important;
+                color: #c2410c !important;
+                border: 1px solid #ffedd5 !important;
+                margin: 1px 0 !important;
+                display: inline-block !important;
+                line-height: 1.2 !important;
+            }
+            .dark .fc .fc-daygrid-more-link {
+                background-color: rgba(124, 45, 18, 0.4) !important;
+                color: #fdba74 !important;
+                border-color: #9a3412 !important;
             }
             .fc .fc-list-event-title,
             .fc .fc-list-event-time {
@@ -207,6 +362,8 @@
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: isMobile ? 'listMonth' : 'dayGridMonth',
+                height: 'auto',
+                contentHeight: 'auto',
                 headerToolbar: isMobile ? {
                     left: 'prev,next today',
                     center: 'title',
@@ -226,6 +383,9 @@
                 locale: 'id',
                 dayMaxEvents: 2,
                 moreLinkClick: 'popover',
+                moreLinkText: function(num) {
+                    return '+' + num;
+                },
                 eventTimeFormat: {
                     hour: '2-digit',
                     minute: '2-digit',
