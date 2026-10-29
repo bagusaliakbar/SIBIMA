@@ -345,6 +345,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
+    // PWA & Web Push Notification Subscriptions
+    Route::get('/push-subscriptions/status', [App\Http\Controllers\PushSubscriptionController::class, 'status'])->name('push-subscriptions.status');
+    Route::post('/push-subscriptions', [App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push-subscriptions.store');
+    Route::delete('/push-subscriptions', [App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push-subscriptions.destroy');
+    Route::post('/push-subscriptions/test', [App\Http\Controllers\PushSubscriptionController::class, 'test'])->name('push-subscriptions.test');
+
     // Calendar
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
     Route::get('/calendar/events', [App\Http\Controllers\CalendarController::class, 'events'])->name('calendar.events');
@@ -431,6 +437,9 @@ Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
         $staticImagesToSync = [
             'public/images/stempel_fasilkom.png' => ['images/stempel_fasilkom.png', 'stempel_fasilkom.png'],
             'public/logo_unsub.png' => ['logo_unsub.png', 'images/logo_unsub.png'],
+            'public/manifest.json' => ['manifest.json'],
+            'public/sw.js' => ['sw.js'],
+            'public/offline.html' => ['offline.html'],
         ];
         foreach ($staticImagesToSync as $srcRel => $destRels) {
             $srcPath = base_path($srcRel);

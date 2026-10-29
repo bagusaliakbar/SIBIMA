@@ -1,0 +1,102 @@
+{
+  "name": "SIBIMA - Sistem Informasi Bimbingan Mahasiswa",
+  "short_name": "SIBIMA",
+  "description": "Sistem Informasi Bimbingan Mahasiswa Fakultas Ilmu Komputer Universitas Subang",
+  "id": "/?source=pwa",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0c1427",
+  "theme_color": "#ea580c",
+  "lang": "id-ID",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard SIBIMA",
+      "short_name": "Dashboard",
+      "description": "Buka Dashboard Utama SIBIMA",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Jadwal Seminar Proposal",
+      "short_name": "Jadwal Seminar",
+      "description": "Lihat Jadwal Seminar Mahasiswa",
+      "url": "/seminar-schedules",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Jadwal Sidang Skripsi",
+      "short_name": "Jadwal Sidang",
+      "description": "Lihat Jadwal Sidang Skripsi",
+      "url": "/thesis-defense-schedules",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Pusat Bantuan & FAQ",
+      "short_name": "Bantuan (FAQ)",
+      "description": "Pusat Bantuan dan Tanya Jawab SIBIMA",
+      "url": "/faqs",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ]
+}

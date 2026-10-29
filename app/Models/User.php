@@ -301,5 +301,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\ActivityLog::class)->where('activity', 'Login')->orderBy('created_at', 'desc');
     }
+
+    /**
+     * Get the PWA push notification subscriptions for the user's devices.
+     */
+    public function pushSubscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\PushSubscription::class)->orderBy('created_at', 'desc');
+    }
 }
 

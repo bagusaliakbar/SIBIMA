@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koneksi Terputus - SIBIMA UNSUB</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        :root {
+            --bg-page: #0c1427;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --brand: #ea580c;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .card {
+            max-width: 440px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            margin-bottom: 1.25rem;
+        }
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+        p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.75rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            height: 44px;
+            background: var(--brand);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="/logo_unsub.png" alt="Logo UNSUB" class="logo">
+        <h1>Koneksi Internet Terputus</h1>
+        <p>Anda sedang berada dalam mode offline. Pastikan perangkat Anda terhubung ke jaringan Wi-Fi atau data seluler untuk mengakses kembali data SIBIMA.</p>
+        <button class="btn" onclick="window.location.reload()">
+            <span>Coba Muat Ulang</span>
+        </button>
+    </div>
+</body>
+</html>

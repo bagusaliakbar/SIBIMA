@@ -28,6 +28,9 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Progressive Web App (PWA) Meta & Service Worker -->
+        <x-pwa-meta />
+
         <!-- Cloudflare Turnstile Script -->
         @if(config('services.turnstile.site_key'))
             <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -252,6 +255,9 @@
 
             </div>
         @endif
+
+        <!-- PWA Install Banner -->
+        <x-pwa-install-banner />
 
     </body>
 </html>

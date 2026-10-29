@@ -31,6 +31,9 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
+        <!-- Progressive Web App (PWA) Meta & Service Worker -->
+        <x-pwa-meta />
+        
         <style>
             [x-cloak] { display: none !important; }
             body { font-family: 'Inter', sans-serif; }
@@ -911,6 +914,16 @@
                                             <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black" x-text="unreadCount + ' Baru'"></span>
                                         </div>
                                         <div class="flex items-center gap-2">
+                                            <!-- Push Notification Device Toggle Button -->
+                                            <button type="button" 
+                                                    @click.stop="togglePushNotifications()" 
+                                                    class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                    :title="pushEnabled ? 'Notifikasi HP: Aktif (Klik untuk Uji Notifikasi)' : 'Notifikasi HP: Nonaktif (Klik untuk Aktifkan di Perangkat)'">
+                                                <svg aria-hidden="true" class="w-4 h-4" :class="pushEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                </svg>
+                                            </button>
+
                                             <!-- Sound Mute/Unmute Toggle -->
                                             <button type="button" 
                                                     @click.stop="toggleSound()" 
@@ -1144,10 +1157,96 @@
                                     userRole: '{{ Auth::user()->role }}',
                                     isStudent: {{ Auth::user()->role === 'mahasiswa' ? 'true' : 'false' }},
                                     soundEnabled: localStorage.getItem('sibima_notif_sound_enabled') !== 'false',
+                                    pushEnabled: ('Notification' in window) && Notification.permission === 'granted',
                                     attendanceLoading: {},
                                     attendanceSuccess: {},
                                     activePermissionInput: null,
                                     permissionReason: {},
+
+                                    async togglePushNotifications() {
+                                        if (!('Notification' in window)) {
+                                            alert('Browser ini belum mendukung fitur Web Push Notification.');
+                                            return;
+                                        }
+
+                                        if (Notification.permission === 'granted') {
+                                            // Trigger a test notification via server endpoint
+                                            try {
+                                                const res = await fetch('{{ route("push-subscriptions.test") }}', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                    }
+                                                });
+                                                const data = await res.json();
+                                                if (data.status === 'success' && data.payload) {
+                                                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                                                        const reg = await navigator.serviceWorker.ready;
+                                                        reg.showNotification(data.payload.title, {
+                                                            body: data.payload.body,
+                                                            icon: data.payload.icon,
+                                                            badge: data.payload.badge,
+                                                            vibrate: [100, 50, 100],
+                                                            data: { url: data.payload.url }
+                                                        });
+                                                    } else {
+                                                        new Notification(data.payload.title, {
+                                                            body: data.payload.body,
+                                                            icon: data.payload.icon
+                                                        });
+                                                    }
+                                                }
+                                            } catch (err) {
+                                                console.warn('[SIBIMA PWA] Error testing push notification:', err);
+                                            }
+                                            return;
+                                        }
+
+                                        if (Notification.permission === 'denied') {
+                                            alert('Izin notifikasi saat ini diblokir di setelan browser. Silakan izinkan notifikasi melalui ikon gembok / pengaturan browser Anda.');
+                                            return;
+                                        }
+
+                                        // Request permission from user
+                                        const permission = await Notification.requestPermission();
+                                        if (permission === 'granted') {
+                                            this.pushEnabled = true;
+                                            if ('serviceWorker' in navigator) {
+                                                try {
+                                                    const reg = await navigator.serviceWorker.ready;
+                                                    let sub = await reg.pushManager.getSubscription();
+                                                    if (!sub) {
+                                                        sub = await reg.pushManager.subscribe({
+                                                            userVisibleOnly: true,
+                                                            applicationServerKey: null
+                                                        }).catch(() => null);
+                                                    }
+                                                    if (sub) {
+                                                        const subJson = sub.toJSON();
+                                                        await fetch('{{ route("push-subscriptions.store") }}', {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'Content-Type': 'application/json',
+                                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                            },
+                                                            body: JSON.stringify({
+                                                                endpoint: sub.endpoint,
+                                                                keys: subJson.keys || {},
+                                                                contentEncoding: 'aes128gcm'
+                                                            })
+                                                        });
+                                                    }
+                                                } catch (e) {
+                                                    console.warn('[SIBIMA PWA] Push subscription sync notice:', e);
+                                                }
+                                            }
+                                            new Notification('🔔 Notifikasi SIBIMA Aktif!', {
+                                                body: 'Perangkat Anda kini siap menerima pembaruan jadwal dan progres bimbingan secara langsung.',
+                                                icon: '{{ asset("icons/icon-192x192.png") }}'
+                                            });
+                                        }
+                                    },
 
                                     get filteredNotifications() {
                                         if (this.activeTab === 'unread') {
@@ -1726,6 +1825,9 @@
 
         <!-- Instant Navigation: Just-In-Time Link Prefetching -->
         <script src="{{ asset('assets/vendor/instantpage/instantpage.min.js') }}" type="module"></script>
+
+        <!-- Progressive Web App (PWA) Install Banner -->
+        <x-pwa-install-banner />
 
         @stack('scripts')
     </body>
