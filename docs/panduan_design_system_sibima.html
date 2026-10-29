@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Sistem Desain UI/UX (Design System Guidelines) - SIBIMA FASILKOM UNSUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --orange-500: #f97316;
+            --orange-600: #ea580c;
+            --orange-700: #c2410c;
+            --emerald-500: #10b981;
+            --emerald-600: #059669;
+            --amber-500: #f59e0b;
+            --amber-600: #d97706;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --rose-500: #f43f5e;
+            --rose-600: #e11d48;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--slate-100);
+            color: var(--slate-800);
+            line-height: 1.65;
+            padding-bottom: 80px;
+        }
+
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-fasilkom {
+            background: #fff7ed;
+            color: #c2410c;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            border: 1px solid #ffedd5;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .brand-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-800);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #ea580c;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
+        }
+        .btn-primary:hover {
+            background: #c2410c;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--slate-700);
+            border: 1px solid var(--slate-200);
+        }
+        .btn-secondary:hover {
+            background: var(--slate-100);
+        }
+
+        .document-wrapper {
+            max-width: 1180px;
+            margin: 32px auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--slate-200);
+            padding: 48px 56px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--slate-900);
+            margin-bottom: 6px;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #c2410c;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+            border-bottom: 3px solid #ea580c;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--slate-700);
+            margin-top: 10px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h2:not(:first-of-type) {
+            font-size: 19px;
+            font-weight: 900;
+            color: var(--slate-900);
+            margin-top: 44px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--slate-200);
+        }
+
+        h3:not(:first-of-type) {
+            font-size: 16px;
+            font-weight: 800;
+            color: #c2410c;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            text-transform: none;
+        }
+
+        p {
+            font-size: 13.5px;
+            color: var(--slate-700);
+            margin-bottom: 14px;
+            line-height: 1.7;
+        }
+
+        blockquote {
+            background: #f8fafc;
+            border-left: 4px solid #ea580c;
+            padding: 14px 20px;
+            margin: 16px 0;
+            border-radius: 0 12px 12px 0;
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            font-size: 13.5px;
+            color: var(--slate-700);
+        }
+
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px dashed var(--slate-200);
+            margin: 36px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px 0;
+            font-size: 12.5px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        th {
+            background-color: var(--slate-800);
+            color: #ffffff;
+            font-weight: 700;
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--slate-200);
+            color: var(--slate-700);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        tr:hover td {
+            background-color: #f1f5f9;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background-color: #f1f5f9;
+            color: #c2410c;
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre code {
+            display: block;
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 16px;
+            border-radius: 12px;
+            overflow-x: auto;
+            border: 1px solid #1e293b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .mermaid-box {
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow-x: auto;
+        }
+
+        .mermaid-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--slate-500);
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            border-bottom: 1px dashed var(--slate-200);
+            padding-bottom: 6px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ========================================================
+           INTERACTIVE COMPONENT SHOWCASE STYLES
+           ======================================================== */
+        .showcase-box {
+            background: #ffffff;
+            border: 1px solid var(--slate-300);
+            border-radius: 18px;
+            margin: 32px 0 40px 0;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+        }
+
+        .showcase-header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--slate-200);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-badge {
+            font-size: 10.5px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ea580c;
+            text-transform: uppercase;
+        }
+
+        .showcase-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--slate-900);
+            margin: 2px 0 0 0;
+        }
+
+        .mode-toggle-group {
+            display: inline-flex;
+            background: var(--slate-100);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            padding: 3px;
+            gap: 4px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--slate-600);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .toggle-btn.active {
+            background: #ffffff;
+            color: var(--slate-900);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stage-container {
+            padding: 28px 28px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .stage-container.mode-light {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .stage-container.mode-dark {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .stage-section {
+            margin-bottom: 24px;
+        }
+        .stage-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .stage-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
+        .swatches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .swatch-card {
+            padding: 14px 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 75px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .swatch-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+        }
+
+        .swatch-name {
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .swatch-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            opacity: 0.85;
+        }
+
+        .btn-showcase-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .live-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .live-btn-primary {
+            background: #ea580c;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
+        }
+        .live-btn-primary:hover {
+            background: #c2410c;
+        }
+
+        .mode-light .live-btn-secondary {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+        }
+        .mode-light .live-btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        .mode-dark .live-btn-secondary {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+        .mode-dark .live-btn-secondary:hover {
+            background: #334155;
+        }
+
+        .live-btn-danger {
+            background: #e11d48;
+            color: #ffffff;
+        }
+        .live-btn-danger:hover {
+            background: #be123c;
+        }
+
+        .mode-light .live-btn-ghost {
+            background: transparent;
+            color: #475569;
+        }
+        .mode-light .live-btn-ghost:hover {
+            background: #e2e8f0;
+        }
+
+        .mode-dark .live-btn-ghost {
+            background: transparent;
+            color: #94a3b8;
+        }
+        .mode-dark .live-btn-ghost:hover {
+            background: #1e293b;
+        }
+
+        .badge-showcase-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        /* Badges Light */
+        .mode-light .badge-success { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+        .mode-light .dot-success { background: #059669; }
+
+        .mode-light .badge-warning { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+        .mode-light .dot-warning { background: #d97706; }
+
+        .mode-light .badge-info { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+        .mode-light .dot-info { background: #2563eb; }
+
+        .mode-light .badge-danger { background: #fff1f2; color: #9f1239; border-color: #fecdd3; }
+        .mode-light .dot-danger { background: #e11d48; }
+
+        .mode-light .badge-purple { background: #faf5ff; color: #6b21a8; border-color: #e9d5ff; }
+        .mode-light .dot-purple { background: #9333ea; }
+
+        /* Badges Dark */
+        .mode-dark .badge-success { background: rgba(6, 78, 59, 0.4); color: #6ee7b7; border-color: rgba(5, 150, 105, 0.5); }
+        .mode-dark .dot-success { background: #34d399; }
+
+        .mode-dark .badge-warning { background: rgba(120, 53, 15, 0.4); color: #fcd34d; border-color: rgba(217, 119, 6, 0.5); }
+        .mode-dark .dot-warning { background: #fbbf24; }
+
+        .mode-dark .badge-info { background: rgba(30, 58, 138, 0.4); color: #93c5fd; border-color: rgba(37, 99, 235, 0.5); }
+        .mode-dark .dot-info { background: #60a5fa; }
+
+        .mode-dark .badge-danger { background: rgba(136, 19, 55, 0.4); color: #fda4af; border-color: rgba(225, 29, 72, 0.5); }
+        .mode-dark .dot-danger { background: #f43f5e; }
+
+        .mode-dark .badge-purple { background: rgba(88, 28, 135, 0.4); color: #d8b4fe; border-color: rgba(147, 51, 234, 0.5); }
+        .mode-dark .dot-purple { background: #c084fc; }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: #ffffff;
+                color: #000000;
+                padding-bottom: 0;
+            }
+
+            .document-wrapper {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+                box-shadow: none;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            th {
+                background-color: #1e293b !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 1.8cm 1.5cm 1.8cm 1.5cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar no-print">
+        <div class="brand-info">
+            <span class="badge-fasilkom">FASILKOM UNSUB</span>
+            <div class="brand-title">Panduan Sistem Desain UI/UX (SIBIMA Design System)</div>
+        </div>
+        <div class="btn-group">
+            <button onclick="window.print()" class="btn btn-primary" title="Cetak atau Simpan sebagai PDF">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                <span>Cetak / Simpan PDF (Ctrl + P)</span>
+            </button>
+            <a href="panduan_design_system_sibima.docx" class="btn btn-secondary" download title="Unduh file Microsoft Word (.docx)">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                <span>Unduh Word (.docx)</span>
+            </a>
+            <a href="panduan_design_system_sibima.md" class="btn btn-secondary" download title="Unduh berkas mentah Markdown (.md)">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <span>Unduh Markdown (.md)</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="document-wrapper">
+        <h1>PANDUAN SISTEM DESAIN UI/UX (DESIGN SYSTEM GUIDELINES)</h1>
+<h2>SISTEM INFORMASI BIMBINGAN TUGAS AKHIR (SIBIMA)</h2>
+<h3>FAKULTAS ILMU KOMPUTER — UNIVERSITAS SUBANG</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Informasi Dokumen</th>
+<th align="left">Spesifikasi Teknis &amp; Standar Desain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Nama Sistem</strong></td>
+<td align="left">SIBIMA (Sistem Informasi Bimbingan Tugas Akhir Mahasiswa)</td>
+</tr>
+<tr>
+<td align="left"><strong>Institusi Pemilik</strong></td>
+<td align="left">Fakultas Ilmu Komputer, Universitas Subang (FASILKOM UNSUB)</td>
+</tr>
+<tr>
+<td align="left"><strong>Filosofi Desain</strong></td>
+<td align="left"><strong>Clean Enterprise SaaS</strong> (Linear / TailwindUI Inspiration)</td>
+</tr>
+<tr>
+<td align="left"><strong>Versi Design System</strong></td>
+<td align="left">v2.0 (Three-Layer Tokens, Dual Light/Dark Mode Native)</td>
+</tr>
+<tr>
+<td align="left"><strong>Framework CSS</strong></td>
+<td align="left">Tailwind CSS v3.4+ dengan Ekstensi <code>@tailwindcss/forms</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Framework Template</strong></td>
+<td align="left">Laravel Blade Engine &amp; Alpine.js v3.x</td>
+</tr>
+<tr>
+<td align="left"><strong>Koleksi Ikonografi</strong></td>
+<td align="left">100% SVG Monokromatik (Heroicons / Lucide Icons)</td>
+</tr>
+<tr>
+<td align="left"><strong>Standar Aksesibilitas</strong></td>
+<td align="left"><strong>WCAG 2.1 Level AA</strong> (Rasio Kontras Minimum 4.5:1)</td>
+</tr>
+<tr>
+<td align="left"><strong>Klasifikasi Dokumen</strong></td>
+<td align="left"><strong>Dokumen Standar Rekayasa Antarmuka (<em>UI/UX Design Specification</em>)</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>Tanggal Pembaruan</strong></td>
+<td align="left">29 Oktober 2026</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. FILOSOFI &amp; PRINSIP DESAIN SIBIMA</h2>
+<p>Sistem Informasi Bimbingan Tugas Akhir (SIBIMA) adalah platform akademik perguruan tinggi yang melayani berbagai pemangku kepentingan: Administrator, Ketua Program Studi (Kaprodi), Dosen Pembimbing &amp; Penguji, serta Mahasiswa tingkat akhir. Oleh karena itu, antarmuka dirancang berorientasi pada <strong>fungsionalitas tinggi, keterbacaan data akademik (<em>data clarity</em>), kerapian visual, dan efisiensi kerja pengguna</strong>.</p>
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM SISTEM DESAIN</div><div class="mermaid">flowchart LR
+    A["<b>Clean Enterprise SaaS</b><br>Linear / TailwindUI"] --> B["<b>Kejelasan Data</b><br>Informasi Akademik Padat & Rapi"]
+    A --> C["<b>Bebas AI Slop</b><br>Tanpa Gradien Acak & Efek Berlebih"]
+    A --> D["<b>Ikon Monokromatik</b><br>100% SVG Lucide / Heroicons"]
+    A --> E["<b>Dual Native Mode</b><br>Kontras WCAG AA di Light & Dark"]
+</div></div>
+<h3>1.1 Empat Pilar Prinsip Desain</h3>
+<ol>
+<li><strong>Kejelasan di Atas Ornamen (<em>Clarity over Ornamentation</em>)</strong>:
+<ul>
+<li>Setiap elemen visual harus memiliki tujuan fungsional. Antarmuka mengutamakan status alur bimbingan, verifikasi prasyarat, nilai rubrik, dan jadwal ujian tanpa distraksi visual yang tidak perlu.</li>
+</ul>
+</li>
+<li><strong>Larangan Tegas &quot;AI Slop&quot; (<em>Zero AI Slop Rule</em>)</strong>:
+<ul>
+<li>Dilarang keras menggunakan gradien warna-warni acak (seperti ungu ke pink neon), bayangan berlebihan (<em>drop shadow</em> pekat), efek kartu kaca (<em>heavy glassmorphism</em>) yang mengorbankan keterbacaan, atau animasi yang memperlambat interaksi pengguna.</li>
+</ul>
+</li>
+<li><strong>Standarisasi Ikonografi SVG Monokrom</strong>:
+<ul>
+<li>Seluruh ikon antarmuka wajib menggunakan format <strong>SVG monokromatik (Heroicons atau Lucide)</strong>. Dilarang menggunakan emoji Unicode sebagai ikon fungsional tombol, tabel, atau navigasi.</li>
+</ul>
+</li>
+<li><strong>Jaminan Kontras WCAG 2.1 AA &amp; Dukungan Penuh Dark Mode</strong>:
+<ul>
+<li>Seluruh pasangan warna teks dan latar belakang wajib memenuhi rasio kontras minimal <strong>4.5:1</strong> untuk teks normal dan <strong>3.0:1</strong> untuk teks tebal/besar pada kedua mode (Light Mode maupun Dark Mode).</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>2. ARSITEKTUR TOKEN DESAIN TIGA LAPIS (THREE-LAYER TOKEN ARCHITECTURE)</h2>
+<p>SIBIMA mengadopsi struktur token desain tiga lapis (<em>Primitive</em> $\rightarrow$ <em>Semantic</em> $\rightarrow$ <em>Component</em>) guna menjamin skalabilitas, konsistensi tema, dan kemudahan pemeliharaan kode:</p>
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM SISTEM DESAIN</div><div class="mermaid">flowchart TD
+    subgraph L1["<b>LAPIS 1: PRIMITIVE TOKENS (Nilai Mentah HEX / Ukuran)</b>"]
+        P1["Color: #ea580c (Orange-600)<br>Color: #0f172a (Slate-900)<br>Spacing: 4px, 8px, 16px<br>Radius: 8px, 12px, 16px"]
+    end
+    subgraph L2["<b>LAPIS 2: SEMANTIC TOKENS (Tujuan Penggunaan Antarmuka)</b>"]
+        S1["--color-primary: var(--orange-600)<br>--surface-canvas: var(--slate-50 / --slate-900)<br>--status-approved: var(--emerald-500)<br>--status-pending: var(--amber-500)"]
+    end
+    subgraph L3["<b>LAPIS 3: COMPONENT TOKENS (Spesifik Komponen UI)</b>"]
+        C1["--btn-primary-bg: var(--color-primary)<br>--card-border: var(--slate-200 / --slate-800)<br>--input-focus-ring: rgba(234, 88, 12, 0.25)<br>--badge-success-text: var(--emerald-800)"]
+    end
+    L1 --> L2 --> L3
+</div></div>
+<h3>2.1 Tabel Hierarki Token Desain</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Kategori Token</th>
+<th align="left">Lapis 1: Primitive Token</th>
+<th align="left">Lapis 2: Semantic Token</th>
+<th align="left">Lapis 3: Component Token</th>
+<th align="left">Kelas Tailwind SIBIMA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Brand Action</strong></td>
+<td align="left"><code>#ea580c</code> (Orange-600)</td>
+<td align="left"><code>--color-primary</code></td>
+<td align="left"><code>--btn-primary-bg</code></td>
+<td align="left"><code>bg-orange-600 hover:bg-orange-700</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Brand Action Focus</strong></td>
+<td align="left"><code>rgba(249, 115, 22, 0.25)</code></td>
+<td align="left"><code>--ring-brand-focus</code></td>
+<td align="left"><code>--input-focus-glow</code></td>
+<td align="left"><code>focus:ring-4 focus:ring-orange-500/20</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Kanvas Halaman (Light)</strong></td>
+<td align="left"><code>#f8fafc</code> (Slate-50)</td>
+<td align="left"><code>--surface-background</code></td>
+<td align="left"><code>--app-layout-bg</code></td>
+<td align="left"><code>bg-slate-50 text-slate-800</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Kanvas Halaman (Dark)</strong></td>
+<td align="left"><code>#0f172a</code> (Slate-900)</td>
+<td align="left"><code>--surface-background-dark</code></td>
+<td align="left"><code>--app-layout-bg-dark</code></td>
+<td align="left"><code>dark:bg-slate-900 dark:text-slate-100</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Permukaan Kartu (Light)</strong></td>
+<td align="left"><code>#ffffff</code> (White)</td>
+<td align="left"><code>--surface-card</code></td>
+<td align="left"><code>--card-container-bg</code></td>
+<td align="left"><code>bg-white border-slate-200</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Permukaan Kartu (Dark)</strong></td>
+<td align="left"><code>#0f172a</code> (Slate-900)</td>
+<td align="left"><code>--surface-card-dark</code></td>
+<td align="left"><code>--card-container-bg-dark</code></td>
+<td align="left"><code>dark:bg-slate-900 dark:border-slate-800</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Sub-Permukaan / Well</strong></td>
+<td align="left"><code>#f8fafc</code> / <code>#1e293b</code></td>
+<td align="left"><code>--surface-subtle</code></td>
+<td align="left"><code>--table-header-bg</code></td>
+<td align="left"><code>bg-slate-50/60 dark:bg-slate-800/40</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Status Sukses / ACC</strong></td>
+<td align="left"><code>#059669</code> (Emerald-600)</td>
+<td align="left"><code>--status-success</code></td>
+<td align="left"><code>--badge-approved-border</code></td>
+<td align="left"><code>bg-emerald-50 text-emerald-800 border-emerald-200</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Status Menunggu / Revisi</strong></td>
+<td align="left"><code>#d97706</code> (Amber-600)</td>
+<td align="left"><code>--status-warning</code></td>
+<td align="left"><code>--badge-pending-border</code></td>
+<td align="left"><code>bg-amber-50 text-amber-800 border-amber-200</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Status Informasi / Terkirim</strong></td>
+<td align="left"><code>#2563eb</code> (Blue-600)</td>
+<td align="left"><code>--status-info</code></td>
+<td align="left"><code>--badge-info-border</code></td>
+<td align="left"><code>bg-blue-50 text-blue-800 border-blue-200</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Status Ditolak / Bahaya</strong></td>
+<td align="left"><code>#e11d48</code> (Rose-600)</td>
+<td align="left"><code>--status-danger</code></td>
+<td align="left"><code>--badge-danger-border</code></td>
+<td align="left"><code>bg-rose-50 text-rose-800 border-rose-200</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. PALET WARNA SEMANTIK SIBIMA &amp; RASIO KONTRAS WCAG AA</h2>
+<p>Seluruh elemen visual wajib menggunakan token warna semantik yang konsisten guna menjamin kenyamanan mata civitas akademika selama penggunaan harian.</p>
+<h3>3.1 Palet Utama (Brand Primary — SIBIMA Orange)</h3>
+<p>Warna oranye merupakan identitas utama institusi FASILKOM UNSUB yang melambangkan inovasi, energi akademik, dan ketegasan aksi:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Token Warna</th>
+<th align="center">Nilai HEX</th>
+<th align="left">Penggunaan Utama</th>
+<th align="center">Kontras terhadap Latar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>orange-50</code></td>
+<td align="center"><code>#fff7ed</code></td>
+<td align="left">Latar badge oranye terang, highlight baris terpilih</td>
+<td align="center">16.5:1 (dengan teks orange-900)</td>
+</tr>
+<tr>
+<td align="left"><code>orange-100</code></td>
+<td align="center"><code>#ffedd5</code></td>
+<td align="left">Border aksen kartu oranye, pill chip</td>
+<td align="center">14.1:1</td>
+</tr>
+<tr>
+<td align="left"><code>orange-500</code></td>
+<td align="center"><code>#f97316</code></td>
+<td align="left">Border fokus input, indikator aktif tab</td>
+<td align="center">3.2:1 (UI Component)</td>
+</tr>
+<tr>
+<td align="left"><strong><code>orange-600</code></strong></td>
+<td align="center"><strong><code>#ea580c</code></strong></td>
+<td align="left"><strong>Tombol Aksi Utama (Primary Button), Ikon Sorotan</strong></td>
+<td align="center"><strong>4.6:1 (Teks Putih — Lulus WCAG AA)</strong></td>
+</tr>
+<tr>
+<td align="left"><code>orange-700</code></td>
+<td align="center"><code>#c2410c</code></td>
+<td align="left">Hover state tombol aksi utama, sub-judul aksen</td>
+<td align="center">6.8:1 (Teks Putih)</td>
+</tr>
+<tr>
+<td align="left"><code>orange-800</code></td>
+<td align="center"><code>#9a3412</code></td>
+<td align="left">Teks judul aksen pada latar terang</td>
+<td align="center">8.9:1</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 Palet Netral &amp; Permukaan (Neutral Slate Palette)</h3>
+<p>Menggunakan keluarga warna <code>Slate</code> yang memiliki rona biru dingin mikro (<em>cool blue undertone</em>) untuk kesan modern enterprise:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Token Warna</th>
+<th align="center">Nilai HEX</th>
+<th align="left">Implementasi Light Mode</th>
+<th align="left">Implementasi Dark Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>slate-50</code></td>
+<td align="center"><code>#f8fafc</code></td>
+<td align="left">Latar belakang halaman (<em>page background</em>)</td>
+<td align="left">Teks kontras tertinggi (<em>headings</em>)</td>
+</tr>
+<tr>
+<td align="left"><code>slate-100</code></td>
+<td align="center"><code>#f1f5f9</code></td>
+<td align="left">Latar toolbar, hover baris tabel</td>
+<td align="left">Latar chip/badge sekunder</td>
+</tr>
+<tr>
+<td align="left"><code>slate-200</code></td>
+<td align="center"><code>#e2e8f0</code></td>
+<td align="left">Border kartu, garis batas tabel data</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>slate-300</code></td>
+<td align="center"><code>#cbd5e1</code></td>
+<td align="left">Border input form keadaan default</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>slate-400</code></td>
+<td align="center"><code>#94a3b8</code></td>
+<td align="left">Ikon sekunder, teks <em>placeholder</em></td>
+<td align="left">Teks muted/sekunder pada dark mode</td>
+</tr>
+<tr>
+<td align="left"><code>slate-500</code></td>
+<td align="center"><code>#64748b</code></td>
+<td align="left">Teks sekunder, label atribut tabel</td>
+<td align="left">Ikon sekunder pada dark mode</td>
+</tr>
+<tr>
+<td align="left"><code>slate-600</code></td>
+<td align="center"><code>#475569</code></td>
+<td align="left">Teks body sekunder</td>
+<td align="left">Border kontrol pada dark mode</td>
+</tr>
+<tr>
+<td align="left"><code>slate-700</code></td>
+<td align="center"><code>#334155</code></td>
+<td align="left">Teks body reguler</td>
+<td align="left">Border kartu modal dark mode</td>
+</tr>
+<tr>
+<td align="left"><code>slate-800</code></td>
+<td align="center"><code>#1e293b</code></td>
+<td align="left">Header tabel data (<code>&lt;th&gt;</code>), teks judul</td>
+<td align="left">Permukaan well/sub-surface dark</td>
+</tr>
+<tr>
+<td align="left"><code>slate-900</code></td>
+<td align="center"><code>#0f172a</code></td>
+<td align="left">Teks judul utama (<em>h1/h2</em>)</td>
+<td align="left">Permukaan kartu (<em>card surface</em>) &amp; canvas</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 Status Semantik (Semantic Feedback Palette)</h3>
+<p>Digunakan secara konsisten untuk badge status pendaftaran, persetujuan bimbingan, kelulusan, dan format dokumen:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Kategori Status</th>
+<th align="left">Contoh Kasus Bisnis</th>
+<th align="left">Kelas Tailwind (Light Mode)</th>
+<th align="left">Kelas Tailwind (Dark Mode)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Approved / Selesai</strong></td>
+<td align="left">ACC Bimbingan, Lulus Sidang, Terverifikasi</td>
+<td align="left"><code>bg-emerald-50 text-emerald-800 border-emerald-200</code></td>
+<td align="left"><code>dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Pending / Perhatian</strong></td>
+<td align="left">Menunggu Review, Revisi Ujian, Simulasi</td>
+<td align="left"><code>bg-amber-50 text-amber-800 border-amber-200</code></td>
+<td align="left"><code>dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Info / Terkirim</strong></td>
+<td align="left">Pesan Broadcast WA, Dokumen Word, Berita</td>
+<td align="left"><code>bg-blue-50 text-blue-800 border-blue-200</code></td>
+<td align="left"><code>dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Bahaya / Ditolak</strong></td>
+<td align="left">Berkas Ditolak, Dokumen PDF, Galat Sistem</td>
+<td align="left"><code>bg-rose-50 text-rose-800 border-rose-200</code></td>
+<td align="left"><code>dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Akademik / Yudisium</strong></td>
+<td align="left">SK Dekan, Penetapan Dosen Pembimbing</td>
+<td align="left"><code>bg-purple-50 text-purple-800 border-purple-200</code></td>
+<td align="left"><code>dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/60</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>4. TIPOGRAFI, SKALA SPASI &amp; SUDUT LENGKUNG</h2>
+<h3>4.1 Keluarga Font (<em>Font Families</em>)</h3>
+<ol>
+<li><strong>Primary Interface Font</strong>: <code>Plus Jakarta Sans</code> / <code>Figtree</code> (Sans-Serif)
+<ul>
+<li>Digunakan untuk seluruh elemen teks antarmuka, label form, judul modul, dan navigasi.</li>
+<li><code>font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;</code></li>
+</ul>
+</li>
+<li><strong>Monospace / Code Font</strong>: <code>JetBrains Mono</code> / <code>ui-monospace</code>
+<ul>
+<li>Digunakan khusus untuk Nomor Induk (NPM/NIDN), token tanda tangan QR, kode tiket bug (<code>BUG-xxxx</code>), format waktu, dan nilai tipe data basis data.</li>
+<li><code>font-family: 'JetBrains Mono', monospace;</code></li>
+</ul>
+</li>
+</ol>
+<h3>4.2 Skala Ukuran Teks (<em>Typography Scale</em>)</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Tingkat Tipografi</th>
+<th align="center">Ukuran (px / rem)</th>
+<th align="center">Berat (<em>Weight</em>)</th>
+<th align="center">Tinggi Baris (<em>Line Height</em>)</th>
+<th align="left">Penerapan Antarmuka</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Display / H1</strong></td>
+<td align="center">24px / 1.50rem</td>
+<td align="center">800 (ExtraBold)</td>
+<td align="center">1.25</td>
+<td align="left">Judul utama halaman dashboard &amp; modul</td>
+</tr>
+<tr>
+<td align="left"><strong>Heading 2 / H2</strong></td>
+<td align="center">18px / 1.125rem</td>
+<td align="center">700 (Bold)</td>
+<td align="center">1.30</td>
+<td align="left">Judul kartu data (<em>card header</em>), modal title</td>
+</tr>
+<tr>
+<td align="left"><strong>Heading 3 / H3</strong></td>
+<td align="center">15px / 0.9375rem</td>
+<td align="center">700 (Bold)</td>
+<td align="center">1.35</td>
+<td align="left">Sub-bagian panel, judul seksi formulir</td>
+</tr>
+<tr>
+<td align="left"><strong>Body Regular</strong></td>
+<td align="center">13.5px / 0.84rem</td>
+<td align="center">400 (Regular)</td>
+<td align="center">1.60</td>
+<td align="left">Paragraf penjelasan, uraian catatan revisi</td>
+</tr>
+<tr>
+<td align="left"><strong>Body Medium</strong></td>
+<td align="center">13.5px / 0.84rem</td>
+<td align="center">500 (Medium)</td>
+<td align="center">1.50</td>
+<td align="left">Teks isi tabel data, opsi dropdown</td>
+</tr>
+<tr>
+<td align="left"><strong>Caption / Small</strong></td>
+<td align="center">11.5px / 0.72rem</td>
+<td align="center">600 (SemiBold)</td>
+<td align="center">1.40</td>
+<td align="left">Label form, header tabel kolom (<code>&lt;th&gt;</code>), tanggal</td>
+</tr>
+<tr>
+<td align="left"><strong>Micro Badge</strong></td>
+<td align="center">10px / 0.625rem</td>
+<td align="center">700 (Bold)</td>
+<td align="center">1.20</td>
+<td align="left">Badge status pil, tag peran pengguna, counter chip</td>
+</tr>
+</tbody>
+</table>
+<h3>4.3 Skala Spasi (4px Grid Spacing Scale)</h3>
+<p>Seluruh margin, padding, dan layout container wajib menggunakan kelipatan grid <strong>4px</strong>:</p>
+<ul>
+<li><code>p-1</code> (4px) | <code>p-2</code> (8px) | <code>p-3</code> (12px) | <code>p-4</code> (16px) | <code>p-5</code> (20px) | <code>p-6</code> (24px) | <code>p-8</code> (32px) | <code>p-10</code> (40px)</li>
+</ul>
+<h3>4.4 Sudut Lengkung (<em>Border Radius</em>)</h3>
+<ul>
+<li><strong><code>rounded-lg</code> (8px)</strong>: Elemen internal kecil, baris tabel terpilih, thumbnail avatar mini.</li>
+<li><strong><code>rounded-xl</code> (12px)</strong>: Standar untuk seluruh <strong>Tombol (Button)</strong>, <strong>Input Form</strong>, <strong>Dropdown Select</strong>, dan <strong>Badge Box</strong>.</li>
+<li><strong><code>rounded-2xl</code> (16px - 20px)</strong>: Standar untuk <strong>Container Kartu (Card)</strong>, <strong>Jendela Modal Dialog</strong>, dan <strong>Canvas Container</strong>.</li>
+<li><strong><code>rounded-full</code> (9999px)</strong>: <strong>Status Pill Badge</strong>, <strong>Avatar Lingkaran</strong>, dan <strong>Floating Action Button</strong>.</li>
+</ul>
+<hr />
+<div class="showcase-box no-print">
+    <div class="showcase-header">
+        <div>
+            <span class="showcase-badge">INTERACTIVE COMPONENT & TOKEN SHOWCASE</span>
+            <h4 class="showcase-title">Galeri Komponen UI & Palet Warna Interaktif</h4>
+        </div>
+        <div class="mode-toggle-group">
+            <button type="button" id="toggle-light-btn" class="toggle-btn active" onclick="setPreviewMode('light')">Light Mode</button>
+            <button type="button" id="toggle-dark-btn" class="toggle-btn" onclick="setPreviewMode('dark')">Dark Mode</button>
+        </div>
+    </div>
+
+    <!-- Live Preview Stage -->
+    <div id="preview-stage" class="stage-container mode-light">
+        <!-- 1. Color Palette Row -->
+        <div class="stage-section">
+            <div class="stage-label">PALET WARNA TOKEN (KLIK UNTUK SALIN KODE HEX)</div>
+            <div class="swatches-grid">
+                <div class="swatch-card" onclick="copyHex('#ea580c', this)" style="background: #ea580c; color: #fff;">
+                    <span class="swatch-name">orange-600</span>
+                    <span class="swatch-hex">#ea580c</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#c2410c', this)" style="background: #c2410c; color: #fff;">
+                    <span class="swatch-name">orange-700</span>
+                    <span class="swatch-hex">#c2410c</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#0f172a', this)" style="background: #0f172a; color: #fff;">
+                    <span class="swatch-name">slate-900</span>
+                    <span class="swatch-hex">#0f172a</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#1e293b', this)" style="background: #1e293b; color: #fff;">
+                    <span class="swatch-name">slate-800</span>
+                    <span class="swatch-hex">#1e293b</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#059669', this)" style="background: #059669; color: #fff;">
+                    <span class="swatch-name">emerald-600</span>
+                    <span class="swatch-hex">#059669</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#d97706', this)" style="background: #d97706; color: #fff;">
+                    <span class="swatch-name">amber-600</span>
+                    <span class="swatch-hex">#d97706</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#2563eb', this)" style="background: #2563eb; color: #fff;">
+                    <span class="swatch-name">blue-600</span>
+                    <span class="swatch-hex">#2563eb</span>
+                </div>
+                <div class="swatch-card" onclick="copyHex('#e11d48', this)" style="background: #e11d48; color: #fff;">
+                    <span class="swatch-name">rose-600</span>
+                    <span class="swatch-hex">#e11d48</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Interactive Buttons -->
+        <div class="stage-section">
+            <div class="stage-label">SISTEM TOMBOL RESMI SIBIMA</div>
+            <div class="btn-showcase-row">
+                <button class="live-btn live-btn-primary">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Primary Action</span>
+                </button>
+                <button class="live-btn live-btn-secondary">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Secondary Action</span>
+                </button>
+                <button class="live-btn live-btn-danger">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <span>Danger Action</span>
+                </button>
+                <button class="live-btn live-btn-ghost">
+                    <span>Ghost Neutral</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Status Badges -->
+        <div class="stage-section">
+            <div class="stage-label">BADGE STATUS SEMANTIK AKADEMIK</div>
+            <div class="badge-showcase-row">
+                <span class="live-badge badge-success"><span class="badge-dot dot-success"></span> ACC Bimbingan</span>
+                <span class="live-badge badge-warning"><span class="badge-dot dot-warning"></span> Menunggu Validasi</span>
+                <span class="live-badge badge-info"><span class="badge-dot dot-info"></span> Terkirim WA</span>
+                <span class="live-badge badge-danger"><span class="badge-dot dot-danger"></span> Ditolak Kaprodi</span>
+                <span class="live-badge badge-purple"><span class="badge-dot dot-purple"></span> SK Terbit</span>
+            </div>
+        </div>
+    </div>
+</div>
+<h2>5. SPESIFIKASI &amp; KATALOG KOMPONEN INTI UI</h2>
+<h3>5.1 Tombol (<em>Button System</em>)</h3>
+<p>Semua tombol memiliki tinggi seragam <code>h-10</code> (40px) pada toolbar atau <code>h-9</code> (36px) pada tabel:</p>
+<pre><code class="language-html">&lt;!-- 1. Primary Action Button --&gt;
+&lt;button class=&quot;inline-flex items-center gap-2 px-4 h-10 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white text-xs font-bold rounded-xl shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-orange-500/20&quot;&gt;
+    &lt;svg class=&quot;w-4 h-4&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M12 4v16m8-8H4&quot;/&gt;&lt;/svg&gt;
+    &lt;span&gt;Tambah Jadwal Baru&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;!-- 2. Secondary Neutral Button --&gt;
+&lt;button class=&quot;inline-flex items-center gap-2 px-4 h-10 bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all&quot;&gt;
+    &lt;svg class=&quot;w-4 h-4 text-slate-500&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4&quot;/&gt;&lt;/svg&gt;
+    &lt;span&gt;Cetak Berita Acara&lt;/span&gt;
+&lt;/button&gt;
+</code></pre>
+<h3>5.2 Kontrol Form (<em>Form Inputs &amp; Dropdowns</em>)</h3>
+<ul>
+<li><strong>Tinggi Seragam</strong>: <code>h-10</code> (40px) dengan <code>box-sizing: border-box</code>.</li>
+<li><strong>Fokus Interaktif</strong>: Wajib menampilkan cincin aksen oranye SIBIMA (<code>border-orange-500 focus:ring-4 focus:ring-orange-500/20</code>).</li>
+</ul>
+<pre><code class="language-html">&lt;div class=&quot;space-y-1.5&quot;&gt;
+    &lt;label class=&quot;block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400&quot;&gt;
+        Nama Lengkap Mahasiswa &lt;span class=&quot;text-rose-500&quot;&gt;*&lt;/span&gt;
+    &lt;/label&gt;
+    &lt;input type=&quot;text&quot; 
+           class=&quot;w-full h-10 px-3.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-xs focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all&quot; 
+           placeholder=&quot;Masukkan nama lengkap dan gelar...&quot; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h3>5.3 Pola Tata Letak Toolbar &amp; Tabel (2-Tier Header Pattern)</h3>
+<p>Pola wajib untuk halaman manajemen berkas, jadwal seminar, sidang, dan repositori:</p>
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM SISTEM DESAIN</div><div class="mermaid">flowchart TD
+    subgraph T1["<b>TIER 1 (BARIS ATAS: KONTROL UTAMA & JUDUL)</b>"]
+        direction LR
+        L1["<b>Kiri</b>: Judul Modul (h1 18px) + Subtitle Deskriptif (12px)"]
+        R1["<b>Kanan</b>: Tombol Aksi Primer (+ Tambah Data / Simulasi Otomatis)"]
+    end
+    subgraph T2["<b>TIER 2 (BARIS BAWAH: FILTER & PENCARIAN SERAGAM H-10)</b>"]
+        direction LR
+        L2["<b>Kiri</b>: Input Pencarian (Cari...) + Dropdown Filter (Status, Gelombang)"]
+        R2["<b>Kanan</b>: Tombol Ekspor Batch (Cetak PDF / Download Excel)"]
+    end
+    T1 --> T2
+</div></div>
+<h3>5.4 Kartu Data &amp; Statistik (<em>Metric Stat Card</em>)</h3>
+<pre><code class="language-html">&lt;div class=&quot;p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-shadow&quot;&gt;
+    &lt;div class=&quot;flex items-center justify-between&quot;&gt;
+        &lt;span class=&quot;text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400&quot;&gt;Total Skripsi Aktif&lt;/span&gt;
+        &lt;div class=&quot;p-2 bg-orange-50 dark:bg-orange-950/40 text-orange-600 rounded-xl&quot;&gt;
+            &lt;svg class=&quot;w-5 h-5&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253&quot;/&gt;&lt;/svg&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mt-3 flex items-baseline gap-2&quot;&gt;
+        &lt;span class=&quot;text-2xl font-black text-slate-900 dark:text-slate-100&quot;&gt;142&lt;/span&gt;
+        &lt;span class=&quot;inline-flex items-center text-[10.5px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-md&quot;&gt;+12% semester ini&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<hr />
+<h2>6. STANDAR INTERAKSI, RESPONSIF &amp; AKSESIBILITAS (WCAG 2.1 AA)</h2>
+<ol>
+<li><strong>Target Sentuh Minimum (<em>Touch Targets</em>)</strong>:
+<ul>
+<li>Seluruh elemen yang dapat diklik memiliki area sentuh minimal <strong>40px $\times$ 40px</strong> untuk mencegah salah klik pada perangkat tablet dan seluler.</li>
+</ul>
+</li>
+<li><strong>Indikator Fokus Terlihat (<em>Visible Focus Rings</em>)</strong>:
+<ul>
+<li>Seluruh elemen tombol, link, dan input wajib memiliki fokus visual yang jelas: <code>focus-visible:ring-4 focus-visible:ring-orange-500/20 focus-visible:outline-none</code>.</li>
+</ul>
+</li>
+<li><strong>Penyusunan DOM Semantik</strong>:
+<ul>
+<li>Menggunakan tag HTML5 semantik (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>) dengan atribut <code>aria-label</code> pada tombol yang hanya menampilkan ikon tanpa teks (<em>icon-only buttons</em>).</li>
+</ul>
+</li>
+<li><strong>Breakpoint Responsif</strong>:
+<ul>
+<li>Mobile: <code>&lt; 640px</code> (<code>sm</code>) $\rightarrow$ Layout satu kolom vertikal, menu navigasi lipat (<em>drawer</em>).</li>
+<li>Tablet: <code>640px - 1024px</code> (<code>md/lg</code>) $\rightarrow$ Grid dua kolom, toolbar responsif fleksibel.</li>
+<li>Desktop: <code>&gt; 1024px</code> (<code>xl/2xl</code>) $\rightarrow$ Lebar maksimal container <code>max-w-7xl</code> (1280px).</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>7. PANDUAN PENERAPAN DEVELOPER (HANDOFF WORKFLOW)</h2>
+<p>Setiap pengembang (<em>developer</em> atau AI agent) yang melakukan penambahan fitur atau pengubahan antarmuka wajib mematuhi alur kerja berikut:</p>
+<div class="mermaid-box"><div class="mermaid-label">DIAGRAM SISTEM DESAIN</div><div class="mermaid">flowchart LR
+    W1["1. Edit Tampilan<br>(Blade & Tailwind)"] 
+    --> W2["2. Build Production<br>npm run build"] 
+    --> W3["3. Bersihkan Cache<br>php artisan view:clear"] 
+    --> W4["4. Otomatis Git<br>Commit & Push Main"]
+</div></div>
+<ol>
+<li><strong>Gunakan Token Resmi</strong>: Jangan sekali-kali menuliskan warna HEX acak pada file Blade. Selalu gunakan utilitas warna semantik SIBIMA (<code>orange-600</code>, <code>slate-800</code>, <code>emerald-50</code>, dll).</li>
+<li><strong>Kompilasi Aset Produksi</strong>: Jalankan <code>npm run build</code> untuk memproses seluruh class Tailwind baru ke file bundle <code>public/build/</code>.</li>
+<li><strong>Bersihkan Cache Template</strong>: Eksekusi <code>php artisan view:clear</code> agar view hasil kompilasi Blade tidak menampilkan cache usang.</li>
+<li><strong>Git Commit &amp; Push Otomatis</strong>: Lakukan <code>git add</code>, <code>git commit -m &quot;feat/ui: ...&quot;</code> dan <code>git push origin main</code> agar pembaruan antarmuka langsung tersinkronisasi ke server produksi.</li>
+</ol>
+<hr />
+<h2>8. KESIMPULAN</h2>
+<p>Dokumen Panduan Sistem Desain SIBIMA ini merupakan acuan tunggal (<em>Single Source of Truth</em>) bagi seluruh rancang bangun antarmuka pengguna pada sistem SIBIMA. Dengan mematuhi filosofi <strong>Clean Enterprise SaaS</strong>, arsitektur token tiga lapis, dan standar aksesibilitas WCAG 2.1 AA, platform SIBIMA dapat memberikan pengalaman akademik yang modern, terpercaya, dan bermartabat bagi seluruh civitas akademika Fakultas Ilmu Komputer Universitas Subang.</p>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.mermaid) {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: 'default',
+                    themeVariables: {
+                        primaryColor: '#f8fafc',
+                        primaryTextColor: '#0f172a',
+                        primaryBorderColor: '#0284c7',
+                        lineColor: '#0284c7',
+                        secondaryColor: '#f0fdf4',
+                        tertiaryColor: '#fff7ed'
+                    },
+                    securityLevel: 'loose'
+                });
+            }
+        });
+
+        function setPreviewMode(mode) {
+            const stage = document.getElementById('preview-stage');
+            const lightBtn = document.getElementById('toggle-light-btn');
+            const darkBtn = document.getElementById('toggle-dark-btn');
+
+            if (mode === 'dark') {
+                stage.classList.remove('mode-light');
+                stage.classList.add('mode-dark');
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            } else {
+                stage.classList.remove('mode-dark');
+                stage.classList.add('mode-light');
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            }
+        }
+
+        function copyHex(hex, el) {
+            navigator.clipboard.writeText(hex).then(() => {
+                const orig = el.querySelector('.swatch-hex').textContent;
+                el.querySelector('.swatch-hex').textContent = 'Tersalin!';
+                setTimeout(() => {
+                    el.querySelector('.swatch-hex').textContent = orig;
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
