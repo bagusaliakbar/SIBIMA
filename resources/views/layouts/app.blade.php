@@ -877,19 +877,19 @@
 
 
 
-                    <div class="flex items-center space-x-1.5 sm:space-x-5">
-                        <div class="flex items-center space-x-1 sm:space-x-2">
+                    <div class="flex items-center space-x-1 sm:space-x-5">
+                        <div class="flex items-center space-x-0.5 sm:space-x-2">
                             <!-- Dark Mode Toggle -->
-                            <button type="button" @click="darkMode = !darkMode" :aria-label="darkMode ? 'Aktifkan Mode Terang' : 'Aktifkan Mode Gelap'" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Toggle Mode Gelap/Terang">
-                                <svg aria-hidden="true" x-cloak x-show="!darkMode" class="w-4.5 h-4.5 sm:w-5 sm:h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                                <svg aria-hidden="true" x-cloak x-show="darkMode" class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <button type="button" @click="darkMode = !darkMode" :aria-label="darkMode ? 'Aktifkan Mode Terang' : 'Aktifkan Mode Gelap'" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Toggle Mode Gelap/Terang">
+                                <svg aria-hidden="true" x-cloak x-show="!darkMode" class="w-4 h-4 sm:w-5 sm:h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                                <svg aria-hidden="true" x-cloak x-show="darkMode" class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </button>
 
                             <div x-data="notificationDropdown()" x-init="init()" class="relative">
-                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
-                                    <svg aria-hidden="true" class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
+                                    <svg aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
-                                        <span style="top: 3px; right: 3px;" class="absolute flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white border-2 border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
+                                        <span style="top: 2px; right: 2px;" class="absolute flex h-3.5 min-w-[14px] px-1 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white border border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
                                             <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
                                         </span>
                                     </template>
@@ -1127,7 +1127,7 @@
                             </div>
 
                             <!-- Cool Divider -->
-                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 self-center"></div>
+                            <div class="h-4 sm:h-6 w-px bg-slate-200 dark:bg-slate-700 mx-0.5 sm:mx-1 self-center"></div>
 
                             <!-- Logout Button (Direct Button Sibling for Perfect Flexbox Alignment) -->
                             <form id="header-logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
@@ -1136,9 +1136,9 @@
                             <button type="button" 
                                     onclick="event.preventDefault(); document.getElementById('header-logout-form').submit();" 
                                     aria-label="Keluar dari akun"
-                                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group cursor-pointer" 
+                                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group cursor-pointer" 
                                     title="Keluar">
-                                <svg aria-hidden="true" class="w-4.5 h-4.5 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                <svg aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                             </button>
                         </div>
 
