@@ -367,29 +367,34 @@
                         @endif
                     </div>
 
-                    <div class="flex flex-col sm:flex-row items-center gap-5 w-full md:w-auto justify-between md:justify-end shrink-0">
-                        <a href="{{ route('student.history') }}" class="inline-flex flex-col items-center justify-center gap-1.5 group/btn cursor-pointer">
-                            <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm group-hover/btn:bg-orange-600 group-hover/btn:border-orange-600 group-hover/btn:text-white transition-all duration-300">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover/btn:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover/btn:text-orange-600 dark:group-hover/btn:text-orange-400 transition-colors">Lihat Histori</span>
-                        </a>
-
-                        <div class="flex items-center justify-between w-full sm:w-auto gap-5 bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-700/60 shadow-xs">
-                            <div class="text-right">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Capaian Saat Ini</p>
-                                <p class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{{ round($progressPercent) }}%</p>
-                            </div>
-                            <div class="w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
-                            <div class="relative w-14 h-14">
-                                <svg class="w-14 h-14 transform -rotate-90">
-                                    <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-200 dark:text-slate-800" />
-                                    <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="150.7" stroke-dashoffset="{{ 150.7 - (150.7 * $progressPercent / 100) }}" class="text-orange-600 transition-all duration-1000 ease-out" />
-                                </svg>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    <div class="w-full md:w-auto shrink-0">
+                        <div class="w-full sm:w-auto min-w-[240px] bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/70 dark:border-slate-700/60 shadow-xs overflow-hidden divide-y divide-slate-200/70 dark:divide-slate-700/60">
+                            <!-- Progress Metric Row -->
+                            <div class="flex items-center justify-between gap-5 p-4">
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">Capaian Saat Ini</p>
+                                    <p class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{{ round($progressPercent) }}%</p>
+                                </div>
+                                <div class="w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
+                                <div class="relative w-14 h-14 shrink-0">
+                                    <svg class="w-14 h-14 transform -rotate-90" viewBox="0 0 56 56">
+                                        <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-200 dark:text-slate-800" />
+                                        <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="150.7" stroke-dashoffset="{{ 150.7 - (150.7 * $progressPercent / 100) }}" class="text-orange-600 transition-all duration-1000 ease-out" />
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Integrated Action: Lihat Histori -->
+                            <a href="{{ route('student.history') }}" class="flex items-center justify-between gap-2 px-4 py-2.5 bg-white/70 dark:bg-slate-800/50 hover:bg-orange-50/80 dark:hover:bg-orange-950/40 text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all group/hist cursor-pointer">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-slate-400 group-hover/hist:text-orange-600 dark:group-hover/hist:text-orange-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>Lihat Histori Perjalanan</span>
+                                </span>
+                                <svg class="w-3.5 h-3.5 text-slate-400 group-hover/hist:text-orange-600 dark:group-hover/hist:text-orange-400 group-hover/hist:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                            </a>
                         </div>
                     </div>
                 </div>
