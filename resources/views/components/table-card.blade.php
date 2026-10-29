@@ -31,7 +31,7 @@
         </div>
     @endif
 
-    <div class="overflow-x-auto max-h-[72vh] custom-scrollbar">
+    <div class="overflow-x-auto sm:max-h-[72vh] custom-scrollbar">
         {{ $slot }}
     </div>
 

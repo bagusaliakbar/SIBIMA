@@ -1128,7 +1128,7 @@
                    x-transition:enter="transition ease-out duration-200"
                    x-transition:enter-start="opacity-0"
                    x-transition:enter-end="opacity-100"
-                   class="w-full text-left text-sm whitespace-nowrap">
+                   class="hidden sm:table w-full text-left text-sm whitespace-nowrap">
                 <thead>
                     @if(Auth::user()->role === 'dosen')
                         <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-100 dark:border-slate-700/80">
@@ -2138,6 +2138,29 @@
                     @endforelse
                 </tbody>
             </table>
+
+            <!-- MOBILE VIEW: RESPONSIVE STACKED CARDS (< sm / 640px) -->
+            <div x-show="!pageLoading" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 class="block sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                @forelse($theses as $thesis)
+                    @if(Auth::user()->role === 'dosen')
+                        @include('theses.partials.mobile-card-dosen', ['thesis' => $thesis])
+                    @else
+                        @include('theses.partials.mobile-card-admin', ['thesis' => $thesis])
+                    @endif
+                @empty
+                    <div class="p-8 text-center">
+                        <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada data skripsi</p>
+                        <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Tidak ada data skripsi yang sesuai dengan filter aktif.</p>
+                    </div>
+                @endforelse
+            </div>
         </x-table-card>
 
         @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
