@@ -236,11 +236,36 @@
             </div>
 
             @php
-                $isFullAccUp = $thesis->acc_up_p1 && $thesis->acc_up_p2;
-                $isFullAccSidang = $thesis->acc_sidang_p1 && $thesis->acc_sidang_p2;
+                $isFullAccUp = (bool) ($thesis->acc_up_p1 && $thesis->acc_up_p2);
+                $isFullAccSidang = (bool) ($thesis->acc_sidang_p1 && $thesis->acc_sidang_p2);
+                $hasPassedSeminar = $thesis->hasPassedSeminar();
+                $hasRegisteredSeminar = $hasPassedSeminar || $thesis->seminarApplications()->exists() || (bool) ($thesis->seminarApplication);
+                $hasPassedDefense = $thesis->hasPassedDefense();
+                $hasRegisteredDefense = $hasPassedDefense || $thesis->defenseApplications()->exists() || (bool) ($thesis->defenseApplication);
             @endphp
 
-            @if($isFullAccSidang)
+            @if($hasPassedDefense)
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h4 class="text-sm font-black text-slate-900 dark:text-slate-100">Sidang Skripsi Telah Selesai</h4>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-700">
+                                    Lulus Sidang
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Selamat! Anda telah menyelesaikan Sidang Skripsi. Silakan lengkapi revisi sidang dan proses yudisium kelulusan Anda.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('student-defense-revisions.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/30 shrink-0 cursor-pointer">
+                        <span>Revisi Sidang</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            @elseif($isFullAccSidang && !$hasRegisteredDefense)
                 <div class="p-5 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-center gap-3.5">
                         <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/30">
@@ -251,12 +276,82 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Kedua dosen pembimbing telah menyetujui naskah skripsi Anda untuk didaftarkan ke Sidang Skripsi.</p>
                         </div>
                     </div>
-                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/30 shrink-0">
+                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/30 shrink-0 cursor-pointer">
                         <span>Daftar Sidang Skripsi</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
-            @elseif($isFullAccUp)
+            @elseif($hasRegisteredDefense && !$hasPassedDefense)
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-transparent border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900 dark:text-slate-100">Pendaftaran Sidang Skripsi Sedang Diproses</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Berkas Sidang Skripsi Anda telah diajukan. Pantau status verifikasi dan jadwal sidang Anda.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-sm shadow-blue-600/30 shrink-0 cursor-pointer">
+                        <span>Pantau Sidang</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            @elseif($hasPassedSeminar && !$isFullAccSidang)
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-transparent border border-teal-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-teal-600/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h4 class="text-sm font-black text-slate-900 dark:text-slate-100">Tahap Bimbingan Skripsi (Pasca-Seminar)</h4>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-200 border border-teal-200 dark:border-teal-700">
+                                    Seminar Selesai
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                                Anda telah menyelesaikan Seminar Proposal. Lanjutkan pencatatan logbook bimbingan naskah skripsi untuk memenuhi syarat dan persetujuan (ACC) Sidang Skripsi.
+                            </p>
+                            <div class="flex items-center gap-2 mt-2 text-[10px] font-bold">
+                                <span class="text-slate-500 dark:text-slate-400">Status ACC Sidang:</span>
+                                <span class="px-2 py-0.5 rounded-md {{ $thesis->acc_sidang_p1 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
+                                    P1: {{ $thesis->acc_sidang_p1 ? '✓ Sudah ACC' : 'Belum ACC' }}
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md {{ $thesis->acc_sidang_p2 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
+                                    P2: {{ $thesis->acc_sidang_p2 ? '✓ Sudah ACC' : 'Belum ACC' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                        <a href="{{ route('student-seminar-revisions.index') }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer">
+                            <span>Revisi Seminar</span>
+                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                        <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-sm shadow-teal-600/30 shrink-0 cursor-pointer">
+                            <span>Syarat Sidang</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            @elseif($hasRegisteredSeminar && !$hasPassedSeminar)
+                <div class="p-5 rounded-3xl bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-transparent border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900 dark:text-slate-100">Pendaftaran Seminar Proposal Sedang Diproses</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Berkas Seminar Proposal Anda telah didaftarkan. Pantau jadwal dan pengumuman seminar Anda.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-sm shadow-blue-600/30 shrink-0 cursor-pointer">
+                        <span>Pantau Seminar</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            @elseif($isFullAccUp && !$hasRegisteredSeminar)
                 <div class="p-5 rounded-3xl bg-gradient-to-r from-indigo-500/15 via-blue-500/10 to-transparent border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-center gap-3.5">
                         <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/30">
@@ -267,7 +362,7 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Kedua dosen pembimbing telah menyetujui proposal skripsi Anda untuk didaftarkan ke Seminar Proposal.</p>
                         </div>
                     </div>
-                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm shadow-indigo-600/30 shrink-0">
+                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm shadow-indigo-600/30 shrink-0 cursor-pointer">
                         <span>Daftar Seminar Proposal</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
