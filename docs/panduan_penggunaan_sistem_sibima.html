@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Penggunaan Sistem SIBIMA — FASILKOM UNSUB</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        orange: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74',
+                            400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c',
+                            800: '#9a3412', 900: '#7c2d12', 950: '#431407'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font CDN -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        table, .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200"
+      x-data="{ darkMode: false, activeRole: 'all' }"
+      x-init="
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            darkMode = true;
+            document.documentElement.classList.add('dark');
+        } else {
+            darkMode = false;
+            document.documentElement.classList.remove('dark');
+        }
+        $watch('darkMode', val => {
+            if (val) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+      ">
+
+    <!-- Top Sticky Header Bar -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    S
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Panduan Penggunaan SIBIMA</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">User Manual & Standard Operating Procedure v3.0</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <!-- Theme Toggle Button -->
+                <button @click="darkMode = !darkMode" 
+                        class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
+                        title="Ganti Mode Gelap / Terang">
+                    <svg x-show="!darkMode" class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg x-show="darkMode" class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
+                <!-- Print Button -->
+                <button onclick="window.print()" 
+                        class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Cetak / PDF
+                </button>
+
+                <!-- Download DOCX Button -->
+                <a href="panduan_penggunaan_sistem_sibima.docx" download
+                   class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Unduh DOCX
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Role Filter Pills Bar -->
+    <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2 overflow-x-auto">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2">Pilih Peran:</span>
+            <button @click="activeRole = 'all'" :class="activeRole === 'all' ? 'bg-orange-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                Semua Panduan
+            </button>
+            <button @click="activeRole = 'mahasiswa'" :class="activeRole === 'mahasiswa' ? 'bg-orange-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                🎓 Mahasiswa
+            </button>
+            <button @click="activeRole = 'dosen'" :class="activeRole === 'dosen' ? 'bg-orange-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                👨‍🏫 Dosen (Pembimbing & Penguji)
+            </button>
+            <button @click="activeRole = 'kaprodi'" :class="activeRole === 'kaprodi' ? 'bg-orange-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                🏛️ Kaprodi
+            </button>
+            <button @click="activeRole = 'admin'" :class="activeRole === 'admin' ? 'bg-orange-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                ⚙️ Admin & Dekan
+            </button>
+            <button @click="activeRole = 'faq'" :class="activeRole === 'faq' ? 'bg-orange-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                ❓ FAQ & Kendala
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- Header Banner Card -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60 mb-4">
+                Buku Panduan Operasional Resmi SIBIMA
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+                PANDUAN LENGKAP PENGGUNAAN SISTEM SIBIMA
+            </h1>
+            <p class="text-base text-slate-600 dark:text-slate-400">
+                Sistem Informasi Bimbingan Tugas Akhir Mahasiswa • Fakultas Ilmu Komputer Universitas Subang
+            </p>
+        </div>
+
+        <!-- Section: Mahasiswa -->
+        <section x-show="activeRole === 'all' || activeRole === 'mahasiswa'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-lg">1</span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">PANDUAN PERAN MAHASISWA</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Siklus 6 Tahapan Linear dari Pengajuan Judul hingga Yudisium & SKL</p>
+                </div>
+            </div>
+
+            <!-- Steps Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <!-- Step 1 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 space-y-2">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white">Langkah 1</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-base">Pengajuan Judul Tugas Akhir</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Buka menu <strong>1. Pengajuan Judul</strong>. Masukkan 3 usulan judul (Judul Utama & 2 Cadangan), jelaskan rumusan masalah serta batasan sistem, lalu unggah draf proposal awal (PDF). Tunggu peninjauan dan penetapan Pembimbing 1 & 2 oleh Kaprodi.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 space-y-2">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white">Langkah 2</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-base">Presensi Bimbingan via QR Code</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Saat sesi bimbingan tatap muka, dosen akan menampilkan QR Code dinamis. Buka menu <strong>Jadwal Bimbingan</strong> di ponsel Anda, tekan tombol <strong>Pindai QR Presensi</strong>, dan arahkan kamera ke layar dosen. Presensi Anda otomatis tervalidasi secara instan.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 space-y-2">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white">Langkah 3</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-base">Logbook & Cetak Kartu Bimbingan</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Catat kemajuan harian per bab (BAB I s/d VI) dan kendala yang dihadapi di menu <strong>Logbook Bimbingan</strong>. Setelah mencapai syarat minimal (8 bimbingan), klik <strong>Cetak Kartu Bimbingan (PDF)</strong> untuk mengunduh kartu berparaf digital resmi.
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 space-y-2">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white">Langkah 4</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-base">Pendaftaran Seminar Proposal</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Buka menu <strong>2. Pendaftaran Seminar</strong> setelah memperoleh rekomendasi ACC dari Pembimbing 1 & 2. Pilih gelombang aktif, unggah proposal lengkap, kartu bimbingan, dan transkrip nilai. Pantau kartu jadwal seminar proposal Anda di dasbor.
+                    </p>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 space-y-2">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white">Langkah 5</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-base">Revisi Proposal (Maks 14 Hari)</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Buka menu <strong>3. Revisi Seminar</strong>. Baca catatan perbaikan penguji pada berita acara, perbaiki naskah, dan unggah berkas perbaikan sebelum batas waktu 14 hari kerja berakhir. Gunakan kolom percakapan dua arah untuk konsultasi revisi dengan penguji.
+                    </p>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 space-y-2">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-600 text-white">Langkah 6</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-base">Pendaftaran Sidang & Revisi Naskah</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Buka menu <strong>4. Pendaftaran Sidang</strong>. Unggah naskah skripsi lengkap (BAB I–VI), lembar persetujuan pembimbing, dan sertifikat Turnitin (&le; 25%). Setelah sidang selesai, tuntaskan revisi di menu <strong>5. Revisi Sidang</strong> hingga disetujui dewan penguji.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Yudisium Box -->
+            <div class="p-5 rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white mb-2">Langkah Pamungkas</span>
+                <h4 class="font-bold text-emerald-900 dark:text-emerald-300 text-base">Pengajuan Yudisium & SKL Digital Ber-QR Code</h4>
+                <p class="text-xs text-slate-700 dark:text-slate-300 mt-1">
+                    Buka menu <strong>6. Yudisium & SKL</strong>. Isi biodata alumni, unggah bukti tanda terima penyerahan skripsi jilid/CD ke perpustakaan serta artikel jurnal. Setelah disahkan Dekan, unduh Surat Keterangan Lulus (SKL) digital berstempel resmi dan QR-Code verifikasi keabsahan.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section: Dosen -->
+        <section x-show="activeRole === 'all' || activeRole === 'dosen'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg">2</span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">PANDUAN PERAN DOSEN (PEMBIMBING & PENGUJI)</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Tata Kelola Bimbingan QR, Logbook, Surat Tugas BKD, dan Penilaian Majelis Ujian</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <!-- Dosen 1 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <span class="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">Peran Pembimbing</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white">Tinjauan Judul & Pembuatan Sesi QR</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Buka menu <strong>Mahasiswa Bimbingan</strong> untuk menyetujui usulan judul. Buka menu <strong>Jadwal Bimbingan</strong> untuk membuat sesi bimbingan dan menayangkan QR Code presensi dinamis di layar laptop/gawai Anda agar dipindai mahasiswa.
+                    </p>
+                </div>
+
+                <!-- Dosen 2 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <span class="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">Peran Pembimbing</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white">Pemeriksaan Logbook & Rekomendasi ACC</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Periksa kemajuan naskah bab di logbook mahasiswa dan berikan catatan perbaikan. Jika naskah telah memenuhi syarat, tekan tombol <strong>ACC Sempro</strong> atau <strong>ACC Sidang Skripsi</strong> untuk membuka izin pendaftaran ujian bagi mahasiswa.
+                    </p>
+                </div>
+
+                <!-- Dosen 3 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Peran Penguji</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white">Penilaian Seminar Proposal & Sidang</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Masuk ke menu <strong>Tugas Penguji ➔ Penguji Seminar / Sidang</strong>. Buka ruang ujian untuk membaca naskah, input nilai angka rubrik komponen (skala 0–100), masukkan catatan revisi berita acara, dan simpan nilai akhir mahasiswa.
+                    </p>
+                </div>
+
+                <!-- Dosen 4 -->
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Peran Penguji & Dokumen</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white">ACC Revisi Pasca-Ujian & Surat Tugas BKD</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Buka tab <strong>Revisi Mahasiswa</strong> untuk memeriksa naskah perbaikan pasca-sidang dan berikan persetujuan (*ACC Revisi*). Unduh berkas resmi SK Dekan di menu <strong>Surat Tugas</strong> untuk bukti kinerja BKD / SISTER Kemdiktisaintek.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Kaprodi -->
+        <section x-show="activeRole === 'all' || activeRole === 'kaprodi'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-lg">3</span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">PANDUAN PERAN KETUA PROGRAM STUDI (KAPRODI)</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Disposisi Pembimbing, Simulasi Auto-Schedule, Ekspor Word, dan Monitoring Kritis</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                    <span class="text-xs font-bold text-orange-600 dark:text-orange-400">DISPOSISI PEMBIMBING</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white mt-1">Alokasi & Kuota Dosen</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        Buka menu <strong>Pengajuan Judul</strong>, evaluasi usulan mahasiswa, periksa indikator batas kuota aktif dosen, lalu tetapkan Pembimbing 1 dan 2.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400">AUTO-SCHEDULE ENGINE</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white mt-1">Simulasi Jadwal Bebas Bentrok</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        Jalankan mesin simulasi penjadwalan cerdas untuk sempro/sidang. Sistem otomatis mendeteksi bentrok jadwal menguji dosen dan ketersediaan ruangan fisik.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                    <span class="text-xs font-bold text-rose-600 dark:text-rose-400">MONITORING KRITIS</span>
+                    <h4 class="font-bold text-slate-900 dark:text-white mt-1">Early Warning & DO Alert</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        Pantau mahasiswa bimbingan pasif (>30 hari) dan mahasiswa angkatan tua di menu <strong>Monitoring Masa Studi</strong> untuk mencegah keterlambatan kelulusan.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Admin & Dekan -->
+        <section x-show="activeRole === 'all' || activeRole === 'admin'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-lg">4</span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">PANDUAN ADMINISTRATOR, STAF TU & DEKAN</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Master Data Pengguna, SK Dekan, Broadcast Spintax WhatsApp, dan Backup Basis Data</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white">1. Master Data & Penomoran Surat</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Kelola akun pengguna (tambah manual, reset password, impor massal via Excel). Atur template format penomoran otomatis di menu <strong>Pengaturan Nomor Surat</strong> untuk Berita Acara dan SK Dekan.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white">2. Pengesahan SK Dekan & Yudisium</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Dekan meninjau dan mengesahkan SK Pembimbing, SK Penguji, dan Surat Keterangan Lulus (SKL) mahasiswa yang telah tuntas diuji dan disetujui Kaprodi.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white">3. Broadcast WhatsApp (Anti-Ban Spintax)</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Kirimkan pengumuman atau pengingat jadwal massal tertarget menggunakan format variasi kata spintax `{Halo|Yth} {name}` agar terhindar dari pemblokiran oleh algoritma WhatsApp.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white">4. Backup Database & Pembersihan Cache</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        Lakukan pencadangan dump terkompresi `.sql.gz` secara rutin di menu <strong>Backup & Restore</strong>. Gunakan aksi <strong>Bersihkan Cache</strong> untuk menyinkronkan aset dan skema sistem.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: FAQ & Troubleshooting -->
+        <section x-show="activeRole === 'all' || activeRole === 'faq'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-lg">?</span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">FAQ & PANDUAN PENYELESAIAN MASALAH</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Solusi Mandiri atas Kendala Operasional yang Sering Dialami Pengguna</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-sm">
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                    <h4 class="font-bold text-slate-900 dark:text-white">Kamera ponsel tidak dapat memindai QR Code presensi bimbingan?</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        Pastikan peramban di ponsel Anda telah diberikan izin akses kamera. Buka setelan browser (Chrome/Safari), pilih <em>Site Permissions ➔ Camera</em>, lalu ubah ke <strong>Allow (Izinkan)</strong>.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                    <h4 class="font-bold text-slate-900 dark:text-white">Mengapa menu "Pendaftaran Seminar" saya masih terkunci?</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        Menu pendaftaran seminar proposal hanya akan terbuka jika sesi bimbingan tervalidasi Anda telah mencapai minimal 8 sesi dan kedua dosen pembimbing telah menekan tombol rekomendasi ACC Sempro di akun mereka.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+                    <h4 class="font-bold text-slate-900 dark:text-white">Bagaimana jika naskah revisi melewati batas waktu 14 hari kerja?</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        Sistem akan mengunci pengunggahan revisi secara otomatis. Mahasiswa wajib melapor ke Ketua Program Studi untuk mengajukan permohonan dispensasi pembukaan kunci revisi dengan alasan akademik yang valid.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 dark:text-slate-400">
+            <p>© 2026 SIBIMA • Fakultas Ilmu Komputer, Universitas Subang. Seluruh Hak Cipta Dilindungi.</p>
+            <p class="mt-1">Dokumen Standar Operasional Prosedur & User Manual Resmi Sistem Informasi Bimbingan Mahasiswa</p>
+        </div>
+    </footer>
+
+</body>
+</html>
