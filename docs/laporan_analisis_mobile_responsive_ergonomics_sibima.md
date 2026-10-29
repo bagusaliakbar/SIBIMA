@@ -203,3 +203,4 @@ graph TD
 Transformasi SIBIMA menuju PWA mobile yang sempurna membutuhkan lompatan dari sekadar **"aplikasi web yang bisa dibuka di HP"** menjadi **"aplikasi web yang didesain untuk kenyamanan tangan dan layar HP"**. 
 
 Dengan mengimplementasikan **Bottom Sheet**, **Responsive Stacked Cards**, pencegahan **iOS Auto-Zoom**, dan penataan **Thumb Zone**, SIBIMA akan memberikan pengalaman pengguna kelas dunia (setara aplikasi mobile native di Play Store / App Store) tanpa mengeluarkan biaya maintenance aplikasi terpisah.
+

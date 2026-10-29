@@ -144,6 +144,45 @@ select:-webkit-autofill:active {
 }
 
 /* ==========================================================================
+   4b. MOBILE ERGONOMICS: iOS SAFARI AUTO-ZOOM PREVENTION (< 640px)
+   Apple WebKit forcefully zooms in (120-130%) on form controls with font < 16px.
+   Enforcing 16px minimum font size on mobile viewports completely eliminates this friction.
+   Desktop viewports (>= 640px) retain their precise compact typography.
+   ========================================================================== */
+@media (max-width: 639px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="hidden"]),
+    select,
+    textarea {
+        font-size: 16px !important;
+        line-height: 1.4 !important;
+    }
+}
+
+/* ==========================================================================
+   4c. MOBILE SAFE AREA INSETS & BOTTOM SHEET UTILITIES
+   Ensures UI elements avoid collision with iOS Home Bar & Android Gesture Pill
+   ========================================================================== */
+.safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+}
+.safe-area-bottom-subtle {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+}
+
+@media (max-width: 639px) {
+    .mobile-bottom-sheet-dialog {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-top-left-radius: 1.5rem !important; /* 24px */
+        border-top-right-radius: 1.5rem !important;
+        margin-bottom: 0 !important;
+        margin-top: auto !important;
+        max-height: 90dvh !important;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* ==========================================================================
    5. MODERN SKELETON LOADING & SHIMMER SYSTEM
    ========================================================================== */
 

@@ -843,18 +843,18 @@
 
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300">
-                <!-- Top Header (Clean & Modern) -->
-                <header class="h-20 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-6 lg:px-10 shrink-0 transition-colors duration-300">
-                    <div class="flex items-center md:hidden gap-2">
+                <!-- Top Header (Clean & Modern, Fluid Mobile Height h-14 sm:h-20) -->
+                <header class="h-14 sm:h-20 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-3 sm:px-6 lg:px-10 shrink-0 transition-all duration-300">
+                    <div class="flex items-center md:hidden gap-1.5 sm:gap-2">
                         <!-- Hamburger toggle for mobile sidebar -->
-                        <button type="button" @click="sidebarOpen = !sidebarOpen" :aria-expanded="sidebarOpen" aria-label="Buka atau tutup menu navigasi" title="Menu Navigasi" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700/50 transition-all">
-                            <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="sidebarOpen = !sidebarOpen" :aria-expanded="sidebarOpen" aria-label="Buka atau tutup menu navigasi" title="Menu Navigasi" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700/50 transition-all cursor-pointer">
+                            <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <div class="flex items-center gap-2">
-                            <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-8 h-8 object-contain">
-                            <h1 class="text-lg font-black text-slate-800 dark:text-white tracking-tighter">SIBIMA</h1>
+                        <div class="flex items-center gap-1.5 sm:gap-2">
+                            <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-7 h-7 sm:w-8 sm:h-8 object-contain">
+                            <h1 class="text-base sm:text-lg font-black text-slate-800 dark:text-white tracking-tighter">SIBIMA</h1>
                         </div>
                     </div>
 
@@ -877,25 +877,25 @@
 
 
 
-                    <div class="flex items-center space-x-3 sm:space-x-5">
+                    <div class="flex items-center space-x-1.5 sm:space-x-5">
                         <div class="flex items-center space-x-1 sm:space-x-2">
                             <!-- Dark Mode Toggle -->
-                            <button type="button" @click="darkMode = !darkMode" :aria-label="darkMode ? 'Aktifkan Mode Terang' : 'Aktifkan Mode Gelap'" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Toggle Mode Gelap/Terang">
-                                <svg aria-hidden="true" x-cloak x-show="!darkMode" class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                                <svg aria-hidden="true" x-cloak x-show="darkMode" class="w-5 h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <button type="button" @click="darkMode = !darkMode" :aria-label="darkMode ? 'Aktifkan Mode Terang' : 'Aktifkan Mode Gelap'" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Toggle Mode Gelap/Terang">
+                                <svg aria-hidden="true" x-cloak x-show="!darkMode" class="w-4.5 h-4.5 sm:w-5 sm:h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                                <svg aria-hidden="true" x-cloak x-show="darkMode" class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </button>
 
                             <div x-data="notificationDropdown()" x-init="init()" class="relative">
-                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
-                                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
+                                    <svg aria-hidden="true" class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
-                                        <span style="top: 5px; right: 5px;" class="absolute flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white border-2 border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
+                                        <span style="top: 3px; right: 3px;" class="absolute flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white border-2 border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
                                             <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
                                         </span>
                                     </template>
                                 </button>
 
-                                <!-- Dropdown Panel (Clean, Spacious, Beautiful Original Layout) -->
+                                <!-- Dropdown Panel: Responsive Width for 360px Compact Phones -->
                                 <div x-show="isOpen" 
                                      @click.away="isOpen = false"
                                      x-transition:enter="transition ease-out duration-200"
@@ -904,7 +904,7 @@
                                      x-transition:leave="transition ease-in duration-150"
                                      x-transition:leave-start="opacity-100 translate-y-0"
                                      x-transition:leave-end="opacity-0 translate-y-1"
-                                     class="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden text-left"
+                                     class="fixed sm:absolute inset-x-2 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-0 sm:mt-2 w-auto sm:w-96 max-w-full sm:max-w-sm bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden text-left"
                                      style="display: none;">
                                     
                                     <!-- Header -->
@@ -1136,9 +1136,9 @@
                             <button type="button" 
                                     onclick="event.preventDefault(); document.getElementById('header-logout-form').submit();" 
                                     aria-label="Keluar dari akun"
-                                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group cursor-pointer" 
+                                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group cursor-pointer" 
                                     title="Keluar">
-                                <svg aria-hidden="true" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                <svg aria-hidden="true" class="w-4.5 h-4.5 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                             </button>
                         </div>
 
@@ -1539,12 +1539,12 @@
                             }
                         </script>
                         
-                        <a href="{{ route('profile.edit') }}" class="flex items-center pl-5 border-l border-slate-100 dark:border-slate-700 ml-2 group/profile">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center pl-2.5 sm:pl-5 border-l border-slate-100 dark:border-slate-700 ml-1 sm:ml-2 group/profile">
                             <div class="hidden sm:flex flex-col items-end mr-4">
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none mb-1 group-hover/profile:text-orange-600 transition-colors">{{ Auth::user()->name }}</span>
                                 <span class="text-[10px] font-black text-orange-600 uppercase tracking-widest">{{ Auth::user()->role }}</span>
                             </div>
-                            <div class="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-orange-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700 cursor-pointer hover:scale-110 transition-transform relative group">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-orange-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700 cursor-pointer hover:scale-105 transition-transform relative group">
                                 <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                                 <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
@@ -1552,8 +1552,8 @@
                     </div>
                 </header>
 
-                <!-- Page Content -->
-                <main class="flex-1 overflow-y-auto p-4 lg:p-8 z-10 w-full relative">
+                <!-- Page Content (Mobile Optimized Padding & Safe Area) -->
+                <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-[max(1rem,env(safe-area-inset-bottom))]">
                     @isset($header)
                         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
                             {{ $header }}
