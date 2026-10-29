@@ -2,7 +2,7 @@
 /* Responsive Dock Container */
 #bug-report-dock-container {
     position: fixed !important;
-    bottom: 16px !important;
+    bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)) !important;
     right: 16px !important;
     z-index: 9999999 !important;
     pointer-events: auto !important;

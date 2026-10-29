@@ -8,7 +8,7 @@
      x-transition:leave="transition ease-in duration-200"
      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
      x-transition:leave-end="opacity-0 translate-y-6 sm:translate-y-0 sm:scale-95"
-     class="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:w-96 z-50 pointer-events-auto pb-[env(safe-area-inset-bottom)]">
+     class="fixed bottom-20 sm:bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:w-96 z-50 pointer-events-auto pb-[env(safe-area-inset-bottom)]">
     
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl shadow-slate-950/20 dark:shadow-black/50 relative overflow-hidden">
         <!-- Top Subtle Accent Line -->

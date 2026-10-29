@@ -1553,7 +1553,7 @@
                 </header>
 
                 <!-- Page Content (Mobile Optimized Padding & Safe Area) -->
-                <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-24 sm:pb-8">
                     @isset($header)
                         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
                             {{ $header }}
@@ -1562,6 +1562,9 @@
                     
                     {{ $slot }}
                 </main>
+
+                <!-- Mobile Bottom Navigation Bar (PWA One-Handed Thumb Zone) -->
+                <x-mobile-bottom-nav />
             </div>
         </div>
 

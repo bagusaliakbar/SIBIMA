@@ -18,7 +18,7 @@
         }
     }"
     @notify.window="add($event.detail)"
-    class="fixed bottom-0 right-0 p-3 sm:p-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-6 z-[200] space-y-3 sm:space-y-4 w-full max-w-sm pointer-events-none"
+    class="fixed bottom-16 sm:bottom-0 right-0 p-3 sm:p-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-6 z-[200] space-y-3 sm:space-y-4 w-full max-w-sm pointer-events-none"
 >
     <template x-for="n in notifications" :key="n.id">
         <div
