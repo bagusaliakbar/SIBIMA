@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="w-full h-[calc(100vh-12rem)] min-h-[500px]">
-        <div class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden h-full flex flex-col md:flex-row">
+    <div class="w-full h-[calc(100dvh-12rem)] sm:h-[calc(100vh-14rem)] min-h-[480px] sm:min-h-[500px]">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden h-full flex flex-col md:flex-row">
             
             <!-- Sidebar Contacts (Hidden on very small screens, visible on md+) -->
             <div class="hidden md:flex w-80 border-r border-slate-100 dark:border-slate-700 flex-col h-full bg-slate-50/50 dark:bg-slate-900/30 shrink-0">
