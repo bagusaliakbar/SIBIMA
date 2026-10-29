@@ -40,7 +40,6 @@
                 <div>
                     <div class="flex items-center gap-2 flex-wrap">
                         <h4 class="text-xs font-black tracking-wide uppercase text-emerald-950 dark:text-emerald-100">Pemberitahuan Sistem WhatsApp Bot SIBIMA</h4>
-                        <span class="px-2 py-0.5 rounded-full bg-emerald-200/80 dark:bg-emerald-900/60 text-[9px] font-black uppercase tracking-wider text-emerald-900 dark:text-emerald-200 border border-emerald-300/80 dark:border-emerald-700/60">Penting</span>
                     </div>
                     <p class="text-xs font-medium text-emerald-800 dark:text-emerald-300/90 leading-relaxed mt-0.5">
                         Agar notifikasi bimbingan, revisi, & jadwal sidang masuk lancar tanpa terblokir, mohon <strong class="text-emerald-950 dark:text-white font-black">simpan nomor WhatsApp Bot SIBIMA {{ $botNumberRaw ? "($botNumberRaw)" : '' }}</strong> ke kontak HP Anda.
@@ -252,7 +251,6 @@
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <h4 class="text-xs font-black tracking-wide uppercase text-rose-950 dark:text-rose-100">Lengkapi Tanggal Lahir Anda</h4>
-                            <span class="px-2 py-0.5 rounded-full bg-rose-200/80 dark:bg-rose-900/60 text-[11px] font-black uppercase tracking-wider text-rose-900 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60">Info Profil</span>
                         </div>
                         <p class="text-xs font-medium text-rose-800 dark:text-rose-300/90 leading-relaxed mt-0.5">
                             Dapatkan ucapan spesial dan kejutan di hari ulang tahun Anda dari sistem SIBIMA.
