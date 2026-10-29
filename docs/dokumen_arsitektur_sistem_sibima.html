@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumen Arsitektur Sistem SIBIMA â€” FASILKOM UNSUB</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        orange: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74',
+                            400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c',
+                            800: '#9a3412', 900: '#7c2d12', 950: '#431407'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font CDN -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
+    <!-- Mermaid CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'neutral',
+                fontFamily: 'Inter',
+                securityLevel: 'loose'
+            });
+        });
+    </script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        table, .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200"
+      x-data="{ darkMode: false, activeTab: 'doc' }"
+      x-init="
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            darkMode = true;
+            document.documentElement.classList.add('dark');
+        } else {
+            darkMode = false;
+            document.documentElement.classList.remove('dark');
+        }
+        $watch('darkMode', val => {
+            if (val) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+      ">
+
+    <!-- Top Sticky Header Bar -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    S
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">SIBIMA Architecture</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Software Architecture Document (SAD) v3.0</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <!-- Theme Toggle Button -->
+                <button @click="darkMode = !darkMode" 
+                        class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
+                        title="Ganti Mode Gelap / Terang">
+                    <svg x-show="!darkMode" class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg x-show="darkMode" class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
+                <!-- Print Button -->
+                <button onclick="window.print()" 
+                        class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Cetak / PDF
+                </button>
+
+                <!-- Download DOCX Button -->
+                <a href="dokumen_arsitektur_sistem_sibima.docx" download
+                   class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Unduh DOCX
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Document Title Card -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
+            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60 mb-4">
+                Dokumen Arsitektur Perangkat Lunak (SAD) â€” IEEE 1471 Standard
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+                DOKUMEN ARSITEKTUR SISTEM SIBIMA
+            </h1>
+            <p class="text-base text-slate-600 dark:text-slate-400 mb-6">
+                Sistem Informasi Bimbingan Tugas Akhir & Tata Kelola Akademik â€¢ Fakultas Ilmu Komputer Universitas Subang
+            </p>
+
+            <!-- Metadata Table -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tr class="bg-slate-50/50 dark:bg-slate-800/20">
+                            <td class="px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-300 w-1/4">Institusi Pengembang</td>
+                            <td class="px-4 py-2.5 text-slate-600 dark:text-slate-400">Program Studi Sistem Informasi & Informatika, FASILKOM Universitas Subang</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-300">Versi Dokumen</td>
+                            <td class="px-4 py-2.5 text-slate-600 dark:text-slate-400"><span class="font-bold text-orange-600 dark:text-orange-400">3.0</span> (Enterprise Architecture, Cloudflare Hybrid & Federated Library)</td>
+                        </tr>
+                        <tr class="bg-slate-50/50 dark:bg-slate-800/20">
+                            <td class="px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-300">Tech Stack Inti</td>
+                            <td class="px-4 py-2.5 text-slate-600 dark:text-slate-400">Laravel 11.x (PHP 8.2+) â€¢ Tailwind CSS v3.4 â€¢ Alpine.js â€¢ Vite â€¢ Inter Font</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-300">Basis Data & Relasi</td>
+                            <td class="px-4 py-2.5 text-slate-600 dark:text-slate-400">MySQL 8.0+ / MariaDB 10.4+ (InnoDB Engine, 35 Tabel Operasional, 57 Kunci Asing)</td>
+                        </tr>
+                        <tr class="bg-slate-50/50 dark:bg-slate-800/20">
+                            <td class="px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-300">Status Deployment</td>
+                            <td class="px-4 py-2.5 text-emerald-600 dark:text-emerald-400 font-semibold">â -  Production Live (GitHub Sync & Cloudflare Origin)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Document Content Sections rendered in structured cards -->
+        <div class="space-y-8">
+
+            <!-- Section 1: Pendahuluan -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                    1. PENDAHULUAN & RUANG LINGKUP SISTEM
+                </h2>
+                <div class="prose dark:prose-invert max-w-none text-sm text-slate-700 dark:text-slate-300 space-y-4">
+                    <p>
+                        Sistem Informasi Bimbingan Mahasiswa (<strong>SIBIMA</strong>) adalah platform sentral tata kelola siklus hidup akademik Tugas Akhir dan Skripsi pada Fakultas Ilmu Komputer (FASILKOM) Universitas Subang. SIBIMA mengotomatisasi rantai proses administrasi dan akademik secara menyeluruhâ€”mulai dari pengajuan judul, alokasi dosen pembimbing, sesi bimbingan berbasis QR-code, logbook kemajuan berkas bab, pendaftaran ujian seminar proposal, pelaksanaan seminar, pencatatan revisi bertingkat, pendaftaran sidang skripsi, pelaksanaan sidang dewan penguji, penuntasan revisi sidang, yudisium kelulusan, penomoran Berita Acara resmi, penerbitan Surat Keputusan (SK) Dekan, hingga katalog repositori digital karya ilmiah alumni dan federasi pencarian jurnal internasional.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div class="p-4 rounded-xl bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800/40">
+                            <h4 class="font-bold text-orange-800 dark:text-orange-300 text-sm mb-1">Tujuan Arsitektur</h4>
+                            <ul class="list-disc list-inside text-xs space-y-1 text-slate-700 dark:text-slate-300">
+                                <li>Integritas & Akurasi Data Transaksional (ACID & 3NF)</li>
+                                <li>Keandalan Skalabilitas Tinggi di Shared Hosting / VPS</li>
+                                <li>Otomatisasi Penjadwalan & Bebas Bentrok Ruang/Dosen</li>
+                                <li>Keamanan Berlapis (Anti-IDOR, Anti-SQLi, Anti-SSRF, CSP)</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/40">
+                            <h4 class="font-bold text-blue-800 dark:text-blue-300 text-sm mb-1">Prinsip Rekayasa</h4>
+                            <ul class="list-disc list-inside text-xs space-y-1 text-slate-700 dark:text-slate-300">
+                                <li>Separation of Concerns (SoC) & Modern Modular Monolith</li>
+                                <li>Thin Controllers & Domain-Driven Service Layer</li>
+                                <li>Zero-Downtime Deployment via Webhook /clear-cache</li>
+                                <li>Clean Enterprise SaaS UI/UX (Linear / TailwindUI style)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Arsitektur Tingkat Tinggi -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                    2. ARSITEKTUR TINGKAT TINGGI (HIGH-LEVEL ARCHITECTURE)
+                </h2>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">
+                    Diagram kontainer berikut memetakan aliran interaksi dari klien browser melalui perisai Cloudflare, web server gateway Apache, hingga lapisan domain service dan penyimpanan data relasional:
+                </p>
+                <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto mb-6">
+                    <pre class="mermaid text-xs">
+graph TD
+    CLIENT["Client Tier<br/>Mahasiswa â€¢ Dosen â€¢ Kaprodi â€¢ Dekan â€¢ Admin"] -->|HTTPS 443| CF["Cloudflare Edge Proxy & WAF<br/>SSL Termination â€¢ DDoS Shield â€¢ Asset CDN"]
+    CF -->|Reverse Proxy| HT["Apache Gateway (.htaccess)<br/>5-Layer Access Shield â€¢ Subdir PHP Blocker"]
+    HT --> INDEX["index.php Front Controller<br/>Custom Public Path Loader"]
+    INDEX --> MIDD["Security Middleware<br/>RoleMiddleware (RBAC) â€¢ CSP Level 2 â€¢ Throttle"]
+    MIDD --> CTRL["Thin Controllers Layer<br/>Thesis â€¢ Exam â€¢ Repo â€¢ Export â€¢ Admin"]
+    CTRL --> SERV["Domain Service Layer<br/>MentoringService â€¢ AutoScheduleSimulationService<br/>UnsubRepositorySyncService â€¢ WaBroadcastService<br/>BackupService â€¢ FederatedJournalServices"]
+    SERV --> DB[("MySQL / MariaDB (InnoDB)<br/>35 Tabel â€¢ 57 Foreign Keys")]
+    SERV --> STORAGE["Storage & Cache<br/>Private Disk â€¢ Public Disk â€¢ theses_cache (7 Hari)"]
+                    </pre>
+                </div>
+            </section>
+
+            <!-- Section 3: Infrastruktur & Deployment -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                    3. ARSITEKTUR INFRASTRUKTUR & DEPLOYMENT
+                </h2>
+                <div class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                            <span class="text-xs font-bold text-orange-600 dark:text-orange-400">ROUTING GATEWAY</span>
+                            <h4 class="font-bold text-slate-900 dark:text-white mt-1">Root index.php & .htaccess</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Mengonfigurasi root repositori sebagai public path aman, memblokir seluruh akses langsung ke subfolder Laravel dan ekstensi rahasia.</p>
+                        </div>
+                        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400">EDGE PROXY</span>
+                            <h4 class="font-bold text-slate-900 dark:text-white mt-1">Cloudflare Trusted Proxies</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Konfigurasi TRUSTED_PROXIES = '*' memastikan IP asli klien tercatat presisi dan HTTPS scheme tetap terjaga konsisten.</p>
+                        </div>
+                        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">ZERO DOWNTIME</span>
+                            <h4 class="font-bold text-slate-900 dark:text-white mt-1">Live Sync /clear-cache</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Endpoint terproteksi DEPLOY_SECRET_KEY untuk auto-pull git, pembersihan cache blade/route/config, dan migrasi basis data.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Subsistem Aplikasi -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                    4. MODUL & SUBSISTEM APLIKASI
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-1">1. Bimbingan & QR Code Presensi</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Validasi kehadiran tatap muka menggunakan token kriptografis 32 karakter dan scan QR Code kamera ponsel.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-1">2. Auto-Schedule & Conflict Engine</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Simulasi jadwal ujian cerdas untuk mendeteksi bentrok ruangan fisik dan jadwal menguji dosen secara simultan.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-1">3. Ujian Sempro & Sidang Skripsi</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Manajemen pendaftaran gelombang, rubrik penilaian multi-kriteria dewan penguji, dan penetapan kelulusan otomatis.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-1">4. Tata Kelola Revisi Dua Arah</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Thread komunikasi revisi naskah dengan tenggat waktu 14 hari dan validasi persetujuan 100% dewan penguji.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-1">5. On-Demand Streaming Repositori</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Penyajian naskah skripsi BAB 1â€“6 via same-origin streaming proxy, cache lokal 7 hari, dan In-App PDF Reader (PDF.js).</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-1">6. Federasi Jurnal Ilmiah (5 Pangkalan Data)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Integrasi OAI-PMH GLOBAL FASILKOM, GARUDA SINTA, DOAJ, Crossref DOI, dan OpenAlex disertai sitasi instan APA/IEEE.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Diagram Alur / Sequences -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                    5. DIAGRAM ALUR DATA & SEQUENCE
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-2">5.1 State Machine Siklus Hidup Tugas Akhir Mahasiswa</h3>
+                        <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
+                            <pre class="mermaid text-xs">
+stateDiagram-v2
+    [*] --> Usulan_Judul
+    Usulan_Judul --> Ditolak_Kaprodi : Review Judul
+    Ditolak_Kaprodi --> Usulan_Judul : Ajukan Baru
+    Usulan_Judul --> Bimbingan_Aktif : Disetujui & Dosen Ditetapkan
+    Bimbingan_Aktif --> Daftar_Sempro : Min 8 Sesi + ACC Dosen
+    Daftar_Sempro --> Ujian_Sempro : Jadwal Diterbitkan
+    Ujian_Sempro --> Revisi_Sempro : Catatan Penguji
+    Revisi_Sempro --> Naskah_Akhir : ACC Revisi 100%
+    Naskah_Akhir --> Daftar_Sidang : Cek Turnitin < 25%
+    Daftar_Sidang --> Sidang_Skripsi : Majelis Dewan Penguji
+    Sidang_Skripsi --> Revisi_Sidang : Lulus Bersyarat (14 Hari)
+    Revisi_Sidang --> Lulus_Sidang : Disetujui Semua Penguji
+    Lulus_Sidang --> Yudisium : SK Kelulusan Dekan
+    Yudisium --> [*] : Mahasiswa Lulus (Alumni)
+                            </pre>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-2">5.2 Alur On-Demand Streaming Repositori PDF</h3>
+                        <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
+                            <pre class="mermaid text-xs">
+sequenceDiagram
+    autonumber
+    actor M as Mahasiswa / Dosen
+    participant UI as SIBIMA Frontend (PDF.js)
+    participant CTRL as ThesisRepositoryController
+    participant CACHE as Disk Cache (theses_cache/)
+    participant GD as Remote GDrive UNSUB
+
+    M->>UI: Klik "Baca BAB 1"
+    UI->>CTRL: GET /repositories/{id}/stream/bab1
+    alt Cache Hit
+        CTRL->>CACHE: Baca berkas lokal
+        CACHE-->>CTRL: File tersedia
+        CTRL-->>UI: Stream PDF (HTTP 200)
+    else Cache Miss
+        CTRL->>GD: Ambil file PDF dari remote proxy
+        GD-->>CTRL: Stream byte data
+        CTRL->>CACHE: Simpan salinan sementara (7 Hari)
+        CTRL-->>UI: Stream PDF ke browser
+    end
+    UI-->>M: Dokumen terbuka di In-App Reader
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Keamanan & Design System -->
+            <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                    6. KEAMANAN & DESIGN SYSTEM SIBIMA
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-700 dark:text-slate-300">
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base">Arsitektur Keamanan Berlapis</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li class="flex items-start"><span class="text-emerald-500 font-bold mr-2">âœ“</span><span><strong>Anti-IDOR:</strong> Berkas naskah privat mahasiswa disimpan di `storage/app/private/` dan diverifikasi kepemilikannya oleh controller sebelum disajikan.</span></li>
+                            <li class="flex items-start"><span class="text-emerald-500 font-bold mr-2">âœ“</span><span><strong>Anti-SQL Injection:</strong> 100% kueri database dieksekusi via Eloquent PDO Prepared Statements.</span></li>
+                            <li class="flex items-start"><span class="text-emerald-500 font-bold mr-2">âœ“</span><span><strong>Anti-XSS & Anti-CSRF:</strong> Escape otomatis {{ }} pada Blade dan token wajib @csrf pada setiap form mutasi.</span></li>
+                            <li class="flex items-start"><span class="text-emerald-500 font-bold mr-2">âœ“</span><span><strong>Content Security Policy:</strong> Header HTTP CSP Level 2 dan proteksi anti-clickjacking SAMEORIGIN.</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base">Standar Design System Enterprise</h4>
+                        <ul class="space-y-2 text-xs">
+                            <li class="flex items-start"><span class="text-orange-500 font-bold mr-2">â - </span><span><strong>Inter Typography:</strong> Font resmi antialiased dengan tabular figures (font-variant-numeric: tabular-nums) untuk perataan presisi angka NPM dan nilai.</span></li>
+                            <li class="flex items-start"><span class="text-orange-500 font-bold mr-2">â - </span><span><strong>Semantic Palette:</strong> Brand Orange-600, Slate-50/900 surfaces, dan status semantik Emerald, Amber, Blue, Rose berstandar WCAG AA (rasio kontras > 4.5:1).</span></li>
+                            <li class="flex items-start"><span class="text-orange-500 font-bold mr-2">â - </span><span><strong>Ikon SVG Murni:</strong> Heroicons / Lucide monokromatik, bebas AI slop dan bebas emoji antarmuka.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 dark:text-slate-400">
+            <p>Â© 2026 SIBIMA â€¢ Fakultas Ilmu Komputer, Universitas Subang. Seluruh Hak Cipta Dilindungi.</p>
+            <p class="mt-1">Dokumen Rekayasa Perangkat Lunak Resmi (Software Architecture Document - SAD v3.0)</p>
+        </div>
+    </footer>
+
+</body>
+</html>
