@@ -189,12 +189,11 @@ graph TD
 
 ## 5. Roadmap Rekomendasi Penerapan Bertahap (Action Plan)
 
-| Fase | Target Komponen | Aksi Perbaikan Spesifik | Estimasi Dampak UX |
-| :---: | :--- | :--- | :---: |
-| **Fase 1** *(Quick Wins & Ergonomics)* | `resources/views/layouts/app.blade.php` & `components/modal.blade.php` | 1. Perkecil Header topbar dari `h-20` menjadi `h-14 sm:h-20`.<br>2. Tambahkan CSS `env(safe-area-inset-bottom)` pada fixed elements.<br>3. Konversi modal dialog mengambang menjadi **Native Bottom Sheet** di layar `< sm`. | **+35% kenyamanan input formulir & penghematan viewport**. |
-| **Fase 2** *(Input & Safari Polish)* | Semua file formulir & komponen form | 1. Terapkan aturan `text-base sm:text-xs` pada semua input text, select, dan textarea (mencegah auto-zoom iOS Safari).<br>2. Perlebar tap target tombol kecil dan dropdown menjadi minimal 42–44px. | **Mengeliminasi bug zoom Safari dan kesalahan salah sentuh**. |
-| **Fase 3** *(Table-to-Card Transformation)* | `theses/index.blade.php` & `monitoring/index.blade.php` | 1. Bungkus tag `<table>` dengan kelas `hidden sm:block`.<br>2. Buat blok kartu stacked responsif dengan kelas `block sm:hidden` lengkap dengan avatar, NPM, judul skripsi, bar bimbingan, dan tombol aksi full-width. | **Transformasi radikal pengalaman membaca daftar bimbingan mahasiswa di HP**. |
-| **Fase 4** *(Mobile Navigation)* | `resources/views/layouts/app.blade.php` | Hadirkan **Bottom Navigation Bar** khusus mobile untuk akses instan satu jempol (*One-Handed Thumb Zone*). | **Navigasi aplikasi berstandar enterprise layaknya mobile native app**. |
+| Fase | Target Komponen | Aksi Perbaikan Spesifik | Estimasi Dampak UX | Status |
+| :---: | :--- | :--- | :---: | :---: |
+| **Fase 1** *(Quick Wins & Ergonomics)* | `resources/views/layouts/app.blade.php`, `components/modal.blade.php`, `resources/css/app.css` | 1. Perkecil Header topbar dari `h-20` menjadi `h-14 sm:h-20`.<br>2. Tambahkan CSS `env(safe-area-inset-bottom)` pada fixed elements & modal bottom sheet.<br>3. Konversi modal dialog mengambang menjadi **Native Bottom Sheet** di layar `< sm`.<br>4. Aturan global font minimum 16px pada seluruh form input mobile (eliminasi iOS Safari auto-zoom). | **+35% kenyamanan input formulir & penghematan viewport vertikal**. | **✅ SELESAI (v2.1)** |
+| **Fase 2** *(Table-to-Card Transformation)* | `theses/index.blade.php` & `monitoring/index.blade.php` | 1. Bungkus tag `<table>` dengan kelas `hidden sm:block`.<br>2. Buat blok kartu stacked responsif dengan kelas `block sm:hidden` lengkap dengan avatar, NPM, judul skripsi, bar bimbingan, dan tombol aksi full-width. | **Transformasi radikal pengalaman membaca daftar bimbingan mahasiswa di HP**. | Siap Diterapkan |
+| **Fase 3** *(Mobile Navigation)* | `resources/views/layouts/app.blade.php` | Hadirkan **Bottom Navigation Bar** khusus mobile untuk akses instan satu jempol (*One-Handed Thumb Zone*). | **Navigasi aplikasi berstandar enterprise layaknya mobile native app**. | Rencana Selanjutnya |
 
 ---
 
