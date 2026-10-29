@@ -108,9 +108,9 @@ Pengujian fungsional memvalidasi seluruh siklus tahapan operasional SIBIMA mulai
   * Kaprodi dapat meninjau judul dan menetapkan Dosen Pembimbing 1 & 2 dengan validasi kuota aktif (**PASS**).
   * Sistem menolak penetapan dosen yang telah melampaui batas maksimal kuota bimbingan (**PASS**).
 * `MentoringRealtimeAttendanceTest.php`:
-  * Dosen dapat membuat sesi bimbingan baru dan menerbitkan Kode QR token 32 karakter dinamis (**PASS**).
-  * Mahasiswa memindai Kode QR dan sistem memverifikasi kehadiran secara instan (**PASS**).
-  * Sistem menolak token presensi yang sudah kedaluwarsa atau tidak cocok (**PASS**).
+  * Dosen dapat membuat sesi bimbingan baru mandiri maupun kelompok (**PASS**).
+  * Mahasiswa melakukan konfirmasi kehadiran digital (Hadir/Izin) pada sesi aktif (**PASS**).
+  * Dosen memberikan catatan evaluasi dan menandai status sesi Selesai (Completed) (**PASS**).
   * Mahasiswa mengisi logbook kemajuan harian per bab dan mengunggah lampiran naskah (**PASS**).
 
 ### 4.3 Modul Seminar Proposal & Sidang Skripsi
@@ -228,10 +228,10 @@ Pengujian kinerja mengevaluasi efisiensi konsumsi memori dan kecepatan pemrosesa
 ## 9. LAPORAN PENGUJIAN KOMPATIBILITAS LINTAS PLATFORM & FORMAT BERKAS
 
 ### 9.1 Kompatibilitas Peramban Web (*Cross-Browser Testing*)
-* **Google Chrome (v120+)**: Seluruh fitur (kamera QR, modal PDF reader, tabel tabular) berjalan sempurna (**PASS**).
+* **Google Chrome (v120+)**: Seluruh fitur (jadwal bimbingan, modal PDF reader, tabel tabular) berjalan sempurna (**PASS**).
 * **Mozilla Firefox (v121+)**: Tampilan antarmuka, rendering font Inter, dan dark mode berfungsi mulus (**PASS**).
 * **Microsoft Edge (v120+)**: Kompatibel penuh dengan performa komputasi JavaScript tinggi (**PASS**).
-* **Apple Safari (iOS & macOS)**: Akses izin kamera ponsel lancar, PDF streaming same-origin terbaca normal (**PASS**).
+* **Apple Safari (iOS & macOS)**: Akses mobile lancar, PDF streaming same-origin terbaca normal (**PASS**).
 
 ### 9.2 Pengujian Integritas Dokumen Microsoft Word (`.docx`)
 * Menguji seluruh berkas dokumen Word hasil ekspor sistem (`ScheduleWordExportService`) dan buku panduan resmi di folder `docs/`.
@@ -248,7 +248,7 @@ Pengujian Penerimaan Pengguna (*UAT*) dijalankan dengan melibatkan perwakilan pe
 | Kode UAT | Peran Penguji | Skenario Alur UAT | Hasil yang Diamati | Keputusan Penerimaan |
 | :---: | :--- | :--- | :--- | :---: |
 | **UAT-M01** | Mahasiswa | Mengajukan 3 usulan judul tugas akhir dan mengunggah draf proposal | Berkas terunggah sukses dan status berubah menjadi *Pending* | **DITERIMA (ACCEPT)** |
-| **UAT-M02** | Mahasiswa | Memindai Kode QR presensi bimbingan dari gawai dosen | Kamera langsung membaca QR dan presensi tercatat otomatis | **DITERIMA (ACCEPT)** |
+| **UAT-M02** | Mahasiswa | Melakukan konfirmasi kehadiran bimbingan digital di jadwal aktif | Status kehadiran tercatat dan diverifikasi dosen pembimbing | **DITERIMA (ACCEPT)** |
 | **UAT-M03** | Mahasiswa | Mengisi logbook bimbingan harian dan mengunduh Kartu Bimbingan PDF | Rekapitulasi bimbingan rapi berparaf digital resmi | **DITERIMA (ACCEPT)** |
 | **UAT-M04** | Mahasiswa | Mendaftar seminar proposal dan sidang skripsi pada gelombang aktif | Form pendaftaran memvalidasi syarat kelayakan secara otomatis | **DITERIMA (ACCEPT)** |
 | **UAT-M05** | Mahasiswa | Mengunggah revisi naskah sempro/sidang dan berkonsultasi via chat | Poin revisi terkirim ke dewan penguji dengan hitungan 14 hari | **DITERIMA (ACCEPT)** |

@@ -18,7 +18,7 @@
 ## 1. PENDAHULUAN & RUANG LINGKUP SISTEM
 
 ### 1.1 Konteks Bisnis & Latar Belakang Akademik
-Sistem Informasi Bimbingan Mahasiswa (**SIBIMA**) adalah platform sentral tata kelola siklus hidup akademik Tugas Akhir dan Skripsi pada Fakultas Ilmu Komputer (FASILKOM) Universitas Subang. SIBIMA mengotomatisasi rantai proses administrasi dan akademik secara menyeluruhâ€”mulai dari pengajuan judul, alokasi dosen pembimbing, sesi bimbingan berbasis QR-code, logbook kemajuan berkas bab, pendaftaran ujian seminar proposal, pelaksanaan seminar, pencatatan revisi bertingkat, pendaftaran sidang skripsi, pelaksanaan sidang dewan penguji, penuntasan revisi sidang, yudisium kelulusan, penomoran Berita Acara resmi, penerbitan Surat Keputusan (SK) Dekan, hingga katalog repositori digital karya ilmiah alumni dan federasi pencarian jurnal internasional.
+Sistem Informasi Bimbingan Mahasiswa (**SIBIMA**) adalah platform sentral tata kelola siklus hidup akademik Tugas Akhir dan Skripsi pada Fakultas Ilmu Komputer (FASILKOM) Universitas Subang. SIBIMA mengotomatisasi rantai proses administrasi dan akademik secara menyeluruhâ€”mulai dari pengajuan judul, alokasi dosen pembimbing, sesi bimbingan terverifikasi digital ber-QR Code tanda tangan resmi, logbook kemajuan berkas bab, pendaftaran ujian seminar proposal, pelaksanaan seminar, pencatatan revisi bertingkat, pendaftaran sidang skripsi, pelaksanaan sidang dewan penguji, penuntasan revisi sidang, yudisium kelulusan, penomoran Berita Acara resmi, penerbitan Surat Keputusan (SK) Dekan, hingga katalog repositori digital karya ilmiah alumni dan federasi pencarian jurnal internasional.
 
 Sebelum implementasi SIBIMA, proses tugas akhir menghadapi sejumlah kendala klasik perguruan tinggi:
 1. **Pencatatan Manual yang Terfragmentasi**: Buku bimbingan kertas rentan hilang, rusak, atau dipalsukan parafnya.
@@ -41,8 +41,8 @@ SIBIMA melayani 6 peran pemangku kepentingan (*roles*) dengan wewenang yang teri
 
 | Aktor / Peran | Deskripsi Tanggung Jawab & Hak Akses Utama |
 | :--- | :--- |
-| **Mahasiswa** | Mengajukan judul tugas akhir, mengisi logbook harian, membuat janji bimbingan, melakukan presensi bimbingan via scan QR Code, mendaftar Seminar Proposal & Sidang Skripsi, mengunggah revisi naskah, mengajukan yudisium, serta menelusuri katalog pustaka dan jurnal. |
-| **Dosen Pembimbing** | Menyetujui/menolak pengajuan judul, mengelola jadwal bimbingan tatap muka/online, menerbitkan QR Code presensi bimbingan, memberikan paraf digital & catatan perbaikan bab, menyetujui kelayakan pendaftaran ujian, serta memvalidasi revisi akhir naskah. |
+| **Mahasiswa** | Mengajukan judul tugas akhir, mengisi logbook harian, membuat janji bimbingan, melakukan konfirmasi kehadiran bimbingan digital, mendaftar Seminar Proposal & Sidang Skripsi, mengunggah revisi naskah, mengajukan yudisium, serta menelusuri katalog pustaka dan jurnal. |
+| **Dosen Pembimbing** | Menyetujui/menolak pengajuan judul, mengelola jadwal bimbingan tatap muka/online, memvalidasi kehadiran dan menyelesaikan sesi bimbingan, memberikan paraf digital & catatan perbaikan bab, menyetujui kelayakan pendaftaran ujian, serta memvalidasi revisi akhir naskah. |
 | **Dewan Penguji** | Mengakses berkas naskah ujian mahasiswa yang ditugaskan, mengisi lembar rubrik penilaian objektif per komponen, memberikan catatan revisi pada form berita acara, dan memvalidasi penuntasan revisi pasca-sidang. |
 | **Ketua Program Studi (Kaprodi)** | Memvalidasi dan mendisposisikan usulan judul & pembimbing, memantau matriks beban bimbingan dosen, menjalankan simulasi auto-scheduling jadwal ujian, memvalidasi hasil kelulusan sidang, serta memantau analitik KPI masa studi mahasiswa. |
 | **Dekan / Pimpinan Fakultas** | Memantau dasbor eksekutif perkembangan akademik fakultas, menandatangani Surat Keputusan (SK) Dosen Pembimbing dan SK Dewan Penguji, serta mengesahkan kelulusan yudisium mahasiswa. |
@@ -249,7 +249,7 @@ SIBIMA terdiri dari 10 subsistem aplikasi modular yang saling berinteraksi:
   * **Sesi Bimbingan Berbasis QR-Code**:
     1. Dosen membuat sesi bimbingan (mandiri atau kelompok).
     2. Sistem menghasilkan token acak 32 karakter bertanda tangan kriptografis yang ditampilkan sebagai QR Code di layar gawai dosen.
-    3. Mahasiswa memindai QR Code menggunakan kamera ponsel untuk memvalidasi kehadiran secara instan.
+    3. Mahasiswa melakukan konfirmasi kehadiran (Hadir/Izin), lalu dosen memvalidasi pelaksanaan bimbingan dan menandai status sesi Selesai (Completed).
     4. Sistem mencatat koordinat waktu presensi, memastikan kehadiran fisik/tatap muka tanpa manipulasi tanda tangan.
   * **Logbook Kemajuan Harian**: Mahasiswa mencatat aktivitas penelitian harian, kendala yang dihadapi, dan progres penulisan bab (BAB I s/d BAB VI).
   * **Pencetakan Kartu Bimbingan Digital**: Menghasilkan lembar kartu bimbingan resmi berformat PDF lengkap dengan paraf digital dan riwayat tanggal bimbingan yang telah disetujui.
@@ -392,10 +392,10 @@ sequenceDiagram
     D->>UI_D: Buat Sesi Bimbingan (Materi & Waktu)
     UI_D->>MS: storeSession(payload)
     MS->>DB: INSERT INTO mentoring_sessions (token, status='pending')
-    MS-->>UI_D: Tampilkan Layar QR Code Dinamis
+    MS-->>UI_D: Sesi Bimbingan Aktif & Notifikasi Terkirim
     
     M->>UI_M: Buka Menu "Scan Presensi Bimbingan"
-    M->>UI_D: Pindai QR Code dengan Kamera Ponsel
+    M->>UI_M: Klik Konfirmasi Hadir
     UI_M->>MS: verifyAttendance(sessionId, token, studentId)
     
     alt Token Valid & Sesi Aktif

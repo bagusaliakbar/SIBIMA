@@ -92,19 +92,22 @@ Menu: **Tahapan Skripsi ➔ 1. Pengajuan Judul**
 
 ---
 
-### 2.2 Langkah 2: Pelaksanaan Sesi Bimbingan & Presensi Scan QR Code
+### 2.2 Langkah 2: Pelaksanaan Sesi Bimbingan & Konfirmasi Kehadiran Digital
 Menu: **Aktivitas & Bimbingan ➔ Jadwal Bimbingan**
 
-Presensi bimbingan tugas akhir di SIBIMA wajib dilakukan secara tatap muka (*offline*) atau konsultasi terjadwal menggunakan **Kode QR Dinamis bertanda tangan kriptografis**:
+Sesi bimbingan tugas akhir di SIBIMA dapat dijadwalkan oleh Dosen Pembimbing maupun diajukan oleh Mahasiswa melalui menu Jadwal Bimbingan:
 
-1. Dosen pembimbing akan membuka sesi bimbingan di aplikasinya dan menampilkan **Kode QR Presensi** di layar laptop atau ponsel dosen.
-2. Pada ponsel Anda, buka SIBIMA dan pilih menu **Jadwal Bimbingan**.
-3. Klik tombol **Pindai QR Presensi** (`bg-orange-600`).
-4. Jika peramban meminta izin akses kamera, pilih **Izinkan (Allow)**.
-5. Arahkan kamera ponsel Anda tepat ke Kode QR yang ditampilkan oleh dosen pembimbing.
-6. Dalam hitungan detik, sistem akan membaca token 32 karakter dan menampilkan notifikasi:
-   `"Presensi Bimbingan Berhasil Diverifikasi! Tanggal dan waktu kehadiran Anda telah tercatat resmi."`
-7. Sesi bimbingan otomatis masuk ke riwayat kartu bimbingan Anda dengan status *Selesai / Terverifikasi*.
+1. **Melihat Jadwal Bimbingan**: Mahasiswa membuka menu **Jadwal Bimbingan** untuk melihat agenda bimbingan yang telah ditentukan oleh dosen (topik diskusi, waktu pelaksanaan, serta lokasi tatap muka atau tautan konsultasi daring).
+2. **Konfirmasi Kehadiran Mahasiswa**:
+   * Pada kartu jadwal bimbingan yang berstatus aktif, klik tombol **Konfirmasi Kehadiran**.
+   * Pilih status: **Hadir** (jika siap mengikuti sesi) atau **Izin** (sertakan alasan keterangan jika berhalangan).
+   * Klik **Kirim Konfirmasi**. Waktu konfirmasi Anda (`student_confirmed_at`) otomatis tercatat di sistem.
+3. **Pelaksanaan & Verifikasi Selesai oleh Dosen**:
+   * Selama atau setelah sesi bimbingan berlangsung, dosen pembimbing meninjau progres naskah mahasiswa.
+   * Dosen mencatat arahan dan catatan perbaikan pada kolom **Catatan Pembimbing (*Notes*)**, serta dapat mengunggah dokumen revisi (*Feedback Document*).
+   * Dosen mengubah status sesi menjadi **Selesai (*Completed*)**.
+4. **Pencatatan Resmi di Kartu Bimbingan**:
+   Sesi yang telah berstatus *Completed* oleh dosen pembimbing otomatis dihitung sebagai 1 sesi bimbingan resmi dan masuk ke rekapitulasi Kartu Bimbingan Mahasiswa.
 
 ---
 
@@ -249,22 +252,25 @@ Menu: **Dokumentasi & Bimbingan ➔ Mahasiswa Bimbingan**
 
 ---
 
-### 3.2 Sebagai Pembimbing: Membuat Jadwal Bimbingan & Menerbitkan QR Code
+### 3.2 Sebagai Pembimbing: Membuat Jadwal Bimbingan & Verifikasi Kehadiran Selesai
 Menu: **Dokumentasi & Bimbingan ➔ Jadwal Bimbingan**
 
-Untuk memastikan akuntabilitas kehadiran mahasiswa dan mencegah manipulasi tandatangan kartu bimbingan:
+Dosen Pembimbing dapat menjadwalkan sesi konsultasi mandiri maupun kelompok dengan alur terstruktur:
 
-1. Buka menu **Jadwal Bimbingan**.
-2. Klik tombol **+ Buat Sesi Bimbingan**.
-3. Tentukan rincian sesi:
+1. Buka menu **Jadwal Bimbingan**, lalu klik tombol **+ Buat Sesi Bimbingan**.
+2. Tentukan rincian sesi:
    * **Tipe Bimbingan**: Pilih *Bimbingan Mandiri (1 Mahasiswa)* atau *Bimbingan Kelompok (Banyak Mahasiswa Sekaligus)*.
-   * **Mahasiswa Sasaran**: Pilih nama mahasiswa bimbingan Anda.
-   * **Materi / Topik Diskusi**: Tuliskan bahasan bimbingan (misalnya: *Review Bab 3 Metodologi Penelitian dan Desain Basis Data*).
-   * **Tanggal & Waktu**: Tentukan jam pelaksanaan bimbingan.
-4. Klik **Simpan & Tampilkan Kode QR**.
-5. Layar Anda akan memunculkan **Kode QR Dinamis**. Minta mahasiswa untuk membuka aplikasi SIBIMA di ponsel mereka dan memindai kode QR tersebut.
-6. Saat mahasiswa memindai kode QR, daftar hadir di layar Anda akan otomatis tercentang hijau secara *real-time*.
-7. Klik tombol **Tutup Sesi & Berikan Catatan** untuk mencatat poin perbaikan yang harus dikerjakan mahasiswa sebelum bimbingan berikutnya.
+   * **Mahasiswa Sasaran**: Pilih mahasiswa bimbingan yang ditugaskan.
+   * **Topik Diskusi**: Masukkan pokok bahasan (misalnya: *Review Bab 3 Metodologi Penelitian & Desain Basis Data*).
+   * **Tanggal, Waktu & Lokasi**: Tentukan waktu dan tempat (ruang dosen, lab, atau tautan video conference).
+3. Klik **Simpan Jadwal Bimbingan**. Sistem otomatis mengirimkan notifikasi agenda ke akun mahasiswa.
+4. **Memeriksa Konfirmasi Mahasiswa**: Dosen dapat melihat status respon mahasiswa (*Hadir / Izin*).
+5. **Menyelesaikan Sesi (*Mark as Completed*)**:
+   * Setelah diskusi bimbingan tuntas, dosen mengisi catatan evaluasi (*Notes* / *Feedback*).
+   * Dosen dapat melampirkan file naskah coretan hasil koreksi (*Feedback Document*).
+   * Klik tombol **Selesaikan Sesi (*Completed*)**.
+6. **Legalisasi Tanda Tangan Digital Ber-QR Code**:
+   Saat kartu bimbingan PDF dicetak oleh mahasiswa, sistem otomatis menyematkan **Kode QR Tanda Tangan Digital Resmi** dosen yang merujuk pada token keaslian tanda tangan di basis data (`/verify-signature/{signature_token}`).
 
 ---
 
@@ -519,7 +525,8 @@ Menu: **Sistem & Konfigurasi ➔ Pemeliharaan Sistem**
 
 | Gejala / Kendala | Kemungkinan Penyebab | Langkah Solusi Praktis |
 | :--- | :--- | :--- |
-| **Kamera ponsel tidak mau memindai QR Code Presensi** | Peramban belum diberikan izin akses kamera (*camera permission*). | Buka pengaturan peramban di ponsel Anda (Chrome/Safari), pilih *Site Settings ➔ Camera*, lalu ubah izin untuk domain SIBIMA menjadi **Allow (Izinkan)**. Muat ulang (*refresh*) halaman. |
+| **Bagaimana cara mengonfirmasi kehadiran bimbingan?** | Mahasiswa perlu merespons jadwal bimbingan yang telah dibuat dosen. | Buka menu **Jadwal Bimbingan**, temukan kartu sesi bimbingan yang sedang aktif, lalu klik tombol **Konfirmasi Kehadiran** (pilih Hadir atau Izin dengan alasan). Setelah sesi terlaksana, dosen pembimbing akan menandai sesi sebagai *Selesai (Completed)*. |
+| **Di mana letak fitur QR Code di SIBIMA?** | QR Code di SIBIMA bukan untuk pemindaian presensi harian, melainkan untuk **Verifikasi Keabsahan Tanda Tangan Digital & Dokumen Resmi**. | QR Code resmi tercetak pada: (1) **Kartu Bimbingan PDF** sebagai legalitas tanda tangan pembimbing; (2) **Berita Acara Ujian PDF** sebagai legalitas penguji; (3) **Jadwal Ujian Word (.docx)**; dan (4) **Surat Keterangan Lulus (SKL) Digital** yang dapat dipindai oleh pihak eksternal untuk membuktikan keaslian dokumen kelulusan. |
 | **Naskah PDF di In-App Reader tidak muncul / blank** | Kendala jaringan saat proses streaming awal dari server Google Drive UNSUB. | Tekan tombol **Muat Ulang Berkas** pada bilah reader PDF. Jika tetap berkendala, gunakan tombol **Unduh Salinan Asli** untuk membuka file di penampil PDF eksternal gawai Anda. |
 | **Tidak menerima pesan notifikasi WhatsApp** | Nomor WhatsApp pada profil pengguna salah atau tidak menggunakan kode negara `62`. | Periksa menu **Profil Pengguna**. Pastikan nomor telepon diawali format internasional resmi Indonesia (contoh: `081234567890` atau `6281234567890`), bukan tanda plus atau tanda strip. |
 | **Menu "Pendaftaran Seminar" terkunci / tidak bisa diklik** | Prasyarat jumlah sesi bimbingan belum terpenuhi (< 8 sesi) atau belum di-ACC dosen. | Buka menu **Logbook Bimbingan**, pastikan telah memiliki minimal 8 sesi bimbingan yang berstatus *Selesai/Tervalidasi* dan mintalah kedua dosen pembimbing menekan tombol ACC Sempro di akun mereka. |
