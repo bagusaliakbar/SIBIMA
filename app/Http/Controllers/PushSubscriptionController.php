@@ -100,3 +100,4 @@ class PushSubscriptionController extends Controller
         ]);
     }
 }
+
