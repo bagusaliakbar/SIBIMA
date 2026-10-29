@@ -165,7 +165,158 @@
 // =========================================================================
 // GLOBAL CONTROLLERS FOR BUG REPORT WIDGET (VANILLA JS + ALPINE DUAL COMPATIBLE)
 // =========================================================================
-window.openBugReportModal = function() {
+window.currentBugReportType = 'bug';
+
+window.switchBugReportType = function(type) {
+    window.currentBugReportType = type;
+    const isFeature = type === 'feature';
+
+    // 1. Update Tabs styling
+    const tabBug = document.getElementById('tab-btn-bug');
+    const tabFeature = document.getElementById('tab-btn-feature');
+    const typeInput = document.getElementById('bug-report-type-input');
+    if (typeInput) typeInput.value = type;
+
+    if (isFeature) {
+        if (tabFeature) {
+            tabFeature.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 border border-slate-200/80 dark:border-slate-700';
+        }
+        if (tabBug) {
+            tabBug.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
+        }
+    } else {
+        if (tabBug) {
+            tabBug.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700';
+        }
+        if (tabFeature) {
+            tabFeature.className = 'flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
+        }
+    }
+
+    // 2. Update Header
+    const iconContainer = document.getElementById('bug-report-header-icon-box');
+    const titleEl = document.getElementById('bug-report-header-title');
+    const subtitleEl = document.getElementById('bug-report-header-subtitle');
+
+    if (iconContainer) {
+        if (isFeature) {
+            iconContainer.className = 'w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 shadow-xs';
+            iconContainer.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>';
+        } else {
+            iconContainer.className = 'w-12 h-12 rounded-2xl bg-orange-500/10 dark:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 shadow-xs';
+            iconContainer.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+        }
+    }
+
+    if (titleEl) {
+        titleEl.innerText = isFeature ? 'Usulan / Request Fitur Baru' : 'Lapor Kendala / Bug Sistem';
+    }
+    if (subtitleEl) {
+        subtitleEl.innerText = isFeature
+            ? 'Punya ide fitur untuk mempermudah bimbingan atau persuratan? Sampaikan ke Tim Pengembang SIBIMA.'
+            : 'Laporan Anda akan otomatis diteruskan kepada Tim Teknis SIBIMA.';
+    }
+
+    // 3. Update Form Labels & Inputs
+    const titleLabel = document.getElementById('bug-report-title-label');
+    const titleInput = document.getElementById('bug-report-title-input');
+    const catLabel = document.getElementById('bug-report-category-label');
+    const catSelect = document.getElementById('bug-report-category-select');
+    const sevLabel = document.getElementById('bug-report-severity-label');
+    const sevSelect = document.getElementById('bug-report-severity-select');
+    const urlLabel = document.getElementById('bug-report-url-label');
+    const descLabel = document.getElementById('bug-report-desc-label');
+    const descInput = document.getElementById('bug-report-desc-input');
+    const stepsLabel = document.getElementById('bug-report-steps-label');
+    const stepsInput = document.getElementById('bug-report-steps-input');
+    const attachLabel = document.getElementById('bug-report-attachment-label');
+    const submitBtnText = document.getElementById('bug-report-submit-btn-text');
+
+    if (titleLabel) {
+        titleLabel.innerHTML = isFeature ? 'Nama / Judul Fitur yang Diusulkan <span class="text-rose-500">*</span>' : 'Judul Kendala <span class="text-rose-500">*</span>';
+    }
+    if (titleInput) {
+        titleInput.placeholder = isFeature
+            ? 'Contoh: Integrasi kalender bimbingan ke Google Calendar, atau export rekap nilai'
+            : 'Contoh: Tombol simpan revisi tidak merespons, atau layout berantakan';
+    }
+
+    if (catLabel) {
+        catLabel.innerHTML = isFeature ? 'Kategori Usulan <span class="text-rose-500">*</span>' : 'Kategori Masalah <span class="text-rose-500">*</span>';
+    }
+    if (catSelect) {
+        if (isFeature) {
+            catSelect.innerHTML = `
+                <option value="feature_request" selected>💡 Fitur Baru yang Belum Ada di Sistem (Default)</option>
+                <option value="improvement">🚀 Peningkatan / Penyempurnaan Fitur yang Ada</option>
+                <option value="ui_ux">🎨 Saran Tampilan / Desain (UI/UX)</option>
+                <option value="other">💡 Ide & Masukan Lainnya</option>
+            `;
+        } else {
+            catSelect.innerHTML = `
+                <option value="functionality" selected>⚙️ Fitur / Fungsi Eror (Default)</option>
+                <option value="ui_ux">🎨 Tampilan / Layout / UI Rusak</option>
+                <option value="performance">⚡ Kinerja / Sangat Lambat / Hang</option>
+                <option value="data_error">📄 Ketidaksesuaian Data / Nilai</option>
+                <option value="security">🔒 Izin Akses / Akun / Keamanan</option>
+                <option value="other">❓ Masalah Lainnya</option>
+            `;
+        }
+    }
+
+    if (sevLabel) {
+        sevLabel.innerHTML = isFeature ? 'Tingkat Kebutuhan / Urgensi <span class="text-rose-500">*</span>' : 'Tingkat Keparahan <span class="text-rose-500">*</span>';
+    }
+    if (sevSelect) {
+        if (isFeature) {
+            sevSelect.innerHTML = `
+                <option value="low">🟢 Saran Tambahan (Nice to Have)</option>
+                <option value="medium" selected>🟡 Cukup Dibutuhkan (Mempermudah Aktivitas)</option>
+                <option value="high">🟠 Sangat Dibutuhkan (Penting untuk Alur Kerja)</option>
+                <option value="critical">🔥 Prioritas Utama (Sangat Mendesak)</option>
+            `;
+        } else {
+            sevSelect.innerHTML = `
+                <option value="low">🟢 Rendah (Minor / Masalah Estetika)</option>
+                <option value="medium" selected>🟡 Sedang (Fitur Lambat / Agak Terganggu)</option>
+                <option value="high">🟠 Tinggi (Fitur Utama Gagal / Eror 500)</option>
+                <option value="critical">🔴 Kritis (Fatal / Seluruh Sistem Terkunci)</option>
+            `;
+        }
+    }
+
+    if (urlLabel) {
+        urlLabel.innerText = isFeature ? 'Halaman / Menu Terkait Fitur (URL)' : 'Halaman Lokasi Bug (URL)';
+    }
+
+    if (descLabel) {
+        descLabel.innerHTML = isFeature ? 'Uraian & Manfaat Fitur <span class="text-rose-500">*</span>' : 'Uraian Masalah / Deskripsi <span class="text-rose-500">*</span>';
+    }
+    if (descInput) {
+        descInput.placeholder = isFeature
+            ? 'Jelaskan bagaimana fitur ini bekerja dan apa manfaatnya bagi mahasiswa atau dosen...'
+            : 'Jelaskan apa yang Anda lakukan, apa pesan eror yang muncul, dan apa hasil yang seharusnya terjadi...';
+    }
+
+    if (stepsLabel) {
+        stepsLabel.innerText = isFeature ? 'Contoh Alur Kerja Fitur (Opsional)' : 'Langkah-langkah Memicu Masalah (Opsional)';
+    }
+    if (stepsInput) {
+        stepsInput.placeholder = isFeature
+            ? '1. Pengguna membuka menu X\n2. Klik tombol Y untuk aksi cepat\n3. Data otomatis tersimpan...'
+            : '1. Masuk ke menu X\n2. Pilih tanggal Y\n3. Klik tombol Simpan...';
+    }
+
+    if (attachLabel) {
+        attachLabel.innerText = isFeature ? 'Mockup / Sketsa / Contoh Dokumen (Opsional, Maks. 5MB)' : 'Tangkapan Layar / Bukti Gambar (Opsional, Maks. 5MB)';
+    }
+
+    if (submitBtnText) {
+        submitBtnText.innerText = isFeature ? 'Kirim Usulan Fitur' : 'Kirim Laporan';
+    }
+};
+
+window.openBugReportModal = function(initialType) {
     const modal = document.getElementById('bug-report-modal');
     if (modal) {
         modal.style.setProperty('display', 'block', 'important');
@@ -173,6 +324,9 @@ window.openBugReportModal = function() {
         if (urlInput && !urlInput.value) {
             urlInput.value = window.location.href;
         }
+    }
+    if (initialType === 'feature' || initialType === 'bug') {
+        window.switchBugReportType(initialType);
     }
     if (window.innerWidth < 768) {
         window.toggleBugCollapse(true);
@@ -350,12 +504,20 @@ window.fetchMyReportsDirect = async function() {
         if (data.success && data.reports && data.reports.length > 0) {
             if (emptyState) emptyState.style.display = 'none';
             if (listContainer) {
-                listContainer.innerHTML = data.reports.map(item => `
+                listContainer.innerHTML = data.reports.map(item => {
+                    const isFeature = item.is_feature_request || (item.ticket_number && item.ticket_number.startsWith('REQ-'));
+                    const typeBadge = isFeature
+                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60">💡 USULAN FITUR</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">🐞 BUG SISTEM</span>`;
+                    const ticketColor = isFeature ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400';
+
+                    return `
                     <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-800/60 shadow-2xs space-y-3">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-[11px] font-mono font-bold text-orange-600 dark:text-orange-400">${item.ticket_number}</span>
+                                    <span class="text-[11px] font-mono font-bold ${ticketColor}">${item.ticket_number}</span>
+                                    ${typeBadge}
                                     <span class="text-slate-300 dark:text-slate-700">•</span>
                                     <span class="text-[10px] text-slate-400">${item.created_at_human}</span>
                                 </div>
@@ -368,12 +530,12 @@ window.fetchMyReportsDirect = async function() {
                         <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${item.description}</p>
                         ${item.admin_notes ? `
                             <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border-l-4 border-emerald-500 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                                <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">Tanggapan Admin / Kaprodi:</div>
+                                <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">Tanggapan Tim SIBIMA:</div>
                                 <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">${item.admin_notes}</p>
                             </div>
                         ` : ''}
                     </div>
-                `).join('');
+                `;}).join('');
             }
         } else {
             if (emptyState) emptyState.style.display = 'block';
@@ -392,6 +554,7 @@ window.handleBugFormSubmit = async function(event) {
 
     const btnSubmit = form.querySelector('button[type="submit"]');
     const errBox = document.getElementById('bug-form-error');
+    const isFeature = window.currentBugReportType === 'feature';
 
     if (errBox) errBox.style.display = 'none';
     if (btnSubmit) {
@@ -411,13 +574,15 @@ window.handleBugFormSubmit = async function(event) {
         if (res.ok && data.success) {
             window.closeBugReportModal();
             form.reset();
-            alert('Laporan bug berhasil dikirim! Nomor Tiket: ' + data.ticket_number);
+            const fileNameSpan = document.getElementById('selected-file-name');
+            if (fileNameSpan) fileNameSpan.innerText = '';
+            alert(data.message + ' (Nomor Tiket: ' + data.ticket_number + ')');
         } else {
             if (errBox) {
-                errBox.innerText = data.message || 'Gagal mengirim laporan bug.';
+                errBox.innerText = data.message || 'Gagal mengirim laporan.';
                 errBox.style.display = 'block';
             } else {
-                alert(data.message || 'Gagal mengirim laporan bug.');
+                alert(data.message || 'Gagal mengirim laporan.');
             }
         }
     } catch (e) {
@@ -429,7 +594,7 @@ window.handleBugFormSubmit = async function(event) {
     } finally {
         if (btnSubmit) {
             btnSubmit.disabled = false;
-            btnSubmit.innerText = 'Kirim Laporan';
+            btnSubmit.innerText = isFeature ? 'Kirim Usulan Fitur' : 'Kirim Laporan';
         }
     }
 };
@@ -538,18 +703,18 @@ document.addEventListener('keydown', function(e) {
             </span>
         </button>
 
-        <!-- Button 5: Orange Circle with Edit/Pencil (📝) (Lapor Bug Baru) -->
+        <!-- Button 5: Orange Circle with Edit/Pencil (📝) (Lapor Bug / Usulan Fitur) -->
         <button onclick="window.openBugReportModal(); event.stopPropagation();"
                 type="button"
                 style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; background: #f97316; color: #ffffff; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; border: none !important; padding: 0 !important; overflow: hidden !important; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); pointer-events: auto !important;"
                 class="w-10 h-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-90 shadow-lg shadow-orange-500/30 group relative cursor-pointer"
-                title="Laporkan Bug Baru">
+                title="Lapor Bug atau Usulan Fitur">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px; max-width: 20px; max-height: 20px;">
                 <path d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5" />
                 <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
             <span class="absolute right-14 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md">
-                Lapor Bug Baru
+                Lapor Bug / Usulan Fitur
             </span>
         </button>
 
@@ -592,16 +757,16 @@ document.addEventListener('keydown', function(e) {
             <!-- Modal Header -->
             <div class="px-6 sm:px-8 pt-6 pb-5 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between bg-gradient-to-r from-orange-50/60 via-amber-50/40 to-transparent dark:from-orange-950/20 dark:via-transparent">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-12 h-12 rounded-2xl bg-orange-500/10 dark:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 shadow-xs">
+                    <div id="bug-report-header-icon-box" class="w-12 h-12 rounded-2xl bg-orange-500/10 dark:bg-orange-500/20 border border-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                        <h3 id="bug-report-header-title" class="text-lg font-black text-slate-900 dark:text-white tracking-tight">
                             Lapor Kendala / Bug Sistem
                         </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        <p id="bug-report-header-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                             Laporan Anda akan otomatis diteruskan kepada Tim Teknis SIBIMA.
                         </p>
                     </div>
@@ -614,6 +779,26 @@ document.addEventListener('keydown', function(e) {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
+            </div>
+
+            <!-- Dual Mode Segmented Switcher: Bug vs Usulan Fitur -->
+            <div class="px-6 sm:px-8 pt-3.5 pb-2 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex p-1 bg-slate-200/70 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 gap-1.5">
+                    <button type="button"
+                            id="tab-btn-bug"
+                            onclick="window.switchBugReportType('bug')"
+                            class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs cursor-pointer">
+                        <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        <span>Lapor Kendala / Bug</span>
+                    </button>
+                    <button type="button"
+                            id="tab-btn-feature"
+                            onclick="window.switchBugReportType('feature')"
+                            class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                        <span>Usulan Fitur Baru</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Secondary Navigation Bar: Quick Link to Check Status -->
@@ -630,31 +815,34 @@ document.addEventListener('keydown', function(e) {
             <!-- Modal Body / Form -->
             <form id="bug-report-form" onsubmit="window.handleBugFormSubmit(event)" class="p-6 sm:p-8 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
                 @csrf
+                <input type="hidden" name="report_type" id="bug-report-type-input" value="bug">
                 
                 <!-- Judul Laporan -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    <label id="bug-report-title-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                         Judul Kendala <span class="text-rose-500">*</span>
                     </label>
                     <input type="text"
                            name="title"
+                           id="bug-report-title-input"
                            required
                            maxlength="255"
                            placeholder="Contoh: Tombol simpan revisi tidak merespons, atau layout berantakan"
                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
                 </div>
 
-                <!-- Grid: Kategori & Tingkat Keparahan -->
+                <!-- Grid: Kategori & Tingkat Keparahan / Urgensi -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Kategori -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                        <label id="bug-report-category-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                             Kategori Masalah <span class="text-rose-500">*</span>
                         </label>
                         <select name="category"
+                                id="bug-report-category-select"
                                 required
                                 class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
-                            <option value="functionality">⚙️ Fitur / Fungsi Eror (Default)</option>
+                            <option value="functionality" selected>⚙️ Fitur / Fungsi Eror (Default)</option>
                             <option value="ui_ux">🎨 Tampilan / Layout / UI Rusak</option>
                             <option value="performance">⚡ Kinerja / Sangat Lambat / Hang</option>
                             <option value="data_error">📄 Ketidaksesuaian Data / Nilai</option>
@@ -663,12 +851,13 @@ document.addEventListener('keydown', function(e) {
                         </select>
                     </div>
 
-                    <!-- Severity -->
+                    <!-- Severity / Urgensi -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                        <label id="bug-report-severity-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                             Tingkat Keparahan <span class="text-rose-500">*</span>
                         </label>
                         <select name="severity"
+                                id="bug-report-severity-select"
                                 required
                                 class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
                             <option value="low">🟢 Rendah (Minor / Masalah Estetika)</option>
@@ -682,47 +871,50 @@ document.addEventListener('keydown', function(e) {
                 <!-- Halaman Terkait (URL) -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                        <label id="bug-report-url-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                             Halaman Lokasi Bug (URL)
                         </label>
                         <button type="button" 
-                                onclick="const inp = document.querySelector('input[name=\'page_url\']'); if (inp) inp.value = window.location.href;"
+                                onclick="const inp = document.getElementById('bug-report-url-input') || document.querySelector('input[name=\'page_url\']'); if (inp) inp.value = window.location.href;"
                                 class="text-[11px] font-semibold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
                             Ambil URL Sekarang
                         </button>
                     </div>
                     <input type="text"
                            name="page_url"
+                           id="bug-report-url-input"
                            placeholder="https://..."
                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 text-xs font-mono focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
                 </div>
 
-                <!-- Deskripsi Bug -->
+                <!-- Deskripsi / Uraian -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    <label id="bug-report-desc-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                         Uraian Masalah / Deskripsi <span class="text-rose-500">*</span>
                     </label>
                     <textarea name="description"
+                              id="bug-report-desc-input"
                               required
                               rows="3"
                               placeholder="Jelaskan apa yang Anda lakukan, apa pesan eror yang muncul, dan apa hasil yang seharusnya terjadi..."
                               class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"></textarea>
                 </div>
 
-                <!-- Langkah Reproduksi (Opsional) -->
+                <!-- Langkah Reproduksi / Alur Fitur (Opsional) -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    <label id="bug-report-steps-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                         Langkah-langkah Memicu Masalah (Opsional)
                     </label>
                     <textarea name="steps_to_reproduce"
+                              id="bug-report-steps-input"
                               rows="2"
                               placeholder="1. Masuk ke menu X&#10;2. Pilih tanggal Y&#10;3. Klik tombol Simpan..."
                               class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"></textarea>
                 </div>
 
-                <!-- Upload Bukti Tangkapan Layar (Screenshot) -->
+                <!-- Upload Bukti Tangkapan Layar (Screenshot) / Mockup -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    <label id="bug-report-attachment-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                         Tangkapan Layar / Bukti Gambar (Opsional, Maks. 5MB)
                     </label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 dark:border-slate-700 border-dashed rounded-2xl hover:border-orange-400 dark:hover:border-orange-500 transition-colors bg-slate-50/50 dark:bg-slate-800/40 relative">
@@ -758,7 +950,7 @@ document.addEventListener('keydown', function(e) {
                     </button>
                     <button type="submit"
                             class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-orange-600/20 flex items-center gap-2 transition-all cursor-pointer">
-                        <span>Kirim Laporan</span>
+                        <span id="bug-report-submit-btn-text">Kirim Laporan</span>
                     </button>
                 </div>
             </form>
@@ -886,10 +1078,10 @@ document.addEventListener('keydown', function(e) {
                     </div>
                     <div>
                         <h3 class="text-base font-black text-slate-900 dark:text-white tracking-tight">
-                            Panduan Pelaporan Kendala
+                            Panduan Kendala & Usulan Fitur
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Tips agar laporan bug dapat ditangani lebih cepat.
+                            Tips agar laporan bug atau usulan fitur dapat diproses optimal.
                         </p>
                     </div>
                 </div>
@@ -916,24 +1108,32 @@ document.addEventListener('keydown', function(e) {
                 <div class="flex items-start gap-3">
                     <span class="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center shrink-0 text-[11px]">2</span>
                     <div>
-                        <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Lampirkan Screenshot (Tangkapan Layar)</h5>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">Screenshot sangat membantu tim pengembang melihat kode pesan galat atau visual yang berantakan.</p>
+                        <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Lampirkan Screenshot / Mockup</h5>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Screenshot sangat membantu tim melihat kendala teknis atau contoh layout fitur yang diusulkan.</p>
                     </div>
                 </div>
 
                 <div class="flex items-start gap-3">
                     <span class="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center shrink-0 text-[11px]">3</span>
                     <div>
-                        <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Tulis Langkah Kejadian</h5>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">Tuliskan tombol apa yang diklik sebelum error muncul agar kendala mudah direka ulang oleh admin.</p>
+                        <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Tulis Langkah Kejadian atau Alur Ide</h5>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Tuliskan tombol apa yang diklik sebelum error muncul, atau bagaimana alur kerja fitur yang diharapkan.</p>
                     </div>
                 </div>
 
                 <div class="flex items-start gap-3">
-                    <span class="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 font-black flex items-center justify-center shrink-0 text-[11px]">4</span>
+                    <span class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-black flex items-center justify-center shrink-0 text-[11px]">4</span>
+                    <div>
+                        <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Ingin Mengusulkan Fitur Baru?</h5>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Pilih tab <strong>"💡 Usulan Fitur Baru"</strong> pada formulir pelaporan untuk ide otomatisasi, penambahan menu, atau integrasi baru.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-black flex items-center justify-center shrink-0 text-[11px]">5</span>
                     <div>
                         <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Pantau di Menu Status Laporan (Tombol Hijau ✓)</h5>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">Klik tombol centang hijau pada kapsul untuk melihat apakah tiket Anda sudah selesai diperbaiki.</p>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Klik tombol centang hijau pada kapsul untuk melihat respons admin dan status pengerjaan tiket Anda.</p>
                     </div>
                 </div>
             </div>

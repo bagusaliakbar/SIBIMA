@@ -19,7 +19,7 @@ class BugReportController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|string|in:ui_ux,functionality,performance,security,data_error,other',
+            'category' => 'required|string|in:ui_ux,functionality,performance,security,data_error,feature_request,improvement,other',
             'severity' => 'required|string|in:low,medium,high,critical',
             'page_url' => 'nullable|string|max:500',
             'description' => 'required|string|max:5000',
@@ -34,10 +34,14 @@ class BugReportController extends Controller
             $attachmentPath = $file->store('bug_reports', config('filesystems.default'));
         }
 
-        // Generate unique ticket number: BUG-YYYYMMDD-XXXX
-        $ticketNumber = 'BUG-' . date('Ymd') . '-' . strtoupper(Str::random(4));
+        $isFeature = in_array($validated['category'], ['feature_request', 'improvement'])
+            || $request->input('report_type') === 'feature';
+
+        // Generate unique ticket number: REQ-YYYYMMDD-XXXX (Usulan Fitur) or BUG-YYYYMMDD-XXXX (Kendala Bug)
+        $prefix = $isFeature ? 'REQ-' : 'BUG-';
+        $ticketNumber = $prefix . date('Ymd') . '-' . strtoupper(Str::random(4));
         while (BugReport::where('ticket_number', $ticketNumber)->exists()) {
-            $ticketNumber = 'BUG-' . date('Ymd') . '-' . strtoupper(Str::random(4));
+            $ticketNumber = $prefix . date('Ymd') . '-' . strtoupper(Str::random(4));
         }
 
         $bugReport = BugReport::create([
@@ -63,25 +67,37 @@ class BugReportController extends Controller
         $severityUpper = strtoupper($bugReport->severity);
         $roleLabel = ucfirst(Auth::user()->role);
 
+        $notifTitle = $isFeature
+            ? 'Usulan Fitur Baru #' . $bugReport->ticket_number
+            : 'Laporan Bug Baru #' . $bugReport->ticket_number;
+        $notifMessage = $isFeature
+            ? Auth::user()->name . " ({$roleLabel}) mengusulkan fitur [{$severityUpper}]: " . Str::limit($bugReport->title, 45)
+            : Auth::user()->name . " ({$roleLabel}) melaporkan kendala [{$severityUpper}]: " . Str::limit($bugReport->title, 45);
+        $notifType = $isFeature ? 'info' : ($bugReport->severity === 'critical' ? 'danger' : 'warning');
+
         foreach ($recipients as $recipient) {
             $recipient->notify(new GeneralNotification(
-                title: 'Laporan Bug Baru #' . $bugReport->ticket_number,
-                message: Auth::user()->name . " ({$roleLabel}) melaporkan kendala [{$severityUpper}]: " . Str::limit($bugReport->title, 45),
+                title: $notifTitle,
+                message: $notifMessage,
                 url: route('admin.bug-reports.index', ['highlight' => $bugReport->id]),
-                type: $bugReport->severity === 'critical' ? 'danger' : 'warning'
+                type: $notifType
             ));
         }
+
+        $successMsg = $isFeature
+            ? 'Usulan fitur berhasil dikirim! Terima kasih atas masukan Anda untuk kemajuan SIBIMA.'
+            : 'Laporan bug berhasil dikirim! Tim Admin/Kaprodi akan segera meninjaunya.';
 
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Laporan bug berhasil dikirim! Tim Admin/Kaprodi akan segera meninjaunya.',
+                'message' => $successMsg,
                 'ticket_number' => $bugReport->ticket_number,
                 'report' => $bugReport,
             ]);
         }
 
-        return back()->with('success', 'Laporan bug berhasil dikirim! Kode tiket: ' . $bugReport->ticket_number);
+        return back()->with('success', $successMsg . ' Kode tiket: ' . $bugReport->ticket_number);
     }
 
     /**
@@ -110,6 +126,7 @@ class BugReportController extends Controller
                     'attachment_path' => $report->attachment_path,
                     'attachment_url' => $report->attachment_url,
                     'is_attachment_image' => $report->is_attachment_image,
+                    'is_feature_request' => $report->is_feature_request,
                     'attachment_filename' => $report->attachment_path ? basename($report->attachment_path) : null,
                     'admin_notes' => $report->admin_notes,
                     'resolver_name' => $report->resolver ? $report->resolver->name : null,
@@ -149,6 +166,21 @@ class BugReportController extends Controller
             });
         }
 
+        // Filter type: all, bug, feature
+        if ($request->filled('type') && $request->type !== 'all') {
+            if ($request->type === 'feature') {
+                $query->where(function ($q) {
+                    $q->whereIn('category', ['feature_request', 'improvement'])
+                        ->orWhere('ticket_number', 'like', 'REQ-%');
+                });
+            } elseif ($request->type === 'bug') {
+                $query->where(function ($q) {
+                    $q->whereNotIn('category', ['feature_request', 'improvement'])
+                        ->where('ticket_number', 'not like', 'REQ-%');
+                });
+            }
+        }
+
         // Keyword Search
         if ($request->filled('search')) {
             $search = $request->search;
@@ -175,7 +207,8 @@ class BugReportController extends Controller
             SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as `open`,
             SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
             SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
-            SUM(CASE WHEN severity = 'critical' AND status IN ('open', 'in_progress') THEN 1 ELSE 0 END) as critical
+            SUM(CASE WHEN severity = 'critical' AND status IN ('open', 'in_progress') THEN 1 ELSE 0 END) as critical,
+            SUM(CASE WHEN category IN ('feature_request', 'improvement') OR ticket_number LIKE 'REQ-%' THEN 1 ELSE 0 END) as feature_requests
         ")->first();
 
         $stats = [
@@ -184,6 +217,7 @@ class BugReportController extends Controller
             'in_progress' => (int) ($rawStats->in_progress ?? 0),
             'resolved' => (int) ($rawStats->resolved ?? 0),
             'critical' => (int) ($rawStats->critical ?? 0),
+            'feature_requests' => (int) ($rawStats->feature_requests ?? 0),
         ];
 
         return view('bug_reports.index', compact('bugReports', 'stats'));

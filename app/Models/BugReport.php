@@ -72,15 +72,25 @@ class BugReport extends Model
     }
 
     /**
+     * Cek apakah laporan merupakan usulan fitur baru
+     */
+    public function getIsFeatureRequestAttribute(): bool
+    {
+        return in_array($this->category, ['feature_request', 'improvement']) 
+            || str_starts_with($this->ticket_number, 'REQ-');
+    }
+
+    /**
      * Label status bahasa Indonesia
      */
     public function getStatusLabelAttribute(): string
     {
+        $isFeature = $this->is_feature_request;
         return match ($this->status) {
             'open' => 'Menunggu Review',
-            'in_progress' => 'Sedang Ditangani',
-            'resolved' => 'Selesai / Teratasi',
-            'rejected' => 'Ditolak / Bukan Bug',
+            'in_progress' => $isFeature ? 'Sedang Dikembangkan' : 'Sedang Ditangani',
+            'resolved' => $isFeature ? 'Selesai / Diimplementasikan' : 'Selesai / Teratasi',
+            'rejected' => $isFeature ? 'Ditolak / Belum Dapat Diterapkan' : 'Ditolak / Bukan Bug',
             default => ucfirst($this->status),
         };
     }
@@ -90,6 +100,16 @@ class BugReport extends Model
      */
     public function getSeverityLabelAttribute(): string
     {
+        if ($this->is_feature_request) {
+            return match ($this->severity) {
+                'low' => 'Saran Tambahan (Nice to Have)',
+                'medium' => 'Cukup Dibutuhkan',
+                'high' => 'Sangat Dibutuhkan',
+                'critical' => 'Prioritas Utama',
+                default => ucfirst($this->severity),
+            };
+        }
+
         return match ($this->severity) {
             'low' => 'Rendah (Minor)',
             'medium' => 'Sedang (Normal)',
@@ -105,13 +125,15 @@ class BugReport extends Model
     public function getCategoryLabelAttribute(): string
     {
         return match ($this->category) {
+            'feature_request' => 'Usulan Fitur Baru',
+            'improvement' => 'Peningkatan Fitur',
             'ui_ux' => 'Tampilan / Desain (UI/UX)',
             'functionality' => 'Fungsi / Fitur Eror',
             'performance' => 'Kinerja / Lambat',
             'security' => 'Keamanan / Akses',
             'data_error' => 'Ketidaksesuaian Data',
             'other' => 'Lainnya',
-            default => ucfirst($this->category),
+            default => ucfirst(str_replace('_', ' ', $this->category)),
         };
     }
 

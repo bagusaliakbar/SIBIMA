@@ -12,7 +12,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-3">
-                    <span>Laporan Bug Sistem</span>
+                    <span>Laporan Bug & Usulan Fitur</span>
                     @if($stats['open'] > 0)
                         <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-500 text-white animate-pulse">
                             {{ $stats['open'] }} Baru
@@ -20,18 +20,25 @@
                     @endif
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Kelola dan tindak lanjuti laporan kendala teknis yang dilaporkan oleh Mahasiswa dan Dosen.
+                    Kelola dan tindak lanjuti laporan kendala teknis serta usulan fitur baru yang diajukan oleh Mahasiswa dan Dosen.
                 </p>
             </div>
         </div>
 
         <!-- Metric Stat Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             <!-- Total -->
             <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Laporan</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Tiket</div>
                 <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ $stats['total'] }}</div>
                 <div class="text-[10px] text-slate-400 mt-0.5">Semua waktu</div>
+            </div>
+
+            <!-- Usulan Fitur Baru -->
+            <div class="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200/80 dark:border-indigo-900/50 shadow-2xs">
+                <div class="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-widest">Usulan Fitur</div>
+                <div class="text-2xl font-black text-indigo-800 dark:text-indigo-300 mt-1">{{ $stats['feature_requests'] ?? 0 }}</div>
+                <div class="text-[10px] text-indigo-600/80 dark:text-indigo-400/80 mt-0.5">Ide & masukan</div>
             </div>
 
             <!-- Menunggu Review (Open) -->
@@ -56,7 +63,7 @@
             </div>
 
             <!-- Urgensi Kritis -->
-            <div class="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/50 shadow-2xs col-span-2 sm:col-span-1">
+            <div class="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/50 shadow-2xs">
                 <div class="text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest">Prioritas Kritis</div>
                 <div class="text-2xl font-black text-rose-800 dark:text-rose-300 mt-1">{{ $stats['critical'] }}</div>
                 <div class="text-[10px] text-rose-600/80 dark:text-rose-400/80 mt-0.5">Membutuhkan aksi segera</div>
@@ -65,7 +72,7 @@
 
         <!-- Filter & Search Bar Card -->
         <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-            <form method="GET" action="{{ route('admin.bug-reports.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <form method="GET" action="{{ route('admin.bug-reports.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
                 
                 <!-- Keyword Search -->
                 <div class="lg:col-span-2 relative">
@@ -79,6 +86,15 @@
                     </svg>
                 </div>
 
+                <!-- Filter Jenis Laporan -->
+                <div>
+                    <select name="type" onchange="this.form.submit()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
+                        <option value="all" {{ request('type') === 'all' || !request('type') ? 'selected' : '' }}>Semua Jenis</option>
+                        <option value="bug" {{ request('type') === 'bug' ? 'selected' : '' }}>🐞 Kendala / Bug</option>
+                        <option value="feature" {{ request('type') === 'feature' ? 'selected' : '' }}>💡 Usulan Fitur</option>
+                    </select>
+                </div>
+
                 <!-- Filter Status -->
                 <div>
                     <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
@@ -86,7 +102,7 @@
                         <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>🟡 Menunggu Review</option>
                         <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>🔵 Sedang Diproses</option>
                         <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>🟢 Selesai / Teratasi</option>
-                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>⚪ Ditolak / Bukan Bug</option>
+                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>⚪ Ditolak / Belum Diterapkan</option>
                     </select>
                 </div>
 
@@ -109,7 +125,7 @@
                         <option value="dosen" {{ request('role') === 'dosen' ? 'selected' : '' }}>Dosen</option>
                     </select>
 
-                    @if(request()->anyFilled(['search', 'status', 'severity', 'role']))
+                    @if(request()->anyFilled(['search', 'type', 'status', 'severity', 'role']))
                         <a href="{{ route('admin.bug-reports.index') }}" 
                            class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs font-bold transition-colors shrink-0"
                            title="Reset Filter">
@@ -121,13 +137,13 @@
         </div>
 
         <!-- Table Card -->
-        <x-table-card title="Daftar Tiket Kendala Sistem" :footer="$bugReports->links()">
+        <x-table-card title="Daftar Tiket Kendala & Usulan Fitur" :footer="$bugReports->links()">
             <table class="w-full text-left text-sm">
                 <thead>
                     <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                         <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Tiket & Waktu</th>
                         <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Pelapor</th>
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Kendala & Kategori</th>
+                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Subjek & Kategori</th>
                         <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-center">Tingkat Urgensi</th>
                         <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-center">Status</th>
                         <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-right">Aksi</th>
@@ -139,7 +155,18 @@
                             
                             <!-- Tiket & Waktu -->
                             <td class="py-4 px-6 whitespace-nowrap">
-                                <div class="font-mono text-xs font-bold text-orange-600 dark:text-orange-400">
+                                <div class="flex items-center gap-1.5 mb-1">
+                                    @if($report->is_feature_request || str_starts_with($report->ticket_number, 'REQ-'))
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
+                                            💡 FITUR
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                            🐞 BUG
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="font-mono text-xs font-bold {{ ($report->is_feature_request || str_starts_with($report->ticket_number, 'REQ-')) ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400' }}">
                                     {{ $report->ticket_number }}
                                 </div>
                                 <div class="text-[10px] text-slate-400 mt-0.5">
@@ -270,6 +297,7 @@
                     <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-orange-50/60 to-transparent dark:from-orange-950/20 shrink-0">
                         <div>
                             <div class="flex items-center gap-2 mb-1">
+                                <span id="brm-type-badge" class="px-2 py-0.5 rounded-md text-[10px] font-black"></span>
                                 <span id="brm-ticket-number" class="text-xs font-mono font-bold text-orange-600 dark:text-orange-400"></span>
                                 <span class="text-slate-300 dark:text-slate-700">•</span>
                                 <span id="brm-created-at" class="text-xs text-slate-400"></span>
@@ -303,30 +331,30 @@
                             </div>
                         </div>
 
-                        <!-- URL Lokasi Bug -->
+                        <!-- URL Lokasi Bug / Halaman Terkait -->
                         <div id="brm-page-url-container" style="display: none;">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Halaman Kejadian (URL):</span>
+                            <span id="brm-url-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Halaman Kejadian (URL):</span>
                             <a id="brm-page-url" href="" target="_blank" class="text-xs font-mono text-orange-600 dark:text-orange-400 hover:underline break-all bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-xl block border border-slate-100 dark:border-slate-700">
                                 <span class="page-url-text"></span>
                                 <svg class="w-3.5 h-3.5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                             </a>
                         </div>
 
-                        <!-- Uraian Masalah -->
+                        <!-- Uraian Masalah / Manfaat Fitur -->
                         <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Uraian / Deskripsi Kendala:</span>
+                            <span id="brm-desc-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Uraian / Deskripsi Kendala:</span>
                             <div id="brm-description" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed"></div>
                         </div>
 
-                        <!-- Langkah Reproduksi -->
+                        <!-- Langkah Reproduksi / Alur Fitur -->
                         <div id="brm-steps-container" style="display: none;">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Langkah Memicu Masalah:</span>
+                            <span id="brm-steps-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Langkah Memicu Masalah:</span>
                             <div id="brm-steps" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed font-mono"></div>
                         </div>
 
-                        <!-- Lampiran Screenshot / File Bukti -->
+                        <!-- Lampiran Screenshot / File Bukti / Mockup -->
                         <div id="brm-attachment-container" style="display: none;">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Tangkapan Layar / Dokumen:</span>
+                            <span id="brm-attachment-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Tangkapan Layar / Dokumen:</span>
                             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-center">
                                 
                                 <!-- Image Preview Wrapper -->
@@ -447,9 +475,11 @@
         const feedbackEl = document.getElementById('brm-feedback');
         if (feedbackEl) feedbackEl.style.display = 'none';
 
+        const tb = document.getElementById('brm-type-badge');
+        if (tb) { tb.className = ''; tb.innerText = ''; }
         document.getElementById('brm-ticket-number').innerText = 'Memuat...';
         document.getElementById('brm-created-at').innerText = '';
-        document.getElementById('brm-title').innerText = 'Mengambil rincian laporan bug...';
+        document.getElementById('brm-title').innerText = 'Mengambil rincian laporan...';
         document.getElementById('brm-description').innerText = 'Mohon tunggu sebentar...';
         document.getElementById('brm-status-select').value = 'open';
         document.getElementById('brm-admin-notes').value = '';
@@ -464,9 +494,53 @@
             const data = await res.json();
             if (data.success && data.report) {
                 const r = data.report;
+                const isReq = r.is_feature_request || (r.ticket_number && r.ticket_number.startsWith('REQ-'));
+
+                const typeBadge = document.getElementById('brm-type-badge');
+                if (typeBadge) {
+                    if (isReq) {
+                        typeBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
+                        typeBadge.innerText = '💡 USULAN FITUR';
+                    } else {
+                        typeBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
+                        typeBadge.innerText = '🐞 BUG SISTEM';
+                    }
+                }
+
+                const urlLabel = document.getElementById('brm-url-label');
+                if (urlLabel) urlLabel.innerText = isReq ? 'Halaman / Menu Terkait (URL):' : 'Halaman Kejadian (URL):';
+
+                const descLabel = document.getElementById('brm-desc-label');
+                if (descLabel) descLabel.innerText = isReq ? 'Uraian & Manfaat Fitur:' : 'Uraian / Deskripsi Kendala:';
+
+                const stepsLabel = document.getElementById('brm-steps-label');
+                if (stepsLabel) stepsLabel.innerText = isReq ? 'Contoh Alur Kerja Fitur:' : 'Langkah Memicu Masalah:';
+
+                const attachLabel = document.getElementById('brm-attachment-label');
+                if (attachLabel) attachLabel.innerText = isReq ? 'Mockup / Sketsa / Contoh Dokumen:' : 'Bukti Tangkapan Layar / Dokumen:';
+
+                const statusSelect = document.getElementById('brm-status-select');
+                if (statusSelect) {
+                    if (isReq) {
+                        statusSelect.innerHTML = `
+                            <option value="open">🟡 Menunggu Telaah (Ide Baru)</option>
+                            <option value="in_progress">🔵 Sedang Dikembangkan (In Progress)</option>
+                            <option value="resolved">🟢 Selesai / Diimplementasikan (Done)</option>
+                            <option value="rejected">⚪ Ditolak / Belum Dapat Diterapkan</option>
+                        `;
+                    } else {
+                        statusSelect.innerHTML = `
+                            <option value="open">🟡 Menunggu Review (Open)</option>
+                            <option value="in_progress">🔵 Sedang Ditangani (In Progress)</option>
+                            <option value="resolved">🟢 Selesai / Teratasi (Resolved)</option>
+                            <option value="rejected">⚪ Ditolak / Bukan Bug (Rejected)</option>
+                        `;
+                    }
+                }
+
                 document.getElementById('brm-ticket-number').innerText = r.ticket_number || ('#' + r.id);
                 document.getElementById('brm-created-at').innerText = r.created_at || '';
-                document.getElementById('brm-title').innerText = r.title || 'Laporan Bug';
+                document.getElementById('brm-title').innerText = r.title || (isReq ? 'Usulan Fitur Baru' : 'Laporan Bug');
 
                 if (r.user) {
                     document.getElementById('brm-avatar').src = r.user.avatar_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(r.user.name || 'User'));
