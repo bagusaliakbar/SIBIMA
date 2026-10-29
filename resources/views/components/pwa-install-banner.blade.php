@@ -24,13 +24,9 @@
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 mb-0.5">
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200/70 dark:border-orange-500/20">
-                        Aplikasi Resmi
+                        Pasang SIBIMA di Layar HP
                     </span>
-                    <span class="text-[10px] text-slate-400 font-bold">PWA</span>
                 </div>
-                <h4 class="text-xs font-black text-slate-900 dark:text-slate-100 leading-snug">
-                    Pasang SIBIMA di Layar HP
-                </h4>
                 <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                     Akses bimbingan, jadwal ujian, dan riwayat revisi lebih cepat langsung dari layar utama perangkat Anda.
                 </p>
