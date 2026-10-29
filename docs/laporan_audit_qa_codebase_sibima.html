@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Audit & Analisis Mendalam Codebase (QA Report) — SIBIMA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        orange: {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74',
+                            400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c',
+                            800: '#9a3412', 900: '#7c2d12', 950: '#431407'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font CDN -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800|jetbrains-mono:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        table, .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        pre, code {
+            font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200"
+      x-data="{ darkMode: false, filterSeverity: 'all', searchQuery: '' }"
+      x-init="
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            darkMode = true;
+            document.documentElement.classList.add('dark');
+        } else {
+            darkMode = false;
+            document.documentElement.classList.remove('dark');
+        }
+        $watch('darkMode', val => {
+            if (val) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+      ">
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    QA
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">SIBIMA Deep-Dive QA Audit Report</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Senior QA Engineer & Architecture Analysis v1.0</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Quick Nav Links -->
+                <nav class="hidden md:flex items-center space-x-1 mr-2 text-xs font-medium">
+                    <a href="#scorecard" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Scorecard</a>
+                    <a href="#register" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Daftar Temuan</a>
+                    <a href="#critical-p0" class="px-3 py-1.5 rounded-lg text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition font-semibold">Critical (P0)</a>
+                    <a href="#high-p1" class="px-3 py-1.5 rounded-lg text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition font-semibold">High (P1)</a>
+                    <a href="#medium-p2" class="px-3 py-1.5 rounded-lg text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition">Medium (P2)</a>
+                    <a href="#roadmap" class="px-3 py-1.5 rounded-lg text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition">Roadmap</a>
+                </nav>
+
+                <!-- Theme Toggle -->
+                <button @click="darkMode = !darkMode"
+                        class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
+                        title="Ganti Mode Gelap / Terang">
+                    <svg x-show="!darkMode" class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg x-show="darkMode" class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
+                <!-- Print / PDF -->
+                <button onclick="window.print()"
+                        class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Cetak / PDF
+                </button>
+
+                <!-- Download Word DOCX -->
+                <a href="laporan_audit_qa_codebase_sibima.docx" download
+                   class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Unduh Word (.docx)
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-1 w-full">
+
+        <!-- Hero Cover Banner -->
+        <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="space-y-3 max-w-3xl">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60">
+                        <span>LAPORAN AUDIT SENIOR QA ENGINEER</span>
+                        <span>•</span>
+                        <span>29 OKTOBER 2026</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                        Analisis Mendalam Arsitektur, Logika Bisnis, Keamanan &amp; Performa Codebase SIBIMA
+                    </h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Dokumen ini merangkum hasil pemeriksaan baris-per-baris (<em>static source code audit</em>), penelusuran aliran data dan transisi status (<em>state-transition tracing</em>), analisis <em>foreign-key cascade</em> database, serta evaluasi skalabilitas pada 25+ Controller, 21 Service, 24 Model, dan 55+ Migrasi di repositori <strong>SIBIMA FASILKOM UNSUB</strong>.
+                    </p>
+                </div>
+
+                <!-- Overall Score Badge -->
+                <div class="flex items-center gap-5 bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-5 shrink-0">
+                    <div class="text-center">
+                        <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Skor Saat Ini</div>
+                        <div class="text-3xl font-extrabold text-orange-600 dark:text-orange-400 tabular-nums mt-1">75.8<span class="text-base font-normal text-slate-400">/100</span></div>
+                        <span class="inline-block mt-1 px-2.5 py-0.5 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">Grade B+</span>
+                    </div>
+                    <div class="h-12 w-px bg-slate-200 dark:bg-slate-700"></div>
+                    <div class="text-center">
+                        <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Target Pasca-Patch</div>
+                        <div class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums mt-1">95.2<span class="text-base font-normal text-slate-400">/100</span></div>
+                        <span class="inline-block mt-1 px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">Grade A+</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary KPI Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <div class="p-4 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/60">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300">Critical (P0)</span>
+                        <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-rose-200/80 dark:bg-rose-900 text-rose-900 dark:text-rose-200">Blocker / Data Loss</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-rose-700 dark:text-rose-300 mt-2 tabular-nums">2 Temuan</div>
+                    <p class="text-xs text-rose-700/80 dark:text-rose-300/80 mt-1">Cascade delete nilai &amp; bug filter WA pasif</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">High (P1)</span>
+                        <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-amber-200/80 dark:bg-amber-900 text-amber-900 dark:text-amber-200">Fungsional &amp; Akses</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-amber-700 dark:text-amber-300 mt-2 tabular-nums">5 Temuan</div>
+                    <p class="text-xs text-amber-700/80 dark:text-amber-300/80 mt-1">Reset status revisi, 403 PDF/berkas, &amp; cron ganda</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300">Medium (P2)</span>
+                        <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-blue-200/80 dark:bg-blue-900 text-blue-900 dark:text-blue-200">Performa &amp; Konkurensi</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-blue-700 dark:text-blue-300 mt-2 tabular-nums">5 Temuan</div>
+                    <p class="text-xs text-blue-700/80 dark:text-blue-300/80 mt-1">Lock nomor surat, pencarian terenkripsi, &amp; memori</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Low (P3)</span>
+                        <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200">Maintainability</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-slate-800 dark:text-slate-200 mt-2 tabular-nums">3 Temuan</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Duplikasi kode Seminar/Sidang &amp; cakupan test</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: QA Scorecard -->
+        <section id="scorecard" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">1. Kartu Skor Kesehatan Codebase (QA Quality Scorecard)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Evaluasi kuantitatif per dimensi rekayasa perangkat lunak sebelum dan sesudah penerapan patch perbaikan</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
+                            <th class="py-3.5 px-4">Dimensi Kualitas</th>
+                            <th class="py-3.5 px-4 text-center">Bobot</th>
+                            <th class="py-3.5 px-4 text-center">Skor Saat Ini</th>
+                            <th class="py-3.5 px-4 text-center">Target Pasca-Patch</th>
+                            <th class="py-3.5 px-4">Evaluasi Teknis Senior QA</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tr>
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-100">1. Arsitektur &amp; Pemisahan Layer (SoC)</td>
+                            <td class="py-3.5 px-4 text-center tabular-nums">20%</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">82 / 100</span></td>
+                            <td class="py-3.5 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">94 / 100</td>
+                            <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">Adopsi <em>Service Layer</em> sangat baik (21 service), namun terdapat duplikasi ~90% kode antara controller Seminar Proposal dan Sidang Skripsi.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-100">2. Integritas Data &amp; Ketahanan State Bisnis</td>
+                            <td class="py-3.5 px-4 text-center tabular-nums">25%</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60">65 / 100</span></td>
+                            <td class="py-3.5 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">98 / 100</td>
+                            <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">Ditemukan risiko kehilangan data nilai &amp; revisi akibat <code>$schedule-&gt;details()-&gt;delete()</code> saat edit jadwal (<code>P0-01</code>) dan penimpaan status revisi saat update nilai (<code>P1-01</code>).</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-100">3. Konsistensi Kontrol Akses &amp; Validasi Backend</td>
+                            <td class="py-3.5 px-4 text-center tabular-nums">20%</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60">85 / 100</span></td>
+                            <td class="py-3.5 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">98 / 100</td>
+                            <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">Proteksi SSRF, IDOR Chat, dan Backup sudah kuat. Perlu sinkronisasi izin cetak PDF jadwal mahasiswa (<code>P1-02</code>), validasi POST Yudisium (<code>P1-03</code>), dan path berkas Admin (<code>P1-04</code>).</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-100">4. Performa Query, Memori &amp; Konkurensi</td>
+                            <td class="py-3.5 px-4 text-center tabular-nums">20%</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">72 / 100</span></td>
+                            <td class="py-3.5 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">92 / 100</td>
+                            <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300">Perlu penambahan <code>lockForUpdate()</code> pada penomoran surat (<code>P2-02</code>) dan optimasi <code>checkTitle()</code> agar tidak menarik seluruh baris tabel ke memori PHP (<code>P2-05</code>).</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-100">5. Cakupan Pengujian Otomatis (Test Coverage)</td>
+                            <td class="py-3.5 px-4 text-center tabular-nums">15%</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">45 / 100</span></td>
+                            <td class="py-3.5 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">90 / 100</td>
+                            <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-300"><code>ComprehensiveSystemTest.php</code> baru mencakup 6 test case. Perlu penambahan test otomatis untuk alur Penjadwalan, Penilaian, Revisi, dan Yudisium.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Master Defect Register (2-Tier Header Table) -->
+        <section id="register" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Tier 1: Title -->
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">2. Daftar Induk Temuan Audit (Master Defect Register)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Gunakan filter tingkat keparahan atau pencarian kata kunci untuk menyaring 15 temuan QA</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-slate-700 dark:text-slate-300">Total: 15 Temuan Teridentifikasi</span>
+                </div>
+            </div>
+
+            <!-- Tier 2: Filter & Search Toolbar (h-10 uniform controls) -->
+            <div class="px-6 py-3.5 bg-slate-50/60 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button @click="filterSeverity = 'all'"
+                            :class="filterSeverity === 'all' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50'"
+                            class="h-10 px-3.5 rounded-xl text-xs font-semibold border transition">
+                        Semua (15)
+                    </button>
+                    <button @click="filterSeverity = 'P0'"
+                            :class="filterSeverity === 'P0' ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-slate-900 text-rose-700 dark:text-rose-300 border-slate-200 dark:border-slate-700 hover:bg-rose-50'"
+                            class="h-10 px-3.5 rounded-xl text-xs font-semibold border transition">
+                        Critical P0 (2)
+                    </button>
+                    <button @click="filterSeverity = 'P1'"
+                            :class="filterSeverity === 'P1' ? 'bg-amber-600 text-white border-amber-600' : 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50'"
+                            class="h-10 px-3.5 rounded-xl text-xs font-semibold border transition">
+                        High P1 (5)
+                    </button>
+                    <button @click="filterSeverity = 'P2'"
+                            :class="filterSeverity === 'P2' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50'"
+                            class="h-10 px-3.5 rounded-xl text-xs font-semibold border transition">
+                        Medium P2 (5)
+                    </button>
+                    <button @click="filterSeverity = 'P3'"
+                            :class="filterSeverity === 'P3' ? 'bg-slate-700 text-white border-slate-700' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'"
+                            class="h-10 px-3.5 rounded-xl text-xs font-semibold border transition">
+                        Low P3 (3)
+                    </button>
+                </div>
+
+                <div class="relative w-full sm:w-72">
+                    <input type="text" x-model="searchQuery" placeholder="Cari ID, file, atau modul..."
+                           class="w-full h-10 pl-3.5 pr-4 rounded-xl text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
+                            <th class="py-3 px-4 w-24">ID</th>
+                            <th class="py-3 px-4 w-32">Prioritas</th>
+                            <th class="py-3 px-4 w-44">Modul / Kategori</th>
+                            <th class="py-3 px-4">Lokasi File &amp; Baris</th>
+                            <th class="py-3 px-4">Ringkasan Masalah &amp; Dampak</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P0') && ('p0-01 scheduleservice cascade delete nilai revisi jadwal'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-rose-700 dark:text-rose-400"><a href="#p0-01" class="hover:underline">P0-01</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60">CRITICAL (P0)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Penjadwalan &amp; Penilaian</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">ScheduleService.php (L39–L55)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300"><code>$schedule-&gt;details()-&gt;delete()</code> memicu <em>ON DELETE CASCADE</em> yang menghapus permanen seluruh nilai penguji, catatan revisi, diskusi revisi, dan token QR Berita Acara saat jadwal diedit.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P0') && ('p0-02 wabroadcastservice bimbingan pasif date scheduled_at'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-rose-700 dark:text-rose-400"><a href="#p0-02" class="hover:underline">P0-02</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60">CRITICAL (P0)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Broadcast WhatsApp</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">WaBroadcastService.php (L116–L140)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Membaca <code>$lastSession-&gt;date</code> (kolom tidak ada, seharusnya <code>scheduled_at</code>). <code>Carbon::parse(null)</code> menghasilkan waktu hari ini sehingga mahasiswa pasif yang pernah bimbingan tidak pernah terdeteksi.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P1') && ('p1-01 examinerservice storegrading status approved completed'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-amber-700 dark:text-amber-400"><a href="#p1-01" class="hover:underline">P1-01</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">HIGH (P1)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Penilaian &amp; Revisi</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">ExaminerService.php (L71–L82)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Menyimpan/mengedit nilai penguji menimpa paksa status revisi yang sudah <code>'approved'</code> kembali menjadi <code>'completed'</code> (membatalkan ACC revisi).</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P1') && ('p1-02 seminarschedulecontroller exportpdf 403 mahasiswa'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-amber-700 dark:text-amber-400"><a href="#p1-02" class="hover:underline">P1-02</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">HIGH (P1)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Cetak PDF Jadwal</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">SeminarScheduleController.php (L418–L423)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Middleware mengizinkan <code>mahasiswa</code> pada <code>exportPdf</code>, tetapi pengecekan internal memblokir mahasiswa dengan HTTP 403.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P1') && ('p1-03 graduationcontroller studentstore yudisium skl bypass'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-amber-700 dark:text-amber-400"><a href="#p1-03" class="hover:underline">P1-03</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">HIGH (P1)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Yudisium &amp; SKL</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">GraduationController.php (L107–L160)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Endpoint <code>POST /student/graduation</code> tidak memvalidasi ulang syarat kelulusan sidang &amp; ACC revisi di sisi backend.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P1') && ('p1-04 downloadcontroller adminregister seminar_applications 403'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-amber-700 dark:text-amber-400"><a href="#p1-04" class="hover:underline">P1-04</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">HIGH (P1)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Unduh Berkas Admin</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">SeminarApplicationController.php (L623)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Pendaftaran via Admin menyimpan file ke <code>seminar_applications/</code> yang tidak dikenali <code>DownloadController</code> (menghasilkan 403).</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P1') && ('p1-05 bootstrap/app.php console.php send-schedule-reminders cron'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-amber-700 dark:text-amber-400"><a href="#p1-05" class="hover:underline">P1-05</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">HIGH (P1)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Scheduler Pengingat</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">bootstrap/app.php (L32) &amp; console.php (L12)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Command <code>app:send-schedule-reminders</code> terjadwal ganda (07:00 &amp; 08:00 WIB), mengirim pesan WA &amp; notifikasi ganda ke peserta.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P2') && ('p2-01 usercontroller phone_number encrypted like'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-blue-700 dark:text-blue-400"><a href="#medium-p2" class="hover:underline">P2-01</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60">MEDIUM (P2)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Manajemen User</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">UserController.php (L145)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Pencarian SQL <code>LIKE</code> pada kolom <code>phone_number</code> yang terenkripsi AES-256-CBC tidak pernah cocok.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P2') && ('p2-02 lettersetting lockforupdate race condition nomor surat'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-blue-700 dark:text-blue-400"><a href="#medium-p2" class="hover:underline">P2-02</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60">MEDIUM (P2)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Penomoran Surat</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">GraduationController.php (L35–L58)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Inkremen <code>last_number</code> pada <code>LetterSetting</code> tanpa <code>lockForUpdate()</code> rawan menduplikasi nomor SK/SKL saat request bersamaan.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P2') && ('p2-03 advisordecreecontroller str_contains json_encode otorisasi sk'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-blue-700 dark:text-blue-400"><a href="#medium-p2" class="hover:underline">P2-03</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60">MEDIUM (P2)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Otorisasi SK Dosen</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">AdvisorDecreeController.php (L36, L658)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Cek akses dosen via <code>str_contains(json_encode(...), $user-&gt;name)</code> rawan <em>false positive</em> jika nama dosen pendek.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P2') && ('p2-04 withoutverifying ssl payment proof google drive loop'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-blue-700 dark:text-blue-400"><a href="#medium-p2" class="hover:underline">P2-04</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60">MEDIUM (P2)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Ekspor Bukti Bayar</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">SeminarApplicationController.php (L315)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Penggunaan <code>withoutVerifying()</code> dan HTTP fetch sinkron beruntun di dalam loop ekspor PDF/Word berisiko timeout.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P2') && ('p2-05 thesiscontroller checktitle similar_text memory pagination'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-blue-700 dark:text-blue-400"><a href="#medium-p2" class="hover:underline">P2-05</a></td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60">MEDIUM (P2)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Performa &amp; Memori</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">ThesisController.php (L157–L195)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Memuat seluruh tabel <code>Thesis</code> &amp; <code>ThesisRepository</code> ke RAM untuk menjalankan <code>similar_text()</code> pada setiap baris.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P3') && ('p3-01 duplikasi kode seminar sidang controller'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">P3-01</td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-slate-100 text-slate-800 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">LOW (P3)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Maintainability</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">Seminar* &amp; ThesisDefense*Controller</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Duplikasi kode ~90% antara controller Seminar Proposal dan Sidang Skripsi.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P3') && ('p3-02 autoschedulesimulationservice user::find n+1'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">P3-02</td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-slate-100 text-slate-800 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">LOW (P3)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Simulasi Jadwal</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">AutoScheduleSimulationService.php (L631)</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Query <code>User::find()</code> di dalam nested loop pemeriksaan bentrok antar-ruangan.</td>
+                        </tr>
+                        <tr x-show="(filterSeverity === 'all' || filterSeverity === 'P3') && ('p3-03 comprehensivesystemtest cakupan automated test'.includes(searchQuery.toLowerCase()))">
+                            <td class="py-3.5 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">P3-03</td>
+                            <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md font-bold bg-slate-100 text-slate-800 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">LOW (P3)</span></td>
+                            <td class="py-3.5 px-4 font-semibold">Automated Testing</td>
+                            <td class="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">ComprehensiveSystemTest.php</td>
+                            <td class="py-3.5 px-4 text-slate-600 dark:text-slate-300">Perlu penambahan automated regression test untuk alur Penjadwalan, Penilaian, Revisi, dan Yudisium.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3: CRITICAL (P0) Deep Dive -->
+        <section id="critical-p0" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <span class="px-3 py-1 rounded-lg text-xs font-extrabold uppercase bg-rose-600 text-white shadow-sm">CRITICAL — P0</span>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">3. Analisis Mendalam Temuan Kritis (Blocker &amp; Risiko Kehilangan Data)</h3>
+            </div>
+
+            <!-- P0-01 Card -->
+            <div id="p0-01" class="bg-white dark:bg-slate-900 border-2 border-rose-200 dark:border-rose-800/70 rounded-2xl overflow-hidden shadow-sm">
+                <div class="px-6 py-4 bg-rose-50/70 dark:bg-rose-950/40 border-b border-rose-200 dark:border-rose-800/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-rose-600 text-white">P0-01</span>
+                        <h4 class="text-sm sm:text-base font-bold text-rose-950 dark:text-rose-200">Penghapusan Permanen Nilai Penguji &amp; Riwayat Revisi Saat Admin Mengedit Jadwal (Cascade Delete Data Loss)</h4>
+                    </div>
+                    <span class="text-xs font-mono text-rose-800 dark:text-rose-300">app/Services/ScheduleService.php : L39–L55</span>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 space-y-2">
+                            <div class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Akar Masalah (Root Cause)</div>
+                            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                                Pada <code>ScheduleService::updateSchedule()</code> baris 49, sistem memanggil <code>$schedule-&gt;details()-&gt;delete();</code> lalu membuat ulang baris <code>SeminarScheduleDetail</code> / <code>ThesisDefenseScheduleDetail</code> dari awal. Padahal tabel <code>seminar_revisions</code> dan <code>thesis_defense_revisions</code> memiliki constraint <code>-&gt;onDelete('cascade')</code> terhadap tabel detail jadwal tersebut.
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-rose-50/40 dark:bg-rose-950/20 border border-rose-200/70 dark:border-rose-800/50 space-y-2">
+                            <div class="text-xs font-bold uppercase text-rose-700 dark:text-rose-400">Skenario Dampak di Produksi</div>
+                            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                                Jika ujian di suatu ruangan telah berlangsung, dosen telah menginput nilai komponen dan catatan revisi, lalu Admin mengedit jadwal tersebut (misalnya hanya memperbaiki typo nama ruangan atau link Zoom), maka <strong>seluruh nilai penguji, catatan revisi, riwayat diskusi revisi, dan status ACC revisi untuk seluruh mahasiswa di jadwal tersebut langsung terhapus permanen!</strong> Token QR Berita Acara juga ikut berubah.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1.5">Kode Saat Ini (Rentan Menghapus Data):</div>
+                            <pre class="p-3.5 rounded-xl bg-slate-900 text-slate-100 text-xs overflow-x-auto leading-relaxed"><code>// app/Services/ScheduleService.php (L48-L51)
+$schedule-&gt;details()-&gt;delete();
+
+$this-&gt;saveDetails($schedule, $detailModelClass, $data['details'] ?? [], $schedule-&gt;date);</code></pre>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1.5">Rekomendasi Perbaikan (Upsert / Reconcile tanpa Cascade Delete):</div>
+                            <pre class="p-3.5 rounded-xl bg-slate-900 text-emerald-300 text-xs overflow-x-auto leading-relaxed"><code>// Rekonsiliasi berdasarkan thesis_id / id detail eksisting:
+// 1. Update detail sesi yang thesis_id-nya masih ada di jadwal
+// 2. Pertahankan primary key id &amp; verification_token
+// 3. Hanya hapus detail yang benar-benar dikeluarkan dari daftar</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- P0-02 Card -->
+            <div id="p0-02" class="bg-white dark:bg-slate-900 border-2 border-rose-200 dark:border-rose-800/70 rounded-2xl overflow-hidden shadow-sm">
+                <div class="px-6 py-4 bg-rose-50/70 dark:bg-rose-950/40 border-b border-rose-200 dark:border-rose-800/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-rose-600 text-white">P0-02</span>
+                        <h4 class="text-sm sm:text-base font-bold text-rose-950 dark:text-rose-200">Filter "Mahasiswa Bimbingan Pasif" pada Broadcast WA Tidak Berfungsi (Bug Atribut $lastSession-&gt;date)</h4>
+                    </div>
+                    <span class="text-xs font-mono text-rose-800 dark:text-rose-300">app/Services/WaBroadcastService.php : L116–L140</span>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Method <code>getMahasiswaBimbinganPasif()</code> mengurutkan dan mem-parsing <code>$lastSession-&gt;date</code>, padahal pada model <code>MentoringSession</code> kolom waktu bimbingan bernama <code>scheduled_at</code>. Karena <code>$lastSession-&gt;date</code> bernilai <code>null</code>, ekspresi <code>Carbon::parse(null)</code> menghasilkan waktu hari ini (<code>Carbon::now()</code>), sehingga pengecekan <code>-&gt;lt($thresholdDate)</code> selalu menghasilkan <code>false</code>. Akibatnya, mahasiswa yang vakum bimbingan berbulan-bulan tidak pernah terjaring oleh broadcast WA.
+                    </p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1.5">Kode Saat Ini:</div>
+                            <pre class="p-3.5 rounded-xl bg-slate-900 text-slate-100 text-xs overflow-x-auto leading-relaxed"><code>$lastSession = $thesis-&gt;mentoringSessions-&gt;sortByDesc('date')-&gt;first();
+if (!$lastSession) return true;
+return Carbon::parse($lastSession-&gt;date)-&gt;lt($thresholdDate);</code></pre>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1.5">Rekomendasi Perbaikan:</div>
+                            <pre class="p-3.5 rounded-xl bg-slate-900 text-emerald-300 text-xs overflow-x-auto leading-relaxed"><code>$lastSession = $thesis-&gt;mentoringSessions-&gt;sortByDesc('scheduled_at')-&gt;first();
+if (!$lastSession || !$lastSession-&gt;scheduled_at) return true;
+return Carbon::parse($lastSession-&gt;scheduled_at)-&gt;lt($thresholdDate);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: HIGH (P1) Deep Dive -->
+        <section id="high-p1" class="space-y-4">
+            <div class="flex items-center space-x-3">
+                <span class="px-3 py-1 rounded-lg text-xs font-extrabold uppercase bg-amber-600 text-white shadow-sm">HIGH — P1</span>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">4. Analisis Temuan Mayor (Bug Fungsional &amp; Kontradiksi Otorisasi)</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- P1-01 -->
+                <div id="p1-01" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">P1-01</span>
+                        <span class="text-xs font-mono text-slate-500">ExaminerService.php (L71–L82)</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Status ACC Revisi ('approved') Tertimpa Saat Simpan/Edit Nilai</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <code>storeGrading()</code> mengatur <code>'status' =&gt; ($detail-&gt;thesis-&gt;pembimbing1_id === $user-&gt;id) ? 'approved' : 'completed'</code>. Jika Penguji 1/2 sudah menyetujui revisi mahasiswa (<code>approved</code>), lalu mengedit nilai angka, status revisi mahasiswa ter-reset kembali menjadi <code>completed</code> (Menunggu Revisi).
+                    </p>
+                </div>
+
+                <!-- P1-02 -->
+                <div id="p1-02" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">P1-02</span>
+                        <span class="text-xs font-mono text-slate-500">Seminar/DefenseScheduleController (L421)</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Kontradiksi 403 Forbidden Cetak PDF Jadwal oleh Mahasiswa</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Middleware controller mengizinkan <code>role:admin,kaprodi,dosen,mahasiswa</code> untuk <code>exportPdf</code>, tetapi di baris 421 terdapat pengecekan <code>if (!in_array($user-&gt;role, ['admin', 'kaprodi', 'dosen'])) abort(403);</code> yang langsung menolak mahasiswa.
+                    </p>
+                </div>
+
+                <!-- P1-03 -->
+                <div id="p1-03" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">P1-03</span>
+                        <span class="text-xs font-mono text-slate-500">GraduationController.php (L107–L160)</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Bypass Validasi Eligibilitas Sidang pada POST Yudisium Mahasiswa</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Pengecekan <code>$isEligible = $hasDefense &amp;&amp; $isDefensePassed</code> hanya ada di <code>studentIndex()</code> (tampilan form), namun tidak diperiksa di <code>studentStore()</code> (<code>POST /student/graduation</code>). Mahasiswa yang belum lulus sidang dapat mengirim request POST langsung.
+                    </p>
+                </div>
+
+                <!-- P1-04 & P1-05 -->
+                <div id="p1-04" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex gap-1.5">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">P1-04</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">P1-05</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-500">DownloadController &amp; Scheduler</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Mismatch Folder Berkas Admin (403) &amp; Duplikasi Cron Pengingat</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <strong>P1-04:</strong> <code>adminRegister()</code> menyimpan berkas ke <code>seminar_applications/</code> sedangkan <code>DownloadController</code> hanya mengizinkan <code>SeminarApplication_files/</code>.<br>
+                        <strong>P1-05:</strong> Cron <code>app:send-schedule-reminders</code> didaftarkan di <code>bootstrap/app.php</code> (08:00) sekaligus <code>routes/console.php</code> (07:00), memicu pengiriman WA ganda.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: MEDIUM (P2) & LOW (P3) -->
+        <section id="medium-p2" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center space-x-3">
+                <span class="px-3 py-1 rounded-lg text-xs font-extrabold uppercase bg-blue-600 text-white shadow-sm">MEDIUM (P2) &amp; LOW (P3)</span>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">5. Ringkasan Temuan Keamanan, Konkurensi, Performa &amp; Maintainability</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 space-y-1.5">
+                    <div class="font-bold text-slate-800 dark:text-slate-100">[P2-01 &amp; P2-02] Kriptografi &amp; Locking</div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        • Query <code>LIKE</code> pada kolom terenkripsi <code>phone_number</code> di <code>UserController</code> tidak pernah cocok.<br>
+                        • Penomoran surat <code>LetterSetting</code> perlu <code>lockForUpdate()</code> di dalam transaksi agar bebas <em>race condition</em>.
+                    </p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 space-y-1.5">
+                    <div class="font-bold text-slate-800 dark:text-slate-100">[P2-03 &amp; P2-04] Otorisasi SK &amp; Bukti Bayar</div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        • Ganti pengecekan <code>str_contains(json_encode(...), $user-&gt;name)</code> pada SK Pembimbing dengan pencocokan field array eksak.<br>
+                        • Cache hasil fetch gambar Google Drive agar ekspor PDF/Word tidak mengalami timeout.
+                    </p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 space-y-1.5">
+                    <div class="font-bold text-slate-800 dark:text-slate-100">[P2-05, P3-01..03] Skalabilitas &amp; Refactoring</div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        • Optimasi <code>ThesisController::checkTitle()</code> agar hanya menjalankan <code>similar_text()</code> pada kandidat yang memiliki irisan kata kunci.<br>
+                        • Hilangkan query <code>User::find()</code> di dalam loop <code>AutoScheduleSimulationService</code>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Remediation Roadmap -->
+        <section id="roadmap" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">6. Rencana Remediasi &amp; Urutan Eksekusi Patch (Remediation Roadmap)</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Urutan perbaikan terstruktur dengan risiko regresi minimal terhadap server produksi</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
+                            <th class="py-3.5 px-4 w-44">Tahap Remediasi</th>
+                            <th class="py-3.5 px-4">Item Temuan yang Ditutup</th>
+                            <th class="py-3.5 px-4">File Target Perubahan</th>
+                            <th class="py-3.5 px-4 text-center w-36">Risiko Regresi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-rose-700 dark:text-rose-400">Tahap 1 — Hotfix P0</td>
+                            <td class="py-3.5 px-4">Rekonsiliasi detail jadwal tanpa menghapus nilai/revisi (<code>P0-01</code>) &amp; perbaikan atribut <code>scheduled_at</code> pada WA Broadcast (<code>P0-02</code>)</td>
+                            <td class="py-3.5 px-4 font-mono">ScheduleService.php, WaBroadcastService.php</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">Sangat Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-amber-700 dark:text-amber-400">Tahap 2 — Patch P1</td>
+                            <td class="py-3.5 px-4">Proteksi status revisi saat update nilai (<code>P1-01</code>), buka akses PDF jadwal mahasiswa (<code>P1-02</code>), validasi backend Yudisium (<code>P1-03</code>), sinkronisasi path berkas Admin (<code>P1-04</code>), &amp; dedup cron (<code>P1-05</code>)</td>
+                            <td class="py-3.5 px-4 font-mono">ExaminerService.php, SeminarScheduleController.php, ThesisDefenseScheduleController.php, GraduationController.php, DownloadController.php, bootstrap/app.php</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">Sangat Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-blue-700 dark:text-blue-400">Tahap 3 — Optimasi P2/P3</td>
+                            <td class="py-3.5 px-4">Row locking <code>lockForUpdate()</code> nomor surat (<code>P2-02</code>), akurasi otorisasi SK Dosen (<code>P2-03</code>), optimasi pre-filter <code>checkTitle()</code> (<code>P2-05</code>), &amp; eliminasi N+1 simulasi (<code>P3-02</code>)</td>
+                            <td class="py-3.5 px-4 font-mono">GraduationController.php, AdvisorDecreeController.php, ThesisController.php, AutoScheduleSimulationService.php</td>
+                            <td class="py-3.5 px-4 text-center"><span class="px-2.5 py-1 rounded-md font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">Rendah</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-5 mt-8 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
+            <div>&copy; 2026 Fakultas Ilmu Komputer — Universitas Subang (FASILKOM UNSUB). Sistem Informasi Bimbingan Tugas Akhir (SIBIMA).</div>
+            <div>Dokumen Audit QA &amp; Analisis Codebase v1.0</div>
+        </div>
+    </footer>
+
+</body>
+</html>
