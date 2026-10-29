@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Audit & Analisis Mendalam UI/UX — SIBIMA UNSUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --bg-code: #0f172a;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --brand: #ea580c;
+            --brand-hover: #c2410c;
+            --brand-soft: #fff7ed;
+            --brand-border: #fed7aa;
+            --emerald-bg: #ecfdf5;
+            --emerald-text: #065f46;
+            --emerald-border: #a7f3d0;
+            --amber-bg: #fffbeb;
+            --amber-text: #92400e;
+            --amber-border: #fde68a;
+            --rose-bg: #fff1f2;
+            --rose-text: #9f1239;
+            --rose-border: #fecdd3;
+            --blue-bg: #eff6ff;
+            --blue-text: #1e40af;
+            --blue-border: #bfdbfe;
+            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+        }
+        html.dark {
+            --bg-page: #090d16;
+            --bg-card: #0f172a;
+            --bg-subtle: #1e293b;
+            --bg-code: #020617;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --brand: #f97316;
+            --brand-hover: #ea580c;
+            --brand-soft: rgba(249, 115, 22, 0.12);
+            --brand-border: rgba(249, 115, 22, 0.3);
+            --emerald-bg: rgba(16, 185, 129, 0.12);
+            --emerald-text: #6ee7b7;
+            --emerald-border: rgba(16, 185, 129, 0.3);
+            --amber-bg: rgba(245, 158, 11, 0.12);
+            --amber-text: #fcd34d;
+            --amber-border: rgba(245, 158, 11, 0.3);
+            --rose-bg: rgba(244, 63, 94, 0.12);
+            --rose-text: #fda4af;
+            --rose-border: rgba(244, 63, 94, 0.3);
+            --blue-bg: rgba(59, 130, 246, 0.12);
+            --blue-text: #93c5fd;
+            --blue-border: rgba(59, 130, 246, 0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-variant-numeric: tabular-nums;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+        }
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.85rem 1.5rem;
+        }
+        html.dark .topbar {
+            background: rgba(15, 23, 42, 0.88);
+        }
+        .topbar-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--brand);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+        }
+        .brand-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            height: 38px;
+            padding: 0 0.9rem;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+        }
+        .btn:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+        .btn-primary {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand);
+        }
+        .btn-primary:hover {
+            background: var(--brand-hover);
+            color: #fff;
+        }
+        .layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media (max-width: 1024px) {
+            .layout { grid-template-columns: 1fr; }
+            .toc-sidebar { display: none; }
+        }
+        .toc-sidebar {
+            position: sticky;
+            top: 84px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .toc-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .toc-list a {
+            display: block;
+            padding: 0.45rem 0.65rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .toc-list a:hover {
+            background: var(--brand-soft);
+            color: var(--brand);
+        }
+        .hero-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c, #f59e0b, #10b981);
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid transparent;
+        }
+        .badge-brand { background: var(--brand-soft); color: var(--brand); border-color: var(--brand-border); }
+        .badge-emerald { background: var(--emerald-bg); color: var(--emerald-text); border-color: var(--emerald-border); }
+        .badge-amber { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
+        .badge-rose { background: var(--rose-bg); color: var(--rose-text); border-color: var(--rose-border); }
+        .badge-blue { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .kpi-box {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.1rem 1.25rem;
+        }
+        .kpi-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+        .kpi-val {
+            font-size: 1.65rem;
+            font-weight: 900;
+            margin-top: 0.2rem;
+            letter-spacing: -0.02em;
+        }
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.75rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+        }
+        th, td {
+            padding: 0.75rem 0.9rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        th {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: var(--bg-subtle);
+        }
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-subtle);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 0.35rem;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 999px;
+        }
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .tab-group {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 0.45rem 0.85rem;
+            border-radius: 10px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .tab-btn.active {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand);
+        }
+        .search-input {
+            height: 38px;
+            padding: 0 0.9rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            min-width: 240px;
+        }
+        .search-input:focus {
+            outline: 2px solid var(--brand);
+            outline-offset: 1px;
+        }
+        .finding-card {
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background: var(--bg-card);
+            transition: border-color 0.15s;
+        }
+        .finding-card:hover {
+            border-color: var(--brand);
+        }
+        .finding-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .finding-title {
+            font-size: 0.96rem;
+            font-weight: 800;
+        }
+        .finding-meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .finding-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+            margin-top: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            .finding-grid { grid-template-columns: 1fr; }
+        }
+        .box-problem {
+            background: var(--rose-bg);
+            border: 1px solid var(--rose-border);
+            border-radius: 10px;
+            padding: 0.85rem;
+            font-size: 0.83rem;
+        }
+        .box-solution {
+            background: var(--emerald-bg);
+            border: 1px solid var(--emerald-border);
+            border-radius: 10px;
+            padding: 0.85rem;
+            font-size: 0.83rem;
+        }
+        .box-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.35rem;
+            display: block;
+        }
+        .strength-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .strength-item {
+            border: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            border-radius: 14px;
+            padding: 1.1rem;
+        }
+        .strength-item h4 {
+            font-size: 0.88rem;
+            font-weight: 800;
+            margin-bottom: 0.35rem;
+            color: var(--brand);
+        }
+        .strength-item p {
+            font-size: 0.81rem;
+            color: var(--text-secondary);
+        }
+        @media print {
+            .topbar, .toc-sidebar, .filter-bar { display: none !important; }
+            .layout { grid-template-columns: 1fr; padding: 0; }
+            .section-card, .hero-card, .finding-card { break-inside: avoid; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand-row">
+                <div class="brand-icon">UX</div>
+                <div>
+                    <div class="brand-title">Laporan Audit & Analisis Mendalam UI/UX SIBIMA</div>
+                    <div class="brand-sub">Senior UI/UX Designer &bull; Clean Enterprise SaaS &bull; WCAG 2.1 AA &bull; 29 Okt 2026</div>
+                </div>
+            </div>
+            <div class="toolbar-actions">
+                <button class="btn" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle Dark atau Light Mode">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Mode Gelap/Terang</span>
+                </button>
+                <button class="btn" onclick="window.print()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    <span>Cetak / Simpan PDF</span>
+                </button>
+                <a class="btn btn-primary" href="laporan_audit_ui_ux_sibima.docx" download>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Unduh Dokumen Word (.docx)</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar Navigation -->
+        <aside class="toc-sidebar">
+            <div class="toc-title">Daftar Isi Audit</div>
+            <ul class="toc-list">
+                <li><a href="#ringkasan">1. Ringkasan Eksekutif</a></li>
+                <li><a href="#matriks-skor">2. Matriks 8 Dimensi UI/UX</a></li>
+                <li><a href="#kekuatan">3. Kekuatan Desain Saat Ini</a></li>
+                <li><a href="#temuan-audit">4. 10 Temuan Mendalam (UX-01..10)</a></li>
+                <li><a href="#heuristik">5. 10 Heuristik Jakob Nielsen</a></li>
+                <li><a href="#per-role">6. Analisis UX Per Peran</a></li>
+                <li><a href="#roadmap">7. Peta Jalan Implementasi</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Section 1: Hero & Executive Summary -->
+            <section id="ringkasan" class="hero-card">
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                    <span class="badge badge-brand">Dokumen: SIBIMA-UIUX-AUDIT-2026-V1</span>
+                    <span class="badge badge-emerald">Standar: Clean Enterprise SaaS &amp; WCAG 2.1 AA</span>
+                    <span class="badge badge-blue">Skor Saat Ini: 86.5 / 100 (Grade A-)</span>
+                </div>
+                <h1 style="font-size:1.6rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:0.65rem;">
+                    Laporan Audit &amp; Analisis Mendalam UI/UX Sistem SIBIMA
+                </h1>
+                <p style="color:var(--text-secondary); font-size:0.92rem; max-width:920px;">
+                    Secara keseluruhan, antarmuka <strong>SIBIMA (Sistem Informasi Bimbingan Mahasiswa)</strong> telah memiliki fondasi visual yang sangat kuat dan modern dengan mengadopsi filosofi <strong>Clean Enterprise SaaS</strong> (setara dengan antarmuka produktivitas modern seperti <em>Linear</em>, <em>Vercel</em>, dan <em>TailwindUI</em>). Penggunaan tipografi <strong>Inter</strong> dengan angka tabular (<code>tabular-nums</code>), palet semantik berbasis <strong>Orange-600 &amp; Slate</strong>, serta pola <strong>2-Tier Table Toolbar</strong> memberikan kejelasan hierarki data yang sangat baik. Dokumen ini membedah <strong>10 temuan spesifik (UX-01 s.d. UX-10)</strong> untuk meningkatkan kematangan UI/UX dari <strong>86.5 (Grade A-)</strong> menuju <strong>96+ (Grade A+)</strong> tanpa risiko merusak logika backend.
+                </p>
+
+                <div class="kpi-grid">
+                    <div class="kpi-box">
+                        <div class="kpi-label">Skor Kematangan UI/UX</div>
+                        <div class="kpi-val" style="color:var(--brand);">86.5 <span style="font-size:0.95rem; font-weight:700; color:var(--text-muted);">/ 100</span></div>
+                        <div class="kpi-sub">Grade A- (Potensi 96.5 Grade A+)</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-label">Temuan Prioritas Tinggi</div>
+                        <div class="kpi-val" style="color:var(--rose-text);">3 <span style="font-size:0.95rem; font-weight:700;">HIGH</span></div>
+                        <div class="kpi-sub">UX-01, UX-02, UX-03 (Token, Fokus, Alert)</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-label">Temuan Menengah &amp; Rendah</div>
+                        <div class="kpi-val" style="color:var(--amber-text);">5 <span style="font-size:0.95rem;">MED</span> / 2 <span style="font-size:0.95rem;">LOW</span></div>
+                        <div class="kpi-sub">UX-04 s.d. UX-10 (SVG, Font 9px, ARIA)</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-label">Risiko Regresi Backend</div>
+                        <div class="kpi-val" style="color:var(--emerald-text);">0% <span style="font-size:0.95rem;">Aman</span></div>
+                        <div class="kpi-sub">100% hanya menyentuh layer Blade &amp; CSS</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: 8 Core Dimensions -->
+            <section id="matriks-skor" class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">2. Matriks Skor Kematangan UI/UX (8 Core Dimensions)</h2>
+                    <span class="badge badge-brand">Evaluasi Kuantitatif</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:45px;">No</th>
+                                <th style="width:260px;">Dimensi Evaluasi UI/UX</th>
+                                <th style="width:140px;">Skor &amp; Visual</th>
+                                <th style="width:80px;">Bobot</th>
+                                <th>Catatan Utama Senior UI/UX Designer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Visual Hierarchy &amp; Layout Architecture</strong></td>
+                                <td>
+                                    <strong>92 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:92%; background:#10b981;"></div></div>
+                                </td>
+                                <td>15%</td>
+                                <td>Pola <em>2-Tier Table Toolbar</em>, tinggi kontrol seragam <code>h-10</code> (40px), dan grid kartu KPI dashboard sangat rapi.</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>Color Palette &amp; Dark Mode Parity</strong></td>
+                                <td>
+                                    <strong>90 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:90%; background:#10b981;"></div></div>
+                                </td>
+                                <td>15%</td>
+                                <td>Palet semantik (<code>orange</code>, <code>slate</code>, <code>emerald</code>, <code>amber</code>, <code>blue</code>, <code>rose</code>) dan WebKit autofill dark mode sudah matang.</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>Typography &amp; Scannability</strong></td>
+                                <td>
+                                    <strong>82 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:82%; background:#f59e0b;"></div></div>
+                                </td>
+                                <td>10%</td>
+                                <td>Font <code>Inter</code> + <code>tabular-nums</code> sangat baik, namun terlalu banyak teks mikro <code>9px</code>–<code>10px</code> dengan <code>tracking-[0.4em]</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><strong>Navigation &amp; Information Architecture</strong></td>
+                                <td>
+                                    <strong>88 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:88%; background:#10b981;"></div></div>
+                                </td>
+                                <td>15%</td>
+                                <td>Sidebar <em>collapsible</em> (280px &harr; 80px) dengan <em>hover-expand</em> dan <em>breadcrumb</em> kontekstual sangat intuitif.</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><strong>Interaction Design &amp; Feedback Loops</strong></td>
+                                <td>
+                                    <strong>83 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:83%; background:#f59e0b;"></div></div>
+                                </td>
+                                <td>15%</td>
+                                <td>Pusat notifikasi interaktif (konfirmasi hadir 1-klik) sangat inovatif, namun masih ada <code>window.alert()</code> di sidebar.</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><strong>Design System &amp; Component Consistency</strong></td>
+                                <td>
+                                    <strong>81 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:81%; background:#f59e0b;"></div></div>
+                                </td>
+                                <td>10%</td>
+                                <td>Komponen dasar warisan Laravel Breeze (<code>primary-button</code>, <code>modal</code>) masih memakai warna <code>gray</code>/<code>indigo</code> dan ada emoji.</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td><strong>Accessibility (WCAG 2.1 AA &amp; Keyboard)</strong></td>
+                                <td>
+                                    <strong>78 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:78%; background:#f97316;"></div></div>
+                                </td>
+                                <td>10%</td>
+                                <td><code>outline: none !important</code> menghapus indikator fokus keyboard pada <code>&lt;button&gt;</code>, serta tombol ikon belum memiliki <code>aria-label</code>.</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td><strong>Responsive &amp; Mobile Ergonomics</strong></td>
+                                <td>
+                                    <strong>94 / 100</strong>
+                                    <div class="progress-track"><div class="progress-bar" style="width:94%; background:#10b981;"></div></div>
+                                </td>
+                                <td>10%</td>
+                                <td>Tabel responsif, <em>off-canvas drawer</em> mobile dengan <code>backdrop-blur</code>, dan <em>touch target</em> &ge; 40px bekerja sangat mulus.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 3: Strengths -->
+            <section id="kekuatan" class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">3. Apresiasi Kekuatan Desain Saat Ini (Best Practices yang Sudah Berjalan)</h2>
+                    <span class="badge badge-emerald">Wajib Dipertahankan</span>
+                </div>
+                <div class="strength-grid">
+                    <div class="strength-item">
+                        <h4>1. Collapsible Sidebar + Peek-on-Hover</h4>
+                        <p>Transisi <code>280px &harr; 80px</code> di <code>layouts/app.blade.php</code> dilengkapi persistensi <code>localStorage</code> dan fitur <em>hover-expand</em> tanpa menggeser konten utama.</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>2. Actionable Notification Center</h4>
+                        <p>Dropdown lonceng notifikasi memungkinkan mahasiswa mengklik <strong>"Akan Hadir"</strong> atau <strong>"Izin"</strong> langsung dari dalam kartu notifikasi beserta toggle efek suara.</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>3. Pola 2-Tier Table Toolbar</h4>
+                        <p>Halaman jadwal seminar &amp; sidang memisahkan aksi utama (Simulasi, Import, Tambah) di Tier 1 dan filter/pencarian <code>h-10</code> serta ekspor PDF/Word di Tier 2.</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>4. Filter "Hanya Jadwal Saya" untuk Dosen</h4>
+                        <p>Tombol pill mandiri yang dapat dikombinasikan dengan tab <em>Mendatang</em>, <em>Hari Ini</em>, dan <em>Riwayat</em> beserta penanda peran otomatis (Ketua Sidang / Penguji).</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>5. WebKit Autofill Dark Mode Override</h4>
+                        <p>Masalah klasik kotak input Chrome yang berubah kuning/putih saat autofill di Dark Mode sudah diatasi tuntas menggunakan <code>inset box-shadow #0f172a</code>.</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>6. Tipografi Inter + Angka Tabular</h4>
+                        <p>Penerapan <code>font-variant-numeric: tabular-nums</code> menjaga kesejajaran vertikal NPM, NIP, tanggal, dan nilai ujian di seluruh tabel data.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: 10 Detailed Findings -->
+            <section id="temuan-audit" class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">4. Temuan Audit UI/UX Mendalam &amp; Solusi Perbaikan (UX-01 s.d. UX-10)</h2>
+                    <span class="badge badge-rose">10 Temuan Terverifikasi</span>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="tab-group">
+                        <button class="tab-btn active" onclick="filterFindings('ALL', this)">Semua (10)</button>
+                        <button class="tab-btn" onclick="filterFindings('HIGH', this)">Prioritas Tinggi / HIGH (3)</button>
+                        <button class="tab-btn" onclick="filterFindings('MEDIUM', this)">Menengah / MEDIUM (5)</button>
+                        <button class="tab-btn" onclick="filterFindings('LOW', this)">Penyempurnaan / LOW (2)</button>
+                    </div>
+                    <input type="text" id="searchFinding" class="search-input" placeholder="Cari kode UX, file Blade, atau kata kunci..." oninput="searchFindings()">
+                </div>
+
+                <div id="findingsContainer">
+                    <!-- UX-01 -->
+                    <article class="finding-card" data-severity="HIGH">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-01] Komponen Blade Dasar Warisan Laravel Breeze Belum Selaras dengan Design Token SIBIMA</div>
+                            <span class="badge badge-rose">HIGH &bull; Design System</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/components/primary-button.blade.php, secondary-button.blade.php, modal.blade.php, layouts/navigation.blade.php</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Komponen <code>&lt;x-primary-button&gt;</code> masih memakai <code>bg-gray-800 dark:bg-gray-200 focus:ring-indigo-500 rounded-md</code>, serta <code>&lt;x-modal&gt;</code> memakai <code>bg-gray-800 rounded-lg</code>. Hal ini bertabrakan dengan identitas SIBIMA (<code>bg-orange-600 rounded-xl</code> &amp; <code>slate-900 rounded-2xl</code>).
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Perbarui <code>primary-button.blade.php</code> ke token <code>bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-10 px-4 text-xs font-bold shadow-sm</code>, dan <code>secondary-button</code> / <code>modal</code> ke palet <code>slate</code> dengan sudut <code>rounded-2xl</code>.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-02 -->
+                    <article class="finding-card" data-severity="HIGH">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-02] Penghapusan Focus Outline Global (outline: none !important) Tanpa Pengganti :focus-visible pada Button</div>
+                            <span class="badge badge-rose">HIGH &bull; Accessibility WCAG 2.4.7</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/css/app.css (Baris 44-63) &amp; resources/views/layouts/app.blade.php (Baris 43-61)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Aturan <code>input, textarea, select, button { outline: none !important; }</code> menghapus fokus bawaan browser, tetapi pengganti <code>box-shadow</code> oranye hanya diberikan pada <code>input/textarea/select</code>. Pengguna keyboard (tombol <code>Tab</code>) tidak dapat melihat tombol mana yang sedang fokus.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Tambahkan aturan global <code>button:focus-visible, a:focus-visible { outline: 2px solid #f97316 !important; outline-offset: 2px !important; }</code> agar cincin fokus muncul khusus saat navigasi keyboard tanpa mengganggu klik mouse.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-03 -->
+                    <article class="finding-card" data-severity="HIGH">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-03] Penggunaan Native Browser alert() dan Gaya Terkunci pada Menu Tahapan Mahasiswa yang Sudah Selesai</div>
+                            <span class="badge badge-rose">HIGH &bull; Interaction &amp; Flow</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/layouts/app.blade.php (Baris 381-428)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Tahapan mahasiswa yang sudah selesai (Pengajuan Judul, Sempro, Sidang) menggunakan <code>onclick="alert('Anda sudah melakukan...'); return false;"</code> dengan gaya redup <code>text-slate-600 opacity-50 cursor-not-allowed</code> sehingga tampak seperti fitur rusak/error.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Tampilkan indikator ceklis hijau semantik (<code>bg-emerald-500/20 text-emerald-400</code> dengan ikon <code>&check;</code>) untuk memberikan <em>sense of progress</em>, dan arahkan klik ke halaman detail/riwayat atau tampilkan <code>&lt;x-toast&gt;</code> non-blocking.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-04 -->
+                    <article class="finding-card" data-severity="MEDIUM">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-04] Penggunaan Emoji Unicode Sebagai Ikon Struktural Antarmuka</div>
+                            <span class="badge badge-amber">MEDIUM &bull; Visual Consistency</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/dashboard.blade.php (Baris 94-247) &amp; resources/views/layouts/app.blade.php (Baris 1054-1056)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Penggunaan emoji <code>🎂</code> di dalam kotak ikon <code>w-10 h-10 rounded-xl bg-rose-500</code> serta <code>📅</code> dan <code>📍</code> pada kartu notifikasi jadwal melanggar aturan SIBIMA Design System Pasal 1 (emoji tampil beda di tiap OS).
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Ganti seluruh emoji pada komponen struktural dengan ikon SVG monokromatik Heroicons/Lucide (ikon <code>calendar</code>, <code>map-pin</code>, dan <code>cake</code> / <code>sparkles</code>).
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-05 -->
+                    <article class="finding-card" data-severity="MEDIUM">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-05] Penggunaan Ukuran Font Mikro (text-[9px] dan text-[10px]) Berlebihan dengan Letter-Spacing Ekstrem</div>
+                            <span class="badge badge-amber">MEDIUM &bull; Typography &amp; Legibility</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/components/status-badge.blade.php (Baris 24), layouts/app.blade.php (Baris 306, 319), dashboard.blade.php</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Ukuran default <code>&lt;x-status-badge&gt;</code> adalah <code>text-[9px]</code> (9 piksel) dengan <code>font-black uppercase</code>, serta label grup sidebar memakai <code>text-[10px] tracking-[0.4em]</code>. Pada layar Windows 1080p standar, teks 9px mengalami <em>sub-pixel blurring</em> dan sulit dibaca oleh dosen senior.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Naikkan batas bawah ukuran teks badge pada <code>status-badge.blade.php</code> dari <code>text-[9px]</code> menjadi <code>text-[11px]</code> (11px), dan perhalus <code>tracking-[0.4em]</code> menjadi <code>tracking-[0.18em]</code>.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-06 -->
+                    <article class="finding-card" data-severity="MEDIUM">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-06] Tombol Berbasis Ikon (Icon-Only Buttons) Belum Dilengkapi Atribut aria-label dan aria-expanded</div>
+                            <span class="badge badge-amber">MEDIUM &bull; Screen Reader ARIA</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/layouts/app.blade.php (Baris 310, 894, 925, 931, 1162), components/toast.blade.php (Baris 65), auth/login.blade.php (Baris 59)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Tombol hamburger mobile, tutup sidebar, toggle dark mode, lonceng notifikasi, logout, dan tutup toast hanya berisi elemen <code>&lt;svg&gt;</code> tanpa <code>aria-label</code> sehingga terbaca sebagai <em>"unlabelled button"</em> oleh pembaca layar.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Tambahkan atribut <code>aria-label</code> deskriptif dalam Bahasa Indonesia pada seluruh tombol ikon, <code>:aria-expanded</code> pada dropdown, serta <code>aria-hidden="true"</code> pada SVG dekoratif.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-07 -->
+                    <article class="finding-card" data-severity="MEDIUM">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-07] Animasi Berkelanjutan (animate-pulse pada Alert &amp; Confetti) Belum Menghormati prefers-reduced-motion</div>
+                            <span class="badge badge-amber">MEDIUM &bull; Motion Ergonomics</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/seminar_schedules/index.blade.php (Baris 10), dashboard.blade.php (Baris 125-235), resources/css/app.css</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Alert <code>session('success')</code> di halaman jadwal menggunakan class <code>animate-pulse</code> pada seluruh kotak hijau sehingga berkedip tanpa henti dan mendistraksi fokus baca pengguna.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Hapus <code>animate-pulse</code> dari kontainer utama banner alert sukses, dan tambahkan media query <code>@media (prefers-reduced-motion: reduce)</code> di <code>app.css</code> serta pengecekan pada kanvas confetti.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-08 -->
+                    <article class="finding-card" data-severity="MEDIUM">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-08] Artificial Skeleton Delay (150ms) dan Kepadatan View pada Halaman Daftar Skripsi/Bimbingan</div>
+                            <span class="badge badge-amber">MEDIUM &bull; Perceived Performance</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/theses/index.blade.php (Baris 8-16; total 2.507 baris)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                State <code>pageLoading: true</code> yang ditahan dengan <code>setTimeout(() =&gt; pageLoading = false, 150)</code> membuat tabel yang sebenarnya sudah dirender oleh server berkedip menampilkan skeleton setiap kali halaman dibuka.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Inisialisasi <code>pageLoading: false</code> saat halaman selesai dimuat, dan hanya aktifkan <code>pageLoading = true</code> ketika pengguna memilih/mengirimkan filter baru (saat menunggu respons jaringan).
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-09 -->
+                    <article class="finding-card" data-severity="LOW">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-09] Inkonsistensi Komponen Empty State (&lt;x-empty-state&gt; vs Markup Manual)</div>
+                            <span class="badge badge-blue">LOW &bull; Component Reuse</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/views/components/empty-state.blade.php (Baris 1-40) &amp; seminar_schedules/index.blade.php (Baris 414-432)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Komponen <code>&lt;x-empty-state&gt;</code> menggunakan deskripsi <code>uppercase tracking-widest font-black</code> dan belum mendukung slot tombol aksi (seperti tombol <em>Reset Filter Pencarian</em>).
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Tambahkan dukungan <code>$slot</code> pada <code>&lt;x-empty-state&gt;</code> untuk tombol Call-to-Action dan ubah deskripsi ke kalimat normal (<code>text-xs font-medium text-slate-500</code>).
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- UX-10 -->
+                    <article class="finding-card" data-severity="LOW">
+                        <div class="finding-top">
+                            <div class="finding-title">[UX-10] Duplikasi Aturan CSS Global Antara resources/css/app.css dan Inline &lt;style&gt; pada Layout</div>
+                            <span class="badge badge-blue">LOW &bull; CSS Architecture</span>
+                        </div>
+                        <div class="finding-meta">Lokasi: resources/css/app.css (Baris 24-133) &amp; resources/views/layouts/app.blade.php (Baris 34-93)</div>
+                        <div class="finding-grid">
+                            <div class="box-problem">
+                                <span class="box-label">Masalah &amp; Dampak UX Saat Ini</span>
+                                Aturan CSS untuk focus ring oranye dan WebKit autofill ditulis ganda di <code>app.css</code> dan di dalam tag <code>&lt;style&gt;</code> pada <code>layouts/app.blade.php</code>.
+                            </div>
+                            <div class="box-solution">
+                                <span class="box-label">Rekomendasi Perbaikan Senior UI/UX</span>
+                                Konsolidasikan seluruh aturan global ke <code>resources/css/app.css</code> sebagai <em>Single Source of Truth</em> dan sisakan hanya aturan <code>[x-cloak]</code> di inline head.
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Section 5: 10 Usability Heuristics -->
+            <section id="heuristik" class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">5. Evaluasi 10 Heuristik Usability (Jakob Nielsen)</h2>
+                    <span class="badge badge-emerald">Rata-rata Heuristik: 91.3%</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">Kode</th>
+                                <th style="width:240px;">Prinsip Heuristik Nielsen</th>
+                                <th style="width:150px;">Status di SIBIMA</th>
+                                <th>Implementasi Saat Ini &amp; Catatan Analisis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>H1</strong></td>
+                                <td><strong>Visibility of System Status</strong></td>
+                                <td><span class="badge badge-emerald">Sangat Baik (90%)</span></td>
+                                <td>Indikator tahapan mahasiswa di sidebar, badge jumlah antrean dengan dot animasi, dan status online bekerja sangat jelas.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H2</strong></td>
+                                <td><strong>Match Between System &amp; Real World</strong></td>
+                                <td><span class="badge badge-emerald">Istimewa (96%)</span></td>
+                                <td>Terminologi sistem sangat sesuai dengan dunia akademik Fasilkom UNSUB (Gelombang Sempro, SK Pembimbing, Berita Acara, Kaprodi).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H3</strong></td>
+                                <td><strong>User Control and Freedom</strong></td>
+                                <td><span class="badge badge-emerald">Sangat Baik (90%)</span></td>
+                                <td>Tersedia fitur Reset Filter, tombol Batal di setiap modal, konfirmasi Rollback pengajuan skripsi, dan toggle Buka/Tutup akordion jadwal.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H4</strong></td>
+                                <td><strong>Consistency and Standards</strong></td>
+                                <td><span class="badge badge-amber">Baik (82%)</span></td>
+                                <td>Halaman utama sudah konsisten menggunakan palet Orange/Slate, namun komponen dasar <code>&lt;x-primary-button&gt;</code> perlu diselaraskan (UX-01).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H5</strong></td>
+                                <td><strong>Error Prevention</strong></td>
+                                <td><span class="badge badge-emerald">Sangat Baik (92%)</span></td>
+                                <td>Pencegahan bentrok jadwal otomatis, modal konfirmasi sebelum aksi destruktif, dan peringatan baris Excel yang dilewati (<code>skippedDetails</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H6</strong></td>
+                                <td><strong>Recognition Rather Than Recall</strong></td>
+                                <td><span class="badge badge-emerald">Istimewa (95%)</span></td>
+                                <td>Setiap kartu jadwal langsung menampilkan badge <strong>"Peran Anda: Ketua Sidang &amp; Penguji"</strong> serta filter 1-klik <strong>"Hanya Jadwal Saya"</strong>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H7</strong></td>
+                                <td><strong>Flexibility and Efficiency of Use</strong></td>
+                                <td><span class="badge badge-emerald">Istimewa (94%)</span></td>
+                                <td>Simulasi Jadwal Otomatis, Import Excel, Tab Filter Cepat Dosen, serta konfirmasi kehadiran 1-klik dari notifikasi sangat menghemat waktu.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H8</strong></td>
+                                <td><strong>Aesthetic and Minimalist Design</strong></td>
+                                <td><span class="badge badge-emerald">Sangat Baik (88%)</span></td>
+                                <td>Desain bersih, bebas dari gradien berlebihan (no AI slop), menggunakan subtle border <code>slate-200/800</code> dan bayangan lembut.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H9</strong></td>
+                                <td><strong>Recognize, Diagnose &amp; Recover Errors</strong></td>
+                                <td><span class="badge badge-emerald">Sangat Baik (91%)</span></td>
+                                <td>Saat import Excel menemukan baris tidak valid, sistem menampilkan rincian nomor baris beserta alasan spesifiknya (<code>Baris X: ...</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>H10</strong></td>
+                                <td><strong>Help and Documentation</strong></td>
+                                <td><span class="badge badge-emerald">Istimewa (95%)</span></td>
+                                <td>Tautan <strong>Pusat Bantuan &amp; Tanya Jawab (FAQ)</strong> tersedia langsung di halaman Login dan di dalam aplikasi untuk memandu pengguna baru.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 6: Role-based UX Journey -->
+            <section id="per-role" class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">6. Analisis Pengalaman Pengguna Berdasarkan Peran (Role-Based UX Journey)</h2>
+                    <span class="badge badge-blue">4 Peran Pengguna</span>
+                </div>
+                <div class="strength-grid">
+                    <div class="strength-item">
+                        <h4>Peran Mahasiswa</h4>
+                        <p><strong>Kekuatan:</strong> Stepper tahapan akademik di sidebar &amp; konfirmasi hadir 1-klik di lonceng notifikasi.<br><strong>Solusi Peningkatan:</strong> Ganti <code>alert()</code> pada tahapan selesai (UX-03) dengan lencana ceklis hijau <code>&check; Selesai</code>.</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>Peran Dosen (Pembimbing &amp; Penguji)</h4>
+                        <p><strong>Kekuatan:</strong> Filter <em>"Hanya Jadwal Saya"</em> dan penanda peran otomatis di setiap sesi.<br><strong>Solusi Peningkatan:</strong> Naikkan font badge <code>9px</code> ke <code>11px</code> (UX-05) dan hilangkan kedipan skeleton 150ms (UX-08).</p>
+                    </div>
+                    <div class="strength-item">
+                        <h4>Peran Kaprodi &amp; Admin Akademik</h4>
+                        <p><strong>Kekuatan:</strong> <em>2-Tier Header Toolbar</em> dengan tinggi kontrol seragam <code>40px</code> dan counter antrean real-time.<br><strong>Solusi Peningkatan:</strong> Aktifkan cincin fokus <code>:focus-visible</code> keyboard pada seluruh tombol aksi tabel (UX-02).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Roadmap -->
+            <section id="roadmap" class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">7. Peta Jalan Implementasi Perbaikan (Prioritized Action Plan)</h2>
+                    <span class="badge badge-emerald">100% Aman untuk Backend</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:180px;">Fase Implementasi</th>
+                                <th style="width:140px;">Kode Temuan</th>
+                                <th>Fokus Perbaikan UI/UX</th>
+                                <th style="width:150px;">Risiko Regresi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Fase 1: Quick Wins &amp; High Impact</strong></td>
+                                <td><span class="badge badge-rose">UX-01, UX-02, UX-03</span></td>
+                                <td>Selaraskan <code>&lt;x-primary-button&gt;</code>, <code>&lt;x-secondary-button&gt;</code>, <code>&lt;x-modal&gt;</code> ke token Orange/Slate; tambahkan <code>:focus-visible</code> ring oranye pada <code>&lt;button&gt;</code> &amp; <code>&lt;a&gt;</code>; ganti <code>window.alert()</code> di stepper sidebar mahasiswa dengan lencana ceklis hijau &amp; toast.</td>
+                                <td><span class="badge badge-emerald">0% Risiko Backend</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fase 2: Visual Polish &amp; Legibility</strong></td>
+                                <td><span class="badge badge-amber">UX-04, UX-05, UX-07</span></td>
+                                <td>Ganti seluruh emoji (<code>🎂</code>, <code>📅</code>, <code>📍</code>, <code>🎓</code>) dengan ikon SVG Heroicons; naikkan ukuran teks mikro <code>9px</code> pada <code>&lt;x-status-badge&gt;</code> menjadi minimal <code>11px</code>; hapus <code>animate-pulse</code> permanen pada alert sukses &amp; dukung <code>prefers-reduced-motion</code>.</td>
+                                <td><span class="badge badge-emerald">0% Risiko Backend</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fase 3: Accessibility &amp; DX Cleanup</strong></td>
+                                <td><span class="badge badge-blue">UX-06, UX-08, UX-09, UX-10</span></td>
+                                <td>Tambahkan <code>aria-label</code> pada seluruh tombol icon-only; ubah pemicu skeleton <code>pageLoading</code> di <code>theses/index.blade.php</code> agar aktif saat submit filter; perkaya <code>&lt;x-empty-state&gt;</code> dengan slot aksi &amp; bersihkan duplikasi CSS inline.</td>
+                                <td><span class="badge badge-emerald">0% Risiko Backend</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+        let currentSeverity = 'ALL';
+        function filterFindings(sev, btn) {
+            currentSeverity = sev;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilter();
+        }
+        function searchFindings() {
+            applyFilter();
+        }
+        function applyFilter() {
+            const q = (document.getElementById('searchFinding').value || '').toLowerCase();
+            document.querySelectorAll('.finding-card').forEach(card => {
+                const sev = card.getAttribute('data-severity');
+                const text = card.innerText.toLowerCase();
+                const matchSev = (currentSeverity === 'ALL' || sev === currentSeverity);
+                const matchText = (!q || text.includes(q));
+                card.style.display = (matchSev && matchText) ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
