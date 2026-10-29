@@ -6,14 +6,14 @@
     </x-slot>
 
     <div class="w-full space-y-6" x-data="{ 
-        pageLoading: true,
+        pageLoading: false,
         rollbackModalOpen: false,
         rollbackData: { id: null, student: '', p1: '', p2: '' },
         openRollbackModal(id, student, p1, p2) {
             this.rollbackData = { id: id, student: student, p1: p1, p2: p2 };
             this.rollbackModalOpen = true;
         }
-    }" x-init="$nextTick(() => { setTimeout(() => pageLoading = false, 150) })">
+    }">
     @php
         $filter = $filter ?? 'all';
         $stats = $stats ?? null;

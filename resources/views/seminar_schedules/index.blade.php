@@ -7,8 +7,8 @@
 
     <div class="w-full space-y-6" x-data="{ allOpen: true, openImportModal: false }">
         @if(session('success'))
-            <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center border border-emerald-100 dark:border-emerald-800/50 shadow-sm animate-pulse">
-                <svg class="w-5 h-5 mr-3 text-emerald-600 dark:text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center border border-emerald-100 dark:border-emerald-800/50 shadow-sm">
+                <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-600 dark:text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                 </svg>
                 {{ session('success') }}

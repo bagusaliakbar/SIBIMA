@@ -34,63 +34,6 @@
         <style>
             [x-cloak] { display: none !important; }
             body { font-family: 'Inter', sans-serif; }
-
-            /* Force completely remove native browser focus ring / blue / purple outline */
-            *, *::before, *::after {
-                --tw-ring-color: rgba(249, 115, 22, 0.25) !important;
-            }
-            
-            input, textarea, select, button {
-                outline: none !important;
-                -webkit-tap-highlight-color: transparent !important;
-            }
-
-            input:focus, 
-            input:focus-visible, 
-            input:active,
-            textarea:focus, 
-            textarea:focus-visible, 
-            textarea:active,
-            select:focus, 
-            select:focus-visible, 
-            select:active {
-                outline: none !important;
-                outline-width: 0px !important;
-                outline-style: none !important;
-                outline-color: transparent !important;
-                border-color: #f97316 !important;
-                box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
-            }
-
-            /* Override Browser Autofill Blue/Purple Background & Border */
-            input:-webkit-autofill,
-            input:-webkit-autofill:hover, 
-            input:-webkit-autofill:focus,
-            input:-webkit-autofill:active,
-            textarea:-webkit-autofill,
-            textarea:-webkit-autofill:hover,
-            textarea:-webkit-autofill:focus,
-            textarea:-webkit-autofill:active,
-            select:-webkit-autofill,
-            select:-webkit-autofill:hover,
-            select:-webkit-autofill:focus,
-            select:-webkit-autofill:active {
-                -webkit-text-fill-color: inherit !important;
-                -webkit-box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
-                box-shadow: 0 0 0px 1000px #ffffff inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
-                border-color: #f97316 !important;
-                outline: none !important;
-                transition: background-color 5000s ease-in-out 0s !important;
-            }
-
-            .dark input:-webkit-autofill,
-            .dark input:-webkit-autofill:hover, 
-            .dark input:-webkit-autofill:focus,
-            .dark input:-webkit-autofill:active {
-                -webkit-text-fill-color: #f8fafc !important;
-                -webkit-box-shadow: 0 0 0px 1000px #0f172a inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
-                box-shadow: 0 0 0px 1000px #0f172a inset, 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
-            }
             .sidebar-link { transition: all 0.2s ease-in-out; }
             .sidebar-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
 
@@ -303,12 +246,12 @@
                         <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain shrink-0 transition-transform duration-300" :class="{ 'hover:scale-105': (sidebarCollapsed && !sidebarHovered) }">
                         <div x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity.duration.200ms class="sidebar-header-title whitespace-nowrap overflow-hidden">
                             <h1 class="text-xl font-black text-white tracking-tighter">SIBIMA</h1>
-                            <span class="text-[9px] uppercase tracking-wider text-orange-400 font-bold block -mt-1">Fasilkom UNSUB</span>
+                            <span class="text-[11px] uppercase tracking-wider text-orange-400 font-bold block -mt-1">Fasilkom UNSUB</span>
                         </div>
                     </div>
                     <!-- Close Button for Mobile -->
-                    <button @click="sidebarOpen = false" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <button type="button" @click="sidebarOpen = false" aria-label="Tutup menu navigasi" title="Tutup menu navigasi" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 
@@ -316,7 +259,7 @@
                      :class="(sidebarCollapsed && !sidebarHovered) ? 'px-2 py-4' : 'px-4 py-6'">
                     <!-- General Menu -->
                     <div class="sidebar-section-header px-4 mb-4">
-                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Menu Utama</p>
+                        <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Menu Utama</p>
                         <div class="sidebar-section-divider hidden w-6 h-0.5 bg-white/10 rounded-full mx-auto my-2" title="Menu Utama"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
@@ -374,17 +317,21 @@
                         @endphp
 
                         <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                            <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Tahapan Skripsi</p>
+                            <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Tahapan Skripsi</p>
                             <div class="sidebar-section-divider hidden w-6 h-0.5 bg-white/10 rounded-full mx-auto my-2" title="Tahapan Skripsi"></div>
                         </div>
                         <nav class="space-y-1 mb-10">
                             @if($thesis)
-                            <a href="#" onclick="alert('Anda sudah melakukan pengajuan judul skripsi.'); return false;" 
+                            <button type="button"
+                               @click="$dispatch('notify', { title: 'Tahap 1 Selesai', message: 'Anda sudah mengajukan judul skripsi. Silakan pantau progres bimbingan pada Dashboard atau Logbook.', type: 'success' })"
                                data-tooltip="1. Pengajuan Judul (Selesai)" title="1. Pengajuan Judul (Selesai)"
-                               class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
-                                <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <span class="sidebar-text">1. Pengajuan Judul</span>
-                            </a>
+                               class="w-full group flex items-center justify-between px-4 py-3 rounded-xl text-sm text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border border-emerald-500/20 font-semibold transition-all cursor-pointer text-left">
+                                <span class="flex items-center min-w-0">
+                                    <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="sidebar-text truncate">1. Pengajuan Judul</span>
+                                </span>
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 leading-none shrink-0">Selesai</span>
+                            </button>
                             @else
                             <a href="{{ route('theses.create') }}" 
                                data-tooltip="1. Pengajuan Judul" title="1. Pengajuan Judul"
@@ -398,11 +345,14 @@
                                 $hasSeminar = $thesis ? cache()->remember('u_' . Auth::id() . '_has_sem', 30, fn() => \App\Models\SeminarApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\SeminarScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
                             @endphp
                             @if($hasSeminar)
-                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar seminar proposal/hasil.'); return false;" 
-                               data-tooltip="2. Pendaftaran Seminar (Selesai)" title="2. Pendaftaran Seminar (Selesai)"
-                               class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
-                                <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <span class="sidebar-text">2. Pendaftaran Seminar</span>
+                            <a href="{{ route('seminar-applications.index') }}"
+                               data-tooltip="2. Pendaftaran Seminar (Selesai)" title="2. Pendaftaran Seminar (Selesai - Klik untuk lihat detail)"
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border border-emerald-500/20 font-semibold transition-all">
+                                <span class="flex items-center min-w-0">
+                                    <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="sidebar-text truncate">2. Pendaftaran Seminar</span>
+                                </span>
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 leading-none shrink-0">Selesai</span>
                             </a>
                             @else
                             <a href="{{ route('seminar-applications.index') }}" 
@@ -424,11 +374,14 @@
                                 $hasDefense = $thesis ? cache()->remember('u_' . Auth::id() . '_has_def', 30, fn() => \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
                             @endphp
                             @if($hasDefense)
-                            <a href="#" onclick="alert('Anda sudah melaksanakan atau mendaftar sidang skripsi.'); return false;" 
-                               data-tooltip="4. Pendaftaran Sidang (Selesai)" title="4. Pendaftaran Sidang (Selesai)"
-                               class="group flex items-center px-4 py-3 rounded-xl text-sm text-slate-600 font-medium opacity-50 cursor-not-allowed">
-                                <svg class="w-5 h-5 mr-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                <span class="sidebar-text">4. Pendaftaran Sidang</span>
+                            <a href="{{ route('thesis-defense-applications.index') }}"
+                               data-tooltip="4. Pendaftaran Sidang (Selesai)" title="4. Pendaftaran Sidang (Selesai - Klik untuk lihat detail)"
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border border-emerald-500/20 font-semibold transition-all">
+                                <span class="flex items-center min-w-0">
+                                    <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="sidebar-text truncate">4. Pendaftaran Sidang</span>
+                                </span>
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 leading-none shrink-0">Selesai</span>
                             </a>
                             @else
                             <a href="{{ route('thesis-defense-applications.index') }}" 
@@ -455,7 +408,7 @@
                         </nav>
 
                         <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                            <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Aktivitas & Bimbingan</p>
+                            <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Aktivitas & Bimbingan</p>
                             <div class="sidebar-section-divider hidden w-6 h-0.5 bg-white/10 rounded-full mx-auto my-2" title="Aktivitas & Bimbingan"></div>
                         </div>
                         <nav class="space-y-1 mb-10">
@@ -477,7 +430,7 @@
                     <!-- Admin & Kaprodi Specific -->
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Pelaksanaan Skripsi</p>
+                        <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Pelaksanaan Skripsi</p>
                         <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
@@ -592,7 +545,7 @@
                     <!-- Monitoring Section -->
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Monitoring & Laporan</p>
+                        <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Monitoring & Laporan</p>
                         <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
@@ -673,7 +626,7 @@
                     <!-- Sistem & Konfigurasi Section -->
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Sistem & Konfigurasi</p>
+                        <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Sistem & Konfigurasi</p>
                         <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
@@ -808,7 +761,7 @@
                     <!-- Dosen Specific -->
                     @if(Auth::user()->role === 'dosen')
                     <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">
-                        <p class="sidebar-section-title text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Dokumentasi & Bimbingan</p>
+                        <p class="sidebar-section-title text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.18em]">Dokumentasi & Bimbingan</p>
                         <div class="sidebar-section-divider"></div>
                     </div>
                     <nav class="space-y-1 mb-10">
@@ -891,8 +844,8 @@
                 <header class="h-20 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-6 lg:px-10 shrink-0 transition-colors duration-300">
                     <div class="flex items-center md:hidden gap-2">
                         <!-- Hamburger toggle for mobile sidebar -->
-                        <button @click="sidebarOpen = !sidebarOpen" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700/50 transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="sidebarOpen = !sidebarOpen" :aria-expanded="sidebarOpen" aria-label="Buka atau tutup menu navigasi" title="Menu Navigasi" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700/50 transition-all">
+                            <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
@@ -906,10 +859,12 @@
                     <div class="hidden md:flex items-center gap-3">
                         <button type="button" 
                                 @click="sidebarCollapsed = !sidebarCollapsed" 
+                                :aria-expanded="!sidebarCollapsed"
+                                :aria-label="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'"
                                 class="h-10 px-3.5 rounded-xl flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-slate-700/60 transition-all border border-slate-200/80 dark:border-slate-700/60 shadow-xs cursor-pointer group"
                                 :title="sidebarCollapsed ? 'Perluas Sidebar (Expanded)' : 'Kecilkan Sidebar (Collapsed)'">
                             <div class="w-5 h-5 flex items-center justify-center transition-colors">
-                                <svg class="w-5 h-5 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg aria-hidden="true" class="w-5 h-5 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h14" />
                                 </svg>
                             </div>
@@ -922,14 +877,14 @@
                     <div class="flex items-center space-x-3 sm:space-x-5">
                         <div class="flex items-center space-x-1 sm:space-x-2">
                             <!-- Dark Mode Toggle -->
-                            <button @click="darkMode = !darkMode" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative" title="Toggle Mode">
-                                <svg x-cloak x-show="!darkMode" class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                                <svg x-cloak x-show="darkMode" class="w-5 h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <button type="button" @click="darkMode = !darkMode" :aria-label="darkMode ? 'Aktifkan Mode Terang' : 'Aktifkan Mode Gelap'" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Toggle Mode Gelap/Terang">
+                                <svg aria-hidden="true" x-cloak x-show="!darkMode" class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                                <svg aria-hidden="true" x-cloak x-show="darkMode" class="w-5 h-5 text-yellow-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </button>
 
                             <div x-data="notificationDropdown()" x-init="init()" class="relative">
-                                <button x-ref="button" @click="toggle()" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
+                                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
                                         <span style="top: 5px; right: 5px;" class="absolute flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white border-2 border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
                                             <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
@@ -1050,18 +1005,24 @@
                                                                 </div>
                                                             </template>
                                                             <template x-if="notif.data.scheduled_at">
-                                                                <div class="text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
-                                                                    <span x-text="'📅 ' + notif.data.scheduled_at"></span>
+                                                                <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                                                                    <span class="inline-flex items-center gap-1">
+                                                                        <svg aria-hidden="true" class="w-3.5 h-3.5 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                                        <span x-text="notif.data.scheduled_at"></span>
+                                                                    </span>
                                                                     <template x-if="notif.data.type_location">
-                                                                        <span x-text="' • 📍 ' + notif.data.type_location"></span>
+                                                                        <span class="inline-flex items-center gap-1">
+                                                                            <svg aria-hidden="true" class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                                                            <span x-text="notif.data.type_location"></span>
+                                                                        </span>
                                                                     </template>
                                                                 </div>
                                                             </template>
                                                         </div>
                                                     </template>
                                                     <div class="flex items-center gap-2 mt-1.5">
-                                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
-                                                        <span x-show="!notif.read_at" class="text-[9px] font-black text-orange-600 dark:text-orange-400">• Baru</span>
+                                                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
+                                                        <span x-show="!notif.read_at" class="text-[11px] font-black text-orange-600 dark:text-orange-400">&bull; Baru</span>
                                                     </div>
 
                                                     <!-- Actionable Attendance Confirmation (For Students) -->
@@ -1161,9 +1122,10 @@
                             </form>
                             <button type="button" 
                                     onclick="event.preventDefault(); document.getElementById('header-logout-form').submit();" 
+                                    aria-label="Keluar dari akun"
                                     class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group cursor-pointer" 
                                     title="Keluar">
-                                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                <svg aria-hidden="true" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                             </button>
                         </div>
 

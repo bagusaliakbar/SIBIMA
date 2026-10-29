@@ -31,7 +31,12 @@
             @endif
         </div>
         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $title }}</h3>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest font-black">{{ $description }}</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium max-w-md mx-auto">{{ $description }}</p>
+        @if(!$slot->isEmpty())
+            <div class="mt-4">
+                {{ $slot }}
+            </div>
+        @endif
 @if($colspan)
     </td>
 </tr>

@@ -90,16 +90,17 @@
                             </span>
                         @endif
                     </div>
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
-                        Selamat Ulang Tahun, {{ Auth::user()->name }}! 🥳
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight flex items-center gap-2">
+                        <span>Selamat Ulang Tahun, {{ Auth::user()->name }}!</span>
+                        <svg aria-hidden="true" class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                     </h3>
                     @if(Auth::user()->role === 'mahasiswa')
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                            Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya! 🎓✨
+                            Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa diberikan kelancaran bimbingan, kemudahan revisi, dan segera meraih gelar sarjana dengan hasil terbaik. Tetap semangat skripsinya!
                         </p>
                     @else
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                            Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu! 🌟🤲
+                            Keluarga besar FASILKOM UNSUB mengucapkan selamat bertambah usia! Semoga senantiasa dilimpahkan kesehatan, keberkahan, kemudahan dalam mengabdi, serta terus menginspirasi mahasiswa dalam mencetak generasi unggul. Teriring doa terbaik untuk Bapak/Ibu!
                         </p>
                     @endif
                 </div>
@@ -107,15 +108,16 @@
                 <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end">
                     <button type="button" 
                             @click="burst()" 
-                            class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                            class="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-wider shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                        <svg aria-hidden="true" class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                         <span class="text-white font-black">Rayakan Lagi</span>
-                        <span>🎉</span>
                     </button>
                     <button type="button" 
                             @click="dismiss()" 
+                            aria-label="Tutup ucapan ulang tahun hari ini"
                             class="p-2.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
                             title="Tutup ucapan hari ini">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -141,6 +143,7 @@
 
                         initConfetti() {
                             if (this.dismissed) return;
+                            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
                             this.$nextTick(() => {
                                 this.canvas = this.$refs.confettiCanvas;
                                 if (!this.canvas) return;
@@ -243,13 +246,13 @@
                  class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 
                 <div class="flex items-center gap-3.5 relative z-10">
-                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm text-lg">
-                        🎂
+                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"/></svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <h4 class="text-xs font-black tracking-wide uppercase text-rose-950 dark:text-rose-100">Lengkapi Tanggal Lahir Anda</h4>
-                            <span class="px-2 py-0.5 rounded-full bg-rose-200/80 dark:bg-rose-900/60 text-[9px] font-black uppercase tracking-wider text-rose-900 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60">Info Profil</span>
+                            <span class="px-2 py-0.5 rounded-full bg-rose-200/80 dark:bg-rose-900/60 text-[11px] font-black uppercase tracking-wider text-rose-900 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60">Info Profil</span>
                         </div>
                         <p class="text-xs font-medium text-rose-800 dark:text-rose-300/90 leading-relaxed mt-0.5">
                             Dapatkan ucapan spesial dan kejutan di hari ulang tahun Anda dari sistem SIBIMA.

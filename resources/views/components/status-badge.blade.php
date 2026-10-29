@@ -21,8 +21,8 @@
     ];
 
     $sizes = [
-        'xs' => 'text-[9px]',
-        'sm' => 'text-[10px]',
+        'xs' => 'text-[11px] leading-tight',
+        'sm' => 'text-[11px]',
         'md' => 'text-xs',
     ];
 

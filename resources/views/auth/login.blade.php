@@ -57,6 +57,8 @@
                 
                 <!-- Toggle Password Button -->
                 <button type="button" @click="showPassword = !showPassword" 
+                        :aria-label="showPassword ? 'Sembunyikan password' : 'Tampilkan password'"
+                        :aria-pressed="showPassword"
                         class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none cursor-pointer"
                         title="Tampilkan / Sembunyikan Password">
                     <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -101,6 +101,18 @@ input[type='radio']:checked {
     color: #f97316 !important;
 }
 
+/* 3b. Keyboard Accessibility Focus Ring (WCAG 2.4.7 Focus Visible) for Buttons & Links */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+    outline: none !important;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #f97316 !important;
+    outline-offset: 2px !important;
+}
+
 /* 4. Complete Browser Autofill Override (Chrome / Edge / Safari / Firefox) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
@@ -224,5 +236,19 @@ select:-webkit-autofill:active {
 .dark .ai-tldr-card {
     background-color: #1e293b !important; /* slate-800 */
 }
+
+/* ==========================================================================
+   6. MOTION & VESTIBULAR ACCESSIBILITY (PREFERS-REDUCED-MOTION)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .animate-shimmer::after,
+    .animate-pulse,
+    .animate-bounce,
+    .animate-spin {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
 
 
