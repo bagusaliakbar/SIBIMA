@@ -125,9 +125,10 @@ Digunakan secara konsisten untuk badge status pendaftaran, persetujuan bimbingan
 ## 4. TIPOGRAFI, SKALA SPASI & SUDUT LENGKUNG
 
 ### 4.1 Keluarga Font (*Font Families*)
-1. **Primary Interface Font**: `Plus Jakarta Sans` / `Figtree` (Sans-Serif)
-   - Digunakan untuk seluruh elemen teks antarmuka, label form, judul modul, dan navigasi.
-   - `font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;`
+1. **Primary Interface Font**: `Inter` (Sans-Serif — Standar Enterprise Global)
+   - Digunakan untuk seluruh elemen teks antarmuka, label form, judul modul, tabel nilai, dan navigasi.
+   - `font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;`
+   - Dilengkapi dukungan *Tabular Numbers* (`font-variant-numeric: tabular-nums`) untuk kejelasan angka NPM/NIDN dan nilai ujian.
 2. **Monospace / Code Font**: `JetBrains Mono` / `ui-monospace`
    - Digunakan khusus untuk Nomor Induk (NPM/NIDN), token tanda tangan QR, kode tiket bug (`BUG-xxxx`), format waktu, dan nilai tipe data basis data.
    - `font-family: 'JetBrains Mono', monospace;`

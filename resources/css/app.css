@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 /* ==========================================================================
+   GLOBAL SIBIMA TYPOGRAPHY: INTER (OFFICIAL ENTERPRISE SPECIFICATION)
+   ========================================================================== */
+@layer base {
+    html {
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    table, .tabular-nums {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+/* ==========================================================================
    GLOBAL SIBIMA INPUT FOCUS & AUTOFILL SYSTEM (100% BRAND ORANGE)
    ========================================================================== */
 
