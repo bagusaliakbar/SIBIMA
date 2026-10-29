@@ -615,6 +615,7 @@ class AutoScheduleSimulationService
         unset($rData, $session);
 
         // Cross-check antar assignments di simulasi
+        $dosenNamesMap = User::where('role', 'dosen')->pluck('name', 'id');
         $totalAssignments = count($assignments);
         for ($i = 0; $i < $totalAssignments; $i++) {
             for ($j = $i + 1; $j < $totalAssignments; $j++) {
@@ -628,7 +629,7 @@ class AutoScheduleSimulationService
                                  Carbon::parse($a2['start_time'])->lt(Carbon::parse($a1['end_time']));
 
                     if ($isOverlap) {
-                        $dosenName = User::find($a1['dosen_id'])?->name ?? 'Dosen';
+                        $dosenName = $dosenNamesMap[$a1['dosen_id']] ?? 'Dosen';
                         $msg = "Bentrok Ruangan: {$dosenName} terjadwal di {$a1['room_name']} ({$a1['role']}) dan {$a2['room_name']} ({$a2['role']}) pada jam yang sama ({$a1['start_time']} - {$a1['end_time']}).";
                         $conflicts[] = [
                             'room' => "{$a1['room_name']} & {$a2['room_name']}",

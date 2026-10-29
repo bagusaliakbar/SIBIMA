@@ -239,12 +239,19 @@ class ThesisController extends Controller
             ? (2 * count($intersection) / (count($inputTokensFiltered) + count($existingTokensFiltered))) * 100 
             : 0;
 
-        // Overall full text similarity
+        // Overall full text similarity (skip expensive O(N^3) similar_text if 0 tokens overlap)
+        $tokenScore = max($jaccardScore, $diceScore);
+        if (empty($intersection) && $tokenScore == 0) {
+            return [
+                'percentage' => 0.0,
+                'matched_words' => []
+            ];
+        }
+
         $similarTextPercent = 0;
         similar_text($cleanInput, $cleanExisting, $similarTextPercent);
 
         // Combined score: 60% Token similarity + 40% Full text similarity
-        $tokenScore = max($jaccardScore, $diceScore);
         $finalScore = ($tokenScore * 0.60) + ($similarTextPercent * 0.40);
         
         return [

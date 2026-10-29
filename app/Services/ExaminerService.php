@@ -68,6 +68,11 @@ class ExaminerService
             'writing' => $oldRevision->score_writing
         ] : null;
 
+        $defaultStatus = (isset($detail->thesis) && $detail->thesis->pembimbing1_id === $user->id) ? 'approved' : 'completed';
+        $preservedStatus = ($oldRevision && in_array($oldRevision->status, ['approved', 'resubmitted'], true))
+            ? $oldRevision->status
+            : $defaultStatus;
+
         $revision = $revisionModel::updateOrCreate(
             [
                 $foreignKey => $detail->id,
@@ -77,7 +82,7 @@ class ExaminerService
                 'score_presentation' => $data['score_presentation'],
                 'score_explanation' => $data['score_explanation'],
                 'score_writing' => $data['score_writing'],
-                'status' => (isset($detail->thesis) && $detail->thesis->pembimbing1_id === $user->id) ? 'approved' : 'completed'
+                'status' => $preservedStatus
             ]
         );
 

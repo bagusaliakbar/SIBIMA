@@ -506,14 +506,15 @@ class AdvisorDecreeController extends Controller
                 return trim($request->custom_decree_number);
             }
 
-            $setting = LetterSetting::firstOrCreate(
-                ['type' => 'sk_pembimbing'],
-                [
+            $setting = LetterSetting::where('type', 'sk_pembimbing')->lockForUpdate()->first();
+            if (!$setting) {
+                $setting = LetterSetting::create([
+                    'type' => 'sk_pembimbing',
                     'title' => 'SK Dosen Pembimbing Skripsi',
                     'format' => '[NUMBER]/D/FIK-US/[ROMAN_MONTH]/[YEAR]',
                     'last_number' => 0,
-                ]
-            );
+                ]);
+            }
 
             if (str_contains($setting->format, 'SK-PEMBIMBING')) {
                 $setting->update(['format' => '[NUMBER]/D/FIK-US/[ROMAN_MONTH]/[YEAR]']);
@@ -652,12 +653,7 @@ class AdvisorDecreeController extends Controller
         $isStaff = in_array($user->role, ['admin', 'kaprodi']);
 
         if (!$isStaff && $user->role === 'dosen') {
-            // Ensure lecturer is part of this decree if not staff
-            $isIncluded = $advisorDecree->target_type === 'collective'
-                || $advisorDecree->dosen_id === $user->id
-                || str_contains(json_encode($advisorDecree->theses_data), $user->name);
-
-            if (!$isIncluded) {
+            if (!$this->isDosenAuthorizedForDecree($advisorDecree, $user)) {
                 abort(403, 'Anda tidak memiliki hak akses ke dokumen ini.');
             }
         }
@@ -814,31 +810,33 @@ class AdvisorDecreeController extends Controller
             'selected_theses.min' => 'Pilih minimal satu mahasiswa bimbingan.',
         ]);
 
-        // Generate official number
-        $letterSetting = LetterSetting::firstOrCreate(
-            ['type' => 'surat_tugas_pembimbing'],
-            [
-                'title' => 'Surat Tugas Dosen Pembimbing (BKD)',
-                'format' => '[NUMBER]/PD.1.2/FIK-US/[ROMAN_MONTH]/[YEAR]',
-                'last_number' => 460,
-            ]
-        );
-
         if ($request->filled('custom_decree_number')) {
             $decreeNumber = trim($request->custom_decree_number);
         } else {
-            $letterSetting->increment('last_number');
-            $number = str_pad($letterSetting->last_number, 3, '0', STR_PAD_LEFT);
-            $month = Carbon::parse($request->decree_date)->format('m');
-            $year = Carbon::parse($request->decree_date)->format('Y');
-            $romans = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-            $romanMonth = $romans[(int)$month] ?? 'I';
+            $decreeNumber = DB::transaction(function () use ($request) {
+                $letterSetting = LetterSetting::where('type', 'surat_tugas_pembimbing')->lockForUpdate()->first();
+                if (!$letterSetting) {
+                    $letterSetting = LetterSetting::create([
+                        'type' => 'surat_tugas_pembimbing',
+                        'title' => 'Surat Tugas Dosen Pembimbing (BKD)',
+                        'format' => '[NUMBER]/PD.1.2/FIK-US/[ROMAN_MONTH]/[YEAR]',
+                        'last_number' => 460,
+                    ]);
+                }
 
-            $decreeNumber = str_replace(
-                ['[NUMBER]', '[ROMAN_MONTH]', '[MONTH]', '[YEAR]'],
-                [$number, $romanMonth, $month, $year],
-                $letterSetting->format
-            );
+                $letterSetting->increment('last_number');
+                $number = str_pad($letterSetting->last_number, 3, '0', STR_PAD_LEFT);
+                $month = Carbon::parse($request->decree_date)->format('m');
+                $year = Carbon::parse($request->decree_date)->format('Y');
+                $romans = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                $romanMonth = $romans[(int)$month] ?? 'I';
+
+                return str_replace(
+                    ['[NUMBER]', '[ROMAN_MONTH]', '[MONTH]', '[YEAR]'],
+                    [$number, $romanMonth, $month, $year],
+                    $letterSetting->format
+                );
+            });
         }
 
         // Collect student records sorted: Pembimbing I first, then Pembimbing II
@@ -923,11 +921,7 @@ class AdvisorDecreeController extends Controller
         $isStaff = in_array($user->role, ['admin', 'kaprodi']);
 
         if (!$isStaff && $user->role === 'dosen') {
-            $isIncluded = $advisorDecree->target_type === 'collective'
-                || $advisorDecree->dosen_id === $user->id
-                || str_contains(json_encode($advisorDecree->theses_data), $user->name);
-
-            if (!$isIncluded) {
+            if (!$this->isDosenAuthorizedForDecree($advisorDecree, $user)) {
                 abort(403);
             }
         }
@@ -1054,5 +1048,33 @@ class AdvisorDecreeController extends Controller
 
         return redirect($redirectRoute)
             ->with('success', "Arsip " . ($isIndividual ? 'Surat Tugas' : 'SK Pembimbing') . " No. {$decreeNumber} berhasil dihapus.");
+    }
+
+    /**
+     * Accurately check whether a lecturer is authorized to view/download an AdvisorDecree.
+     */
+    private function isDosenAuthorizedForDecree(AdvisorDecree $advisorDecree, User $user): bool
+    {
+        if ($advisorDecree->target_type === 'collective' || $advisorDecree->dosen_id === $user->id) {
+            return true;
+        }
+
+        $rows = is_array($advisorDecree->theses_data) ? $advisorDecree->theses_data : [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            if (($row['pembimbing1_id'] ?? null) == $user->id || ($row['pembimbing2_id'] ?? null) == $user->id) {
+                return true;
+            }
+            if (
+                strcasecmp((string) ($row['pembimbing1_name'] ?? ''), (string) $user->name) === 0 ||
+                strcasecmp((string) ($row['pembimbing2_name'] ?? ''), (string) $user->name) === 0
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

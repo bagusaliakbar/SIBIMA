@@ -43,7 +43,7 @@ class DownloadController extends Controller
         }
 
         // 2. Seminar Application Files
-        if (str_starts_with($path, 'SeminarApplication_files/')) {
+        if (str_starts_with($path, 'SeminarApplication_files/') || str_starts_with($path, 'seminar_applications/')) {
             $application = SeminarApplication::where(function($query) use ($path) {
                 $query->where('file_acc_pembimbing', $path)
                       ->orWhere('file_pembayaran', $path)
@@ -87,7 +87,7 @@ class DownloadController extends Controller
         }
 
         // 3. Thesis Defense Application Files
-        if (str_starts_with($path, 'ThesisDefenseApplication_files/')) {
+        if (str_starts_with($path, 'ThesisDefenseApplication_files/') || str_starts_with($path, 'thesis_defense_applications/')) {
             $files = [
                 'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
                 'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',

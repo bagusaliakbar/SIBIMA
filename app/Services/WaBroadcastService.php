@@ -116,14 +116,14 @@ class WaBroadcastService
         $theses = $query->get()->filter(function ($thesis) use ($thresholdDate) {
             $lastSession = $thesis->mentoringSessions
                 ->whereIn('status', ['approved', 'completed'])
-                ->sortByDesc('date')
+                ->sortByDesc('scheduled_at')
                 ->first();
 
-            if (!$lastSession) {
+            if (!$lastSession || !$lastSession->scheduled_at) {
                 return true; // Belum pernah bimbingan sama sekali
             }
 
-            return Carbon::parse($lastSession->date)->lt($thresholdDate);
+            return Carbon::parse($lastSession->scheduled_at)->lt($thresholdDate);
         });
 
         return $theses->map(function ($thesis) {
@@ -132,10 +132,10 @@ class WaBroadcastService
 
             $lastSession = $thesis->mentoringSessions
                 ->whereIn('status', ['approved', 'completed'])
-                ->sortByDesc('date')
+                ->sortByDesc('scheduled_at')
                 ->first();
 
-            $lastDate = $lastSession ? Carbon::parse($lastSession->date) : null;
+            $lastDate = ($lastSession && $lastSession->scheduled_at) ? Carbon::parse($lastSession->scheduled_at) : null;
             $inactiveDays = $lastDate ? (int) $lastDate->diffInDays(now()) : 999;
             $lastDateFormatted = $lastDate ? $lastDate->locale('id')->translatedFormat('d F Y') : 'Belum pernah bimbingan';
 

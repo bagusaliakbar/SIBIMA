@@ -418,7 +418,7 @@ class ThesisDefenseScheduleController extends Controller implements HasMiddlewar
     public function exportPdf(ThesisDefenseSchedule $thesisDefenseSchedule, Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen', 'mahasiswa'])) {
             abort(403);
         }
 

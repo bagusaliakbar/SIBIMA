@@ -28,9 +28,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\UpdateUserOnlineStatus::class,
         ]);
     })
-    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
-        $schedule->command('app:send-schedule-reminders')->dailyAt('08:00');
-    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

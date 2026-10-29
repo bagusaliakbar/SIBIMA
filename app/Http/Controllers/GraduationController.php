@@ -33,7 +33,7 @@ class GraduationController extends Controller
     private function getNextSklNumber()
     {
         return DB::transaction(function () {
-            $setting = LetterSetting::where('type', 'surat_keterangan_lulus')->first();
+            $setting = LetterSetting::where('type', 'surat_keterangan_lulus')->lockForUpdate()->first();
             if (!$setting) {
                 $setting = LetterSetting::create([
                     'type' => 'surat_keterangan_lulus',
@@ -112,6 +112,14 @@ class GraduationController extends Controller
         }
 
         $thesis = Thesis::where('student_id', $user->id)->firstOrFail();
+
+        $defenseDetail = \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->latest()->first();
+        $isEligible = ($defenseDetail && ($defenseDetail->isRevisionAllApproved() || $thesis->status === 'completed'))
+            || $thesis->status === 'completed';
+
+        if (!$isEligible) {
+            abort(403, 'Anda belum memenuhi syarat kelulusan sidang dan penyelesaian revisi untuk mengajukan Yudisium.');
+        }
 
         // Normalize URLs (prepend https:// if missing)
         $urlFields = ['final_thesis_file', 'journal_article_file', 'plagiarism_file', 'publication_link'];

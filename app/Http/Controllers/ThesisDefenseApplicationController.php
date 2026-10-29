@@ -651,7 +651,7 @@ class ThesisDefenseApplicationController extends Controller
             } elseif (!empty($batchFolder)) {
                 $uploadedFiles[$field] = $batchFolder;
             } elseif ($request->hasFile($field)) {
-                $uploadedFiles[$field] = $request->file($field)->store('thesis_defense_applications/' . $field, config('filesystems.default', 'local'));
+                $uploadedFiles[$field] = $request->file($field)->store('ThesisDefenseApplication_files', config('filesystems.default', 'local'));
             } elseif ($bypassFiles) {
                 $uploadedFiles[$field] = 'DISPENSASI_ADMIN: ' . ($validated['admin_notes'] ?: 'Didaftarkan langsung oleh ' . ucfirst($user->role));
             } else {

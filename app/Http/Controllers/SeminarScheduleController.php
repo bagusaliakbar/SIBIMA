@@ -418,7 +418,7 @@ class SeminarScheduleController extends Controller implements HasMiddleware
     public function exportPdf(SeminarSchedule $seminarSchedule, Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'])) {
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen', 'mahasiswa'])) {
             abort(403);
         }
 
