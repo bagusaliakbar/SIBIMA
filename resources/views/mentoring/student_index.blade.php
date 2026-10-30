@@ -136,10 +136,15 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {{-- Seminar UP Progress --}}
                         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Seminar Usulan Penelitian (UP)</span>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between items-start gap-2.5 sm:gap-4 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                                <span class="text-sm font-bold text-slate-800 dark:text-slate-100">Seminar Usulan Penelitian (UP)</span>
                                 @if($thesis->isAccUpFinal())
-                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap shadow-xs">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Sudah Di-ACC Kedua Pembimbing</span>
+                                    </span>
                                 @endif
                             </div>
                             
@@ -188,10 +193,15 @@
 
                         {{-- Sidang Akhir Progress --}}
                         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Sidang Akhir Skripsi</span>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between items-start gap-2.5 sm:gap-4 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                                <span class="text-sm font-bold text-slate-800 dark:text-slate-100">Sidang Akhir Skripsi</span>
                                 @if($thesis->isAccSidangFinal())
-                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">SUDAH DIACC KEDUA PEMBIMBING</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap shadow-xs">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Sudah Di-ACC Kedua Pembimbing</span>
+                                    </span>
                                 @endif
                             </div>
 
