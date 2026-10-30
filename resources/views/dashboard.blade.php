@@ -26,44 +26,44 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 scale-100"
              x-transition:leave-end="opacity-0 scale-95"
-             class="bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200/90 dark:border-emerald-800/60 rounded-2xl p-4 sm:p-5 shadow-xs dark:shadow-none relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+             class="bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200/90 dark:border-emerald-800/60 rounded-2xl p-4 sm:p-5 shadow-xs dark:shadow-none relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             
             <!-- Background glow -->
             <div class="absolute -top-12 -right-12 w-40 h-40 bg-emerald-400/10 dark:bg-emerald-400/5 rounded-full blur-2xl pointer-events-none"></div>
 
-            <div class="flex items-start sm:items-center gap-3.5 relative z-10">
-                <div class="w-10 h-10 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <!-- Close button in top-right corner -->
+            <button @click="dismissed = true; localStorage.setItem('hide_wa_bot_banner', 'true')" 
+                    type="button" 
+                    class="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 text-emerald-700/70 hover:text-emerald-950 hover:bg-emerald-200/60 dark:text-emerald-400/80 dark:hover:text-white dark:hover:bg-emerald-900/50 rounded-xl transition-colors cursor-pointer z-20" 
+                    title="Tutup pemberitahuan">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="flex items-start gap-3.5 pr-8 sm:pr-0 relative z-10 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                     <svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                     </svg>
                 </div>
-                <div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h4 class="text-xs font-black tracking-wide uppercase text-emerald-950 dark:text-emerald-100">Pemberitahuan Sistem WhatsApp Bot SIBIMA</h4>
-                    </div>
+                <div class="min-w-0">
+                    <h4 class="text-xs font-black tracking-wide uppercase text-emerald-950 dark:text-emerald-100">Pemberitahuan Sistem WhatsApp Bot SIBIMA</h4>
                     <p class="text-xs font-medium text-emerald-800 dark:text-emerald-300/90 leading-relaxed mt-0.5">
                         Agar notifikasi bimbingan, revisi, & jadwal sidang masuk lancar tanpa terblokir, mohon <strong class="text-emerald-950 dark:text-white font-black">simpan nomor WhatsApp Bot SIBIMA {{ $botNumberRaw ? "($botNumberRaw)" : '' }}</strong> ke kontak HP Anda.
                     </p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 self-end sm:self-center shrink-0 relative z-10">
-                @if($botNumberFormatted)
+            @if($botNumberFormatted)
+                <div class="w-full sm:w-auto shrink-0 relative z-10">
                     <a href="https://wa.me/{{ $botNumberFormatted }}?text={{ urlencode('Halo Bot SIBIMA, saya menyimpan nomor ini untuk menerima notifikasi akademik.') }}" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                       class="w-full sm:w-auto min-h-[38px] px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
                         <svg class="w-3.5 h-3.5 fill-current text-white dark:text-slate-950" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                         <span>Chat / Simpan Bot</span>
                     </a>
-                @endif
-                <button @click="dismissed = true; localStorage.setItem('hide_wa_bot_banner', 'true')" 
-                        type="button" 
-                        class="p-2 text-emerald-600 hover:text-emerald-950 hover:bg-emerald-200/60 dark:text-emerald-400 dark:hover:text-white dark:hover:bg-emerald-900/50 rounded-xl transition-colors cursor-pointer" 
-                        title="Tutup pemberitahuan">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+                </div>
+            @endif
         </div>
 
         <!-- Birthday Celebration Card / Prompt -->
@@ -242,34 +242,34 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="opacity-100 scale-100"
                  x-transition:leave-end="opacity-0 scale-95"
-                 class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                 class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 rounded-2xl p-4 sm:p-5 shadow-xs relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 
-                <div class="flex items-center gap-3.5 relative z-10">
-                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                <!-- Close button in top-right corner -->
+                <button @click="dismissed = true; localStorage.setItem('hide_birthdate_prompt', 'true')" 
+                        type="button" 
+                        class="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 text-rose-700/70 hover:text-rose-950 hover:bg-rose-200/60 dark:text-rose-400/80 dark:hover:text-white dark:hover:bg-rose-900/50 rounded-xl transition-colors cursor-pointer z-20" 
+                        title="Nanti saja">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <div class="flex items-start gap-3.5 pr-8 sm:pr-0 relative z-10 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                         <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"/></svg>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h4 class="text-xs font-black tracking-wide uppercase text-rose-950 dark:text-rose-100">Lengkapi Tanggal Lahir Anda</h4>
-                        </div>
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-black tracking-wide uppercase text-rose-950 dark:text-rose-100">Lengkapi Tanggal Lahir Anda</h4>
                         <p class="text-xs font-medium text-rose-800 dark:text-rose-300/90 leading-relaxed mt-0.5">
                             Dapatkan ucapan spesial dan kejutan di hari ulang tahun Anda dari sistem SIBIMA.
                         </p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 self-end sm:self-center shrink-0 relative z-10">
+                <div class="w-full sm:w-auto shrink-0 relative z-10">
                     <a href="{{ route('profile.edit') }}#birth_date" 
-                       class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                       class="w-full sm:w-auto min-h-[38px] px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
                         <span>Lengkapi di Profil</span>
                         <span>➔</span>
                     </a>
-                    <button @click="dismissed = true; localStorage.setItem('hide_birthdate_prompt', 'true')" 
-                            type="button" 
-                            class="p-2 text-rose-600 hover:text-rose-950 hover:bg-rose-200/60 dark:text-rose-400 dark:hover:text-white dark:hover:bg-rose-900/50 rounded-xl transition-colors cursor-pointer" 
-                            title="Nanti saja">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
                 </div>
             </div>
         @endif
@@ -285,50 +285,54 @@
             @endphp
 
             @if($isStale)
-                <div class="{{ $isCriticalStale ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/60' : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60' }} border p-4 sm:p-5 rounded-2xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-11 h-11 {{ $isCriticalStale ? 'bg-rose-600 text-white shadow-rose-600/20 animate-pulse' : 'bg-amber-500 text-white shadow-amber-500/20' }} rounded-2xl flex items-center justify-center shrink-0 shadow-md">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div class="{{ $isCriticalStale ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/60' : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60' }} border p-4 sm:p-5 rounded-2xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 shadow-xs">
+                    <div class="flex items-start gap-3.5 min-w-0">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 {{ $isCriticalStale ? 'bg-rose-600 text-white shadow-rose-600/20 animate-pulse' : 'bg-amber-500 text-white shadow-amber-500/20' }} rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-md mt-0.5">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
                                 <h4 class="text-xs font-black {{ $isCriticalStale ? 'text-rose-950 dark:text-rose-100' : 'text-amber-950 dark:text-amber-100' }} uppercase tracking-wider">
                                     {{ $isCriticalStale ? 'Peringatan Bimbingan Macet (> 2 Minggu)' : 'Peringatan Dini Bimbingan (> 1 Minggu)' }}
                                 </h4>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {{ $isCriticalStale ? 'bg-rose-200 text-rose-900 dark:bg-rose-900 dark:text-rose-200' : 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200' }}">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase shrink-0 {{ $isCriticalStale ? 'bg-rose-200 text-rose-900 dark:bg-rose-900 dark:text-rose-200' : 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200' }}">
                                     {{ $daysSinceLastSession }} Hari Belum Bimbingan
                                 </span>
                             </div>
-                            <p class="text-xs {{ $isCriticalStale ? 'text-rose-800 dark:text-rose-300' : 'text-amber-800 dark:text-amber-300' }} font-medium mt-0.5 leading-relaxed">
+                            <p class="text-xs {{ $isCriticalStale ? 'text-rose-800 dark:text-rose-300' : 'text-amber-800 dark:text-amber-300' }} font-medium mt-1 leading-relaxed">
                                 Sesuai standar prodi, mahasiswa dianjurkan bimbingan minimal 1x per minggu. Segera jadwalkan bimbingan dengan dosen pembimbing Anda agar skripsi berjalan lancar!
                             </p>
                         </div>
                     </div>
-                    <a href="{{ route('mentoring-sessions.create') }}" class="px-4 py-2 {{ $isCriticalStale ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20' : 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20' }} text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md hover:scale-105 active:scale-95 shrink-0 cursor-pointer">
-                        Jadwalkan Bimbingan
-                    </a>
+                    <div class="w-full sm:w-auto shrink-0">
+                        <a href="{{ route('mentoring-sessions.create') }}" class="w-full sm:w-auto min-h-[38px] px-4 py-2 {{ $isCriticalStale ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20' : 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/20' }} text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md hover:scale-[1.02] active:scale-95 flex items-center justify-center cursor-pointer">
+                            Jadwalkan Bimbingan
+                        </a>
+                    </div>
                 </div>
             @endif
 
             @if(Auth::user()->is_critical_semester)
-                <div class="bg-rose-50/90 dark:bg-rose-950/40 border border-rose-200/90 dark:border-rose-800/60 rounded-2xl p-4 sm:p-5 shadow-xs mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div class="flex items-start sm:items-center gap-3.5">
-                        <div class="w-11 h-11 bg-rose-600 dark:bg-rose-500 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-md shadow-rose-600/20">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div class="bg-rose-50/90 dark:bg-rose-950/40 border border-rose-200/90 dark:border-rose-800/60 rounded-2xl p-4 sm:p-5 shadow-xs mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                    <div class="flex items-start gap-3.5 min-w-0">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 bg-rose-600 dark:bg-rose-500 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-md shadow-rose-600/20 mt-0.5">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2 flex-wrap">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
                                 <h4 class="text-xs font-black uppercase tracking-wider text-rose-950 dark:text-rose-100">Peringatan Masa Studi Kritikal</h4>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60">Semester {{ Auth::user()->current_semester }}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60 shrink-0">Semester {{ Auth::user()->current_semester }}</span>
                             </div>
-                            <p class="text-xs text-rose-800 dark:text-rose-300/90 font-medium mt-0.5 leading-relaxed">
+                            <p class="text-xs text-rose-800 dark:text-rose-300/90 font-medium mt-1 leading-relaxed">
                                 Anda telah memasuki semester batas akhir. Harap prioritaskan penyelesaian skripsi untuk menghindari sanksi Drop Out (DO). Hubungi Koordinator Prodi jika butuh asistensi khusus.
                             </p>
                         </div>
                     </div>
-                    <span class="px-3 py-1 bg-rose-200/60 dark:bg-rose-900/40 text-rose-900 dark:text-rose-200 text-[10px] font-black uppercase tracking-widest rounded-xl border border-rose-300/60 dark:border-rose-700/60 shrink-0 self-end sm:self-center">
-                        Perhatian Khusus
-                    </span>
+                    <div class="w-full sm:w-auto shrink-0 flex justify-end">
+                        <span class="w-full sm:w-auto text-center px-3 py-1.5 bg-rose-200/60 dark:bg-rose-900/40 text-rose-900 dark:text-rose-200 text-[10px] font-black uppercase tracking-widest rounded-xl border border-rose-300/60 dark:border-rose-700/60">
+                            Perhatian Khusus
+                        </span>
+                    </div>
                 </div>
             @endif
             <!-- Linear Progress Stepper (Hero Section) - Roadmap Akademik Mahasiswa (5 Tahap) -->
