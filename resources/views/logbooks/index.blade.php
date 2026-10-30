@@ -8,26 +8,54 @@
     <div class="w-full space-y-6">
         <!-- 1. KARTU INFORMASI SKRIPSI & PROGRESS BIMBINGAN (BANNER ATAS) -->
         @if($thesis)
-            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 border border-slate-200/90 dark:border-slate-700 shadow-xs space-y-6">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-7 border border-slate-200/90 dark:border-slate-700 shadow-xs space-y-6">
                 <!-- Top Row: Tag & Status Skripsi -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center gap-2.5">
-                        <span class="px-3 py-1 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider border border-orange-500/20">
+                <div class="flex items-center justify-between gap-3 pb-3.5 sm:pb-4 border-b border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="px-2.5 sm:px-3 py-1 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider border border-orange-500/20 shrink-0">
                             Logbook Skripsi Mahasiswa
                         </span>
                         @if($thesis->topic)
-                            <span class="text-xs text-slate-400 font-medium">Bidang: <strong class="text-slate-700 dark:text-slate-200">{{ $thesis->topic }}</strong></span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline truncate">
+                                Bidang: <strong class="text-slate-700 dark:text-slate-200">{{ $thesis->topic }}</strong>
+                            </span>
                         @endif
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Status Skripsi:</span>
-                        <x-status-badge type="orange" :label="strtoupper($thesis->status)" />
+                    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                            <span class="hidden sm:inline">Status Skripsi:</span>
+                            <span class="sm:hidden">Status:</span>
+                        </span>
+                        @php
+                            $statusKey = strtolower($thesis->status ?? '');
+                            $statusLabel = match($statusKey) {
+                                'active' => 'Aktif',
+                                'completed' => 'Selesai',
+                                'pending' => 'Menunggu',
+                                'rejected' => 'Ditolak',
+                                default => strtoupper($thesis->status ?? 'Aktif')
+                            };
+                            $statusType = match($statusKey) {
+                                'completed' => 'emerald',
+                                'active' => 'orange',
+                                'rejected' => 'rose',
+                                default => 'amber'
+                            };
+                        @endphp
+                        <x-status-badge :type="$statusType" :label="$statusLabel" />
                     </div>
                 </div>
 
                 <!-- Judul Skripsi -->
                 <div class="space-y-1.5">
-                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Judul Skripsi:</span>
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Judul Skripsi:</span>
+                        @if($thesis->topic)
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium sm:hidden">
+                                Bidang: <strong class="text-slate-700 dark:text-slate-200">{{ $thesis->topic }}</strong>
+                            </span>
+                        @endif
+                    </div>
                     <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 leading-relaxed">
                         {{ $thesis->display_title ?: 'Judul skripsi belum diatur' }}
                     </h2>
