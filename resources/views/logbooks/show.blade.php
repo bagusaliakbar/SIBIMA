@@ -545,7 +545,7 @@
         <!-- 3. KARTU UTAMA RIWAYAT CATATAN LOGBOOK (FULL WIDTH, SEARCH, EXPORT, TIMELINE) -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/90 dark:border-slate-700 overflow-hidden">
             <!-- Header Bar -->
-            <div class="p-6 border-b border-slate-200/80 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50 dark:bg-slate-800">
+            <div class="p-4 sm:p-6 border-b border-slate-200/80 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 bg-slate-50 dark:bg-slate-800">
                 <div>
                     <h3 class="text-base font-black text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
                         <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -556,40 +556,45 @@
                     </p>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto" style="display: flex !important; align-items: center !important;">
+                <div class="flex items-center gap-2 w-full md:w-auto">
                     <!-- Search Input (mencakup topik, catatan mhs, feedback dosen) -->
-                    <x-search-input 
-                        name="search" 
-                        :value="$search ?? ''" 
-                        placeholder="Cari topik, catatan, atau revisi..." 
-                        :params="['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null]" />
+                    <div class="flex-1 md:w-64 min-w-0">
+                        <x-search-input 
+                            name="search" 
+                            :value="$search ?? ''" 
+                            placeholder="Cari topik, catatan, atau revisi..." 
+                            :params="['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null]" />
+                    </div>
 
                     <!-- Export PDF Button (Modern SIBIMA Style) -->
                     <a href="{{ route('theses.logbooks.export-pdf', array_filter(['thesis' => $thesis->id, 'dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null])) }}" 
                        target="_blank"
-                       class="h-10 inline-flex items-center justify-center gap-2 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider transition-all shadow-xs shrink-0 cursor-pointer" 
+                       class="h-10 inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider transition-all shadow-xs shrink-0 cursor-pointer" 
                        style="height: 40px !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; box-sizing: border-box !important;"
                        title="Unduh seluruh catatan logbook mahasiswa dalam format PDF">
                         <svg class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/>
                         </svg>
-                        <span>Export PDF</span>
+                        <span class="hidden sm:inline">Export </span>
+                        <span>PDF</span>
                     </a>
                 </div>
             </div>
 
             <!-- Filter Pembimbing Tabs -->
             @if($thesis->pembimbing1 || $thesis->pembimbing2)
-                <div class="px-6 py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center gap-2 overflow-x-auto">
-                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
-                        Filter Pembimbing:
+                <div class="px-4 sm:px-6 py-2.5 sm:py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center gap-1.5 sm:gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
+                        <span class="hidden sm:inline">Filter Pembimbing:</span>
+                        <span class="sm:hidden">Filter:</span>
                     </span>
 
                     <!-- Tab Semua -->
                     <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'all'])) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
-                        <span>Semua Pembimbing</span>
+                        <span class="hidden sm:inline">Semua Pembimbing</span>
+                        <span class="sm:hidden">Semua</span>
                         <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                             {{ $totalCompletedCount }}
                         </span>
@@ -598,8 +603,10 @@
                     <!-- Tab P1 -->
                     @if($thesis->pembimbing1)
                         <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'p1'])) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
-                            <span>Pembimbing 1 ({{ Str::limit($thesis->pembimbing1->name, 22) }}){{ $thesis->pembimbing1_id === Auth::id() ? ' • Anda' : '' }}</span>
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
+                           title="Pembimbing 1: {{ $thesis->pembimbing1->name }}">
+                            <span class="hidden sm:inline">Pembimbing 1 ({{ Str::limit($thesis->pembimbing1->name, 22) }}){{ $thesis->pembimbing1_id === Auth::id() ? ' • Anda' : '' }}</span>
+                            <span class="sm:hidden">Pembimbing 1</span>
                             <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                 {{ $p1SessionCount }}
                             </span>
@@ -609,10 +616,17 @@
                     <!-- Tab P2 -->
                     @if($thesis->pembimbing2)
                         <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'p2'])) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
-                            <span>Pembimbing 2 ({{ Str::limit($thesis->pembimbing2->name, 22) }}){{ $thesis->pembimbing2_id === Auth::id() ? ' • Anda' : '' }}</span>
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
+                           title="Pembimbing 2: {{ $thesis->pembimbing2->name }}">
+                            <span class="hidden sm:inline">Pembimbing 2 ({{ Str::limit($thesis->pembimbing2->name, 22) }}){{ $thesis->pembimbing2_id === Auth::id() ? ' • Anda' : '' }}</span>
+                            <span class="sm:hidden">Pembimbing 2</span>
                             <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                 {{ $p2SessionCount }}
+                            </span>
+                        </a>
+                    @endif
+                </div>
+            @endif
                             </span>
                         </a>
                     @endif
