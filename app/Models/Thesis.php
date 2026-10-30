@@ -279,6 +279,97 @@ class Thesis extends Model
         return $this->defenseScheduleDetails()->exists();
     }
 
+    public function hasPassedSeminarRevision(): bool
+    {
+        if ($this->status === 'completed' || $this->isGraduated()) {
+            return true;
+        }
+
+        if ($this->hasPassedDefense()) {
+            return true;
+        }
+
+        if ($this->isAccSidangFinal()) {
+            return true;
+        }
+
+        if ($this->relationLoaded('defenseApplications')) {
+            if ($this->defenseApplications->whereIn('status', ['pending', 'approved', 'completed', 'finished'])->isNotEmpty()) {
+                return true;
+            }
+        } else {
+            if ($this->defenseApplications()->whereIn('status', ['pending', 'approved', 'completed', 'finished'])->exists()) {
+                return true;
+            }
+        }
+
+        if ($this->relationLoaded('defenseScheduleDetails')) {
+            if ($this->defenseScheduleDetails->isNotEmpty()) {
+                return true;
+            }
+        } else {
+            if ($this->defenseScheduleDetails()->exists()) {
+                return true;
+            }
+        }
+
+        $scheduleDetail = $this->relationLoaded('seminarScheduleDetails')
+            ? $this->seminarScheduleDetails->sortByDesc('id')->first()
+            : $this->seminarScheduleDetails()->latest('id')->first();
+
+        if ($scheduleDetail) {
+            if ($scheduleDetail->isAllRevisionsApproved()) {
+                return true;
+            }
+
+            $revs = $scheduleDetail->relationLoaded('revisions')
+                ? $scheduleDetail->revisions
+                : $scheduleDetail->revisions()->get();
+
+            if ($revs->isNotEmpty() && $revs->every(fn($r) => $r->status === 'approved')) {
+                $hasEx1 = (bool) $scheduleDetail->examiner1_id;
+                $hasEx2 = (bool) $scheduleDetail->examiner2_id;
+                $approvedExIds = $revs->where('status', 'approved')->pluck('examiner_id')->all();
+
+                $ex1Ok = !$hasEx1 || in_array($scheduleDetail->examiner1_id, $approvedExIds);
+                $ex2Ok = !$hasEx2 || in_array($scheduleDetail->examiner2_id, $approvedExIds);
+
+                if ($ex1Ok && $ex2Ok) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function hasPassedDefenseRevision(): bool
+    {
+        if ($this->status === 'completed' || $this->isGraduated()) {
+            return true;
+        }
+
+        $scheduleDetail = $this->relationLoaded('defenseScheduleDetails')
+            ? $this->defenseScheduleDetails->sortByDesc('id')->first()
+            : $this->defenseScheduleDetails()->latest('id')->first();
+
+        if ($scheduleDetail) {
+            if ($scheduleDetail->isRevisionAllApproved()) {
+                return true;
+            }
+
+            $revs = $scheduleDetail->relationLoaded('revisions')
+                ? $scheduleDetail->revisions
+                : $scheduleDetail->revisions()->get();
+
+            if ($revs->isNotEmpty() && $revs->every(fn($r) => $r->status === 'approved')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getCurrentAcademicStage(): array
     {
         if ($this->status === 'completed' || $this->isGraduated()) {

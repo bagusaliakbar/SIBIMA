@@ -350,7 +350,7 @@
                             @if($hasSeminar)
                             <a href="{{ route('seminar-applications.index') }}"
                                data-tooltip="2. Pendaftaran Seminar (Selesai)" title="2. Pendaftaran Seminar (Selesai - Klik untuk lihat detail)"
-                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border border-emerald-500/20 font-semibold transition-all">
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm {{ request()->routeIs('seminar-applications.*') ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 ring-1 ring-emerald-400/30' : 'text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border-emerald-500/20' }} border font-semibold transition-all">
                                 <span class="flex items-center min-w-0">
                                     <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <span class="sidebar-text truncate">2. Pendaftaran Seminar</span>
@@ -366,12 +366,27 @@
                             </a>
                             @endif
 
+                            @php
+                                $hasSeminarRev = $thesis ? cache()->remember('u_' . Auth::id() . '_has_sem_rev', 30, fn() => $thesis->hasPassedSeminarRevision()) : false;
+                            @endphp
+                            @if($hasSeminarRev)
+                            <a href="{{ route('student-seminar-revisions.index') }}"
+                               data-tooltip="3. Revisi Seminar (Selesai)" title="3. Revisi Seminar (Selesai - Klik untuk lihat detail)"
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm {{ request()->routeIs('student-seminar-revisions.*') ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 ring-1 ring-emerald-400/30' : 'text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border-emerald-500/20' }} border font-semibold transition-all">
+                                <span class="flex items-center min-w-0">
+                                    <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="sidebar-text truncate">3. Revisi Seminar</span>
+                                </span>
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 leading-none shrink-0">Selesai</span>
+                            </a>
+                            @else
                             <a href="{{ route('student-seminar-revisions.index') }}" 
                                data-tooltip="3. Revisi Seminar" title="3. Revisi Seminar"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student-seminar-revisions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-seminar-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 <span class="sidebar-text">3. Revisi Seminar</span>
                             </a>
+                            @endif
 
                             @php
                                 $hasDefense = $thesis ? cache()->remember('u_' . Auth::id() . '_has_def', 30, fn() => \App\Models\ThesisDefenseApplication::where('thesis_id', $thesis->id)->whereIn('status', ['approved', 'completed', 'finished'])->exists() || \App\Models\ThesisDefenseScheduleDetail::where('thesis_id', $thesis->id)->exists()) : false;
@@ -379,7 +394,7 @@
                             @if($hasDefense)
                             <a href="{{ route('thesis-defense-applications.index') }}"
                                data-tooltip="4. Pendaftaran Sidang (Selesai)" title="4. Pendaftaran Sidang (Selesai - Klik untuk lihat detail)"
-                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border border-emerald-500/20 font-semibold transition-all">
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm {{ request()->routeIs('thesis-defense-applications.*') ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 ring-1 ring-emerald-400/30' : 'text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border-emerald-500/20' }} border font-semibold transition-all">
                                 <span class="flex items-center min-w-0">
                                     <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <span class="sidebar-text truncate">4. Pendaftaran Sidang</span>
@@ -395,19 +410,49 @@
                             </a>
                             @endif
 
+                            @php
+                                $hasDefenseRev = $thesis ? cache()->remember('u_' . Auth::id() . '_has_def_rev', 30, fn() => $thesis->hasPassedDefenseRevision()) : false;
+                            @endphp
+                            @if($hasDefenseRev)
+                            <a href="{{ route('student-defense-revisions.index') }}" 
+                               data-tooltip="5. Revisi Sidang (Selesai)" title="5. Revisi Sidang (Selesai - Klik untuk lihat detail)"
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm {{ request()->routeIs('student-defense-revisions.*') ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 ring-1 ring-emerald-400/30' : 'text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border-emerald-500/20' }} border font-semibold transition-all">
+                                <span class="flex items-center min-w-0">
+                                    <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="sidebar-text truncate">5. Revisi Sidang</span>
+                                </span>
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 leading-none shrink-0">Selesai</span>
+                            </a>
+                            @else
                             <a href="{{ route('student-defense-revisions.index') }}" 
                                data-tooltip="5. Revisi Sidang" title="5. Revisi Sidang"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student-defense-revisions.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student-defense-revisions.*') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 <span class="sidebar-text">5. Revisi Sidang</span>
                             </a>
+                            @endif
 
+                            @php
+                                $hasGraduated = $thesis ? cache()->remember('u_' . Auth::id() . '_has_grad', 30, fn() => $thesis->isGraduated()) : false;
+                            @endphp
+                            @if($hasGraduated)
+                            <a href="{{ route('student.graduation') }}" 
+                               data-tooltip="6. Yudisium & SKL (Selesai)" title="6. Yudisium & SKL (Selesai - Klik untuk lihat detail)"
+                               class="group flex items-center justify-between px-4 py-3 rounded-xl text-sm {{ request()->routeIs('student.graduation') ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 ring-1 ring-emerald-400/30' : 'text-emerald-400/90 hover:text-emerald-300 bg-emerald-500/[0.06] hover:bg-emerald-500/10 border-emerald-500/20' }} border font-semibold transition-all">
+                                <span class="flex items-center min-w-0">
+                                    <svg aria-hidden="true" class="w-5 h-5 mr-3 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="sidebar-text truncate">6. Yudisium & SKL</span>
+                                </span>
+                                <span class="sidebar-badge px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 leading-none shrink-0">Selesai</span>
+                            </a>
+                            @else
                             <a href="{{ route('student.graduation') }}" 
                                data-tooltip="6. Yudisium & SKL" title="6. Yudisium & SKL"
                                class="sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('student.graduation') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('student.graduation') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
                                 <span class="sidebar-text">6. Yudisium & SKL</span>
                             </a>
+                            @endif
                         </nav>
 
                         <div class="sidebar-section-header px-4 pt-12 pb-4 border-t border-white/[0.05] mt-10">

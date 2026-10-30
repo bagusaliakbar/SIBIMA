@@ -68,10 +68,20 @@ class SeminarScheduleDetail extends Model
 
     public function isAllRevisionsApproved()
     {
-        $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
-        $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
-        
-        return ($rev1 && $rev1->status === 'approved') && ($rev2 && $rev2->status === 'approved');
+        $hasEx1 = (bool) $this->examiner1_id;
+        $hasEx2 = (bool) $this->examiner2_id;
+
+        if (!$hasEx1 && !$hasEx2) {
+            return false;
+        }
+
+        $rev1 = $hasEx1 ? $this->revisions()->where('examiner_id', $this->examiner1_id)->first() : null;
+        $rev2 = $hasEx2 ? $this->revisions()->where('examiner_id', $this->examiner2_id)->first() : null;
+
+        $ok1 = !$hasEx1 || ($rev1 && $rev1->status === 'approved');
+        $ok2 = !$hasEx2 || ($rev2 && $rev2->status === 'approved');
+
+        return $ok1 && $ok2;
     }
 
     public function isRevisionStarted()
