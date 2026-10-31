@@ -627,11 +627,6 @@
                     @endif
                 </div>
             @endif
-                            </span>
-                        </a>
-                    @endif
-                </div>
-            @endif
 
             <!-- 4. DAFTAR RIWAYAT LOGBOOK -->
             <div class="p-6 bg-slate-50/60 dark:bg-slate-900/60">
