@@ -31,3 +31,4 @@ class BirthdayWish extends Model
         return $this->belongsTo(User::class, 'to_user_id');
     }
 }
+

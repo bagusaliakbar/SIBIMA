@@ -1366,7 +1366,7 @@
                                         $isTargetSidang = $hasSeminar;
                                         $p1Acc = $isTargetSidang ? $thesis->acc_sidang_p1 : $thesis->acc_up_p1;
                                         $p2Acc = $isTargetSidang ? $thesis->acc_sidang_p2 : $thesis->acc_up_p2;
-                                        $targetAccLabel = $isTargetSidang ? 'Sidang' : 'Sempro';
+                                        $targetAccLabel = $isTargetSidang ? 'Sidang' : 'Seminar';
 
                                         $lastSession = $thesis->mentoringSessions ? $thesis->mentoringSessions->first() : null;
                                         $lastDate = ($lastSession && $lastSession->scheduled_at) 
@@ -1403,7 +1403,7 @@
                                             @if($hasSeminar)
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60 shrink-0 shadow-2xs" title="Seminar Proposal: Selesai">
                                                     <svg class="w-2.5 h-2.5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                    <span>Sempro</span>
+                                                    <span>Seminar</span>
                                                 </span>
                                             @elseif($thesis->isAccUpFinal())
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0 shadow-2xs" title="Seminar Proposal: ACC Lengkap, Siap Daftar">
