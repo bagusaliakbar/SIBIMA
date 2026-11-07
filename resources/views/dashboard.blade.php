@@ -1083,57 +1083,6 @@
                 </x-stat-card>
             </div>
 
-            <!-- Early Warning System for Dosen -->
-            @if(isset($earlyWarning) && ($earlyWarning['total_inactive'] ?? 0) > 0)
-                <div class="bg-gradient-to-r from-amber-100/70 via-rose-50/70 to-orange-100/60 dark:from-amber-950/40 dark:via-rose-950/20 dark:to-orange-950/30 rounded-3xl p-6 sm:p-7 shadow-sm relative overflow-hidden mb-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div class="flex items-start sm:items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/30">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <h3 class="text-sm sm:text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">
-                                        Early Warning System: Bimbingan Butuh Intervensi
-                                    </h3>
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-2xs">
-                                        {{ $earlyWarning['total_inactive'] }} Mahasiswa Pasif / Macet
-                                    </span>
-                                </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1.5 leading-relaxed">
-                                    Terdapat 
-                                    <a href="{{ route('theses.index', ['mentoring_health' => 'warning']) }}" 
-                                       class="underline decoration-amber-400 font-bold text-slate-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 transition-colors" 
-                                       title="Klik untuk filter mahasiswa pasif (8–14 hari)">
-                                        {{ $earlyWarning['warning_count'] }} mahasiswa pasif (8–14 hari)
-                                    </a> 
-                                    dan 
-                                    <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" 
-                                       class="underline decoration-rose-400 font-bold text-slate-800 dark:text-white hover:text-rose-600 dark:hover:text-rose-400 transition-colors" 
-                                       title="Klik untuk filter mahasiswa macet (>14 hari)">
-                                        {{ $stalledThesesCount ?? $earlyWarning['stalled_count'] ?? $earlyWarning['critical_count'] }} mahasiswa macet (&gt;14 hari)
-                                    </a> 
-                                    yang belum melakukan bimbingan rutin (standar prodi: min 1x/pekan).
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 shrink-0">
-                            <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" 
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md shadow-amber-600/25 transition-all cursor-pointer">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                                <span>Tinjau &amp; Ingatkan Mahasiswa</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
 
 
             <!-- Dosen Charts: Distribusi Progres & Tren Aktivitas -->
