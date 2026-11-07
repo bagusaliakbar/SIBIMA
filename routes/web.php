@@ -39,6 +39,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{user}/status', [App\Http\Controllers\ChatController::class, 'status'])->name('chat.status');
     Route::post('/chat/{user}', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
 
+    // Birthday Wishes Routes
+    Route::post('/birthday-wishes', [App\Http\Controllers\BirthdayWishController::class, 'store'])->name('birthday-wishes.store');
+    Route::get('/birthday-wishes/{user}', [App\Http\Controllers\BirthdayWishController::class, 'index'])->name('birthday-wishes.index');
+
     Route::get('/theses/export-excel', [App\Http\Controllers\ThesisController::class, 'exportExcel'])->name('theses.export-excel');
     Route::get('/theses/export-pdf', [App\Http\Controllers\ThesisController::class, 'exportPdf'])->name('theses.export-pdf');
     Route::post('/theses/{thesis}/toggle-acc/{type}', [App\Http\Controllers\ThesisController::class, 'toggleAcc'])->name('theses.toggle-acc');

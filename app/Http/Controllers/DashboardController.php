@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BirthdayWish;
 use App\Services\DashboardService;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,12 +30,38 @@ class DashboardController extends Controller
 
         $commonData = $this->dashboardService->getCommonData();
         
-        return view('dashboard', array_merge($this->getDefaultData(), $data, $commonData));
+        $wishedUserIds = BirthdayWish::where('from_user_id', $user->id)
+            ->where('year', now()->year)
+            ->pluck('to_user_id')
+            ->toArray();
+
+        $myReceivedWishesCount = 0;
+        $myReceivedWishes = collect();
+        if ($user->is_birthday) {
+            $myReceivedWishes = BirthdayWish::with('fromUser')
+                ->where('to_user_id', $user->id)
+                ->where('year', now()->year)
+                ->latest()
+                ->get();
+            $myReceivedWishesCount = $myReceivedWishes->count();
+        }
+
+        $birthdayData = [
+            'wishedUserIds' => $wishedUserIds,
+            'myReceivedWishesCount' => $myReceivedWishesCount,
+            'myReceivedWishes' => $myReceivedWishes,
+        ];
+        
+        return view('dashboard', array_merge($this->getDefaultData(), $data, $commonData, $birthdayData));
     }
 
     private function getDefaultData()
     {
         return [
+            'todayBirthdays' => collect(),
+            'wishedUserIds' => [],
+            'myReceivedWishesCount' => 0,
+            'myReceivedWishes' => collect(),
             'thesis' => null,
             'upcomingSessions' => collect(),
             'pastSessionsCount' => 0,

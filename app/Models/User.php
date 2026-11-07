@@ -227,11 +227,27 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the birthday wishes received by this user.
+     */
+    public function birthdayWishesReceived()
+    {
+        return $this->hasMany(BirthdayWish::class, 'to_user_id');
+    }
+
+    /**
+     * Get the birthday wishes sent by this user.
+     */
+    public function birthdayWishesSent()
+    {
+        return $this->hasMany(BirthdayWish::class, 'from_user_id');
+    }
+
+    /**
      * Get the URL for the user's avatar.
      */
     public function getAvatarUrlAttribute()
     {
-        if ($this->avatar) {
+        if ($this->avatar || ($this->attributes['has_avatar'] ?? false)) {
             return route('users.avatar', $this->id);
         }
 

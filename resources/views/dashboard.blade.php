@@ -104,7 +104,13 @@
                     @endif
                 </div>
 
-                <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end">
+                <div class="flex items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto justify-end flex-wrap">
+                    <button type="button" 
+                            @click="$dispatch('open-received-wishes', { userId: {{ Auth::id() }}, userName: '{{ addslashes(Auth::user()->name) }}', userRole: '{{ Auth::user()->role === 'dosen' ? 'Dosen' : (Auth::user()->role === 'kaprodi' ? 'Kaprodi' : (Auth::user()->role === 'admin' ? 'Admin' : 'Mahasiswa')) }}', userAvatar: '{{ Auth::user()->avatar_url }}' })"
+                            class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-wider shadow-2xs active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
+                        <svg aria-hidden="true" class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        <span>Kotak Doa ({{ $myReceivedWishesCount ?? 0 }})</span>
+                    </button>
                     <button type="button" 
                             @click="burst()" 
                             class="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-black uppercase tracking-wider shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
@@ -273,6 +279,9 @@
                 </div>
             </div>
         @endif
+
+        <!-- Campus Birthday Board (Papan Ucapan Ulang Tahun Seluruh Civitas Akademika) -->
+        <x-birthday-board :birthdays="$todayBirthdays ?? collect()" :wishedUserIds="$wishedUserIds ?? []" />
 
         @if(Auth::user()->role === 'mahasiswa')
             @php

@@ -1011,6 +1011,13 @@ class DashboardService
             $allUsers = User::select('id', 'name', 'role', 'identifier', 'email')->get();
             $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values();
 
+            $todayBirthdays = User::query()
+                ->birthdayToday()
+                ->selectRaw('id, name, role, identifier, email, birth_date, CASE WHEN avatar IS NOT NULL AND avatar != "" THEN 1 ELSE 0 END as has_avatar')
+                ->orderByRaw("CASE WHEN role = 'dosen' THEN 1 WHEN role = 'kaprodi' THEN 2 ELSE 3 END")
+                ->orderBy('name')
+                ->get();
+
             return [
                 'announcements' => Announcement::where('is_active', true)->orderBy('created_at', 'desc')->take(3)->get(),
                 'onlineUsers' => $onlineUsers,
@@ -1020,7 +1027,8 @@ class DashboardService
                     'dosen' => $onlineUsers->where('role', 'dosen')->count(),
                     'kaprodi' => $onlineUsers->where('role', 'kaprodi')->count(),
                     'admin' => $onlineUsers->where('role', 'admin')->count(),
-                ]
+                ],
+                'todayBirthdays' => $todayBirthdays,
             ];
         });
     }
