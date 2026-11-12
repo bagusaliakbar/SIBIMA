@@ -18,20 +18,23 @@
     $stagesPayload = [];
 
     foreach ($rawStages as $idx => $st) {
-        $numStr = str_pad((string) ($st['number'] ?? ($idx + 1)), 2, '0', STR_PAD_LEFT);
+        $stageNo = (int) ($st['number'] ?? ($idx + 1));
+        $numStr = str_pad((string) $stageNo, 2, '0', STR_PAD_LEFT);
+        $cleanName = preg_replace('/^\d+\.\s*/', '', (string) ($st['name'] ?? ''));
+        $cleanShort = preg_replace('/^\d+\.\s*/', '', (string) ($st['short_name'] ?? $cleanName));
         $badgeText = !empty($st['badge'])
             ? $st['badge']
             : (!empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Sedang Berjalan' : 'Terkunci'));
         $stagesPayload[] = [
             'id' => 'stage-' . ($idx + 1),
             'num' => $numStr,
-            'short' => $st['short_name'] ?? $st['name'],
-            'title' => ($st['number'] ?? ($idx + 1)) . '. ' . ($st['name'] ?? ''),
+            'short' => $cleanShort,
+            'title' => $stageNo . '. ' . $cleanName,
             'desc' => $st['desc'] ?? '',
             'badge' => $badgeText,
             'subBadge' => !empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Tahap Aktif' : 'Terkunci'),
             'url' => $st['url'] ?? '#',
-            'action' => !empty($st['is_locked']) ? 'Tahap Terkunci' : ('Buka ' . ($st['short_name'] ?? 'Tahap')),
+            'action' => !empty($st['is_locked']) ? 'Tahap Terkunci' : ('Buka ' . $cleanShort),
             'isCompleted' => !empty($st['is_completed']),
             'isCurrent' => !empty($st['is_current']),
             'isLocked' => !empty($st['is_locked']),
