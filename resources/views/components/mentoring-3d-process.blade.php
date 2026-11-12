@@ -2,14 +2,7 @@
     'role' => 'mahasiswa',
     'progress' => null,
     'pastSessionsCount' => 0,
-    'studentProgressDistribution' => [],
-    'activeThesesCount' => 0,
-    'sessionsThisWeek' => 0,
-    'totalCompletedSessions' => 0,
-    'dosenActionCenter' => [],
-    'adminApprovals' => [],
-    'thesisStatusCounts' => [],
-    'embedded' => false,
+    'embedded' => true,
 ])
 
 @php
@@ -21,311 +14,66 @@
     $activeIdx = $currentStageNum - 1;
 
     $modelTypes = ['book', 'laptop', 'revision', 'podium', 'hardcover', 'toga'];
+    $rawStages = $progress['stages'] ?? [];
+    $stagesPayload = [];
 
-    if ($role === 'mahasiswa' && !empty($progress['stages'])) {
-        $rawStages = $progress['stages'];
-        $stagesPayload = [];
-        foreach ($rawStages as $idx => $st) {
-            $numStr = str_pad((string) ($st['number'] ?? ($idx + 1)), 2, '0', STR_PAD_LEFT);
-            $badgeText = !empty($st['badge'])
-                ? $st['badge']
-                : (!empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Sedang Berjalan' : 'Terkunci'));
-            $stagesPayload[] = [
-                'id' => 'stage-' . ($idx + 1),
-                'num' => $numStr,
-                'short' => $st['short_name'] ?? $st['name'],
-                'title' => ($st['number'] ?? ($idx + 1)) . '. ' . ($st['name'] ?? ''),
-                'desc' => $st['desc'] ?? '',
-                'badge' => $badgeText,
-                'subBadge' => !empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Tahap Aktif' : 'Terkunci'),
-                'url' => $st['url'] ?? '#',
-                'action' => !empty($st['is_locked']) ? 'Tahap Terkunci' : ('Buka ' . ($st['short_name'] ?? 'Tahap')),
-                'isCompleted' => !empty($st['is_completed']),
-                'isCurrent' => !empty($st['is_current']),
-                'isLocked' => !empty($st['is_locked']),
-                'modelType' => $modelTypes[$idx] ?? 'book',
-            ];
-        }
-    } elseif ($role === 'dosen') {
-        $cJudul = (int) ($studentProgressDistribution['Judul'] ?? 0);
-        $cBimbingan = (int) ($studentProgressDistribution['Bimbingan'] ?? 0);
-        $cSempro = (int) ($studentProgressDistribution['ACC Seminar'] ?? 0);
-        $cSidang = (int) ($studentProgressDistribution['ACC Sidang'] ?? 0);
-        $cPendingMentoring = (int) ($dosenActionCenter['pending_mentoring_count'] ?? 0);
-        $cNeedReview = (int) ($dosenActionCenter['need_review_count'] ?? 0);
-        $cNeedInput = (int) ($dosenActionCenter['need_input_count'] ?? 0);
-
-        $stagesPayload = [
-            [
-                'id' => 'stage-1',
-                'num' => '01',
-                'short' => 'Judul Skripsi',
-                'title' => '1. Pengajuan & Verifikasi Judul',
-                'desc' => $cJudul . ' mahasiswa bimbingan Anda berada pada tahap pengajuan/awal judul skripsi.',
-                'badge' => $cJudul . ' Mahasiswa',
-                'subBadge' => $cJudul . ' Mhs',
-                'url' => route('theses.index'),
-                'action' => 'Lihat Daftar Bimbingan',
-                'isCompleted' => true,
-                'isCurrent' => false,
-                'isLocked' => false,
-                'modelType' => 'book',
-            ],
-            [
-                'id' => 'stage-2',
-                'num' => '02',
-                'short' => 'Siklus Bimbingan',
-                'title' => '2. Siklus Bimbingan & Logbook (GDrive / GMeet)',
-                'desc' => $cBimbingan . ' mahasiswa aktif bimbingan rutin (' . $cPendingMentoring . ' permintaan sesi menunggu konfirmasi Anda, ' . $sessionsThisWeek . ' sesi minggu ini).',
-                'badge' => $cPendingMentoring > 0 ? ($cPendingMentoring . ' Perlu Respon') : ($cBimbingan . ' Mhs Aktif'),
-                'subBadge' => $cBimbingan . ' Mhs Aktif',
-                'url' => route('mentoring-sessions.index'),
-                'action' => 'Buka Jadwal & Logbook',
-                'isCompleted' => false,
-                'isCurrent' => true,
-                'isLocked' => false,
-                'modelType' => 'laptop',
-            ],
-            [
-                'id' => 'stage-3',
-                'num' => '03',
-                'short' => 'Seminar & Revisi',
-                'title' => '3. Seminar Proposal & Revisi Penguji',
-                'desc' => $cSempro . ' mahasiswa telah ACC Seminar Proposal. Terdapat ' . $cNeedReview . ' berkas revisi masuk yang menunggu peninjauan.',
-                'badge' => $cNeedReview > 0 ? ($cNeedReview . ' Revisi Masuk') : ($cSempro . ' ACC Sempro'),
-                'subBadge' => $cSempro . ' ACC Sempro',
-                'url' => route('seminar-examiner.index'),
-                'action' => 'Buka Penguji Seminar',
-                'isCompleted' => true,
-                'isCurrent' => false,
-                'isLocked' => false,
-                'modelType' => 'revision',
-            ],
-            [
-                'id' => 'stage-4',
-                'num' => '04',
-                'short' => 'Bimbingan Sidang',
-                'title' => '4. Bimbingan Lanjut (Bab 4–5) & Persiapan Sidang',
-                'desc' => $cSidang . ' mahasiswa bimbingan berada pada tahap penyusunan akhir dan telah disetujui menuju Sidang Skripsi.',
-                'badge' => $cSidang . ' Siap Sidang',
-                'subBadge' => $cSidang . ' Siap Sidang',
-                'url' => route('theses.index'),
-                'action' => 'Monitoring Bimbingan',
-                'isCompleted' => true,
-                'isCurrent' => false,
-                'isLocked' => false,
-                'modelType' => 'podium',
-            ],
-            [
-                'id' => 'stage-5',
-                'num' => '05',
-                'short' => 'Revisi Sidang',
-                'title' => '5. Penilaian & Revisi Pasca Sidang Skripsi',
-                'desc' => $cNeedInput > 0 ? ('Terdapat ' . $cNeedInput . ' berita acara / nilai ujian yang memerlukan pengisian catatan dari Anda.') : 'Seluruh catatan dan penilaian ujian sidang mahasiswa telah terisi.',
-                'badge' => $cNeedInput > 0 ? ($cNeedInput . ' Belum Diisi') : 'Tuntas',
-                'subBadge' => $cNeedInput > 0 ? ($cNeedInput . ' Belum Diisi') : 'Tuntas',
-                'url' => route('defense-examiner.index'),
-                'action' => 'Buka Penguji Sidang',
-                'isCompleted' => $cNeedInput === 0,
-                'isCurrent' => $cNeedInput > 0,
-                'isLocked' => false,
-                'modelType' => 'hardcover',
-            ],
-            [
-                'id' => 'stage-6',
-                'num' => '06',
-                'short' => 'Yudisium & SKL',
-                'title' => '6. Kelulusan Akhir & Yudisium',
-                'desc' => 'Total ' . $totalCompletedSessions . ' sesi bimbingan telah Anda selesaikan bersama ' . $activeThesesCount . ' mahasiswa bimbingan aktif.',
-                'badge' => $totalCompletedSessions . ' Sesi Selesai',
-                'subBadge' => $totalCompletedSessions . ' Sesi',
-                'url' => route('theses.index'),
-                'action' => 'Lihat Rekap Skripsi',
-                'isCompleted' => true,
-                'isCurrent' => false,
-                'isLocked' => false,
-                'modelType' => 'toga',
-            ],
+    foreach ($rawStages as $idx => $st) {
+        $numStr = str_pad((string) ($st['number'] ?? ($idx + 1)), 2, '0', STR_PAD_LEFT);
+        $badgeText = !empty($st['badge'])
+            ? $st['badge']
+            : (!empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Sedang Berjalan' : 'Terkunci'));
+        $stagesPayload[] = [
+            'id' => 'stage-' . ($idx + 1),
+            'num' => $numStr,
+            'short' => $st['short_name'] ?? $st['name'],
+            'title' => ($st['number'] ?? ($idx + 1)) . '. ' . ($st['name'] ?? ''),
+            'desc' => $st['desc'] ?? '',
+            'badge' => $badgeText,
+            'subBadge' => !empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Tahap Aktif' : 'Terkunci'),
+            'url' => $st['url'] ?? '#',
+            'action' => !empty($st['is_locked']) ? 'Tahap Terkunci' : ('Buka ' . ($st['short_name'] ?? 'Tahap')),
+            'isCompleted' => !empty($st['is_completed']),
+            'isCurrent' => !empty($st['is_current']),
+            'isLocked' => !empty($st['is_locked']),
+            'modelType' => $modelTypes[$idx] ?? 'book',
         ];
-        $activeIdx = 1;
-    } else {
-        // Kaprodi / Admin
-        $pTheses = (int) (($adminApprovals['pending_theses'] ?? 0) + ($adminApprovals['unassigned_theses'] ?? 0));
-        $pSeminars = (int) ($adminApprovals['pending_seminars'] ?? 0);
-        $pDefenses = (int) ($adminApprovals['pending_defenses'] ?? 0);
-        $pGraduations = (int) ($adminApprovals['pending_graduations'] ?? 0);
-        $cActive = (int) ($thesisStatusCounts['active'] ?? $activeThesesCount ?? 0);
-        $cCompleted = (int) ($thesisStatusCounts['completed'] ?? 0);
-
-        $stagesPayload = [
-            [
-                'id' => 'stage-1',
-                'num' => '01',
-                'short' => 'Usulan Judul',
-                'title' => '1. Usulan Judul & Plotting Pembimbing',
-                'desc' => $pTheses > 0 ? ($pTheses . ' usulan judul skripsi menunggu verifikasi atau plotting dosen pembimbing.') : 'Seluruh usulan judul baru telah diverifikasi dan di-plot.',
-                'badge' => $pTheses > 0 ? ($pTheses . ' Perlu Plotting') : 'Terverifikasi',
-                'subBadge' => $pTheses . ' Antrean',
-                'url' => route('theses.index', ['status' => 'pending']),
-                'action' => 'Kelola Usulan Judul',
-                'isCompleted' => $pTheses === 0,
-                'isCurrent' => $pTheses > 0,
-                'isLocked' => false,
-                'modelType' => 'book',
-            ],
-            [
-                'id' => 'stage-2',
-                'num' => '02',
-                'short' => 'Bimbingan Aktif',
-                'title' => '2. Siklus Bimbingan Skripsi Aktif',
-                'desc' => $cActive . ' mahasiswa sedang menjalani bimbingan aktif (' . $sessionsThisWeek . ' sesi minggu ini, total ' . $totalCompletedSessions . ' sesi selesai).',
-                'badge' => $cActive . ' Skripsi Aktif',
-                'subBadge' => $cActive . ' Aktif',
-                'url' => route('theses.index', ['status' => 'active']),
-                'action' => 'Monitoring Bimbingan',
-                'isCompleted' => false,
-                'isCurrent' => true,
-                'isLocked' => false,
-                'modelType' => 'laptop',
-            ],
-            [
-                'id' => 'stage-3',
-                'num' => '03',
-                'short' => 'Berkas Seminar',
-                'title' => '3. Verifikasi & Penjadwalan Seminar Proposal',
-                'desc' => $pSeminars > 0 ? ($pSeminars . ' pendaftar seminar proposal menunggu validasi berkas dan penjadwalan ruang/penguji.') : 'Tidak ada antrean berkas pendaftaran seminar proposal.',
-                'badge' => $pSeminars > 0 ? ($pSeminars . ' Pendaftar') : 'Tuntas',
-                'subBadge' => $pSeminars . ' Berkas',
-                'url' => route('seminar-applications.index'),
-                'action' => 'Verifikasi Seminar',
-                'isCompleted' => $pSeminars === 0,
-                'isCurrent' => $pSeminars > 0,
-                'isLocked' => false,
-                'modelType' => 'revision',
-            ],
-            [
-                'id' => 'stage-4',
-                'num' => '04',
-                'short' => 'Jadwal Seminar',
-                'title' => '4. Pelaksanaan & Revisi Seminar Proposal',
-                'desc' => 'Kelola jadwal pelaksanaan seminar proposal, berita acara, dan pemantauan revisi penguji.',
-                'badge' => 'Terjadwal',
-                'subBadge' => 'Jadwal Ujian',
-                'url' => route('seminar-schedules.index'),
-                'action' => 'Buka Jadwal Seminar',
-                'isCompleted' => true,
-                'isCurrent' => false,
-                'isLocked' => false,
-                'modelType' => 'podium',
-            ],
-            [
-                'id' => 'stage-5',
-                'num' => '05',
-                'short' => 'Sidang Skripsi',
-                'title' => '5. Verifikasi & Penjadwalan Sidang Akhir',
-                'desc' => $pDefenses > 0 ? ($pDefenses . ' mahasiswa mendaftar Sidang Akhir Skripsi dan menunggu verifikasi syarat.') : 'Seluruh berkas pendaftaran sidang akhir telah diproses.',
-                'badge' => $pDefenses > 0 ? ($pDefenses . ' Pendaftar') : 'Tuntas',
-                'subBadge' => $pDefenses . ' Berkas',
-                'url' => route('thesis-defense-applications.index'),
-                'action' => 'Verifikasi Sidang',
-                'isCompleted' => $pDefenses === 0,
-                'isCurrent' => $pDefenses > 0,
-                'isLocked' => false,
-                'modelType' => 'hardcover',
-            ],
-            [
-                'id' => 'stage-6',
-                'num' => '06',
-                'short' => 'Yudisium & SKL',
-                'title' => '6. Verifikasi Bebas Tanggungan & SKL',
-                'desc' => $pGraduations > 0 ? ($pGraduations . ' pengajuan SKL menunggu approval (' . $cCompleted . ' mahasiswa telah lulus).') : ('Total ' . $cCompleted . ' mahasiswa telah menyelesaikan skripsi & yudisium.'),
-                'badge' => $pGraduations > 0 ? ($pGraduations . ' Perlu Approval') : ($cCompleted . ' Lulus'),
-                'subBadge' => $cCompleted . ' Lulus',
-                'url' => route('graduations.index'),
-                'action' => 'Kelola Yudisium & SKL',
-                'isCompleted' => true,
-                'isCurrent' => false,
-                'isLocked' => false,
-                'modelType' => 'toga',
-            ],
-        ];
-        $activeIdx = 1;
     }
 @endphp
 
-<div id="{{ $uid }}_wrap" class="{{ $embedded ? '' : 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs p-4 sm:p-5 mb-6' }}"
-     x-data="{ show3D: localStorage.getItem('sibima_hide_3d_{{ $role }}') !== 'true' }">
-
-    @if(!$embedded)
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-3.5 mb-3.5 border-b border-slate-100 dark:border-slate-800">
-            <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
-                            {{ $role === 'dosen' ? 'Stepper 3D Siklus & Progres Bimbingan Mahasiswa' : 'Stepper 3D Alur Bimbingan & Progres Skripsi Prodi' }}
-                        </h3>
-                        <span class="hidden sm:inline-flex px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-700 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60">
-                            Isometrik 3D
-                        </span>
-                    </div>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                        Klik tahapan 3D (1 s.d. 6) untuk melihat detail status dan membuka menu terkait.
-                    </p>
-                </div>
-            </div>
-
-            <button type="button"
-                    @click="show3D = !show3D; localStorage.setItem('sibima_hide_3d_{{ $role }}', !show3D); if(show3D) { setTimeout(() => window.dispatchEvent(new Event('resize')), 50); }"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-colors cursor-pointer">
-                <svg class="w-3.5 h-3.5 text-orange-600 transition-transform duration-200" :class="show3D ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-                <span x-text="show3D ? 'Sembunyikan 3D' : 'Tampilkan Stepper 3D'"></span>
-            </button>
+<div id="{{ $uid }}_wrap" class="space-y-3">
+    <!-- Stationary 3D Isometric Stepper Viewport (Horizontal Scroll on Very Small Screens) -->
+    <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 overflow-x-auto hide-scrollbar transition-colors duration-300">
+        <div class="min-w-[740px] sm:min-w-0 relative">
+            <canvas id="{{ $uid }}_canvas" class="w-full h-[290px] sm:h-[320px] block select-none"></canvas>
         </div>
-    @endif
+    </div>
 
-    <div x-show="show3D" x-transition.opacity.duration.200ms class="space-y-3">
-        <!-- Stationary 3D Isometric Stepper Viewport (Horizontal Scroll on Very Small Screens) -->
-        <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 overflow-x-auto hide-scrollbar transition-colors duration-300">
-            <div class="min-w-[740px] sm:min-w-0 relative">
-                <canvas id="{{ $uid }}_canvas" class="w-full h-[290px] sm:h-[320px] block select-none"></canvas>
+    <!-- Bottom Interactive Inspector Card -->
+    <div class="p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+            <div id="{{ $uid }}_inspIcon" class="w-11 h-11 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 font-black text-sm shadow-xs">
+                02
+            </div>
+            <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h5 id="{{ $uid }}_inspTitle" class="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
+                        Memuat Tahapan...
+                    </h5>
+                    <span id="{{ $uid }}_inspBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60">
+                        Aktif
+                    </span>
+                </div>
+                <p id="{{ $uid }}_inspDesc" class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                    Klik salah satu tahapan 3D di atas untuk melihat rincian dan pintasan menu.
+                </p>
             </div>
         </div>
 
-        <!-- Bottom Interactive Inspector Card -->
-        <div class="p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
-            <div class="flex items-start sm:items-center gap-3.5 min-w-0">
-                <div id="{{ $uid }}_inspIcon" class="w-11 h-11 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 font-black text-sm shadow-xs">
-                    02
-                </div>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h5 id="{{ $uid }}_inspTitle" class="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
-                            Memuat Tahapan...
-                        </h5>
-                        <span id="{{ $uid }}_inspBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60">
-                            Aktif
-                        </span>
-                    </div>
-                    <p id="{{ $uid }}_inspDesc" class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                        Klik salah satu tahapan 3D di atas untuk melihat rincian dan pintasan menu.
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 shrink-0">
-                <a id="{{ $uid }}_inspLink" href="#" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
-                    <span id="{{ $uid }}_inspAction">Buka Menu</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                </a>
-            </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <a id="{{ $uid }}_inspLink" href="#" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
+                <span id="{{ $uid }}_inspAction">Buka Menu</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </a>
         </div>
     </div>
 </div>

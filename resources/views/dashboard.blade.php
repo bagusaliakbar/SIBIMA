@@ -1048,16 +1048,6 @@
                 </div>
             </div>
 
-            <!-- 3D Interactive Mentoring & Supervision Process (Dosen) -->
-            <x-mentoring-3d-process
-                role="dosen"
-                :studentProgressDistribution="$studentProgressDistribution ?? []"
-                :activeThesesCount="$activeThesesCount ?? 0"
-                :sessionsThisWeek="$sessionsThisWeek ?? 0"
-                :totalCompletedSessions="$totalCompletedSessions ?? 0"
-                :dosenActionCenter="$dosenActionCenter ?? []"
-            />
-
             <!-- Active Wave Info Widget for Dosen (if active) -->
             @if(isset($activeWaveInfo) && $activeWaveInfo)
             <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 dark:from-orange-950/40 dark:via-amber-950/30 dark:to-slate-800/60 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1414,16 +1404,6 @@
                         </a>
                     </div>
                     @endif
-
-                    <!-- 3D Interactive Mentoring & Thesis Ecosystem (Kaprodi / Admin) -->
-                    <x-mentoring-3d-process
-                        role="kaprodi"
-                        :activeThesesCount="$activeThesesCount ?? 0"
-                        :sessionsThisWeek="$sessionsThisWeek ?? 0"
-                        :totalCompletedSessions="$totalCompletedSessions ?? 0"
-                        :adminApprovals="$adminApprovals ?? []"
-                        :thesisStatusCounts="$thesisStatusCounts ?? []"
-                    />
 
                     <!-- Admin Core Stats Row (4 Cards) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
