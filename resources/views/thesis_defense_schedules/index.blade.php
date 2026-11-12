@@ -287,9 +287,13 @@
                                 <div class="px-2.5 sm:px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 min-w-0">
                                     <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Virtual Meeting</span>
                                     @if($schedule->meeting_link)
-                                        <a href="{{ $schedule->meeting_link }}" target="_blank" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline truncate block text-xs">Buka Link &rarr;</a>
+                                        <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 truncate text-xs transition-colors group mt-0.5" title="Buka Google Meet: {{ $schedule->meeting_link }}">
+                                            <x-google-meet-icon class="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />
+                                            <span class="truncate hover:underline">Google Meet</span>
+                                            <svg class="w-3 h-3 text-slate-400 dark:text-slate-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        </a>
                                     @else
-                                        <span class="font-bold text-slate-400 truncate block text-xs">-</span>
+                                        <span class="font-bold text-slate-400 truncate block text-xs mt-0.5">-</span>
                                     @endif
                                 </div>
                             </div>
@@ -586,9 +590,10 @@
                                             {{ $schedule->location ?: 'BELUM DIATUR' }}
                                         </span>
                                         @if($schedule->meeting_link)
-                                            <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center text-[8px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-100 transition-all uppercase tracking-widest">
-                                                <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                                Meeting Link
+                                            <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 text-[9px] font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-700 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-2xs group">
+                                                <x-google-meet-icon class="w-3 h-3 shrink-0 transition-transform group-hover:scale-110" />
+                                                <span>Google Meet</span>
+                                                <svg class="w-2.5 h-2.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                             </a>
                                         @endif
                                     </div>
