@@ -11,12 +11,11 @@
             return {
                 openGuideModal: false,
                 activeGuideTab: 'workflow', // 'workflow', 'views', 'tips', 'faq'
-                viewMode: '{{ request('view', '') }}' || localStorage.getItem('sibima_mentoring_view_mode') || 'table',
+                viewMode: (function() {
+                    const saved = '{{ request('view', '') }}' || localStorage.getItem('sibima_mentoring_view_mode');
+                    return saved === 'cards' ? 'cards' : 'table';
+                })(),
                 cardGrouping: localStorage.getItem('sibima_card_grouping') || 'session', // 'session' (default) or 'student'
-                selectedEvent: null,
-                eventModalOpen: false,
-                calendarInitialized: false,
-                events: @json($calendarEvents ?? []),
                 attendanceStats: @json($attendanceStats ?? []),
                 selectedSessionIds: [],
                 expandedSessions: [],
@@ -30,9 +29,6 @@
                     window.addEventListener('mentoring-clear-selection', () => {
                         this.clearSelection();
                     });
-                    if (this.viewMode === 'calendar') {
-                        this.initCalendar();
-                    }
                 },
                 notifySelection() {
                     const ids = this.selectedSessionIds ? this.selectedSessionIds.map(String) : [];
@@ -45,11 +41,8 @@
                     localStorage.setItem('sibima_card_grouping', mode);
                 },
                 switchView(mode) {
-                    this.viewMode = mode;
-                    localStorage.setItem('sibima_mentoring_view_mode', mode);
-                    if (mode === 'calendar') {
-                        this.initCalendar();
-                    }
+                    this.viewMode = mode === 'cards' ? 'cards' : 'table';
+                    localStorage.setItem('sibima_mentoring_view_mode', this.viewMode);
                 },
                 toggleExpand(id) {
                     const strId = String(id);
@@ -131,44 +124,6 @@
                 openBulkComplete() {
                     if (!this.selectedSessionIds || this.selectedSessionIds.length === 0) return;
                     window.dispatchEvent(new CustomEvent('open-bulk-complete-modal', { detail: { ids: this.selectedSessionIds } }));
-                },
-                initCalendar() {
-                    if (this.calendarInitialized) return;
-                    this.$nextTick(() => {
-                        const calendarEl = document.getElementById('mentoring-calendar');
-                        if (!calendarEl || typeof FullCalendar === 'undefined') return;
-                        
-                        const calendar = new FullCalendar.Calendar(calendarEl, {
-                            initialView: 'dayGridMonth',
-                            headerToolbar: {
-                                left: 'prev,next today',
-                                center: 'title',
-                                right: 'dayGridMonth,timeGridWeek,listMonth'
-                            },
-                            buttonText: {
-                                today: 'Hari Ini',
-                                month: 'Bulan',
-                                week: 'Minggu',
-                                list: 'Agenda'
-                            },
-                            locale: 'id',
-                            events: this.events,
-                            eventClick: (info) => {
-                                window.dispatchEvent(new CustomEvent('open-event-modal', { detail: info.event.extendedProps }));
-                            },
-                            eventTimeFormat: {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                meridiem: false,
-                                hour12: false
-                            },
-                            height: 'auto',
-                            contentHeight: 650,
-                            dayMaxEvents: 3
-                        });
-                        calendar.render();
-                        this.calendarInitialized = true;
-                    });
                 }
             };
         }
@@ -341,41 +296,18 @@
             };
         }
 
-        function mentoringEventModal() {
-            return {
-                eventModalOpen: false,
-                selectedEvent: null,
-                editingFeedback: false,
-                feedbackText: '',
-                feedbackDocUrl: '',
-                openModal(eventData) {
-                    this.selectedEvent = eventData;
-                    this.editingFeedback = false;
-                    this.feedbackText = eventData?.feedback || '';
-                    this.feedbackDocUrl = eventData?.feedback_document_url || '';
-                    this.eventModalOpen = true;
-                },
-                init() {
-                    window.__eventModalScope = this;
-                }
-            };
-        }
-
         window.mentoringSchedule = mentoringSchedule;
-        window.mentoringEventModal = mentoringEventModal;
         window.mentoringLiveAttendance = mentoringLiveAttendance;
         window.mentoringCancelModal = mentoringCancelModal;
 
         if (window.Alpine) {
             window.Alpine.data('mentoringSchedule', mentoringSchedule);
-            window.Alpine.data('mentoringEventModal', mentoringEventModal);
             window.Alpine.data('mentoringLiveAttendance', mentoringLiveAttendance);
             window.Alpine.data('mentoringCancelModal', mentoringCancelModal);
         }
         document.addEventListener('alpine:init', () => {
             if (window.Alpine) {
                 window.Alpine.data('mentoringSchedule', mentoringSchedule);
-                window.Alpine.data('mentoringEventModal', mentoringEventModal);
                 window.Alpine.data('mentoringLiveAttendance', mentoringLiveAttendance);
                 window.Alpine.data('mentoringCancelModal', mentoringCancelModal);
             }
@@ -469,7 +401,7 @@
             
             <x-slot name="headerActions">
                 <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-                    <!-- View Mode Toggle (Table vs Cards vs Calendar) -->
+                    <!-- View Mode Toggle (Table vs Cards) -->
                     <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                         <!-- 1. Mode Tabel -->
                         <button type="button" 
@@ -492,17 +424,6 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                             <span>Kartu</span>
                         </button>
-
-                        <!-- 3. Mode Kalender -->
-                        <button type="button" 
-                                @click="switchView('calendar')" 
-                                :class="viewMode === 'calendar' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
-                                title="Mode Kalender: Agenda interaktif bulanan"
-                                aria-label="Tampilan Kalender">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <span>Kalender</span>
-                        </button>
                     </div>
 
                     @if(in_array(Auth::user()->role, ['admin', 'kaprodi']) && isset($dosens))
@@ -520,14 +441,12 @@
                         </form>
                     @endif
 
-                    <template x-if="viewMode === 'cards' || viewMode === 'table'">
-                        <x-search-input 
-                            name="search" 
-                            :value="$search ?? ''" 
-                            placeholder="Cari nama atau topik..." 
-                            route="mentoring-sessions.index"
-                            :params="['tab' => $activeTab, 'dosen_id' => $dosenId ?? '']" />
-                    </template>
+                    <x-search-input 
+                        name="search" 
+                        :value="$search ?? ''" 
+                        placeholder="Cari nama atau topik..." 
+                        route="mentoring-sessions.index"
+                        :params="['tab' => $activeTab, 'dosen_id' => $dosenId ?? '']" />
 
                     <!-- Tombol Panduan Penggunaan Menu Bimbingan -->
                     <button type="button" 
@@ -3038,274 +2957,11 @@
                     
                     @endif
                 </div>
-
-                <!-- 2. CALENDAR VIEW -->
-                <div x-show="viewMode === 'calendar'" x-cloak x-transition class="space-y-4">
-                    <!-- Legend Indicators -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <div class="flex flex-wrap items-center gap-4 text-xs font-bold">
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
-                                <span class="text-slate-600 dark:text-slate-400 text-[11px]">Selesai / Hadir</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-orange-600 shadow-[0_0_8px_rgba(234,88,12,0.4)]"></span>
-                                <span class="text-slate-600 dark:text-slate-400 text-[11px]">Dijadwalkan (Aktif)</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]"></span>
-                                <span class="text-slate-600 dark:text-slate-400 text-[11px]">Menunggu Konfirmasi</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"></span>
-                                <span class="text-slate-600 dark:text-slate-400 text-[11px]">Ditolak / Absen</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">💡 Klik pada jadwal untuk melihat rincian & aksi cepat</span>
-                    </div>
-
-                    <!-- Calendar Container -->
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 min-h-[600px]">
-                        <div id="mentoring-calendar"></div>
-                    </div>
-                </div>
             </div>
         </x-table-card>
 
         <!-- Modal Panduan Interaktif Penggunaan Jadwal Bimbingan (Solusi 1) -->
         @include('mentoring.partials.guide-modal')
-
-        <!-- Interactive Event Modal -->
-        <template x-teleport="body">
-            <div x-data="mentoringEventModal()"
-                 @open-event-modal.window="openModal($event.detail)"
-                 x-show="eventModalOpen" 
-                 x-cloak 
-                 class="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
-                 style="z-index: 99999 !important;"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0">
-                
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 max-w-lg w-full overflow-hidden relative"
-                     style="z-index: 100000 !important;"
-                     @click.outside="eventModalOpen = false">
-                
-                <!-- Modal Header -->
-                <div class="p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-orange-50 shrink-0">
-                            <template x-if="selectedEvent?.student_avatar">
-                                <img :src="selectedEvent.student_avatar" class="w-full h-full object-cover">
-                            </template>
-                            <template x-if="!selectedEvent?.student_avatar">
-                                <span class="font-black text-xs text-orange-600" x-text="selectedEvent?.student_name?.charAt(0) || 'M'"></span>
-                            </template>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase" x-text="selectedEvent?.student_name"></h4>
-                            <p class="text-[10px] text-slate-400 font-bold" x-text="'NPM: ' + (selectedEvent?.student_npm || '-')"></p>
-                        </div>
-                    </div>
-                    <button type="button" @click="eventModalOpen = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="p-6 space-y-4 text-xs">
-                    <!-- Date & Time Banner -->
-                    <div class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl">
-                        <div class="flex items-center gap-2.5">
-                            <svg class="w-4 h-4 text-slate-400 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <div>
-                                <p class="font-extrabold text-slate-800 dark:text-slate-200" x-text="selectedEvent?.date"></p>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold" x-text="selectedEvent?.time"></p>
-                            </div>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider"
-                              :class="{
-                                'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300': selectedEvent?.status === 'completed',
-                                'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300': selectedEvent?.status === 'approved',
-                                'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300': selectedEvent?.status === 'pending',
-                                'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300': selectedEvent?.status === 'rejected' || selectedEvent?.is_absent,
-                              }"
-                              x-text="selectedEvent?.is_absent ? 'TIDAK HADIR' : (selectedEvent?.status === 'completed' ? 'HADIR / SELESAI' : selectedEvent?.status)">
-                        </span>
-                    </div>
-
-                    <!-- Topic -->
-                    <div class="space-y-1">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Topik Pembahasan:</span>
-                        <p class="font-black text-sm text-slate-800 dark:text-slate-100" x-text="selectedEvent?.topic"></p>
-                    </div>
-
-                    <!-- Location / GMeet Link -->
-                    <div class="space-y-1">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Metode & Lokasi:</span>
-                        <div>
-                            <template x-if="selectedEvent?.type === 'online' && selectedEvent?.location">
-                                <a :href="selectedEvent.location.startsWith('http') ? selectedEvent.location : 'https://' + selectedEvent.location" 
-                                   target="_blank" 
-                                   class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl font-bold hover:bg-emerald-100 transition-all text-xs">
-                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                    <span>🎥 Buka Link Google Meet / Meeting</span>
-                                </a>
-                            </template>
-                            <template x-if="selectedEvent?.type === 'offline' || !selectedEvent?.location">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-semibold">
-                                    <span>🏢 Tatap Muka Langsung</span>
-                                    <span x-text="selectedEvent?.location ? '(' + selectedEvent.location + ')' : ''"></span>
-                                </span>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Student Attendance Status in Calendar Modal -->
-                    <template x-if="selectedEvent?.student_attendance_status && selectedEvent?.status !== 'completed'">
-                        <div class="p-3.5 rounded-xl border space-y-1.5"
-                             :class="{
-                                 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800': selectedEvent.student_attendance_status === 'attending',
-                                 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800': selectedEvent.student_attendance_status === 'permission',
-                                 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700': selectedEvent.student_attendance_status === 'pending'
-                             }">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Konfirmasi Kehadiran Mahasiswa:</span>
-                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider"
-                                      :class="{
-                                          'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200': selectedEvent.student_attendance_status === 'attending',
-                                          'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200': selectedEvent.student_attendance_status === 'permission',
-                                          'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300': selectedEvent.student_attendance_status === 'pending'
-                                      }"
-                                      x-text="selectedEvent.student_attendance_status === 'attending' ? '🟢 Akan Hadir' : (selectedEvent.student_attendance_status === 'permission' ? '🟡 Izin / Berhalangan' : '⚪ Menunggu Konfirmasi')">
-                                </span>
-                            </div>
-                            <template x-if="selectedEvent.student_attendance_status === 'permission' && selectedEvent.student_attendance_reason">
-                                <div class="mt-1">
-                                    <span class="text-[9px] font-bold text-amber-800 dark:text-amber-300">Alasan Izin:</span>
-                                    <p class="text-[11px] text-amber-950 dark:text-amber-200 italic font-medium leading-relaxed" x-text="'&ldquo;' + selectedEvent.student_attendance_reason + '&rdquo;'"></p>
-                                </div>
-                            </template>
-                            <template x-if="selectedEvent.student_confirmed_at">
-                                <p class="text-[9px] text-slate-400 dark:text-slate-500 text-right font-medium" x-text="'Dikonfirmasi: ' + selectedEvent.student_confirmed_at"></p>
-                            </template>
-                        </div>
-                    </template>
-
-                    <!-- Student Notes -->
-                    <template x-if="selectedEvent?.notes">
-                        <div class="space-y-1 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Catatan Pengajuan Mahasiswa:</span>
-                            <p class="text-slate-600 dark:text-slate-300 italic" x-text="'&ldquo;' + selectedEvent.notes + '&rdquo;'"></p>
-                        </div>
-                    </template>
-
-                    <!-- Student Uploaded Document -->
-                    <template x-if="selectedEvent?.document_path">
-                        <div class="space-y-1 p-3 bg-orange-50/70 dark:bg-orange-950/30 rounded-xl border border-orange-200/80 dark:border-orange-800/60">
-                            <span class="text-[9px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest block mb-0.5">Dokumen Bimbingan Mahasiswa:</span>
-                            <a :href="selectedEvent.document_path" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline">
-                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                <span>Lihat Dokumen Bimbingan Mahasiswa</span>
-                            </a>
-                        </div>
-                    </template>
-
-                    <!-- Lecturer Feedback (dengan mode revisi) -->
-                    <template x-if="selectedEvent?.status === 'completed' || selectedEvent?.feedback">
-                        <div class="space-y-1.5 p-3.5 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200/80 dark:border-emerald-800">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-                                    <span>Hasil / Catatan Bimbingan Dosen:</span>
-                                </span>
-                                @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                                    <button type="button" 
-                                            @click="editingFeedback = !editingFeedback; feedbackText = selectedEvent?.feedback || ''; feedbackDocUrl = selectedEvent?.feedback_document_url || ''" 
-                                            class="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 cursor-pointer">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                        <span x-text="editingFeedback ? 'Batal' : (selectedEvent?.feedback ? 'Ubah' : '+ Tulis Catatan')"></span>
-                                    </button>
-                                @endif
-                            </div>
-
-                            <div x-show="!editingFeedback">
-                                <p class="text-emerald-900 dark:text-emerald-200 font-medium leading-relaxed whitespace-pre-line" x-text="selectedEvent?.feedback ? '&ldquo;' + selectedEvent.feedback + '&rdquo;' : 'Belum ada catatan hasil bimbingan.'"></p>
-                                <template x-if="selectedEvent?.feedback_document_url">
-                                    <div class="mt-2 pt-1.5 border-t border-emerald-200/60 dark:border-emerald-900/40">
-                                        <a :href="selectedEvent.feedback_document_url" target="_blank" class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:underline">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                            <span>Dokumen Koreksi / Feedback Dosen</span>
-                                        </a>
-                                    </div>
-                                </template>
-                            </div>
-
-                            @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                                <div x-show="editingFeedback" x-cloak class="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-800" x-transition>
-                                    <form :action="'/mentoring-sessions/' + selectedEvent?.id + '/status'" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="completed">
-                                        <textarea name="feedback" x-model="feedbackText" rows="2" required class="block w-full rounded-xl border-emerald-300 dark:border-emerald-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs focus:ring-emerald-500 focus:border-emerald-500 mb-2 leading-relaxed" placeholder="Tuliskan catatan hasil bimbingan..."></textarea>
-                                        <div class="mb-2">
-                                            <label class="block text-[9px] font-bold text-slate-600 dark:text-slate-400 mb-1">Link Dokumen Feedback / Revisi (Opsional):</label>
-                                            <div class="relative">
-                                                <input type="url" name="feedback_document_url" x-model="feedbackDocUrl" placeholder="https://drive.google.com/..." class="block w-full text-[11px] rounded-lg border-emerald-300 dark:border-emerald-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-emerald-500 focus:border-emerald-500 py-1 pl-7 pr-2">
-                                                <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-slate-400">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button type="button" @click="editingFeedback = false" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-black uppercase cursor-pointer">Batal</button>
-                                            <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            @endif
-                        </div>
-                    </template>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="p-4 px-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <template x-if="((selectedEvent?.status !== 'completed') || selectedEvent?.is_absent) && selectedEvent?.id">
-                            <a :href="'/mentoring-sessions/' + selectedEvent.id + '/edit'" 
-                               class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/80 rounded-xl font-bold text-xs transition-all shadow-2xs">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                <span>Ubah / Reschedule</span>
-                            </a>
-                        </template>
-                        <template x-if="((selectedEvent?.status !== 'completed') || selectedEvent?.is_absent) && selectedEvent?.id">
-                            <button type="button" 
-                                    @click="eventModalOpen = false; openCancelModal({
-                                        id: selectedEvent.id,
-                                        student_name: selectedEvent.student_name || 'Mahasiswa',
-                                        student_npm: selectedEvent.student_identifier || '-',
-                                        topic: selectedEvent.topic,
-                                        scheduled_date: selectedEvent.start_formatted || '-',
-                                        scheduled_time: selectedEvent.time_formatted || '-',
-                                        is_group: false,
-                                        group_count: 1,
-                                    })"
-                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 rounded-xl font-bold text-xs transition-all shadow-2xs cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span>Batalkan</span>
-                            </button>
-                        </template>
-                    </div>
-                    <button type="button" @click="eventModalOpen = false" class="px-5 py-2 bg-slate-800 dark:bg-white text-white dark:text-slate-800 font-bold rounded-xl text-xs hover:bg-slate-900 dark:hover:bg-slate-100 transition-all shadow-xs cursor-pointer">
-                        Tutup
-                    </button>
-                </div>
-            </div>
-        </div>
-        </template>
 
         <!-- 3. LIVE REAL-TIME ATTENDANCE MONITOR MODAL -->
         <template x-teleport="body">
@@ -4146,73 +3802,7 @@
         </template>
     </div>
 
-    @push('styles')
-    <style>
-        :root {
-            --fc-border-color: #f1f5f9;
-            --fc-daygrid-event-dot-width: 8px;
-        }
-        .dark {
-            --fc-border-color: #334155;
-            --fc-page-bg-color: transparent;
-            --fc-neutral-bg-color: #1e293b;
-            --fc-list-event-hover-bg-color: #334155;
-        }
-        .fc {
-            font-family: 'Inter', sans-serif;
-        }
-        .fc .fc-toolbar-title {
-            font-size: 1.15rem !important;
-            font-weight: 800 !important;
-            text-transform: uppercase;
-            letter-spacing: -0.025em;
-            color: #1e293b;
-        }
-        .dark .fc .fc-toolbar-title {
-            color: #f1f5f9;
-        }
-        .fc .fc-button {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            color: #64748b;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.75rem;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        .dark .fc .fc-button {
-            background-color: #1e293b;
-            border-color: #334155;
-            color: #94a3b8;
-        }
-        .fc .fc-button:hover {
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-        .dark .fc .fc-button:hover {
-            background-color: #334155;
-            color: #f1f5f9;
-        }
-        .fc .fc-button-active {
-            background-color: #ea580c !important;
-            border-color: #ea580c !important;
-            color: #ffffff !important;
-        }
-        .fc-event {
-            cursor: pointer;
-            border-radius: 6px;
-            padding: 2px 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-    </style>
-    @endpush
-
     @push('scripts')
-    <script defer src="{{ asset('assets/vendor/fullcalendar/index.global.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);

@@ -181,22 +181,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <!-- 3. Mode Kalender -->
-                        <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/40 flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <div class="space-y-1">
-                                <div class="flex items-center gap-2">
-                                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Tampilan Kalender (Agenda Bulanan)</h4>
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300">Bulanan</span>
-                                </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                                    Menampilkan kalender agenda interaktif. Klik tanggal bimbingan untuk melihat nama mahasiswa dan topik yang dijadwalkan pada hari tersebut.
-                                </p>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -292,7 +276,7 @@
                     <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/40 space-y-1.5">
                         <h4 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2">
                             <span class="text-orange-500 font-mono font-bold">Q:</span>
-                            Apakah mode tampilan (Tabel / Kartu / Kalender) saya berpengaruh ke dosen lain?
+                            Apakah mode tampilan (Tabel / Kartu) saya berpengaruh ke dosen lain?
                         </h4>
                         <p class="text-xs text-slate-600 dark:text-slate-300 pl-5 leading-relaxed">
                             <strong class="text-emerald-600 dark:text-emerald-400">Jawab:</strong> Tidak sama sekali. Pilihan tampilan tersimpan khusus di perangkat peramban Anda masing-masing secara independen.

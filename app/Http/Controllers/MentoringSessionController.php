@@ -191,17 +191,10 @@ class MentoringSessionController extends Controller
                 ->with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'dosen'])
                 ->get();
 
-            // Reuse $sessions when there is no text search to prevent duplicate database query
-            $calendarEvents = ($search ? MentoringSession::forUser($user)
-                ->whereHas('thesis', fn($q) => $activeTab === 'history' ? $q->where('status', 'completed') : $q->where('status', '!=', 'completed'))
-                ->when($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending']), fn($q) => $q->where('student_attendance_status', $attendanceFilter))
-                ->with(['thesis.student', 'dosen'])->get() : $sessions)
-                ->map(fn($s) => $this->formatCalendarEvent($s));
-
             $kpiStats = $this->calculateKpiStats($user);
             $attendanceStats = $this->calculateAttendanceStats($user);
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'attendanceFilter', 'calendarEvents', 'kpiStats', 'attendanceStats'));
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'attendanceFilter', 'kpiStats', 'attendanceStats'));
         } elseif ($user->role === 'mahasiswa') {
             $sessions = MentoringSession::forUser($user)
                 ->search($search)
@@ -241,19 +234,11 @@ class MentoringSessionController extends Controller
                 ->orderBy('scheduled_at', 'desc')
                 ->get();
 
-            // Reuse $sessions when there is no text search to prevent duplicate database query
-            $calendarEvents = ($search ? MentoringSession::query()
-                ->whereHas('thesis', fn($q) => $activeTab === 'history' ? $q->where('status', 'completed') : $q->where('status', '!=', 'completed'))
-                ->when($dosenId, fn($q) => $q->where(fn($sub) => $sub->where('dosen_id', $dosenId)->orWhereHas('thesis', fn($t) => $t->where('pembimbing1_id', $dosenId)->orWhere('pembimbing2_id', $dosenId))))
-                ->when($attendanceFilter && in_array($attendanceFilter, ['attending', 'permission', 'pending']), fn($q) => $q->where('student_attendance_status', $attendanceFilter))
-                ->with(['thesis.student', 'dosen'])->get() : $sessions)
-                ->map(fn($s) => $this->formatCalendarEvent($s));
-
             $dosens = \App\Models\User::whereIn('role', ['dosen', 'kaprodi'])->orderBy('name')->get();
             $kpiStats = $this->calculateKpiStats($user, $dosenId);
             $attendanceStats = $this->calculateAttendanceStats($user, $dosenId);
 
-            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'attendanceFilter', 'dosens', 'dosenId', 'calendarEvents', 'kpiStats', 'attendanceStats'));
+            return view('mentoring.index', compact('sessions', 'search', 'activeTab', 'attendanceFilter', 'dosens', 'dosenId', 'kpiStats', 'attendanceStats'));
         }
 
         abort(403);
@@ -443,53 +428,6 @@ class MentoringSessionController extends Controller
         ];
     }
 
-    private function formatCalendarEvent(MentoringSession $session): array
-    {
-        $statusColor = match($session->status) {
-            'completed' => '#10b981',
-            'approved' => '#ea580c',
-            'pending' => '#f59e0b',
-            'rejected' => '#ef4444',
-            default => '#64748b'
-        };
-        $statusBg = match($session->status) {
-            'completed' => '#ecfdf5',
-            'approved' => '#fff7ed',
-            'pending' => '#fef3c7',
-            'rejected' => '#fef2f2',
-            default => '#f8fafc'
-        };
-
-        return [
-            'id' => $session->id,
-            'title' => ($session->thesis->student->name ?? 'Mahasiswa') . ' - ' . $session->topic,
-            'start' => $session->scheduled_at->toIso8601String(),
-            'backgroundColor' => $statusBg,
-            'borderColor' => $statusColor,
-            'textColor' => $statusColor,
-            'extendedProps' => [
-                'id' => $session->id,
-                'student_name' => $session->thesis->student->name ?? '-',
-                'student_npm' => $session->thesis->student->identifier ?? '-',
-                'student_avatar' => $session->thesis->student->avatar_url ?? null,
-                'topic' => $session->topic,
-                'type' => $session->type,
-                'location' => $session->location,
-                'status' => $session->status,
-                'is_absent' => (bool) $session->is_absent,
-                'student_attendance_status' => $session->student_attendance_status ?? 'pending',
-                'student_attendance_reason' => $session->student_attendance_reason,
-                'student_confirmed_at' => $session->student_confirmed_at ? $session->student_confirmed_at->locale('id')->translatedFormat('d M H:i') . ' WIB' : null,
-                'notes' => $session->notes,
-                'document_path' => $session->document_path,
-                'document_original_name' => $session->document_original_name,
-                'feedback' => $session->feedback,
-                'feedback_document_url' => $session->feedback_document_url,
-                'time' => $session->scheduled_at->format('H:i') . ' WIB',
-                'date' => $session->scheduled_at->locale('id')->translatedFormat('l, d F Y'),
-            ]
-        ];
-    }
 
     public function updateStatus(UpdateMentoringSessionStatusRequest $request, MentoringSession $session)
     {
