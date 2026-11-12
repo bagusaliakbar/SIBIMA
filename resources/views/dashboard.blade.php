@@ -412,8 +412,45 @@
                     </div>
                 </div>
 
-                <!-- Linear Progress Stepper (6 Visual Stages) -->
-                <div class="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x snap-mandatory">
+                <!-- Roadmap Mode Switcher (3D Interactive vs 2D Stepper) -->
+                <div x-data="{ roadmapMode: localStorage.getItem('sibima_mhs_roadmap_mode') || '3d' }" class="relative z-10">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-orange-600"></span>
+                            <span class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                                Peta Progres &amp; Siklus Bimbingan Skripsi
+                            </span>
+                        </div>
+                        <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-700/70">
+                            <button type="button"
+                                    @click="roadmapMode = '3d'; localStorage.setItem('sibima_mhs_roadmap_mode', '3d'); setTimeout(() => window.dispatchEvent(new Event('resize')), 50);"
+                                    :class="roadmapMode === '3d' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+                                <span>Animasi 3D</span>
+                            </button>
+                            <button type="button"
+                                    @click="roadmapMode = '2d'; localStorage.setItem('sibima_mhs_roadmap_mode', '2d');"
+                                    :class="roadmapMode === '2d' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                <span>Stepper 2D</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3D Interactive Mode -->
+                    <div x-show="roadmapMode === '3d'" x-transition.opacity.duration.200ms>
+                        <x-mentoring-3d-process
+                            role="mahasiswa"
+                            :progress="$progress"
+                            :pastSessionsCount="$pastSessionsCount ?? 0"
+                            :embedded="true"
+                        />
+                    </div>
+
+                    <!-- Linear Progress Stepper (6 Visual Stages - 2D Mode) -->
+                    <div x-show="roadmapMode === '2d'" x-cloak class="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x snap-mandatory">
                     <div class="min-w-[680px] sm:min-w-0 py-3">
                         <div class="flex items-start justify-between">
                         @foreach($stages as $index => $stage)
@@ -536,7 +573,7 @@
                 @php
                     $activeStageItem = collect($stages)->firstWhere('is_current', true) ?? collect($stages)->firstWhere('is_completed', false) ?? $stages[0];
                 @endphp
-                <div class="block md:hidden mt-4 p-4 rounded-2xl bg-gradient-to-r from-orange-50/90 to-amber-50/40 dark:from-orange-950/30 dark:to-slate-800/40 border border-orange-200/80 dark:border-orange-800/60 shadow-xs">
+                <div x-show="roadmapMode === '2d'" x-cloak class="block md:hidden mt-4 p-4 rounded-2xl bg-gradient-to-r from-orange-50/90 to-amber-50/40 dark:from-orange-950/30 dark:to-slate-800/40 border border-orange-200/80 dark:border-orange-800/60 shadow-xs">
                     <div class="flex items-center justify-between gap-2 mb-2">
                         <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
@@ -556,6 +593,7 @@
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                         </a>
                     </div>
+                </div>
                 </div>
 
                 <!-- Footer Stage Insight -->
@@ -1010,6 +1048,16 @@
                 </div>
             </div>
 
+            <!-- 3D Interactive Mentoring & Supervision Process (Dosen) -->
+            <x-mentoring-3d-process
+                role="dosen"
+                :studentProgressDistribution="$studentProgressDistribution ?? []"
+                :activeThesesCount="$activeThesesCount ?? 0"
+                :sessionsThisWeek="$sessionsThisWeek ?? 0"
+                :totalCompletedSessions="$totalCompletedSessions ?? 0"
+                :dosenActionCenter="$dosenActionCenter ?? []"
+            />
+
             <!-- Active Wave Info Widget for Dosen (if active) -->
             @if(isset($activeWaveInfo) && $activeWaveInfo)
             <div class="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 dark:from-orange-950/40 dark:via-amber-950/30 dark:to-slate-800/60 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1366,6 +1414,16 @@
                         </a>
                     </div>
                     @endif
+
+                    <!-- 3D Interactive Mentoring & Thesis Ecosystem (Kaprodi / Admin) -->
+                    <x-mentoring-3d-process
+                        role="kaprodi"
+                        :activeThesesCount="$activeThesesCount ?? 0"
+                        :sessionsThisWeek="$sessionsThisWeek ?? 0"
+                        :totalCompletedSessions="$totalCompletedSessions ?? 0"
+                        :adminApprovals="$adminApprovals ?? []"
+                        :thesisStatusCounts="$thesisStatusCounts ?? []"
+                    />
 
                     <!-- Admin Core Stats Row (4 Cards) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
