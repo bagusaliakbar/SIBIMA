@@ -414,13 +414,7 @@
 
                 <!-- Roadmap Mode Switcher (3D Interactive vs 2D Stepper) -->
                 <div x-data="{ roadmapMode: localStorage.getItem('sibima_mhs_roadmap_mode') || '3d' }" class="relative z-10">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700/60">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-orange-600"></span>
-                            <span class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-200">
-                                Peta Progres &amp; Siklus Bimbingan Skripsi
-                            </span>
-                        </div>
+                    <div class="flex items-center justify-end mb-3">
                         <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-700/70">
                             <button type="button"
                                     @click="roadmapMode = '3d'; localStorage.setItem('sibima_mhs_roadmap_mode', '3d'); setTimeout(() => window.dispatchEvent(new Event('resize')), 50);"
@@ -503,22 +497,22 @@
                                             @else
                                                 <!-- Sedang Berjalan (Active): Specific Stage Visual Icon matching Sidebar -->
                                                 @if($stageNum == 1)
-                                                    <!-- 1. Pengajuan Judul -->
+                                                    <!-- Pengajuan Judul -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                 @elseif($stageNum == 2)
-                                                    <!-- 2. Pendaftaran Seminar -->
+                                                    <!-- Pendaftaran Seminar -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                 @elseif($stageNum == 3)
-                                                    <!-- 3. Revisi Seminar -->
+                                                    <!-- Revisi Seminar -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 @elseif($stageNum == 4)
-                                                    <!-- 4. Pendaftaran Sidang -->
+                                                    <!-- Pendaftaran Sidang -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                                 @elseif($stageNum == 5)
-                                                    <!-- 5. Revisi Sidang -->
+                                                    <!-- Revisi Sidang -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 @else
-                                                    <!-- 6. Yudisium & SKL -->
+                                                    <!-- Yudisium & SKL -->
                                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
