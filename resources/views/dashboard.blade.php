@@ -412,29 +412,10 @@
                     </div>
                 </div>
 
-                <!-- Roadmap Mode Switcher (3D Interactive vs 2D Stepper) -->
-                <div x-data="{ roadmapMode: localStorage.getItem('sibima_mhs_roadmap_mode') || '3d' }" class="relative z-10">
-                    <div class="flex items-center justify-end mb-3">
-                        <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-700/70">
-                            <button type="button"
-                                    @click="roadmapMode = '3d'; localStorage.setItem('sibima_mhs_roadmap_mode', '3d'); setTimeout(() => window.dispatchEvent(new Event('resize')), 50);"
-                                    :class="roadmapMode === '3d' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
-                                <span>Animasi 3D</span>
-                            </button>
-                            <button type="button"
-                                    @click="roadmapMode = '2d'; localStorage.setItem('sibima_mhs_roadmap_mode', '2d');"
-                                    :class="roadmapMode === '2d' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                <span>Stepper 2D</span>
-                            </button>
-                        </div>
-                    </div>
-
+                <!-- Roadmap 3D (2D Stepper Hidden) -->
+                <div x-data="{ roadmapMode: '3d' }" class="relative z-10">
                     <!-- 3D Interactive Mode -->
-                    <div x-show="roadmapMode === '3d'" x-transition.opacity.duration.200ms>
+                    <div>
                         <x-mentoring-3d-process
                             role="mahasiswa"
                             :progress="$progress"
@@ -443,8 +424,8 @@
                         />
                     </div>
 
-                    <!-- Linear Progress Stepper (6 Visual Stages - 2D Mode) -->
-                    <div x-show="roadmapMode === '2d'" x-cloak class="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x snap-mandatory">
+                    <!-- Linear Progress Stepper (6 Visual Stages - 2D Mode Hidden) -->
+                    <div x-show="false" x-cloak class="hidden overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x snap-mandatory">
                     <div class="min-w-[680px] sm:min-w-0 py-3">
                         <div class="flex items-start justify-between">
                         @foreach($stages as $index => $stage)
