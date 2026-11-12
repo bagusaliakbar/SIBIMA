@@ -617,7 +617,7 @@
                                         <a href="{{ filter_var($session->document_path, FILTER_VALIDATE_URL) ? $session->document_path : route('download.private', ['path' => $session->document_path]) }}" 
                                            target="_blank" 
                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all shadow-2xs group/doc">
-                                            <svg class="w-3.5 h-3.5 text-indigo-500 group-hover/doc:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                            <x-google-drive-icon class="w-4 h-4 shrink-0 group-hover/doc:scale-110 transition-transform" />
                                             <span>Unduh Berkas Bimbingan:</span>
                                             <span class="font-normal underline">{{ $session->document_original_name ?: 'Dokumen Draft' }}</span>
                                         </a>

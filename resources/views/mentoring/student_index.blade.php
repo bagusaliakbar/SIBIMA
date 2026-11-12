@@ -740,7 +740,7 @@
                                     @if($session->feedback_document_url)
                                         <div class="pt-1.5 border-t border-slate-100 dark:border-slate-700/80">
                                             <a href="{{ $session->feedback_document_url }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">
-                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                <x-google-drive-icon class="w-3.5 h-3.5 shrink-0" />
                                                 <span>Dokumen Koreksi / Feedback Dosen</span>
                                             </a>
                                         </div>
@@ -805,7 +805,7 @@
 
                                 @if($session->document_path)
                                     <a href="{{ $session->document_path }}" target="_blank" class="flex items-center gap-1.5 text-orange-700 dark:text-orange-400 font-bold hover:underline">
-                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        <x-google-drive-icon class="w-3.5 h-3.5 shrink-0" />
                                         <span class="truncate">{{ $session->document_original_name ?: 'Buka Berkas Google Drive' }}</span>
                                     </a>
                                 @else
