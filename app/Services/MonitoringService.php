@@ -700,7 +700,7 @@ class MonitoringService
             $today = $sessions->filter(fn($s) => $s->scheduled_at->isToday())->count();
             $oldest = $sessions->sortBy('scheduled_at')->first();
             $oldestDate = $oldest ? $oldest->scheduled_at : null;
-            $daysOverdue = $oldestDate && $oldestDate->isPast() ? $oldestDate->diffInDays(now()) : 0;
+            $daysOverdue = $oldestDate && $oldestDate->isPast() ? (int) $oldestDate->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
 
             $uniqueStudents = $sessions->map(fn($s) => $s->thesis?->student)->filter()->unique('id')->values();
 

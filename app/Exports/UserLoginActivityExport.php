@@ -249,8 +249,8 @@ class InactiveUsersSheet extends DefaultValueBinder implements FromCollection, W
         $this->row++;
         $status = 'Belum Pernah Login';
         if ($user->last_login_at) {
-            $days = $user->last_login_at->diffInDays(now());
-            $status = "Tidak Aktif ({$days} Hari Lalu)";
+            $days = (int) $user->last_login_at->copy()->startOfDay()->diffInDays(now()->startOfDay());
+            $status = $days > 0 ? "Tidak Aktif ({$days} Hari Lalu)" : "Hari Ini";
         }
 
         return [

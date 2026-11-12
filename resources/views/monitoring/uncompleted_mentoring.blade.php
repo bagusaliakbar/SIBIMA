@@ -272,7 +272,7 @@
                                             @php
                                                 $student = $session->thesis?->student;
                                                 $isOverdue = $session->scheduled_at->isPast();
-                                                $daysOver = $isOverdue ? $session->scheduled_at->diffInDays(now()) : 0;
+                                                $daysOver = $isOverdue ? (int) $session->scheduled_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
                                             @endphp
                                             <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
                                                 <td class="py-3 px-5 whitespace-nowrap">
@@ -363,7 +363,7 @@
                                     $student = $session->thesis?->student;
                                     $dosen = $session->dosen ?? $session->thesis?->pembimbing1;
                                     $isOverdue = $session->scheduled_at->isPast();
-                                    $daysOver = $isOverdue ? $session->scheduled_at->diffInDays(now()) : 0;
+                                    $daysOver = $isOverdue ? (int) $session->scheduled_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
                                 @endphp
                                 <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-700/40 transition-colors">
                                     <td class="py-4 px-6 text-center text-xs font-bold text-slate-400">

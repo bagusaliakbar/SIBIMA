@@ -168,7 +168,7 @@ class UncompletedSessionsSheet extends DefaultValueBinder implements FromCollect
         $student = $session->thesis?->student;
         $dosen = $session->dosen ?? $session->thesis?->pembimbing1;
         $isOverdue = $session->scheduled_at->isPast();
-        $days = $isOverdue ? $session->scheduled_at->diffInDays(now()) : 0;
+        $days = $isOverdue ? (int) $session->scheduled_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
         $delayNotice = $days > 0 ? "Lewat {$days} hari" : "Lewat hari ini";
 
         return [

@@ -342,7 +342,7 @@
                                 @php
                                     $rowNo = ($users->currentPage() - 1) * $users->perPage() + $index + 1;
                                     $isNever = is_null($user->last_login_at);
-                                    $daysInactive = $user->last_login_at ? $user->last_login_at->diffInDays(now()) : null;
+                                    $daysInactive = $user->last_login_at ? (int) $user->last_login_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : null;
                                 @endphp
                                 <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-700/40 transition-colors group">
                                     <td class="py-4 px-6 text-center text-xs font-bold text-slate-400">
