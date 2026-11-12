@@ -244,8 +244,8 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span>Tautan Video Conference Seminar Tersedia</span>
                 </div>
-                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500/10 hover:bg-amber-500 text-amber-700 dark:text-amber-300 hover:text-slate-950 text-xs font-black rounded-xl border border-amber-500/20 transition-all uppercase tracking-wider">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500/10 hover:bg-amber-500 text-amber-700 dark:text-amber-300 hover:text-slate-950 text-xs font-black rounded-xl border border-amber-500/20 transition-all uppercase tracking-wider group">
+                    <x-google-meet-icon class="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />
                     <span>Join GMeet Seminar</span>
                 </a>
             </div>

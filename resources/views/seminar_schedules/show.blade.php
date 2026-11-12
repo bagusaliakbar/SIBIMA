@@ -57,8 +57,8 @@
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $seminarSchedule->location ?: '-' }}</span>
                         </div>
                         @if($seminarSchedule->meeting_link)
-                        <a href="{{ $seminarSchedule->meeting_link }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg border border-orange-700 transition-colors shadow-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        <a href="{{ $seminarSchedule->meeting_link }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg border border-orange-700 transition-colors shadow-sm group">
+                            <x-google-meet-icon class="w-4 h-4 mr-2 shrink-0 transition-transform group-hover:scale-110" />
                             <span class="text-xs font-black uppercase tracking-widest">Join Google Meet</span>
                         </a>
                         @endif

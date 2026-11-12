@@ -1695,8 +1695,8 @@
                                 </div>
                                 @if($mySeminarSchedule->schedule->meeting_link && !$isSeminarFinished)
                                     <div class="pt-2">
-                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2.5 {{ $isSeminarOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-orange-600 hover:bg-orange-700' }} text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xs">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        <a href="{{ $mySeminarSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2.5 {{ $isSeminarOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-orange-600 hover:bg-orange-700' }} text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xs group">
+                                            <x-google-meet-icon class="w-4 h-4 mr-2 shrink-0 transition-transform group-hover:scale-110" />
                                             {{ $isSeminarOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Gabung Sekarang' }}
                                         </a>
                                     </div>
@@ -1809,9 +1809,9 @@
                                 </div>
                                 @if($myDefenseSchedule->schedule->meeting_link && !$isDefenseFinished)
                                     <div class="pt-2">
-                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2.5 {{ $isDefenseOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xs">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                            {{ $isDefenseOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Join Online Meeting' }}
+                                        <a href="{{ $myDefenseSchedule->schedule->meeting_link }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2.5 {{ $isDefenseOngoing ? 'bg-blue-600 hover:bg-blue-700 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xs group">
+                                            <x-google-meet-icon class="w-4 h-4 mr-2 shrink-0 transition-transform group-hover:scale-110" />
+                                            {{ $isDefenseOngoing ? 'Gabung Sekarang (Sedang Berlangsung)' : 'Join Google Meet' }}
                                         </a>
                                     </div>
                                 @endif

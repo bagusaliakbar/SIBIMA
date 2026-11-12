@@ -63,8 +63,8 @@
                 </a>
             </div>
             @if($detail->schedule->meeting_link)
-                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-700 dark:text-emerald-300 hover:text-white text-xs font-bold rounded-xl border border-emerald-500/20 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <a href="{{ $detail->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-700 dark:text-emerald-300 hover:text-white text-xs font-bold rounded-xl border border-emerald-500/20 transition-all group">
+                    <x-google-meet-icon class="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />
                     <span>Join GMeet Sidang</span>
                 </a>
             @endif
