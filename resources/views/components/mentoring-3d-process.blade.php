@@ -13,7 +13,6 @@
     }
     $activeIdx = $currentStageNum - 1;
 
-    $modelTypes = ['book', 'laptop', 'revision', 'podium', 'hardcover', 'toga'];
     $rawStages = $progress['stages'] ?? [];
     $stagesPayload = [];
 
@@ -27,27 +26,27 @@
             : (!empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Sedang Berjalan' : 'Terkunci'));
         $stagesPayload[] = [
             'id' => 'stage-' . ($idx + 1),
+            'stageNo' => $stageNo,
             'num' => $numStr,
             'short' => $cleanShort,
             'title' => $stageNo . '. ' . $cleanName,
             'desc' => $st['desc'] ?? '',
             'badge' => $badgeText,
-            'subBadge' => !empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Tahap Aktif' : 'Terkunci'),
+            'subBadge' => !empty($st['is_completed']) ? 'Selesai' : (!empty($st['is_current']) ? 'Sedang Berjalan' : 'Terkunci'),
             'url' => $st['url'] ?? '#',
             'action' => !empty($st['is_locked']) ? 'Tahap Terkunci' : ('Buka ' . $cleanShort),
             'isCompleted' => !empty($st['is_completed']),
             'isCurrent' => !empty($st['is_current']),
             'isLocked' => !empty($st['is_locked']),
-            'modelType' => $modelTypes[$idx] ?? 'book',
         ];
     }
 @endphp
 
 <div id="{{ $uid }}_wrap" class="space-y-3">
-    <!-- Stationary 3D Isometric Stepper Viewport (Horizontal Scroll on Very Small Screens) -->
+    <!-- Stationary Uniform 3D Isometric Stepper Viewport -->
     <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 overflow-x-auto hide-scrollbar transition-colors duration-300">
-        <div class="min-w-[740px] sm:min-w-0 relative">
-            <canvas id="{{ $uid }}_canvas" class="w-full h-[290px] sm:h-[320px] block select-none"></canvas>
+        <div class="min-w-[720px] sm:min-w-0 relative">
+            <canvas id="{{ $uid }}_canvas" class="w-full h-[260px] sm:h-[280px] block select-none"></canvas>
         </div>
     </div>
 
@@ -84,12 +83,11 @@
 <script>
 (function() {
     const uid = @json($uid);
-    const role = @json($role);
     const stagesData = @json($stagesPayload);
     const activeStageIdx = @json($activeIdx);
 
     const canvas = document.getElementById(uid + '_canvas');
-    if (!canvas) return;
+    if (!canvas || !stagesData.length) return;
     const ctx = canvas.getContext('2d');
 
     let isDarkScene = document.documentElement.classList.contains('dark');
@@ -99,7 +97,7 @@
     let hitBoxes = [];
 
     // Smooth elevation animation per stage when hovered/selected
-    const stageLift = stagesData.map((_, i) => i === activeStageIdx ? 10 : 0);
+    const stageLift = stagesData.map((_, i) => i === activeStageIdx ? 8 : 0);
 
     // Animated energy packets moving left-to-right along the stepper track
     const trackPackets = [
@@ -108,13 +106,6 @@
         { seg: 2, t: 0.35, speed: 0.008 },
         { seg: 3, t: 0.8, speed: 0.008 },
         { seg: 4, t: 0.1, speed: 0.008 }
-    ];
-
-    // Mentoring cycle badges floating gently around the active stage
-    const cyclePills = [
-        { label: 'Draft GDrive', dx: -44, dy: -66, phase: 0 },
-        { label: 'Diskusi GMeet', dx: 46, dy: -66, phase: 1.6 },
-        { label: 'ACC Logbook', dx: 0, dy: -92, phase: 3.2 }
     ];
 
     const themeObserver = new MutationObserver(() => {
@@ -172,7 +163,6 @@
     }
 
     // Fixed True Isometric Local Projection around an Anchor (ax, ay)
-    // Never rotates the layout; preserves left-to-right stepper order while rendering crisp 3D blocks
     function isoPoint(ax, ay, lx, ly, lz) {
         const cos30 = 0.866025;
         const sin30 = 0.5;
@@ -182,25 +172,23 @@
         };
     }
 
-    // Draw a Stationary Isometric 3D Box at Anchor (ax, ay) with local center (cx, cy, cz) and size (w, h, d)
+    // Draw a Stationary Isometric 3D Box at Anchor (ax, ay)
     function drawIsoBox(ax, ay, cx, cy, cz, w, h, d, colors) {
         const hw = w / 2;
         const hd = d / 2;
 
-        // Top face (y = cy + h)
         const t0 = isoPoint(ax, ay, cx - hw, cy + h, cz - hd);
         const t1 = isoPoint(ax, ay, cx + hw, cy + h, cz - hd);
         const t2 = isoPoint(ax, ay, cx + hw, cy + h, cz + hd);
         const t3 = isoPoint(ax, ay, cx - hw, cy + h, cz + hd);
 
-        // Bottom front vertices (y = cy)
         const b1 = isoPoint(ax, ay, cx + hw, cy, cz - hd);
         const b2 = isoPoint(ax, ay, cx + hw, cy, cz + hd);
         const b3 = isoPoint(ax, ay, cx - hw, cy, cz + hd);
 
         const strokeCol = colors.stroke || 'rgba(255,255,255,0.22)';
 
-        // Left Front Face (t3 -> t2 -> b2 -> b3)
+        // Left Front Face
         ctx.beginPath();
         ctx.moveTo(t3.x, t3.y);
         ctx.lineTo(t2.x, t2.y);
@@ -213,7 +201,7 @@
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Right Front Face (t2 -> t1 -> b1 -> b2)
+        // Right Front Face
         ctx.beginPath();
         ctx.moveTo(t2.x, t2.y);
         ctx.lineTo(t1.x, t1.y);
@@ -226,7 +214,7 @@
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Top Face (t0 -> t1 -> t2 -> t3)
+        // Top Face
         ctx.beginPath();
         ctx.moveTo(t0.x, t0.y);
         ctx.lineTo(t1.x, t1.y);
@@ -242,53 +230,50 @@
         return isoPoint(ax, ay, cx, cy + h, cz);
     }
 
-    // Draw Sculpted 3D Stepper Icon on top of the Isometric Pedestal
-    function drawStepper3DIcon(type, ax, ay, baseY, sc, palette, animTime, isAnimated) {
-        const bob = isAnimated ? Math.sin(animTime * 2.6) * 4.5 : 0;
-        const y0 = baseY + bob;
+    // Draw Uniform 3D Stepper Node (Same Geometry & Proportions for All 6 Stages)
+    function drawUniform3DNode(st, ax, ay, sc, colors, baseColors, capColors, animTime, isSelected) {
+        const bob = (st.isCurrent || isSelected) ? Math.sin(animTime * 2.6) * 3.5 : 0;
 
-        const whitePages = {
-            top: '#ffffff', front: '#e2e8f0', sideDark: '#cbd5e1', stroke: 'rgba(148,163,184,0.45)'
-        };
-        const blueScreen = {
-            top: '#7dd3fc', front: '#0ea5e9', sideDark: '#0284c7', stroke: 'rgba(255,255,255,0.45)'
-        };
-        const goldAccent = {
-            top: '#fde047', front: '#eab308', sideDark: '#ca8a04', stroke: 'rgba(255,255,255,0.45)'
-        };
+        // Tier 1: Uniform Isometric Base Pad (56 x 9 x 56)
+        drawIsoBox(ax, ay, 0, 0, 0, 56 * sc, 9 * sc, 56 * sc, baseColors);
 
-        if (type === 'book') {
-            // 1. Stacked 3D Thesis Proposal Books
-            drawIsoBox(ax, ay, 0, y0, 0, 38 * sc, 8 * sc, 30 * sc, palette);
-            drawIsoBox(ax, ay, 0, y0 + 8 * sc, 0, 34 * sc, 6 * sc, 26 * sc, whitePages);
-            return drawIsoBox(ax, ay, 0, y0 + 14 * sc, 0, 32 * sc, 7 * sc, 24 * sc, palette);
-        } else if (type === 'laptop') {
-            // 2. 3D Laptop (Mentoring & Google Meet)
-            drawIsoBox(ax, ay, 0, y0, 4 * sc, 40 * sc, 5 * sc, 32 * sc, palette);
-            drawIsoBox(ax, ay, 0, y0 + 5 * sc, -10 * sc, 38 * sc, 25 * sc, 5 * sc, palette);
-            return drawIsoBox(ax, ay, 0, y0 + 8 * sc, -7 * sc, 32 * sc, 19 * sc, 3 * sc, blueScreen);
-        } else if (type === 'revision') {
-            // 3. 3D Revision Clipboard & Verification Stamp
-            drawIsoBox(ax, ay, 0, y0, 0, 34 * sc, 7 * sc, 34 * sc, whitePages);
-            drawIsoBox(ax, ay, -7 * sc, y0 + 7 * sc, -4 * sc, 14 * sc, 22 * sc, 14 * sc, palette);
-            return drawIsoBox(ax, ay, 8 * sc, y0 + 7 * sc, 5 * sc, 14 * sc, 16 * sc, 14 * sc, goldAccent);
-        } else if (type === 'podium') {
-            // 4. 3D Seminar/Defense Podium Lectern
-            drawIsoBox(ax, ay, 0, y0, 0, 36 * sc, 7 * sc, 36 * sc, whitePages);
-            drawIsoBox(ax, ay, 0, y0 + 7 * sc, 0, 22 * sc, 24 * sc, 22 * sc, palette);
-            return drawIsoBox(ax, ay, 0, y0 + 31 * sc, 0, 30 * sc, 6 * sc, 26 * sc, goldAccent);
-        } else if (type === 'hardcover') {
-            // 5. Standing 3D Hardcover Thesis Tome
-            drawIsoBox(ax, ay, 0, y0, 0, 32 * sc, 30 * sc, 14 * sc, palette);
-            return drawIsoBox(ax, ay, 0, y0 + 6 * sc, 6 * sc, 22 * sc, 18 * sc, 4 * sc, goldAccent);
+        // Tier 2: Uniform Colored Main 3D Cube/Block (42 x 26 x 42)
+        drawIsoBox(ax, ay, 0, (9 + bob) * sc, 0, 42 * sc, 26 * sc, 42 * sc, colors);
+
+        // Tier 3: Uniform Top Emblem Cap Plate (30 x 5 x 30)
+        const topCenter = drawIsoBox(ax, ay, 0, (35 + bob) * sc, 0, 30 * sc, 5 * sc, 30 * sc, capColors);
+
+        // Draw Uniform Status Symbol / Number on Top Emblem Plate
+        ctx.save();
+        ctx.translate(topCenter.x, topCenter.y);
+        ctx.strokeStyle = (st.isCompleted || st.isCurrent) ? '#ffffff' : (isDarkScene ? '#94a3b8' : '#64748b');
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (st.isCompleted) {
+            // Bold Checkmark Icon
+            ctx.lineWidth = 2.6 * sc;
+            ctx.beginPath();
+            ctx.moveTo(-6 * sc, 0);
+            ctx.lineTo(-1.5 * sc, 4.5 * sc);
+            ctx.lineTo(6.5 * sc, -4 * sc);
+            ctx.stroke();
+        } else if (st.isLocked) {
+            // Clean Padlock Icon
+            ctx.lineWidth = 1.8 * sc;
+            ctx.strokeRect(-4.5 * sc, -1 * sc, 9 * sc, 7 * sc);
+            ctx.beginPath();
+            ctx.arc(0, -1 * sc, 3 * sc, Math.PI, 0, false);
+            ctx.stroke();
         } else {
-            // 6. 3D Graduation Cap (Toga Wisuda)
-            drawIsoBox(ax, ay, 0, y0, 0, 24 * sc, 12 * sc, 24 * sc, palette);
-            const topCap = drawIsoBox(ax, ay, 0, y0 + 12 * sc, 0, 44 * sc, 5 * sc, 44 * sc, palette);
-            drawIsoBox(ax, ay, 0, y0 + 17 * sc, 0, 8 * sc, 3 * sc, 8 * sc, goldAccent);
-            drawIsoBox(ax, ay, 16 * sc, y0 + 4 * sc, 16 * sc, 5 * sc, 13 * sc, 5 * sc, goldAccent);
-            return topCap;
+            // Active Stage Number ("01" .. "06")
+            ctx.font = `900 ${Math.round(11 * sc)}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(st.num, 0, 0.5);
         }
+        ctx.restore();
     }
 
     let animTime = 0;
@@ -317,10 +302,10 @@
         ctx.fillStyle = isDarkScene ? '#090d16' : '#f8fafc';
         ctx.fillRect(0, 0, W, H);
 
-        // Subtle Horizontal Perspective Grid Lines
+        // Subtle Perspective Grid Lines
         ctx.lineWidth = 1;
-        ctx.strokeStyle = isDarkScene ? 'rgba(51, 65, 85, 0.28)' : 'rgba(203, 213, 225, 0.55)';
-        for (let gy = 48; gy < H; gy += 36) {
+        ctx.strokeStyle = isDarkScene ? 'rgba(51, 65, 85, 0.25)' : 'rgba(203, 213, 225, 0.5)';
+        for (let gy = 44; gy < H; gy += 36) {
             ctx.beginPath();
             ctx.moveTo(0, gy);
             ctx.lineTo(W, gy);
@@ -338,13 +323,13 @@
         const padX = Math.max(68, W * 0.085);
         const usableW = W - padX * 2;
         const stepSpan = usableW / 5;
-        const baseLineY = H * 0.56;
-        const sc = Math.max(0.82, Math.min(1.12, W / 960));
+        const baseLineY = H * 0.53;
+        const sc = Math.max(0.84, Math.min(1.1, W / 960));
 
         const anchors = stagesData.map((st, idx) => {
             const isSel = st.id === selectedNodeId;
             const isHov = st.id === hoveredNodeId;
-            const targetLift = (isSel || st.isCurrent) ? 12 : (isHov ? 7 : 0);
+            const targetLift = (isSel || st.isCurrent) ? 9 : (isHov ? 5 : 0);
             stageLift[idx] += (targetLift - stageLift[idx]) * 0.15;
 
             return {
@@ -354,16 +339,14 @@
             };
         });
 
-        // 1. Draw 3D Isometric Stepper Track / Bridges connecting 1 -> 2 -> 3 -> 4 -> 5 -> 6
+        // 1. Draw 3D Isometric Stepper Track connecting 1 -> 2 -> 3 -> 4 -> 5 -> 6
         for (let i = 0; i < stagesData.length - 1; i++) {
             const sA = stagesData[i];
             const sB = stagesData[i + 1];
             const a1 = anchors[i];
             const a2 = anchors[i + 1];
-
             const trackY = baseLineY - 12;
 
-            // Outer 3D Track Beam
             ctx.beginPath();
             ctx.moveTo(a1.x, trackY);
             ctx.lineTo(a2.x, trackY);
@@ -372,7 +355,6 @@
             ctx.strokeStyle = isDarkScene ? '#1e293b' : '#e2e8f0';
             ctx.stroke();
 
-            // Inner Lit Progress Conduit
             ctx.beginPath();
             ctx.moveTo(a1.x, trackY);
             ctx.lineTo(a2.x, trackY);
@@ -388,12 +370,12 @@
             ctx.stroke();
         }
 
-        // 2. Draw Flowing 3D Energy Spheres along Completed/Active Stepper Segments
+        // 2. Draw Flowing Energy Spheres along Completed/Active Segments
         trackPackets.forEach(pk => {
             pk.t += pk.speed;
             if (pk.t > 1) pk.t -= 1;
 
-            if (pk.seg <= activeStageIdx || role !== 'mahasiswa') {
+            if (pk.seg <= activeStageIdx) {
                 const a1 = anchors[pk.seg];
                 const a2 = anchors[pk.seg + 1];
                 if (!a1 || !a2) return;
@@ -401,13 +383,13 @@
                 const py = baseLineY - 12;
 
                 ctx.beginPath();
-                ctx.arc(px, py, 4.5 * sc, 0, Math.PI * 2);
+                ctx.arc(px, py, 4.2 * sc, 0, Math.PI * 2);
                 ctx.fillStyle = pk.seg < activeStageIdx ? '#34d399' : '#fb923c';
                 ctx.fill();
             }
         });
 
-        // 3. Draw Each of the 6 Stationary 3D Isometric Stepper Nodes (Left to Right)
+        // 3. Draw All 6 Uniform 3D Isometric Stepper Nodes
         hitBoxes = [];
 
         stagesData.forEach((st, idx) => {
@@ -417,15 +399,15 @@
 
             // Ground Shadow Ellipse
             ctx.beginPath();
-            ctx.ellipse(anc.x, anc.baseY + 8 * sc, 40 * sc, 16 * sc, 0, 0, Math.PI * 2);
+            ctx.ellipse(anc.x, anc.baseY + 8 * sc, 38 * sc, 15 * sc, 0, 0, Math.PI * 2);
             ctx.fillStyle = st.isCurrent
                 ? 'rgba(234, 88, 12, 0.22)'
-                : (isDarkScene ? 'rgba(0, 0, 0, 0.38)' : 'rgba(148, 163, 184, 0.28)');
+                : (isDarkScene ? 'rgba(0, 0, 0, 0.36)' : 'rgba(148, 163, 184, 0.26)');
             ctx.fill();
 
-            // Active Stage Pulsing Isometric Halo Ring
+            // Active / Selected Pulsing Isometric Ring
             if (st.isCurrent || isSelected) {
-                const pulseR = (46 + Math.sin(animTime * 3) * 4) * sc;
+                const pulseR = (44 + Math.sin(animTime * 3) * 3.5) * sc;
                 ctx.beginPath();
                 ctx.ellipse(anc.x, anc.y - 2 * sc, pulseR, pulseR * 0.48, 0, 0, Math.PI * 2);
                 ctx.strokeStyle = st.isCurrent ? 'rgba(249, 115, 22, 0.65)' : 'rgba(59, 130, 246, 0.55)';
@@ -433,37 +415,39 @@
                 ctx.stroke();
             }
 
-            // Semantic 3D Block Palette
-            let colors;
+            // Semantic 3D Block Palettes
+            let colors, capColors;
             if (st.isCurrent) {
                 colors = {
-                    top: '#fb923c',
-                    front: '#ea580c',
-                    sideDark: '#c2410c',
+                    top: '#fb923c', front: '#ea580c', sideDark: '#c2410c',
                     stroke: isSelected || isHovered ? '#ffffff' : 'rgba(255,255,255,0.35)'
+                };
+                capColors = {
+                    top: '#fdba74', front: '#f97316', sideDark: '#ea580c', stroke: '#ffffff'
                 };
             } else if (st.isCompleted) {
                 colors = {
-                    top: '#34d399',
-                    front: '#059669',
-                    sideDark: '#047857',
+                    top: '#34d399', front: '#059669', sideDark: '#047857',
                     stroke: isSelected || isHovered ? '#ffffff' : 'rgba(255,255,255,0.28)'
+                };
+                capColors = {
+                    top: '#6ee7b7', front: '#10b981', sideDark: '#059669', stroke: 'rgba(255,255,255,0.5)'
                 };
             } else {
                 colors = isDarkScene ? {
-                    top: '#475569',
-                    front: '#334155',
-                    sideDark: '#1e293b',
+                    top: '#475569', front: '#334155', sideDark: '#1e293b',
                     stroke: isSelected || isHovered ? '#cbd5e1' : 'rgba(148,163,184,0.25)'
                 } : {
-                    top: '#e2e8f0',
-                    front: '#cbd5e1',
-                    sideDark: '#94a3b8',
+                    top: '#e2e8f0', front: '#cbd5e1', sideDark: '#94a3b8',
                     stroke: isSelected || isHovered ? '#334155' : 'rgba(100,116,139,0.28)'
+                };
+                capColors = isDarkScene ? {
+                    top: '#334155', front: '#1e293b', sideDark: '#0f172a', stroke: 'rgba(148,163,184,0.3)'
+                } : {
+                    top: '#f8fafc', front: '#e2e8f0', sideDark: '#cbd5e1', stroke: 'rgba(148,163,184,0.45)'
                 };
             }
 
-            // Tier 1: Wide Isometric Base Platform
             const baseColors = isDarkScene ? {
                 top: '#1e293b', front: '#0f172a', sideDark: '#090d16',
                 stroke: isSelected ? '#fb923c' : 'rgba(100,116,139,0.45)'
@@ -471,27 +455,13 @@
                 top: '#ffffff', front: '#e2e8f0', sideDark: '#cbd5e1',
                 stroke: isSelected ? '#ea580c' : 'rgba(148,163,184,0.55)'
             };
-            drawIsoBox(anc.x, anc.y, 0, 0, 0, 56 * sc, 10 * sc, 56 * sc, baseColors);
 
-            // Tier 2: Colored 3D Stepper Pedestal
-            drawIsoBox(anc.x, anc.y, 0, 10 * sc, 0, 42 * sc, 18 * sc, 42 * sc, colors);
+            // Draw the Uniform 3D Isometric Node
+            drawUniform3DNode(st, anc.x, anc.y, sc, colors, baseColors, capColors, animTime, isSelected);
 
-            // Tier 3: Sculpted 3D Stage Figurine on Top
-            drawStepper3DIcon(
-                st.modelType,
-                anc.x,
-                anc.y,
-                28 * sc,
-                sc,
-                colors,
-                animTime,
-                st.isCurrent || isSelected
-            );
-
-            // Stepper Labels Below Pedestal (Just like a Classic Stepper!)
+            // Stepper Labels Below Node
             const labelTopY = anc.baseY + 34;
 
-            // Stage Title ("1. Judul Skripsi", etc.)
             ctx.font = (st.isCurrent || isSelected) ? '900 11.5px sans-serif' : 'bold 11px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -503,7 +473,7 @@
             // Status Pill Below Title
             const pillText = st.subBadge || st.badge;
             ctx.font = 'bold 9.5px sans-serif';
-            const pillW = Math.max(64, ctx.measureText(pillText).width + 16);
+            const pillW = Math.max(68, ctx.measureText(pillText).width + 16);
             const pillH = 19;
             const pillY = labelTopY + 21;
 
@@ -533,39 +503,11 @@
                 : (st.isCompleted ? (isDarkScene ? '#6ee7b7' : '#047857') : (isDarkScene ? '#94a3b8' : '#64748b'));
             ctx.fillText(pillText, anc.x, pillY + 0.5);
 
-            // Floating Mentoring Cycle Callouts above the Active Mentoring Stage
-            if (idx === activeStageIdx) {
-                cyclePills.forEach(cp => {
-                    const floatY = anc.y + cp.dy * sc + Math.sin(animTime * 2.2 + cp.phase) * 3;
-                    const floatX = anc.x + cp.dx * sc;
-
-                    ctx.font = 'bold 9px sans-serif';
-                    const cw = ctx.measureText(cp.label).width + 10;
-                    const ch = 16;
-
-                    ctx.beginPath();
-                    if (ctx.roundRect) {
-                        ctx.roundRect(floatX - cw / 2, floatY - ch / 2, cw, ch, 5);
-                    } else {
-                        ctx.rect(floatX - cw / 2, floatY - ch / 2, cw, ch);
-                    }
-                    ctx.fillStyle = isDarkScene ? 'rgba(15, 23, 42, 0.92)' : 'rgba(255, 255, 255, 0.95)';
-                    ctx.strokeStyle = '#3b82f6';
-                    ctx.lineWidth = 1;
-                    ctx.fill();
-                    ctx.stroke();
-
-                    ctx.fillStyle = isDarkScene ? '#93c5fd' : '#1d4ed8';
-                    ctx.fillText(cp.label, floatX, floatY + 0.5);
-                });
-            }
-
-            // Save Clickable Hitbox for this Stepper Column
             hitBoxes.push({
                 id: st.id,
-                x1: anc.x - 52 * sc,
-                x2: anc.x + 52 * sc,
-                y1: anc.y - 85 * sc,
+                x1: anc.x - 50 * sc,
+                x2: anc.x + 50 * sc,
+                y1: anc.y - 60 * sc,
                 y2: pillY + 14
             });
         });
