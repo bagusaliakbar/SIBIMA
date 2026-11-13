@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\MentoringSession;
+use App\Models\Thesis;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,8 +26,58 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $thesis = null;
+        $p1Sessions = collect();
+        $p2Sessions = collect();
+        $academicStage = null;
+        $dosenStats = null;
+
+        if ($user->role === 'mahasiswa') {
+            $thesis = Thesis::where('student_id', $user->id)
+                ->with(['pembimbing1', 'pembimbing2', 'graduation'])
+                ->first();
+
+            if ($thesis) {
+                $completedSessions = MentoringSession::where('thesis_id', $thesis->id)
+                    ->where('status', 'completed')
+                    ->where('is_absent', false)
+                    ->orderBy('scheduled_at', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->get(['id', 'dosen_id', 'scheduled_at', 'topic']);
+
+                if ($thesis->pembimbing1_id) {
+                    $p1Sessions = $completedSessions->where('dosen_id', $thesis->pembimbing1_id)->values();
+                }
+                if ($thesis->pembimbing2_id) {
+                    $p2Sessions = $completedSessions->where('dosen_id', $thesis->pembimbing2_id)->values();
+                }
+
+                $academicStage = $thesis->getCurrentAcademicStage();
+            }
+        } elseif (in_array($user->role, ['dosen', 'kaprodi', 'admin'])) {
+            $activeP1 = Thesis::where('pembimbing1_id', $user->id)->notGraduated()->count();
+            $activeP2 = Thesis::where('pembimbing2_id', $user->id)->notGraduated()->count();
+            $completedSessions = MentoringSession::where('dosen_id', $user->id)
+                ->where('status', 'completed')
+                ->where('is_absent', false)
+                ->count();
+
+            $dosenStats = [
+                'active_p1' => $activeP1,
+                'active_p2' => $activeP2,
+                'active_total' => $activeP1 + $activeP2,
+                'completed_sessions' => $completedSessions,
+            ];
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'thesis' => $thesis,
+            'p1Sessions' => $p1Sessions,
+            'p2Sessions' => $p2Sessions,
+            'academicStage' => $academicStage,
+            'dosenStats' => $dosenStats,
         ]);
     }
 

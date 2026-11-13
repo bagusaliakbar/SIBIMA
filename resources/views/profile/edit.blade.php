@@ -8,6 +8,10 @@
     <div class="py-8">
         <div class="w-full mx-auto space-y-6">
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 sm:rounded-lg">
+                @include('profile.partials.mentoring-id-card')
+            </div>
+
+            <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
