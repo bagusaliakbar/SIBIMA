@@ -22,6 +22,7 @@ class LogbookController extends Controller
                 ->first();
 
             $filterDosen = $request->input('dosen', 'all');
+            $sort = $request->input('sort', 'desc') === 'asc' ? 'asc' : 'desc';
 
             // 1. Ambil seluruh sesi bimbingan selesai urut kronologis (asc) untuk penomoran resmi sesi
             $allCompletedSessions = MentoringSession::whereHas('thesis', function ($q) use ($user) {
@@ -76,15 +77,21 @@ class LogbookController extends Controller
 
             $sessions = $sessionsQuery
                 ->with('thesis.pembimbing1', 'thesis.pembimbing2', 'dosen')
-                ->orderBy('scheduled_at', 'desc')
+                ->orderBy('scheduled_at', $sort)
+                ->orderBy('id', $sort)
                 ->paginate(10)
-                ->appends(array_filter(['search' => $search, 'dosen' => $filterDosen !== 'all' ? $filterDosen : null]));
+                ->appends(array_filter([
+                    'search' => $search,
+                    'dosen' => $filterDosen !== 'all' ? $filterDosen : null,
+                    'sort' => $sort !== 'desc' ? $sort : null,
+                ]));
 
             return view('logbooks.index', compact(
                 'sessions', 
                 'search', 
                 'thesis', 
-                'filterDosen', 
+                'filterDosen',
+                'sort',
                 'sessionOrderMap', 
                 'sessionDosenOrderMap', 
                 'totalCompletedCount', 

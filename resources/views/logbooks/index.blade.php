@@ -233,18 +233,6 @@
                                     {{ $progressPercent }}% {{ $isTargetReached ? '(Target Terpenuhi)' : '' }}
                                 </span>
                             </div>
-
-                            <!-- Rincian P1 & P2 Badges -->
-                            <div class="grid grid-cols-2 gap-2 mt-2.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px]">
-                                <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50">
-                                    <span class="font-bold text-indigo-700 dark:text-indigo-300">P1:</span>
-                                    <span class="font-black text-indigo-900 dark:text-indigo-100">{{ $countP1 }}/8 Sesi</span>
-                                </div>
-                                <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-purple-50/70 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50">
-                                    <span class="font-bold text-purple-700 dark:text-purple-300">P2:</span>
-                                    <span class="font-black text-purple-900 dark:text-purple-100">{{ $countP2 }}/8 Sesi</span>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="pt-2.5 border-t border-slate-200/80 dark:border-slate-700 text-[10px] text-slate-600 dark:text-slate-300 font-medium">
@@ -294,9 +282,9 @@
                     </a>
                 </div>
             @elseif($isFullAccSidang && !$hasRegisteredDefense)
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-start gap-3 sm:gap-3.5">
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/30 mt-0.5">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="min-w-0 flex-1">
@@ -304,15 +292,15 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">Kedua dosen pembimbing telah menyetujui naskah skripsi Anda untuk didaftarkan ke Sidang Skripsi.</p>
                         </div>
                     </div>
-                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/30 shrink-0 cursor-pointer w-full sm:w-auto text-center">
+                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer w-full sm:w-auto text-center">
                         <span>Daftar Sidang Skripsi</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             @elseif($hasRegisteredDefense && !$hasPassedDefense)
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-transparent border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-start gap-3 sm:gap-3.5">
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30 mt-0.5">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="min-w-0 flex-1">
@@ -320,36 +308,27 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">Berkas Sidang Skripsi Anda telah diajukan. Pantau status verifikasi dan jadwal sidang Anda.</p>
                         </div>
                     </div>
-                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-sm shadow-blue-600/30 shrink-0 cursor-pointer w-full sm:w-auto text-center">
+                    <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer w-full sm:w-auto text-center">
                         <span>Pantau Sidang</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             @elseif($hasPassedSeminar && !$isFullAccSidang)
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-transparent border border-teal-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-start gap-3 sm:gap-3.5">
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-teal-600/30 mt-0.5">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <h4 class="text-sm font-black text-slate-900 dark:text-slate-100 leading-snug">Tahap Bimbingan Skripsi (Pasca-Seminar)</h4>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-200 border border-teal-200 dark:border-teal-700 shrink-0">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-700 shrink-0">
                                     Seminar Selesai
                                 </span>
                             </div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                                 Anda telah menyelesaikan Seminar Proposal. Lanjutkan pencatatan logbook bimbingan naskah skripsi untuk memenuhi syarat dan persetujuan (ACC) Sidang Skripsi.
                             </p>
-                            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2.5 text-[10px] font-bold">
-                                <span class="text-slate-500 dark:text-slate-400 shrink-0">Status ACC Sidang:</span>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-md shrink-0 {{ $thesis->acc_sidang_p1 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
-                                    P1: {{ $thesis->acc_sidang_p1 ? '✓ Sudah ACC' : 'Belum ACC' }}
-                                </span>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-md shrink-0 {{ $thesis->acc_sidang_p2 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
-                                    P2: {{ $thesis->acc_sidang_p2 ? '✓ Sudah ACC' : 'Belum ACC' }}
-                                </span>
-                            </div>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 w-full sm:w-auto shrink-0 pt-1 sm:pt-0">
@@ -357,16 +336,16 @@
                             <span>Revisi Seminar</span>
                             <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </a>
-                        <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-sm shadow-teal-600/30 shrink-0 cursor-pointer text-center">
+                        <a href="{{ route('thesis-defense-applications.index') }}" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer text-center">
                             <span>Syarat Sidang</span>
                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     </div>
                 </div>
             @elseif($hasRegisteredSeminar && !$hasPassedSeminar)
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-transparent border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-start gap-3 sm:gap-3.5">
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30 mt-0.5">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="min-w-0 flex-1">
@@ -374,15 +353,15 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">Berkas Seminar Proposal Anda telah didaftarkan. Pantau jadwal dan pengumuman seminar Anda.</p>
                         </div>
                     </div>
-                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-sm shadow-blue-600/30 shrink-0 cursor-pointer w-full sm:w-auto text-center">
+                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer w-full sm:w-auto text-center">
                         <span>Pantau Seminar</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             @elseif($isFullAccUp && !$hasRegisteredSeminar)
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-indigo-500/15 via-blue-500/10 to-transparent border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                     <div class="flex items-start gap-3 sm:gap-3.5">
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/30 mt-0.5">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="min-w-0 flex-1">
@@ -390,7 +369,7 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">Kedua dosen pembimbing telah menyetujui proposal skripsi Anda untuk didaftarkan ke Seminar Proposal.</p>
                         </div>
                     </div>
-                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm shadow-indigo-600/30 shrink-0 cursor-pointer w-full sm:w-auto text-center">
+                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer w-full sm:w-auto text-center">
                         <span>Daftar Seminar Proposal</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
@@ -420,64 +399,76 @@
                             :value="$search ?? ''" 
                             placeholder="Cari topik, catatan, atau revisi..." 
                             route="logbooks.index" 
-                            :params="['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null]" />
+                            :params="['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null, 'sort' => ($sort ?? 'desc') !== 'desc' ? $sort : null]" />
                     </div>
 
                     <!-- Export PDF Button -->
                     <a href="{{ route('logbooks.export-pdf', array_filter(['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null])) }}" 
-                       class="h-10 inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider transition-all shadow-xs shrink-0 cursor-pointer" 
+                       class="h-10 inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 transition-all shadow-xs shrink-0 cursor-pointer" 
                        style="height: 40px !important; margin: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; box-sizing: border-box !important;"
                        title="Unduh seluruh catatan logbook dalam format PDF">
                         <svg class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <span class="hidden sm:inline">Export </span>
-                        <span>PDF</span>
+                        <span>Export PDF</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 3. QUICK FILTER PEMBIMBING TABS -->
+            <!-- 3. QUICK FILTER PEMBIMBING TABS & SORT -->
             @if($thesis && ($thesis->pembimbing1 || $thesis->pembimbing2))
-                <div class="px-4 sm:px-6 py-2.5 sm:py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center gap-1.5 sm:gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                    <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
-                        <span class="hidden sm:inline">Filter Pembimbing:</span>
-                        <span class="sm:hidden">Filter:</span>
-                    </span>
-
-                    <!-- Tab Semua -->
-                    <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => 'all'])) }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
-                        <span class="hidden sm:inline">Semua Pembimbing</span>
-                        <span class="sm:hidden">Semua</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                            {{ $totalCompletedCount }}
+                <div class="px-4 sm:px-6 py-2.5 sm:py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden min-w-0">
+                        <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
+                            <span class="hidden sm:inline">Filter Pembimbing:</span>
+                            <span class="sm:hidden">Filter:</span>
                         </span>
+
+                        <!-- Tab Semua -->
+                        <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => 'all', 'sort' => ($sort ?? 'desc') !== 'desc' ? $sort : null])) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
+                            <span class="hidden sm:inline">Semua Pembimbing</span>
+                            <span class="sm:hidden">Semua</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                {{ $totalCompletedCount }}
+                            </span>
+                        </a>
+
+                        <!-- Tab P1 -->
+                        @if($thesis->pembimbing1)
+                            <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => 'p1', 'sort' => ($sort ?? 'desc') !== 'desc' ? $sort : null])) }}"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
+                               title="Pembimbing 1: {{ $thesis->pembimbing1->name }}">
+                                <span class="hidden sm:inline">P1 · {{ Str::limit($thesis->pembimbing1->name, 20) }}</span>
+                                <span class="sm:hidden">P1</span>
+                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    {{ $countP1 }}
+                                </span>
+                            </a>
+                        @endif
+
+                        <!-- Tab P2 -->
+                        @if($thesis->pembimbing2)
+                            <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => 'p2', 'sort' => ($sort ?? 'desc') !== 'desc' ? $sort : null])) }}"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
+                               title="Pembimbing 2: {{ $thesis->pembimbing2->name }}">
+                                <span class="hidden sm:inline">P2 · {{ Str::limit($thesis->pembimbing2->name, 20) }}</span>
+                                <span class="sm:hidden">P2</span>
+                                <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    {{ $countP2 }}
+                                </span>
+                            </a>
+                        @endif
+                    </div>
+
+                    <!-- Sort Toggle (Terbaru / Terlama) -->
+                    @php
+                        $nextSort = ($sort ?? 'desc') === 'desc' ? 'asc' : 'desc';
+                    @endphp
+                    <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null, 'sort' => $nextSort !== 'desc' ? $nextSort : null])) }}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all shrink-0"
+                       title="Ubah urutan riwayat logbook">
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                        <span>{{ ($sort ?? 'desc') === 'desc' ? 'Terbaru' : 'Terlama' }}</span>
                     </a>
-
-                    <!-- Tab P1 -->
-                    @if($thesis->pembimbing1)
-                        <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => 'p1'])) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
-                           title="Pembimbing 1: {{ $thesis->pembimbing1->name }}">
-                            <span class="hidden sm:inline">Pembimbing 1 ({{ Str::limit($thesis->pembimbing1->name, 22) }})</span>
-                            <span class="sm:hidden">Pembimbing 1</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                                {{ $countP1 }}
-                            </span>
-                        </a>
-                    @endif
-
-                    <!-- Tab P2 -->
-                    @if($thesis->pembimbing2)
-                        <a href="{{ route('logbooks.index', array_filter(['search' => $search, 'dosen' => 'p2'])) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
-                           title="Pembimbing 2: {{ $thesis->pembimbing2->name }}">
-                            <span class="hidden sm:inline">Pembimbing 2 ({{ Str::limit($thesis->pembimbing2->name, 22) }})</span>
-                            <span class="sm:hidden">Pembimbing 2</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
-                                {{ $countP2 }}
-                            </span>
-                        </a>
-                    @endif
                 </div>
             @endif
 
@@ -579,7 +570,7 @@
                                             <span>Hasil & Catatan Pembimbing</span>
                                         </h5>
                                     </div>
-                                    <p class="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium whitespace-pre-line italic">
+                                    <p class="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium whitespace-pre-line">
                                         {{ $session->feedback ?: 'Tidak ada catatan pembimbing tertulis untuk sesi ini.' }}
                                     </p>
                                     @if($session->feedback_document_url)
@@ -628,17 +619,12 @@
                                 @if($session->dosen)
                                     <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3 flex-wrap">
                                         <div class="flex items-center gap-2.5">
-                                            <div class="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
+                                            <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
                                                 <img src="{{ $session->dosen->avatar_url }}" alt="{{ $session->dosen->name }}" class="w-full h-full object-cover">
                                             </div>
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $session->dosen->name }}</span>
-                                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider {{ $isP1 ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300' : ($isP2 ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400') }}">
-                                                {{ $pembimbingLabel }}
-                                            </span>
-                                                </div>
-                                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{{ $session->dosen->identifier ?: 'NIP/NIDN -' }}</p>
+                                            <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $session->dosen->name }}</span>
+                                                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{{ $session->dosen->identifier ?: 'NIP/NIDN -' }}</span>
                                             </div>
                                         </div>
                                     </div>
