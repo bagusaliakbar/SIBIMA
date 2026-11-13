@@ -300,11 +300,6 @@
             <!-- Integrated ACC & Exam Readiness Bar -->
             <div class="pt-5 border-t border-slate-100 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/20 shadow-2xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <h4 class="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">Status Persetujuan Ujian (ACC)</h4>
@@ -545,7 +540,6 @@
             <div class="p-4 sm:p-6 border-b border-slate-200/80 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 bg-slate-50 dark:bg-slate-800">
                 <div>
                     <h3 class="text-base font-black text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                         <span>Riwayat Catatan Logbook</span>
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
