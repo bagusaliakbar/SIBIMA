@@ -169,11 +169,6 @@
                         <!-- Modal Header -->
                         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20">
-                                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                    </svg>
-                                </div>
                                 <div class="min-w-0">
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
                                         Kirim Doa &amp; Ucapan Ulang Tahun
@@ -210,7 +205,7 @@
                             <!-- Pilihan Template Ucapan Cepat -->
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-                                    Pilih Doa Cepat (Tinggal Klik):
+                                    Pilih template ucapan:
                                 </label>
                                 <div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                                     <button type="button" 
@@ -248,7 +243,7 @@
                             <div>
                                 <div class="flex items-center justify-between mb-1.5">
                                     <label for="birthday-wish-message" class="text-xs font-bold text-slate-700 dark:text-slate-300">
-                                        Isi Doa / Pesan Anda:
+                                        Ucapan:
                                     </label>
                                     <span class="text-[10px] font-mono text-slate-400" x-text="wishMessage.length + ' / 300'"></span>
                                 </div>
