@@ -74,11 +74,18 @@
                             $gradedCount = ($revP1?->isGraded() ? 1 : 0) + ($revE1?->isGraded() ? 1 : 0) + ($revE2?->isGraded() ? 1 : 0);
 
                             $defDate = \Carbon\Carbon::parse($exam->schedule->date)->format('Y-m-d');
+                            $defStart = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($exam->start_time)->format('H:i:s'));
                             $defEnd = \Carbon\Carbon::parse($defDate . ' ' . \Carbon\Carbon::parse($exam->end_time)->format('H:i:s'));
                             $isFinished = ($exam->thesis && $exam->thesis->defenseApplication && $exam->thesis->defenseApplication->status === 'completed')
                                 || $exam->isGradingComplete()
                                 || $exam->isRevisionAllApproved()
                                 || $defEnd->isPast();
+                            $now = now();
+                            $isOngoing = !$isFinished && $now->betweenIncluded($defStart, $defEnd);
+                            $isTodayUpcoming = !$isFinished && $defStart->isToday() && $now->lt($defStart);
+                            $daysUntil = (!$isFinished && $defStart->isFuture() && !$defStart->isToday())
+                                ? (int) $now->copy()->startOfDay()->diffInDays($defStart->copy()->startOfDay())
+                                : null;
 
                             $app = $exam->thesis?->defenseApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first() 
                                 ?? $exam->thesis?->defenseApplication
@@ -124,16 +131,38 @@
 
                             <!-- Jadwal Sidang -->
                             <td class="px-6 py-5 text-center">
-                                <div class="flex flex-col items-center gap-1">
-                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ \Carbon\Carbon::parse($exam->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
-                                    <span class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center font-medium">
-                                        <svg class="w-3 h-3 mr-1 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        {{ \Carbon\Carbon::parse($exam->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($exam->end_time)->format('H:i') }}
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">{{ $defStart->copy()->locale('id')->translatedFormat('l, d M Y') }}</span>
+                                    <span class="text-xs text-slate-600 dark:text-slate-300 flex items-center font-medium tabular-nums whitespace-nowrap">
+                                        <svg class="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        {{ $defStart->format('H:i') }} - {{ $defEnd->format('H:i') }} WIB
                                     </span>
                                     @if($isFinished)
-                                        <span class="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200/70 dark:border-slate-700/70">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500"></span>
                                             Selesai
+                                        </span>
+                                    @elseif($isOngoing)
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
+                                            <span class="relative flex h-1.5 w-1.5">
+                                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                                            </span>
+                                            Berlangsung
+                                        </span>
+                                    @elseif($isTodayUpcoming)
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            Hari Ini
+                                        </span>
+                                    @elseif($daysUntil === 1)
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                            Besok
+                                        </span>
+                                    @elseif($daysUntil !== null)
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
+                                            {{ $daysUntil }} hari lagi
                                         </span>
                                     @endif
                                 </div>
