@@ -369,6 +369,9 @@
                     <!-- Pinned Initial Revision Notes from Lecturer (if any) -->
                     @php
                         $firstExaminerMsg = $revision->messages->where('sender_id', $revision->examiner_id)->first();
+                        $timelineMessages = $firstExaminerMsg
+                            ? $revision->messages->where('id', '!=', $firstExaminerMsg->id)
+                            : $revision->messages;
                     @endphp
                     @if($firstExaminerMsg)
                         <div class="p-4 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/50 space-y-2">
@@ -377,7 +380,7 @@
                                     <span>📌</span>
                                     <span>Catatan Revisi Awal Hasil Seminar</span>
                                 </span>
-                                <span>{{ $firstExaminerMsg->created_at->format('d M Y') }}</span>
+                                <span>{{ $firstExaminerMsg->created_at->format('d M Y, H:i') }}</span>
                             </div>
                             <div class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
                                 <x-revision-message-content :message="$firstExaminerMsg->message" :is-me="false" theme="orange" />
@@ -398,7 +401,7 @@
                     @endif
 
                     <!-- Timeline of Messages -->
-                    @forelse($revision->messages as $msg)
+                    @forelse($timelineMessages as $msg)
                         @php 
                             $isMe = $msg->sender_id === Auth::id(); 
                             $isRead = !empty($msg->read_at);
@@ -468,9 +471,15 @@
                             </div>
                         </div>
                     @empty
-                        <div class="py-12 text-center text-slate-400">
-                            <p class="text-xs">Belum ada riwayat percakapan revisi.</p>
-                        </div>
+                        @if($firstExaminerMsg)
+                            <div class="py-6 text-center text-slate-400 dark:text-slate-500">
+                                <p class="text-[11px] font-medium">Belum ada balasan atau diskusi lanjutan.</p>
+                            </div>
+                        @else
+                            <div class="py-12 text-center text-slate-400">
+                                <p class="text-xs">Belum ada riwayat percakapan revisi.</p>
+                            </div>
+                        @endif
                     @endforelse
 
                 </div>
