@@ -12,6 +12,12 @@
             activeSessionId: null, 
             activeSessionTopic: '', 
             permissionReason: '',
+            studentStatusFilter: 'all',
+            matchesStudentFilter(status) {
+                if (this.studentStatusFilter === 'all') return true;
+                const isActive = status === 'pending' || status === 'approved';
+                return this.studentStatusFilter === 'active' ? isActive : !isActive;
+            },
             openPermissionModal(session) {
                 this.activeSessionId = session.id;
                 this.activeSessionTopic = session.topic;
@@ -153,7 +159,12 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP1 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/4</span>
+                                        <span class="text-[10px] font-bold tabular-nums {{ $countP1 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">
+                                            {{ min($countP1, 4) }}/4
+                                            @if($countP1 > 4)
+                                                <span class="text-slate-400 dark:text-slate-500 font-medium">({{ $countP1 }} sesi)</span>
+                                            @endif
+                                        </span>
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -173,7 +184,12 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP2 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/4</span>
+                                        <span class="text-[10px] font-bold tabular-nums {{ $countP2 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">
+                                            {{ min($countP2, 4) }}/4
+                                            @if($countP2 > 4)
+                                                <span class="text-slate-400 dark:text-slate-500 font-medium">({{ $countP2 }} sesi)</span>
+                                            @endif
+                                        </span>
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -201,6 +217,18 @@
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                         </svg>
                                         <span>Sudah Di-ACC Kedua Pembimbing</span>
+                                    </span>
+                                @elseif($countP1 >= 8 && $countP2 >= 8)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-200 dark:border-amber-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                        <span>Syarat Sesi Terpenuhi · Menunggu ACC</span>
+                                    </span>
+                                @else
+                                    @php
+                                        $sidangRemaining = max(0, 8 - $countP1) + max(0, 8 - $countP2);
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-700 self-start sm:self-auto shrink-0 whitespace-nowrap">
+                                        <span>Butuh {{ $sidangRemaining }} Sesi Lagi</span>
                                     </span>
                                 @endif
                             </div>
@@ -259,7 +287,29 @@
                     @endif
                 </div>
                 
-                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full sm:w-auto">
+                <div class="flex flex-wrap lg:flex-nowrap items-center gap-2.5 w-full sm:w-auto">
+                    <!-- Quick Status Filter -->
+                    <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
+                        <button type="button"
+                                @click="studentStatusFilter = 'all'"
+                                :class="studentStatusFilter === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                                class="px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer">
+                            Semua
+                        </button>
+                        <button type="button"
+                                @click="studentStatusFilter = 'active'"
+                                :class="studentStatusFilter === 'active' ? 'bg-orange-600 text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                                class="px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer">
+                            Aktif
+                        </button>
+                        <button type="button"
+                                @click="studentStatusFilter = 'completed'"
+                                :class="studentStatusFilter === 'completed' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                                class="px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer">
+                            Selesai
+                        </button>
+                    </div>
+
                     <!-- Search Input -->
                     <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="relative m-0 p-0 flex items-center flex-1 sm:flex-initial">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -304,10 +354,19 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($sessions as $session)
-                            <tr id="session-{{ $session->id }}" data-session-id="{{ $session->id }}" class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-all duration-500 group align-top">
+                            <tr id="session-{{ $session->id }}" data-session-id="{{ $session->id }}"
+                                x-show="matchesStudentFilter('{{ $session->status }}')"
+                                class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-all duration-500 group align-top">
                                 <td class="py-4 px-5 text-slate-800 dark:text-slate-200 font-medium whitespace-nowrap">
-                                    {{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }} <br>
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span>{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
+                                        @if($session->scheduled_at->isToday())
+                                            <span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-[9px] font-black uppercase">Hari Ini</span>
+                                        @elseif($session->scheduled_at->isTomorrow())
+                                            <span class="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-[9px] font-black uppercase">Besok</span>
+                                        @endif
+                                    </div>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-normal tabular-nums">{{ $session->scheduled_at->format('H:i') }} WIB</span>
                                 </td>
                                 <td class="py-4 px-5 text-slate-700 dark:text-slate-300">
                                     <div class="font-medium text-slate-800 dark:text-slate-100 leading-snug">{{ $session->topic }}</div>
@@ -321,7 +380,7 @@
                                             @if($session->location)
                                                 <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100') }} transition-all shadow-2xs font-bold text-[10px] uppercase tracking-wider">
                                                     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                                    <span>{{ $isMeet ? '🎥 Gabung Google Meet' : ($isZoom ? '📹 Gabung Zoom' : 'Buka Meeting') }}</span>
+                                                    <span>{{ $isMeet ? 'Gabung Google Meet' : ($isZoom ? 'Gabung Zoom' : 'Buka Meeting') }}</span>
                                                 </a>
                                             @else
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-semibold border border-blue-100 dark:border-blue-500/20">Online</span>
@@ -389,9 +448,9 @@
                                                 </div>
                                             @else
                                                 {{-- Belum ada dokumen --}}
-                                                <button type="button" @click="uploading = !uploading" class="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 rounded-md hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                                                    Lampirkan Dokumen
+                                                <button type="button" @click="uploading = !uploading" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors whitespace-nowrap cursor-pointer">
+                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                                    <span>Lampirkan</span>
                                                 </button>
                                             @endif
 
@@ -533,13 +592,22 @@
                                             Tidak Hadir
                                         </span>
                                     @else
+                                        @php
+                                            $studentStatusLabel = match($session->status) {
+                                                'completed' => 'SELESAI',
+                                                'approved' => 'DISETUJUI',
+                                                'pending' => 'MENUNGGU',
+                                                'rejected' => 'DITOLAK',
+                                                default => strtoupper($session->status),
+                                            };
+                                        @endphp
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
                                             {{ $session->status === 'pending' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800' : '' }}
                                             {{ $session->status === 'approved' ? 'bg-orange-600 text-white' : '' }}
                                             {{ $session->status === 'rejected' ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800' : '' }}
                                             {{ $session->status === 'completed' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900' : '' }}
                                         ">
-                                            {{ $session->status === 'completed' ? 'Hadir' : $session->status }}
+                                            {{ $studentStatusLabel }}
                                         </span>
 
                                         @if(in_array($session->status, ['pending', 'approved']))
@@ -581,7 +649,8 @@
                         $linkUrl = Str::startsWith($session->location ?? '', 'http') ? $session->location : 'https://' . $session->location;
                     @endphp
                     <div id="mobile-session-{{ $session->id }}" 
-                         x-data="{ expanded: false, uploading: false }" 
+                         x-data="{ expanded: false, uploading: false }"
+                         x-show="matchesStudentFilter('{{ $session->status }}')"
                          class="rounded-2xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 shadow-2xs hover:shadow-xs transition-all overflow-hidden">
                         
                         <!-- Card Header & Summary (Tap anywhere to toggle accordion) -->
@@ -589,24 +658,36 @@
                             <!-- Top Row: Tanggal, Waktu & Status Badge -->
                             <div class="flex items-start justify-between gap-2.5">
                                 <div class="space-y-1">
-                                    <div class="flex items-center gap-1.5 font-black text-slate-900 dark:text-slate-100 text-xs">
+                                    <div class="flex flex-wrap items-center gap-1.5 font-black text-slate-900 dark:text-slate-100 text-xs">
                                         <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         <span>{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
                                         <span class="text-slate-300 dark:text-slate-600">•</span>
                                         <span class="text-slate-600 dark:text-slate-300 font-mono">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                        @if($session->scheduled_at->isToday())
+                                            <span class="px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 text-[9px] font-bold uppercase tracking-wide">Hari Ini</span>
+                                        @elseif($session->scheduled_at->isTomorrow())
+                                            <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 text-[9px] font-bold uppercase tracking-wide">Besok</span>
+                                        @endif
                                     </div>
                                     <!-- Media / Lokasi -->
                                     <div class="text-[11px]" @click.stop>
                                         @if($session->type === 'online')
                                             @if($session->location)
                                                 <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
-                                                    <span>{{ $isMeet ? '🎥 Gabung Google Meet' : ($isZoom ? '📹 Gabung Zoom' : '🎥 Buka Meeting') }}</span>
+                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    <span>{{ $isMeet ? 'Gabung Google Meet' : ($isZoom ? 'Gabung Zoom' : 'Buka Meeting') }}</span>
                                                 </a>
                                             @else
-                                                <span class="font-bold text-blue-600 dark:text-blue-400">🎥 Online</span>
+                                                <span class="inline-flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400">
+                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                    <span>Online</span>
+                                                </span>
                                             @endif
                                         @else
-                                            <span class="font-bold text-slate-600 dark:text-slate-300">🏢 Tatap Muka: {{ $session->location ?? 'Offline' }}</span>
+                                            <span class="inline-flex items-center gap-1 font-bold text-slate-600 dark:text-slate-300">
+                                                <svg class="w-3.5 h-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                                <span>Tatap Muka: {{ $session->location ?? 'Offline' }}</span>
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -618,13 +699,22 @@
                                             Tidak Hadir
                                         </span>
                                     @else
+                                        @php
+                                            $mobileStudentStatusLabel = match($session->status) {
+                                                'completed' => 'SELESAI',
+                                                'approved' => 'DISETUJUI',
+                                                'pending' => 'MENUNGGU',
+                                                'rejected' => 'DITOLAK',
+                                                default => strtoupper($session->status),
+                                            };
+                                        @endphp
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider
                                             {{ $session->status === 'pending' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800' : '' }}
                                             {{ $session->status === 'approved' ? 'bg-orange-600 text-white shadow-xs' : '' }}
                                             {{ $session->status === 'rejected' ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800' : '' }}
                                             {{ $session->status === 'completed' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : '' }}
                                         ">
-                                            {{ $session->status === 'completed' ? 'Hadir / Selesai' : $session->status }}
+                                            {{ $mobileStudentStatusLabel }}
                                         </span>
                                     @endif
                                 </div>
