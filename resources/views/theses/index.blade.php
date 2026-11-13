@@ -562,32 +562,6 @@
 
                     @if(Auth::user()->role === 'dosen')
                         <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                            <!-- Dosen Role Filter Dropdown -->
-                            <form action="{{ route('theses.index') }}" method="GET" class="relative">
-                                <input type="hidden" name="status" value="{{ $status ?? 'active' }}">
-                                <input type="hidden" name="cohort_filter" value="{{ $cohortFilter ?? 'all' }}">
-                                <input type="hidden" name="mentoring_health" value="{{ $mentoringHealth ?? 'all' }}">
-                                <input type="hidden" name="acc_status" value="{{ $accStatus ?? 'all' }}">
-                                @if($entryYear)
-                                    <input type="hidden" name="entry_year" value="{{ $entryYear }}">
-                                @endif
-                                @if($search)
-                                    <input type="hidden" name="search" value="{{ $search }}">
-                                @endif
-                                <select name="role_filter" onchange="this.form.submit()" 
-                                        class="pl-3 pr-8 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs cursor-pointer">
-                                    <option value="" {{ empty($roleFilter) ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
-                                        Semua Peran ({{ $dosenStats['total'] ?? $theses->total() }})
-                                    </option>
-                                    <option value="p1" {{ ($roleFilter ?? '') === 'p1' ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
-                                        👤 Pembimbing 1 ({{ $dosenStats['p1'] ?? 0 }})
-                                    </option>
-                                    <option value="p2" {{ ($roleFilter ?? '') === 'p2' ? 'selected' : '' }} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
-                                        👥 Pembimbing 2 ({{ $dosenStats['p2'] ?? 0 }})
-                                    </option>
-                                </select>
-                            </form>
-
                             <!-- Export PDF for Dosen -->
                             <a href="{{ route('theses.export-pdf', ['search' => $search ?? '', 'status' => $status ?? 'active', 'role_filter' => $roleFilter ?? '', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'mentoring_health' => $mentoringHealth ?? 'all', 'acc_status' => $accStatus ?? 'all']) }}" 
                                class="inline-flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all" 
@@ -1217,10 +1191,12 @@
                                         <div class="font-bold text-slate-900 dark:text-white line-clamp-2 text-xs sm:text-sm leading-snug tracking-tight" title="{{ $thesis->final_title }}">
                                             {{ $thesis->final_title }}
                                         </div>
-                                        <div class="mt-1 flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400" title="Rencana awal: {{ $thesis->title }}">
-                                            <span class="text-amber-500 shrink-0 font-bold">↳</span>
-                                            <span class="italic line-clamp-1">Awal: {{ $thesis->title }}</span>
-                                        </div>
+                                        @if(trim(mb_strtolower($thesis->final_title)) !== trim(mb_strtolower($thesis->title ?? '')))
+                                            <div class="mt-1 flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400" title="Rencana awal: {{ $thesis->title }}">
+                                                <span class="text-amber-500 shrink-0 font-bold">↳</span>
+                                                <span class="italic line-clamp-1">Awal: {{ $thesis->title }}</span>
+                                            </div>
+                                        @endif
                                     @else
                                         <div class="font-bold text-slate-900 dark:text-white line-clamp-2 text-xs sm:text-sm leading-snug tracking-tight" title="{{ $thesis->title }}">
                                             {{ $thesis->title }}
@@ -1436,83 +1412,86 @@
                                             @endif
                                         </div>
 
-                                        <!-- 3. Dual Progress Bar Target UP (8 Sesi) & Sidang (16 Sesi) -->
-                                        <div class="w-full space-y-2 pt-1 border-t border-slate-100 dark:border-slate-800/80">
-                                            <!-- Target UP (8 Sesi) -->
-                                            <div class="space-y-1">
-                                                <div class="flex items-center justify-between text-[10px] font-bold">
-                                                    <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5" title="Target Seminar UP: 8 Sesi (4x P1 & 4x P2)">
-                                                        <span class="w-1.5 h-1.5 rounded-full {{ $upPercent >= 100 || $hasMyAccUp ? 'bg-indigo-600 dark:bg-indigo-400' : ($upPercent > 0 ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-600') }}"></span>
-                                                        <span>Target UP</span>
-                                                    </span>
-                                                    <div class="flex items-center gap-1.5">
-                                                        @if($hasMyAccUp || $isAccUpFinal || $isGraduated)
-                                                            <span class="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800" title="Sudah di-ACC Seminar Proposal">
-                                                                <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                                                <span>ACC UP</span>
-                                                            </span>
-                                                        @endif
-                                                        <span class="font-mono text-[10px] {{ $completedCount >= 8 || $isGraduated ? 'text-indigo-600 dark:text-indigo-400 font-black' : ($completedCount > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
-                                                            {{ $isGraduated ? '8/8' : min($completedCount, 8) . '/8' }} Sesi
-                                                            <span class="text-[9px] font-normal text-slate-400 dark:text-slate-500">({{ $upPercent }}%)</span>
+                                        <!-- 3. Active Stage Progress Bar (Target UP 8 Sesi / Target Sidang 16 Sesi) -->
+                                        <div class="w-full space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                                            @if(!$isTargetSidang && !$isGraduated)
+                                                <!-- Target UP (8 Sesi) -->
+                                                <div class="space-y-1">
+                                                    <div class="flex items-center justify-between text-[10px] font-bold">
+                                                        <span class="text-slate-600 dark:text-slate-300 flex items-center gap-1.5" title="Target Seminar UP: 8 Sesi (4x P1 & 4x P2)">
+                                                            <span class="w-1.5 h-1.5 rounded-full {{ $upPercent >= 100 || $hasMyAccUp ? 'bg-indigo-600 dark:bg-indigo-400' : ($upPercent > 0 ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-600') }}"></span>
+                                                            <span>Target UP</span>
                                                         </span>
+                                                        <div class="flex items-center gap-1.5">
+                                                            @if($hasMyAccUp || $isAccUpFinal)
+                                                                <span class="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800" title="Sudah di-ACC Seminar Proposal">
+                                                                    <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                                    <span>ACC UP</span>
+                                                                </span>
+                                                            @endif
+                                                            <span class="font-mono tabular-nums text-[10px] {{ $completedCount >= 8 ? 'text-indigo-600 dark:text-indigo-400 font-black' : ($completedCount > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
+                                                                {{ min($completedCount, 8) }}/8 Sesi
+                                                                <span class="text-[9px] font-medium text-slate-500 dark:text-slate-300">({{ $upPercent }}%)</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full bg-slate-100 dark:bg-slate-700/80 rounded-full h-1.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+                                                        <div class="h-full rounded-full transition-all duration-500 {{ $upPercent >= 100 ? 'bg-indigo-600 dark:bg-indigo-500' : ($upPercent > 0 ? 'bg-indigo-500 dark:bg-indigo-400' : 'bg-transparent') }}" 
+                                                             style="width: {{ $upPercent }}%; {{ $upPercent > 0 ? 'min-width: 6px;' : '' }}"></div>
                                                     </div>
                                                 </div>
-                                                <div class="w-full bg-slate-100 dark:bg-slate-700/80 rounded-full h-1.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
-                                                    <div class="h-full rounded-full transition-all duration-500 {{ $upPercent >= 100 ? 'bg-indigo-600 dark:bg-indigo-500' : ($upPercent > 0 ? 'bg-indigo-500 dark:bg-indigo-400' : 'bg-transparent') }}" 
-                                                         style="width: {{ $upPercent }}%; {{ $upPercent > 0 ? 'min-width: 6px;' : '' }}"></div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Target Sidang (16 Sesi) -->
-                                            <div class="space-y-1">
-                                                <div class="flex items-center justify-between text-[10px] font-bold">
-                                                    <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5" title="Target Sidang Skripsi: 16 Sesi (8x P1 & 8x P2)">
-                                                        <span class="w-1.5 h-1.5 rounded-full {{ $sidangPercent >= 100 || $hasMyAccSidang ? 'bg-emerald-600 dark:bg-emerald-400' : ($sidangPercent > 0 ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600') }}"></span>
-                                                        <span>Target Sidang</span>
-                                                    </span>
-                                                    <div class="flex items-center gap-1.5">
-                                                        @if($hasMyAccSidang || $isAccSidangFinal || $isGraduated)
-                                                            <span class="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800" title="Sudah di-ACC Sidang Akhir">
-                                                                <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                                                <span>ACC Sidang</span>
-                                                            </span>
-                                                        @endif
-                                                        <span class="font-mono text-[10px] {{ $completedCount >= 16 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : ($completedCount > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
-                                                            {{ $isGraduated ? '16/16' : min($completedCount, 16) . '/16' }} Sesi
-                                                            <span class="text-[9px] font-normal text-slate-400 dark:text-slate-500">({{ $sidangPercent }}%)</span>
+                                            @else
+                                                <!-- Target Sidang (16 Sesi) -->
+                                                <div class="space-y-1">
+                                                    <div class="flex items-center justify-between text-[10px] font-bold">
+                                                        <span class="text-slate-600 dark:text-slate-300 flex items-center gap-1.5" title="Target Sidang Skripsi: 16 Sesi (8x P1 & 8x P2)">
+                                                            <span class="w-1.5 h-1.5 rounded-full {{ $sidangPercent >= 100 || $hasMyAccSidang ? 'bg-emerald-600 dark:bg-emerald-400' : ($sidangPercent > 0 ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600') }}"></span>
+                                                            <span>Target Sidang</span>
                                                         </span>
+                                                        <div class="flex items-center gap-1.5">
+                                                            @if($hasMyAccSidang || $isAccSidangFinal || $isGraduated)
+                                                                <span class="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800" title="Sudah di-ACC Sidang Akhir">
+                                                                    <svg class="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                                    <span>ACC Sidang</span>
+                                                                </span>
+                                                            @endif
+                                                            <span class="font-mono tabular-nums text-[10px] {{ $completedCount >= 16 || $isGraduated ? 'text-emerald-600 dark:text-emerald-400 font-black' : ($completedCount > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400') }}">
+                                                                {{ $isGraduated ? '16/16' : min($completedCount, 16) . '/16' }} Sesi
+                                                                <span class="text-[9px] font-medium text-slate-500 dark:text-slate-300">({{ $sidangPercent }}%)</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full bg-slate-100 dark:bg-slate-700/80 rounded-full h-1.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+                                                        <div class="h-full rounded-full transition-all duration-500 {{ $sidangPercent >= 100 ? 'bg-emerald-600 dark:bg-emerald-500' : ($sidangPercent > 0 ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-transparent') }}" 
+                                                             style="width: {{ $sidangPercent }}%; {{ $sidangPercent > 0 ? 'min-width: 6px;' : '' }}"></div>
                                                     </div>
                                                 </div>
-                                                <div class="w-full bg-slate-100 dark:bg-slate-700/80 rounded-full h-1.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
-                                                    <div class="h-full rounded-full transition-all duration-500 {{ $sidangPercent >= 100 ? 'bg-emerald-600 dark:bg-emerald-500' : ($sidangPercent > 0 ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-transparent') }}" 
-                                                         style="width: {{ $sidangPercent }}%; {{ $sidangPercent > 0 ? 'min-width: 6px;' : '' }}"></div>
-                                                </div>
-                                            </div>
+                                            @endif
                                         </div>
 
                                         <!-- 4. Rincian ACC Pembimbing (P1 & P2 Status) & Keaktifan Status -->
-                                        <div class="w-full flex items-center justify-between gap-1.5 text-[10px] pt-1">
+                                        <div class="w-full flex items-center justify-between gap-1.5 text-[10px] pt-0.5">
                                             <div class="flex items-center gap-1">
+                                                <span class="text-[9px] font-bold text-slate-400 dark:text-slate-400 mr-0.5">ACC {{ $targetAccLabel }}:</span>
                                                 <!-- P1 Status -->
                                                 <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md font-bold border transition-all {{ $p1Acc ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' }} {{ $isP1 ? 'ring-1 ring-orange-500/40' : '' }}"
                                                       title="Pembimbing 1 ACC {{ $targetAccLabel }}: {{ $p1Acc ? 'Sudah Disetujui' : 'Belum' }} {{ $isP1 ? '(Anda)' : '' }}">
-                                                    <span class="text-[9px] font-black {{ $isP1 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                                    <span class="text-[9px] font-black {{ $isP1 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400' }}">P1</span>
                                                     @if($p1Acc)
                                                         <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     @else
-                                                        <span class="text-slate-300 dark:text-slate-600 font-bold">—</span>
+                                                        <span class="text-slate-300 dark:text-slate-500 font-bold">—</span>
                                                     @endif
                                                 </span>
 
                                                 <!-- P2 Status -->
                                                 <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md font-bold border transition-all {{ $p2Acc ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' }} {{ $isP2 ? 'ring-1 ring-orange-500/40' : '' }}"
                                                       title="Pembimbing 2 ACC {{ $targetAccLabel }}: {{ $p2Acc ? 'Sudah Disetujui' : 'Belum' }} {{ $isP2 ? '(Anda)' : '' }}">
-                                                    <span class="text-[9px] font-black {{ $isP2 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                                    <span class="text-[9px] font-black {{ $isP2 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400' }}">P2</span>
                                                     @if($p2Acc)
                                                         <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     @else
-                                                        <span class="text-slate-300 dark:text-slate-600 font-bold">—</span>
+                                                        <span class="text-slate-300 dark:text-slate-500 font-bold">—</span>
                                                     @endif
                                                 </span>
                                             </div>
@@ -1521,29 +1500,32 @@
                                             <div class="shrink-0">
                                                 @if($isGraduated)
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
-                                                        <span>🎓 Lulus</span>
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                                        <span>Lulus</span>
                                                     </span>
                                                 @elseif(($completedCount >= 16 || ($p1Count >= 8 && $p2Count >= 8)) && !$hasMyAccSidang)
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800" title="Mahasiswa siap untuk di-ACC Sidang">
-                                                        <span>🟢 Siap Sidang</span>
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        <span>Siap Sidang</span>
                                                     </span>
                                                 @elseif(($completedCount >= 8 || ($p1Count >= 4 && $p2Count >= 4)) && !$hasMyAccUp)
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800" title="Mahasiswa siap untuk di-ACC Seminar">
-                                                        <span>🔵 Siap UP</span>
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                                        <span>Siap UP</span>
                                                     </span>
                                                 @elseif($completedCount === 0)
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">
-                                                        <span class="w-1 h-1 rounded-full bg-rose-500"></span>
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                                         <span>0 Sesi</span>
                                                     </span>
                                                 @elseif($daysSinceLast !== null && $daysSinceLast > 14)
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800"
                                                           title="Bimbingan terakhir: {{ $lastDate ? $lastDate->isoFormat('D MMMM Y') : '-' }}">
-                                                        <span class="w-1 h-1 rounded-full bg-amber-500"></span>
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                                         <span>Pasif ({{ $daysSinceLast }}h)</span>
                                                     </span>
                                                 @else
-                                                    <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500"
+                                                    <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400"
                                                           title="Bimbingan terakhir: {{ $lastDate ? $lastDate->isoFormat('D MMMM Y') : '-' }}">
                                                         {{ $lastActivityText }}
                                                     </span>
@@ -1555,16 +1537,16 @@
                                 <!-- Kolom 4: Aksi -->
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
                                     <div class="inline-flex items-center gap-1.5 justify-end">
-                                        <!-- Tombol Pintasan Intip Riwayat (Quick Preview) -->
+                                        <!-- Tombol Pintasan Pratinjau Riwayat (Quick Preview) -->
                                         <button type="button" 
                                                 @click="$dispatch('open-logbook-preview', { thesisId: {{ $thesis->id }} })"
                                                 class="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-orange-50 hover:text-orange-600 dark:bg-slate-800 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs group/btn cursor-pointer"
-                                                title="Intip Riwayat Bimbingan Terakhir (3-5 Sesi)">
+                                                title="Pratinjau Riwayat Bimbingan Terakhir (3-5 Sesi)">
                                             <svg class="w-4 h-4 text-slate-400 group-hover/btn:text-orange-500 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
-                                            <span class="hidden sm:inline">Intip</span>
+                                            <span class="hidden sm:inline">Pratinjau</span>
                                         </button>
 
                                         <!-- Tombol Lihat Logbook Lengkap -->
@@ -1660,10 +1642,12 @@
                             <td class="py-4 px-6 max-w-sm whitespace-normal">
                                 @if($thesis->final_title)
                                     <div class="font-bold text-slate-900 dark:text-white line-clamp-2 text-xs sm:text-sm leading-snug tracking-tight" title="{{ $thesis->final_title }}">{{ $thesis->final_title }}</div>
-                                    <div class="mt-1 flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400" title="Rencana awal: {{ $thesis->title }}">
-                                        <span class="text-amber-500 shrink-0 font-bold">↳</span>
-                                        <span class="italic line-clamp-1">Awal: {{ $thesis->title }}</span>
-                                    </div>
+                                    @if(trim(mb_strtolower($thesis->final_title)) !== trim(mb_strtolower($thesis->title ?? '')))
+                                        <div class="mt-1 flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400" title="Rencana awal: {{ $thesis->title }}">
+                                            <span class="text-amber-500 shrink-0 font-bold">↳</span>
+                                            <span class="italic line-clamp-1">Awal: {{ $thesis->title }}</span>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="font-bold text-slate-900 dark:text-white line-clamp-2 text-xs sm:text-sm leading-snug tracking-tight" title="{{ $thesis->title }}">{{ $thesis->title }}</div>
                                 @endif
