@@ -142,11 +142,18 @@
                             <!-- Lokasi -->
                             <td class="px-6 py-5 text-center">
                                 <div class="inline-flex items-center justify-center">
-                                    @if($exam->schedule->meeting_link && !$isFinished)
-                                        <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50/70 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 text-xs font-medium transition-colors" title="Buka tautan Google Meet">
-                                            <x-google-meet-icon class="w-3.5 h-3.5 shrink-0" />
-                                            <span>{{ $exam->schedule->location }}</span>
-                                        </a>
+                                    @if($exam->schedule->meeting_link)
+                                        @if(!$isFinished)
+                                            <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50/70 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 text-xs font-medium transition-colors" title="Buka tautan Google Meet">
+                                                <x-google-meet-icon class="w-3.5 h-3.5 shrink-0" />
+                                                <span>{{ $exam->schedule->location }}</span>
+                                            </a>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 text-xs font-medium" title="Sesi sidang telah selesai">
+                                                <x-google-meet-icon class="w-3.5 h-3.5 shrink-0 opacity-60 grayscale" />
+                                                <span>{{ $exam->schedule->location }}</span>
+                                            </span>
+                                        @endif
                                     @else
                                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
                                             <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
