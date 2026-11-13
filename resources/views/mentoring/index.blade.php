@@ -2646,16 +2646,6 @@
                                             </div>
                                         @endforeach
                                     </div>
-                                    @if($studentSessions->count() > 3)
-                                        <div class="pt-1 flex justify-center">
-                                            <button type="button"
-                                                    @click="showAllStudentSessions = !showAllStudentSessions"
-                                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all cursor-pointer">
-                                                <span x-text="showAllStudentSessions ? 'Ringkas (tampilkan 3 sesi terbaru)' : 'Tampilkan semua {{ $studentSessions->count() }} sesi'"></span>
-                                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="showAllStudentSessions ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                            </button>
-                                        </div>
-                                    @endif
                                 </div>
                             @endforeach
                         </div>
