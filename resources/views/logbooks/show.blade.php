@@ -59,7 +59,16 @@
 
                 <div class="flex items-center gap-2 self-start sm:self-auto">
                     <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Status Skripsi:</span>
-                    <x-status-badge type="orange" :label="strtoupper($thesis->status)" />
+                    @php
+                        $thesisStatusLabel = match($thesis->status) {
+                            'active' => 'AKTIF',
+                            'completed' => 'LULUS',
+                            'archived' => 'DIARSIPKAN',
+                            default => strtoupper($thesis->status),
+                        };
+                        $thesisStatusType = $thesis->status === 'completed' ? 'emerald' : 'orange';
+                    @endphp
+                    <x-status-badge :type="$thesisStatusType" :label="$thesisStatusLabel" />
                 </div>
             </div>
 
@@ -249,21 +258,9 @@
 
                         <div class="flex items-center justify-between text-[11px] font-bold">
                             <span class="text-slate-500 dark:text-slate-400">Pencapaian:</span>
-                            <span class="{{ $isTargetReached ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400' }} font-black">
+                            <span class="{{ $isTargetReached ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400' }} font-black tabular-nums">
                                 {{ $progressPercent }}% {{ $isTargetReached ? '(Target Terpenuhi)' : '' }}
                             </span>
-                        </div>
-
-                        <!-- Rincian P1 & P2 Badges -->
-                        <div class="grid grid-cols-2 gap-2 mt-2.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px]">
-                            <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50">
-                                <span class="font-bold text-indigo-700 dark:text-indigo-300">P1:</span>
-                                <span class="font-black text-indigo-900 dark:text-indigo-100">{{ $p1SessionCount }}/8 Sesi</span>
-                            </div>
-                            <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-purple-50/70 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50">
-                                <span class="font-bold text-purple-700 dark:text-purple-300">P2:</span>
-                                <span class="font-black text-purple-900 dark:text-purple-100">{{ $p2SessionCount }}/8 Sesi</span>
-                            </div>
                         </div>
                     </div>
 
@@ -543,7 +540,7 @@
         @endif
 
         <!-- 3. KARTU UTAMA RIWAYAT CATATAN LOGBOOK (FULL WIDTH, SEARCH, EXPORT, TIMELINE) -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/90 dark:border-slate-700 overflow-hidden">
+        <div x-data="{ sortOrder: 'desc' }" class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/90 dark:border-slate-700 overflow-hidden">
             <!-- Header Bar -->
             <div class="p-4 sm:p-6 border-b border-slate-200/80 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 bg-slate-50 dark:bg-slate-800">
                 <div>
@@ -556,7 +553,7 @@
                     </p>
                 </div>
                 
-                <div class="flex items-center gap-2 w-full md:w-auto">
+                <div class="flex items-center gap-2 w-full md:w-auto flex-wrap sm:flex-nowrap">
                     <!-- Search Input (mencakup topik, catatan mhs, feedback dosen) -->
                     <div class="flex-1 md:w-64 min-w-0">
                         <x-search-input 
@@ -565,6 +562,15 @@
                             placeholder="Cari topik, catatan, atau revisi..." 
                             :params="['dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null]" />
                     </div>
+
+                    <!-- Urutkan Kronologis -->
+                    <button type="button"
+                            @click="sortOrder = sortOrder === 'desc' ? 'asc' : 'desc'"
+                            class="h-10 inline-flex items-center justify-center gap-1.5 px-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 transition-all shadow-xs shrink-0 cursor-pointer"
+                            :title="sortOrder === 'desc' ? 'Urutan: Terbaru ke Terlama (klik untuk balik)' : 'Urutan: Terlama ke Terbaru (klik untuk balik)'">
+                        <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="sortOrder === 'asc' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                        <span x-text="sortOrder === 'desc' ? 'Terbaru' : 'Terlama'">Terbaru</span>
+                    </button>
 
                     <!-- Export PDF Button (Modern SIBIMA Style) -->
                     <a href="{{ route('theses.logbooks.export-pdf', array_filter(['thesis' => $thesis->id, 'dosen' => ($filterDosen ?? 'all') !== 'all' ? $filterDosen : null])) }}" 
@@ -584,7 +590,7 @@
 
             <!-- Filter Pembimbing Tabs -->
             @if($thesis->pembimbing1 || $thesis->pembimbing2)
-                <div class="px-4 sm:px-6 py-2.5 sm:py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center gap-1.5 sm:gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <div class="px-4 sm:px-6 py-2.5 sm:py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center gap-1.5 sm:gap-2 flex-wrap">
                     <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
                         <span class="hidden sm:inline">Filter Pembimbing:</span>
                         <span class="sm:hidden">Filter:</span>
@@ -593,9 +599,8 @@
                     <!-- Tab Semua -->
                     <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'all'])) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
-                        <span class="hidden sm:inline">Semua Pembimbing</span>
-                        <span class="sm:hidden">Semua</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                        <span>Semua</span>
+                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                             {{ $totalCompletedCount }}
                         </span>
                     </a>
@@ -605,9 +610,8 @@
                         <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'p1'])) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
                            title="Pembimbing 1: {{ $thesis->pembimbing1->name }}">
-                            <span class="hidden sm:inline">Pembimbing 1 ({{ Str::limit($thesis->pembimbing1->name, 22) }}){{ $thesis->pembimbing1_id === Auth::id() ? ' • Anda' : '' }}</span>
-                            <span class="sm:hidden">Pembimbing 1</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            <span>Pembimbing 1{{ $thesis->pembimbing1_id === Auth::id() ? ' • Anda' : '' }}</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                 {{ $p1SessionCount }}
                             </span>
                         </a>
@@ -618,9 +622,8 @@
                         <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'p2'])) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
                            title="Pembimbing 2: {{ $thesis->pembimbing2->name }}">
-                            <span class="hidden sm:inline">Pembimbing 2 ({{ Str::limit($thesis->pembimbing2->name, 22) }}){{ $thesis->pembimbing2_id === Auth::id() ? ' • Anda' : '' }}</span>
-                            <span class="sm:hidden">Pembimbing 2</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            <span>Pembimbing 2{{ $thesis->pembimbing2_id === Auth::id() ? ' • Anda' : '' }}</span>
+                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                 {{ $p2SessionCount }}
                             </span>
                         </a>
@@ -649,7 +652,7 @@
                     @endif
                 @else
                     <!-- Daftar Kartu Sesi Logbook (Modern Timeline Cards) -->
-                    <div class="space-y-6">
+                    <div :class="sortOrder === 'asc' ? 'flex flex-col-reverse gap-6' : 'flex flex-col gap-6'">
                         @foreach($completedSessions as $session)
                             @php
                                 $seqNumber = $sessionOrderMap[$session->id] ?? ($loop->count - $loop->index);
@@ -726,11 +729,6 @@
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             <span>Hasil & Catatan Pembimbing</span>
                                         </h5>
-                                        @if(!$isMySession && Auth::user()->role === 'dosen')
-                                            <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-100/70 dark:bg-amber-950/60 px-2 py-0.5 rounded-lg border border-amber-200/60 dark:border-amber-800">
-                                                Catatan {{ $pembimbingLabel }} ({{ $session->dosen->name ?? '-' }})
-                                            </span>
-                                        @endif
                                     </div>
                                     <p class="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium whitespace-pre-line italic">
                                         {{ $session->feedback ?: 'Tidak ada catatan pembimbing tertulis untuk sesi ini.' }}
