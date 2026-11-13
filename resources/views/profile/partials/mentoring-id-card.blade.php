@@ -402,7 +402,7 @@
                                 <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-100">{{ $roleLabel }}</span>
                             </div>
                             <p class="mt-1.5 text-[9px] font-mono tracking-wider text-slate-400">
-                                <span class="text-slate-500 uppercase mr-1">No.</span>{{ $cardCode }}
+                                <span class="text-slate-500 uppercase mr-1">No Kartu.</span>{{ $cardCode }}
                             </p>
                         </div>
                     </div>
@@ -483,7 +483,7 @@
                         <div class="flex items-center justify-between gap-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
                             <div class="min-w-0 space-y-0.5">
                                 <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate">Sistem Informasi Bimbingan Mahasiswa</p>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Kartu Identitas Digital Resmi · Universitas Subang</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Kartu Dosen Pembimbing</p>
                             </div>
                             <div class="p-1.5 bg-white rounded-lg border border-slate-200 shadow-2xs shrink-0" title="QR Verifikasi Identitas">
                                 {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(48)->margin(0)->generate($qrPayload) !!}
