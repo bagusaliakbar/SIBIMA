@@ -94,15 +94,10 @@
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <!-- Left: Title & Subtitle -->
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 border border-orange-200/70 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20 flex items-center justify-center shrink-0 shadow-2xs">
-                            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                            </svg>
-                        </div>
                         <div>
                             <div class="flex items-center gap-2">
                                 <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
-                                    Tab Filter Cepat
+                                    Tab Filter
                                 </h3>
                                 @if($hasActiveDosenFilters)
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
