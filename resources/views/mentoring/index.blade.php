@@ -1616,12 +1616,39 @@
                             </a>
                             <a href="{{ route('mentoring-sessions.index', ['tab' => 'history', 'search' => $search, 'dosen_id' => $dosenId ?? '']) }}" 
                                class="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all {{ $activeTab === 'history' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/60' }}">
-                                Riwayat Selesai
+                                Bimbingan Selesai (Mhs Lulus)
                             </a>
                         </div>
 
-                        <!-- Grouping Switcher & Real-Time Actions -->
+                        <!-- Grouping Switcher, Status Filter & Real-Time Actions -->
                         <div class="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+                            @php
+                                $cardActionableCount = $sessions->whereIn('status', ['pending', 'approved'])->count();
+                                $cardCompletedCount = $sessions->count() - $cardActionableCount;
+                            @endphp
+                            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                                <button type="button"
+                                        @click="sessionStatusFilter = 'all'"
+                                        :class="sessionStatusFilter === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer">
+                                    <span>Semua</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300">{{ $sessions->count() }}</span>
+                                </button>
+                                <button type="button"
+                                        @click="sessionStatusFilter = 'actionable'"
+                                        :class="sessionStatusFilter === 'actionable' ? 'bg-orange-600 text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer">
+                                    <span>Perlu Diproses</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="sessionStatusFilter === 'actionable' ? 'bg-orange-500/40 text-white' : 'bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300'">{{ $cardActionableCount }}</span>
+                                </button>
+                                <button type="button"
+                                        @click="sessionStatusFilter = 'completed'"
+                                        :class="sessionStatusFilter === 'completed' ? 'bg-slate-800 dark:bg-slate-600 text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer">
+                                    <span>Selesai</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="sessionStatusFilter === 'completed' ? 'bg-slate-700 dark:bg-slate-500 text-white' : 'bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300'">{{ $cardCompletedCount }}</span>
+                                </button>
+                            </div>
                             <!-- Toggle Mode Grouping: Per Sesi (Default) vs Per Mahasiswa -->
                             <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                                 <button type="button" 
@@ -1864,9 +1891,13 @@
                                                 $isZoom = Str::contains($firstSession->location ?? '', ['zoom.us', 'zoom.com']);
                                                 $linkUrl = Str::startsWith($firstSession->location ?? '', 'http') ? $firstSession->location : 'https://' . $firstSession->location;
                                                 $actionableSessionIds = $sessionItems->filter(fn($s) => $s->status !== 'completed' || $s->is_absent)->pluck('id')->values()->all();
+                                                $hasActionableInGroup = $sessionItems->contains(fn($s) => in_array($s->status, ['pending', 'approved']));
+                                                $isGroupAllDone = !$hasActionableInGroup;
                                             @endphp
 
-                                            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 shadow-xs overflow-hidden transition-all hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md">
+                                            <div x-data="{ sessionOpen: {{ $isGroupAllDone ? 'false' : 'true' }} }"
+                                                 x-show="sessionStatusFilter === 'all' || (sessionStatusFilter === 'actionable' ? {{ $hasActionableInGroup ? 'true' : 'false' }} : {{ $isGroupAllDone ? 'true' : 'false' }})"
+                                                 class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 shadow-xs overflow-hidden transition-all hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md">
                                                 <!-- Session Header Bar -->
                                                 <div class="p-4 sm:px-5 bg-slate-50/80 dark:bg-slate-800/90 border-b border-slate-200/80 dark:border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
                                                     <div class="space-y-1.5 min-w-0 flex-1">
@@ -1902,13 +1933,15 @@
                                                                         <span>{{ $isMeet ? 'Buka Google Meet' : ($isZoom ? 'Buka Zoom' : 'Buka Link Online') }}</span>
                                                                     </a>
                                                                 @else
-                                                                    <span class="inline-flex items-center gap-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-bold shadow-2xs">
-                                                                        🎥 Daring
+                                                                    <span class="inline-flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-bold shadow-2xs">
+                                                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                                        <span>Daring</span>
                                                                     </span>
                                                                 @endif
                                                             @else
-                                                                <span class="inline-flex items-center gap-1 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-600 text-xs font-bold shadow-2xs">
-                                                                    🏢 {{ $firstSession->location ?? 'Offline' }}
+                                                                <span class="inline-flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-600 text-xs font-bold shadow-2xs">
+                                                                    <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                                                    <span>{{ $firstSession->location ?? 'Offline' }}</span>
                                                                 </span>
                                                             @endif
 
@@ -1943,8 +1976,9 @@
                                                             </button>
                                                         @endif
                                                         @if($totalMhs > 1)
-                                                            <span class="px-2.5 py-1 rounded-xl bg-slate-200/80 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-black uppercase tracking-wider border border-transparent dark:border-slate-600 shadow-2xs">
-                                                                👥 {{ $totalMhs }} Mahasiswa
+                                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-200/80 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-black uppercase tracking-wider border border-transparent dark:border-slate-600 shadow-2xs">
+                                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                                                <span>{{ $totalMhs }} Mahasiswa</span>
                                                             </span>
                                                             @if($attendingCount > 0)
                                                                  <span class="px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800/80 flex items-center gap-1">
@@ -1969,15 +2003,33 @@
                                                             @if($firstSession->is_absent)
                                                                 <x-status-badge type="red" label="TIDAK HADIR" />
                                                             @else
+                                                                @php
+                                                                    $cardSessionStatusLabel = match($firstSession->status) {
+                                                                        'completed' => 'SELESAI',
+                                                                        'approved' => 'DISETUJUI',
+                                                                        'pending' => 'MENUNGGU',
+                                                                        'rejected' => 'DITOLAK',
+                                                                        default => strtoupper($firstSession->status),
+                                                                    };
+                                                                @endphp
                                                                 <x-status-badge 
                                                                     :type="$firstSession->status === 'pending' ? 'amber' : ($firstSession->status === 'approved' ? 'orange' : ($firstSession->status === 'rejected' ? 'red' : ($firstSession->status === 'completed' ? 'emerald' : 'slate')))" 
-                                                                    :label="$firstSession->status === 'completed' ? 'HADIR' : strtoupper($firstSession->status)" />
+                                                                    :label="$cardSessionStatusLabel" />
                                                             @endif
                                                         @endif
+
+                                                        <button type="button"
+                                                                @click="sessionOpen = !sessionOpen"
+                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 text-[11px] font-bold transition-all cursor-pointer"
+                                                                :title="sessionOpen ? 'Ringkas kartu sesi' : 'Tampilkan rincian sesi'">
+                                                            <span x-text="sessionOpen ? 'Ringkas' : 'Rincian'"></span>
+                                                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="sessionOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                        </button>
                                                     </div>
                                                 </div>
 
                                                 <!-- Session Content (Single vs Multi) -->
+                                                <div x-show="sessionOpen" x-transition>
                                                 @if($totalMhs === 1)
                                                     {{-- TAMPILAN TERPADU 1-ON-1 (TIDAK ADA NESTING GANDA) --}}
                                                     @php
@@ -2590,9 +2642,20 @@
                                                         </div>
                                                     </div>
                                                 @endif
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
+                                    @if($studentSessions->count() > 3)
+                                        <div class="pt-1 flex justify-center">
+                                            <button type="button"
+                                                    @click="showAllStudentSessions = !showAllStudentSessions"
+                                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all cursor-pointer">
+                                                <span x-text="showAllStudentSessions ? 'Ringkas (tampilkan 3 sesi terbaru)' : 'Tampilkan semua {{ $studentSessions->count() }} sesi'"></span>
+                                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="showAllStudentSessions ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </button>
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
@@ -2600,28 +2663,37 @@
                         <!-- 2. TAMPILAN PER MAHASISWA -->
                         <div x-show="cardGrouping === 'student'" class="space-y-12">
                             @foreach($groupedSessions as $studentName => $studentSessions)
-                                <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 sm:p-7 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-6 transition-all hover:border-slate-300 dark:hover:border-slate-600">
-                                    @php
-                                        $studentThesis = $studentSessions->first()->thesis;
-                                        $mentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
-                                            ? $studentThesis->completed_mentoring_count 
-                                            : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
-                                    @endphp
+                                @php
+                                    $studentThesis = $studentSessions->first()->thesis;
+                                    $mentoringCount = (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') 
+                                        ? $studentThesis->completed_mentoring_count 
+                                        : $studentThesis->getCompletedMentoringCountForDosen(Auth::id());
+                                    $hasStudentActionable = $studentSessions->contains(fn($s) => in_array($s->status, ['pending', 'approved']));
+                                    $isStudentAllDone = !$hasStudentActionable;
+                                    $mentoringTarget = 8;
+                                    $mentoringPct = min(100, (int) round(($mentoringCount / $mentoringTarget) * 100));
+                                @endphp
+                                <div x-data="{ showAllStudentSessions: false }"
+                                     x-show="sessionStatusFilter === 'all' || (sessionStatusFilter === 'actionable' ? {{ $hasStudentActionable ? 'true' : 'false' }} : {{ $isStudentAllDone ? 'true' : 'false' }})"
+                                     class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 sm:p-7 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-6 transition-all hover:border-slate-300 dark:hover:border-slate-600">
                                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5 border-b border-slate-200/80 dark:border-slate-700/80 gap-4">
                                         <div class="flex items-center gap-4">
                                             <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0">
                                                 <img src="{{ $studentThesis->student?->avatar_url }}" alt="{{ $studentName }}" class="w-full h-full object-cover">
                                             </div>
                                             <div class="space-y-2 min-w-0">
-                                                <div class="flex items-center gap-3 flex-wrap">
+                                                <div class="flex items-center gap-2.5 flex-wrap">
                                                     <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ $studentName }}</h4>
                                                     @if($studentThesis->status === 'completed')
                                                         <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
                                                             Lulus
                                                         </span>
                                                     @endif
-                                                    <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-wider shadow-2xs">
-                                                        {{ $mentoringCount }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}
+                                                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold shadow-2xs">
+                                                        <span class="tabular-nums">{{ $mentoringCount }}/{{ $mentoringTarget }} Bimbingan {{ (Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi') ? 'Total' : 'dengan Anda' }}</span>
+                                                        <span class="w-12 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden inline-block">
+                                                            <span class="block h-full rounded-full {{ $mentoringCount >= $mentoringTarget ? 'bg-emerald-500' : 'bg-orange-500' }}" style="width: {{ $mentoringPct }}%"></span>
+                                                        </span>
                                                     </span>
                                                 </div>
                                                 <div class="flex flex-wrap items-center gap-2.5 text-[11px] font-medium">
@@ -2678,9 +2750,15 @@
                                                             ACC SEMINAR
                                                         </button>
                                                     </form>
-                                                    <div class="inline-flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1 self-center">
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
+                                                    <div class="inline-flex items-center gap-2 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1 self-center text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                                                        <span class="inline-flex items-center gap-1" title="Status ACC Pembimbing 1">
+                                                            <span>P1</span>
+                                                            <span class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}"></span>
+                                                        </span>
+                                                        <span class="inline-flex items-center gap-1" title="Status ACC Pembimbing 2">
+                                                            <span>P2</span>
+                                                            <span class="w-2 h-2 rounded-full {{ $studentThesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}"></span>
+                                                        </span>
                                                     </div>
                                                 </div>
 
@@ -2703,9 +2781,15 @@
                                                             ACC SIDANG
                                                         </button>
                                                     </form>
-                                                    <div class="inline-flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1 self-center">
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P1"></div>
-                                                        <div class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}" title="Status ACC P2"></div>
+                                                    <div class="inline-flex items-center gap-2 border-l border-slate-200 dark:border-slate-700 pl-2 ml-1 self-center text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                                                        <span class="inline-flex items-center gap-1" title="Status ACC Pembimbing 1">
+                                                            <span>P1</span>
+                                                            <span class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}"></span>
+                                                        </span>
+                                                        <span class="inline-flex items-center gap-1" title="Status ACC Pembimbing 2">
+                                                            <span>P2</span>
+                                                            <span class="w-2 h-2 rounded-full {{ $studentThesis->acc_sidang_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300 dark:bg-slate-700' }}"></span>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2723,6 +2807,7 @@
                                                 $isGroupSession = ($groupCountMap[$gKey] ?? 1) > 1;
                                             @endphp
                                             <div id="session-{{ $session->id }}" 
+                                                 x-show="(showAllStudentSessions || {{ $loop->index < 3 ? 'true' : 'false' }}) && matchesStatusFilter('{{ $session->status }}')"
                                                  :class="isSelected('{{ $session->id }}') ? 'ring-2 ring-orange-500/80 border-orange-500 dark:border-orange-500 shadow-md' : 'border-slate-200/90 dark:border-slate-700/80'"
                                                  class="bg-slate-50/60 dark:bg-slate-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-none hover:border-orange-300 dark:hover:border-orange-500/40 transition-all flex flex-col justify-between">
                                                 <div>
@@ -2754,9 +2839,18 @@
                                                             @if($session->is_absent)
                                                                 <x-status-badge type="red" label="TIDAK HADIR" />
                                                             @else
+                                                                @php
+                                                                    $perStudentStatusLabel = match($session->status) {
+                                                                        'completed' => 'SELESAI',
+                                                                        'approved' => 'DISETUJUI',
+                                                                        'pending' => 'MENUNGGU',
+                                                                        'rejected' => 'DITOLAK',
+                                                                        default => strtoupper($session->status),
+                                                                    };
+                                                                @endphp
                                                                 <x-status-badge 
                                                                     :type="$session->status === 'pending' ? 'amber' : ($session->status === 'approved' ? 'orange' : ($session->status === 'rejected' ? 'red' : ($session->status === 'completed' ? 'emerald' : 'slate')))" 
-                                                                    :label="$session->status === 'completed' ? 'HADIR' : strtoupper($session->status)" />
+                                                                    :label="$perStudentStatusLabel" />
                                                             @endif
                                                         </div>
                                                     </div>
@@ -3048,6 +3142,16 @@
                                             </div>
                                         @endforeach
                                     </div>
+                                    @if($studentSessions->count() > 3)
+                                        <div class="pt-1 flex justify-center">
+                                            <button type="button"
+                                                    @click="showAllStudentSessions = !showAllStudentSessions"
+                                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all cursor-pointer">
+                                                <span x-text="showAllStudentSessions ? 'Ringkas (tampilkan 3 sesi terbaru)' : 'Tampilkan semua {{ $studentSessions->count() }} sesi'"></span>
+                                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="showAllStudentSessions ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </button>
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
