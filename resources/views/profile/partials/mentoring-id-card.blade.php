@@ -44,11 +44,6 @@
     <!-- 2-Tier Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-slate-200 dark:border-slate-700">
         <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200/80 dark:border-orange-800/60 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                </svg>
-            </div>
             <div>
                 <h2 class="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                     {{ $isStudent ? 'Kartu Bimbingan Digital' : 'Kartu Identitas Akademik' }}
@@ -139,11 +134,14 @@
                                 <p class="text-xs sm:text-sm font-extrabold tracking-wide text-white truncate">Fakultas Ilmu Komputer</p>
                             </div>
                         </div>
-                        <div class="text-right shrink-0">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-orange-600 text-white text-[9px] font-black uppercase tracking-widest">
-                                Kartu Bimbingan
-                            </span>
-                            <p class="mt-1 text-[9px] font-mono text-slate-400 tracking-wider">{{ $cardCode }}</p>
+                        <div class="shrink-0 pl-3 border-l border-slate-700/80 text-right">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/15">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></span>
+                                <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-100">Kartu Bimbingan</span>
+                            </div>
+                            <p class="mt-1.5 text-[9px] font-mono tracking-wider text-slate-400">
+                                <span class="text-slate-500 uppercase mr-1">No.</span>{{ $cardCode }}
+                            </p>
                         </div>
                     </div>
 
@@ -402,11 +400,14 @@
                                 <p class="text-xs sm:text-sm font-extrabold tracking-wide text-white truncate">Fakultas Ilmu Komputer</p>
                             </div>
                         </div>
-                        <div class="text-right shrink-0">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-orange-600 text-white text-[9px] font-black uppercase tracking-widest">
-                                {{ $roleLabel }}
-                            </span>
-                            <p class="mt-1 text-[9px] font-mono text-slate-400 tracking-wider">{{ $cardCode }}</p>
+                        <div class="shrink-0 pl-3 border-l border-slate-700/80 text-right">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/15">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></span>
+                                <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-100">{{ $roleLabel }}</span>
+                            </div>
+                            <p class="mt-1.5 text-[9px] font-mono tracking-wider text-slate-400">
+                                <span class="text-slate-500 uppercase mr-1">No.</span>{{ $cardCode }}
+                            </p>
                         </div>
                     </div>
 
@@ -477,3 +478,4 @@
         @endif
     </div>
 </section>
+
