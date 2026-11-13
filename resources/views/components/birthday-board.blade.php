@@ -331,14 +331,9 @@
                         <!-- Header -->
                         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/20">
-                                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                    </svg>
-                                </div>
                                 <div class="min-w-0">
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
-                                        Kotak Doa &amp; Ucapan Ulang Tahun
+                                        Daftar Ucapan
                                     </h3>
                                     <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
                                         Untuk <strong class="text-slate-700 dark:text-slate-300" x-text="receivedUser?.name"></strong>
