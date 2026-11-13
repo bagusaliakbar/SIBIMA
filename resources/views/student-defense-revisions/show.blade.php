@@ -335,12 +335,26 @@
                         <div class="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0">
                             <img src="{{ $revision->examiner->avatar_url }}" alt="{{ $revision->examiner->name }}" class="w-full h-full object-cover">
                         </div>
+                        @php
+                            $examinerRoleLabel = 'Dewan Penguji Sidang Skripsi';
+                            $detailRef = $revision->detail;
+                            $thesisRef = $detailRef?->thesis;
+                            if ($detailRef && (int) $detailRef->examiner1_id === (int) $revision->examiner_id) {
+                                $examinerRoleLabel = 'Dosen Penguji 1 Sidang Skripsi';
+                            } elseif ($detailRef && (int) $detailRef->examiner2_id === (int) $revision->examiner_id) {
+                                $examinerRoleLabel = 'Dosen Penguji 2 Sidang Skripsi';
+                            } elseif ($thesisRef && (int) $thesisRef->pembimbing1_id === (int) $revision->examiner_id) {
+                                $examinerRoleLabel = 'Dosen Pembimbing 1';
+                            } elseif ($thesisRef && (int) $thesisRef->pembimbing2_id === (int) $revision->examiner_id) {
+                                $examinerRoleLabel = 'Dosen Pembimbing 2';
+                            }
+                        @endphp
                         <div class="min-w-0">
                             <h3 class="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-100 truncate">
                                 {{ $revision->examiner->name }}
                             </h3>
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
-                                Dewan Penguji Sidang Skripsi
+                                {{ $examinerRoleLabel }}
                             </p>
                         </div>
                     </div>
