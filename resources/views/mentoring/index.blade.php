@@ -3084,66 +3084,67 @@
                         </div>
 
                         <!-- Filter Tabs, View Switcher & Search in Modal -->
-                        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1">
+                        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 pt-1">
                             <!-- Status Tabs -->
-                            <div class="flex flex-wrap items-center gap-1 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full lg:w-auto">
+                            <div class="inline-flex flex-wrap sm:flex-nowrap items-center gap-1 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
                                 <button type="button" 
                                         @click="liveTab = 'all'" 
                                         :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs font-semibold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 font-medium'"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Semua</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400'" x-text="attendanceStats.total || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400'" x-text="attendanceStats.total || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'attending'" 
                                         :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs font-semibold' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-medium'"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Akan Hadir</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'attending' ? 'bg-emerald-500/40 text-white' : 'bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'" x-text="attendanceStats.attending || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'attending' ? 'bg-emerald-500/40 text-white' : 'bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'" x-text="attendanceStats.attending || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'permission'" 
                                         :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs font-semibold' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-medium'"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Izin</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'permission' ? 'bg-amber-500/40 text-white' : 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'" x-text="attendanceStats.permission || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'permission' ? 'bg-amber-500/40 text-white' : 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'" x-text="attendanceStats.permission || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'pending'" 
                                         :class="liveTab === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-2xs font-semibold' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800/60 font-medium'"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Belum Konfirmasi</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'pending' ? 'bg-slate-700 dark:bg-slate-600 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300'" x-text="attendanceStats.pending || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'pending' ? 'bg-slate-700 dark:bg-slate-600 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300'" x-text="attendanceStats.pending || 0"></span>
                                 </button>
                             </div>
 
                             <!-- Right Controls: View Mode Switcher & Search -->
-                            <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                            <div class="flex items-center gap-2 flex-1 lg:justify-end min-w-0">
                                 <!-- Mode Tampilan: Per Sesi (Default) vs Semua Mahasiswa -->
                                 <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
                                     <button type="button" 
                                             @click="liveViewMode = 'session'" 
-                                            :class="liveViewMode === 'session' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-bold'"
+                                            :class="liveViewMode === 'session' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
                                             title="Kelompokkan berdasarkan sesi bimbingan"
-                                            class="px-2.5 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                                            class="px-2.5 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                         <span>Per Sesi</span>
                                     </button>
                                     <button type="button" 
                                             @click="liveViewMode = 'flat'" 
-                                            :class="liveViewMode === 'flat' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-bold'"
+                                            :class="liveViewMode === 'flat' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs font-semibold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
                                             title="Tampilkan seluruh daftar mahasiswa"
-                                            class="px-2.5 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                                            class="px-2.5 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                         <span>Semua Mhs</span>
                                     </button>
                                 </div>
 
-                                <div class="w-full sm:w-56">
+                                <div class="relative flex-1 lg:max-w-[200px] min-w-[140px]">
+                                    <svg class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                     <input type="text" 
                                            x-model="liveSearch" 
-                                           placeholder="Cari mhs / topik / tgl..." 
-                                           class="w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500">
+                                           placeholder="Cari mhs / topik..." 
+                                           class="w-full h-9 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 pl-8 pr-3 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500">
                                 </div>
                             </div>
                         </div>
