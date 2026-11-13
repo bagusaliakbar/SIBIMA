@@ -126,9 +126,7 @@
                     <!-- Institutional Top Band -->
                     <div class="relative z-10 bg-slate-900 dark:bg-slate-950 text-white px-5 py-3.5 border-b-[3px] border-orange-500 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 shadow-2xs">
-                                <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-full h-full object-contain">
-                            </div>
+                            <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-9 h-9 object-contain shrink-0">
                             <div class="min-w-0">
                                 <p class="text-[9px] font-bold tracking-[0.22em] text-orange-400 uppercase truncate">Universitas Subang</p>
                                 <p class="text-xs sm:text-sm font-extrabold tracking-wide text-white truncate">Fakultas Ilmu Komputer</p>
@@ -392,9 +390,7 @@
                     <!-- Institutional Top Band -->
                     <div class="relative z-10 bg-slate-900 dark:bg-slate-950 text-white px-5 py-3.5 border-b-[3px] border-orange-500 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 shadow-2xs">
-                                <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-full h-full object-contain">
-                            </div>
+                            <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-9 h-9 object-contain shrink-0">
                             <div class="min-w-0">
                                 <p class="text-[9px] font-bold tracking-[0.22em] text-orange-400 uppercase truncate">Universitas Subang</p>
                                 <p class="text-xs sm:text-sm font-extrabold tracking-wide text-white truncate">Fakultas Ilmu Komputer</p>
@@ -419,25 +415,35 @@
                                 </div>
                             </div>
 
-                            <div class="flex-1 min-w-0 space-y-2.5">
+                            <div class="flex-1 min-w-0 flex flex-col justify-between space-y-2.5">
                                 <div>
-                                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Nama Lengkap</p>
                                     <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-slate-100 leading-snug break-words">
                                         {{ $user->name }}
                                     </h3>
                                 </div>
 
-                                <div class="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 inline-block">
-                                    <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">NIDN / NIP</span>
-                                    <span class="block text-xs font-mono font-bold text-orange-600 dark:text-orange-400">
-                                        {{ $user->identifier ?: 'Belum Diatur' }}
-                                    </span>
+                                <div class="space-y-1.5 text-xs">
+                                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
+                                        </svg>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">NIDN/NIP</span>
+                                        <span class="font-mono font-bold text-orange-600 dark:text-orange-400 truncate">
+                                            {{ $user->identifier ?: 'Belum Diatur' }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-300 truncate">{{ $user->email }}</span>
+                                    </div>
                                 </div>
 
                                 @if($interests->isNotEmpty())
-                                    <div class="flex flex-wrap gap-1.5">
+                                    <div class="flex flex-wrap gap-1.5 pt-0.5">
                                         @foreach($interests as $tag)
-                                            <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-semibold text-slate-700 dark:text-slate-300">
+                                            <span class="px-2 py-0.5 rounded-md bg-slate-100/90 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-[10px] font-semibold text-slate-700 dark:text-slate-300">
                                                 {{ $tag }}
                                             </span>
                                         @endforeach
@@ -476,8 +482,8 @@
 
                         <div class="flex items-center justify-between gap-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
                             <div class="min-w-0 space-y-0.5">
-                                <p class="text-[10px] font-bold text-slate-700 dark:text-slate-200 truncate">{{ $user->email }}</p>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">SIBIMA · Fakultas Ilmu Komputer UNSUB</p>
+                                <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate">Sistem Informasi Bimbingan Mahasiswa</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Kartu Identitas Digital Resmi · Universitas Subang</p>
                             </div>
                             <div class="p-1.5 bg-white rounded-lg border border-slate-200 shadow-2xs shrink-0" title="QR Verifikasi Identitas">
                                 {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(48)->margin(0)->generate($qrPayload) !!}
