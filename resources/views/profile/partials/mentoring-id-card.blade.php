@@ -46,12 +46,12 @@
         <div class="flex items-start gap-3">
             <div>
                 <h2 class="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                    {{ $isStudent ? 'Kartu Bimbingan Digital' : 'Kartu Identitas Akademik' }}
+                    {{ $isStudent ? 'Kartu Bimbingan Digital' : 'Kartu Dosen Pembimbing' }}
                 </h2>
                 <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     {{ $isStudent
-                        ? 'Kartu pengenal mahasiswa dan kendali progres bimbingan skripsi SIBIMA.'
-                        : 'Kartu identitas digital civitas akademika dan rekap pembimbingan SIBIMA.' }}
+                        ? 'Kartu pengenal mahasiswa pada SIBIMA.'
+                        : 'Kartu pengenal dosen pembimbing pada SIBIMA.' }}
                 </p>
             </div>
         </div>
@@ -447,18 +447,29 @@
                         </div>
 
                         @if($dosenStats)
-                            <div class="grid grid-cols-3 gap-2.5 pt-3 border-t border-slate-200/80 dark:border-slate-800 text-center">
-                                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                                    <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bimbingan P1</span>
-                                    <span class="block text-base font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">{{ $dosenStats['active_p1'] }}</span>
-                                </div>
-                                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                                    <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bimbingan P2</span>
-                                    <span class="block text-base font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">{{ $dosenStats['active_p2'] }}</span>
-                                </div>
-                                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                                    <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sesi Selesai</span>
-                                    <span class="block text-base font-extrabold text-orange-600 dark:text-orange-400 mt-0.5">{{ $dosenStats['completed_sessions'] }}</span>
+                            <div class="pt-3 border-t border-slate-200/80 dark:border-slate-800">
+                                <div class="grid grid-cols-3 divide-x divide-slate-200/80 dark:divide-slate-700/80 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+                                    <div class="px-3 py-2.5">
+                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">Pembimbing 1</span>
+                                        <div class="mt-0.5 flex items-baseline gap-1">
+                                            <span class="text-sm font-extrabold font-mono text-slate-900 dark:text-slate-100">{{ $dosenStats['active_p1'] }}</span>
+                                            <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Mhs</span>
+                                        </div>
+                                    </div>
+                                    <div class="px-3 py-2.5">
+                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">Pembimbing 2</span>
+                                        <div class="mt-0.5 flex items-baseline gap-1">
+                                            <span class="text-sm font-extrabold font-mono text-slate-900 dark:text-slate-100">{{ $dosenStats['active_p2'] }}</span>
+                                            <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Mhs</span>
+                                        </div>
+                                    </div>
+                                    <div class="px-3 py-2.5">
+                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">Total Sesi</span>
+                                        <div class="mt-0.5 flex items-baseline gap-1">
+                                            <span class="text-sm font-extrabold font-mono text-orange-600 dark:text-orange-400">{{ $dosenStats['completed_sessions'] }}</span>
+                                            <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Sesi</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endif
