@@ -3003,16 +3003,9 @@
                     <!-- Modal Header -->
                     <div class="p-6 bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shrink-0">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
                             <div>
                                 <div class="flex items-center gap-2">
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight">Monitor Kehadiran Mahasiswa</h3>
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold border border-emerald-200/60 dark:border-emerald-800/60">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        Real-Time Sync
-                                    </span>
                                 </div>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau status konfirmasi kehadiran mahasiswa untuk seluruh sesi bimbingan aktif.</p>
                             </div>
@@ -3093,30 +3086,34 @@
                         <!-- Filter Tabs, View Switcher & Search in Modal -->
                         <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1">
                             <!-- Status Tabs -->
-                            <div class="flex items-center gap-1.5 overflow-x-auto p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="flex flex-wrap items-center gap-1 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full lg:w-auto">
                                 <button type="button" 
                                         @click="liveTab = 'all'" 
-                                        :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 font-bold'"
-                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
-                                    Semua (<span x-text="attendanceStats.total || 0"></span>)
+                                        :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs font-semibold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                    <span>Semua</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400'" x-text="attendanceStats.total || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'attending'" 
-                                        :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs font-black' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-bold'"
-                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
-                                    Akan Hadir (<span x-text="attendanceStats.attending || 0"></span>)
+                                        :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs font-semibold' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                    <span>Akan Hadir</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'attending' ? 'bg-emerald-500/40 text-white' : 'bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'" x-text="attendanceStats.attending || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'permission'" 
-                                        :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs font-black' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-bold'"
-                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
-                                    Izin (<span x-text="attendanceStats.permission || 0"></span>)
+                                        :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs font-semibold' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                    <span>Izin</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'permission' ? 'bg-amber-500/40 text-white' : 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'" x-text="attendanceStats.permission || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'pending'" 
-                                        :class="liveTab === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-2xs font-black' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800/60 font-bold'"
-                                        class="px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
-                                    Belum Konfirmasi (<span x-text="attendanceStats.pending || 0"></span>)
+                                        :class="liveTab === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-2xs font-semibold' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800/60 font-medium'"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
+                                    <span>Belum Konfirmasi</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="liveTab === 'pending' ? 'bg-slate-700 dark:bg-slate-600 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300'" x-text="attendanceStats.pending || 0"></span>
                                 </button>
                             </div>
 
