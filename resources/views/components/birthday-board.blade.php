@@ -50,8 +50,10 @@
                 @endphp
                 <div class="bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 hover:border-amber-300 dark:hover:border-amber-700/80 transition-all flex flex-col justify-between gap-3.5 group">
                     <div class="flex items-start gap-3 min-w-0">
-                        <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 border border-slate-200 dark:border-slate-700 shadow-2xs relative">
-                            <img src="{{ $bUser->avatar_url }}" alt="{{ $bUser->name }}" class="w-full h-full object-cover">
+                        <div class="relative shrink-0">
+                            <div class="w-11 h-11 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 shadow-2xs">
+                                <img src="{{ $bUser->avatar_url }}" alt="{{ $bUser->name }}" class="w-full h-full object-cover">
+                            </div>
                             <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-white dark:border-slate-900" title="Ulang Tahun Hari Ini"></div>
                         </div>
                         <div class="min-w-0 flex-1">
