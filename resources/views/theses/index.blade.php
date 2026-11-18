@@ -651,13 +651,13 @@
                             
                             @if(($cohortFilter ?? 'all') === 'new')
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                                <span>🌱 Angkatan Baru</span>
+                                <span>Angkatan Baru</span>
                                 <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
                                     {{ $cohortCounts['new'] ?? 0 }}
                                 </span>
                             @elseif(($cohortFilter ?? 'all') === 'old')
                                 <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
-                                <span>⏳ Angkatan Lama</span>
+                                <span>Angkatan Lama</span>
                                 <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                     {{ $cohortCounts['old'] ?? 0 }}
                                 </span>
@@ -717,7 +717,7 @@
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                         <div>
-                                            <span>🌱 Angkatan Baru</span>
+                                            <span>Angkatan Baru</span>
                                             <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Semester Normal / Baru Mengajukan</p>
                                         </div>
                                     </div>
@@ -737,7 +737,7 @@
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                         <div>
-                                            <span>⏳ Angkatan Lama</span>
+                                            <span>Angkatan Lama</span>
                                             <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Masa Studi Lanjut (Semester 9+)</p>
                                         </div>
                                     </div>
@@ -971,7 +971,7 @@
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                         <div>
-                                            <span>🎓 Siap Seminar UP</span>
+                                            <span>Siap Seminar UP</span>
                                             <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">ACC Lengkap (P1 & P2)</p>
                                         </div>
                                     </div>
@@ -986,7 +986,7 @@
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
                                         <div>
-                                            <span>🏛️ Siap Sidang Akhir</span>
+                                            <span>Siap Sidang Akhir</span>
                                             <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">ACC Lengkap (P1 & P2)</p>
                                         </div>
                                     </div>
@@ -1001,7 +1001,7 @@
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                         <div>
-                                            <span>⏳ ACC Parsial (1/2)</span>
+                                            <span>ACC Parsial (1/2)</span>
                                             <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Baru 1 Pembimbing ACC</p>
                                         </div>
                                     </div>
@@ -1245,13 +1245,13 @@
                                     @if($thesis->abstract)
                                         <!-- Abstract Modal -->
                                         <template x-teleport="body">
-                                            <div x-show="openAbstract" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
+                                            <div x-show="openAbstract" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
                                                 <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                     <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAbstract = false">
                                                         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                     </div>
                                                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                    <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
+                                                    <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                         <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                                                             <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
                                                             <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
@@ -1698,13 +1698,13 @@
 
                                     <!-- Abstract Modal -->
                                     <template x-teleport="body">
-                                        <div x-show="openAbstract" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak x-transition>
+                                        <div x-show="openAbstract" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
                                             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                 <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAbstract = false">
                                                     <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                 </div>
                                                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
+                                                <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                     <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                                                         <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
                                                         <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
@@ -1896,13 +1896,13 @@
 
                                             <!-- Modal Penugasan Pembimbing -->
                                             <template x-teleport="body">
-                                                <div x-show="openAssignModal" class="fixed inset-0 overflow-y-auto text-left" style="z-index: 99999 !important;" x-cloak x-transition>
+                                                <div x-show="openAssignModal" class="fixed inset-0 z-[60] overflow-y-auto text-left" x-cloak x-transition>
                                                     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                         <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAssignModal = false">
                                                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                         </div>
                                                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
+                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                                                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Penugasan Dosen Pembimbing</h3>
                                                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-1">Mahasiswa: {{ $thesis->student->name }} ({{ $thesis->student->identifier }})</p>
@@ -1929,7 +1929,7 @@
                                                                                     <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p1Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
                                                                                         <span>P1: {{ $thesis->requestedPembimbing1->name }}</span>
                                                                                         <span class="font-black">({{ $thesis->requestedPembimbing1->total_workload }}/{{ $thesis->requestedPembimbing1->max_quota }})</span>
-                                                                                        @if($p1Full)<span class="text-rose-600 font-black">🔴 Penuh</span>@endif
+                                                                                        @if($p1Full)<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-black text-[10px]">Penuh</span>@endif
                                                                                     </div>
                                                                                 @endif
                                                                                 @if($thesis->requestedPembimbing2)
@@ -1937,7 +1937,7 @@
                                                                                     <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p2Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
                                                                                         <span>P2: {{ $thesis->requestedPembimbing2->name }}</span>
                                                                                         <span class="font-black">({{ $thesis->requestedPembimbing2->total_workload }}/{{ $thesis->requestedPembimbing2->max_quota }})</span>
-                                                                                        @if($p2Full)<span class="text-rose-600 font-black">🔴 Penuh</span>@endif
+                                                                                        @if($p2Full)<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-black text-[10px]">Penuh</span>@endif
                                                                                     </div>
                                                                                 @endif
                                                                             </div>
@@ -2031,13 +2031,13 @@
 
                                             <!-- Edit Modal -->
                                             <template x-teleport="body">
-                                                <div x-show="openEditModal" class="fixed inset-0 overflow-y-auto text-left" style="z-index: 99999 !important;" x-cloak x-transition>
+                                                <div x-show="openEditModal" class="fixed inset-0 z-[60] overflow-y-auto text-left" x-cloak x-transition>
                                                     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                         <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openEditModal = false">
                                                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                                                         </div>
                                                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative" style="z-index: 100000 !important;">
+                                                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                                                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Edit Data Skripsi</h3>
                                                                 <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Mahasiswa: {{ $thesis->student->name }}</p>
@@ -2146,8 +2146,7 @@
             <!-- MODAL: KONFIRMASI ROLLBACK PENUGASAN PEMBIMBING -->
             <template x-teleport="body">
                 <div x-show="rollbackModalOpen" 
-                     class="fixed inset-0 overflow-y-auto" 
-                     style="z-index: 99999 !important;" 
+                     class="fixed inset-0 z-[60] overflow-y-auto" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0 scale-95"
@@ -2219,7 +2218,7 @@
                  class="relative"
                  x-cloak>
                 <template x-teleport="body">
-                    <div x-show="open" class="relative" style="z-index: 99999 !important;">
+                    <div x-show="open" class="relative z-[60]">
                         <!-- Backdrop -->
                         <div x-show="open"
                              x-transition:enter="ease-in-out duration-300"
@@ -2405,7 +2404,8 @@
                                                     <div class="p-4 sm:p-5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/10 space-y-3">
                                                         <div class="flex items-center justify-between gap-2">
                                                             <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-900 dark:text-amber-300">
-                                                                <span>📝 Catatan & Arahan Pembimbing</span>
+                                                                <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                                <span>Catatan &amp; Arahan Pembimbing</span>
                                                             </div>
                                                             <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/20 dark:bg-amber-500/20 px-2.5 py-0.5 rounded-lg shrink-0" 
                                                                   x-text="session.dosen_name + ' (' + session.dosen_role + ')'"></span>

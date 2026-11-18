@@ -189,7 +189,7 @@
             }
 
             /* Soft Bordered Table & Sticky Header (Scoped, solid opaque sticky cells) */
-            .overflow-x-auto table thead th {
+            .overflow-x-auto table thead {
                 position: sticky;
                 top: 0;
                 z-index: 10;

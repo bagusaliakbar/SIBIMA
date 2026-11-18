@@ -325,8 +325,8 @@
         <!-- DETAIL & REVIEW MODAL                                                     -->
         <!-- ========================================================================= -->
         <div id="bug-review-modal"
-             class="fixed inset-0 overflow-y-auto"
-             style="display: none; position: fixed !important; inset: 0 !important; z-index: 99999999 !important;">
+             class="fixed inset-0 z-[60] overflow-y-auto"
+             style="display: none;">
             
             <!-- Backdrop -->
             <div onclick="window.closeBugReviewModal()"

@@ -229,7 +229,12 @@
                                                 <div class="my-1 border-t border-slate-100 dark:border-slate-700/70 mx-1"></div>
 
                                                 <!-- Delete Option -->
-                                                <form action="{{ route('guidance-documents.destroy', $doc->id) }}" method="POST" onsubmit="return confirm('Hapus permanen dokumen panduan {{ addslashes($doc->title) }}?')">
+                                                <form action="{{ route('guidance-documents.destroy', $doc->id) }}"
+                                                      method="POST"
+                                                      data-confirm="Hapus permanen dokumen panduan {{ $doc->title }}?"
+                                                      data-confirm-title="Hapus Dokumen Panduan"
+                                                      data-confirm-type="danger"
+                                                      data-confirm-button="Ya, Hapus">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
@@ -338,8 +343,7 @@
         @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
             <div x-show="showModal" 
                  x-cloak 
-                 class="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"

@@ -230,7 +230,13 @@
                                             </a>
 
                                             @if($isStaff)
-                                                <form action="{{ route('advisor-decrees.destroy', $decree) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus arsip SK Pembimbing ini?');" class="inline">
+                                                <form action="{{ route('advisor-decrees.destroy', $decree) }}"
+                                                      method="POST"
+                                                      class="inline"
+                                                      data-confirm="Apakah Anda yakin ingin menghapus arsip SK Pembimbing ini?"
+                                                      data-confirm-title="Hapus Arsip SK"
+                                                      data-confirm-type="danger"
+                                                      data-confirm-button="Ya, Hapus">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Hapus Arsip">

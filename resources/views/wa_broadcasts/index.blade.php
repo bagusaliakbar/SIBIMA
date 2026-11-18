@@ -160,7 +160,12 @@
                                         </a>
 
                                         @if($bc->failed_count > 0)
-                                            <form action="{{ route('wa-broadcasts.resend-failed', $bc) }}" method="POST" onsubmit="return confirm('Kirim ulang pesan hanya ke kontak yang gagal sebelumnya?');">
+                                            <form action="{{ route('wa-broadcasts.resend-failed', $bc) }}"
+                                                  method="POST"
+                                                  data-confirm="Kirim ulang pesan hanya ke kontak yang gagal sebelumnya?"
+                                                  data-confirm-title="Kirim Ulang Pesan Gagal"
+                                                  data-confirm-type="warning"
+                                                  data-confirm-button="Ya, Kirim Ulang">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition-colors cursor-pointer">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -169,7 +174,12 @@
                                             </form>
                                         @endif
 
-                                        <form action="{{ route('wa-broadcasts.destroy', $bc) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siaran ini beserta seluruh log pengirimannya?');">
+                                        <form action="{{ route('wa-broadcasts.destroy', $bc) }}"
+                                              method="POST"
+                                              data-confirm="Apakah Anda yakin ingin menghapus data siaran ini beserta seluruh log pengirimannya?"
+                                              data-confirm-title="Hapus Riwayat Siaran"
+                                              data-confirm-type="danger"
+                                              data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" title="Hapus Riwayat Siaran" class="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer">

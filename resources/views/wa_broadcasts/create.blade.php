@@ -404,9 +404,9 @@
                         </div>
 
                         <!-- Recipient List Table -->
-                        <div x-show="!isLoadingRecipients" class="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden max-h-72 overflow-y-auto custom-scrollbar">
+                        <div x-show="!isLoadingRecipients" class="border border-slate-200 dark:border-slate-700 rounded-2xl max-h-72 overflow-x-auto overflow-y-auto custom-scrollbar">
                             <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 sticky top-0 text-[10px] uppercase">
+                                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 text-[10px] uppercase">
                                     <tr>
                                         <th class="p-3 w-10 text-center">
                                             <input type="checkbox" @change="toggleSelectAll($event)" :checked="isAllSelected()" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500">

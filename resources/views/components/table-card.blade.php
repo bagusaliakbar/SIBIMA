@@ -9,11 +9,12 @@
 
 @php
     $actionSlot = $headerActions ?? $actions ?? $action ?? null;
+    $hasHeader = (bool) ($title || $subtitle || $actionSlot);
 @endphp
 
-<div {{ $attributes->merge(['class' => 'bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/70 dark:border-slate-700/80 overflow-hidden transition-all']) }}>
-    @if($title || $subtitle || $actionSlot)
-        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/40 dark:bg-slate-800/40">
+<div {{ $attributes->merge(['class' => 'bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/70 dark:border-slate-700/80 transition-all']) }}>
+    @if($hasHeader)
+        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/40 dark:bg-slate-800/40 rounded-t-2xl">
             <div>
                 @if($title)
                     <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight">{{ $title }}</h3>
@@ -31,12 +32,12 @@
         </div>
     @endif
 
-    <div class="overflow-x-auto sm:max-h-[72vh] custom-scrollbar">
+    <div class="overflow-x-auto sm:max-h-[72vh] custom-scrollbar {{ !$hasHeader ? 'rounded-t-2xl' : '' }} {{ !$footer ? 'rounded-b-2xl' : '' }}">
         {{ $slot }}
     </div>
 
     @if($footer)
-        <div class="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/50">
+        <div class="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/50 rounded-b-2xl">
             {!! $footer !!}
         </div>
     @endif

@@ -90,7 +90,12 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"></path></svg>
                                     </button>
 
-                                    <form action="{{ route('waves.destroy', $wave) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus gelombang ini?')">
+                                    <form action="{{ route('waves.destroy', $wave) }}"
+                                          method="POST"
+                                          data-confirm="Apakah Anda yakin ingin menghapus gelombang ini?"
+                                          data-confirm-title="Hapus Gelombang"
+                                          data-confirm-type="danger"
+                                          data-confirm-button="Ya, Hapus">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all" title="Hapus Gelombang">
@@ -109,7 +114,7 @@
     </div>
 
     <!-- Modal Add Wave -->
-    <div id="modal-add-wave" class="hidden fixed inset-0 z-[100] overflow-y-auto">
+    <div id="modal-add-wave" class="hidden fixed inset-0 z-[60] overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen p-4 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById('modal-add-wave').classList.add('hidden')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
@@ -166,7 +171,7 @@
     </div>
 
     <!-- Modal Edit Wave -->
-    <div id="modal-edit-wave" class="hidden fixed inset-0 z-[100] overflow-y-auto">
+    <div id="modal-edit-wave" class="hidden fixed inset-0 z-[60] overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen p-4 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById('modal-edit-wave').classList.add('hidden')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>

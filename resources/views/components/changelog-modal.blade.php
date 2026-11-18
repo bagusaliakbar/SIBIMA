@@ -6,7 +6,10 @@
 <div x-data="{
         expandedVersions: ['{{ $currentVersion }}'],
         activeFilter: 'all',
-        allVersions: @js(collect($releases)->pluck('version')->values()->all()),
+        allReleases: @js(collect($releases)->map(fn($r) => ['version' => $r['version'], 'badge_type' => $r['badge_type'] ?? 'slate'])->values()->all()),
+        get allVersions() {
+            return this.allReleases.map(r => r.version);
+        },
         toggleVersion(ver) {
             if (this.expandedVersions.includes(ver)) {
                 this.expandedVersions = this.expandedVersions.filter(v => v !== ver);
@@ -17,19 +20,29 @@
         isExpanded(ver) {
             return this.expandedVersions.includes(ver);
         },
-        toggleAll() {
-            if (this.expandedVersions.length === this.allVersions.length) {
-                this.expandedVersions = ['{{ $currentVersion }}'];
-            } else {
-                this.expandedVersions = [...this.allVersions];
-            }
-        },
         matchesFilter(badgeType) {
             if (this.activeFilter === 'all') return true;
             if (this.activeFilter === 'feature') return ['emerald', 'blue'].includes(badgeType);
             if (this.activeFilter === 'ux') return badgeType === 'indigo';
             if (this.activeFilter === 'perf') return ['amber', 'slate'].includes(badgeType);
             return true;
+        },
+        selectFilter(filter) {
+            this.activeFilter = filter;
+            if (filter === 'all') {
+                this.expandedVersions = ['{{ $currentVersion }}'];
+            } else {
+                this.expandedVersions = this.allReleases
+                    .filter(r => this.matchesFilter(r.badge_type))
+                    .map(r => r.version);
+            }
+        },
+        toggleAll() {
+            if (this.expandedVersions.length === this.allVersions.length) {
+                this.expandedVersions = ['{{ $currentVersion }}'];
+            } else {
+                this.expandedVersions = [...this.allVersions];
+            }
         }
      }"
      @open-changelog-modal.window="$dispatch('open-modal', 'changelog-modal')">
@@ -71,22 +84,22 @@
         <!-- Toolbar Filter & Expand All -->
         <div class="px-5 sm:px-6 py-2.5 bg-slate-50/40 dark:bg-slate-950/40 border-b border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-1.5 overflow-x-auto">
-                <button type="button" @click="activeFilter = 'all'"
+                <button type="button" @click="selectFilter('all')"
                         :class="activeFilter === 'all' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'"
                         class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-colors cursor-pointer shrink-0">
                     Semua ({{ count($releases) }})
                 </button>
-                <button type="button" @click="activeFilter = 'feature'"
+                <button type="button" @click="selectFilter('feature')"
                         :class="activeFilter === 'feature' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'"
                         class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-colors cursor-pointer shrink-0">
                     Fitur Utama
                 </button>
-                <button type="button" @click="activeFilter = 'ux'"
+                <button type="button" @click="selectFilter('ux')"
                         :class="activeFilter === 'ux' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'"
                         class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-colors cursor-pointer shrink-0">
                     UI/UX &amp; Revisi
                 </button>
-                <button type="button" @click="activeFilter = 'perf'"
+                <button type="button" @click="selectFilter('perf')"
                         :class="activeFilter === 'perf' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'"
                         class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-colors cursor-pointer shrink-0">
                     Performa &amp; Fondasi
@@ -101,7 +114,7 @@
         </div>
 
         <!-- Release Timeline Body -->
-        <div class="p-5 sm:p-6 space-y-3">
+        <div class="p-5 sm:p-6 space-y-3 max-h-[62vh] overflow-y-auto custom-scrollbar">
             @foreach($releases as $release)
                 @php
                     $ver = $release['version'];
