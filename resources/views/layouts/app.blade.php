@@ -1598,14 +1598,45 @@
                 </header>
 
                 <!-- Page Content (Mobile Optimized Padding & Safe Area) -->
-                <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-24 sm:pb-8">
+                <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-24 sm:pb-6 flex flex-col">
                     @isset($header)
-                        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
+                        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between shrink-0">
                             {{ $header }}
                         </div>
                     @endisset
                     
-                    {{ $slot }}
+                    <div class="flex-1 min-w-0">
+                        {{ $slot }}
+                    </div>
+
+                    @unless(request()->routeIs('chat.*'))
+                        <!-- Slim Non-Intrusive Enterprise Footer -->
+                        <footer class="mt-8 pt-3.5 border-t border-slate-200/75 dark:border-slate-800/80 md:pr-20 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400 print:hidden shrink-0">
+                            <div class="flex items-center gap-2 text-center sm:text-left">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 hidden sm:inline-block"></span>
+                                <span class="font-semibold text-slate-600 dark:text-slate-300">&copy; {{ date('Y') }} SIBIMA</span>
+                                <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+                                <span>Sistem Informasi Bimbingan Mahasiswa <span class="hidden md:inline">&mdash; FASILKOM Universitas Subang</span></span>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('faqs.index') }}" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
+                                    FAQ
+                                </a>
+                                <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+                                <button type="button"
+                                        onclick="if (window.openBugReportModal) window.openBugReportModal();"
+                                        class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium cursor-pointer">
+                                    Lapor Kendala
+                                </button>
+                                <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&middot;</span>
+                                <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>Aktif</span>
+                                </span>
+                            </div>
+                        </footer>
+                    @endunless
                 </main>
 
                 <!-- Mobile Bottom Navigation Bar (PWA One-Handed Thumb Zone) -->
