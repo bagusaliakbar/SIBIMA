@@ -212,6 +212,9 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 overflow-hidden selection:bg-orange-100 selection:text-orange-900 transition-colors duration-300">
+        @php
+            $isBugReportEnabled = \App\Models\Setting::isBugReportEnabled();
+        @endphp
         <div class="flex h-screen w-full overflow-hidden">
             <!-- Sidebar Backdrop for Mobile -->
             <div 
@@ -303,15 +306,17 @@
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('faqs.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span class="sidebar-text">Pusat Bantuan (FAQ)</span>
                         </a>
-                        <button type="button" 
-                                data-tooltip="Lapor Kendala / Bug" title="Lapor Kendala / Bug"
-                                @click="sidebarOpen = false; if (window.openBugReportModal) window.openBugReportModal();"
-                                class="w-full sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 font-medium text-left cursor-pointer">
-                            <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <span class="sidebar-text">Lapor Kendala / Bug</span>
-                        </button>
+                        @if($isBugReportEnabled)
+                            <button type="button" 
+                                    data-tooltip="Lapor Kendala / Bug" title="Lapor Kendala / Bug"
+                                    @click="sidebarOpen = false; if (window.openBugReportModal) window.openBugReportModal();"
+                                    class="w-full sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 font-medium text-left cursor-pointer">
+                                <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span class="sidebar-text">Lapor Kendala / Bug</span>
+                            </button>
+                        @endif
                     </nav>
                         
                         @if(Auth::user()->role === 'mahasiswa')
@@ -1611,7 +1616,7 @@
 
                     @unless(request()->routeIs('chat.*'))
                         <!-- Slim Non-Intrusive Enterprise Footer -->
-                        <footer class="mt-8 pt-3.5 border-t border-slate-200/75 dark:border-slate-800/80 md:pr-20 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400 print:hidden shrink-0">
+                        <footer class="mt-8 pt-3.5 border-t border-slate-200/75 dark:border-slate-800/80 {{ $isBugReportEnabled ? 'md:pr-20' : '' }} flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400 print:hidden shrink-0">
                             <div class="flex items-center gap-2 text-center sm:text-left">
                                 <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 hidden sm:inline-block"></span>
                                 <span class="font-semibold text-slate-600 dark:text-slate-300">&copy; {{ date('Y') }} SIBIMA</span>
@@ -1623,12 +1628,14 @@
                                 <a href="{{ route('faqs.index') }}" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                                     FAQ
                                 </a>
-                                <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-                                <button type="button"
-                                        onclick="if (window.openBugReportModal) window.openBugReportModal();"
-                                        class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium cursor-pointer">
-                                    Lapor Kendala
-                                </button>
+                                @if($isBugReportEnabled)
+                                    <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+                                    <button type="button"
+                                            onclick="if (window.openBugReportModal) window.openBugReportModal();"
+                                            class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium cursor-pointer">
+                                        Lapor Kendala
+                                    </button>
+                                @endif
                                 <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&middot;</span>
                                 <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-[10px] font-medium text-slate-500 dark:text-slate-400">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -1646,7 +1653,9 @@
 
         <x-toast />
 
-        @include('components.bug-report-widget')
+        @if($isBugReportEnabled)
+            @include('components.bug-report-widget')
+        @endif
 
         <!-- Global Slide-Over Drawer Kemiripan Judul -->
         <div x-data="{ 

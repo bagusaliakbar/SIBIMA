@@ -333,6 +333,7 @@ Route::middleware('auth')->group(function () {
 
         // Bug Reports Management (Admin & Kaprodi)
         Route::get('/admin/bug-reports', [App\Http\Controllers\BugReportController::class, 'index'])->name('admin.bug-reports.index');
+        Route::post('/admin/bug-reports/toggle-feature', [App\Http\Controllers\BugReportController::class, 'toggleFeature'])->name('admin.bug-reports.toggle-feature');
         Route::patch('/admin/bug-reports/{bugReport}/status', [App\Http\Controllers\BugReportController::class, 'updateStatus'])->name('admin.bug-reports.update-status');
         Route::delete('/admin/bug-reports/{bugReport}', [App\Http\Controllers\BugReportController::class, 'destroy'])->name('admin.bug-reports.destroy');
 

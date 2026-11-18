@@ -71,6 +71,26 @@ class Setting extends Model
     }
 
     /**
+     * Check if the Bug Report & Feature Request widget/feature is enabled globally.
+     */
+    public static function isBugReportEnabled(): bool
+    {
+        try {
+            return (bool) self::get('bug_report_enabled', true);
+        } catch (\Throwable $e) {
+            return true;
+        }
+    }
+
+    /**
+     * Set the global Bug Report & Feature Request feature status.
+     */
+    public static function setBugReportEnabled(bool $enabled): void
+    {
+        self::set('bug_report_enabled', $enabled, 'boolean');
+    }
+
+    /**
      * Check if WhatsApp circuit breaker is currently tripped.
      */
     public static function isWhatsAppCircuitTripped(): bool

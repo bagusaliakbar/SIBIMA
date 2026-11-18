@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\BugReport;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\GeneralNotification;
 use Illuminate\Http\Request;
@@ -17,6 +19,14 @@ class BugReportController extends Controller
      */
     public function store(Request $request)
     {
+        if (!Setting::isBugReportEnabled()) {
+            $disabledMsg = 'Fitur Lapor Bug & Usulan Fitur sedang dinonaktifkan oleh Kaprodi/Admin.';
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $disabledMsg], 403);
+            }
+            return back()->with('error', $disabledMsg);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string|in:ui_ux,functionality,performance,security,data_error,feature_request,improvement,other',
@@ -220,7 +230,31 @@ class BugReportController extends Controller
             'feature_requests' => (int) ($rawStats->feature_requests ?? 0),
         ];
 
-        return view('bug_reports.index', compact('bugReports', 'stats'));
+        $isBugReportEnabled = Setting::isBugReportEnabled();
+
+        return view('bug_reports.index', compact('bugReports', 'stats', 'isBugReportEnabled'));
+    }
+
+    /**
+     * Toggle global Bug Report & Feature Request feature (Admin & Kaprodi).
+     */
+    public function toggleFeature()
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'kaprodi'])) {
+            abort(403);
+        }
+
+        $newState = !Setting::isBugReportEnabled();
+        Setting::setBugReportEnabled($newState);
+
+        $statusLabel = $newState ? 'diaktifkan' : 'dinonaktifkan';
+        ActivityLog::log(
+            'Konfigurasi Sistem',
+            Auth::user()->name . " ({$statusLabel}) fitur Lapor Bug & Usulan Fitur.",
+            'Sistem'
+        );
+
+        return back()->with('success', "Fitur Lapor Bug & Usulan Fitur berhasil {$statusLabel}.");
     }
 
     /**

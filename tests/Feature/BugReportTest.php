@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\BugReport;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\GeneralNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -284,6 +285,58 @@ class BugReportTest extends TestCase
 
         $response = $this->actingAs($otherStudent)->get(route('bug-reports.attachment', $bug->id));
         $response->assertStatus(403);
+    }
+
+    public function test_kaprodi_and_admin_can_toggle_bug_report_feature_and_hide_widget(): void
+    {
+        $kaprodi = User::factory()->create(['role' => 'kaprodi', 'is_active' => true]);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'is_active' => true]);
+
+        $this->assertTrue(Setting::isBugReportEnabled());
+
+        // Non-admin/kaprodi cannot toggle
+        $this->actingAs($student)
+            ->post(route('admin.bug-reports.toggle-feature'))
+            ->assertStatus(403);
+
+        // Kaprodi disables the feature
+        $this->actingAs($kaprodi)
+            ->post(route('admin.bug-reports.toggle-feature'))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertFalse(Setting::isBugReportEnabled());
+
+        // Floating dock widget and submission triggers are hidden from rendered pages
+        $this->actingAs($student)
+            ->get(route('profile.edit'))
+            ->assertOk()
+            ->assertDontSee('id="bug-report-dock-container"', false)
+            ->assertDontSee('Lapor Kendala / Bug');
+
+        // Direct submissions are rejected while disabled
+        $this->actingAs($student)
+            ->postJson(route('bug-reports.store'), [
+                'title' => 'Laporan saat nonaktif',
+                'category' => 'functionality',
+                'severity' => 'low',
+                'description' => 'Harusnya ditolak',
+            ])
+            ->assertStatus(403);
+
+        // Admin re-enables the feature
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $this->actingAs($admin)
+            ->post(route('admin.bug-reports.toggle-feature'))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertTrue(Setting::isBugReportEnabled());
+
+        $this->actingAs($student)
+            ->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee('id="bug-report-dock-container"', false);
     }
 }
 
