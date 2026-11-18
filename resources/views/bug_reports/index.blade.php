@@ -27,19 +27,19 @@
             <div class="flex items-center gap-3 shrink-0">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border {{ $isBugReportEnabled ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60' : 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700' }}">
                     <span class="w-2 h-2 rounded-full {{ $isBugReportEnabled ? 'bg-emerald-500' : 'bg-slate-400' }}"></span>
-                    <span>{{ $isBugReportEnabled ? 'Fitur Aktif' : 'Fitur Nonaktif' }}</span>
+                    <span>{{ $isBugReportEnabled ? 'Floating Aktif' : 'Floating Nonaktif' }}</span>
                 </span>
 
                 <form action="{{ route('admin.bug-reports.toggle-feature') }}"
                       method="POST"
-                      onsubmit="return confirm('{{ $isBugReportEnabled ? 'Nonaktifkan tombol & widget Lapor Bug di seluruh halaman pengguna?' : 'Aktifkan kembali tombol & widget Lapor Bug untuk seluruh pengguna?' }}');">
+                      onsubmit="return confirm('{{ $isBugReportEnabled ? 'Sembunyikan tombol kapsul melayang (Floating Lapor Bug) di seluruh halaman?' : 'Tampilkan kembali tombol kapsul melayang (Floating Lapor Bug) di seluruh halaman?' }}');">
                     @csrf
                     <button type="submit"
                             class="h-10 inline-flex items-center gap-2 px-4 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer {{ $isBugReportEnabled ? 'bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 dark:bg-slate-900 dark:hover:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60' : 'bg-orange-600 hover:bg-orange-700 text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v9" />
                         </svg>
-                        <span>{{ $isBugReportEnabled ? 'Nonaktifkan Lapor Bug' : 'Aktifkan Lapor Bug' }}</span>
+                        <span>{{ $isBugReportEnabled ? 'Nonaktifkan Floating' : 'Aktifkan Floating' }}</span>
                     </button>
                 </form>
             </div>
@@ -51,8 +51,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <div class="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-                    <span class="font-bold">Fitur Lapor Bug &amp; Usulan Fitur sedang dinonaktifkan.</span>
-                    Widget melayang, tombol menu sidebar, dan tautan pelaporan pada footer disembunyikan untuk seluruh pengguna. Riwayat tiket di halaman ini tetap dapat dikelola.
+                    <span class="font-bold">Tombol kapsul melayang (Floating Lapor Bug) sedang dinonaktifkan.</span>
+                    Widget melayang di pojok kanan bawah tidak ditampilkan, sementara pelaporan melalui menu Sidebar (<strong>Lapor Kendala / Bug</strong>) dan Footer (<strong>Lapor Kendala</strong>) tetap tersedia.
                 </div>
             </div>
         @endif

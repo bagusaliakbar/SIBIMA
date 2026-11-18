@@ -307,22 +307,24 @@ class BugReportTest extends TestCase
 
         $this->assertFalse(Setting::isBugReportEnabled());
 
-        // Floating dock widget and submission triggers are hidden from rendered pages
+        // Floating dock widget is hidden, while sidebar & footer reporting modal remain available
         $this->actingAs($student)
             ->get(route('profile.edit'))
             ->assertOk()
             ->assertDontSee('id="bug-report-dock-container"', false)
-            ->assertDontSee('Lapor Kendala / Bug');
+            ->assertSee('id="bug-report-modal"', false)
+            ->assertSee('Lapor Kendala / Bug');
 
-        // Direct submissions are rejected while disabled
+        // Users can still submit bug reports via Sidebar / Footer modal while floating dock is off
         $this->actingAs($student)
             ->postJson(route('bug-reports.store'), [
-                'title' => 'Laporan saat nonaktif',
+                'title' => 'Laporan saat floating nonaktif',
                 'category' => 'functionality',
                 'severity' => 'low',
-                'description' => 'Harusnya ditolak',
+                'description' => 'Tetap terkirim melalui menu sidebar/footer',
             ])
-            ->assertStatus(403);
+            ->assertOk()
+            ->assertJson(['success' => true]);
 
         // Admin re-enables the feature
         $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);

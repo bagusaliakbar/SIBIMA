@@ -19,14 +19,6 @@ class BugReportController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Setting::isBugReportEnabled()) {
-            $disabledMsg = 'Fitur Lapor Bug & Usulan Fitur sedang dinonaktifkan oleh Kaprodi/Admin.';
-            if ($request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $disabledMsg], 403);
-            }
-            return back()->with('error', $disabledMsg);
-        }
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string|in:ui_ux,functionality,performance,security,data_error,feature_request,improvement,other',
@@ -247,14 +239,14 @@ class BugReportController extends Controller
         $newState = !Setting::isBugReportEnabled();
         Setting::setBugReportEnabled($newState);
 
-        $statusLabel = $newState ? 'diaktifkan' : 'dinonaktifkan';
+        $statusLabel = $newState ? 'diaktifkan (ditampilkan)' : 'dinonaktifkan (disembunyikan)';
         ActivityLog::log(
             'Konfigurasi Sistem',
-            Auth::user()->name . " ({$statusLabel}) fitur Lapor Bug & Usulan Fitur.",
+            Auth::user()->name . " mengatur Floating Widget Lapor Bug menjadi {$statusLabel}.",
             'Sistem'
         );
 
-        return back()->with('success', "Fitur Lapor Bug & Usulan Fitur berhasil {$statusLabel}.");
+        return back()->with('success', "Floating Widget Lapor Bug berhasil {$statusLabel}.");
     }
 
     /**

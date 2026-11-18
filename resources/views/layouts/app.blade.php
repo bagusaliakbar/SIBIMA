@@ -306,17 +306,15 @@
                             <svg class="w-5 h-5 mr-3 transition-colors {{ request()->routeIs('faqs.index') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span class="sidebar-text">Pusat Bantuan (FAQ)</span>
                         </a>
-                        @if($isBugReportEnabled)
-                            <button type="button" 
-                                    data-tooltip="Lapor Kendala / Bug" title="Lapor Kendala / Bug"
-                                    @click="sidebarOpen = false; if (window.openBugReportModal) window.openBugReportModal();"
-                                    class="w-full sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 font-medium text-left cursor-pointer">
-                                <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                                <span class="sidebar-text">Lapor Kendala / Bug</span>
-                            </button>
-                        @endif
+                        <button type="button" 
+                                data-tooltip="Lapor Kendala / Bug" title="Lapor Kendala / Bug"
+                                @click="sidebarOpen = false; if (window.openBugReportModal) window.openBugReportModal();"
+                                class="w-full sidebar-link group flex items-center px-4 py-3 rounded-xl text-sm transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5 font-medium text-left cursor-pointer">
+                            <svg class="w-5 h-5 mr-3 transition-colors text-slate-500 group-hover:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <span class="sidebar-text">Lapor Kendala / Bug</span>
+                        </button>
                     </nav>
                         
                         @if(Auth::user()->role === 'mahasiswa')
@@ -1628,14 +1626,12 @@
                                 <a href="{{ route('faqs.index') }}" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium">
                                     FAQ
                                 </a>
-                                @if($isBugReportEnabled)
-                                    <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-                                    <button type="button"
-                                            onclick="if (window.openBugReportModal) window.openBugReportModal();"
-                                            class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium cursor-pointer">
-                                        Lapor Kendala
-                                    </button>
-                                @endif
+                                <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+                                <button type="button"
+                                        onclick="if (window.openBugReportModal) window.openBugReportModal();"
+                                        class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium cursor-pointer">
+                                    Lapor Kendala
+                                </button>
                                 <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&middot;</span>
                                 <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-[10px] font-medium text-slate-500 dark:text-slate-400">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -1653,9 +1649,7 @@
 
         <x-toast />
 
-        @if($isBugReportEnabled)
-            @include('components.bug-report-widget')
-        @endif
+        @include('components.bug-report-widget')
 
         <!-- Global Slide-Over Drawer Kemiripan Judul -->
         <div x-data="{ 

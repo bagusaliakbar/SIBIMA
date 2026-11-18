@@ -610,6 +610,7 @@ document.addEventListener('keydown', function(e) {
 <!-- ========================================================================= -->
 <!-- FLOATING CAPSULE DOCK (BOTTOM-RIGHT CORNER)                                -->
 <!-- ========================================================================= -->
+@if(\App\Models\Setting::isBugReportEnabled())
 <div id="bug-report-dock-container"
      class="select-none">
 
@@ -736,6 +737,7 @@ document.addEventListener('keydown', function(e) {
 
     </div>
 </div>
+@endif
 
 
 <!-- ========================================================================= -->
