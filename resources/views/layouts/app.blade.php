@@ -1632,11 +1632,14 @@
                                         class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium cursor-pointer">
                                     Lapor Kendala
                                 </button>
-                                <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&middot;</span>
-                                <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    <span>Aktif</span>
-                                </span>
+                                <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+                                <button type="button"
+                                        @click="$dispatch('open-changelog-modal')"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100/80 hover:bg-orange-50 dark:bg-slate-800/80 dark:hover:bg-orange-950/40 border border-slate-200/80 hover:border-orange-200 dark:border-slate-700/80 dark:hover:border-orange-800/60 text-[10px] font-mono font-semibold text-slate-600 hover:text-orange-600 dark:text-slate-300 dark:hover:text-orange-400 transition-colors cursor-pointer"
+                                        title="Lihat Catatan Versi &amp; Pembaruan Sistem">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                    <span>{{ config('changelog.current_version', 'v2.5.0') }}</span>
+                                </button>
                             </div>
                         </footer>
                     @endunless
@@ -1649,6 +1652,7 @@
 
         <x-toast />
 
+        @include('components.changelog-modal')
         @include('components.bug-report-widget')
 
         <!-- Global Slide-Over Drawer Kemiripan Judul -->
