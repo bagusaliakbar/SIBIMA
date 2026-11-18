@@ -170,14 +170,18 @@ class ThesisService
     /**
      * Toggle ACC status for a thesis.
      */
-    public function toggleAcc(Thesis $thesis, string $type, ?string $slot = null)
+    public function toggleAcc(Thesis $thesis, string $type, ?string $slot = null, bool $viaKaprodi = false)
     {
         $user = Auth::user();
-        
-        if (in_array($user->role, ['admin', 'kaprodi'])) {
+        $isBypass = false;
+
+        if (in_array($user->role, ['admin', 'kaprodi'], true)) {
             $targetSlot = $slot ?? request('slot', 'p1');
+            $viaKaprodi = $viaKaprodi || request()->boolean('via_kaprodi');
+
             if ($targetSlot === 'p2') {
                 $column = $type === 'up' ? 'acc_up_p2' : 'acc_sidang_p2';
+                $isBypass = $viaKaprodi || ((int) $user->id !== (int) $thesis->pembimbing2_id);
             } elseif ($targetSlot === 'all') {
                 $col1 = $type === 'up' ? 'acc_up_p1' : 'acc_sidang_p1';
                 $col2 = $type === 'up' ? 'acc_up_p2' : 'acc_sidang_p2';
@@ -190,14 +194,15 @@ class ThesisService
                 $statusText = $newVal ? 'memberikan' : 'membatalkan';
                 ActivityLog::log('ACC Bimbingan', "{$user->role} ({$user->name}) {$statusText} ACC {$typeName} (P1 & P2) untuk mahasiswa {$thesis->student->name}.", 'Skripsi', $thesis);
                 if ($newVal) {
-                    $thesis->student->notify(new \App\Notifications\AccNotification($thesis, $type, $user));
+                    $thesis->student->notify(new \App\Notifications\AccNotification($thesis, $type, $user, true));
                 }
                 return $newVal ? 'diberikan' : 'dibatalkan';
             } else {
                 $column = $type === 'up' ? 'acc_up_p1' : 'acc_sidang_p1';
+                $isBypass = $viaKaprodi || ((int) $user->id !== (int) $thesis->pembimbing1_id);
             }
         } else {
-            $column = $this->getAccColumn($thesis, $user->id, $type);
+            $column = $this->getAccColumn($thesis, (int) $user->id, $type);
         }
 
         if (!$column) {
@@ -217,14 +222,7 @@ class ThesisService
         ]);
         
         if ($thesis->$column) {
-            $thesis->student->notify(new GeneralNotification(
-                'ACC Pembimbing',
-                "ACC untuk {$typeName} telah diberikan.",
-                route('mentoring-sessions.index'),
-                'success'
-            ));
-
-            $thesis->student->notify(new \App\Notifications\AccNotification($thesis, $type, $user));
+            $thesis->student->notify(new \App\Notifications\AccNotification($thesis, $type, $user, $isBypass));
         }
 
         return $thesis->$column ? 'diberikan' : 'dibatalkan';
@@ -232,9 +230,9 @@ class ThesisService
 
     private function getAccColumn(Thesis $thesis, int $userId, string $type)
     {
-        if ($userId === $thesis->pembimbing1_id) {
+        if ($userId === (int) $thesis->pembimbing1_id) {
             return $type === 'up' ? 'acc_up_p1' : 'acc_sidang_p1';
-        } elseif ($userId === $thesis->pembimbing2_id) {
+        } elseif ($userId === (int) $thesis->pembimbing2_id) {
             return $type === 'up' ? 'acc_up_p2' : 'acc_sidang_p2';
         }
         return null;

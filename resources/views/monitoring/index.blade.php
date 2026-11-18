@@ -524,6 +524,7 @@
         <form id="kaprodi-acc-form" method="POST" class="hidden">
             @csrf
             <input type="hidden" name="slot" id="kaprodi-acc-slot" value="all">
+            <input type="hidden" name="via_kaprodi" value="1">
         </form>
 
         <!-- Centralized Kaprodi Quick ACC Modal Dialog -->

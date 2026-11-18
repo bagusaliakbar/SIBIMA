@@ -701,7 +701,8 @@ class ThesisController extends Controller
 
         try {
             $slot = $request->input('slot');
-            $statusText = $this->thesisService->toggleAcc($thesis, $type, $slot);
+            $viaKaprodi = $request->boolean('via_kaprodi');
+            $statusText = $this->thesisService->toggleAcc($thesis, $type, $slot, $viaKaprodi);
             $typeName = $type === 'up' ? 'Seminar UP' : 'Sidang Akhir';
 
             return redirect()->back()->with('success', "ACC {$typeName} berhasil {$statusText}.");
