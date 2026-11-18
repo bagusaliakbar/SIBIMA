@@ -188,11 +188,19 @@
                 background: rgba(255, 255, 255, 0.34);
             }
 
-            /* Soft Bordered Table & Sticky Header (Scoped without !important override) */
+            /* Soft Bordered Table & Sticky Header (Scoped, solid opaque sticky cells) */
             .overflow-x-auto table thead th {
                 position: sticky;
                 top: 0;
                 z-index: 10;
+            }
+            :where(.overflow-x-auto table thead th) {
+                background-color: #f8fafc;
+                box-shadow: inset 0 -1px 0 rgba(226, 232, 240, 0.9);
+            }
+            :where(.dark .overflow-x-auto table thead th) {
+                background-color: #0f172a;
+                box-shadow: inset 0 -1px 0 rgba(51, 65, 85, 0.85);
             }
             table tbody tr {
                 transition: background-color 0.15s ease-in-out;

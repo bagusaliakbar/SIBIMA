@@ -1100,17 +1100,17 @@
                    class="hidden sm:table w-full text-left text-sm whitespace-nowrap">
                 <thead>
                     @if(Auth::user()->role === 'dosen')
-                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-100 dark:border-slate-700/80">
-                            <th class="py-3.5 px-6 font-semibold tracking-wider">MAHASISWA</th>
-                            <th class="py-3.5 px-6 font-semibold tracking-wider">RENCANA JUDUL SKRIPSI</th>
-                            <th class="py-3.5 px-6 font-semibold tracking-wider text-center">
+                        <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-100 dark:border-slate-700/80">
+                            <th class="py-3.5 px-6 font-semibold tracking-wider bg-slate-50 dark:bg-slate-900">MAHASISWA</th>
+                            <th class="py-3.5 px-6 font-semibold tracking-wider bg-slate-50 dark:bg-slate-900">RENCANA JUDUL SKRIPSI</th>
+                            <th class="py-3.5 px-6 font-semibold tracking-wider text-center bg-slate-50 dark:bg-slate-900">
                                 <span class="block">Status &amp; Progres</span>
                                 <span class="block text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-black">PROGRES TARGET BIMBINGAN</span>
                             </th>
-                            <th class="py-3.5 px-6 font-semibold tracking-wider text-right">AKSI</th>
+                            <th class="py-3.5 px-6 font-semibold tracking-wider text-right bg-slate-50 dark:bg-slate-900">AKSI</th>
                         </tr>
                     @else
-                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                        <tr class="bg-slate-50 dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                             <th class="py-4 px-6">Mahasiswa</th>
                             <th class="py-4 px-6">Rencana Judul Skripsi</th>
                             <th class="py-4 px-6">Deskripsi</th>
