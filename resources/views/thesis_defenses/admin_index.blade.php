@@ -767,7 +767,13 @@
                                                 class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
                                             Validasi
                                         </button>
-                                        <form action="{{ route('thesis-defense-applications.destroy', $app) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin MEMBATALKAN & MENGHAPUS pengajuan sidang skripsi untuk mahasiswa {{ addslashes($app->thesis->student->name) }}?\n\nMahasiswa dapat mengajukan ulang berkas pendaftaran baru.');" class="inline">
+                                        <form action="{{ route('thesis-defense-applications.destroy', $app) }}"
+                                              method="POST"
+                                              class="inline"
+                                              data-confirm="Apakah Anda yakin ingin MEMBATALKAN &amp; MENGHAPUS pengajuan sidang skripsi untuk mahasiswa {{ $app->thesis->student->name }}?&#10;&#10;Mahasiswa dapat mengajukan ulang berkas pendaftaran baru."
+                                              data-confirm-title="Batalkan Pengajuan Sidang"
+                                              data-confirm-type="danger"
+                                              data-confirm-button="Ya, Batalkan & Hapus">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 

@@ -2727,7 +2727,9 @@
                                                 @endphp
                                                 <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
                                                     <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?')">
+                                                        data-confirm="Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar untuk {{ $studentName }}?"
+                                                        data-confirm-title="Konfirmasi ACC Seminar"
+                                                        data-confirm-type="{{ $hasAccUp ? 'warning' : 'emerald' }}">
                                                         @csrf
                                                         @if($isAdminOrKaprodi)
                                                             <input type="hidden" name="slot" value="all">
@@ -2758,7 +2760,9 @@
                                                 @endphp
                                                 <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
                                                     <form action="{{ route('theses.toggle-acc', [$studentThesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?')">
+                                                        data-confirm="Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang untuk {{ $studentName }}?"
+                                                        data-confirm-title="Konfirmasi ACC Sidang"
+                                                        data-confirm-type="{{ $hasAccSidang ? 'warning' : 'emerald' }}">
                                                         @csrf
                                                         @if($isAdminOrKaprodi)
                                                             <input type="hidden" name="slot" value="all">

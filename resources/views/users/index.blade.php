@@ -542,7 +542,12 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </button>
                                     
-                                    <form action="{{ route('users.reset-password', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin me-reset password pengguna ini menjadi sama dengan NPM/NIDN-nya?')">
+                                    <form action="{{ route('users.reset-password', $user->id) }}"
+                                          method="POST"
+                                          data-confirm="Apakah Anda yakin ingin me-reset password pengguna ini menjadi sama dengan NPM/NIDN-nya?"
+                                          data-confirm-title="Reset Password Pengguna"
+                                          data-confirm-type="warning"
+                                          data-confirm-button="Ya, Reset Password">
                                         @csrf
                                         <button type="submit" class="p-2 text-slate-400 hover:text-amber-500 transition-colors" title="Reset Password ke NPM/NIDN">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
@@ -551,7 +556,12 @@
                                     <a href="{{ route('users.edit', $user->id) }}" class="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="Edit Pengguna">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     </a>
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
+                                    <form action="{{ route('users.destroy', $user->id) }}"
+                                          method="POST"
+                                          data-confirm="Apakah Anda yakin ingin menghapus pengguna ini?"
+                                          data-confirm-title="Hapus Pengguna"
+                                          data-confirm-type="danger"
+                                          data-confirm-button="Ya, Hapus">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 text-slate-400 hover:text-red-600 transition-colors" title="Hapus Pengguna">

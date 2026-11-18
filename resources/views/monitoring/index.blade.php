@@ -551,8 +551,10 @@
             <!-- Modal Header -->
             <div class="p-4 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
               <div class="flex items-center gap-2.5">
-                <span class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-sm font-bold shadow-2xs">
-                  ⚖️
+                <span class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shadow-2xs shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  </svg>
                 </span>
                 <div>
                   <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100" x-text="'Kelola ACC ' + modalData.typeName"></h3>
@@ -613,12 +615,12 @@
                     <button type="button" 
                             @click="submitAcc('p1')"
                             class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[11px] font-semibold transition-colors text-center cursor-pointer">
-                      <span x-text="modalData.accP1 ? '❌ Cabut P1' : '✅ Beri ACC P1'"></span>
+                      <span x-text="modalData.accP1 ? 'Cabut ACC P1' : 'Beri ACC P1'"></span>
                     </button>
                     <button type="button" 
                             @click="submitAcc('p2')"
                             class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-[11px] font-semibold transition-colors text-center cursor-pointer">
-                      <span x-text="modalData.accP2 ? '❌ Cabut P2' : '✅ Beri ACC P2'"></span>
+                      <span x-text="modalData.accP2 ? 'Cabut ACC P2' : 'Beri ACC P2'"></span>
                     </button>
                   </div>
                 </div>

@@ -328,7 +328,9 @@
                     <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                         @if($canToggleAcc)
                             <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar Proposal untuk {{ addslashes($thesis->student->name) }}?')">
+                                data-confirm="Apakah Anda yakin ingin {{ $hasAccUp ? 'membatalkan' : 'memberikan' }} ACC Seminar Proposal untuk {{ addslashes($thesis->student->name) }}?"
+                                data-confirm-title="Konfirmasi ACC Seminar Proposal"
+                                data-confirm-type="{{ $hasAccUp ? 'warning' : 'emerald' }}">
                                 @csrf
                                 @if($isAdminOrKaprodi)
                                     <input type="hidden" name="slot" value="all">
@@ -358,7 +360,9 @@
                         <div class="inline-flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5 self-center">
                             @if($isAdminOrKaprodi)
                                 <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                    onsubmit="return confirm('Toggle ACC Seminar P1 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    data-confirm="Ubah status ACC Seminar Pembimbing 1 untuk {{ addslashes($thesis->student->name) }}?"
+                                    data-confirm-title="Toggle ACC Seminar P1"
+                                    data-confirm-type="primary">
                                     @csrf
                                     <input type="hidden" name="slot" value="p1">
                                     <button type="submit" class="inline-flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P1">
@@ -367,7 +371,9 @@
                                     </button>
                                 </form>
                                 <form action="{{ route('theses.toggle-acc', [$thesis->id, 'up']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                    onsubmit="return confirm('Toggle ACC Seminar P2 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    data-confirm="Ubah status ACC Seminar Pembimbing 2 untuk {{ addslashes($thesis->student->name) }}?"
+                                    data-confirm-title="Toggle ACC Seminar P2"
+                                    data-confirm-type="primary">
                                     @csrf
                                     <input type="hidden" name="slot" value="p2">
                                     <button type="submit" class="inline-flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P2">
@@ -392,7 +398,9 @@
                     <div class="inline-flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                         @if($canToggleAcc)
                             <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                onsubmit="return confirm('Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang Akhir untuk {{ addslashes($thesis->student->name) }}?')">
+                                data-confirm="Apakah Anda yakin ingin {{ $hasAccSidang ? 'membatalkan' : 'memberikan' }} ACC Sidang Akhir untuk {{ addslashes($thesis->student->name) }}?"
+                                data-confirm-title="Konfirmasi ACC Sidang Akhir"
+                                data-confirm-type="{{ $hasAccSidang ? 'warning' : 'emerald' }}">
                                 @csrf
                                 @if($isAdminOrKaprodi)
                                     <input type="hidden" name="slot" value="all">
@@ -422,7 +430,9 @@
                         <div class="inline-flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-2.5 pr-1.5 self-center">
                             @if($isAdminOrKaprodi)
                                 <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                    onsubmit="return confirm('Toggle ACC Sidang P1 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    data-confirm="Ubah status ACC Sidang Pembimbing 1 untuk {{ addslashes($thesis->student->name) }}?"
+                                    data-confirm-title="Toggle ACC Sidang P1"
+                                    data-confirm-type="primary">
                                     @csrf
                                     <input type="hidden" name="slot" value="p1">
                                     <button type="submit" class="inline-flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P1">
@@ -431,7 +441,9 @@
                                     </button>
                                 </form>
                                 <form action="{{ route('theses.toggle-acc', [$thesis->id, 'sidang']) }}" method="POST" class="m-0 p-0 inline-flex items-center"
-                                    onsubmit="return confirm('Toggle ACC Sidang P2 untuk {{ addslashes($thesis->student->name) }}?')">
+                                    data-confirm="Ubah status ACC Sidang Pembimbing 2 untuk {{ addslashes($thesis->student->name) }}?"
+                                    data-confirm-title="Toggle ACC Sidang P2"
+                                    data-confirm-type="primary">
                                     @csrf
                                     <input type="hidden" name="slot" value="p2">
                                     <button type="submit" class="inline-flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P2">

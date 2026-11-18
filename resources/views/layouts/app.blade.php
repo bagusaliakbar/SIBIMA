@@ -164,39 +164,44 @@
                 filter: drop-shadow(0 0 2px rgba(249, 115, 22, 0.7)) !important;
             }
 
-            /* Custom Sleek Dark Scrollbar */
+            /* Custom Sleek Scrollbar (Light, Dark, & Dark Sidebar aware) */
             .custom-scrollbar::-webkit-scrollbar {
-                width: 5px;
-                height: 5px;
+                width: 6px;
+                height: 6px;
             }
             .custom-scrollbar::-webkit-scrollbar-track {
                 background: transparent;
             }
             .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.15);
+                background: rgba(100, 116, 139, 0.28);
                 border-radius: 9999px;
             }
             .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                background: rgba(255, 255, 255, 0.35);
+                background: rgba(100, 116, 139, 0.48);
             }
-            /* Soft Bordered Table & Sticky Header */
-            table thead th {
+            .dark .custom-scrollbar::-webkit-scrollbar-thumb,
+            aside .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.16);
+            }
+            .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover,
+            aside .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.34);
+            }
+
+            /* Soft Bordered Table & Sticky Header (Scoped without !important override) */
+            .overflow-x-auto table thead th {
                 position: sticky;
                 top: 0;
                 z-index: 10;
-                background-color: #f8fafc;
-            }
-            .dark table thead th {
-                background-color: #0f172a;
             }
             table tbody tr {
                 transition: background-color 0.15s ease-in-out;
             }
             table tbody tr:hover {
-                background-color: #f1f5f9 !important;
+                background-color: rgba(241, 245, 249, 0.75);
             }
             .dark table tbody tr:hover {
-                background-color: #1e293b !important;
+                background-color: rgba(30, 41, 59, 0.7);
             }
         </style>
         <script>
@@ -1652,6 +1657,7 @@
 
         <x-toast />
 
+        @include('components.confirm-dialog')
         @include('components.changelog-modal')
         @include('components.bug-report-widget')
 
@@ -1662,8 +1668,8 @@
         }"
         @open-audit-modal.window="data = $event.detail; open = true"
         x-show="open" 
-        class="fixed inset-0 overflow-hidden"
-        style="display: none; z-index: 99999 !important;"
+        class="fixed inset-0 overflow-hidden z-[55]"
+        style="display: none;"
         x-cloak>
             <!-- Backdrop Overlay -->
             <div x-show="open"
@@ -1674,10 +1680,9 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  @click="open = false" 
-                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
-                 style="z-index: 99999 !important;"></div>
+                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity z-[55]"></div>
 
-            <div class="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-none" style="z-index: 100000 !important;">
+            <div class="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-none z-[56]">
                 <div x-show="open"
                      x-transition:enter="transform transition ease-in-out duration-300 sm:duration-400"
                      x-transition:enter-start="translate-x-full"

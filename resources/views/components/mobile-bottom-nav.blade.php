@@ -64,7 +64,7 @@
     }
 @endphp
 
-<nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-lg shadow-slate-950/5 transition-colors duration-300 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-lg shadow-slate-950/5 transition-colors duration-300 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
      aria-label="Navigasi Bawah Mobile">
     <div class="h-14 grid grid-cols-5 items-center px-1 max-w-lg mx-auto">
         <!-- 1. Dashboard -->

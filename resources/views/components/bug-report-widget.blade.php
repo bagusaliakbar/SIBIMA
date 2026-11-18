@@ -4,7 +4,7 @@
     position: fixed !important;
     bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)) !important;
     right: 16px !important;
-    z-index: 9999999 !important;
+    z-index: 35 !important;
     pointer-events: auto !important;
     display: flex !important;
     flex-direction: column !important;
@@ -247,19 +247,19 @@ window.switchBugReportType = function(type) {
     if (catSelect) {
         if (isFeature) {
             catSelect.innerHTML = `
-                <option value="feature_request" selected>💡 Fitur Baru yang Belum Ada di Sistem (Default)</option>
-                <option value="improvement">🚀 Peningkatan / Penyempurnaan Fitur yang Ada</option>
-                <option value="ui_ux">🎨 Saran Tampilan / Desain (UI/UX)</option>
-                <option value="other">💡 Ide & Masukan Lainnya</option>
+                <option value="feature_request" selected>Fitur Baru yang Belum Ada di Sistem (Default)</option>
+                <option value="improvement">Peningkatan / Penyempurnaan Fitur yang Ada</option>
+                <option value="ui_ux">Saran Tampilan / Desain (UI/UX)</option>
+                <option value="other">Ide &amp; Masukan Lainnya</option>
             `;
         } else {
             catSelect.innerHTML = `
-                <option value="functionality" selected>⚙️ Fitur / Fungsi Eror (Default)</option>
-                <option value="ui_ux">🎨 Tampilan / Layout / UI Rusak</option>
-                <option value="performance">⚡ Kinerja / Sangat Lambat / Hang</option>
-                <option value="data_error">📄 Ketidaksesuaian Data / Nilai</option>
-                <option value="security">🔒 Izin Akses / Akun / Keamanan</option>
-                <option value="other">❓ Masalah Lainnya</option>
+                <option value="functionality" selected>Fitur / Fungsi Eror (Default)</option>
+                <option value="ui_ux">Tampilan / Layout / UI Rusak</option>
+                <option value="performance">Kinerja / Sangat Lambat / Hang</option>
+                <option value="data_error">Ketidaksesuaian Data / Nilai</option>
+                <option value="security">Izin Akses / Akun / Keamanan</option>
+                <option value="other">Masalah Lainnya</option>
             `;
         }
     }
@@ -270,17 +270,17 @@ window.switchBugReportType = function(type) {
     if (sevSelect) {
         if (isFeature) {
             sevSelect.innerHTML = `
-                <option value="low">🟢 Saran Tambahan (Nice to Have)</option>
-                <option value="medium" selected>🟡 Cukup Dibutuhkan (Mempermudah Aktivitas)</option>
-                <option value="high">🟠 Sangat Dibutuhkan (Penting untuk Alur Kerja)</option>
-                <option value="critical">🔥 Prioritas Utama (Sangat Mendesak)</option>
+                <option value="low">Saran Tambahan (Nice to Have)</option>
+                <option value="medium" selected>Cukup Dibutuhkan (Mempermudah Aktivitas)</option>
+                <option value="high">Sangat Dibutuhkan (Penting untuk Alur Kerja)</option>
+                <option value="critical">Prioritas Utama (Sangat Mendesak)</option>
             `;
         } else {
             sevSelect.innerHTML = `
-                <option value="low">🟢 Rendah (Minor / Masalah Estetika)</option>
-                <option value="medium" selected>🟡 Sedang (Fitur Lambat / Agak Terganggu)</option>
-                <option value="high">🟠 Tinggi (Fitur Utama Gagal / Eror 500)</option>
-                <option value="critical">🔴 Kritis (Fatal / Seluruh Sistem Terkunci)</option>
+                <option value="low">Rendah (Minor / Masalah Estetika)</option>
+                <option value="medium" selected>Sedang (Fitur Lambat / Agak Terganggu)</option>
+                <option value="high">Tinggi (Fitur Utama Gagal / Eror 500)</option>
+                <option value="critical">Kritis (Fatal / Seluruh Sistem Terkunci)</option>
             `;
         }
     }
@@ -507,8 +507,8 @@ window.fetchMyReportsDirect = async function() {
                 listContainer.innerHTML = data.reports.map(item => {
                     const isFeature = item.is_feature_request || (item.ticket_number && item.ticket_number.startsWith('REQ-'));
                     const typeBadge = isFeature
-                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60">💡 USULAN FITUR</span>`
-                        : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">🐞 BUG SISTEM</span>`;
+                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60">USULAN FITUR</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">BUG SISTEM</span>`;
                     const ticketColor = isFeature ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400';
 
                     return `
@@ -744,7 +744,7 @@ document.addEventListener('keydown', function(e) {
 <!-- MODAL 1: FORMULIR PELAPORAN BUG                                            -->
 <!-- ========================================================================= -->
 <div id="bug-report-modal"
-     style="display: none; position: fixed !important; inset: 0 !important; z-index: 99999999 !important; overflow-y: auto;"
+     style="display: none; position: fixed !important; inset: 0 !important; z-index: 65 !important; overflow-y: auto;"
      role="dialog"
      aria-modal="true">
     
@@ -844,12 +844,12 @@ document.addEventListener('keydown', function(e) {
                                 id="bug-report-category-select"
                                 required
                                 class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
-                            <option value="functionality" selected>⚙️ Fitur / Fungsi Eror (Default)</option>
-                            <option value="ui_ux">🎨 Tampilan / Layout / UI Rusak</option>
-                            <option value="performance">⚡ Kinerja / Sangat Lambat / Hang</option>
-                            <option value="data_error">📄 Ketidaksesuaian Data / Nilai</option>
-                            <option value="security">🔒 Izin Akses / Akun / Keamanan</option>
-                            <option value="other">❓ Masalah Lainnya</option>
+                            <option value="functionality" selected>Fitur / Fungsi Eror (Default)</option>
+                            <option value="ui_ux">Tampilan / Layout / UI Rusak</option>
+                            <option value="performance">Kinerja / Sangat Lambat / Hang</option>
+                            <option value="data_error">Ketidaksesuaian Data / Nilai</option>
+                            <option value="security">Izin Akses / Akun / Keamanan</option>
+                            <option value="other">Masalah Lainnya</option>
                         </select>
                     </div>
 
@@ -862,10 +862,10 @@ document.addEventListener('keydown', function(e) {
                                 id="bug-report-severity-select"
                                 required
                                 class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
-                            <option value="low">🟢 Rendah (Minor / Masalah Estetika)</option>
-                            <option value="medium" selected>🟡 Sedang (Fitur Lambat / Agak Terganggu)</option>
-                            <option value="high">🟠 Tinggi (Fitur Utama Gagal / Eror 500)</option>
-                            <option value="critical">🔴 Kritis (Fatal / Seluruh Sistem Terkunci)</option>
+                            <option value="low">Rendah (Minor / Masalah Estetika)</option>
+                            <option value="medium" selected>Sedang (Fitur Lambat / Agak Terganggu)</option>
+                            <option value="high">Tinggi (Fitur Utama Gagal / Eror 500)</option>
+                            <option value="critical">Kritis (Fatal / Seluruh Sistem Terkunci)</option>
                         </select>
                     </div>
                 </div>
@@ -964,7 +964,7 @@ document.addEventListener('keydown', function(e) {
 <!-- MODAL 2: STATUS & RIWAYAT LAPORAN SAYA                                     -->
 <!-- ========================================================================= -->
 <div id="bug-history-modal"
-     style="display: none; position: fixed !important; inset: 0 !important; z-index: 99999999 !important; overflow-y: auto;"
+     style="display: none; position: fixed !important; inset: 0 !important; z-index: 65 !important; overflow-y: auto;"
      role="dialog"
      aria-modal="true">
     
@@ -1028,7 +1028,7 @@ document.addEventListener('keydown', function(e) {
                     </div>
                     <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">Belum Ada Laporan Bug</h4>
                     <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                        Anda belum pernah mengirimkan laporan kendala teknis. Gunakan tombol oranye 📝 untuk membuat laporan baru.
+                        Anda belum pernah mengirimkan laporan kendala teknis. Gunakan tombol Buat Laporan Baru di bawah untuk membuat laporan.
                     </p>
                 </div>
 
@@ -1058,7 +1058,7 @@ document.addEventListener('keydown', function(e) {
 <!-- MODAL 3: PANDUAN PELAPORAN BUG                                             -->
 <!-- ========================================================================= -->
 <div id="bug-guide-modal"
-     style="display: none; position: fixed !important; inset: 0 !important; z-index: 99999999 !important; overflow-y: auto;"
+     style="display: none; position: fixed !important; inset: 0 !important; z-index: 65 !important; overflow-y: auto;"
      role="dialog"
      aria-modal="true">
     
@@ -1127,7 +1127,7 @@ document.addEventListener('keydown', function(e) {
                     <span class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-black flex items-center justify-center shrink-0 text-[11px]">4</span>
                     <div>
                         <h5 class="font-bold text-slate-800 dark:text-slate-100 mb-0.5">Ingin Mengusulkan Fitur Baru?</h5>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">Pilih tab <strong>"💡 Usulan Fitur Baru"</strong> pada formulir pelaporan untuk ide otomatisasi, penambahan menu, atau integrasi baru.</p>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Pilih tab <strong>"Usulan Fitur Baru"</strong> pada formulir pelaporan untuk ide otomatisasi, penambahan menu, atau integrasi baru.</p>
                     </div>
                 </div>
 

@@ -75,7 +75,11 @@
                         </span>
                     </div>
 
-                    <form action="{{ route('wa-templates.toggle-global') }}" method="POST" onsubmit="return confirm('{{ $isWhatsAppGloballyEnabled ? 'Apakah Anda yakin ingin MENONAKTIFKAN seluruh pengiriman notifikasi WhatsApp di sistem SIBIMA?' : 'Apakah Anda yakin ingin MENGAKTIFKAN kembali seluruh pengiriman notifikasi WhatsApp?' }}');">
+                    <form action="{{ route('wa-templates.toggle-global') }}"
+                          method="POST"
+                          data-confirm="{{ $isWhatsAppGloballyEnabled ? 'Apakah Anda yakin ingin MENONAKTIFKAN seluruh pengiriman notifikasi WhatsApp di sistem SIBIMA?' : 'Apakah Anda yakin ingin MENGAKTIFKAN kembali seluruh pengiriman notifikasi WhatsApp?' }}"
+                          data-confirm-title="Konfirmasi Saklar WhatsApp"
+                          data-confirm-type="{{ $isWhatsAppGloballyEnabled ? 'danger' : 'emerald' }}">
                         @csrf
                         @if($isWhatsAppGloballyEnabled)
                             <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-rose-600/30 cursor-pointer">
@@ -197,7 +201,12 @@
                         </a>
 
                         @if($template->is_customized)
-                            <form action="{{ route('wa-templates.reset', $template) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengembalikan format teks ini ke versi default bawaan?');">
+                            <form action="{{ route('wa-templates.reset', $template) }}"
+                                  method="POST"
+                                  data-confirm="Apakah Anda yakin ingin mengembalikan format teks ini ke versi default bawaan?"
+                                  data-confirm-title="Reset Template WhatsApp"
+                                  data-confirm-type="warning"
+                                  data-confirm-button="Ya, Reset">
                                 @csrf
                                 <button type="submit" 
                                         title="Reset ke Default Bawaan"
@@ -304,7 +313,12 @@
                                         </a>
 
                                         @if($template->is_customized)
-                                            <form action="{{ route('wa-templates.reset', $template) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengembalikan format teks ini ke versi default bawaan?');">
+                                            <form action="{{ route('wa-templates.reset', $template) }}"
+                                  method="POST"
+                                  data-confirm="Apakah Anda yakin ingin mengembalikan format teks ini ke versi default bawaan?"
+                                  data-confirm-title="Reset Template WhatsApp"
+                                  data-confirm-type="warning"
+                                  data-confirm-button="Ya, Reset">
                                                 @csrf
                                                 <button type="submit" 
                                                         title="Reset ke Default Bawaan"

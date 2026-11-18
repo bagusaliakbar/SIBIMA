@@ -32,7 +32,9 @@
 
                 <form action="{{ route('admin.bug-reports.toggle-feature') }}"
                       method="POST"
-                      onsubmit="return confirm('{{ $isBugReportEnabled ? 'Sembunyikan tombol kapsul melayang (Floating Lapor Bug) di seluruh halaman?' : 'Tampilkan kembali tombol kapsul melayang (Floating Lapor Bug) di seluruh halaman?' }}');">
+                      data-confirm="{{ $isBugReportEnabled ? 'Sembunyikan tombol kapsul melayang (Floating Lapor Bug) di seluruh halaman?' : 'Tampilkan kembali tombol kapsul melayang (Floating Lapor Bug) di seluruh halaman?' }}"
+                      data-confirm-title="Konfirmasi Floating Lapor Bug"
+                      data-confirm-type="{{ $isBugReportEnabled ? 'warning' : 'emerald' }}">
                     @csrf
                     <button type="submit"
                             class="h-10 inline-flex items-center gap-2 px-4 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer {{ $isBugReportEnabled ? 'bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 dark:bg-slate-900 dark:hover:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60' : 'bg-orange-600 hover:bg-orange-700 text-white' }}">
@@ -120,32 +122,32 @@
 
                 <!-- Filter Jenis Laporan -->
                 <div>
-                    <select name="type" onchange="this.form.submit()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
+                    <select name="type" onchange="this.form.submit()" class="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
                         <option value="all" {{ request('type') === 'all' || !request('type') ? 'selected' : '' }}>Semua Jenis</option>
-                        <option value="bug" {{ request('type') === 'bug' ? 'selected' : '' }}>🐞 Kendala / Bug</option>
-                        <option value="feature" {{ request('type') === 'feature' ? 'selected' : '' }}>💡 Usulan Fitur</option>
+                        <option value="bug" {{ request('type') === 'bug' ? 'selected' : '' }}>Kendala / Bug</option>
+                        <option value="feature" {{ request('type') === 'feature' ? 'selected' : '' }}>Usulan Fitur</option>
                     </select>
                 </div>
 
                 <!-- Filter Status -->
                 <div>
-                    <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
+                    <select name="status" onchange="this.form.submit()" class="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
                         <option value="all" {{ request('status') === 'all' || !request('status') ? 'selected' : '' }}>Semua Status</option>
-                        <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>🟡 Menunggu Review</option>
-                        <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>🔵 Sedang Diproses</option>
-                        <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>🟢 Selesai / Teratasi</option>
-                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>⚪ Ditolak / Belum Diterapkan</option>
+                        <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>Menunggu Review</option>
+                        <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>Sedang Diproses</option>
+                        <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>Selesai / Teratasi</option>
+                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak / Belum Diterapkan</option>
                     </select>
                 </div>
 
                 <!-- Filter Severity -->
                 <div>
-                    <select name="severity" onchange="this.form.submit()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
+                    <select name="severity" onchange="this.form.submit()" class="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500">
                         <option value="all" {{ request('severity') === 'all' || !request('severity') ? 'selected' : '' }}>Semua Urgensi</option>
-                        <option value="critical" {{ request('severity') === 'critical' ? 'selected' : '' }}>🔴 Kritis (Fatal)</option>
-                        <option value="high" {{ request('severity') === 'high' ? 'selected' : '' }}>🟠 Tinggi (Mayor)</option>
-                        <option value="medium" {{ request('severity') === 'medium' ? 'selected' : '' }}>🟡 Sedang (Normal)</option>
-                        <option value="low" {{ request('severity') === 'low' ? 'selected' : '' }}>🟢 Rendah (Minor)</option>
+                        <option value="critical" {{ request('severity') === 'critical' ? 'selected' : '' }}>Kritis (Fatal)</option>
+                        <option value="high" {{ request('severity') === 'high' ? 'selected' : '' }}>Tinggi (Mayor)</option>
+                        <option value="medium" {{ request('severity') === 'medium' ? 'selected' : '' }}>Sedang (Normal)</option>
+                        <option value="low" {{ request('severity') === 'low' ? 'selected' : '' }}>Rendah (Minor)</option>
                     </select>
                 </div>
 
@@ -159,9 +161,10 @@
 
                     @if(request()->anyFilled(['search', 'type', 'status', 'severity', 'role']))
                         <a href="{{ route('admin.bug-reports.index') }}" 
-                           class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs font-bold transition-colors shrink-0"
-                           title="Reset Filter">
-                            ✕
+                           class="h-10 w-10 inline-flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 transition-colors shrink-0"
+                           title="Reset Filter"
+                           aria-label="Reset Filter">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </a>
                     @endif
                 </div>
@@ -190,11 +193,13 @@
                                 <div class="flex items-center gap-1.5 mb-1">
                                     @if($report->is_feature_request || str_starts_with($report->ticket_number, 'REQ-'))
                                         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
-                                            💡 FITUR
+                                            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                            <span>FITUR</span>
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
-                                            🐞 BUG
+                                            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                            <span>BUG</span>
                                         </span>
                                     @endif
                                 </div>
@@ -285,7 +290,12 @@
                                     </button>
 
                                     @if(Auth::user()->role === 'admin')
-                                        <form action="{{ route('admin.bug-reports.destroy', $report->id) }}" method="POST" onsubmit="return confirm('Hapus laporan bug ini secara permanen?')">
+                                        <form action="{{ route('admin.bug-reports.destroy', $report->id) }}"
+                                              method="POST"
+                                              data-confirm="Hapus laporan bug ini secara permanen?"
+                                              data-confirm-title="Hapus Laporan Bug"
+                                              data-confirm-type="danger"
+                                              data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Laporan">
@@ -443,10 +453,10 @@
                                     Perbarui Status Tiket:
                                 </label>
                                 <select id="brm-status-select" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold focus:ring-2 focus:ring-orange-500">
-                                    <option value="open">🟡 Menunggu Review (Open)</option>
-                                    <option value="in_progress">🔵 Sedang Ditangani (In Progress)</option>
-                                    <option value="resolved">🟢 Selesai / Teratasi (Resolved)</option>
-                                    <option value="rejected">⚪ Ditolak / Bukan Bug (Rejected)</option>
+                                    <option value="open">Menunggu Review (Open)</option>
+                                    <option value="in_progress">Sedang Ditangani (In Progress)</option>
+                                    <option value="resolved">Selesai / Teratasi (Resolved)</option>
+                                    <option value="rejected">Ditolak / Bukan Bug (Rejected)</option>
                                 </select>
                             </div>
 
@@ -532,10 +542,10 @@
                 if (typeBadge) {
                     if (isReq) {
                         typeBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
-                        typeBadge.innerText = '💡 USULAN FITUR';
+                        typeBadge.innerText = 'USULAN FITUR';
                     } else {
                         typeBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
-                        typeBadge.innerText = '🐞 BUG SISTEM';
+                        typeBadge.innerText = 'BUG SISTEM';
                     }
                 }
 
@@ -555,17 +565,17 @@
                 if (statusSelect) {
                     if (isReq) {
                         statusSelect.innerHTML = `
-                            <option value="open">🟡 Menunggu Telaah (Ide Baru)</option>
-                            <option value="in_progress">🔵 Sedang Dikembangkan (In Progress)</option>
-                            <option value="resolved">🟢 Selesai / Diimplementasikan (Done)</option>
-                            <option value="rejected">⚪ Ditolak / Belum Dapat Diterapkan</option>
+                            <option value="open">Menunggu Telaah (Ide Baru)</option>
+                            <option value="in_progress">Sedang Dikembangkan (In Progress)</option>
+                            <option value="resolved">Selesai / Diimplementasikan (Done)</option>
+                            <option value="rejected">Ditolak / Belum Dapat Diterapkan</option>
                         `;
                     } else {
                         statusSelect.innerHTML = `
-                            <option value="open">🟡 Menunggu Review (Open)</option>
-                            <option value="in_progress">🔵 Sedang Ditangani (In Progress)</option>
-                            <option value="resolved">🟢 Selesai / Teratasi (Resolved)</option>
-                            <option value="rejected">⚪ Ditolak / Bukan Bug (Rejected)</option>
+                            <option value="open">Menunggu Review (Open)</option>
+                            <option value="in_progress">Sedang Ditangani (In Progress)</option>
+                            <option value="resolved">Selesai / Teratasi (Resolved)</option>
+                            <option value="rejected">Ditolak / Bukan Bug (Rejected)</option>
                         `;
                     }
                 }

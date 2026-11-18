@@ -33,7 +33,13 @@
 
                 @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
                     <!-- Sync Skripsi Lulus SIBIMA -->
-                    <form action="{{ route('repositories.sync-completed') }}" method="POST" class="inline" onsubmit="return confirm('Tarik dan arsipkan semua skripsi mahasiswa yang telah lulus/completed di SIBIMA ke katalog pustaka?')">
+                    <form action="{{ route('repositories.sync-completed') }}"
+                          method="POST"
+                          class="inline"
+                          data-confirm="Tarik dan arsipkan semua skripsi mahasiswa yang telah lulus/completed di SIBIMA ke katalog pustaka?"
+                          data-confirm-title="Sinkronisasi Skripsi SIBIMA"
+                          data-confirm-type="emerald"
+                          data-confirm-button="Ya, Sinkronkan">
                         @csrf
                         <button type="submit"
                                 class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 rounded-xl text-xs font-bold shadow-2xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
