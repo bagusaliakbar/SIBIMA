@@ -381,7 +381,7 @@
                     .catch(error => {
                         console.error('Error sending message:', error);
                         messageInput.value = text;
-                        alert('Gagal mengirim pesan. Silakan coba lagi.');
+                        window.sibimaToast('Gagal mengirim pesan. Silakan coba lagi.', 'error', 'Gagal Mengirim');
                     })
                     .finally(() => {
                         isSending = false;
@@ -407,7 +407,7 @@
                     .catch(err => {
                         console.error('Error sending message:', err);
                         messageInput.value = text;
-                        alert('Gagal mengirim pesan. Silakan coba lagi.');
+                        window.sibimaToast('Gagal mengirim pesan. Silakan coba lagi.', 'error', 'Gagal Mengirim');
                     })
                     .finally(() => {
                         isSending = false;

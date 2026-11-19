@@ -602,7 +602,7 @@
                     },
                     applyBatchFolderUrl() {
                         if (!this.batchFolderUrl || !this.batchFolderUrl.trim().startsWith('http')) {
-                            alert('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)');
+                            window.sibimaToast('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)', 'warning', 'Tautan Tidak Valid');
                             return;
                         }
                         const url = this.batchFolderUrl.trim();
@@ -617,7 +617,7 @@
                                 this.files[field] = text.trim();
                             }
                         } catch (e) {
-                            alert('Gunakan tombol pintasan Ctrl + V untuk menempelkan link.');
+                            window.sibimaToast('Gunakan tombol pintasan Ctrl + V untuk menempelkan link.', 'info', 'Pintasan Tempel');
                         }
                     },
                     isDrive(url) {

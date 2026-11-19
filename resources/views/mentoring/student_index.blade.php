@@ -437,10 +437,15 @@
                                                         Ganti
                                                     </button>
                                                     {{-- Hapus dokumen --}}
-                                                    <form action="{{ route('mentoring-sessions.delete-document', $session->id) }}" method="POST">
+                                                    <form action="{{ route('mentoring-sessions.delete-document', $session->id) }}"
+                                                          method="POST"
+                                                          data-confirm="Yakin ingin menghapus dokumen ini?"
+                                                          data-confirm-title="Hapus Dokumen Bimbingan"
+                                                          data-confirm-type="danger"
+                                                          data-confirm-button="Ya, Hapus">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" onclick="return confirm('Yakin ingin menghapus dokumen ini?');" class="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-slate-700 border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors relative z-10">
+                                                        <button type="submit" class="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-slate-700 border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors relative z-10 cursor-pointer">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                             Hapus
                                                         </button>
@@ -865,10 +870,16 @@
                                                 <div class="flex items-center gap-1.5">
                                                     <button type="button" @click="uploading = !uploading" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline">Ganti</button>
                                                     <span class="text-slate-300 dark:text-slate-600">•</span>
-                                                    <form action="{{ route('mentoring-sessions.delete-document', $session->id) }}" method="POST" class="inline">
+                                                    <form action="{{ route('mentoring-sessions.delete-document', $session->id) }}"
+                                                          method="POST"
+                                                          class="inline"
+                                                          data-confirm="Yakin ingin menghapus dokumen ini?"
+                                                          data-confirm-title="Hapus Dokumen Bimbingan"
+                                                          data-confirm-type="danger"
+                                                          data-confirm-button="Ya, Hapus">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" onclick="return confirm('Yakin ingin menghapus dokumen ini?');" class="text-[10px] font-bold text-rose-600 dark:text-rose-400 hover:underline">Hapus</button>
+                                                        <button type="submit" class="text-[10px] font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer">Hapus</button>
                                                     </form>
                                                 </div>
                                             @else
@@ -985,8 +996,7 @@
             <!-- Modal Izin Bimbingan -->
             <template x-teleport="body">
                 <div x-show="permissionModalOpen" 
-                     class="fixed inset-0 overflow-y-auto text-left" 
-                     style="z-index: 99999 !important;" 
+                     class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0"
@@ -999,8 +1009,7 @@
                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                         </div>
                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative" 
-                             style="z-index: 100000 !important;">
+                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-10">
                             <form :action="'/mentoring-sessions/' + activeSessionId + '/confirm-attendance'" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="permission">
@@ -1052,8 +1061,7 @@
             <!-- Modal Pembatalan Jadwal Bimbingan (Mahasiswa) -->
             <template x-teleport="body">
                 <div x-show="cancelModalOpen" 
-                     class="fixed inset-0 overflow-y-auto text-left" 
-                     style="z-index: 99999 !important;" 
+                     class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0"
@@ -1066,8 +1074,7 @@
                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                         </div>
                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative" 
-                             style="z-index: 100000 !important;">
+                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-10">
                             <form :action="'{{ url('mentoring-sessions') }}/' + cancelData.id" method="POST">
                                 @csrf
                                 @method('DELETE')

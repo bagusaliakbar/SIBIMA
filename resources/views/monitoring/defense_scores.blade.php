@@ -23,7 +23,7 @@
         },
         downloadSelected() {
             if (this.selectedIds.length === 0) {
-                alert('Pilih minimal satu mahasiswa.');
+                window.sibimaToast('Pilih minimal satu mahasiswa.', 'warning', 'Belum Ada Pilihan');
                 return;
             }
             window.location.href = '{{ route('monitoring.batch-export-berita-acara') }}?category=defense&ids=' + this.selectedIds.join(',');

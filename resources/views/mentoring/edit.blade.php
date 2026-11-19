@@ -285,7 +285,7 @@
                             this.location = text.trim();
                         }
                     } catch (e) {
-                        alert('Silakan tekan Ctrl + V untuk menempelkan tautan.');
+                        window.sibimaToast('Silakan tekan Ctrl + V untuk menempelkan tautan.', 'info', 'Pintasan Tempel');
                     }
                 },
                 isGoogleMeet() {
@@ -573,8 +573,7 @@
         <template x-teleport="body">
             <div x-show="cancelModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto" 
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto" 
                  aria-labelledby="modal-title" 
                  role="dialog" 
                  aria-modal="true">
@@ -601,8 +600,7 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700 relative"
-                         style="z-index: 100000 !important;">
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700 relative z-10">
                         
                         <form action="{{ route('mentoring-sessions.destroy', $mentoringSession->id) }}" method="POST" class="p-6 sm:p-8 space-y-5">
                             @csrf
@@ -710,8 +708,7 @@
         <template x-teleport="body">
             <div x-show="addStudentModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto" 
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto" 
                  aria-labelledby="modal-add-student-title" 
                  role="dialog" 
                  aria-modal="true">
@@ -738,8 +735,7 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative"
-                         style="z-index: 100000 !important;">
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative z-10">
                         
                         <form action="{{ route('mentoring-sessions.add-students', $mentoringSession->id) }}" method="POST" class="flex flex-col overflow-hidden max-h-[85vh]">
                             @csrf

@@ -161,7 +161,7 @@
                     }
 
                     if (this.isLecturer && this.selectionMode === 'multiple' && this.selectedThesisIds.length === 0) {
-                        alert('Silakan pilih minimal 1 mahasiswa bimbingan.');
+                        window.sibimaToast('Silakan pilih minimal 1 mahasiswa bimbingan.', 'warning', 'Mahasiswa Belum Dipilih');
                         return;
                     }
 
@@ -310,7 +310,7 @@
                             this.location = text.trim();
                         }
                     } catch (e) {
-                        alert('Silakan tekan Ctrl + V untuk menempelkan tautan.');
+                        window.sibimaToast('Silakan tekan Ctrl + V untuk menempelkan tautan.', 'info', 'Pintasan Tempel');
                     }
                 },
                 isGoogleMeet() {

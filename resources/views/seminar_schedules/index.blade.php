@@ -619,7 +619,14 @@
                                             @csrf
                                             @method('DELETE')
                                         </form>
-                                        <button type="button" onclick="if(confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) document.getElementById('delete-seminar-schedule-{{ $schedule->id }}').submit();" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/del cursor-pointer" title="Hapus">
+                                        <button type="button"
+                                                data-confirm-target="delete-seminar-schedule-{{ $schedule->id }}"
+                                                data-confirm="Apakah Anda yakin ingin menghapus jadwal ini?"
+                                                data-confirm-title="Hapus Jadwal Seminar"
+                                                data-confirm-type="danger"
+                                                data-confirm-button="Ya, Hapus"
+                                                class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/del cursor-pointer"
+                                                title="Hapus">
                                             <svg class="w-5 h-5 group-hover/del:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>

@@ -75,7 +75,7 @@
              },
              applyRegBatchFolder() {
                  if (!this.regBatchFolderUrl || !this.regBatchFolderUrl.trim().startsWith('http')) {
-                     alert('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)');
+                     window.sibimaToast('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)', 'warning', 'Tautan Tidak Valid');
                      return;
                  }
                  const url = this.regBatchFolderUrl.trim();
@@ -297,7 +297,7 @@
 
                     <!-- Upload Template Modal -->
                     <template x-teleport="body">
-                        <div x-show="open" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>
+                        <div x-show="open" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                             <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" @click="open = false"></div>
                             <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
                                 <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 my-8" @click.stop>
@@ -801,9 +801,9 @@
             @endif
         </div>
 
-        {{-- GLOBAL VIEW FILES MODAL (TELEPORTED TO BODY, GUARANTEED TOP LAYER) --}}
+        {{-- GLOBAL VIEW FILES MODAL --}}
         <template x-teleport="body">
-            <div x-show="showFiles" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>
+            <div x-show="showFiles" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" @click="showFiles = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
@@ -851,9 +851,9 @@
             </div>
         </template>
 
-        {{-- GLOBAL WIDE 2-COLUMN VALIDATION MODAL (TELEPORTED TO BODY, GUARANTEED TOP LAYER) --}}
+        {{-- GLOBAL WIDE 2-COLUMN VALIDATION MODAL --}}
         <template x-teleport="body">
-            <div x-show="openValidation" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>
+            <div x-show="openValidation" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" @click="openValidation = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
@@ -993,7 +993,7 @@
 
         {{-- GLOBAL PREVIEW APPLICATION MODAL WITH IN-APP VIEWER (20 BERKAS) --}}
         <template x-teleport="body">
-            <div x-show="openPreview" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>
+            <div x-show="openPreview" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" @click="openPreview = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-3 sm:p-5 text-center">
@@ -1260,7 +1260,7 @@
         {{-- MODAL: DAFTARKAN SIDANG OLEH ADMIN/KAPRODI --}}
         {{-- ========================================== --}}
         <template x-teleport="body">
-            <div x-show="openRegisterModal" class="fixed inset-0 overflow-y-auto" style="z-index: 99999 !important;" x-cloak>
+            <div x-show="openRegisterModal" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" @click="openRegisterModal = false"></div>
                 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">

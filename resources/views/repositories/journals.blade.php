@@ -505,41 +505,48 @@
                     <div x-data="{ syncing: false }" class="shrink-0">
                         <button type="button" 
                                 @click="if(!syncing) {
-                                    if(confirm('Mulai sinkronisasi seluruh artikel terbaru dari Portal OJS FASILKOM UNSUB (ejournal.unsub.ac.id)?')) {
-                                        syncing = true;
-                                        fetch('{{ route('repositories.journals.sync-fasilkom') }}', {
-                                            method: 'POST',
-                                            headers: {
-                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                'Accept': 'application/json',
-                                                'Content-Type': 'application/json'
-                                            }
-                                        })
-                                        .then(r => r.json())
-                                        .then(d => {
-                                            syncing = false;
-                                            window.dispatchEvent(new CustomEvent('notify', { 
-                                                detail: { 
-                                                    title: d.success ? 'Sinkronisasi Berhasil' : 'Gagal Sinkronisasi', 
-                                                    message: d.message, 
-                                                    type: d.success ? 'success' : 'error' 
-                                                } 
-                                            }));
-                                            if (d.success) {
-                                                setTimeout(() => window.location.reload(), 1500);
-                                            }
-                                        })
-                                        .catch(err => {
-                                            syncing = false;
-                                            window.dispatchEvent(new CustomEvent('notify', { 
-                                                detail: { 
-                                                    title: 'Kesalahan Jaringan', 
-                                                    message: 'Tidak dapat menghubungi server OJS FASILKOM UNSUB.', 
-                                                    type: 'error' 
-                                                } 
-                                            }));
-                                        });
-                                    }
+                                    const self = $data;
+                                    window.sibimaConfirm({
+                                        title: 'Sinkronisasi OJS FASILKOM',
+                                        message: 'Mulai sinkronisasi seluruh artikel terbaru dari Portal OJS FASILKOM UNSUB (ejournal.unsub.ac.id)?',
+                                        type: 'primary',
+                                        confirmText: 'Ya, Sinkronkan',
+                                        onConfirm: () => {
+                                            self.syncing = true;
+                                            fetch('{{ route('repositories.journals.sync-fasilkom') }}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                    'Accept': 'application/json',
+                                                    'Content-Type': 'application/json'
+                                                }
+                                            })
+                                            .then(r => r.json())
+                                            .then(d => {
+                                                self.syncing = false;
+                                                window.dispatchEvent(new CustomEvent('notify', { 
+                                                    detail: { 
+                                                        title: d.success ? 'Sinkronisasi Berhasil' : 'Gagal Sinkronisasi', 
+                                                        message: d.message, 
+                                                        type: d.success ? 'success' : 'error' 
+                                                    } 
+                                                }));
+                                                if (d.success) {
+                                                    setTimeout(() => window.location.reload(), 1500);
+                                                }
+                                            })
+                                            .catch(() => {
+                                                self.syncing = false;
+                                                window.dispatchEvent(new CustomEvent('notify', { 
+                                                    detail: { 
+                                                        title: 'Kesalahan Jaringan', 
+                                                        message: 'Tidak dapat menghubungi server OJS FASILKOM UNSUB.', 
+                                                        type: 'error' 
+                                                    } 
+                                                }));
+                                            });
+                                        }
+                                    });
                                 }"
                                 :disabled="syncing"
                                 class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border shadow-xs whitespace-nowrap cursor-pointer"
@@ -1065,18 +1072,15 @@
         <template x-teleport="body">
             <div x-show="citationModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
                  role="dialog" 
                  aria-modal="true">
                 <!-- Backdrop -->
                 <div class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm transition-opacity" 
-                     style="z-index: 99999 !important;"
                      @click="citationModalOpen = false"></div>
 
-            <div class="flex min-h-screen items-center justify-center p-4" style="z-index: 100000 !important;">
-                <div class="relative bg-white dark:bg-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200/80 dark:border-slate-700 space-y-5"
-                     style="z-index: 100001 !important;"
+            <div class="relative z-10 flex min-h-screen items-center justify-center p-4">
+                <div class="relative z-20 bg-white dark:bg-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200/80 dark:border-slate-700 space-y-5"
                      @click.stop>
                     
                     <!-- Modal Header -->

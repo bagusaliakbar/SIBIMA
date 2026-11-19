@@ -9,6 +9,7 @@ return [
             'date' => '13–18 Nov 2026',
             'badge' => 'Terbaru',
             'badge_type' => 'emerald',
+            'categories' => ['feature', 'ux'],
             'title' => 'Kartu Bimbingan Digital, Footer & Penyempurnaan UX',
             'items' => [
                 'Penambahan Kartu Bimbingan Digital bergaya kartu pengenal/KTM (sisi depan, kartu kendali 8 sesi, QR verifikasi, & cetak kartu) di halaman Profil.',
@@ -23,6 +24,7 @@ return [
             'date' => '07–12 Nov 2026',
             'badge' => 'Rilis Fitur',
             'badge_type' => 'blue',
+            'categories' => ['feature', 'perf'],
             'title' => 'Stepper 3D Mahasiswa & Papan Ucapan Ulang Tahun',
             'items' => [
                 'Visualisasi stepper 3D isometrik tahapan skripsi pada dashboard mahasiswa.',
@@ -36,6 +38,7 @@ return [
             'date' => '16–31 Okt 2026',
             'badge' => 'UI/UX & Revisi',
             'badge_type' => 'indigo',
+            'categories' => ['feature', 'ux'],
             'title' => 'Ruang Revisi 2 Kolom, Penilaian Interaktif & Desain Enterprise',
             'items' => [
                 'Penerapan sistem desain Clean Enterprise pada dashboard 3 peran, logbook, yudisium/SKL, serta navigasi bawah mobile PWA.',
@@ -49,6 +52,7 @@ return [
             'date' => '01–15 Okt 2026',
             'badge' => 'Penjadwalan & Performa',
             'badge_type' => 'amber',
+            'categories' => ['feature', 'perf'],
             'title' => 'Simulasi Jadwal, Ekspor Massal & Optimasi Performa Global',
             'items' => [
                 'Simulasi penjadwalan seminar & sidang otomatis, import jadwal via Excel, cetak batch seluruh ruangan PDF, serta ekspor Word.',
@@ -62,6 +66,7 @@ return [
             'date' => 'September 2026',
             'badge' => 'Katalog Ilmiah & Analitik',
             'badge_type' => 'blue',
+            'categories' => ['feature'],
             'title' => 'Pustaka Jurnal AI, PDF Reader Naskah & Widget Lapor Bug',
             'items' => [
                 'Katalog Ilmiah terintegrasi (OpenAlex, Jurnal GLOBAL FASILKOM UNSUB, GARUDA, DOAJ, Crossref, Google Scholar) dilengkapi Smart AI Rekomendasi/TL;DR, filter SINTA, dan ekspor sitasi .RIS/Word.',
@@ -75,6 +80,7 @@ return [
             'date' => 'Juli–Agustus 2026',
             'badge' => 'Rilis Besar v2',
             'badge_type' => 'emerald',
+            'categories' => ['feature', 'ux'],
             'title' => 'Modernisasi SIBIMA v2, Real-time Chat & Gateway WhatsApp',
             'items' => [
                 'Pembaruan antarmuka SIBIMA v2 berbasis Laravel 12 + Tailwind + Alpine.js lengkap dengan Dark Mode dan sidebar responsif.',
@@ -88,6 +94,7 @@ return [
             'date' => 'Juni 2026',
             'badge' => 'Rilis Fitur',
             'badge_type' => 'slate',
+            'categories' => ['feature', 'ux'],
             'title' => 'Alur Seminar, Sidang Skripsi & Dukungan Mobile',
             'items' => [
                 'Implementasi manajemen pendaftaran Seminar Proposal, Sidang Akhir, penjadwalan penguji, dan pembuatan berita acara.',
@@ -99,6 +106,7 @@ return [
             'date' => 'Mei 2026',
             'badge' => 'Rilis Perdana',
             'badge_type' => 'slate',
+            'categories' => ['perf'],
             'title' => 'Peluncuran Awal Platform SIBIMA FASILKOM UNSUB',
             'items' => [
                 'Fondasi sistem manajemen skripsi: pengajuan judul, penjadwalan bimbingan, logbook, dan penilaian sidang.',

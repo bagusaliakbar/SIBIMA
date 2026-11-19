@@ -108,7 +108,7 @@
             async installApp() {
                 if (!this.deferredPrompt) {
                     // Fallback for browsers (e.g. iOS Safari) where beforeinstallprompt is not standard
-                    alert('Untuk memasang di iPhone/iPad: Tekan tombol Bagikan (Share) di Safari, lalu pilih "Tambahkan ke Layar Utama" (Add to Home Screen).');
+                    window.sibimaToast('Untuk memasang di iPhone/iPad: Tekan tombol Bagikan (Share) di Safari, lalu pilih "Tambahkan ke Layar Utama" (Add to Home Screen).', 'info', 'Panduan Pasang PWA');
                     return;
                 }
 

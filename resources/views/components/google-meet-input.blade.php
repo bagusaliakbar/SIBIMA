@@ -26,7 +26,7 @@
                 }
             }
         } catch (err) {
-            alert('Silakan gunakan tombol pintasan Ctrl + V untuk menempelkan link.');
+            window.sibimaToast('Silakan gunakan tombol pintasan Ctrl + V untuk menempelkan link.', 'info', 'Pintasan Tempel');
         }
     },
     isGoogleMeet() {

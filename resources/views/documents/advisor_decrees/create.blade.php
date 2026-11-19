@@ -644,7 +644,7 @@
 
                 saveManualStudent() {
                     if (!this.newManual.student_name || !this.newManual.student_npm || !this.newManual.title || !this.newManual.pembimbing1_name) {
-                        alert('Mohon lengkapi Nama Mahasiswa, NPM, Judul Skripsi, dan Nama Pembimbing 1.');
+                        window.sibimaToast('Mohon lengkapi Nama Mahasiswa, NPM, Judul Skripsi, dan Nama Pembimbing 1.', 'warning', 'Data Belum Lengkap');
                         return;
                     }
                     this.manualStudents.push({ ...this.newManual });
@@ -668,7 +668,7 @@
                 handleSubmit(event) {
                     if (this.selectedIds.length === 0 && this.manualStudents.length === 0) {
                         event.preventDefault();
-                        alert('Pilih minimal satu mahasiswa dari daftar atau klik "Tambah Manual" untuk menambahkan mahasiswa.');
+                        window.sibimaToast('Pilih minimal satu mahasiswa dari daftar atau klik "Tambah Manual" untuk menambahkan mahasiswa.', 'warning', 'Mahasiswa Belum Dipilih');
                         return;
                     }
                     this.isSubmitting = true;

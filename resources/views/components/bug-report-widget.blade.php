@@ -576,13 +576,13 @@ window.handleBugFormSubmit = async function(event) {
             form.reset();
             const fileNameSpan = document.getElementById('selected-file-name');
             if (fileNameSpan) fileNameSpan.innerText = '';
-            alert(data.message + ' (Nomor Tiket: ' + data.ticket_number + ')');
+            window.sibimaToast(data.message + ' (Nomor Tiket: ' + data.ticket_number + ')', 'success', 'Laporan Terkirim');
         } else {
             if (errBox) {
                 errBox.innerText = data.message || 'Gagal mengirim laporan.';
                 errBox.style.display = 'block';
             } else {
-                alert(data.message || 'Gagal mengirim laporan.');
+                window.sibimaToast(data.message || 'Gagal mengirim laporan.', 'error', 'Gagal Mengirim');
             }
         }
     } catch (e) {

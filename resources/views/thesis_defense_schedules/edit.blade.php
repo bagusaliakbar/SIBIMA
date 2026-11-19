@@ -297,21 +297,32 @@
                     });
                 },
                 submitForm(e) {
+                    const form = e.target;
+                    if (form.dataset.confirmed === '1') {
+                        delete form.dataset.confirmed;
+                        return;
+                    }
                     const unexempted = this.rows.filter(r => r.conflicts && r.conflicts.length > 0 && !r.allow_override);
                     if (unexempted.length > 0) {
+                        e.preventDefault();
                         let msg = `PERHATIAN: Terdeteksi bentrok jadwal pada ${unexempted.length} sesi yang belum diberi centang izin pengecualian:\n\n`;
-                        unexempted.forEach((r, idx) => {
+                        unexempted.forEach((r) => {
                             const name = r.thesis_id ? (this.theses.find(t => t.id == r.thesis_id)?.student?.name || 'Mahasiswa') : (r.activity_name || 'Kegiatan');
                             msg += `• Sesi (${name}):\n  ${r.conflicts.join('\n  ')}\n\n`;
                         });
                         msg += `Apakah Anda yakin ingin tetap MEMPERBARUI jadwal ini dengan memberikan pengecualian bentrok?`;
 
-                        if (!confirm(msg)) {
-                            e.preventDefault();
-                            return false;
-                        }
-                        // User setuju: tandai semua override menjadi true
-                        unexempted.forEach(r => r.allow_override = true);
+                        window.sibimaConfirm({
+                            title: 'Konfirmasi Pengecualian Bentrok',
+                            message: msg,
+                            type: 'warning',
+                            confirmText: 'Ya, Tetap Perbarui',
+                            onConfirm: () => {
+                                unexempted.forEach(r => r.allow_override = true);
+                                form.dataset.confirmed = '1';
+                                this.$nextTick(() => form.submit());
+                            }
+                        });
                     }
                 }
             }

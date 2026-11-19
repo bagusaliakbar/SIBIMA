@@ -139,4 +139,44 @@
             }
         });
     });
+
+    document.addEventListener('click', function (e) {
+        const targetTrigger = e.target.closest('[data-confirm-target]');
+        if (targetTrigger) {
+            const targetForm = document.getElementById(targetTrigger.dataset.confirmTarget);
+            if (!targetForm) return;
+            e.preventDefault();
+            window.sibimaConfirm({
+                title: targetTrigger.dataset.confirmTitle || 'Konfirmasi Tindakan',
+                message: targetTrigger.dataset.confirm || 'Apakah Anda yakin ingin melanjutkan tindakan ini?',
+                type: targetTrigger.dataset.confirmType || 'warning',
+                confirmText: targetTrigger.dataset.confirmButton || 'Ya, Lanjutkan',
+                onConfirm: () => {
+                    if (targetTrigger.dataset.confirmAction) {
+                        targetForm.action = targetTrigger.dataset.confirmAction;
+                    }
+                    targetForm.dataset.confirmed = '1';
+                    targetForm.submit();
+                }
+            });
+            return;
+        }
+
+        const link = e.target.closest('a[data-confirm]');
+        if (!link) return;
+        e.preventDefault();
+        window.sibimaConfirm({
+            title: link.dataset.confirmTitle || 'Konfirmasi Tindakan',
+            message: link.dataset.confirm,
+            type: link.dataset.confirmType || 'warning',
+            confirmText: link.dataset.confirmButton || 'Ya, Lanjutkan',
+            onConfirm: () => {
+                if (link.target === '_blank') {
+                    window.open(link.href, '_blank', 'noopener,noreferrer');
+                } else {
+                    window.location.href = link.href;
+                }
+            }
+        });
+    });
 </script>

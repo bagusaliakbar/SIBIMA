@@ -668,12 +668,12 @@
                             this.unassignedCount = data.unassigned_count || 0;
                             this.userBookmarks = data.bookmarks || [];
                         } else {
-                            alert(data.message || 'Terjadi kesalahan saat memuat data.');
+                            window.sibimaToast(data.message || 'Terjadi kesalahan saat memuat data.', 'error', 'Gagal Memuat');
                             this.closeModal();
                         }
                     } catch (err) {
                         console.error('Error fetching user collection:', err);
-                        alert('Terjadi kesalahan koneksi saat memuat data koleksi.');
+                        window.sibimaToast('Terjadi kesalahan koneksi saat memuat data koleksi.', 'error', 'Kesalahan Jaringan');
                         this.closeModal();
                     } finally {
                         this.loading = false;

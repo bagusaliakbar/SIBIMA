@@ -2,8 +2,7 @@
 <template x-teleport="body">
     <div x-show="openGuideModal" 
          x-cloak 
-         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200"
-         style="z-index: 99999 !important;"
+         class="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -12,8 +11,7 @@
          x-transition:leave-end="opacity-0"
          @keydown.escape.window="openGuideModal = false">
         
-        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden relative"
-             style="z-index: 100000 !important;"
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden relative z-10"
              @click.outside="openGuideModal = false"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 scale-95 translate-y-2"

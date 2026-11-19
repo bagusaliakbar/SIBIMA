@@ -537,11 +537,10 @@
         <template x-teleport="body">
             <div x-show="citationModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4" style="z-index: 100000 !important;">
-                    <div class="relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
-                         style="z-index: 100001 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
+                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="relative z-10 flex min-h-full items-center justify-center p-4">
+                    <div class="relative z-20 w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -671,11 +670,10 @@
         <template x-teleport="body">
             <div x-show="batchCitationModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4 sm:p-6" style="z-index: 100000 !important;">
-                    <div class="relative w-full max-w-3xl sm:max-w-4xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all my-8"
-                         style="z-index: 100001 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
+                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="relative z-10 flex min-h-full items-center justify-center p-4 sm:p-6">
+                    <div class="relative z-20 w-full max-w-3xl sm:max-w-4xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all my-8"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -794,11 +792,10 @@
         <template x-teleport="body">
             <div x-show="folderModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4" style="z-index: 100000 !important;">
-                    <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
-                         style="z-index: 100001 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
+                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="relative z-10 flex min-h-full items-center justify-center p-4">
+                    <div class="relative z-20 w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -862,11 +859,10 @@
         <template x-teleport="body">
             <div x-show="moveModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
-                <div class="flex min-h-full items-center justify-center p-4" style="z-index: 100000 !important;">
-                    <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
-                         style="z-index: 100001 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
+                 style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+                <div class="relative z-10 flex min-h-full items-center justify-center p-4">
+                    <div class="relative z-20 w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5 transform transition-all"
                          @click.stop>
                         
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -1220,54 +1216,60 @@
                 },
 
                 deleteFolder(folder) {
-                    if (!confirm(`Apakah Anda yakin ingin menghapus folder "${folder.name}"?\nArtikel di dalamnya TIDAK akan terhapus, melainkan dikembalikan ke status Tanpa Folder.`)) {
-                        return;
-                    }
-
-                    fetch(`/repositories/bookmarks/folders/${folder.id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
+                    window.sibimaConfirm({
+                        title: 'Hapus Folder',
+                        message: `Apakah Anda yakin ingin menghapus folder "${folder.name}"?\nArtikel di dalamnya TIDAK akan terhapus, melainkan dikembalikan ke status Tanpa Folder.`,
+                        type: 'danger',
+                        confirmText: 'Ya, Hapus',
+                        onConfirm: () => {
+                            fetch(`/repositories/bookmarks/folders/${folder.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(r => r.json())
+                            .then(d => {
+                                if (d.success) {
+                                    window.dispatchEvent(new CustomEvent('notify', {
+                                        detail: { title: 'Folder Dihapus', message: d.message, type: 'info' }
+                                    }));
+                                    setTimeout(() => {
+                                        // If currently viewing the deleted folder, redirect to 'all'
+                                        const url = new URL(window.location.href);
+                                        url.searchParams.set('folder', 'all');
+                                        window.location.href = url.toString();
+                                    }, 300);
+                                }
+                            })
+                            .catch(() => {
+                                window.dispatchEvent(new CustomEvent('notify', {
+                                    detail: { title: 'Kesalahan', message: 'Gagal menghapus folder.', type: 'error' }
+                                }));
+                            });
                         }
-                    })
-                    .then(r => r.json())
-                    .then(d => {
-                        if (d.success) {
-                            window.dispatchEvent(new CustomEvent('notify', {
-                                detail: { title: 'Folder Dihapus', message: d.message, type: 'info' }
-                            }));
-                            setTimeout(() => {
-                                // If currently viewing the deleted folder, redirect to 'all'
-                                const url = new URL(window.location.href);
-                                url.searchParams.set('folder', 'all');
-                                window.location.href = url.toString();
-                            }, 300);
-                        }
-                    })
-                    .catch(() => {
-                        window.dispatchEvent(new CustomEvent('notify', {
-                            detail: { title: 'Kesalahan', message: 'Gagal menghapus folder.', type: 'error' }
-                        }));
                     });
                 },
 
                 applyThesisTemplate() {
-                    if (!confirm('Apakah Anda ingin membuat 5 folder standar Bab Skripsi FASILKOM (BAB I s/d BAB V)?')) {
-                        return;
-                    }
-
-                    this.templateLoading = true;
-                    fetch('/repositories/bookmarks/folders/templates', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(r => r.json())
+                    window.sibimaConfirm({
+                        title: 'Buat Folder Standar Skripsi',
+                        message: 'Apakah Anda ingin membuat 5 folder standar Bab Skripsi FASILKOM (BAB I s/d BAB V)?',
+                        type: 'primary',
+                        confirmText: 'Ya, Buat Folder',
+                        onConfirm: () => {
+                            this.templateLoading = true;
+                            fetch('/repositories/bookmarks/folders/templates', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(r => r.json())
                     .then(d => {
                         this.templateLoading = false;
                         if (d.success) {
@@ -1327,22 +1329,26 @@
 
                 // ============ DELETE BOOKMARK ============
                 deleteBookmark(id) {
-                    if (!confirm('Apakah Anda yakin ingin menghapus artikel ini dari Daftar Bacaan?')) return;
-
-                    fetch(`/repositories/bookmarks/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(r => r.json())
-                    .then(d => {
-                        if (d.success) {
-                            window.dispatchEvent(new CustomEvent('notify', {
-                                detail: { title: 'Dihapus', message: d.message, type: 'info' }
-                            }));
+                    window.sibimaConfirm({
+                        title: 'Hapus dari Daftar Bacaan',
+                        message: 'Apakah Anda yakin ingin menghapus artikel ini dari Daftar Bacaan?',
+                        type: 'danger',
+                        confirmText: 'Ya, Hapus',
+                        onConfirm: () => {
+                            fetch(`/repositories/bookmarks/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(r => r.json())
+                            .then(d => {
+                                if (d.success) {
+                                    window.dispatchEvent(new CustomEvent('notify', {
+                                        detail: { title: 'Dihapus', message: d.message, type: 'info' }
+                                    }));
                             const el = document.getElementById(`bookmark-item-${id}`);
                             if (el) {
                                 el.style.transition = 'all 0.3s ease';

@@ -1335,8 +1335,7 @@
         <!-- Modal Detail Abstrak Pustaka -->
         <template x-teleport="body">
             <div x-show="abstractModalOpen && !pdfReaderOpen" 
-                 class="fixed inset-0 overflow-y-auto text-left" 
-                 style="z-index: 99999 !important;" 
+                 class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                  x-cloak 
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"
@@ -1349,8 +1348,7 @@
                         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                     </div>
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative" 
-                         style="z-index: 100000 !important;">
+                    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                         <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="px-2.5 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-lg" x-text="'Angkatan ' + abstractData.year"></span>
@@ -1537,7 +1535,7 @@
             <div x-show="pdfReaderOpen" 
                  id="pdfReaderModalElement"
                  class="fixed inset-0 select-none overflow-hidden" 
-                 :style="'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 999999 !important; background-color: #0b0f19 !important;' + (pdfReaderOpen ? ' display: flex !important; flex-direction: column !important;' : ' display: none !important;')"
+                 :style="'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 68 !important; background-color: #0b0f19 !important;' + (pdfReaderOpen ? ' display: flex !important; flex-direction: column !important;' : ' display: none !important;')"
                  x-cloak
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"
@@ -1844,8 +1842,7 @@
             <!-- Modal Edit Arsip Pustaka -->
             <template x-teleport="body">
                 <div x-show="editModalOpen" 
-                     class="fixed inset-0 overflow-y-auto text-left" 
-                     style="z-index: 99999 !important;" 
+                     class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0"
@@ -1858,8 +1855,7 @@
                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                         </div>
                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-200 dark:border-slate-700 relative" 
-                             style="z-index: 100000 !important;">
+                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                                 <div>
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Edit Data Arsip Pustaka</h3>
@@ -1934,8 +1930,7 @@
             <!-- Modal Hapus Arsip Pustaka -->
             <template x-teleport="body">
                 <div x-show="deleteModalOpen" 
-                     class="fixed inset-0 overflow-y-auto text-left" 
-                     style="z-index: 99999 !important;" 
+                     class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0"
@@ -1948,8 +1943,7 @@
                             <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
                         </div>
                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-700 relative" 
-                             style="z-index: 100000 !important;">
+                        <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-700 relative z-10">
                             <div class="p-6">
                                 <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-4">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -2153,30 +2147,35 @@
     let pageRetryCount = 0;
     const maxRetries = 3;
 
-    async function startSync() {
+    function startSync() {
         if (isSyncing) return;
-        
-        if (!confirm('Anda yakin ingin memulai migrasi 41 halaman dari portal FASILKOM? Proses ini mungkin memakan waktu beberapa menit.')) {
-            return;
-        }
 
-        isSyncing = true;
-        currentPage = 1;
-        totalImported = 0;
-        totalNew = 0;
-        totalDuplicates = 0;
-        pageRetryCount = 0;
-        
-        document.getElementById('statNewCount').innerText = '0';
-        document.getElementById('statDupCount').innerText = '0';
-        document.getElementById('statTotalCount').innerText = '0';
-        
-        const modal = document.getElementById('syncModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.getElementById('closeSyncModalBtn').classList.add('hidden');
-        
-        await processNextPage();
+        window.sibimaConfirm({
+            title: 'Mulai Migrasi Portal FASILKOM',
+            message: 'Anda yakin ingin memulai migrasi 41 halaman dari portal FASILKOM? Proses ini mungkin memakan waktu beberapa menit.',
+            type: 'warning',
+            confirmText: 'Ya, Mulai Migrasi',
+            onConfirm: async () => {
+                if (isSyncing) return;
+                isSyncing = true;
+                currentPage = 1;
+                totalImported = 0;
+                totalNew = 0;
+                totalDuplicates = 0;
+                pageRetryCount = 0;
+
+                document.getElementById('statNewCount').innerText = '0';
+                document.getElementById('statDupCount').innerText = '0';
+                document.getElementById('statTotalCount').innerText = '0';
+
+                const modal = document.getElementById('syncModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.getElementById('closeSyncModalBtn').classList.add('hidden');
+
+                await processNextPage();
+            }
+        });
     }
 
     async function processNextPage() {

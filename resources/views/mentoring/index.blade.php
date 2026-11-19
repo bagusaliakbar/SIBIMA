@@ -3164,8 +3164,7 @@
                  @open-live-modal.window="openModal()" 
                  x-show="liveModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto" 
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto" 
                  aria-labelledby="modal-title" 
                  role="dialog" 
                  aria-modal="true">
@@ -3192,8 +3191,7 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700 relative"
-                         style="z-index: 100000 !important;">
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200 dark:border-slate-700 relative z-10">
                     
                     <!-- Modal Header -->
                     <div class="p-6 bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
@@ -3615,8 +3613,7 @@
                  @open-cancel-modal.window="openModal($event.detail)" 
                  x-show="cancelModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 overflow-y-auto" 
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto" 
                  aria-labelledby="modal-title" 
                  role="dialog" 
                  aria-modal="true">
@@ -3643,8 +3640,7 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700 relative"
-                         style="z-index: 100000 !important;">
+                         class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700 relative z-10">
                         
                         <form :action="'{{ url('mentoring-sessions') }}/' + cancelData.id" method="POST" class="p-6 sm:p-8 space-y-5">
                             @csrf
@@ -3759,8 +3755,7 @@
                  x-transition:leave="transition ease-in duration-200 transform"
                  x-transition:leave-start="translate-y-0 opacity-100 scale-100"
                  x-transition:leave-end="translate-y-12 opacity-0 scale-95"
-                 class="fixed bottom-6 inset-x-0 max-w-2xl mx-auto px-4 pointer-events-none"
-                 style="z-index: 99998 !important;">
+                 class="fixed bottom-6 inset-x-0 z-[45] max-w-2xl mx-auto px-4 pointer-events-none">
                 <div class="pointer-events-auto bg-slate-900/95 dark:bg-slate-800/95 text-white backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl p-3 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 shadow-orange-950/20">
                     <div class="flex items-center gap-2.5">
                         <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-xl bg-orange-600 text-white font-black text-xs shadow-xs tracking-wider" 
@@ -3796,8 +3791,7 @@
                  @open-bulk-absent-modal.window="openModal($event.detail.ids)"
                  x-show="open" 
                  x-cloak
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"
@@ -3891,8 +3885,7 @@
                  @open-bulk-complete-modal.window="openModal($event.detail.ids)"
                  x-show="open" 
                  x-cloak
-                 class="fixed inset-0 overflow-y-auto"
-                 style="z-index: 99999 !important;"
+                 class="fixed inset-0 z-[60] overflow-y-auto"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"
                  x-transition:enter-end="opacity-100"

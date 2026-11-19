@@ -68,3 +68,23 @@
         </div>
     </template>
 </div>
+
+<script>
+    if (typeof window.sibimaToast !== 'function') {
+        window.sibimaToast = function (message, type = 'info', title = null) {
+            const defaultTitles = {
+                success: 'Berhasil',
+                error: 'Terjadi Kesalahan',
+                warning: 'Perhatian',
+                info: 'Informasi'
+            };
+            window.dispatchEvent(new CustomEvent('notify', {
+                detail: {
+                    title: title || defaultTitles[type] || 'Informasi',
+                    message: String(message ?? ''),
+                    type: type
+                }
+            }));
+        };
+    }
+</script>

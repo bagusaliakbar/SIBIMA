@@ -497,7 +497,7 @@
                             },
                             applyBatchFolderUrl() {
                                 if (!this.batchFolderUrl || !this.batchFolderUrl.trim().startsWith('http')) {
-                                    alert('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)');
+                                    window.sibimaToast('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)', 'warning', 'Tautan Tidak Valid');
                                     return;
                                 }
                                 const url = this.batchFolderUrl.trim();
@@ -514,7 +514,7 @@
                                         this.files[field] = text.trim();
                                     }
                                 } catch (e) {
-                                    alert('Gunakan pintasan Ctrl + V untuk menempelkan link.');
+                                    window.sibimaToast('Gunakan pintasan Ctrl + V untuk menempelkan link.', 'info', 'Pintasan Tempel');
                                 }
                             },
                             isDrive(url) {
@@ -627,7 +627,7 @@
                     },
                     applyBatchFolderUrl() {
                         if (!this.batchFolderUrl || !this.batchFolderUrl.trim().startsWith('http')) {
-                            alert('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)');
+                            window.sibimaToast('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)', 'warning', 'Tautan Tidak Valid');
                             return;
                         }
                         const url = this.batchFolderUrl.trim();
@@ -644,7 +644,7 @@
                                 this.files[field] = text.trim();
                             }
                         } catch (e) {
-                            alert('Gunakan pintasan keyboard Ctrl + V untuk menempelkan link.');
+                            window.sibimaToast('Gunakan pintasan keyboard Ctrl + V untuk menempelkan link.', 'info', 'Pintasan Tempel');
                         }
                     },
                     isDrive(url) {

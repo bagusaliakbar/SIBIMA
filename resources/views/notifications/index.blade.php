@@ -263,11 +263,12 @@
                                         if (res.ok && resData.success) {
                                             this.attendanceStatus = status;
                                             this.showReasonInput = false;
+                                            window.sibimaToast('Konfirmasi kehadiran berhasil disimpan.', 'success', 'Terkonfirmasi');
                                         } else {
-                                            alert(resData.message || 'Gagal menyimpan konfirmasi.');
+                                            window.sibimaToast(resData.message || 'Gagal menyimpan konfirmasi.', 'error', 'Gagal Menyimpan');
                                         }
                                     } catch (e) {
-                                        alert('Terjadi kesalahan.');
+                                        window.sibimaToast('Terjadi kesalahan jaringan.', 'error', 'Kesalahan Jaringan');
                                     } finally {
                                         this.loading = false;
                                     }
@@ -376,7 +377,7 @@
                                                            @keydown.enter.prevent="if (reasonText.trim()) sendAttendance('permission', reasonText)">
                                                     <div class="flex items-center gap-2">
                                                         <button type="button" 
-                                                                @click="if (reasonText.trim()) { sendAttendance('permission', reasonText); } else { alert('Mohon sertakan alasan izin.'); }"
+                                                                @click="if (reasonText.trim()) { sendAttendance('permission', reasonText); } else { window.sibimaToast('Mohon sertakan alasan izin.', 'warning', 'Alasan Wajib Diisi'); }"
                                                                 :disabled="loading"
                                                                 class="px-3 py-1 rounded-md bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-colors cursor-pointer">
                                                             Kirim Izin

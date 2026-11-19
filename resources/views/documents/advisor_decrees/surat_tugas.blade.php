@@ -382,7 +382,12 @@
                                                 Detail
                                             </a>
                                             <button type="button"
-                                                    onclick="if (confirm('Apakah Anda yakin ingin menghapus arsip surat tugas ini?')) { const f = document.getElementById('deleteDecreeForm'); f.action = '{{ route('advisor-decrees.destroy', $hist) }}'; f.submit(); }"
+                                                    data-confirm-target="deleteDecreeForm"
+                                                    data-confirm-action="{{ route('advisor-decrees.destroy', $hist) }}"
+                                                    data-confirm="Apakah Anda yakin ingin menghapus arsip surat tugas ini?"
+                                                    data-confirm-title="Hapus Arsip Surat Tugas"
+                                                    data-confirm-type="danger"
+                                                    data-confirm-button="Ya, Hapus"
                                                     title="Hapus Arsip"
                                                     class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -465,40 +465,44 @@
                     }
                 },
 
-                async applySchedule() {
-                    if (!confirm('Apakah Anda yakin ingin menerapkan hasil simulasi ini menjadi Jadwal Sidang Resmi? Jadwal akan diterbitkan dan dapat dilihat oleh dosen serta mahasiswa.')) {
-                        return;
-                    }
+                applySchedule() {
+                    window.sibimaConfirm({
+                        title: 'Terbitkan Jadwal Sidang Resmi',
+                        message: 'Apakah Anda yakin ingin menerapkan hasil simulasi ini menjadi Jadwal Sidang Resmi? Jadwal akan diterbitkan dan dapat dilihat oleh dosen serta mahasiswa.',
+                        type: 'primary',
+                        confirmText: 'Ya, Terbitkan Jadwal',
+                        onConfirm: async () => {
+                            this.isApplying = true;
+                            try {
+                                const payload = {
+                                    wave_id: this.simulationResult.wave_id,
+                                    date: this.simulationResult.date,
+                                    rooms: this.simulationResult.rooms
+                                };
 
-                    this.isApplying = true;
-                    try {
-                        const payload = {
-                            wave_id: this.simulationResult.wave_id,
-                            date: this.simulationResult.date,
-                            rooms: this.simulationResult.rooms
-                        };
+                                const response = await fetch('{{ route("thesis-defense-schedules.simulation.apply") }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify(payload)
+                                });
 
-                        const response = await fetch('{{ route("thesis-defense-schedules.simulation.apply") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify(payload)
-                        });
-
-                        const res = await response.json();
-                        if (res.status === 'success') {
-                            alert(res.message);
-                            window.location.href = res.redirect_url;
-                        } else {
-                            alert(res.message || 'Gagal menyimpan jadwal.');
+                                const res = await response.json();
+                                if (res.status === 'success') {
+                                    window.sibimaToast(res.message || 'Jadwal sidang resmi berhasil diterbitkan.', 'success', 'Jadwal Diterbitkan');
+                                    setTimeout(() => { window.location.href = res.redirect_url; }, 700);
+                                } else {
+                                    window.sibimaToast(res.message || 'Gagal menyimpan jadwal.', 'error', 'Gagal Menyimpan');
+                                }
+                            } catch (e) {
+                                window.sibimaToast('Gagal menerapkan jadwal: ' + e.message, 'error', 'Kesalahan Sistem');
+                            } finally {
+                                this.isApplying = false;
+                            }
                         }
-                    } catch (e) {
-                        alert('Gagal menerapkan jadwal: ' + e.message);
-                    } finally {
-                        this.isApplying = false;
-                    }
+                    });
                 }
             };
         }

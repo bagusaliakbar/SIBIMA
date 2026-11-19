@@ -128,14 +128,14 @@
             if (this.editMode === 'points') {
                 const valid = this.editPoints.filter(p => p.trim().length > 0);
                 if (valid.length === 0) {
-                    alert('Silakan isi minimal 1 butir poin catatan revisi.');
+                    window.sibimaToast('Silakan isi minimal 1 butir poin catatan revisi.', 'warning', 'Catatan Belum Diisi');
                     e.preventDefault();
                     return false;
                 }
                 this.editNotes = this.compiledEditNotes();
             } else {
                 if (!this.editNotes || !this.editNotes.trim()) {
-                    alert('Silakan tuliskan catatan revisi.');
+                    window.sibimaToast('Silakan tuliskan catatan revisi.', 'warning', 'Catatan Belum Diisi');
                     e.preventDefault();
                     return false;
                 }
@@ -195,14 +195,14 @@
             if (this.mode === 'points') {
                 const valid = this.points.filter(p => p.trim().length > 0);
                 if (valid.length === 0) {
-                    alert('Silakan isi minimal 1 poin catatan revisi.');
+                    window.sibimaToast('Silakan isi minimal 1 poin catatan revisi.', 'warning', 'Catatan Belum Diisi');
                     e.preventDefault();
                     return false;
                 }
                 this.notes = this.compiledNotes();
             } else {
                 if (!this.notes || !this.notes.trim()) {
-                    alert('Silakan tuliskan catatan revisi.');
+                    window.sibimaToast('Silakan tuliskan catatan revisi.', 'warning', 'Catatan Belum Diisi');
                     e.preventDefault();
                     return false;
                 }
@@ -691,7 +691,13 @@
                                     </div>
                                     <div class="flex items-center gap-3">
                                         @if($myRevision && $myRevision->status !== 'approved')
-                                            <button type="button" onclick="if(confirm('Setujui revisi ini sebagai hasil final?')){ document.getElementById('approve-form').submit(); }" class="px-5 py-2.5 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all">
+                                            <button type="button"
+                                                    data-confirm-target="approve-form"
+                                                    data-confirm="Setujui revisi ini sebagai hasil final?"
+                                                    data-confirm-title="Setujui Revisi Final"
+                                                    data-confirm-type="emerald"
+                                                    data-confirm-button="Ya, Setujui"
+                                                    class="px-5 py-2.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all cursor-pointer">
                                                 Revisi Selesai
                                             </button>
                                         @elseif(!$myRevision)
@@ -700,7 +706,7 @@
                                                 @if(isset($actingId))
                                                     <input type="hidden" name="target_examiner_id" value="{{ $actingId }}">
                                                 @endif
-                                                <button type="submit" class="px-5 py-2.5 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all">
+                                                <button type="submit" class="px-5 py-2.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all cursor-pointer">
                                                     Setujui Tanpa Revisi
                                                 </button>
                                             </form>

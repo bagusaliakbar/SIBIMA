@@ -812,7 +812,10 @@
                                 @if(Auth::user()->role === 'admin')
                                 <a href="{{ route('system.clear-cache', ['migrate' => 1]) }}" 
                                    target="_blank"
-                                   onclick="return confirm('Bersihkan cache sistem dan jalankan migrasi database sekarang?')"
+                                   data-confirm="Bersihkan cache sistem dan jalankan migrasi database sekarang?"
+                                   data-confirm-title="Bersihkan Cache &amp; Migrasi"
+                                   data-confirm-type="warning"
+                                   data-confirm-button="Ya, Jalankan"
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all text-slate-400 hover:text-amber-400 hover:bg-white/5 font-medium">
                                     • Bersihkan Cache
                                 </a>
@@ -1226,7 +1229,7 @@
 
                                     async togglePushNotifications() {
                                         if (!('Notification' in window)) {
-                                            alert('Browser ini belum mendukung fitur Web Push Notification.');
+                                            window.sibimaToast('Browser ini belum mendukung fitur Web Push Notification.', 'warning', 'Tidak Didukung');
                                             return;
                                         }
 
@@ -1265,7 +1268,7 @@
                                         }
 
                                         if (Notification.permission === 'denied') {
-                                            alert('Izin notifikasi saat ini diblokir di setelan browser. Silakan izinkan notifikasi melalui ikon gembok / pengaturan browser Anda.');
+                                            window.sibimaToast('Izin notifikasi saat ini diblokir di setelan browser. Silakan izinkan notifikasi melalui ikon gembok / pengaturan browser Anda.', 'warning', 'Izin Diblokir');
                                             return;
                                         }
 
@@ -1406,12 +1409,13 @@
                                                 this.attendanceSuccess[mentoringId] = status;
                                                 this.activePermissionInput = null;
                                                 this.markSingleRead(notif.id);
+                                                window.sibimaToast('Konfirmasi kehadiran berhasil disimpan.', 'success', 'Terkonfirmasi');
                                             } else {
-                                                alert(data.message || 'Gagal menyimpan konfirmasi kehadiran.');
+                                                window.sibimaToast(data.message || 'Gagal menyimpan konfirmasi kehadiran.', 'error', 'Gagal Menyimpan');
                                             }
                                         } catch (e) {
                                             console.error(e);
-                                            alert('Terjadi kesalahan jaringan saat mengonfirmasi kehadiran.');
+                                            window.sibimaToast('Terjadi kesalahan jaringan saat mengonfirmasi kehadiran.', 'error', 'Kesalahan Jaringan');
                                         } finally {
                                             this.attendanceLoading[mentoringId] = false;
                                         }
@@ -1420,7 +1424,7 @@
                                     submitPermission(notif) {
                                         const reason = (this.permissionReason[notif.id] || '').trim();
                                         if (!reason) {
-                                            alert('Mohon tuliskan alasan berhalangan hadir.');
+                                            window.sibimaToast('Mohon tuliskan alasan berhalangan hadir.', 'warning', 'Alasan Wajib Diisi');
                                             return;
                                         }
                                         this.confirmAttendance(notif, 'permission', reason);

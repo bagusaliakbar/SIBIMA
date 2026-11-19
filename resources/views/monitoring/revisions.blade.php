@@ -23,14 +23,14 @@
         },
         downloadSelectedRevisions() {
             if (this.selectedIds.length === 0) {
-                alert('Pilih minimal satu mahasiswa.');
+                window.sibimaToast('Pilih minimal satu mahasiswa.', 'warning', 'Belum Ada Pilihan');
                 return;
             }
             window.location.href = '{{ route('monitoring.batch-export-revisions') }}?category=seminar&ids=' + this.selectedIds.join(',');
         },
         downloadSelectedBeritaAcara() {
             if (this.selectedIds.length === 0) {
-                alert('Pilih minimal satu mahasiswa.');
+                window.sibimaToast('Pilih minimal satu mahasiswa.', 'warning', 'Belum Ada Pilihan');
                 return;
             }
             window.location.href = '{{ route('monitoring.batch-export-berita-acara') }}?category=seminar&ids=' + this.selectedIds.join(',');

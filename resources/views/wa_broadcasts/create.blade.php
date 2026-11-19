@@ -877,13 +877,13 @@
                         this.title = this.presets[this.targetType].title;
                         this.messageTemplate = this.presets[this.targetType].message;
                     } else {
-                        alert('Tidak ada template bawaan untuk jenis sasaran ini.');
+                        window.sibimaToast('Tidak ada template bawaan untuk jenis sasaran ini.', 'info', 'Template Tidak Tersedia');
                     }
                 },
 
                 sendTestMessage() {
                     if (!this.testPhone) {
-                        alert('Silakan masukkan nomor WhatsApp untuk uji coba.');
+                        window.sibimaToast('Silakan masukkan nomor WhatsApp untuk uji coba.', 'warning', 'Nomor Belum Diisi');
                         return;
                     }
                     this.isSendingTest = true;
@@ -919,20 +919,34 @@
                 },
 
                 handleSubmit(e) {
+                    const form = e.target;
+                    if (form.dataset.confirmed === '1') {
+                        delete form.dataset.confirmed;
+                        this.isSubmitting = true;
+                        return true;
+                    }
                     if (this.isSubmitting) {
                         e.preventDefault();
                         return false;
                     }
                     if (this.selectedUserIds.length === 0) {
                         e.preventDefault();
-                        alert('Pilih setidaknya satu kontak penerima.');
+                        window.sibimaToast('Pilih setidaknya satu kontak penerima.', 'warning', 'Penerima Belum Dipilih');
                         return false;
                     }
-                    if (!confirm(`Apakah Anda yakin ingin mengirim siaran WhatsApp ini ke ${this.selectedUserIds.length} sasaran terpilih?`)) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    this.isSubmitting = true;
+                    e.preventDefault();
+                    window.sibimaConfirm({
+                        title: 'Kirim Siaran WhatsApp',
+                        message: `Apakah Anda yakin ingin mengirim siaran WhatsApp ini ke ${this.selectedUserIds.length} sasaran terpilih?`,
+                        type: 'primary',
+                        confirmText: 'Ya, Kirim Siaran',
+                        onConfirm: () => {
+                            this.isSubmitting = true;
+                            form.dataset.confirmed = '1';
+                            this.$nextTick(() => form.submit());
+                        }
+                    });
+                    return false;
                 }
             }
         }

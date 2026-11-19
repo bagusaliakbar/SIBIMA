@@ -146,7 +146,7 @@
                     this.studentLink = text.trim();
                 }
             } catch (e) {
-                alert('Gunakan Ctrl+V untuk menempelkan link.');
+                window.sibimaToast('Gunakan Ctrl+V untuk menempelkan link.', 'info', 'Pintasan Tempel');
             }
         }
     }" @resize.window.debounce.100ms="isMobile = window.innerWidth < 1024" class="space-y-4">
