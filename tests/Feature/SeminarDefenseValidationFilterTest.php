@@ -82,6 +82,10 @@ class SeminarDefenseValidationFilterTest extends TestCase
             'status' => 'pending'
         ]));
         $responsePending->assertStatus(200);
+        $responsePending->assertViewHas('applications', fn($apps) =>
+            $apps->pluck('thesis.student.name')->contains('Budi Santoso')
+            && !$apps->pluck('thesis.student.name')->contains('Siti Rahma')
+        );
         $responsePending->assertSee('Budi Santoso');
         $responsePending->assertDontSee('Siti Rahma');
 
@@ -91,8 +95,12 @@ class SeminarDefenseValidationFilterTest extends TestCase
             'search' => 'Machine Learning'
         ]));
         $responseSearch->assertStatus(200);
-        $responseSearch->assertSee('Siti Rahma');
-        $responseSearch->assertDontSee('Budi Santoso');
+        $responseSearch->assertViewHas('applications', fn($apps) =>
+            $apps->pluck('thesis.student.name')->contains('Siti Rahma')
+            && !$apps->pluck('thesis.student.name')->contains('Budi Santoso')
+        );
+        $this->assertStringContainsString('Siti Rahma', preg_replace('/candidateTheses:.*?selectedThesisId:/s', '', $responseSearch->getContent()));
+        $this->assertStringNotContainsString('Budi Santoso', preg_replace('/candidateTheses:.*?selectedThesisId:/s', '', $responseSearch->getContent()));
     }
 
     public function test_admin_can_filter_thesis_defense_applications_by_status_and_search()
@@ -192,9 +200,13 @@ class SeminarDefenseValidationFilterTest extends TestCase
             'status' => 'rejected'
         ]));
         $responseRej->assertStatus(200);
-        $responseRej->assertSee('Dewi Lestari');
-        $responseRej->assertSee('Scan sertifikat TOEFL kurang jelas');
-        $responseRej->assertDontSee('Ahmad Fauzi');
+        $responseRej->assertViewHas('applications', fn($apps) =>
+            $apps->pluck('thesis.student.name')->contains('Dewi Lestari')
+            && !$apps->pluck('thesis.student.name')->contains('Ahmad Fauzi')
+        );
+        $this->assertStringContainsString('Dewi Lestari', preg_replace('/candidateTheses:.*?selectedThesisId:/s', '', $responseRej->getContent()));
+        $this->assertStringContainsString('Scan sertifikat TOEFL kurang jelas', $responseRej->getContent());
+        $this->assertStringNotContainsString('Ahmad Fauzi', preg_replace('/candidateTheses:.*?selectedThesisId:/s', '', $responseRej->getContent()));
 
         // 3. Search by NPM
         $responseSearch = $this->actingAs($admin)->get(route('thesis-defense-applications.index', [
@@ -202,8 +214,12 @@ class SeminarDefenseValidationFilterTest extends TestCase
             'search' => 'D1A220003'
         ]));
         $responseSearch->assertStatus(200);
-        $responseSearch->assertSee('Ahmad Fauzi');
-        $responseSearch->assertDontSee('Dewi Lestari');
+        $responseSearch->assertViewHas('applications', fn($apps) =>
+            $apps->pluck('thesis.student.name')->contains('Ahmad Fauzi')
+            && !$apps->pluck('thesis.student.name')->contains('Dewi Lestari')
+        );
+        $this->assertStringContainsString('Ahmad Fauzi', preg_replace('/candidateTheses:.*?selectedThesisId:/s', '', $responseSearch->getContent()));
+        $this->assertStringNotContainsString('Dewi Lestari', preg_replace('/candidateTheses:.*?selectedThesisId:/s', '', $responseSearch->getContent()));
     }
 
     public function test_admin_and_kaprodi_can_export_seminar_applications_to_excel()

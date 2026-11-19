@@ -257,7 +257,115 @@
 
         <!-- Weekly Mentoring Students Table -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 overflow-hidden mb-6">
-            <div class="overflow-x-auto">
+            <!-- Mobile Cards -->
+            <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                @forelse($theses as $index => $thesis)
+                    <div class="p-4 space-y-3">
+                        <div class="flex items-start justify-between gap-2.5">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-bold text-slate-400">#{{ $theses->firstItem() + $index }}</span>
+                                    <span class="font-bold text-sm text-slate-900 dark:text-white truncate">
+                                        {{ $thesis->student ? ucwords(strtolower($thesis->student->name)) : '-' }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                                    <span class="font-mono">{{ $thesis->student->identifier ?? '-' }}</span>
+                                    @if($thesis->student && $thesis->student->entry_year)
+                                        <span>•</span>
+                                        <span>Angkatan {{ $thesis->student->entry_year }}</span>
+                                    @endif
+                                </div>
+                                @if($thesis->student && $thesis->student->phone)
+                                    <div class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                        <span>{{ $thesis->student->phone }}</span>
+                                    </div>
+                                @else
+                                    <span class="text-[10px] text-slate-400 italic mt-0.5 block">No WA belum ada</span>
+                                @endif
+                            </div>
+
+                            @if($thesis->weekly_compliance_status === 'compliant')
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500 text-white shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>Lengkap</span>
+                                </span>
+                            @elseif($thesis->weekly_compliance_status === 'partial')
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500 text-white shrink-0">
+                                    <span>Sebagian</span>
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-600 text-white shrink-0">
+                                    <span>Belum Bimbingan</span>
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-2 p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 text-xs">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[10px] font-bold text-blue-600 dark:text-blue-400 shrink-0">P1</span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-' }}</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $thesis->weekly_p1_count >= 1 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40' }}">
+                                    {{ $thesis->weekly_p1_count }}x Sesi
+                                </span>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">P2</span>
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $thesis->pembimbing2 ? $thesis->pembimbing2->name : ($thesis->pembimbing2_id ? '-' : 'Belum Ditugaskan') }}</span>
+                                </div>
+                                @if($thesis->pembimbing2_id)
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $thesis->weekly_p2_count >= 1 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40' }}">
+                                        {{ $thesis->weekly_p2_count }}x Sesi
+                                    </span>
+                                @else
+                                    <span class="text-[10px] text-slate-400 italic shrink-0">Nonaktif</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 pt-0.5">
+                            <button type="button"
+                                    @click="openReminderModal({
+                                        id: {{ $thesis->id }},
+                                        studentName: '{{ addslashes($thesis->student ? $thesis->student->name : '') }}',
+                                        studentNpm: '{{ addslashes($thesis->student ? $thesis->student->identifier : '') }}',
+                                        studentPhone: '{{ addslashes($thesis->student ? $thesis->student->phone : '') }}',
+                                        p1Name: '{{ addslashes($thesis->pembimbing1 ? $thesis->pembimbing1->name : '-') }}',
+                                        p2Name: '{{ addslashes($thesis->pembimbing2 ? $thesis->pembimbing2->name : '-') }}',
+                                        p1Count: {{ $thesis->weekly_p1_count }},
+                                        p2Count: {{ $thesis->weekly_p2_count }}
+                                    })"
+                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer {{ $thesis->weekly_compliance_status === 'compliant' ? 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200' : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 shadow-2xs' }}">
+                                <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.392-12.416c-5.514 0-10 4.486-10 10 0 1.914.542 3.702 1.482 5.226l-1.571 5.744 5.897-1.547c1.472.872 3.19 1.377 5.023 1.377 5.514 0 10-4.486 10-10s-4.486-10-10-10z"/></svg>
+                                <span>Ingatkan</span>
+                            </button>
+                            <a href="{{ route('theses.show', $thesis->id) }}"
+                               title="Lihat profil dan riwayat bimbingan lengkap"
+                               class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
+                                <span>Detail</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-12 px-6 text-center">
+                        <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                            <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada data mahasiswa skripsi aktif yang cocok.</p>
+                            <p class="text-xs text-slate-400 mt-1">Coba sesuaikan filter pencarian, status kepatuhan, atau pilih minggu lain.</p>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 text-[11px] font-bold uppercase tracking-wider">

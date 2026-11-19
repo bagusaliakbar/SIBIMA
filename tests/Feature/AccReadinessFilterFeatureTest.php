@@ -195,7 +195,7 @@ class AccReadinessFilterFeatureTest extends TestCase
         ]));
 
         $res->assertStatus(200);
-        $this->assertStringContainsString('Laporan_Mahasiswa', $res->headers->get('content-disposition'));
+        $this->assertStringContainsString('Laporan_Akademik', $res->headers->get('content-disposition'));
     }
 
     public function test_monitoring_export_filters_and_mapping()
@@ -258,13 +258,15 @@ class AccReadinessFilterFeatureTest extends TestCase
         $headings = $exportAccDefense->headings();
         $this->assertContains('STATUS ACC SEMINAR (UP)', $headings);
         $this->assertContains('STATUS ACC SIDANG', $headings);
-        $this->assertCount(13, $headings);
+        $this->assertContains('STATUS KELULUSAN', $headings);
+        $this->assertCount(14, $headings);
 
         $mapped = $exportAccDefense->map($thesis2);
-        $this->assertCount(13, $mapped);
+        $this->assertCount(14, $mapped);
         $this->assertEquals('2210002', $mapped[1]);
         $this->assertEquals('Siti Nurhaliza', $mapped[2]);
         $this->assertEquals(2022, $mapped[3]);
         $this->assertEquals('Siap Sidang (ACC P1 & P2)', $mapped[11]);
+        $this->assertEquals('Aktif / Belum Lulus', $mapped[12]);
     }
 }

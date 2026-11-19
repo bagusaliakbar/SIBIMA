@@ -19,6 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ThesisDefenseApplicationsExport;
 use App\Models\ActivityLog;
 use App\Notifications\GeneralNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ThesisDefenseApplicationController extends Controller
 {

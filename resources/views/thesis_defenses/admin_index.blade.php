@@ -436,7 +436,8 @@
                         {{-- Menunggu --}}
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'pending', 'search' => $search]) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' }}">
-                            <span>⏳ Menunggu</span>
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Menunggu</span>
                             <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
                                 {{ $stats['pending'] ?? 0 }}
                             </span>
@@ -726,7 +727,8 @@
 
                                         @if($rejectedCount > 0)
                                             <span class="inline-flex items-center gap-1 text-[9px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">
-                                                ⚠️ {{ $rejectedCount }} Berkas Ditolak
+                                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span>{{ $rejectedCount }} Berkas Ditolak</span>
                                             </span>
                                         @else
                                             <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500">
@@ -1015,7 +1017,7 @@
                                                           'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800': previewApp.status === 'rejected',
                                                           'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800': previewApp.status === 'pending'
                                                       }"
-                                                      x-text="previewApp.status === 'approved' ? '✓ DISETUJUI' : (previewApp.status === 'rejected' ? '✕ PERLU REVISI' : '⏳ MENUNGGU VALIDASI')"></span>
+                                                      x-text="previewApp.status === 'approved' ? 'DISETUJUI' : (previewApp.status === 'rejected' ? 'PERLU REVISI' : 'MENUNGGU VALIDASI')"></span>
                                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                                     20 Dokumen Terdaftar
                                                 </span>
@@ -1154,7 +1156,8 @@
                                         {{-- Viewer Toolbar --}}
                                         <div class="px-4 py-3 bg-slate-800 border-b border-slate-700 flex items-center justify-between gap-3 text-white text-xs shrink-0">
                                             <div class="flex items-center gap-2 min-w-0">
-                                                <span class="text-orange-400 font-bold shrink-0">📄 Dokumen:</span>
+                                                <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                                <span class="text-orange-400 font-bold shrink-0">Dokumen:</span>
                                                 <span class="font-bold truncate" x-text="previewFileLabel"></span>
                                             </div>
 
@@ -1387,7 +1390,7 @@
                                     <div class="p-3.5 bg-orange-50/80 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded-xl space-y-2">
                                         <div class="flex items-center gap-2">
                                             <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">💡 1 Link Folder Drive untuk Semua 20 Berkas Sidang</span>
+                                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">1 Link Folder Drive untuk Semua 20 Berkas Sidang</span>
                                         </div>
                                         <p class="text-[11px] text-slate-600 dark:text-slate-400">Jika mahasiswa memiliki folder Google Drive berisi seluruh 20 berkasnya, tempelkan link foldernya di sini:</p>
                                         <div class="flex items-center gap-2">

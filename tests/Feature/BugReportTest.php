@@ -20,6 +20,7 @@ class BugReportTest extends TestCase
     {
         parent::setUp();
         Storage::fake('public');
+        Storage::fake(config('filesystems.default'));
     }
 
     public function test_student_can_submit_bug_report_with_screenshot(): void
@@ -57,7 +58,7 @@ class BugReportTest extends TestCase
         $this->assertNotNull($report);
         $this->assertStringStartsWith('BUG-', $report->ticket_number);
         $this->assertNotNull($report->attachment_path);
-        Storage::disk('public')->assertExists($report->attachment_path);
+        Storage::disk(config('filesystems.default'))->assertExists($report->attachment_path);
 
         // Verify notifications sent to admin & kaprodi
         Notification::assertSentTo(

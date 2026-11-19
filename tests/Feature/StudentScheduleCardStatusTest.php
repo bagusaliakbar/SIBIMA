@@ -222,7 +222,7 @@ class StudentScheduleCardStatusTest extends TestCase
 
         // Must show Selesai
         $response->assertSee('Jadwal Seminar Skripsi');
-        $response->assertSee('bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>', false);
+        $response->assertSee('bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>', false);
         $response->assertDontSee('Gabung Sekarang');
     }
 
@@ -307,7 +307,7 @@ class StudentScheduleCardStatusTest extends TestCase
         // Must show Terjadwal, NOT Selesai
         $response->assertSee('Jadwal Sidang Skripsi');
         $response->assertSee('Terjadwal');
-        $response->assertDontSee('bg-emerald-100 text-emerald-700 text-[9px] font-extrabold rounded uppercase tracking-widest border border-emerald-200">Selesai</span>', false);
-        $response->assertSee('Join Online Meeting');
+        $response->assertDontSee('bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold rounded-full uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/80">Selesai</span>', false);
+        $response->assertSee('Join Google Meet');
     }
 }

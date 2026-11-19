@@ -301,7 +301,97 @@
 
                         <!-- Presentation Table -->
                         <div x-show="open" x-transition.opacity.duration.150ms class="p-3 sm:p-5">
-                            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs custom-scrollbar">
+                            <!-- Mobile Cards -->
+                            <div class="sm:hidden space-y-2.5">
+                                @php $mobileStudentNo = 1; @endphp
+                                @forelse($schedule->details as $detail)
+                                    @if($detail->thesis_id)
+                                        @php
+                                            $isMyStudent = $detail->thesis && ($detail->thesis->pembimbing1_id === $currentUserId || $detail->thesis->pembimbing2_id === $currentUserId);
+                                            $isMyExam = $detail->examiner1_id === $currentUserId || $detail->examiner2_id === $currentUserId;
+                                        @endphp
+                                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3.5 space-y-2.5 {{ ($isMyStudent || $isMyExam) ? 'bg-amber-500/5 dark:bg-amber-500/10' : 'bg-white dark:bg-slate-800/60' }}">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <div class="flex items-center gap-2 min-w-0">
+                                                    <span class="inline-flex items-center justify-center w-6 h-6 {{ ($isMyStudent || $isMyExam) ? 'bg-amber-500 text-white font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold' }} rounded-lg text-xs shrink-0">
+                                                        {{ $mobileStudentNo++ }}
+                                                    </span>
+                                                    <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-black text-[10px] rounded uppercase tracking-wider shrink-0">
+                                                        {{ $detail->thesis->student->identifier }}
+                                                    </span>
+                                                    <span class="font-bold text-slate-800 dark:text-slate-100 text-xs truncate">{{ $detail->thesis->student->name }}</span>
+                                                </div>
+                                                <span class="inline-flex items-center px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/40 rounded-lg font-bold text-[10px] whitespace-nowrap shrink-0">
+                                                    {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
+                                                </span>
+                                            </div>
+
+                                            @if($isMyExam || $isMyStudent)
+                                                <div class="flex flex-wrap items-center gap-1.5">
+                                                    @if($isMyExam)
+                                                        <span class="px-2 py-0.5 bg-emerald-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">Anda Menguji</span>
+                                                        <a href="{{ route('defense-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-500/15 hover:bg-emerald-500 text-emerald-700 hover:text-slate-950 dark:text-emerald-300 dark:hover:text-slate-950 border border-emerald-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
+                                                            <span>Lembar Nilai / Revisi</span>
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                                        </a>
+                                                    @endif
+                                                    @if($isMyStudent)
+                                                        <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[9px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
+                                                        @if($detail->thesis && $detail->thesis->pembimbing1_id === $currentUserId)
+                                                            <a href="{{ route('defense-examiner.grading', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-500/15 hover:bg-indigo-600 text-indigo-700 hover:text-white dark:text-indigo-300 dark:hover:text-white border border-indigo-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
+                                                                <span>Input Nilai P1</span>
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                                            </a>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            @endif
+
+                                            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-900/30 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
+                                                {{ $detail->thesis->title }}
+                                            </p>
+
+                                            <div class="grid grid-cols-1 gap-1.5 text-[11px] pt-0.5">
+                                                <div class="flex items-start gap-1.5">
+                                                    <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[9px] rounded border border-amber-500/20 shrink-0">P1</span>
+                                                    <span class="{{ $detail->thesis->pembimbing1_id === $currentUserId ? 'font-black text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
+                                                </div>
+                                                @if($detail->thesis->pembimbing2)
+                                                    <div class="flex items-start gap-1.5">
+                                                        <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[9px] rounded border border-amber-500/20 shrink-0">P2</span>
+                                                        <span class="{{ $detail->thesis->pembimbing2_id === $currentUserId ? 'font-black text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->thesis->pembimbing2?->name ?? '-' }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($detail->examiner1)
+                                                    <div class="flex items-start gap-1.5">
+                                                        <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[9px] rounded border border-indigo-500/20 shrink-0">U1</span>
+                                                        <span class="{{ $detail->examiner1_id === $currentUserId ? 'font-black text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->examiner1->name }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($detail->examiner2)
+                                                    <div class="flex items-start gap-1.5">
+                                                        <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[9px] rounded border border-indigo-500/20 shrink-0">U2</span>
+                                                        <span class="{{ $detail->examiner2_id === $currentUserId ? 'font-black text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->examiner2->name }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/60 p-3 flex items-center justify-between gap-2">
+                                            <span class="inline-flex items-center text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                                                {{ $detail->activity_name }}
+                                            </span>
+                                            <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-bold text-[10px] text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-200 dark:border-slate-700">
+                                                {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                @empty
+                                    <p class="py-6 text-center text-xs text-slate-400 italic">Belum ada rincian peserta untuk jadwal ini.</p>
+                                @endforelse
+                            </div>
+
+                            <div class="hidden sm:block overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs custom-scrollbar">
                                 <table class="w-full min-w-[650px] text-xs text-left border-collapse">
                                     <thead>
                                         <tr class="bg-slate-50 dark:bg-slate-900/80 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700">
@@ -548,7 +638,83 @@
                     </div>
                 </div>
 
-                <table class="w-full text-sm text-left">
+                <!-- Mobile Cards -->
+                <div class="sm:hidden divide-y divide-slate-200 dark:divide-slate-700">
+                    @forelse($schedules as $schedule)
+                        @php
+                            $participantCount = $schedule->details->whereNotNull('thesis_id')->count();
+                            $totalSlots = $schedule->details->count();
+                        @endphp
+                        <div class="p-4 space-y-3">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $schedule->title }}</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5 uppercase font-bold tracking-wider">Oleh: {{ $schedule->creator->name }}</p>
+                                </div>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold rounded-lg text-[11px] shrink-0">
+                                    {{ $participantCount }} / {{ $totalSlots }}
+                                </span>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                                <span class="font-bold text-slate-700 dark:text-slate-200">
+                                    {{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l, d F Y') }}
+                                </span>
+                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-400">
+                                    {{ $schedule->location ?: 'BELUM DIATUR' }}
+                                </span>
+                            </div>
+
+                            <div class="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5 bg-slate-50/70 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                                <p><span class="text-[10px] font-bold uppercase text-slate-400">Ketua:</span> {{ $schedule->chairman?->name ?? '-' }}</p>
+                                <p><span class="text-[10px] font-bold uppercase text-slate-400">Moderator:</span> {{ $schedule->moderator?->name ?? '-' }}</p>
+                            </div>
+
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                                @if($schedule->meeting_link)
+                                    <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <x-google-meet-icon class="w-3.5 h-3.5 shrink-0" />
+                                        <span>Google Meet</span>
+                                    </a>
+                                @else
+                                    <span></span>
+                                @endif
+
+                                <div class="flex items-center gap-1">
+                                    <a href="{{ route('thesis-defense-schedules.export-pdf', $schedule) }}" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all" title="Export PDF">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </a>
+                                    <a href="{{ route('thesis-defense-schedules.export-word', $schedule) }}" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-all" title="Export Word (.docx)">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </a>
+                                    <a href="{{ route('thesis-defense-schedules.show', $schedule) }}" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all" title="Detail">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </a>
+                                    <a href="{{ route('thesis-defense-schedules.edit', $schedule) }}" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-all" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    </a>
+                                    <button type="button"
+                                            data-confirm-target="delete-defense-schedule-{{ $schedule->id }}"
+                                            data-confirm="Apakah Anda yakin ingin menghapus jadwal ini?"
+                                            data-confirm-title="Hapus Jadwal Sidang"
+                                            data-confirm-type="danger"
+                                            data-confirm-button="Ya, Hapus"
+                                            class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all cursor-pointer"
+                                            title="Hapus">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center">
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Belum Ada Jadwal Sidang Skripsi</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Agenda pelaksanaan sidang skripsi belum tersedia untuk filter atau gelombang ini.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                <table class="hidden sm:table w-full text-sm text-left">
                     <thead>
                         <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-200 dark:border-slate-700">
                             <th class="py-4 px-6">Informasi Sesi</th>
