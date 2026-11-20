@@ -181,7 +181,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
 
         $request->validate([
             'revision_notes' => 'required|string',
-            'revision_link' => 'nullable|url',
+            'revision_link' => 'nullable|url:http,https|max:1000',
             'target_examiner_id' => 'nullable|exists:users,id',
         ]);
 
@@ -226,7 +226,7 @@ class SeminarExaminerController extends Controller implements HasMiddleware
 
         $request->validate([
             'revision_notes' => 'required|string',
-            'revision_link' => 'nullable|url',
+            'revision_link' => 'nullable|url:http,https|max:1000',
         ]);
 
         try {

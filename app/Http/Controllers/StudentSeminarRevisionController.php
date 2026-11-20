@@ -139,7 +139,7 @@ class StudentSeminarRevisionController extends Controller implements HasMiddlewa
 
         $request->validate([
             'student_notes' => 'required|string',
-            'student_link' => 'nullable|url',
+            'student_link' => 'nullable|url:http,https|max:1000',
         ]);
 
         $this->revisionService->storeReply($revision, SeminarRevisionMessage::class, $request->only('student_notes'), $request->input('student_link'));

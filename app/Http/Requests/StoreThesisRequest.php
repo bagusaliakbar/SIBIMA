@@ -14,11 +14,19 @@ class StoreThesisRequest extends FormRequest
 
     public function rules(): array
     {
-        $studentId = in_array(Auth::user()->role, ['admin', 'kaprodi']) ? $this->student_id : Auth::id();
+        $isStaff = in_array(Auth::user()->role, ['admin', 'kaprodi'], true);
+        $studentId = $isStaff ? $this->student_id : Auth::id();
 
-        return [
-            'student_id' => [
-                in_array(Auth::user()->role, ['admin', 'kaprodi']) ? 'required' : 'nullable',
+        $rules = [
+            'title'    => 'required|string|max:255',
+            'abstract' => 'required|string',
+            'requested_pembimbing1_id' => 'nullable|exists:users,id',
+            'requested_pembimbing2_id' => 'nullable|exists:users,id|different:requested_pembimbing1_id',
+        ];
+
+        if ($isStaff) {
+            $rules['student_id'] = [
+                'required',
                 'exists:users,id',
                 function ($attribute, $value, $fail) use ($studentId) {
                     if ($studentId) {
@@ -31,12 +39,10 @@ class StoreThesisRequest extends FormRequest
                         }
                     }
                 },
-            ],
-            'title'    => 'required|string|max:255',
-            'abstract' => 'required|string',
-            'requested_pembimbing1_id' => 'nullable|exists:users,id',
-            'requested_pembimbing2_id' => 'nullable|exists:users,id|different:requested_pembimbing1_id',
-        ];
+            ];
+        }
+
+        return $rules;
     }
 
     public function messages(): array

@@ -21,7 +21,7 @@ class StoreScheduleRequest extends FormRequest
             'chairman_id' => 'nullable|exists:users,id',
             'moderator_id' => 'nullable|exists:users,id',
             'location' => 'nullable|string|max:255',
-            'meeting_link' => 'nullable|url',
+            'meeting_link' => 'nullable|url:http,https|max:1000',
             'details' => 'required|array|min:1',
             'details.*.start_time' => 'required',
             'details.*.end_time' => 'required',

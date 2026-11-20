@@ -155,14 +155,27 @@
                                 @endif
                             </div>
 
+                            @php
+                                $safeBookmarkUrl = (is_string($bookmark->url) && preg_match('#^https?://#i', trim($bookmark->url))) ? trim($bookmark->url) : null;
+                                $safeBookmarkPdfUrl = (is_string($bookmark->pdf_url) && preg_match('#^https?://#i', trim($bookmark->pdf_url))) ? trim($bookmark->pdf_url) : null;
+                                $safeBookmarkDoi = null;
+                                if (is_string($bookmark->doi) && trim($bookmark->doi) !== '') {
+                                    $rawDoi = trim($bookmark->doi);
+                                    if (preg_match('#^https?://#i', $rawDoi)) {
+                                        $safeBookmarkDoi = $rawDoi;
+                                    } elseif (!str_contains($rawDoi, ':') && !preg_match('/\s/', $rawDoi)) {
+                                        $safeBookmarkDoi = 'https://doi.org/' . $rawDoi;
+                                    }
+                                }
+                            @endphp
                             <div class="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
                                 <span>Disimpan: {{ $bookmark->created_at->diffForHumans() }}</span>
                                 
-                                @if($bookmark->doi)
+                                @if($safeBookmarkDoi)
                                     <span>•</span>
-                                    <a href="{{ $bookmark->doi }}" target="_blank" rel="noopener noreferrer" 
+                                    <a href="{{ $safeBookmarkDoi }}" target="_blank" rel="noopener noreferrer" 
                                        class="font-mono hover:text-orange-500 dark:hover:text-orange-400 flex items-center gap-1 transition-colors">
-                                        <span>DOI: {{ str_replace('https://doi.org/', '', $bookmark->doi) }}</span>
+                                        <span>DOI: {{ str_replace('https://doi.org/', '', $safeBookmarkDoi) }}</span>
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                     </a>
                                 @endif
@@ -172,7 +185,7 @@
                         <!-- Paper Title & Authors/Venue with Proper Breathing Room -->
                         <div>
                             <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">
-                                <a href="{{ $bookmark->url ?: ($bookmark->pdf_url ?: '#') }}" 
+                                <a href="{{ $safeBookmarkUrl ?: ($safeBookmarkPdfUrl ?: ($safeBookmarkDoi ?: '#')) }}" 
                                    target="_blank" 
                                    rel="noopener noreferrer"
                                    class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
@@ -295,8 +308,8 @@
                                 </button>
 
                                 <!-- Landing page / publisher link -->
-                                @if($bookmark->url)
-                                    <a href="{{ $bookmark->url }}" 
+                                @if($safeBookmarkUrl)
+                                    <a href="{{ $safeBookmarkUrl }}" 
                                        target="_blank" 
                                        rel="noopener noreferrer"
                                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all shadow-2xs">
@@ -316,8 +329,8 @@
                             </div>
 
                             <!-- PDF CTA -->
-                            @if($bookmark->pdf_url)
-                                <a href="{{ $bookmark->pdf_url }}" 
+                            @if($safeBookmarkPdfUrl)
+                                <a href="{{ $safeBookmarkPdfUrl }}" 
                                    target="_blank" 
                                    rel="noopener noreferrer" 
                                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm shadow-orange-500/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer whitespace-nowrap">

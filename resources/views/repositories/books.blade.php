@@ -217,8 +217,9 @@
                                         <img src="{{ $book['cover_url'] }}" 
                                              alt="{{ $book['title'] }}" 
                                              loading="lazy"
+                                             data-fallback-title="{{ $book['title'] }}"
                                              class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900\'><svg class=\'w-8 h-8 mb-2 text-slate-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\'></path></svg><span class=\'text-xs font-bold text-slate-600 dark:text-slate-300 line-clamp-2\'>{{ addslashes($book['title']) }}</span></div>';">
+                                             onerror="window.renderSafeBookCoverFallback && window.renderSafeBookCoverFallback(this);">
                                     @else
                                         <!-- STYLISH FALLBACK BOOK COVER -->
                                         <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 select-none">
@@ -675,6 +676,34 @@
                 }
             };
         }
+
+        window.renderSafeBookCoverFallback = function(imgEl) {
+            if (!imgEl || !imgEl.parentElement) return;
+            imgEl.onerror = null;
+            const title = imgEl.dataset.fallbackTitle || imgEl.alt || 'E-Book';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900';
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'w-8 h-8 mb-2 text-slate-400');
+            svg.setAttribute('fill', 'none');
+            svg.setAttribute('stroke', 'currentColor');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('stroke-width', '1.5');
+            path.setAttribute('d', 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253');
+            svg.appendChild(path);
+
+            const span = document.createElement('span');
+            span.className = 'text-xs font-bold text-slate-600 dark:text-slate-300 line-clamp-2';
+            span.textContent = title;
+
+            wrapper.appendChild(svg);
+            wrapper.appendChild(span);
+            imgEl.replaceWith(wrapper);
+        };
     </script>
     @endpush
 </x-app-layout>

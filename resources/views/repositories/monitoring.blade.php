@@ -551,7 +551,7 @@
                                         <!-- Title -->
                                         <div>
                                             <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
-                                                <a :href="item.url || item.doi || '#'" target="_blank" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors" x-text="item.title"></a>
+                                                <a :href="safeExternalUrl(item.url) || safeDoiUrl(item.doi) || '#'" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors" x-text="item.title"></a>
                                             </h4>
                                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                                 <span class="font-medium text-slate-700 dark:text-slate-300" x-text="item.authors"></span>
@@ -578,8 +578,8 @@
                                         <!-- Action Buttons Row -->
                                         <div class="flex items-center gap-2 pt-1 flex-wrap">
                                             <!-- Open URL / DOI -->
-                                            <template x-if="item.url || item.doi">
-                                                <a :href="item.url || ('https://doi.org/' + item.doi)" target="_blank"
+                                            <template x-if="safeExternalUrl(item.url) || safeDoiUrl(item.doi)">
+                                                <a :href="safeExternalUrl(item.url) || safeDoiUrl(item.doi)" target="_blank" rel="noopener noreferrer"
                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all">
                                                     <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                     <span>Buka Sumber</span>
@@ -587,8 +587,8 @@
                                             </template>
 
                                             <!-- PDF Download if OA -->
-                                            <template x-if="item.pdf_url">
-                                                <a :href="item.pdf_url" target="_blank"
+                                            <template x-if="safeExternalUrl(item.pdf_url)">
+                                                <a :href="safeExternalUrl(item.pdf_url)" target="_blank" rel="noopener noreferrer"
                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 transition-all">
                                                     <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                     <span>Unduh PDF</span>
@@ -686,6 +686,21 @@
                 closeModal() {
                     this.modalOpen = false;
                     this.selectedUser = null;
+                },
+
+                safeExternalUrl(url) {
+                    if (typeof url !== 'string') return '';
+                    const trimmed = url.trim();
+                    return /^https?:\/\//i.test(trimmed) ? trimmed : '';
+                },
+
+                safeDoiUrl(doi) {
+                    if (typeof doi !== 'string') return '';
+                    const trimmed = doi.trim();
+                    if (!trimmed) return '';
+                    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+                    if (trimmed.includes(':') || /\s/.test(trimmed)) return '';
+                    return 'https://doi.org/' + trimmed;
                 },
 
                 get filteredBookmarks() {

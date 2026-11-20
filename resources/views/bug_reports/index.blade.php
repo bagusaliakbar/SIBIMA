@@ -673,12 +673,15 @@
 
                 const pageUrlContainer = document.getElementById('brm-page-url-container');
                 const pageUrlLink = document.getElementById('brm-page-url');
-                if (r.page_url) {
+                const rawPageUrl = typeof r.page_url === 'string' ? r.page_url.trim() : '';
+                const isSafePageUrl = /^https?:\/\//i.test(rawPageUrl) || (rawPageUrl.startsWith('/') && !rawPageUrl.startsWith('//'));
+                if (rawPageUrl && isSafePageUrl) {
                     pageUrlContainer.style.display = 'block';
-                    pageUrlLink.href = r.page_url;
-                    pageUrlLink.querySelector('.page-url-text').innerText = r.page_url;
+                    pageUrlLink.href = rawPageUrl;
+                    pageUrlLink.querySelector('.page-url-text').innerText = rawPageUrl;
                 } else {
                     pageUrlContainer.style.display = 'none';
+                    pageUrlLink.removeAttribute('href');
                 }
 
                 document.getElementById('brm-description').innerText = r.description || '-';

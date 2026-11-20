@@ -295,6 +295,17 @@ class MentoringService
     private function handleStudentStore(array $data)
     {
         $thesis = Thesis::where('student_id', Auth::id())->firstOrFail();
+
+        $allowedAdvisorIds = array_values(array_filter([
+            $thesis->pembimbing1_id ? (int) $thesis->pembimbing1_id : null,
+            $thesis->pembimbing2_id ? (int) $thesis->pembimbing2_id : null,
+        ]));
+
+        if (!in_array((int) $data['dosen_id'], $allowedAdvisorIds, true)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'dosen_id' => 'Dosen yang dipilih bukan dosen pembimbing resmi pada skripsi Anda.',
+            ]);
+        }
         
         $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
 

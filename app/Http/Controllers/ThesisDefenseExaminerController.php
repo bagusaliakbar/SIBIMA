@@ -304,7 +304,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
 
         $request->validate([
             'revision_notes' => 'required|string',
-            'revision_link' => 'nullable|url',
+            'revision_link' => 'nullable|url:http,https|max:1000',
         ]);
 
         $actingUser = $user;
@@ -348,7 +348,7 @@ class ThesisDefenseExaminerController extends Controller implements HasMiddlewar
 
         $request->validate([
             'revision_notes' => 'required|string',
-            'revision_link' => 'nullable|url',
+            'revision_link' => 'nullable|url:http,https|max:1000',
         ]);
 
         try {

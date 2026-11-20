@@ -23,7 +23,23 @@ class BugReportController extends Controller
             'title' => 'required|string|max:255',
             'category' => 'required|string|in:ui_ux,functionality,performance,security,data_error,feature_request,improvement,other',
             'severity' => 'required|string|in:low,medium,high,critical',
-            'page_url' => 'nullable|string|max:500',
+            'page_url' => [
+                'nullable',
+                'string',
+                'max:500',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    $url = trim((string) $value);
+                    if ($url === '') {
+                        return;
+                    }
+                    $isSafeRelative = str_starts_with($url, '/') && !str_starts_with($url, '//');
+                    $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+                    $isSafeHttp = in_array($scheme, ['http', 'https'], true) && filter_var($url, FILTER_VALIDATE_URL) !== false;
+                    if (!$isSafeRelative && !$isSafeHttp) {
+                        $fail('URL halaman tidak valid (hanya mendukung tautan HTTP/HTTPS atau path lokal).');
+                    }
+                },
+            ],
             'description' => 'required|string|max:5000',
             'steps_to_reproduce' => 'nullable|string|max:5000',
             'device_info' => 'nullable|string|max:500',
@@ -383,12 +399,23 @@ class BugReportController extends Controller
             abort(404, 'File fisik lampiran tidak ditemukan di server.');
         }
 
-        $mimeType = mime_content_type($resolvedPath) ?: 'application/octet-stream';
-        $filename = basename($resolvedPath);
+        $detectedMime = strtolower((string) (mime_content_type($resolvedPath) ?: 'application/octet-stream'));
+        $safeInlineMimes = [
+            'application/pdf',
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+        ];
+        $isSafeInline = in_array($detectedMime, $safeInlineMimes, true);
+        $mimeType = $isSafeInline ? $detectedMime : 'application/octet-stream';
+        $disposition = $isSafeInline ? 'inline' : 'attachment';
+        $filename = preg_replace('/[^A-Za-z0-9._\- ]/', '_', basename($resolvedPath)) ?: 'attachment';
 
         return response()->file($resolvedPath, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => $disposition . '; filename="' . $filename . '"',
+            'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, max-age=86400',
         ]);
     }

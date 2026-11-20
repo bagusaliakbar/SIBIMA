@@ -354,13 +354,19 @@ class UserController extends Controller implements HasMiddleware
             // If stored as base64 data URI
             if (str_starts_with($user->avatar, 'data:image')) {
                 if (preg_match('/^data:([^;]+);base64,(.+)$/', $user->avatar, $matches)) {
-                    $mime = $matches[1];
-                    $data = base64_decode($matches[2]);
-                    return response($data, 200, [
-                        'Content-Type' => $mime,
-                        'Cache-Control' => 'public, max-age=86400',
-                        'ETag' => md5(($user->updated_at ? $user->updated_at->timestamp : $user->id) . strlen($user->avatar)),
-                    ]);
+                    $mime = strtolower(trim($matches[1]));
+                    $allowedAvatarMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (in_array($mime, $allowedAvatarMimes, true)) {
+                        $data = base64_decode($matches[2], true);
+                        if ($data !== false) {
+                            return response($data, 200, [
+                                'Content-Type' => $mime === 'image/jpg' ? 'image/jpeg' : $mime,
+                                'X-Content-Type-Options' => 'nosniff',
+                                'Cache-Control' => 'public, max-age=86400',
+                                'ETag' => md5(($user->updated_at ? $user->updated_at->timestamp : $user->id) . strlen($user->avatar)),
+                            ]);
+                        }
+                    }
                 }
             }
 

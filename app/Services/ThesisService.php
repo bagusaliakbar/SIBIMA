@@ -16,8 +16,9 @@ class ThesisService
      */
     public function createThesis(array $data)
     {
-        $studentId = $data['student_id'] ?? Auth::id();
-        $student = User::find($studentId);
+        $isStaff = Auth::check() && in_array(Auth::user()->role, ['admin', 'kaprodi'], true);
+        $studentId = $isStaff ? ($data['student_id'] ?? Auth::id()) : Auth::id();
+        $student = User::findOrFail($studentId);
 
         $existing = Thesis::where('student_id', $studentId)
             ->whereIn('status', ['pending', 'active'])

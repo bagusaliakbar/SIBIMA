@@ -218,4 +218,89 @@ class SecurityHardeningTest extends TestCase
             ->getJson(route('calendar.events', ['start' => 'not-a-valid-date']))
             ->assertStatus(422);
     }
+
+    public function test_student_cannot_create_thesis_for_another_student_via_student_id_idor(): void
+    {
+        $attacker = User::factory()->create(['role' => 'mahasiswa', 'is_active' => true]);
+        $victim = User::factory()->create(['role' => 'mahasiswa', 'is_active' => true]);
+
+        $this->actingAs($attacker)
+            ->post(route('theses.store'), [
+                'student_id' => $victim->id,
+                'title' => 'Sistem Informasi Pengujian Otorisasi Pengajuan Skripsi',
+                'abstract' => 'Abstrak pengujian keamanan IDOR pada pengajuan judul skripsi.',
+            ])
+            ->assertRedirect(route('theses.index'));
+
+        $this->assertDatabaseMissing('theses', ['student_id' => $victim->id]);
+        $this->assertDatabaseHas('theses', ['student_id' => $attacker->id]);
+    }
+
+    public function test_student_cannot_book_mentoring_session_with_non_advisor_user(): void
+    {
+        $advisor = User::factory()->create(['role' => 'dosen', 'is_active' => true]);
+        $otherDosen = User::factory()->create(['role' => 'dosen', 'is_active' => true]);
+        $student = User::factory()->create(['role' => 'mahasiswa', 'is_active' => true]);
+
+        Thesis::create([
+            'student_id' => $student->id,
+            'title' => 'Skripsi Bimbingan Mahasiswa Uji',
+            'abstract' => 'Abstrak bimbingan',
+            'status' => 'active',
+            'pembimbing1_id' => $advisor->id,
+        ]);
+
+        $this->actingAs($student)
+            ->post(route('mentoring-sessions.store'), [
+                'dosen_id' => $otherDosen->id,
+                'scheduled_at' => now()->addDays(2)->format('Y-m-d H:i'),
+                'topic' => 'Percobaan Booking Dosen Bukan Pembimbing',
+                'type' => 'offline',
+                'location' => 'Ruang Dosen',
+            ])
+            ->assertSessionHasErrors('dosen_id');
+
+        $this->assertDatabaseCount('mentoring_sessions', 0);
+    }
+
+    public function test_bug_report_and_bookmark_reject_javascript_uri_xss(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa', 'is_active' => true]);
+
+        $this->actingAs($student)
+            ->postJson(route('bug-reports.store'), [
+                'title' => 'Test XSS Bug Report',
+                'category' => 'ui_ux',
+                'severity' => 'low',
+                'page_url' => 'javascript:alert(document.cookie)',
+                'description' => 'Mencoba injeksi javascript URI.',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('page_url');
+
+        $this->actingAs($student)
+            ->postJson(route('repositories.bookmarks.toggle'), [
+                'journal_identifier' => 'xss-test-001',
+                'title' => 'Malicious Bookmark',
+                'url' => 'javascript://%0aalert(1)',
+                'pdf_url' => 'javascript:alert(2)',
+                'doi' => 'javascript:alert(3)',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['url', 'pdf_url', 'doi']);
+    }
+
+    public function test_avatar_endpoint_blocks_svg_data_uri_xss(): void
+    {
+        $viewer = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $target = User::factory()->create([
+            'role' => 'mahasiswa',
+            'is_active' => true,
+            'avatar' => 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"/>'),
+        ]);
+
+        $response = $this->actingAs($viewer)->get(route('users.avatar', $target));
+        $response->assertStatus(200);
+        $this->assertStringNotContainsString('onload="alert(1)"', (string) $response->getContent());
+    }
 }

@@ -311,23 +311,37 @@
                 console.warn('Echo is not defined. Real-time chat updates are disabled.');
             }
 
+            function escapeChatHtml(value) {
+                return String(value ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
             // Function to append message to UI with strict deduplication
             function appendMessage(message, side) {
-                if (message.id && document.getElementById('msg-box-' + message.id)) {
+                const safeId = message && message.id !== undefined && message.id !== null
+                    ? String(message.id).replace(/[^0-9]/g, '')
+                    : '';
+
+                if (safeId && document.getElementById('msg-box-' + safeId)) {
                     return; // Prevent duplicate rendering of the same message
                 }
 
-                const time = new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const time = escapeChatHtml(new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                const safeBody = escapeChatHtml(message.message);
                 let html = '';
-                const msgIdAttr = message.id ? `id="msg-box-${message.id}"` : '';
+                const msgIdAttr = safeId ? `id="msg-box-${safeId}"` : '';
                 
                 if (side === 'right') {
                     const checkColor = message.is_read ? 'text-blue-500 font-bold' : 'text-slate-400 dark:text-slate-500';
-                    const checkIdAttr = message.id ? `id="check-msg-${message.id}"` : '';
+                    const checkIdAttr = safeId ? `id="check-msg-${safeId}"` : '';
                     html = `
                         <div class="flex justify-end" ${msgIdAttr}>
                             <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
-                                <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">${message.message}</p>
+                                <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">${safeBody}</p>
                                 <div class="absolute bottom-1 right-2 flex items-center space-x-1">
                                     <span class="text-[9px] text-slate-500 dark:text-slate-400">${time}</span>
                                     <span ${checkIdAttr} class="inline-flex ${checkColor}">
@@ -342,7 +356,7 @@
                     html = `
                         <div class="flex justify-start" ${msgIdAttr}>
                             <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tl-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-slate-100 dark:border-slate-700">
-                                <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${message.message}</p>
+                                <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${safeBody}</p>
                                 <span class="absolute bottom-1 right-2 text-[9px] text-slate-400 dark:text-slate-500">${time}</span>
                             </div>
                         </div>

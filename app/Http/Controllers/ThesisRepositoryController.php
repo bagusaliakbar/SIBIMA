@@ -341,6 +341,8 @@ class ThesisRepositoryController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
+        $page = max(1, (int) $page);
+
         try {
             $opts = [
                 "http" => [
@@ -1199,8 +1201,41 @@ class ThesisRepositoryController extends Controller
 
         // Validate required fields when creating bookmark
         $request->validate([
-            'title' => 'required|string',
+            'title' => 'required|string|max:1000',
+            'url' => 'nullable|url:http,https|max:2000',
+            'landing_page_url' => 'nullable|url:http,https|max:2000',
+            'pdf_url' => 'nullable|url:http,https|max:2000',
+            'doi' => [
+                'nullable',
+                'string',
+                'max:500',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    $doi = trim((string) $value);
+                    if ($doi === '') {
+                        return;
+                    }
+                    $scheme = strtolower((string) parse_url($doi, PHP_URL_SCHEME));
+                    if ($scheme !== '') {
+                        if (!in_array($scheme, ['http', 'https'], true) || filter_var($doi, FILTER_VALIDATE_URL) === false) {
+                            $fail('Format tautan DOI tidak valid.');
+                        }
+                        return;
+                    }
+                    if (str_contains($doi, ':') || preg_match('/\s/', $doi)) {
+                        $fail('Format DOI tidak valid.');
+                    }
+                },
+            ],
         ]);
+
+        $sanitizeHttpUrl = function (?string $raw): ?string {
+            $val = trim((string) $raw);
+            if ($val === '') {
+                return null;
+            }
+            $scheme = strtolower((string) parse_url($val, PHP_URL_SCHEME));
+            return (in_array($scheme, ['http', 'https'], true) && filter_var($val, FILTER_VALIDATE_URL) !== false) ? $val : null;
+        };
 
         $bookmark = JournalBookmark::create([
             'user_id' => $user->id,
@@ -1211,9 +1246,9 @@ class ThesisRepositoryController extends Controller
             'year' => $request->filled('year') ? (int) $request->input('year') : null,
             'venue' => $request->input('venue'),
             'publisher' => $request->input('publisher'),
-            'doi' => $request->input('doi'),
-            'url' => $request->input('landing_page_url') ?: $request->input('url'),
-            'pdf_url' => $request->input('pdf_url'),
+            'doi' => $request->filled('doi') ? trim((string) $request->input('doi')) : null,
+            'url' => $sanitizeHttpUrl($request->input('landing_page_url') ?: $request->input('url')),
+            'pdf_url' => $sanitizeHttpUrl($request->input('pdf_url')),
             'abstract' => $request->input('abstract'),
             'source' => $request->input('source', 'unknown'),
             'source_label' => $request->input('source_label'),
@@ -1561,7 +1596,7 @@ class ThesisRepositoryController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memproses sinkronisasi: ' . $e->getMessage(),
+                'message' => 'Terjadi kesalahan internal saat memproses sinkronisasi jurnal.',
             ], 500);
         }
     }
@@ -1729,6 +1764,25 @@ class ThesisRepositoryController extends Controller
                 }
             }
 
+            $safeHttp = function (?string $raw): ?string {
+                $val = trim((string) $raw);
+                if ($val === '') {
+                    return null;
+                }
+                $scheme = strtolower((string) parse_url($val, PHP_URL_SCHEME));
+                return (in_array($scheme, ['http', 'https'], true) && filter_var($val, FILTER_VALIDATE_URL) !== false) ? $val : null;
+            };
+            $safeDoi = null;
+            if (filled($bm->doi)) {
+                $doiVal = trim((string) $bm->doi);
+                $doiScheme = strtolower((string) parse_url($doiVal, PHP_URL_SCHEME));
+                if ($doiScheme === '' && !str_contains($doiVal, ':') && !preg_match('/\s/', $doiVal)) {
+                    $safeDoi = $doiVal;
+                } elseif (in_array($doiScheme, ['http', 'https'], true) && filter_var($doiVal, FILTER_VALIDATE_URL) !== false) {
+                    $safeDoi = $doiVal;
+                }
+            }
+
             return [
                 'id' => $bm->id,
                 'title' => $bm->title,
@@ -1736,9 +1790,9 @@ class ThesisRepositoryController extends Controller
                 'year' => $bm->year,
                 'venue' => $bm->venue,
                 'publisher' => $bm->publisher,
-                'doi' => $bm->doi,
-                'url' => $bm->url,
-                'pdf_url' => $bm->pdf_url,
+                'doi' => $safeDoi,
+                'url' => $safeHttp($bm->url),
+                'pdf_url' => $safeHttp($bm->pdf_url),
                 'source' => $bm->source,
                 'source_label' => $bm->clean_source_label ?? ucfirst($bm->source),
                 'notes' => $bm->notes,

@@ -93,6 +93,7 @@ class UserService
     {
         $users = User::whereIn('id', $userIds)
             ->where('role', '!=', 'admin')
+            ->when(\Illuminate\Support\Facades\Auth::id(), fn ($q, $authId) => $q->where('id', '!=', $authId))
             ->get();
 
         $count = $users->count();

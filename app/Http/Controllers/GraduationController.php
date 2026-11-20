@@ -133,10 +133,10 @@ class GraduationController extends Controller
         }
 
         $request->validate([
-            'final_thesis_file' => 'required|url|max:1000',
-            'journal_article_file' => 'required|url|max:1000',
-            'plagiarism_file' => 'nullable|url|max:1000',
-            'publication_link' => 'nullable|url|max:1000',
+            'final_thesis_file' => 'required|url:http,https|max:1000',
+            'journal_article_file' => 'required|url:http,https|max:1000',
+            'plagiarism_file' => 'nullable|url:http,https|max:1000',
+            'publication_link' => 'nullable|url:http,https|max:1000',
             'student_notes' => 'nullable|string|max:1000',
         ], [
             'final_thesis_file.required' => 'Tautan Google Drive naskah skripsi lengkap wajib diisi.',
