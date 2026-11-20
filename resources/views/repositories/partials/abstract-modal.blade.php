@@ -1,6 +1,9 @@
         <!-- Modal Detail Abstrak Pustaka -->
         <template x-teleport="body">
             <div x-show="abstractModalOpen && !pdfReaderOpen" 
+                 @keydown.escape.window="if (abstractModalOpen && !pdfReaderOpen) abstractModalOpen = false"
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                  x-cloak 
                  x-transition:enter="transition ease-out duration-300"
@@ -20,7 +23,7 @@
                                 <span class="px-2.5 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-lg" x-text="'Angkatan ' + abstractData.year"></span>
                                 <span class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border" :class="abstractData.badge?.bg" x-text="abstractData.badge?.label"></span>
                             </div>
-                            <button type="button" @click="abstractModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1 cursor-pointer">&times;</button>
+                            <button type="button" @click="abstractModalOpen = false" aria-label="Tutup modal detail abstrak" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1 cursor-pointer">&times;</button>
                         </div>
                         
                         <div class="p-8 space-y-5 max-h-[70vh] overflow-y-auto">
@@ -70,8 +73,7 @@
                         <div class="px-8 py-5 bg-slate-50/75 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-3.5 sm:gap-4 flex-wrap">
                                 <template x-if="abstractData.file_path">
-                                    <div style="background-color: #e11d48;" 
-                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600 border border-black/10 dark:border-white/15 transition-all">
+                                    <div class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab1')" 
                                                 class="inline-flex items-center gap-2.5 pl-4 pr-3.5 py-2.5 text-white text-xs font-bold hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"
@@ -89,8 +91,7 @@
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab2">
-                                    <div style="background-color: #d97706;" 
-                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600 border border-black/10 dark:border-white/15 transition-all">
+                                    <div class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab2')" 
                                                 class="inline-flex items-center gap-2.5 pl-4 pr-3.5 py-2.5 text-white text-xs font-bold hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"
@@ -108,8 +109,7 @@
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab3">
-                                    <div style="background-color: #4f46e5;" 
-                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 border border-black/10 dark:border-white/15 transition-all">
+                                    <div class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab3')" 
                                                 class="inline-flex items-center gap-2.5 pl-4 pr-3.5 py-2.5 text-white text-xs font-bold hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"
@@ -127,8 +127,7 @@
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab4">
-                                    <div style="background-color: #059669;" 
-                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 border border-black/10 dark:border-white/15 transition-all">
+                                    <div class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab4')" 
                                                 class="inline-flex items-center gap-2.5 pl-4 pr-3.5 py-2.5 text-white text-xs font-bold hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"
@@ -146,8 +145,7 @@
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab5">
-                                    <div style="background-color: #7c3aed;" 
-                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 border border-black/10 dark:border-white/15 transition-all">
+                                    <div class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab5')" 
                                                 class="inline-flex items-center gap-2.5 pl-4 pr-3.5 py-2.5 text-white text-xs font-bold hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"
@@ -165,8 +163,7 @@
                                     </div>
                                 </template>
                                 <template x-if="abstractData.file_path_bab6">
-                                    <div style="background-color: #0891b2;" 
-                                         class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-700 dark:hover:bg-cyan-600 border border-black/10 dark:border-white/15 transition-all">
+                                    <div class="inline-flex items-center rounded-xl shadow-xs overflow-hidden bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-700 dark:hover:bg-cyan-600 border border-black/10 dark:border-white/15 transition-all">
                                         <button type="button" 
                                                 @click="abstractModalOpen = false; openPdfReader(abstractData, 'bab6')" 
                                                 class="inline-flex items-center gap-2.5 pl-4 pr-3.5 py-2.5 text-white text-xs font-bold hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"

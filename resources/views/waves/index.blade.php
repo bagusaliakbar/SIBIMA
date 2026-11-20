@@ -9,8 +9,8 @@
     <div class="space-y-6">
         @if(session('success'))
             <div class="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-2xl flex items-center gap-3">
-                <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 animate-bounce">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </div>
                 <p class="text-xs font-bold text-emerald-700 dark:text-emerald-300">{{ session('success') }}</p>
             </div>
@@ -21,9 +21,9 @@
             :footer="$waves->links()">
             
             <x-slot name="headerActions">
-                <button onclick="document.getElementById('modal-add-wave').classList.remove('hidden')" 
-                        class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95 group">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                <button type="button" onclick="document.getElementById('modal-add-wave').classList.remove('hidden')" 
+                        class="h-10 inline-flex items-center px-4 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl font-bold text-xs transition-colors shadow-sm cursor-pointer">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                     Tambah Gelombang Baru
                 </button>
             </x-slot>
@@ -74,20 +74,21 @@
                                     <form action="{{ route('waves.toggle', $wave) }}" method="POST">
                                         @csrf
                                         <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1.5 {{ $wave->is_active ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-600' : 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600' }} text-[10px] font-black uppercase rounded-lg hover:scale-105 active:scale-95 transition-all shadow-sm">
+                                                class="inline-flex items-center px-3 py-1.5 {{ $wave->is_active ? 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60' : 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60' }} text-[10px] font-black uppercase rounded-lg transition-colors shadow-2xs cursor-pointer">
                                             @if($wave->is_active)
-                                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                                             @else
-                                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                             @endif
                                             {{ $wave->is_active ? 'Arsipkan' : 'Aktifkan' }}
                                         </button>
                                     </form>
                                     
-                                    <button onclick='editWave(@json($wave))' 
-                                            class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-xl transition-all"
-                                            title="Edit Gelombang">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"></path></svg>
+                                    <button type="button" onclick='editWave(@json($wave))' 
+                                            class="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-xl transition-colors cursor-pointer"
+                                            title="Edit Gelombang"
+                                            aria-label="Edit Gelombang {{ $wave->name }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"></path></svg>
                                     </button>
 
                                     <form action="{{ route('waves.destroy', $wave) }}"
@@ -98,8 +99,8 @@
                                           data-confirm-button="Ya, Hapus">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all" title="Hapus Gelombang">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer" title="Hapus Gelombang" aria-label="Hapus Gelombang {{ $wave->name }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </form>
                                 </div>
@@ -114,7 +115,7 @@
     </div>
 
     <!-- Modal Add Wave -->
-    <div id="modal-add-wave" class="hidden fixed inset-0 z-[60] overflow-y-auto">
+    <div id="modal-add-wave" role="dialog" aria-modal="true" aria-labelledby="modal-add-wave-title" class="hidden fixed inset-0 z-[60] overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen p-4 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById('modal-add-wave').classList.add('hidden')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
@@ -124,44 +125,44 @@
                     <div class="px-8 pt-8 pb-6">
                         <div class="flex items-center justify-between mb-8">
                             <div>
-                                <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Gelombang Baru</h3>
-                                <p class="text-xs text-slate-500 font-medium mt-1">Tambahkan periode pelaksanaan baru</p>
+                                <h3 id="modal-add-wave-title" class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Gelombang Baru</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Tambahkan periode pelaksanaan baru</p>
                             </div>
-                            <button type="button" onclick="document.getElementById('modal-add-wave').classList.add('hidden')" class="text-slate-400 hover:text-rose-600 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l18 18"></path></svg>
+                            <button type="button" onclick="document.getElementById('modal-add-wave').classList.add('hidden')" aria-label="Tutup modal tambah gelombang" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors rounded-xl cursor-pointer">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
 
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Nama Gelombang</label>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Nama Gelombang</label>
                                 <input type="text" name="name" required placeholder="Contoh: Gelombang 1 2024/2025"
-                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
+                                    <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
                                     <input type="date" name="start_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
+                                    <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
                                     <input type="date" name="end_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Deskripsi Singkat</label>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Deskripsi Singkat</label>
                                 <textarea name="description" rows="3" placeholder="Tambahkan catatan jika perlu..."
-                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm italic"></textarea>
+                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm italic"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 items-center">
                         <button type="button" onclick="document.getElementById('modal-add-wave').classList.add('hidden')" 
-                                class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</button>
+                                class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors cursor-pointer">Batal</button>
                         <button type="submit" 
-                                class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95">
+                                class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors shadow-sm cursor-pointer">
                             Simpan Gelombang
                         </button>
                     </div>
@@ -171,55 +172,55 @@
     </div>
 
     <!-- Modal Edit Wave -->
-    <div id="modal-edit-wave" class="hidden fixed inset-0 z-[60] overflow-y-auto">
+    <div id="modal-edit-wave" role="dialog" aria-modal="true" aria-labelledby="modal-edit-wave-title" class="hidden fixed inset-0 z-[60] overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen p-4 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById('modal-edit-wave').classList.add('hidden')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700">
+            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-700 relative z-10">
                 <form id="form-edit-wave" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="px-8 pt-8 pb-6">
                         <div class="flex items-center justify-between mb-8">
                             <div>
-                                <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Edit Gelombang</h3>
-                                <p class="text-xs text-slate-500 font-medium mt-1">Perbarui informasi gelombang</p>
+                                <h3 id="modal-edit-wave-title" class="text-xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Edit Gelombang</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Perbarui informasi gelombang</p>
                             </div>
-                            <button type="button" onclick="document.getElementById('modal-edit-wave').classList.add('hidden')" class="text-slate-400 hover:text-rose-600 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <button type="button" onclick="document.getElementById('modal-edit-wave').classList.add('hidden')" aria-label="Tutup modal edit gelombang" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors rounded-xl cursor-pointer">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
 
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Nama Gelombang</label>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Nama Gelombang</label>
                                 <input type="text" id="edit-name" name="name" required placeholder="Nama Gelombang"
-                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                       class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
+                                    <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
                                     <input type="date" id="edit-start-date" name="start_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
+                                    <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
                                     <input type="date" id="edit-end-date" name="end_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Deskripsi Singkat</label>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Deskripsi Singkat</label>
                                 <textarea id="edit-description" name="description" rows="3" placeholder="Deskripsi..."
-                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm italic"></textarea>
+                                          class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-2xl text-sm font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm italic"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="px-8 py-6 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 items-center">
                         <button type="button" onclick="document.getElementById('modal-edit-wave').classList.add('hidden')" 
-                                class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</button>
+                                class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors cursor-pointer">Batal</button>
                         <button type="submit" 
-                                class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95">
+                                class="px-8 py-2.5 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors shadow-sm cursor-pointer">
                             Update Gelombang
                         </button>
                     </div>
@@ -252,5 +253,12 @@
 
             modal.classList.remove('hidden');
         }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.getElementById('modal-add-wave')?.classList.add('hidden');
+                document.getElementById('modal-edit-wave')?.classList.add('hidden');
+            }
+        });
     </script>
 </x-app-layout>

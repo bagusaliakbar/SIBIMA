@@ -19,7 +19,7 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Ketik calon judul proposal Anda untuk mengecek kemiripan dengan repositori alumni & skripsi aktif secara real-time.</p>
                     </div>
                 </div>
-                <button type="button" @click="showChecker = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition-colors">
+                <button type="button" @click="showChecker = false" aria-label="Tutup pemeriksa kemiripan judul" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition-colors cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -35,6 +35,7 @@
                         <button type="button" 
                                 x-show="testTitle" 
                                 x-cloak
+                                aria-label="Hapus judul yang diuji"
                                 @click="testTitle = ''; errorMessage = ''; hasChecked = false; checkResults = [];" 
                                 class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
                                 title="Hapus teks judul">

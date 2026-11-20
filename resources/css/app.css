@@ -85,6 +85,13 @@ select:active,
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
 }
 
+.dark input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):focus,
+.dark select:focus,
+.dark textarea:focus {
+    --tw-ring-offset-color: #0f172a !important;
+    --tw-ring-offset-shadow: var(--tw-ring-inset, ) 0 0 0 var(--tw-ring-offset-width, 0px) var(--tw-ring-offset-color, #0f172a) !important;
+}
+
 /* 3. Checkbox & Radio Buttons */
 input[type='checkbox']:focus,
 input[type='radio']:focus {
@@ -137,7 +144,15 @@ select:-webkit-autofill:active {
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:hover, 
 .dark input:-webkit-autofill:focus,
-.dark input:-webkit-autofill:active {
+.dark input:-webkit-autofill:active,
+.dark textarea:-webkit-autofill,
+.dark textarea:-webkit-autofill:hover,
+.dark textarea:-webkit-autofill:focus,
+.dark textarea:-webkit-autofill:active,
+.dark select:-webkit-autofill,
+.dark select:-webkit-autofill:hover,
+.dark select:-webkit-autofill:focus,
+.dark select:-webkit-autofill:active {
     -webkit-text-fill-color: #f8fafc !important;
     -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
     box-shadow: 0 0 0px 1000px #0f172a inset !important;
@@ -282,6 +297,7 @@ select:-webkit-autofill:active {
 @media (prefers-reduced-motion: reduce) {
     .animate-shimmer::after,
     .animate-pulse,
+    .animate-ping,
     .animate-bounce,
     .animate-spin {
         animation: none !important;

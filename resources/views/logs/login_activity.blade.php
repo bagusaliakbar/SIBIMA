@@ -441,7 +441,7 @@
         <!-- Alpine.js User Login Session Detail Modal -->
         <div x-show="isOpen" 
              x-cloak
-             class="fixed inset-0 z-50 overflow-y-auto" 
+             class="fixed inset-0 z-[60] overflow-y-auto" 
              aria-labelledby="modal-title" 
              role="dialog" 
              aria-modal="true"
@@ -484,7 +484,7 @@
                                 </p>
                             </div>
                         </div>
-                        <button type="button" @click="closeModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors">
+                        <button type="button" @click="closeModal()" aria-label="Tutup detail sesi login" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>

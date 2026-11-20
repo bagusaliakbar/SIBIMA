@@ -53,6 +53,7 @@
                         class="block w-full pl-11 pr-10 py-3.5 text-xs sm:text-sm rounded-2xl bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100/80 dark:hover:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all shadow-inner font-medium">
                     <button type="button" 
                         x-show="searchQuery.length > 0" 
+                        aria-label="Hapus pencarian FAQ"
                         @click="searchQuery = ''" 
                         class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
                         title="Hapus pencarian"

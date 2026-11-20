@@ -27,7 +27,7 @@
                        placeholder="Cari mahasiswa, NPM, atau judul..." 
                        style="background-color: transparent !important; color: inherit !important;"
                        class="w-full border-0 p-0 text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0">
-                <button x-show="search" @click="search = ''" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold shrink-0">
+                <button type="button" x-show="search" @click="search = ''" aria-label="Hapus kata kunci pencarian" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold shrink-0 cursor-pointer">
                     ✕
                 </button>
             </div>

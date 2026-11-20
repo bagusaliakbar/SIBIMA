@@ -586,7 +586,7 @@
         </x-table-card>
 
         <!-- Quick Preview User Detail Modal -->
-        <div x-show="openDetailModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div x-show="openDetailModal" @keydown.escape.window="if (openDetailModal) openDetailModal = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openDetailModal = false">
                     <div class="absolute inset-0 bg-slate-900/75 backdrop-blur-sm"></div>
@@ -637,7 +637,7 @@
                                             <span>Chat WA</span>
                                         </a>
                                     </template>
-                                    <button type="button" @click="openDetailModal = false" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors" title="Tutup">
+                                    <button type="button" @click="openDetailModal = false" aria-label="Tutup detail pengguna" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer" title="Tutup">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
@@ -873,7 +873,7 @@
         </div>
 
         <!-- Import Modal -->
-        <div x-show="openImportModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak x-transition>
+        <div x-show="openImportModal" @keydown.escape.window="if (openImportModal) openImportModal = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openImportModal = false">
                     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
@@ -919,7 +919,10 @@
         <!-- Bulk Delete Confirmation Modal -->
         <div x-show="openBulkDeleteModal" 
              x-cloak
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" 
+             @keydown.escape.window="if (openBulkDeleteModal) openBulkDeleteModal = false"
+             role="dialog"
+             aria-modal="true"
+             class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" 
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"

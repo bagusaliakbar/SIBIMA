@@ -24,6 +24,7 @@
                                 <button type="button" 
                                         x-show="q" 
                                         x-cloak
+                                        aria-label="Hapus pencarian arsip"
                                         @click="q = ''; document.getElementById('search').value = ''; document.getElementById('filterForm').submit();"
                                         class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
                                         title="Reset kata kunci pencarian">

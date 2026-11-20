@@ -81,7 +81,7 @@
                                             $simMatches = $hasValidTitle ? $thesis->getDetailedSimilarityMatches() : collect();
                                         @endphp
                                         @if($hasValidTitle)
-                                            <button @click='$dispatch("open-audit-modal", {
+                                            <button type="button" @click='$dispatch("open-audit-modal", {
                                                 student: "{{ addslashes($thesis->student->name) }}",
                                                 npm: "{{ $thesis->student->identifier }}",
                                                 title: "{{ addslashes($rawTitle) }}",
@@ -108,7 +108,7 @@
                                         @endif
 
                                         @if($thesis->abstract)
-                                            <button @click="openAbstract = true" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors cursor-pointer" title="Lihat Abstrak & Detail Lengkap">
+                                            <button type="button" @click="openAbstract = true" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors cursor-pointer" title="Lihat Abstrak & Detail Lengkap">
                                                 <span>Lihat Detail Lengkap</span>
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                             </button>
@@ -118,7 +118,7 @@
                                     @if($thesis->abstract)
                                         <!-- Abstract Modal -->
                                         <template x-teleport="body">
-                                            <div x-show="openAbstract" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
+                                            <div x-show="openAbstract" @keydown.escape.window="if (openAbstract) openAbstract = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
                                                 <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                                                     <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openAbstract = false">
                                                         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
@@ -127,8 +127,8 @@
                                                     <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                         <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                                                             <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
-                                                            <button @click="openAbstract = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
-                                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                            <button type="button" @click="openAbstract = false" aria-label="Tutup detail deskripsi skripsi" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                             </button>
                                                         </div>
                                                         <div class="px-8 py-8 max-h-[60vh] overflow-y-auto">

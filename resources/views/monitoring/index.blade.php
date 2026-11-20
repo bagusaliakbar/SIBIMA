@@ -530,7 +530,9 @@
         <!-- Centralized Kaprodi Quick ACC Modal Dialog -->
         <div x-show="isOpen" 
              x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+             role="dialog"
+             aria-modal="true"
+             class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"

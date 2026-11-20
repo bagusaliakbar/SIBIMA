@@ -153,7 +153,7 @@
     <!-- Metadata Judul: Similarity Badge & Abstract Modal Trigger -->
     <div class="flex items-center gap-2 flex-wrap text-[10px]">
         @if($hasValidTitle)
-            <button @click='$dispatch("open-audit-modal", {
+            <button type="button" @click='$dispatch("open-audit-modal", {
                 student: "{{ addslashes($thesis->student->name) }}",
                 npm: "{{ $thesis->student->identifier }}",
                 title: "{{ addslashes($rawTitle) }}",
@@ -180,7 +180,7 @@
         @endif
 
         @if($thesis->abstract)
-            <button @click="openAbstractMobile = true" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5 cursor-pointer">
+            <button type="button" @click="openAbstractMobile = true" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5 cursor-pointer">
                 <span>Lihat Deskripsi</span>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
@@ -190,14 +190,14 @@
     @if($thesis->abstract)
         <!-- Abstract Bottom Sheet Modal for Mobile -->
         <template x-teleport="body">
-            <div x-show="openAbstractMobile" class="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4" x-cloak x-transition>
+            <div x-show="openAbstractMobile" @keydown.escape.window="if (openAbstractMobile) openAbstractMobile = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4" x-cloak x-transition>
                 <div class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/75 backdrop-blur-xs" @click="openAbstractMobile = false"></div>
                 <div class="w-full bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-2xl border-t border-x sm:border border-slate-200 dark:border-slate-800 max-h-[85vh] overflow-hidden flex flex-col relative z-10 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-0 sm:max-w-xl shadow-2xl">
                     <div class="sm:hidden w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto my-2.5 shrink-0"></div>
                     <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                         <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Detail Deskripsi Skripsi</h3>
-                        <button @click="openAbstractMobile = false" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl cursor-pointer">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <button type="button" @click="openAbstractMobile = false" aria-label="Tutup detail deskripsi skripsi" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
                     <div class="p-5 overflow-y-auto space-y-4 text-xs">

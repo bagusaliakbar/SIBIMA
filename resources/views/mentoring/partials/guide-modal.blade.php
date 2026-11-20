@@ -2,6 +2,8 @@
 <template x-teleport="body">
     <div x-show="openGuideModal" 
          x-cloak 
+         role="dialog"
+         aria-modal="true"
          class="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
@@ -44,7 +46,8 @@
                 <button type="button" 
                         @click="openGuideModal = false" 
                         class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-all cursor-pointer"
-                        title="Tutup (Esc)">
+                        title="Tutup (Esc)"
+                        aria-label="Tutup panduan jadwal bimbingan">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>

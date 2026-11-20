@@ -118,7 +118,7 @@
                             Progress Bimbingan
                         </h3>
                         <div class="flex items-center gap-3">
-                            <button onclick="captureProgress()" class="inline-flex items-center px-2.5 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm">
+                            <button type="button" onclick="captureProgress()" class="inline-flex items-center px-2.5 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm cursor-pointer">
                                 <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 DOWNLOAD BUKTI ACC
                             </button>
@@ -329,7 +329,7 @@
 
                     <!-- Ajukan Bimbingan Button -->
                     <a href="{{ route('mentoring-sessions.create') }}" 
-                       class="h-10 inline-flex items-center justify-center gap-1.5 px-4 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 hover:scale-[1.02] transition-all whitespace-nowrap shrink-0 cursor-pointer">
+                       class="h-10 inline-flex items-center justify-center gap-1.5 px-4 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs font-bold rounded-xl shadow-sm transition-colors whitespace-nowrap shrink-0 cursor-pointer">
                         <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                         </svg>
@@ -996,6 +996,9 @@
             <!-- Modal Izin Bimbingan -->
             <template x-teleport="body">
                 <div x-show="permissionModalOpen" 
+                     @keydown.escape.window="if (permissionModalOpen) permissionModalOpen = false"
+                     role="dialog"
+                     aria-modal="true"
                      class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"
@@ -1061,6 +1064,9 @@
             <!-- Modal Pembatalan Jadwal Bimbingan (Mahasiswa) -->
             <template x-teleport="body">
                 <div x-show="cancelModalOpen" 
+                     @keydown.escape.window="if (cancelModalOpen) cancelModalOpen = false"
+                     role="dialog"
+                     aria-modal="true"
                      class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"

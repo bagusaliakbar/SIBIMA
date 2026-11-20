@@ -16,15 +16,15 @@
             <x-slot name="headerActions">
                 <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                     <!-- View Mode Toggle (Table vs Cards) -->
-                    <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <div class="h-10 inline-flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                         <!-- 1. Mode Tabel -->
                         <button type="button" 
                                 @click="switchView('table')" 
                                 :class="viewMode === 'table' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                                class="h-full px-3 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                                 title="Mode Tabel: Data terstruktur dengan rincian per baris"
                                 aria-label="Tampilan Tabel">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Tabel</span>
                         </button>
 
@@ -32,10 +32,10 @@
                         <button type="button" 
                                 @click="switchView('cards')" 
                                 :class="viewMode === 'cards' ? 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                                class="h-full px-3 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                                 title="Mode Kartu: Visualisasi alur waktu bimbingan"
                                 aria-label="Tampilan Kartu">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                             <span>Kartu</span>
                         </button>
                     </div>
@@ -44,7 +44,7 @@
                         <form action="{{ route('mentoring-sessions.index') }}" method="GET" class="inline-block">
                             <input type="hidden" name="tab" value="{{ $activeTab }}">
                             <input type="hidden" name="search" value="{{ $search }}">
-                            <select name="dosen_id" onchange="this.form.submit()" class="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 py-2 px-3 shadow-2xs focus:border-orange-500 focus:ring-orange-500">
+                            <select name="dosen_id" onchange="this.form.submit()" aria-label="Filter Dosen Pembimbing" class="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 py-0 px-3 shadow-2xs focus:border-orange-500 focus:ring-orange-500 cursor-pointer">
                                 <option value="">Filter Dosen Pembimbing...</option>
                                 @foreach($dosens as $d)
                                     <option value="{{ $d->id }}" {{ ($dosenId ?? '') == $d->id ? 'selected' : '' }}>
@@ -65,14 +65,17 @@
                     <!-- Tombol Panduan Penggunaan Menu Bimbingan -->
                     <button type="button" 
                             @click="openGuideModal = true"
-                            class="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 dark:text-amber-300 border border-amber-200/90 dark:border-amber-800/60 text-xs font-bold rounded-xl transition-all shadow-2xs hover:shadow-xs cursor-pointer whitespace-nowrap group"
+                            class="h-10 inline-flex items-center gap-1.5 px-3.5 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 dark:text-amber-300 border border-amber-200/90 dark:border-amber-800/60 text-xs font-bold rounded-xl transition-all shadow-2xs hover:shadow-xs cursor-pointer whitespace-nowrap group"
                             title="Buka Panduan Penggunaan Jadwal Bimbingan">
-                        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                         <span>Panduan</span>
                     </button>
 
                     @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
-                        <a href="{{ route('mentoring-sessions.create') }}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm whitespace-nowrap">+ Tambah Jadwal</a>
+                        <a href="{{ route('mentoring-sessions.create') }}" class="h-10 inline-flex items-center gap-1.5 px-4 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs font-bold rounded-xl transition-all shadow-sm whitespace-nowrap">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                            <span>Tambah Jadwal</span>
+                        </a>
                     @endif
                 </div>
             </x-slot>

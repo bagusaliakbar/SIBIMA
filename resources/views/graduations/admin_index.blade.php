@@ -292,7 +292,7 @@
         </x-table-card>
 
         <!-- Verification Modal -->
-        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div x-show="modalOpen" @keydown.escape.window="if (modalOpen) closeModal()" x-cloak class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div x-show="modalOpen" 
                      x-transition:enter="ease-out duration-300" 
@@ -332,7 +332,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="closeModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-slate-700 dark:hover:text-white flex items-center justify-center transition-colors">
+                                <button type="button" @click="closeModal()" aria-label="Tutup modal verifikasi kelulusan" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-slate-700 dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>

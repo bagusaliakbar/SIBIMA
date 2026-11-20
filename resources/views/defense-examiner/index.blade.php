@@ -271,7 +271,7 @@
                             <td class="px-6 py-5 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('defense-examiner.grading', $exam->id) }}" 
-                                       class="inline-flex items-center gap-1 px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-orange-600/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
+                                       class="inline-flex items-center gap-1 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
                                        title="Buka Lembar Penilaian Sidang">
                                         Input Nilai
                                     </a>

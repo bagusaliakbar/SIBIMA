@@ -214,14 +214,14 @@
                 </div>
 
                 <div x-data="{ open: false }">
-                    <button @click="open = true" class="w-full md:w-auto px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest transition-all shadow-xs shadow-orange-500/20 flex items-center justify-center cursor-pointer">
+                    <button type="button" @click="open = true" class="w-full md:w-auto px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest transition-all shadow-xs shadow-orange-500/20 flex items-center justify-center cursor-pointer">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                         Update Templat
                     </button>
 
                     <!-- Upload Template Modal -->
                     <template x-teleport="body">
-                        <div x-show="open" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
+                        <div x-show="open" @keydown.escape.window="if (open) open = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                             <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" @click="open = false"></div>
                             
                             <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
@@ -231,7 +231,7 @@
                                             <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Update Templat Formulir</h3>
                                             <p class="text-[10px] text-slate-500 uppercase font-bold mt-1 tracking-wider">File ini akan diunduh oleh mahasiswa</p>
                                         </div>
-                                        <button @click="open = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                                        <button type="button" @click="open = false" aria-label="Tutup modal update templat" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     </div>
@@ -711,7 +711,7 @@
 
         {{-- GLOBAL WIDE 2-COLUMN VALIDATION MODAL --}}
         <template x-teleport="body">
-            <div x-show="openValidation" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
+            <div x-show="openValidation" @keydown.escape.window="if (openValidation) openValidation = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" @click="openValidation = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
@@ -741,7 +741,7 @@
                                                 class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
                                             ✕ Tolak Semua
                                         </button>
-                                        <button @click="openValidation = false" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1">
+                                        <button type="button" @click="openValidation = false" aria-label="Tutup modal validasi seminar" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1 cursor-pointer">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     </div>
@@ -850,7 +850,7 @@
 
         {{-- GLOBAL PREVIEW APPLICATION MODAL WITH IN-APP VIEWER --}}
         <template x-teleport="body">
-            <div x-show="openPreview" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
+            <div x-show="openPreview" @keydown.escape.window="if (openPreview) openPreview = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" @click="openPreview = false"></div>
 
                 <div class="min-h-full flex items-center justify-center p-3 sm:p-5 text-center">
@@ -885,7 +885,7 @@
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                             <span class="hidden sm:inline">Validasi Berkas</span>
                                         </button>
-                                        <button type="button" @click="openPreview = false" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center transition-colors">
+                                        <button type="button" @click="openPreview = false" aria-label="Tutup pratinjau berkas seminar" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center transition-colors cursor-pointer">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                         </button>
                                     </div>
@@ -1099,7 +1099,7 @@
         {{-- MODAL: DAFTARKAN SEMINAR OLEH ADMIN/KAPRODI--}}
         {{-- ========================================== --}}
         <template x-teleport="body">
-            <div x-show="openRegisterModal" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
+            <div x-show="openRegisterModal" @keydown.escape.window="if (openRegisterModal) openRegisterModal = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak>
                 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" @click="openRegisterModal = false"></div>
                 
                 <div class="min-h-full flex items-center justify-center p-4 text-center sm:p-6">
@@ -1117,7 +1117,7 @@
                                     <p class="text-xs text-slate-500 dark:text-slate-400">Pendaftaran mahasiswa langsung oleh Administrator / Kaprodi</p>
                                 </div>
                             </div>
-                            <button @click="openRegisterModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <button type="button" @click="openRegisterModal = false" aria-label="Tutup modal pendaftaran seminar" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>

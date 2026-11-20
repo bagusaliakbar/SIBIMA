@@ -112,22 +112,22 @@
         <!-- Filter Tabs & Instant Search -->
         <div class="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-2 overflow-x-auto">
-                <button @click="cleanTab = 'all'" 
+                <button type="button" @click="cleanTab = 'all'" 
                         :class="cleanTab === 'all' ? 'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'" 
                         class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
                     Semua (<span x-text="items.length">{{ $pendingSummary['total'] }}</span>)
                 </button>
-                <button @click="cleanTab = 'clean'" 
+                <button type="button" @click="cleanTab = 'clean'" 
                         :class="cleanTab === 'clean' ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/25' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100'" 
                         class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
                     🟢 Siap ACC (<span x-text="items.filter(i => i.category === 'clean').length">{{ $pendingSummary['clean_count'] }}</span>)
                 </button>
-                <button @click="cleanTab = 'warning'" 
+                <button type="button" @click="cleanTab = 'warning'" 
                         :class="cleanTab === 'warning' ? 'bg-amber-600 text-white shadow-sm shadow-amber-500/25' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100'" 
                         class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
                     🟡 Perhatian (<span x-text="items.filter(i => i.category === 'warning').length">{{ $pendingSummary['warning_count'] }}</span>)
                 </button>
-                <button @click="cleanTab = 'critical'" 
+                <button type="button" @click="cleanTab = 'critical'" 
                         :class="cleanTab === 'critical' ? 'bg-rose-600 text-white shadow-sm shadow-rose-500/25' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100'" 
                         class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
                     🔴 Kritis (<span x-text="items.filter(i => i.category === 'critical').length">{{ $pendingSummary['critical_count'] }}</span>)
@@ -175,7 +175,7 @@
                             </span>
 
                             <!-- Similarity Score Button (Clickable for Modal Details) -->
-                            <button @click="$dispatch('open-audit-modal', {
+                            <button type="button" @click="$dispatch('open-audit-modal', {
                                 student: item.student_name,
                                 npm: item.student_identifier,
                                 title: item.title,

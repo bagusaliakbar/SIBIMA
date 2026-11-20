@@ -20,7 +20,7 @@
     // 3. Seminar / Sidang / Jadwal (Disesuaikan otomatis dengan progres mahasiswa)
     if ($role === 'mahasiswa') {
         $thesis = $user ? \App\Models\Thesis::where('student_id', $user->id)->first() : null;
-        $hasPassedSeminar = $thesis ? cache()->remember('u_' . $user->id . '_has_sem', 30, fn() => $thesis->hasPassedSeminar()) : false;
+        $hasPassedSeminar = $thesis ? cache()->remember('u_' . $user->id . '_passed_sem', 30, fn() => $thesis->hasPassedSeminar()) : false;
 
         if ($hasPassedSeminar) {
             // Mahasiswa sudah seminar -> Menu menjadi Sidang

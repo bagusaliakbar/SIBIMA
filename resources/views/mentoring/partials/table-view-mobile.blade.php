@@ -177,6 +177,7 @@
                                                 <button type="button" 
                                                         @click="openCancelModalFromEl($el)"
                                                         onclick="window.openCancelModalFromEl(this)"
+                                                        aria-label="Batalkan jadwal bimbingan"
                                                         data-session-id="{{ $session->id }}"
                                                         data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
                                                         data-student-npm="{{ e($student?->identifier ?? '-') }}"

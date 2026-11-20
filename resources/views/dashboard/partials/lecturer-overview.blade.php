@@ -166,7 +166,8 @@
 
                 <!-- MODAL 1: DAFTAR UJIAN BUTUH INPUT NILAI & CATATAN -->
                 <div x-show="showInputModal" x-cloak 
-                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     @keydown.escape.window="if (showInputModal) showInputModal = false"
+                     class="fixed inset-0 z-[60] overflow-y-auto" 
                      aria-labelledby="modal-title-input" role="dialog" aria-modal="true">
                     <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
                         <div x-show="showInputModal" 
@@ -202,7 +203,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="showInputModal = false" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                <button type="button" @click="showInputModal = false" aria-label="Tutup daftar ujian butuh nilai" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
@@ -259,7 +260,8 @@
 
                 <!-- MODAL 2: DAFTAR REVISI MAHASISWA MASUK MENUNGGU REVIEW -->
                 <div x-show="showReviewModal" x-cloak 
-                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     @keydown.escape.window="if (showReviewModal) showReviewModal = false"
+                     class="fixed inset-0 z-[60] overflow-y-auto" 
                      aria-labelledby="modal-title-review" role="dialog" aria-modal="true">
                     <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
                         <div x-show="showReviewModal" 
@@ -295,7 +297,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="showReviewModal = false" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                <button type="button" @click="showReviewModal = false" aria-label="Tutup daftar revisi masuk" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>

@@ -2,6 +2,8 @@
         <template x-teleport="body">
             <div x-show="pdfReaderOpen" 
                  id="pdfReaderModalElement"
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 select-none overflow-hidden" 
                  :style="'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 68 !important; background-color: #0b0f19 !important;' + (pdfReaderOpen ? ' display: flex !important; flex-direction: column !important;' : ' display: none !important;')"
                  x-cloak
@@ -166,6 +168,7 @@
                             <!-- Clear Query Button (only visible when text entered) -->
                             <button type="button" 
                                     x-show="pdfSearchQuery && pdfSearchQuery.length > 0"
+                                    aria-label="Hapus pencarian teks PDF"
                                     @click="pdfSearchQuery = ''; pdfSearchStatus = ''; pdfSearchMatches = [];"
                                     class="p-0.5 text-slate-400 hover:text-white rounded transition-colors shrink-0 cursor-pointer" 
                                     title="Hapus kata kunci">

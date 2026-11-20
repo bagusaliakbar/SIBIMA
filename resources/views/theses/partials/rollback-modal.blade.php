@@ -2,6 +2,9 @@
             <!-- MODAL: KONFIRMASI ROLLBACK PENUGASAN PEMBIMBING -->
             <template x-teleport="body">
                 <div x-show="rollbackModalOpen" 
+                     @keydown.escape.window="if (rollbackModalOpen) rollbackModalOpen = false"
+                     role="dialog"
+                     aria-modal="true"
                      class="fixed inset-0 z-[60] overflow-y-auto" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-200"

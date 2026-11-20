@@ -100,7 +100,7 @@
                             <div class="p-4 border rounded-lg dark:border-slate-700 relative bg-slate-50/20 dark:bg-slate-900/10" :class="row.type === 'student' ? 'border-orange-100 dark:border-orange-900/30' : 'border-slate-200 dark:border-slate-700'">
                                 <div class="flex justify-between items-start mb-4">
                                     <span class="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded" :class="row.type === 'student' ? 'bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'" x-text="row.type === 'student' ? 'Data Peserta Sidang' : 'Kegiatan / Persiapan'"></span>
-                                    <button type="button" @click="removeRow(index)" class="text-slate-400 hover:text-red-500 transition-colors">
+                                    <button type="button" @click="removeRow(index)" aria-label="Hapus baris jadwal" class="text-slate-400 hover:text-red-500 transition-colors cursor-pointer">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>

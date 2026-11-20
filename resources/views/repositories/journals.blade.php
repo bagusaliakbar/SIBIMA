@@ -118,6 +118,7 @@
                             <button type="button" 
                                     x-show="searchQuery" 
                                     x-cloak
+                                    aria-label="Hapus pencarian jurnal"
                                     @click="searchQuery = ''; @if(!empty($query)) window.location.href = '{{ route('repositories.journals', ['source' => $source]) }}'; @else document.getElementById('journal-search-input').focus(); @endif"
                                     class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
                                     title="Hapus / Reset pencarian">
@@ -245,8 +246,8 @@
                     <!-- 1-Click Recommendation CTA -->
                     <div class="flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-center gap-2 shrink-0">
                         <a href="{{ route('repositories.journals', ['q' => $thesisRecommendation['query'], 'source' => $source, 'year_filter' => $yearFilter, 'sort' => $sort, 'oa_only' => $openAccessOnly ? '1' : '0']) }}"
-                           class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-black bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/25 hover:scale-[1.01] active:scale-95 transition-all whitespace-nowrap cursor-pointer">
-                            <svg class="w-5 h-5 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-sm font-black bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition-colors whitespace-nowrap cursor-pointer">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                             <span>Cari Rujukan untuk Skripsiku</span>
@@ -1072,6 +1073,7 @@
         <template x-teleport="body">
             <div x-show="citationModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (citationModalOpen) citationModalOpen = false"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  role="dialog" 
                  aria-modal="true">
@@ -1098,7 +1100,8 @@
                         </div>
                         <button type="button" 
                                 @click="citationModalOpen = false" 
-                                class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                aria-label="Tutup modal sitasi jurnal"
+                                class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>

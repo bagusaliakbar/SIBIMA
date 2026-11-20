@@ -170,8 +170,9 @@
                             </button>
                             <button type="button" 
                                     @click="deleteFolder(@js($folder))" 
-                                    class="p-1 rounded-lg hover:bg-rose-500/20 text-rose-400 hover:text-rose-600 transition-colors"
-                                    title="Hapus Folder (Artikel tidak akan terhapus)">
+                                    class="p-1 rounded-lg hover:bg-rose-500/20 text-rose-400 hover:text-rose-600 transition-colors cursor-pointer"
+                                    title="Hapus Folder (Artikel tidak akan terhapus)"
+                                    aria-label="Hapus folder {{ $folder->name }}">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -537,6 +538,9 @@
         <template x-teleport="body">
             <div x-show="citationModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (citationModalOpen) citationModalOpen = false"
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
                 <div class="relative z-10 flex min-h-full items-center justify-center p-4">
@@ -552,7 +556,8 @@
                             </div>
                             <button type="button" 
                                     @click="citationModalOpen = false" 
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                    aria-label="Tutup modal sitasi"
+                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -670,6 +675,9 @@
         <template x-teleport="body">
             <div x-show="batchCitationModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (batchCitationModalOpen) batchCitationModalOpen = false"
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
                 <div class="relative z-10 flex min-h-full items-center justify-center p-4 sm:p-6">
@@ -690,7 +698,8 @@
                             </div>
                             <button type="button" 
                                     @click="batchCitationModalOpen = false" 
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                    aria-label="Tutup modal ekspor sitasi massal"
+                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -792,6 +801,9 @@
         <template x-teleport="body">
             <div x-show="folderModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (folderModalOpen) folderModalOpen = false"
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
                 <div class="relative z-10 flex min-h-full items-center justify-center p-4">
@@ -807,7 +819,8 @@
                             </div>
                             <button type="button" 
                                     @click="folderModalOpen = false" 
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                    aria-label="Tutup modal folder"
+                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -859,6 +872,9 @@
         <template x-teleport="body">
             <div x-show="moveModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (moveModalOpen) moveModalOpen = false"
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  style="background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
                 <div class="relative z-10 flex min-h-full items-center justify-center p-4">
@@ -874,7 +890,8 @@
                             </div>
                             <button type="button" 
                                     @click="moveModalOpen = false" 
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                    aria-label="Tutup modal pindah folder"
+                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>

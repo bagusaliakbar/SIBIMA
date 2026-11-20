@@ -460,12 +460,14 @@
         </form>
 
         <!-- Modal Tambah Mahasiswa Manual -->
-        <div x-show="showManualModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div x-show="showManualModal" x-cloak @keydown.escape.window="if (showManualModal) showManualModal = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 space-y-4 border border-slate-200 dark:border-slate-800 shadow-2xl"
                  @click.away="showManualModal = false">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <h3 class="text-sm font-black text-slate-900 dark:text-white">Tambah Mahasiswa Manual</h3>
-                    <button type="button" @click="showManualModal = false" class="text-slate-400 hover:text-slate-600 text-sm cursor-pointer">✕</button>
+                    <button type="button" @click="showManualModal = false" aria-label="Tutup modal tambah mahasiswa manual" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
 
                 <div class="space-y-3 text-xs">

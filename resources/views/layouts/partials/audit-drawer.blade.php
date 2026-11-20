@@ -4,8 +4,12 @@
             data: { student: '', npm: '', title: '', score: 0, matches: [] } 
         }"
         @open-audit-modal.window="data = $event.detail; open = true"
+        @keydown.escape.window="if (open) open = false"
         x-show="open" 
-        class="fixed inset-0 overflow-hidden z-[55]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="audit-drawer-title"
+        class="fixed inset-0 overflow-hidden z-[60]"
         style="display: none;"
         x-cloak>
             <!-- Backdrop Overlay -->
@@ -17,9 +21,9 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  @click="open = false" 
-                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity z-[55]"></div>
+                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity z-[60]"></div>
 
-            <div class="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-none z-[56]">
+            <div class="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-none z-[61]">
                 <div x-show="open"
                      x-transition:enter="transform transition ease-in-out duration-300 sm:duration-400"
                      x-transition:enter-start="translate-x-full"
@@ -36,14 +40,14 @@
                                 <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div>
-                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Kemiripan Judul</h3>
+                                <h3 id="audit-drawer-title" class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Kemiripan Judul</h3>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase mt-0.5">
                                     Mahasiswa: <span class="text-slate-700 dark:text-slate-200" x-text="data.student"></span> (<span x-text="data.npm"></span>)
                                 </p>
                             </div>
                         </div>
-                        <button @click="open = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <button type="button" @click="open = false" aria-label="Tutup panel kemiripan judul" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
                     
@@ -62,13 +66,22 @@
                                 <span class="text-[10px] font-bold uppercase tracking-widest block opacity-75">Tingkat Kemiripan:</span>
                                 <span class="text-xs font-bold uppercase tracking-tight block mt-0.5">
                                     <template x-if="data.score >= 66">
-                                        <span class="text-rose-800 dark:text-rose-300">🔴 Terdeteksi Sangat Mirip</span>
+                                        <span class="inline-flex items-center gap-1.5 text-rose-800 dark:text-rose-300">
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                            <span>Terdeteksi Sangat Mirip</span>
+                                        </span>
                                     </template>
                                     <template x-if="data.score >= 35 && data.score < 66">
-                                        <span class="text-amber-800 dark:text-amber-300">🟧 Terdeteksi Kemiripan Sedang</span>
+                                        <span class="inline-flex items-center gap-1.5 text-amber-800 dark:text-amber-300">
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            <span>Terdeteksi Kemiripan Sedang</span>
+                                        </span>
                                     </template>
                                     <template x-if="data.score < 35">
-                                        <span class="text-emerald-800 dark:text-emerald-300">🟢 Judul Unik & Orisinal</span>
+                                        <span class="inline-flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            <span>Judul Unik & Orisinal</span>
+                                        </span>
                                     </template>
                                 </span>
                             </div>
@@ -117,7 +130,7 @@
 
                     <!-- Drawer Footer -->
                     <div class="p-4 px-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
-                        <button type="button" @click="open = false" class="px-6 py-2.5 bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md">Tutup Panel</button>
+                        <button type="button" @click="open = false" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all shadow-md cursor-pointer">Tutup Panel</button>
                     </div>
                 </div>
             </div>

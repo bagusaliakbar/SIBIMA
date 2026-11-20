@@ -32,10 +32,10 @@
             <div x-data="{ tab: 'manual' }">
                 <!-- Tabs -->
                 <div class="flex space-x-4 mb-6 border-b border-slate-200 dark:border-slate-700">
-                    <button @click="tab = 'manual'" :class="tab === 'manual' ? 'border-orange-500 text-orange-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    <button type="button" @click="tab = 'manual'" :class="tab === 'manual' ? 'border-orange-500 text-orange-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm cursor-pointer">
                         Input Manual Tunggal
                     </button>
-                    <button @click="tab = 'excel'" :class="tab === 'excel' ? 'border-orange-500 text-orange-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    <button type="button" @click="tab = 'excel'" :class="tab === 'excel' ? 'border-orange-500 text-orange-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm cursor-pointer">
                         Import via Excel
                     </button>
                 </div>

@@ -374,8 +374,9 @@
         <!-- DETAIL INSPECTOR MODAL (Alpine.js Drawer)  -->
         <!-- ========================================== -->
         <div x-show="modalOpen" 
+             @keydown.escape.window="if (modalOpen) closeModal()"
              style="display: none;"
-             class="fixed inset-0 z-50 overflow-y-auto"
+             class="fixed inset-0 z-[60] overflow-y-auto"
              aria-labelledby="modal-title" 
              role="dialog" 
              aria-modal="true"
@@ -445,7 +446,8 @@
                             <button type="button" 
                                     @click="closeModal()" 
                                     class="w-9 h-9 rounded-xl bg-slate-200/70 dark:bg-slate-700/70 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer" 
-                                    title="Tutup">
+                                    title="Tutup"
+                                    aria-label="Tutup panel detail mahasiswa">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -476,7 +478,8 @@
                                     <button type="button" 
                                             x-show="innerSearch" 
                                             @click="innerSearch = ''" 
-                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                            aria-label="Hapus filter pencarian"
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>

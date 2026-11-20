@@ -776,6 +776,7 @@ document.addEventListener('keydown', function(e) {
 
                 <button onclick="window.closeBugReportModal()"
                         type="button"
+                        aria-label="Tutup modal laporan bug"
                         class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1005,6 +1006,7 @@ document.addEventListener('keydown', function(e) {
                     </button>
                     <button onclick="window.closeBugHistoryModal()"
                             type="button"
+                            aria-label="Tutup modal riwayat laporan"
                             class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1090,6 +1092,7 @@ document.addEventListener('keydown', function(e) {
 
                 <button onclick="window.closeBugGuideModal()"
                         type="button"
+                        aria-label="Tutup modal panduan pelaporan"
                         class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white flex items-center justify-center cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

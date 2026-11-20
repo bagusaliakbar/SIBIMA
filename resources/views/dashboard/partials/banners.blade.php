@@ -17,7 +17,8 @@
             <button @click="dismissed = true; localStorage.setItem('hide_wa_bot_banner', 'true')" 
                     type="button" 
                     class="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 text-emerald-700/70 hover:text-emerald-950 hover:bg-emerald-200/60 dark:text-emerald-400/80 dark:hover:text-white dark:hover:bg-emerald-900/50 rounded-xl transition-colors cursor-pointer z-20" 
-                    title="Tutup pemberitahuan">
+                    title="Tutup pemberitahuan"
+                    aria-label="Tutup pemberitahuan bot WhatsApp">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
@@ -236,7 +237,8 @@
                 <button @click="dismissed = true; localStorage.setItem('hide_birthdate_prompt', 'true')" 
                         type="button" 
                         class="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 text-rose-700/70 hover:text-rose-950 hover:bg-rose-200/60 dark:text-rose-400/80 dark:hover:text-white dark:hover:bg-rose-900/50 rounded-xl transition-colors cursor-pointer z-20" 
-                        title="Nanti saja">
+                        title="Nanti saja"
+                        aria-label="Tutup pengingat tanggal lahir">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
 

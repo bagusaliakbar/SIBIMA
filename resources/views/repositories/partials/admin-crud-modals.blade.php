@@ -2,6 +2,9 @@
             <!-- Modal Edit Arsip Pustaka -->
             <template x-teleport="body">
                 <div x-show="editModalOpen" 
+                     @keydown.escape.window="if (editModalOpen) editModalOpen = false"
+                     role="dialog"
+                     aria-modal="true"
                      class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"
@@ -90,6 +93,9 @@
             <!-- Modal Hapus Arsip Pustaka -->
             <template x-teleport="body">
                 <div x-show="deleteModalOpen" 
+                     @keydown.escape.window="if (deleteModalOpen) deleteModalOpen = false"
+                     role="dialog"
+                     aria-modal="true"
                      class="fixed inset-0 z-[60] overflow-y-auto text-left" 
                      x-cloak 
                      x-transition:enter="transition ease-out duration-300"

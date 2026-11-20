@@ -575,6 +575,7 @@
         <template x-teleport="body">
             <div x-show="cancelModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (cancelModalOpen) cancelModalOpen = false"
                  class="fixed inset-0 z-[60] overflow-y-auto" 
                  aria-labelledby="modal-title" 
                  role="dialog" 
@@ -711,6 +712,7 @@
         <template x-teleport="body">
             <div x-show="addStudentModalOpen" 
                  x-cloak 
+                 @keydown.escape.window="if (addStudentModalOpen) addStudentModalOpen = false"
                  class="fixed inset-0 z-[60] overflow-y-auto" 
                  aria-labelledby="modal-add-student-title" 
                  role="dialog" 
@@ -758,7 +760,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="addStudentModalOpen = false" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                <button type="button" @click="addStudentModalOpen = false" aria-label="Tutup modal tambah mahasiswa" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>

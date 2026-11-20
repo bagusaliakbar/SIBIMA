@@ -43,8 +43,11 @@
         <template x-teleport="body">
             <div x-data="mentoringBulkAbsentModal()"
                  @open-bulk-absent-modal.window="openModal($event.detail.ids)"
+                 @keydown.escape.window="if (open) closeModal()"
                  x-show="open" 
                  x-cloak
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"
@@ -137,8 +140,11 @@
         <template x-teleport="body">
             <div x-data="mentoringBulkCompleteModal()"
                  @open-bulk-complete-modal.window="openModal($event.detail.ids)"
+                 @keydown.escape.window="if (open) closeModal()"
                  x-show="open" 
                  x-cloak
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] overflow-y-auto"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0"

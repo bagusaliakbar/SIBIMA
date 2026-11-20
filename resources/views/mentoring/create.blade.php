@@ -719,7 +719,8 @@
                 <!-- Modal Konfirmasi Rincian Jadwal Bimbingan -->
                 <div x-show="showConfirmModal" 
                      x-cloak 
-                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     @keydown.escape.window="if (showConfirmModal) showConfirmModal = false"
+                     class="fixed inset-0 z-[60] overflow-y-auto" 
                      aria-labelledby="modal-title" 
                      role="dialog" 
                      aria-modal="true">

@@ -1,5 +1,5 @@
 <!-- Modal Sync Portal -->
-<div id="syncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">
+<div id="syncModal" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 dark:border-slate-700/60 overflow-hidden transform transition-all">
         <div class="p-6">
             <div class="flex items-center gap-3 mb-2">
@@ -41,14 +41,14 @@
             </div>
             
             <div class="mt-6 flex justify-end">
-                <button id="closeSyncModalBtn" onclick="closeSyncModal()" class="hidden bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm">Tutup & Muat Ulang</button>
+                <button type="button" id="closeSyncModalBtn" onclick="closeSyncModal()" class="hidden bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">Tutup & Muat Ulang</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Modal Sync Repositori UNSUB (Khusus FASILKOM & File BAB 1) -->
-<div id="unsubSyncModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">
+<div id="unsubSyncModal" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] hidden bg-slate-900/80 backdrop-blur-md items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 dark:border-slate-700/60 overflow-hidden transform transition-all">
         <div class="p-6">
             <div class="flex items-center gap-3 mb-3">

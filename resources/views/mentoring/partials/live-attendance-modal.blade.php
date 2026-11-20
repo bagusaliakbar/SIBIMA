@@ -2,6 +2,7 @@
         <template x-teleport="body">
             <div x-data="mentoringLiveAttendance()" 
                  @open-live-modal.window="openModal()" 
+                 @keydown.escape.window="if (liveModalOpen) liveModalOpen = false"
                  x-show="liveModalOpen" 
                  x-cloak 
                  class="fixed inset-0 z-[60] overflow-y-auto" 
@@ -51,7 +52,7 @@
                                 <svg class="w-3.5 h-3.5" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 <span>Segarkan</span>
                             </button>
-                            <button type="button" @click="liveModalOpen = false" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                            <button type="button" @click="liveModalOpen = false" aria-label="Tutup modal kehadiran langsung" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>

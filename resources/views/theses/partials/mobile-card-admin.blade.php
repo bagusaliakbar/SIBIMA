@@ -95,7 +95,7 @@
     <!-- Similarity Score -->
     @if($hasValidTitle)
         <div class="flex items-center gap-2 text-[10px]">
-            <button @click='$dispatch("open-audit-modal", {
+            <button type="button" @click='$dispatch("open-audit-modal", {
                 student: "{{ addslashes($thesis->student->name) }}",
                 npm: "{{ $thesis->student->identifier }}",
                 title: "{{ addslashes($rawTitle) }}",

@@ -141,7 +141,8 @@
         <template x-teleport="body">
             <div x-show="sendModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-50 overflow-y-auto" 
+                 @keydown.escape.window="if (sendModalOpen && !isSubmitting) sendModalOpen = false"
+                 class="fixed inset-0 z-[60] overflow-y-auto" 
                  style="display: none;"
                  aria-labelledby="modal-title" 
                  role="dialog" 
@@ -183,6 +184,7 @@
                             <button type="button" 
                                     @click="sendModalOpen = false" 
                                     :disabled="isSubmitting"
+                                    aria-label="Tutup modal kirim ucapan"
                                     class="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                                 <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -303,7 +305,8 @@
         <template x-teleport="body">
             <div x-show="receivedModalOpen" 
                  x-cloak 
-                 class="fixed inset-0 z-50 overflow-y-auto" 
+                 @keydown.escape.window="if (receivedModalOpen) receivedModalOpen = false"
+                 class="fixed inset-0 z-[60] overflow-y-auto" 
                  style="display: none;"
                  aria-labelledby="modal-title" 
                  role="dialog" 
@@ -344,6 +347,7 @@
                             </div>
                             <button type="button" 
                                     @click="receivedModalOpen = false" 
+                                    aria-label="Tutup modal kotak ucapan"
                                     class="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                                 <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>

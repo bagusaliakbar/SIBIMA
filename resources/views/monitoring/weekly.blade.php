@@ -566,7 +566,8 @@
         <!-- WhatsApp Reminder Modal -->
         <div x-show="reminderModalOpen" 
              x-cloak 
-             class="fixed inset-0 z-50 overflow-y-auto" 
+             @keydown.escape.window="if (reminderModalOpen) reminderModalOpen = false"
+             class="fixed inset-0 z-[60] overflow-y-auto" 
              aria-labelledby="modal-title" 
              role="dialog" 
              aria-modal="true">
@@ -612,7 +613,7 @@
                                     <p class="text-xs text-slate-500 dark:text-slate-400">Peringatan kewajiban bimbingan skripsi mingguan</p>
                                 </div>
                             </div>
-                            <button type="button" @click="reminderModalOpen = false" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl">
+                            <button type="button" @click="reminderModalOpen = false" aria-label="Tutup modal pengingat WhatsApp" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>

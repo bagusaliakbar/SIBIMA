@@ -164,7 +164,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 <span class="text-xs font-bold uppercase tracking-wider">Pilih Templat Pesan Cepat</span>
                             </div>
-                            <button type="button" @click="showTemplates = false" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                            <button type="button" @click="showTemplates = false" aria-label="Tutup daftar template pesan" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>

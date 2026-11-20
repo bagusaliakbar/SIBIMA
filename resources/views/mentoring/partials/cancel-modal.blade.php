@@ -2,6 +2,7 @@
         <template x-teleport="body">
             <div x-data="mentoringCancelModal()" 
                  @open-cancel-modal.window="openModal($event.detail)" 
+                 @keydown.escape.window="if (cancelModalOpen) cancelModalOpen = false"
                  x-show="cancelModalOpen" 
                  x-cloak 
                  class="fixed inset-0 z-[60] overflow-y-auto" 

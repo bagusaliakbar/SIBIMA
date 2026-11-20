@@ -729,7 +729,9 @@
         <!-- Inline Document Preview Modal -->
         <div x-show="previewModalOpen" 
              x-cloak 
-             class="fixed inset-0 z-50 overflow-y-auto"
+             role="dialog"
+             aria-modal="true"
+             class="fixed inset-0 z-[60] overflow-y-auto"
              @keydown.escape.window="closePreview()">
             
             <!-- Backdrop -->
@@ -771,7 +773,7 @@
                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                 <span>Buka di Tab Baru</span>
                             </a>
-                            <button type="button" @click="closePreview()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/50 dark:hover:text-rose-400 text-slate-400 flex items-center justify-center transition-all">
+                            <button type="button" @click="closePreview()" aria-label="Tutup pratinjau dokumen" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/50 dark:hover:text-rose-400 text-slate-400 flex items-center justify-center transition-all cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -797,7 +799,9 @@
         <!-- Edit Revision Message Modal -->
         <div x-show="editModalOpen" 
              x-cloak 
-             class="fixed inset-0 z-50 overflow-y-auto"
+             role="dialog"
+             aria-modal="true"
+             class="fixed inset-0 z-[60] overflow-y-auto"
              @keydown.escape.window="closeEditModal()">
             
             <!-- Backdrop -->

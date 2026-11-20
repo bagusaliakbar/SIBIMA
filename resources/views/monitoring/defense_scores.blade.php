@@ -68,9 +68,9 @@
             <!-- Right: Export Buttons and ZIP Action Buttons -->
             <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
                 <!-- Batch Actions (ZIP Selected) -->
-                <button @click="downloadSelected()" 
+                <button type="button" @click="downloadSelected()" 
                         x-show="selectedIds.length > 0"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md animate-in fade-in zoom-in duration-200">
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md animate-in fade-in zoom-in duration-200 cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     ZIP Terpilih (<span x-text="selectedIds.length"></span>)
                 </button>

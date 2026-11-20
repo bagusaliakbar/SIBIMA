@@ -444,8 +444,8 @@
          x-show="open" 
          x-cloak
          @open-edit-thesis-modal.window="open = true"
-         @keydown.escape.window="open = false"
-         class="fixed inset-0 z-50 overflow-y-auto" 
+         @keydown.escape.window="if (open) { open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none'; }"
+         class="fixed inset-0 z-[60] overflow-y-auto" 
          aria-labelledby="modal-title" role="dialog" aria-modal="true"
          style="display: none;">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -464,7 +464,7 @@
                             </div>
                             <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight" id="modal-title">Revisi Judul / Deskripsi Skripsi</h3>
                         </div>
-                        <button type="button" @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
+                        <button type="button" aria-label="Tutup modal revisi judul" @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>

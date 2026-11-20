@@ -270,7 +270,7 @@
                         <!-- Dropdown 1: Pengajuan & Bimbingan -->
                         @php $isBimbinganActive = request()->routeIs('theses.index') || request()->routeIs('advisor-decrees.*') || request()->routeIs('mentoring-sessions.*'); @endphp
                         <div x-data="{ open: {{ $isBimbinganActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Pengajuan & Bimbingan" title="Pengajuan & Bimbingan"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isBimbinganActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -300,7 +300,7 @@
                         <!-- Dropdown 2: Seminar Proposal -->
                         @php $isSeminarActive = request()->routeIs('seminar-applications.*') || request()->routeIs('seminar-schedules.*') || request()->routeIs('seminar-examiner.*'); @endphp
                         <div x-data="{ open: {{ $isSeminarActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Seminar Proposal" title="Seminar Proposal"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isSeminarActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -330,7 +330,7 @@
                         <!-- Dropdown 3: Sidang Skripsi -->
                         @php $isSidangActive = request()->routeIs('thesis-defense-applications.*') || request()->routeIs('thesis-defense-schedules.*') || request()->routeIs('defense-examiner.*'); @endphp
                         <div x-data="{ open: {{ $isSidangActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Sidang Skripsi" title="Sidang Skripsi"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isSidangActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -387,7 +387,7 @@
                             $isMonitoringMhsActive = request()->routeIs('monitoring.index') || request()->routeIs('monitoring.weekly') || request()->routeIs('monitoring.activity*') || request()->routeIs('monitoring.uncompleted-mentoring*') || request()->routeIs('monitoring.revisions') || request()->routeIs('monitoring.defense-revisions') || request()->routeIs('monitoring.critical') || request()->routeIs('theses.unsubmitted-students'); 
                         @endphp
                         <div x-data="{ open: {{ $isMonitoringMhsActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Monitoring Mahasiswa" title="Monitoring Mahasiswa"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isMonitoringMhsActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -427,7 +427,7 @@
                             $isAnalitikActive = request()->routeIs('analytics.*') || request()->routeIs('monitoring.defense-scores') || request()->routeIs('monitoring.advanced-reporting'); 
                         @endphp
                         <div x-data="{ open: {{ $isAnalitikActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Analitik & Evaluasi" title="Analitik & Evaluasi"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isAnalitikActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -474,7 +474,7 @@
                         <!-- Dropdown 1: Pusat Informasi (Pengumuman & FAQ) -->
                         @php $isInfoActive = request()->routeIs('announcements.*') || request()->routeIs('faqs.manage'); @endphp
                         <div x-data="{ open: {{ $isInfoActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Pusat Informasi" title="Pusat Informasi"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isInfoActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -500,7 +500,7 @@
                         <!-- Dropdown 2: Konfigurasi Sistem -->
                         @php $isConfigActive = request()->routeIs('waves.*') || request()->routeIs('admin.letter-settings.*') || request()->routeIs('wa-templates.*') || request()->routeIs('wa-broadcasts.*'); @endphp
                         <div x-data="{ open: {{ $isConfigActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Konfigurasi Sistem" title="Konfigurasi Sistem"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isConfigActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -542,7 +542,7 @@
                             $isMaintenanceActive = request()->routeIs('admin.backups.*') || request()->routeIs('admin.logs*') || request()->routeIs('admin.bug-reports.*');
                         @endphp
                         <div x-data="{ open: {{ $isMaintenanceActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Pemeliharaan Sistem" title="Pemeliharaan Sistem"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isMaintenanceActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -625,7 +625,7 @@
                         <!-- Dropdown: Jadwal Ujian (Seminar & Sidang) -->
                         @php $isJadwalUjianActive = request()->routeIs('seminar-schedules.*') || request()->routeIs('thesis-defense-schedules.*'); @endphp
                         <div x-data="{ open: {{ $isJadwalUjianActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Jadwal Ujian" title="Jadwal Ujian"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isJadwalUjianActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">
@@ -649,7 +649,7 @@
                         <!-- Dropdown: Tugas Penguji (Seminar & Sidang) -->
                         @php $isTugasPengujiActive = request()->routeIs('seminar-examiner.*') || request()->routeIs('defense-examiner.*'); @endphp
                         <div x-data="{ open: {{ $isTugasPengujiActive ? 'true' : 'false' }} }">
-                            <button @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
+                            <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
                                     data-tooltip="Tugas Penguji" title="Tugas Penguji"
                                     class="sidebar-link group w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ $isTugasPengujiActive ? 'text-white bg-white/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                 <div class="flex items-center">

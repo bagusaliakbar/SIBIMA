@@ -13,8 +13,8 @@
                 :footer="$announcements->links()">
                 
                 <x-slot name="headerActions">
-                    <button @click="openModal = true; editMode = false; currentAnnouncement = {}" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-700 transition-all shadow-sm">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    <button type="button" @click="openModal = true; editMode = false; currentAnnouncement = {}" class="h-10 inline-flex items-center px-4 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm cursor-pointer">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                         Buat Baru
                     </button>
                 </x-slot>
@@ -58,8 +58,8 @@
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <button @click="openModal = true; editMode = true; currentAnnouncement = {{ json_encode($announcement) }}" class="p-2 text-slate-400 hover:text-blue-600 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        <button type="button" @click="openModal = true; editMode = true; currentAnnouncement = {{ json_encode($announcement) }}" aria-label="Edit pengumuman {{ $announcement->title }}" title="Edit Pengumuman" class="p-2 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </button>
                                         <form action="{{ route('announcements.destroy', $announcement->id) }}"
                                               method="POST"
@@ -69,8 +69,8 @@
                                               data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-2 text-slate-400 hover:text-red-600 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            <button type="submit" aria-label="Hapus pengumuman {{ $announcement->title }}" title="Hapus Pengumuman" class="p-2 text-slate-400 hover:text-red-600 transition-colors cursor-pointer">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
                                     </div>
@@ -84,7 +84,7 @@
             </x-table-card>
 
             <!-- Modal for Create/Edit -->
-            <div x-show="openModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak x-transition>
+            <div x-show="openModal" @keydown.escape.window="if (openModal) openModal = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
                 <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                     <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openModal = false">
                         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>

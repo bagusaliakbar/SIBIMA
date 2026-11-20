@@ -109,7 +109,7 @@
                                     <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">Sistem menemukan beberapa judul yang mirip di database skripsi & alumni.</p>
                                 </div>
                             </div>
-                            <button type="button" @click="similarTitles = []" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                            <button type="button" @click="similarTitles = []" aria-label="Tutup peringatan kemiripan judul" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer">
                                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>

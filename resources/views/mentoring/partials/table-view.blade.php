@@ -201,7 +201,8 @@
                             <button type="button" 
                                     @click="fetchLiveAttendance(false)" 
                                     title="Segarkan data kehadiran real-time"
-                                    class="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95">
+                                    aria-label="Segarkan data kehadiran real-time"
+                                    class="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer shadow-2xs">
                                 <svg class="w-4 h-4 shrink-0" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             </button>
                         </div>
@@ -353,7 +354,7 @@
                                                             <a href="{{ $session->document_path }}" 
                                                                target="_blank" 
                                                                @click.stop 
-                                                               class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800 text-[11px] font-bold transition-all shadow-2xs hover:scale-105 active:scale-95" 
+                                                               class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800 text-[11px] font-bold transition-colors shadow-2xs" 
                                                                title="Buka Dokumen Bimbingan Mahasiswa">
                                                                 <x-google-drive-icon class="w-3.5 h-3.5 shrink-0" />
                                                                 <span>Lihat Dokumen</span>
@@ -434,7 +435,7 @@
                                                                 @method('PATCH')
                                                                 <input type="hidden" name="status" value="approved">
                                                                 <button type="submit" 
-                                                                        class="px-2.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center gap-1 hover:scale-[1.02] active:scale-95" 
+                                                                        class="px-2.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-[11px] font-black uppercase tracking-wider transition-colors shadow-xs cursor-pointer flex items-center gap-1" 
                                                                         title="Terima Pengajuan Jadwal Mahasiswa">
                                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                                     <span>Terima</span>
@@ -462,6 +463,7 @@
                                                         <button type="button" 
                                                                 @click="openCancelModalFromEl($el)"
                                                                 onclick="window.openCancelModalFromEl(this)"
+                                                                aria-label="Batalkan jadwal bimbingan"
                                                                 data-session-id="{{ $session->id }}"
                                                                 data-student-name="{{ e($student?->name ?? 'Mahasiswa') }}"
                                                                 data-student-npm="{{ e($student?->identifier ?? '-') }}"
@@ -547,7 +549,7 @@
                                                             @if($session->document_path)
                                                                 <div class="pt-2 border-t border-slate-100 dark:border-slate-700/80">
                                                                     <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-1">Dokumen Bimbingan Mahasiswa:</span>
-                                                                    <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl font-bold text-xs transition-all shadow-2xs hover:scale-[1.02] active:scale-95">
+                                                                    <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl font-bold text-xs transition-colors shadow-2xs">
                                                                         <x-google-drive-icon class="w-4 h-4 shrink-0" />
                                                                         <span>Lihat Dokumen Bimbingan Mahasiswa</span>
                                                                     </a>
@@ -603,7 +605,7 @@
                                                                             @csrf
                                                                             @method('PATCH')
                                                                             <input type="hidden" name="status" value="approved">
-                                                                            <button type="submit" class="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 hover:scale-[1.02] active:scale-95">
+                                                                            <button type="submit" class="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-xl text-xs font-bold transition-colors shadow-xs cursor-pointer flex items-center gap-1.5">
                                                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                                                 <span>Terima Jadwal</span>
                                                                             </button>

@@ -6,7 +6,7 @@
                  class="relative"
                  x-cloak>
                 <template x-teleport="body">
-                    <div x-show="open" class="relative z-[60]">
+                    <div x-show="open" role="dialog" aria-modal="true" aria-labelledby="quick-preview-drawer-title" class="relative z-[60]">
                         <!-- Backdrop -->
                         <div x-show="open"
                              x-transition:enter="ease-in-out duration-300"
@@ -32,15 +32,15 @@
                                 <!-- Drawer Header -->
                                 <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 flex items-start justify-between shrink-0">
                                     <div class="flex items-center gap-3 min-w-0 pr-3">
-                                        <div class="w-10 h-10 rounded-2xl bg-orange-50 dark:orange-950/50 border border-orange-200 dark:border-orange-800 flex items-center justify-center shrink-0 shadow-2xs">
-                                            <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="w-10 h-10 rounded-2xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-800 flex items-center justify-center shrink-0 shadow-2xs">
+                                            <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </div>
                                         <div class="min-w-0">
                                             <div class="flex items-center gap-2">
-                                                <h3 class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight">Intip Logbook</h3>
+                                                <h3 id="quick-preview-drawer-title" class="text-base font-black text-slate-800 dark:text-slate-100 tracking-tight">Intip Logbook</h3>
                                                 <span x-show="data && data.total_completed !== undefined" 
                                                       class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
                                                       x-text="(data ? data.total_completed : 0) + ' Sesi Selesai'"></span>
@@ -51,7 +51,8 @@
                                     <button type="button"
                                             @click="closeDrawer()" 
                                             class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
-                                            title="Tutup (Esc)">
+                                            title="Tutup (Esc)"
+                                            aria-label="Tutup panel intip logbook">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                         </svg>

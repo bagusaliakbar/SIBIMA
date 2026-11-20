@@ -814,7 +814,7 @@
         @endif
 
         <!-- Import Excel Modal (Admin & Kaprodi) -->
-        <div x-show="openImportModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak x-transition>
+        <div x-show="openImportModal" @keydown.escape.window="if (openImportModal) openImportModal = false" role="dialog" aria-modal="true" class="fixed inset-0 z-[60] overflow-y-auto" x-cloak x-transition>
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="openImportModal = false">
                     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
@@ -838,7 +838,7 @@
                                 <p class="text-xs text-slate-500 dark:text-slate-400">Unggah berkas spreadsheet Excel (.xlsx, .xls, .csv)</p>
                             </div>
                         </div>
-                        <button type="button" @click="openImportModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <button type="button" @click="openImportModal = false" aria-label="Tutup modal impor jadwal sidang" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>

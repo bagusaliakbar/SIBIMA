@@ -110,6 +110,7 @@
                         <button type="button" 
                                 x-show="searchQuery" 
                                 x-cloak
+                                aria-label="Hapus pencarian buku"
                                 @click="searchQuery = ''; @if(!empty($query)) window.location.href = '{{ route('repositories.books', ['topic' => $topic, 'source' => $source, 'access' => $access]) }}'; @else document.getElementById('book-search-input').focus(); @endif"
                                 class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
                                 title="Hapus / Reset pencarian">
@@ -438,7 +439,8 @@
         <!-- CITATION MODAL -->
         <div x-show="citationModalOpen" 
              x-cloak
-             class="fixed inset-0 z-50 overflow-y-auto" 
+             @keydown.escape.window="if (citationModalOpen) citationModalOpen = false"
+             class="fixed inset-0 z-[60] overflow-y-auto" 
              aria-labelledby="modal-title" 
              role="dialog" 
              aria-modal="true">
@@ -474,7 +476,8 @@
                         </div>
                         <button type="button" 
                                 @click="citationModalOpen = false" 
-                                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors">
+                                aria-label="Tutup modal sitasi buku"
+                                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
