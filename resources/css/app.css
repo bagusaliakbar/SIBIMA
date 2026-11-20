@@ -305,5 +305,191 @@ select:-webkit-autofill:active {
     }
 }
 
+/* ==========================================================================
+   7. FLOATING BUG REPORT DOCK & MODAL SYSTEM
+   ========================================================================== */
+#bug-report-dock-container {
+    position: fixed !important;
+    bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    right: 16px !important;
+    z-index: 35 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+@media (min-width: 768px) {
+    #bug-report-dock-container {
+        bottom: 24px !important;
+        right: 24px !important;
+    }
+}
+
+/* Default Mobile: Collapsed FAB mode (< 768px) */
+@media (max-width: 767px) {
+    #bug-report-dock-container:not(.dock-expanded) #bug-report-full-dock {
+        display: none !important;
+    }
+    #bug-report-dock-container:not(.dock-expanded) #bug-report-collapsed-pill {
+        display: flex !important;
+    }
+    #bug-report-dock-container.dock-expanded #bug-report-full-dock {
+        display: flex !important;
+    }
+    #bug-report-dock-container.dock-expanded #bug-report-collapsed-pill {
+        display: none !important;
+    }
+}
+
+/* Default Desktop: Full Vertical Dock mode (>= 768px) */
+@media (min-width: 768px) {
+    #bug-report-dock-container:not(.dock-collapsed) #bug-report-full-dock {
+        display: flex !important;
+    }
+    #bug-report-dock-container:not(.dock-collapsed) #bug-report-collapsed-pill {
+        display: none !important;
+    }
+    #bug-report-dock-container.dock-collapsed #bug-report-full-dock {
+        display: none !important;
+    }
+    #bug-report-dock-container.dock-collapsed #bug-report-collapsed-pill {
+        display: flex !important;
+    }
+}
+
+.bug-report-pill-btn {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.dark .bug-report-pill-btn {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+}
+.bug-report-pill-btn .bug-report-pill-text {
+    color: #1e293b !important;
+}
+.dark .bug-report-pill-btn .bug-report-pill-text {
+    color: #f1f5f9 !important;
+}
+.bug-report-pill-btn .bug-report-pill-chevron {
+    color: #94a3b8 !important;
+}
+.bug-report-pill-btn:hover .bug-report-pill-chevron {
+    color: #f97316 !important;
+}
+
+.bug-badge-ring {
+    box-shadow: 0 0 0 2px #ffffff !important;
+}
+.dark .bug-badge-ring {
+    box-shadow: 0 0 0 2px #0f172a !important;
+}
+
+.bug-full-dock-container {
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+    border-radius: 9999px !important;
+    padding: 14px 7px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+    pointer-events: auto !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+}
+.dark .bug-full-dock-container {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.6) !important;
+}
+
+.bug-dock-grip {
+    color: #94a3b8 !important;
+}
+.dark .bug-dock-grip {
+    color: #64748b !important;
+}
+
+.bug-dock-divider-line {
+    width: 24px !important;
+    height: 1.5px !important;
+    background-color: #e2e8f0 !important;
+    border-radius: 9999px !important;
+}
+.dark .bug-dock-divider-line {
+    background-color: #334155 !important;
+}
+
+.bug-dock-circle-btn {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+    border-radius: 9999px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    border: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    text-decoration: none !important;
+}
+
+.bug-dock-circle-btn > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.bug-dock-collapse-btn {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+}
+.dark .bug-dock-collapse-btn {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+}
+.bug-dock-collapse-btn:hover {
+    background-color: #e2e8f0 !important;
+}
+.dark .bug-dock-collapse-btn:hover {
+    background-color: #334155 !important;
+}
+
+.bug-dock-admin-link {
+    background-color: #eef2ff !important;
+    color: #4f46e5 !important;
+}
+.dark .bug-dock-admin-link {
+    background-color: #1e1b4b !important;
+    color: #a5b4fc !important;
+}
+.dark .bug-dock-admin-link:hover {
+    background-color: #312e81 !important;
+}
+
+.bug-modal-shell {
+    display: none;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 65 !important;
+    overflow-y: auto;
+}
+
 
 
