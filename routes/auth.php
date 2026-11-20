@@ -36,9 +36,24 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('password.store');
+    Route::get('csrf-token', function () {
+        return response()->json([
+            'csrf_token' => csrf_token(),
+        ]);
+    })->middleware('throttle:30,1')->name('csrf.refresh');
 });
 
 Route::middleware('auth')->group(function () {
+    Route::post('session/keep-alive', function (\Illuminate\Http\Request $request) {
+        $request->session()->put('last_activity_at', now()->timestamp);
+
+        return response()->json([
+            'ok' => true,
+            'csrf_token' => csrf_token(),
+            'idle_timeout' => (int) config('session.idle_timeout', 60),
+            'server_time' => now()->timestamp,
+        ]);
+    })->middleware('throttle:30,1')->name('session.keep-alive');
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

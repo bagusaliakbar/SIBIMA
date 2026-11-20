@@ -14,8 +14,22 @@
         </p>
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <!-- Session Status / Idle Expiry Alert -->
+    @if (session('status'))
+        <div class="mb-4 p-3.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60 text-xs font-semibold flex items-start gap-2.5">
+            <svg class="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{{ session('status') }}</span>
+        </div>
+    @elseif (request()->boolean('expired'))
+        <div class="mb-4 p-3.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60 text-xs font-semibold flex items-start gap-2.5">
+            <svg class="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Sesi Anda telah berakhir karena tidak ada aktivitas selama {{ (int) config('session.idle_timeout', 60) }} menit. Silakan login kembali.</span>
+        </div>
+    @endif
 
     <form method="POST" action="{{ route('login') }}" class="space-y-4 sm:space-y-5" x-data="{ showPassword: false }">
         @csrf
@@ -120,4 +134,35 @@
             </p>
         </div>
     </form>
+
+    <script>
+        (function () {
+            const loadedAt = Date.now();
+            let lastRefreshedAt = loadedAt;
+            const REFRESH_AFTER_MS = 15 * 60 * 1000;
+
+            const refreshGuestCsrf = () => {
+                if ((Date.now() - lastRefreshedAt) < REFRESH_AFTER_MS) return;
+                fetch('{{ route("csrf.refresh") }}', {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                })
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => {
+                        if (!data || !data.csrf_token) return;
+                        lastRefreshedAt = Date.now();
+                        const meta = document.querySelector('meta[name="csrf-token"]');
+                        if (meta) meta.setAttribute('content', data.csrf_token);
+                        document.querySelectorAll('input[name="_token"]').forEach(el => {
+                            el.value = data.csrf_token;
+                        });
+                    })
+                    .catch(() => {});
+            };
+
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) refreshGuestCsrf();
+            });
+            window.addEventListener('focus', refreshGuestCsrf);
+        })();
+    </script>
 </x-guest-layout>

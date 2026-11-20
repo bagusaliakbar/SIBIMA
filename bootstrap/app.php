@@ -3,6 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,5 +33,66 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $handleTokenMismatch = function (Request $request) {
+            if ($request->hasSession()) {
+                $request->session()->regenerateToken();
+            }
+
+            $isAuthenticated = Auth::check();
+            $fallbackUrl = $isAuthenticated ? route('dashboard') : route('login');
+            $previousUrl = url()->previous();
+            $logoutUrl = route('logout');
+            $safePreviousUrl = ($previousUrl && $previousUrl !== $logoutUrl)
+                ? $previousUrl
+                : $fallbackUrl;
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => $isAuthenticated
+                        ? 'Token keamanan halaman telah diperbarui. Silakan ulangi aksi Anda.'
+                        : 'Sesi halaman telah berakhir karena tidak ada aktivitas. Silakan login kembali.',
+                    'expired' => true,
+                    'csrf_token' => csrf_token(),
+                    'redirect' => $isAuthenticated ? $safePreviousUrl : route('login', ['expired' => 1]),
+                ], 419);
+            }
+
+            if (!$isAuthenticated) {
+                $isGuestForm = $request->is('register', 'forgot-password', 'reset-password*');
+                if ($isGuestForm) {
+                    $guestTarget = $request->is('register')
+                        ? route('register')
+                        : ($request->is('forgot-password') ? route('password.request') : $safePreviousUrl);
+
+                    return redirect()->to($guestTarget)
+                        ->withInput($request->except(['password', 'password_confirmation', '_token']))
+                        ->with('status', 'Token keamanan formulir telah diperbarui. Silakan kirim ulang.');
+                }
+
+                $redirect = redirect()->route('login')
+                    ->with('status', 'Sesi halaman telah berakhir karena tidak ada aktivitas. Silakan login kembali.');
+
+                if ($request->is('login') && $request->filled('username')) {
+                    $redirect->withInput($request->only('username'));
+                }
+
+                return $redirect;
+            }
+
+            return redirect()->to($safePreviousUrl)
+                ->withInput($request->except(['password', 'password_confirmation', 'current_password', '_token']))
+                ->with('warning', 'Token keamanan formulir telah diperbarui karena halaman terlalu lama terbuka. Silakan kirim ulang data Anda.');
+        };
+
+        $exceptions->render(function (TokenMismatchException $e, Request $request) use ($handleTokenMismatch) {
+            return $handleTokenMismatch($request);
+        });
+
+        $exceptions->render(function (HttpException $e, Request $request) use ($handleTokenMismatch) {
+            if ($e->getStatusCode() === 419) {
+                return $handleTokenMismatch($request);
+            }
+
+            return null;
+        });
     })->create();

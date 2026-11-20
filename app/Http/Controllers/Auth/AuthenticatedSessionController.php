@@ -33,6 +33,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         $request->session()->regenerate();
+        $request->session()->put('last_activity_at', now()->timestamp);
 
         if ($user && filled($user->identifier) && (string) $request->input('password') === (string) $user->identifier) {
             $request->session()->put('using_default_password', true);
@@ -52,13 +53,33 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $isIdleLogout = $request->input('reason') === 'idle';
+        $idleTimeoutMinutes = max(1, (int) config('session.idle_timeout', 60));
+
+        if ($userId = Auth::id()) {
+            \Illuminate\Support\Facades\Cache::forget('user-is-online-' . $userId);
+        }
+
+        ActivityLog::log(
+            $isIdleLogout ? 'Auto Logout' : 'Logout',
+            $isIdleLogout
+                ? "Sesi berakhir otomatis karena tidak ada aktivitas selama {$idleTimeoutMinutes} menit."
+                : 'User keluar dari sistem.',
+            'Auth'
+        );
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        ActivityLog::log('Logout', 'User keluar dari sistem.', 'Auth');
+        if ($isIdleLogout) {
+            return redirect()->route('login')->with(
+                'status',
+                "Sesi Anda telah berakhir karena tidak ada aktivitas selama {$idleTimeoutMinutes} menit. Silakan login kembali."
+            );
+        }
 
         return redirect('/');
     }

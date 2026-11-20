@@ -113,6 +113,7 @@
         @include('components.confirm-dialog')
         @include('components.changelog-modal')
         @include('components.bug-report-widget')
+        @include('components.session-timeout-modal')
 
         @include('layouts.partials.audit-drawer')
 

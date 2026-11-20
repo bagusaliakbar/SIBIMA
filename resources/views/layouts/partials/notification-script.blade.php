@@ -15,6 +15,10 @@
                                     activePermissionInput: null,
                                     permissionReason: {},
 
+                                    getCsrfToken() {
+                                        return document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+                                    },
+
                                     async togglePushNotifications() {
                                         if (!('Notification' in window)) {
                                             window.sibimaToast('Browser ini belum mendukung fitur Web Push Notification.', 'warning', 'Tidak Didukung');
@@ -28,7 +32,7 @@
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                        'X-CSRF-TOKEN': this.getCsrfToken()
                                                     }
                                                 });
                                                 const data = await res.json();
@@ -80,7 +84,7 @@
                                                             method: 'POST',
                                                             headers: {
                                                                 'Content-Type': 'application/json',
-                                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                                'X-CSRF-TOKEN': this.getCsrfToken()
                                                             },
                                                             body: JSON.stringify({
                                                                 endpoint: sub.endpoint,
@@ -110,7 +114,18 @@
                                     init() {
                                         this.fetchNotifications();
                                         window.refreshNotifications = () => this.fetchNotifications();
-                                        setInterval(() => this.fetchNotifications(), 30000); // Polling 30s
+                                        setInterval(() => {
+                                            if (document.hidden || (typeof window._sibimaIsIdle === 'function' && window._sibimaIsIdle())) {
+                                                return;
+                                            }
+                                            this.fetchNotifications();
+                                        }, 30000); // Polling 30s only while tab visible & user active
+
+                                        document.addEventListener('visibilitychange', () => {
+                                            if (!document.hidden && !(typeof window._sibimaIsIdle === 'function' && window._sibimaIsIdle())) {
+                                                this.fetchNotifications();
+                                            }
+                                        });
                                     },
 
                                     toggle() {
@@ -127,11 +142,19 @@
                                         fetch('{{ route("notifications.index") }}', {
                                             headers: {
                                                 'X-Requested-With': 'XMLHttpRequest',
-                                                'Accept': 'application/json'
+                                                'Accept': 'application/json',
+                                                'X-SIBIMA-Passive': '1'
                                             }
                                         })
-                                            .then(res => res.json())
+                                            .then(res => {
+                                                if (res.status === 401 || res.status === 419) {
+                                                    window.location.href = '{{ route("login", ["expired" => 1]) }}';
+                                                    return null;
+                                                }
+                                                return res.ok ? res.json() : null;
+                                            })
                                             .then(data => {
+                                                if (!data) return;
                                                 this.notifications = data.notifications || [];
                                                 this.unreadCount = data.unread_count || 0;
                                                 
@@ -139,7 +162,8 @@
                                                     this.playSound();
                                                 }
                                                 this.lastCount = this.unreadCount;
-                                            });
+                                            })
+                                            .catch(() => {});
                                     },
 
                                     playSound() {
@@ -173,9 +197,10 @@
 
                                         this.attendanceLoading[mentoringId] = true;
                                         try {
+                                            const csrfToken = this.getCsrfToken();
                                             const payload = {
                                                 status: status,
-                                                _token: '{{ csrf_token() }}'
+                                                _token: csrfToken
                                             };
                                             if (status === 'permission' && reason) {
                                                 payload.reason = reason;
@@ -187,7 +212,7 @@
                                                     'Content-Type': 'application/json',
                                                     'X-Requested-With': 'XMLHttpRequest',
                                                     'Accept': 'application/json',
-                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                    'X-CSRF-TOKEN': csrfToken
                                                 },
                                                 body: JSON.stringify(payload)
                                             });
@@ -325,7 +350,7 @@
                                         fetch(`/notifications/${id}/read`, {
                                             method: 'POST',
                                             headers: {
-                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'X-CSRF-TOKEN': this.getCsrfToken(),
                                                 'Content-Type': 'application/json',
                                                 'X-Requested-With': 'XMLHttpRequest',
                                                 'Accept': 'application/json'
@@ -343,7 +368,7 @@
                                         fetch(`/notifications/${id}/read`, {
                                             method: 'POST',
                                             headers: {
-                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'X-CSRF-TOKEN': this.getCsrfToken(),
                                                 'Content-Type': 'application/json',
                                                 'X-Requested-With': 'XMLHttpRequest',
                                                 'Accept': 'application/json'
@@ -357,7 +382,7 @@
                                         fetch('{{ route("notifications.read-all") }}', {
                                             method: 'POST',
                                             headers: {
-                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'X-CSRF-TOKEN': this.getCsrfToken(),
                                                 'Content-Type': 'application/json',
                                                 'X-Requested-With': 'XMLHttpRequest',
                                                 'Accept': 'application/json'
