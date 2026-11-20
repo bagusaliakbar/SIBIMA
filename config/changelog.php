@@ -1,14 +1,29 @@
 <?php
 
 return [
-    'current_version' => 'v2.5.0',
+    'current_version' => 'v2.6.0',
 
     'releases' => [
         [
-            'version' => 'v2.5.0',
-            'date' => '13–18 Nov 2026',
+            'version' => 'v2.6.0',
+            'date' => '19–20 Nov 2026',
             'badge' => 'Terbaru',
             'badge_type' => 'emerald',
+            'categories' => ['feature', 'ux', 'perf'],
+            'title' => 'Keamanan Sesi Idle 60 Menit, Audit UI/UX Menyeluruh & Mobile Card View',
+            'items' => [
+                'Penerapan batas sesi idle seragam 60 menit (server & client) lengkap dengan modal peringatan hitung mundur 2 menit, tombol perpanjang sesi, sinkronisasi multi-tab, serta auto-logout otomatis.',
+                'Penanganan ramah halaman kedaluwarsa (419 Page Expired) melalui redirect otomatis dengan pembaruan token CSRF, refresh token otomatis di halaman login, serta jeda polling notifikasi saat tab tersembunyi/idle.',
+                'Penambahan tampilan Mobile Card View responsif pada 10 tabel operasional utama (gelombang, pengumuman, FAQ, penguji seminar/sidang, laporan bug, yudisium, manajemen pengguna, pendaftaran seminar & sidang).',
+                'Standardisasi penuh antarmuka Clean Enterprise: penggantian seluruh emoji UI menjadi ikon SVG Heroicons, dialog konfirmasi & toast global, normalisasi aksesibilitas modal (z-index, ESC, ARIA), serta perbaikan kontras Dark Mode.',
+                'Pembersihan inline style pada komponen (Kanban, Widget Lapor Bug, Modal Sinkronisasi) dan modularisasi 9 halaman Blade besar (>1.000 baris) menjadi partial terstruktur.',
+            ],
+        ],
+        [
+            'version' => 'v2.5.0',
+            'date' => '13–18 Nov 2026',
+            'badge' => 'Rilis Fitur',
+            'badge_type' => 'blue',
             'categories' => ['feature', 'ux'],
             'title' => 'Kartu Bimbingan Digital, Footer & Penyempurnaan UX',
             'items' => [
