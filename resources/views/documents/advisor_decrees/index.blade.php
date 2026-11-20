@@ -90,17 +90,17 @@
         <!-- Filter Status / Category Tabs -->
         <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-px custom-scrollbar">
             <a href="{{ route('advisor-decrees.index', array_merge(request()->except('target_type'), ['target_type' => 'all'])) }}" 
-               class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'all' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/5' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+               class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Semua Dokumen</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($targetType ?? 'all') === 'all' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">{{ $stats['total'] }}</span>
             </a>
             <a href="{{ route('advisor-decrees.index', array_merge(request()->except('target_type'), ['target_type' => 'collective'])) }}" 
-               class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'collective' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+               class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'collective' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>SK Kolektif Prodi</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($targetType ?? 'all') === 'collective' ? 'bg-emerald-500 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">{{ $stats['collective'] }}</span>
             </a>
             <a href="{{ route('advisor-decrees.index', array_merge(request()->except('target_type'), ['target_type' => 'individual_dosen'])) }}" 
-               class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'individual_dosen' ? 'border-blue-500 text-blue-600 bg-blue-50/50 dark:bg-blue-500/5' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+               class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'individual_dosen' ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Surat Tugas Dosen (BKD)</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($targetType ?? 'all') === 'individual_dosen' ? 'bg-blue-500 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300' }}">{{ $stats['individual'] }}</span>
             </a>
@@ -143,7 +143,7 @@
 
                     <button type="submit" 
                             class="p-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                            title="Terapkan Filter">
+                            title="Terapkan Filter" aria-label="Terapkan Filter">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                     </button>
 
@@ -239,7 +239,7 @@
                                                       data-confirm-button="Ya, Hapus">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Hapus Arsip">
+                                                    <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Hapus Arsip" aria-label="Hapus Arsip">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                     </button>
                                                 </form>

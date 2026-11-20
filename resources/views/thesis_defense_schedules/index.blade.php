@@ -51,7 +51,7 @@
                 <div class="flex items-center gap-1 shrink-0">
                     <!-- Upcoming Tab -->
                     <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'upcoming', 'wave_id' => $selectedWaveId])) }}"
-                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                         Mendatang
                         <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
@@ -59,7 +59,7 @@
 
                     <!-- Today Tab -->
                     <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'today', 'wave_id' => $selectedWaveId])) }}"
-                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                         Hari Ini
                         <span class="px-2 py-0.5 text-[10px] rounded-full {{ $filterDate === 'today' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
@@ -67,14 +67,14 @@
 
                     <!-- Past Tab -->
                     <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
-                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         Riwayat
                         <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
                     </a>
 
                     <!-- All Tab -->
                     <a href="{{ route('thesis-defense-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
-                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' && !$mySchedules ? 'border-emerald-500 text-emerald-600 bg-emerald-50/50 dark:bg-emerald-500/5 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                       class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' && !$mySchedules ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         Semua Agenda
                         <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
                     </a>
@@ -700,7 +700,7 @@
                                             data-confirm-type="danger"
                                             data-confirm-button="Ya, Hapus"
                                             class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all cursor-pointer"
-                                            title="Hapus">
+                                            title="Hapus" aria-label="Hapus">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
                                 </div>
@@ -799,7 +799,7 @@
                                                 data-confirm-type="danger"
                                                 data-confirm-button="Ya, Hapus"
                                                 class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/del cursor-pointer"
-                                                title="Hapus">
+                                                title="Hapus" aria-label="Hapus">
                                             <svg class="w-5 h-5 group-hover/del:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>

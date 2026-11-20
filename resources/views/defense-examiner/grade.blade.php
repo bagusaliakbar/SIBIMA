@@ -72,7 +72,7 @@
 
         @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($examiners))
             <!-- Admin / Kaprodi Examiner Selector Card -->
-            <div class="bg-gradient-to-r from-emerald-500/10 via-indigo-500/10 to-purple-500/10 border border-emerald-200/60 dark:border-emerald-800/40 rounded-2xl p-5 shadow-sm">
+            <div class="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 rounded-2xl p-5 shadow-sm">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <div class="flex items-center gap-2">
                         <span class="px-2.5 py-1 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-sm">

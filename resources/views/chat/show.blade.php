@@ -264,7 +264,7 @@
                                     oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 128) + 'px'"></textarea>
                             </div>
 
-                            <button type="submit" class="h-11 w-11 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 text-white flex items-center justify-center hover:from-orange-500 hover:to-orange-600 transition-all shadow-md shadow-orange-500/20 shrink-0 hover:scale-[1.02] active:scale-[0.98]">
+                            <button type="submit" aria-label="Kirim pesan" title="Kirim pesan" class="h-11 w-11 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 text-white flex items-center justify-center hover:from-orange-500 hover:to-orange-600 transition-all shadow-md shadow-orange-500/20 shrink-0 hover:scale-[1.02] active:scale-[0.98]">
                                 <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                             </button>
                         </form>

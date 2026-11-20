@@ -288,10 +288,10 @@
 
                                             <div class="flex items-center gap-2 shrink-0">
                                                 {{-- Navigasi Sebelumnya / Selanjutnya --}}
-                                                <button type="button" @click="prevPreviewFile()" class="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" title="Dokumen Sebelumnya">
+                                                <button type="button" @click="prevPreviewFile()" class="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" title="Dokumen Sebelumnya" aria-label="Dokumen Sebelumnya">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                                                 </button>
-                                                <button type="button" @click="nextPreviewFile()" class="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" title="Dokumen Selanjutnya">
+                                                <button type="button" @click="nextPreviewFile()" class="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" title="Dokumen Selanjutnya" aria-label="Dokumen Selanjutnya">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                                 </button>
 
@@ -343,7 +343,8 @@
 
                                             <template x-if="previewFileUrl">
                                                 <iframe :src="previewFileUrl" 
-                                                        class="w-full h-full border-0 bg-white"
+                                                        title="Pratinjau Dokumen Seminar"
+                                                        class="w-full h-full border-0 bg-white dark:bg-slate-900"
                                                         allow="autoplay; fullscreen">
                                                 </iframe>
                                             </template>

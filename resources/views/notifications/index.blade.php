@@ -17,7 +17,7 @@
         <div class="flex items-center gap-1 border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-px custom-scrollbar">
             {{-- Tab: Semua --}}
             <a href="{{ route('notifications.index', ['tab' => 'all', 'search' => $search]) }}" 
-               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'all' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Semua Notifikasi</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'all' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
                     {{ $totalCount }}
@@ -26,7 +26,7 @@
 
             {{-- Tab: Belum Dibaca --}}
             <a href="{{ route('notifications.index', ['tab' => 'unread', 'search' => $search]) }}" 
-               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'unread' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'unread' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 @if($unreadCount > 0)
                     <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                 @endif
@@ -38,7 +38,7 @@
 
             {{-- Tab: Sudah Dibaca --}}
             <a href="{{ route('notifications.index', ['tab' => 'read', 'search' => $search]) }}" 
-               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'read' ? 'border-orange-500 text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+               class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'read' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Sudah Dibaca</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'read' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
                     {{ $readCount ?? max(0, $totalCount - $unreadCount) }}

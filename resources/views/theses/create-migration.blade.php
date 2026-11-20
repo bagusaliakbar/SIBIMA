@@ -117,22 +117,22 @@
                     <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-700/50 rounded-xl">
                         <div class="flex-1">
                             <h4 class="text-sm font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest mb-1">Format Data Migrasi</h4>
-                            <p class="text-xs text-indigo-700 dark:text-indigo-400 font-medium">Gunakan template ini untuk mengimpor banyak data sekaligus. Pastikan format file sesuai sebelum mengunggah.</p>
+                            <p class="text-xs text-blue-700 dark:text-blue-400 font-medium">Gunakan template ini untuk mengimpor banyak data sekaligus. Pastikan format file sesuai sebelum mengunggah.</p>
                         </div>
-                        <a href="{{ route('theses.migration.template') }}" class="inline-flex shrink-0 items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-95">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <a href="{{ route('theses.migration.template') }}" class="inline-flex shrink-0 items-center gap-2 h-10 px-5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-sm transition-colors">
+                            <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             Download Template Excel
                         </a>
                     </div>
                     
                     <form action="{{ route('theses.migration.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6" @submit="isUploading = true">
                         @csrf
-                        <div class="border-2 border-dashed rounded-xl p-8 text-center transition-colors" :class="fileName ? 'border-indigo-400 bg-indigo-50/50 dark:border-indigo-600 dark:bg-indigo-900/10' : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50'">
-                            <svg class="mx-auto h-12 w-12 transition-colors" :class="fileName ? 'text-indigo-500' : 'text-slate-400'" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                        <div class="border-2 border-dashed rounded-xl p-8 text-center transition-colors" :class="fileName ? 'border-orange-400 bg-orange-50/50 dark:border-orange-600 dark:bg-orange-950/20' : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50'">
+                            <svg class="mx-auto h-12 w-12 transition-colors" :class="fileName ? 'text-orange-500' : 'text-slate-400'" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <div class="mt-4 flex flex-col items-center justify-center text-sm text-slate-600">
-                                <label for="file" class="relative cursor-pointer bg-white dark:bg-slate-800 rounded-lg px-4 py-2 border border-slate-200 dark:border-slate-700 font-bold text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500 shadow-sm transition-all">
+                            <div class="mt-4 flex flex-col items-center justify-center text-sm text-slate-600 dark:text-slate-400">
+                                <label for="file" class="relative cursor-pointer bg-white dark:bg-slate-800 rounded-lg px-4 py-2 border border-slate-200 dark:border-slate-700 font-bold text-orange-600 dark:text-orange-400 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500 shadow-sm transition-all">
                                     <span x-text="fileName ? 'Ganti File Excel' : 'Pilih File Excel'"></span>
                                     <input id="file" name="file" type="file" accept=".xlsx,.xls" class="sr-only" required @change="fileName = $event.target.files[0] ? $event.target.files[0].name : null">
                                 </label>

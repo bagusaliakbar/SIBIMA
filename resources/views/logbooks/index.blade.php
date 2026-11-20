@@ -369,7 +369,7 @@
                             <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">Kedua dosen pembimbing telah menyetujui proposal skripsi Anda untuk didaftarkan ke Seminar Proposal.</p>
                         </div>
                     </div>
-                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer w-full sm:w-auto text-center">
+                    <a href="{{ route('seminar-applications.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 active:bg-orange-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer w-full sm:w-auto text-center">
                         <span>Daftar Seminar Proposal</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>

@@ -257,7 +257,7 @@
                                                 
                                                 <div class="flex items-start gap-3 min-w-0 flex-1">
                                                     <template x-if="item.student_avatar">
-                                                        <img :src="item.student_avatar" class="w-9 h-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                                                        <img :src="item.student_avatar" :alt="item.student_name" class="w-9 h-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
                                                     </template>
                                                     <template x-if="!item.student_avatar">
                                                         <div class="w-9 h-9 rounded-xl text-white flex items-center justify-center font-bold text-xs shrink-0"
@@ -348,7 +348,7 @@
                                     
                                     <div class="flex items-start gap-3.5 min-w-0 flex-1">
                                         <template x-if="item.student_avatar">
-                                            <img :src="item.student_avatar" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                                            <img :src="item.student_avatar" :alt="item.student_name" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
                                         </template>
                                         <template x-if="!item.student_avatar">
                                             <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-xs shrink-0"

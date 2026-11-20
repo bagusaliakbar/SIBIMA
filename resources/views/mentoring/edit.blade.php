@@ -62,7 +62,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3.5">
                         @if($mentoringSession->thesis?->student?->avatar_url)
-                            <img src="{{ $mentoringSession->thesis->student->avatar_url }}" class="w-11 h-11 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                            <img src="{{ $mentoringSession->thesis->student->avatar_url }}" alt="{{ $mentoringSession->thesis->student->name ?? 'Mahasiswa' }}" class="w-11 h-11 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0">
                         @else
                             <div class="w-11 h-11 rounded-lg bg-orange-600 text-white flex items-center justify-center font-bold text-sm uppercase shadow-xs shrink-0">
                                 {{ substr($mentoringSession->thesis?->student?->name ?? 'M', 0, 2) }}
@@ -829,25 +829,24 @@
                                         <!-- Student Checklist Scrollable Area -->
                                         <div class="max-h-56 overflow-y-auto space-y-1.5 pr-1 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-2 bg-slate-50/40 dark:bg-slate-900/30">
                                             <template x-for="t in filteredAvailableTheses" :key="t.id">
-                                                <div @click="toggleAddThesis(t.id)" 
-                                                     class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none"
+                                                <label class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none"
                                                      :class="selectedThesesToAdd.includes(t.id) 
-                                                         ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-400 dark:border-indigo-600 shadow-2xs' 
+                                                         ? 'bg-orange-50/90 dark:bg-orange-950/50 border-orange-400 dark:border-orange-600 shadow-2xs' 
                                                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
                                                     
                                                     <!-- Checkbox -->
                                                     <input type="checkbox" 
                                                            :value="t.id" 
                                                            :checked="selectedThesesToAdd.includes(t.id)" 
-                                                           @click.stop="toggleAddThesis(t.id)"
-                                                           class="w-4 h-4 text-indigo-600 rounded border-slate-300 dark:border-slate-600 focus:ring-indigo-500 cursor-pointer">
+                                                           @change="toggleAddThesis(t.id)"
+                                                           class="w-4 h-4 text-orange-600 rounded border-slate-300 dark:border-slate-600 focus:ring-orange-500 cursor-pointer">
                                                     
                                                     <!-- Avatar / Initials -->
                                                     <template x-if="t.avatar">
-                                                        <img :src="t.avatar" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700">
+                                                        <img :src="t.avatar" :alt="t.name" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700">
                                                     </template>
                                                     <template x-if="!t.avatar">
-                                                        <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                                                        <div class="w-8 h-8 rounded-lg bg-orange-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
                                                             <span x-text="t.name.substr(0, 2)"></span>
                                                         </div>
                                                     </template>
@@ -856,12 +855,12 @@
                                                     <div class="min-w-0 flex-1">
                                                         <div class="flex items-center gap-2 flex-wrap">
                                                             <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="t.name"></span>
-                                                            <span class="text-[10px] px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold" x-text="t.npm"></span>
+                                                            <span class="text-[10px] px-1.5 py-0.2 rounded bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 font-bold" x-text="t.npm"></span>
                                                             <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" x-text="t.role_label"></span>
                                                         </div>
                                                         <p class="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5" x-text="t.title"></p>
                                                     </div>
-                                                </div>
+                                                </label>
                                             </template>
 
                                             <template x-if="filteredAvailableTheses.length === 0">

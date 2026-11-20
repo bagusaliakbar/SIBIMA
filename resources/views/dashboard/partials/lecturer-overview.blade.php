@@ -320,7 +320,7 @@
                                                 <span>Diunggah: {{ \Carbon\Carbon::parse($item['date'])->locale('id')->translatedFormat('d M Y, H:i') }} WIB</span>
                                             </div>
                                         </div>
-                                        <a href="{{ $item['url'] }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md shadow-indigo-600/20 active:scale-95 transition-all shrink-0 cursor-pointer">
+                                        <a href="{{ $item['url'] }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl text-xs font-black shadow-sm active:scale-95 transition-all shrink-0 cursor-pointer">
                                             <span>Tinjau Perbaikan</span>
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                         </a>

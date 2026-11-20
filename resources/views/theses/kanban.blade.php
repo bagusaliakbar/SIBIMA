@@ -18,30 +18,30 @@
     <div class="w-full space-y-4" x-data="{ search: '' }">
         <!-- Top Toolbar -->
         <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
-            <div class="flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all w-full sm:w-96">
-                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center gap-2.5 h-10 px-3.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 rounded-xl focus-within:ring-2 focus-within:ring-orange-500/20 focus-within:border-orange-500 transition-all w-full sm:w-96">
+                <svg aria-hidden="true" class="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input type="text" 
                        x-model="search" 
+                       aria-label="Cari mahasiswa, NPM, atau judul skripsi"
                        placeholder="Cari mahasiswa, NPM, atau judul..." 
-                       style="background-color: transparent !important; color: inherit !important;"
-                       class="w-full border-0 p-0 text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0">
-                <button type="button" x-show="search" @click="search = ''" aria-label="Hapus kata kunci pencarian" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold shrink-0 cursor-pointer">
-                    ✕
+                       class="w-full border-0 bg-transparent p-0 text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0">
+                <button type="button" x-show="search" @click="search = ''" aria-label="Hapus kata kunci pencarian" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 shrink-0 cursor-pointer p-1">
+                    <svg aria-hidden="true" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
             <div class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <span>Total: <strong class="text-indigo-600 dark:text-indigo-400 font-black text-sm">{{ $pengajuanBaru->count() + $bimbinganUp->count() + $prosesSeminar->count() + $siapSidang->count() + $lulus->count() }}</strong> Skripsi</span>
+                <span>Total: <strong class="text-orange-600 dark:text-orange-400 font-black text-sm tabular-nums">{{ $pengajuanBaru->count() + $bimbinganUp->count() + $prosesSeminar->count() + $siapSidang->count() + $lulus->count() }}</strong> Skripsi</span>
             </div>
         </div>
 
         <!-- Kanban Board Columns Grid -->
-        <div class="flex items-start gap-4 overflow-x-auto pb-4 custom-scrollbar" style="display: flex; align-items: flex-start; gap: 16px; overflow-x: auto; height: calc(100vh - 230px); min-height: 520px;">
+        <div class="flex items-start gap-4 overflow-x-auto pb-4 custom-scrollbar h-[calc(100vh-230px)] min-h-[520px]">
             
             <!-- Column 1: Baru Daftar -->
-            <div class="bg-slate-100/70 dark:bg-slate-900/60 rounded-2xl flex flex-col border border-slate-200/80 dark:border-slate-800/80 overflow-hidden" style="width: 300px !important; min-width: 300px !important; max-width: 300px !important; flex-shrink: 0 !important; height: 100% !important;">
+            <div class="w-[300px] min-w-[300px] max-w-[300px] shrink-0 h-full bg-slate-100/70 dark:bg-slate-900/60 rounded-2xl flex flex-col border border-slate-200/80 dark:border-slate-800/80 overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-200/80 dark:border-slate-800 flex justify-between items-center bg-slate-200/40 dark:bg-slate-800/40 shrink-0">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-slate-400"></span>
@@ -61,7 +61,7 @@
             </div>
 
             <!-- Column 2: Belum Seminar -->
-            <div class="bg-blue-50/40 dark:bg-blue-950/30 rounded-2xl flex flex-col border border-blue-100 dark:border-blue-900/50 overflow-hidden" style="width: 300px !important; min-width: 300px !important; max-width: 300px !important; flex-shrink: 0 !important; height: 100% !important;">
+            <div class="w-[300px] min-w-[300px] max-w-[300px] shrink-0 h-full bg-blue-50/40 dark:bg-blue-950/30 rounded-2xl flex flex-col border border-blue-100 dark:border-blue-900/50 overflow-hidden">
                 <div class="px-4 py-3 border-b border-blue-100 dark:border-blue-900/50 flex justify-between items-center bg-blue-100/40 dark:bg-blue-900/30 shrink-0">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Column 3: Sudah Seminar -->
-            <div class="bg-amber-50/40 dark:bg-amber-950/30 rounded-2xl flex flex-col border border-amber-100 dark:border-amber-900/50 overflow-hidden" style="width: 300px !important; min-width: 300px !important; max-width: 300px !important; flex-shrink: 0 !important; height: 100% !important;">
+            <div class="w-[300px] min-w-[300px] max-w-[300px] shrink-0 h-full bg-amber-50/40 dark:bg-amber-950/30 rounded-2xl flex flex-col border border-amber-100 dark:border-amber-900/50 overflow-hidden">
                 <div class="px-4 py-3 border-b border-amber-100 dark:border-amber-900/50 flex justify-between items-center bg-amber-100/40 dark:bg-amber-900/30 shrink-0">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -101,19 +101,19 @@
             </div>
 
             <!-- Column 4: Siap Sidang -->
-            <div class="bg-purple-50/40 dark:bg-purple-950/30 rounded-2xl flex flex-col border border-purple-100 dark:border-purple-900/50 overflow-hidden" style="width: 300px !important; min-width: 300px !important; max-width: 300px !important; flex-shrink: 0 !important; height: 100% !important;">
-                <div class="px-4 py-3 border-b border-purple-100 dark:border-purple-900/50 flex justify-between items-center bg-purple-100/40 dark:bg-purple-900/30 shrink-0">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            <div class="w-[300px] min-w-[300px] max-w-[300px] shrink-0 h-full bg-orange-50/40 dark:bg-orange-950/25 rounded-2xl flex flex-col border border-orange-100 dark:border-orange-900/50 overflow-hidden">
+                <div class="px-4 py-3 border-b border-orange-100 dark:border-orange-900/50 flex justify-between items-center bg-orange-100/40 dark:bg-orange-900/30 shrink-0">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-orange-700 dark:text-orange-300 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
                         Siap Sidang
                     </h3>
-                    <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">{{ $siapSidang->count() }}</span>
+                    <span class="bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-800">{{ $siapSidang->count() }}</span>
                 </div>
                 <div class="p-3 overflow-y-auto custom-scrollbar flex-1 space-y-3">
                     @forelse($siapSidang as $thesis)
-                        @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'purple'])
+                        @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'orange'])
                     @empty
-                        <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-purple-200/60 dark:border-purple-900/30 rounded-xl bg-white/40 dark:bg-slate-900/20">
+                        <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-orange-200/60 dark:border-orange-900/30 rounded-xl bg-white/40 dark:bg-slate-900/20">
                             <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Kosong</span>
                         </div>
                     @endforelse
@@ -121,7 +121,7 @@
             </div>
 
             <!-- Column 5: Lulus -->
-            <div class="bg-emerald-50/40 dark:bg-emerald-950/30 rounded-2xl flex flex-col border border-emerald-100 dark:border-emerald-900/50 overflow-hidden" style="width: 300px !important; min-width: 300px !important; max-width: 300px !important; flex-shrink: 0 !important; height: 100% !important;">
+            <div class="w-[300px] min-w-[300px] max-w-[300px] shrink-0 h-full bg-emerald-50/40 dark:bg-emerald-950/30 rounded-2xl flex flex-col border border-emerald-100 dark:border-emerald-900/50 overflow-hidden">
                 <div class="px-4 py-3 border-b border-emerald-100 dark:border-emerald-900/50 flex justify-between items-center bg-emerald-100/40 dark:bg-emerald-900/30 shrink-0">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>

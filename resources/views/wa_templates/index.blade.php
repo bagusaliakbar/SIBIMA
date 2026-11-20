@@ -209,7 +209,7 @@
                                   data-confirm-button="Ya, Reset">
                                 @csrf
                                 <button type="submit" 
-                                        title="Reset ke Default Bawaan"
+                                        title="Reset ke Default Bawaan" aria-label="Reset ke Default Bawaan"
                                         class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 </button>
@@ -321,7 +321,7 @@
                                   data-confirm-button="Ya, Reset">
                                                 @csrf
                                                 <button type="submit" 
-                                                        title="Reset ke Default Bawaan"
+                                                        title="Reset ke Default Bawaan" aria-label="Reset ke Default Bawaan"
                                                         class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                                 </button>

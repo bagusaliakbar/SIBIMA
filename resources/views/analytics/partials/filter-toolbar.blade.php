@@ -1,6 +1,6 @@
         <!-- FILTER TOOLBAR CARD -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm transition-all">
-            <div class="flex items-center justify-between cursor-pointer select-none" @click="filterOpen = !filterOpen">
+            <div role="button" tabindex="0" :aria-expanded="filterOpen ? 'true' : 'false'" aria-label="Buka atau tutup filter data analitik" class="flex items-center justify-between cursor-pointer select-none rounded-xl" @click="filterOpen = !filterOpen" @keydown.enter.prevent="filterOpen = !filterOpen" @keydown.space.prevent="filterOpen = !filterOpen">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center border border-orange-200/50 dark:border-orange-500/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
@@ -19,9 +19,9 @@
                             @endif
                         </span>
                     @endif
-                    <button type="button" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                    <span aria-hidden="true" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
                         <svg class="w-5 h-5 transition-transform duration-200" :class="{ 'rotate-180': filterOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
+                    </span>
                 </div>
             </div>
 

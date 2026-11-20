@@ -432,8 +432,8 @@
                                                                     </div>
 
                                                                     <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700">
-                                                                        <button type="button" @click="openAssignModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
-                                                                        <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all">Simpan Penugasan</button>
+                                                                        <button type="button" @click="openAssignModal = false" class="h-10 px-5 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">Batal</button>
+                                                                        <button type="submit" class="h-10 px-6 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-colors cursor-pointer">Simpan Penugasan</button>
                                                                     </div>
                                                                 </div>
                                                             </form>

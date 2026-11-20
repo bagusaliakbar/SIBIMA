@@ -178,7 +178,7 @@
                                                     type="button" 
                                                     class="w-8 h-8 rounded-xl flex items-center justify-center transition-colors cursor-pointer"
                                                     :class="open ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'"
-                                                    title="Menu Pengaturan">
+                                                    title="Menu Pengaturan" aria-label="Menu Pengaturan">
                                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                                     <circle cx="12" cy="5" r="2"/>
                                                     <circle cx="12" cy="12" r="2"/>
@@ -343,6 +343,8 @@
         @if(in_array(Auth::user()->role, ['admin', 'kaprodi']))
             <div x-show="showModal" 
                  x-cloak 
+                 role="dialog"
+                 aria-modal="true"
                  class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0"

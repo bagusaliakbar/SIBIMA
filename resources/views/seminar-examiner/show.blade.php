@@ -275,7 +275,10 @@
                             $rev = $ex['revision'];
                             $hasRevisionNotes = $rev && $rev->messages->where('sender_id', $ex['user']->id)->count() > 0;
                         @endphp
-                        <div onclick="window.location.href='{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $ex['user']->id, 'redirect_to' => request('redirect_to')]) }}'"
+                        <div role="link"
+                             tabindex="0"
+                             onclick="window.location.href='{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $ex['user']->id, 'redirect_to' => request('redirect_to')]) }}'"
+                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $ex['user']->id, 'redirect_to' => request('redirect_to')]) }}';}"
                              class="cursor-pointer relative p-4 rounded-xl border transition-all flex flex-col justify-between {{ $isSelected ? 'bg-white dark:bg-slate-800 border-orange-500 shadow-md ring-2 ring-orange-500/20' : 'bg-white/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300' }}">
                             <div>
                                 <div class="flex items-center justify-between gap-2 mb-2">
@@ -771,7 +774,8 @@
                         </div>
                         
                         <iframe :src="previewUrl" 
-                                class="relative z-10 w-full h-full border-0 rounded-b-3xl bg-white"
+                                title="Pratinjau Dokumen Seminar"
+                                class="relative z-10 w-full h-full border-0 rounded-b-3xl bg-white dark:bg-slate-900"
                                 allow="autoplay"
                                 sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
                         </iframe>
@@ -860,7 +864,8 @@
                                             <button type="button" 
                                                     @click="removeEditPoint(index)" 
                                                     class="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all mt-0.5"
-                                                    title="Hapus butir ini">
+                                                    title="Hapus butir ini"
+                                                    aria-label="Hapus butir ini">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>

@@ -308,7 +308,7 @@
 
                         <div class="relative w-full">
                             {{-- Search Icon / Submit Button --}}
-                            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-orange-500 transition-colors cursor-pointer" title="Cari">
+                            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-orange-500 transition-colors cursor-pointer" title="Cari" aria-label="Cari">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
@@ -607,7 +607,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
-                                                    title="Batalkan & Hapus Pengajuan Sidang" 
+                                                    title="Batalkan & Hapus Pengajuan Sidang" aria-label="Batalkan & Hapus Pengajuan Sidang" 
                                                     class="p-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-xl transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>

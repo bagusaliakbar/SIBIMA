@@ -302,7 +302,8 @@
                             </div>
 
                             <iframe :src="formatEmbedUrl(currentDocUrl)" 
-                                    class="relative z-10 w-full h-full border-0 bg-white"
+                                    title="Pratinjau Dokumen Naskah"
+                                    class="relative z-10 w-full h-full border-0 bg-white dark:bg-slate-900"
                                     allow="autoplay"
                                     sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
                             </iframe>

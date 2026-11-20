@@ -1,6 +1,6 @@
                             <div x-data="notificationDropdown()" x-init="init()" class="relative">
-                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
-                                    <svg aria-hidden="true" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
+                                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
                                         <span style="top: 2px; right: 2px;" class="absolute flex h-3.5 min-w-[14px] px-1 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white border border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
                                             <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
@@ -30,7 +30,8 @@
                                             <!-- Push Notification Device Toggle Button -->
                                             <button type="button" 
                                                     @click.stop="togglePushNotifications()" 
-                                                    class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                    class="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                    :aria-label="pushEnabled ? 'Notifikasi HP aktif, klik untuk uji notifikasi' : 'Aktifkan notifikasi HP di perangkat ini'"
                                                     :title="pushEnabled ? 'Notifikasi HP: Aktif (Klik untuk Uji Notifikasi)' : 'Notifikasi HP: Nonaktif (Klik untuk Aktifkan di Perangkat)'">
                                                 <svg aria-hidden="true" class="w-4 h-4" :class="pushEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -40,7 +41,8 @@
                                             <!-- Sound Mute/Unmute Toggle -->
                                             <button type="button" 
                                                     @click.stop="toggleSound()" 
-                                                    class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                    class="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                    :aria-label="soundEnabled ? 'Bisukan suara notifikasi' : 'Aktifkan suara notifikasi'"
                                                     :title="soundEnabled ? 'Suara Notifikasi: Aktif (Klik untuk Mute)' : 'Suara Notifikasi: Nonaktif (Klik untuk Aktifkan)'">
                                                 <template x-if="soundEnabled">
                                                     <!-- Speaker ON -->
@@ -70,7 +72,11 @@
                                         </template>
 
                                         <template x-for="notif in notifications" :key="notif.id">
-                                            <div @click="markAsRead(notif.id, getUrl(notif))" 
+                                            <div role="button"
+                                                 tabindex="0"
+                                                 @click="markAsRead(notif.id, getUrl(notif))" 
+                                                 @keydown.enter.prevent="markAsRead(notif.id, getUrl(notif))"
+                                                 @keydown.space.prevent="markAsRead(notif.id, getUrl(notif))"
                                                  class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors cursor-pointer relative group flex items-start gap-3.5"
                                                  :class="notif.read_at ? 'opacity-60' : 'bg-orange-50/20 dark:bg-orange-900/10'">
                                                 

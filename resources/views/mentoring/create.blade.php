@@ -430,7 +430,12 @@
                             <!-- Student Cards List (Max height scrollable) -->
                             <div class="max-h-[340px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                                 <template x-for="t in filteredTheses" :key="t.id">
-                                    <div @click="toggleThesis(t.id)"
+                                    <div role="checkbox"
+                                         :aria-checked="isSelected(t.id) ? 'true' : 'false'"
+                                         tabindex="0"
+                                         @click="toggleThesis(t.id)"
+                                         @keydown.enter.prevent="toggleThesis(t.id)"
+                                         @keydown.space.prevent="toggleThesis(t.id)"
                                          class="p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none"
                                          :class="isSelected(t.id) 
                                              ? 'bg-orange-50/70 dark:bg-orange-500/10 border-orange-300 dark:border-orange-500/40 shadow-xs' 

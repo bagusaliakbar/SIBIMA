@@ -93,9 +93,9 @@
                 </div>
 
                 <!-- Card 4: Total Folder / Topik -->
-                <div class="bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/20 dark:to-slate-900 p-4 sm:p-5 rounded-2xl border border-purple-100 dark:border-purple-900/40 relative overflow-hidden group hover:shadow-md transition-all">
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400">Folder Topik</span>
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Folder Topik</span>
                         <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                         </div>

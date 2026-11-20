@@ -53,7 +53,7 @@
                                         @else
                                             <span class="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs shrink-0">{{ $idx + 1 }}</span>
                                         @endif
-                                        <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white">
+                                        <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
                                             <img src="{{ $d['avatar_url'] }}" alt="{{ $d['name'] }}" class="w-full h-full object-cover">
                                         </div>
                                         <div class="min-w-0">
@@ -71,7 +71,16 @@
                                         <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 font-semibold">{{ $d['supervised_count'] }} Mhs Aktif</span>
                                         <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 font-bold">{{ $d['total_all_time'] }}x Total</span>
                                     </div>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-{{ $d['activity_color'] }}-50 dark:bg-{{ $d['activity_color'] }}-950/70 text-{{ $d['activity_color'] }}-700 dark:text-{{ $d['activity_color'] }}-300 border border-{{ $d['activity_color'] }}-200 dark:border-{{ $d['activity_color'] }}-800/60">
+                                    @php
+                                        $activityBadgeClass = match($d['activity_color'] ?? 'slate') {
+                                            'emerald', 'green' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+                                            'blue', 'sky' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                                            'amber', 'yellow', 'orange' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                                            'rose', 'red' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                                            default => 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border {{ $activityBadgeClass }}">
                                         {{ $d['activity_level'] }}
                                     </span>
                                 </div>
@@ -115,7 +124,7 @@
                                         <!-- Profile -->
                                         <td class="py-4 px-5">
                                             <div class="flex items-center gap-3">
-                                                <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white">
+                                                <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
                                                     <img src="{{ $d['avatar_url'] }}" alt="{{ $d['name'] }}" class="w-full h-full object-cover">
                                                 </div>
                                                 <div class="min-w-0">
@@ -171,7 +180,16 @@
 
                                         <!-- Kategori Keaktifan -->
                                         <td class="py-4 px-4 text-center">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-{{ $d['activity_color'] }}-50 dark:bg-{{ $d['activity_color'] }}-950/70 text-{{ $d['activity_color'] }}-700 dark:text-{{ $d['activity_color'] }}-300 border border-{{ $d['activity_color'] }}-200 dark:border-{{ $d['activity_color'] }}-800/60">
+                                            @php
+                                        $activityBadgeClass = match($d['activity_color'] ?? 'slate') {
+                                            'emerald', 'green' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+                                            'blue', 'sky' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                                            'amber', 'yellow', 'orange' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                                            'rose', 'red' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                                            default => 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border {{ $activityBadgeClass }}">
                                                 {{ $d['activity_level'] }}
                                             </span>
                                         </td>
@@ -212,7 +230,7 @@
                             <div class="p-4 space-y-3 hover:bg-amber-50/30 dark:hover:bg-amber-950/10 transition-colors">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex items-center gap-2.5 min-w-0">
-                                        <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white">
+                                        <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
                                             <img src="{{ $d['avatar_url'] }}" alt="{{ $d['name'] }}" class="w-full h-full object-cover">
                                         </div>
                                         <div class="min-w-0">
@@ -268,7 +286,7 @@
                                         <!-- Profile -->
                                         <td class="py-4 px-5">
                                             <div class="flex items-center gap-3">
-                                                <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white">
+                                                <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
                                                     <img src="{{ $d['avatar_url'] }}" alt="{{ $d['name'] }}" class="w-full h-full object-cover">
                                                 </div>
                                                 <div class="min-w-0">

@@ -440,7 +440,7 @@
                                                                 p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
                                                             })"
                                                             class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
-                                                            title="Aksi Cepat Kaprodi: Kelola ACC Seminar">
+                                                            title="Aksi Cepat Kaprodi: Kelola ACC Seminar" aria-label="Aksi Cepat Kaprodi: Kelola ACC Seminar">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </button>
                                                 @endif
@@ -497,7 +497,7 @@
                                                                 p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
                                                             })"
                                                             class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
-                                                            title="Aksi Cepat Kaprodi: Kelola ACC Sidang">
+                                                            title="Aksi Cepat Kaprodi: Kelola ACC Sidang" aria-label="Aksi Cepat Kaprodi: Kelola ACC Sidang">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </button>
                                                 @endif

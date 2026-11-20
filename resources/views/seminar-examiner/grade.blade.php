@@ -72,7 +72,7 @@
 
         @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && isset($examiners))
             <!-- Admin / Kaprodi Examiner Selector Card -->
-            <div class="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-200/60 dark:border-indigo-800/40 rounded-2xl p-5 shadow-sm">
+            <div class="bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/50 rounded-2xl p-5 shadow-sm">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <div class="flex items-center gap-2">
                         <span class="px-2.5 py-1 bg-indigo-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-sm">
@@ -703,7 +703,7 @@
 
                         <!-- Action Button -->
                         <div class="flex items-center gap-3 w-full lg:w-auto">
-                            <button type="submit" class="w-full lg:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <button type="submit" class="w-full lg:w-auto px-8 py-3.5 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 active:bg-orange-800 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                 <span>Simpan Penilaian Seminar</span>
                             </button>

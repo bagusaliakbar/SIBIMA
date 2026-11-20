@@ -12,7 +12,7 @@
                          class="rounded-2xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 shadow-2xs hover:shadow-xs transition-all overflow-hidden">
                         
                         <!-- Card Header & Summary (Tap anywhere to toggle accordion) -->
-                        <div class="p-4 space-y-3 cursor-pointer select-none" @click="expanded = !expanded">
+                        <div role="button" tabindex="0" :aria-expanded="expanded ? 'true' : 'false'" class="p-4 space-y-3 cursor-pointer select-none" @click="expanded = !expanded" @keydown.enter.prevent="expanded = !expanded" @keydown.space.prevent="expanded = !expanded">
                             <!-- Top Row: Tanggal, Waktu & Status Badge -->
                             <div class="flex items-start justify-between gap-2.5">
                                 <div class="space-y-1">

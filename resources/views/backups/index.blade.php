@@ -237,7 +237,7 @@
                                         <button 
                                             type="button"
                                             @click="restoreTarget = '{{ $backup['filename'] }}'; restoreTargetFormatted = '{{ $backup['filename'] }} ({{ $backup['size_formatted'] }})'; $dispatch('open-modal', 'confirm-restore-modal')"
-                                            title="Pulihkan Database dari File Ini"
+                                            title="Pulihkan Database dari File Ini" aria-label="Pulihkan Database dari File Ini"
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 transition-colors border border-amber-200/50 dark:border-amber-800/40">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -248,7 +248,7 @@
                                         <button 
                                             type="button"
                                             @click="deleteTarget = '{{ $backup['filename'] }}'; deleteTargetFormatted = '{{ $backup['filename'] }}'; $dispatch('open-modal', 'confirm-delete-modal')"
-                                            title="Hapus Berkas Backup"
+                                            title="Hapus Berkas Backup" aria-label="Hapus Berkas Backup"
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 transition-colors border border-rose-200/50 dark:border-rose-800/40">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>

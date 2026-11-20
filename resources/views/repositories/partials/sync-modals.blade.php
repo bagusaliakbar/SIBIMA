@@ -98,7 +98,7 @@
 
             <!-- Progress Bar Track Container -->
             <div class="relative w-full bg-slate-100 dark:bg-slate-700/60 rounded-full h-4 mb-2 overflow-hidden border border-slate-200/80 dark:border-slate-600 shadow-inner">
-                <div id="unsubSyncProgress" class="bg-gradient-to-r from-purple-600 via-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
+                <div id="unsubSyncProgress" class="bg-orange-600 dark:bg-orange-500 h-full rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
             </div>
             
             <div class="flex justify-between items-center text-xs font-bold text-slate-600 dark:text-slate-300 mb-5">
