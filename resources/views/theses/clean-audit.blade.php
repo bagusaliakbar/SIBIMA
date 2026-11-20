@@ -75,7 +75,7 @@
             <!-- 100% Bersih -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-900/60 shadow-sm transition-all hover:border-emerald-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">🟢 100% Bersih (Siap ACC)</span>
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>100% Bersih (Siap ACC)</span>
                     <span class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     </span>
@@ -87,7 +87,7 @@
             <!-- Perlu Penyesuaian -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-900/60 shadow-sm transition-all hover:border-amber-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">🟡 Perlu Penyesuaian</span>
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Perlu Penyesuaian</span>
                     <span class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </span>
@@ -99,7 +99,7 @@
             <!-- Kritis -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-900/60 shadow-sm transition-all hover:border-rose-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">🔴 Duplikasi Kritis</span>
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-rose-500"></span>Duplikasi Kritis</span>
                     <span class="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </span>
@@ -119,18 +119,21 @@
                 </button>
                 <button type="button" @click="cleanTab = 'clean'" 
                         :class="cleanTab === 'clean' ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/25' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100'" 
-                        class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
-                    🟢 Siap ACC (<span x-text="items.filter(i => i.category === 'clean').length">{{ $pendingSummary['clean_count'] }}</span>)
+                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
+                    <span class="w-2 h-2 rounded-full" :class="cleanTab === 'clean' ? 'bg-white' : 'bg-emerald-500'"></span>
+                    <span>Siap ACC (<span x-text="items.filter(i => i.category === 'clean').length">{{ $pendingSummary['clean_count'] }}</span>)</span>
                 </button>
                 <button type="button" @click="cleanTab = 'warning'" 
                         :class="cleanTab === 'warning' ? 'bg-amber-600 text-white shadow-sm shadow-amber-500/25' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100'" 
-                        class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
-                    🟡 Perhatian (<span x-text="items.filter(i => i.category === 'warning').length">{{ $pendingSummary['warning_count'] }}</span>)
+                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
+                    <span class="w-2 h-2 rounded-full" :class="cleanTab === 'warning' ? 'bg-white' : 'bg-amber-500'"></span>
+                    <span>Perhatian (<span x-text="items.filter(i => i.category === 'warning').length">{{ $pendingSummary['warning_count'] }}</span>)</span>
                 </button>
                 <button type="button" @click="cleanTab = 'critical'" 
                         :class="cleanTab === 'critical' ? 'bg-rose-600 text-white shadow-sm shadow-rose-500/25' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100'" 
-                        class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
-                    🔴 Kritis (<span x-text="items.filter(i => i.category === 'critical').length">{{ $pendingSummary['critical_count'] }}</span>)
+                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">
+                    <span class="w-2 h-2 rounded-full" :class="cleanTab === 'critical' ? 'bg-white' : 'bg-rose-500'"></span>
+                    <span>Kritis (<span x-text="items.filter(i => i.category === 'critical').length">{{ $pendingSummary['critical_count'] }}</span>)</span>
                 </button>
             </div>
 
@@ -263,7 +266,7 @@
                                     <template x-if="item.req_p1">
                                         <div class="mt-3 flex items-center justify-between text-[10px] font-bold">
                                             <span :class="item.req_p1.is_full ? 'text-rose-600 font-black' : 'text-slate-500'" x-text="'Beban: ' + item.req_p1.workload + '/' + item.req_p1.max_quota"></span>
-                                            <span class="text-indigo-600 dark:text-indigo-400 font-extrabold" x-text="item.req_p1.match_score > 0 ? '✨ Match: ' + item.req_p1.match_score : ''"></span>
+                                            <span class="text-indigo-600 dark:text-indigo-400 font-extrabold" x-text="item.req_p1.match_score > 0 ? 'Match: ' + item.req_p1.match_score : ''"></span>
                                         </div>
                                     </template>
                                 </div>
@@ -278,7 +281,7 @@
                                     <template x-if="item.req_p2">
                                         <div class="mt-3 flex items-center justify-between text-[10px] font-bold">
                                             <span :class="item.req_p2.is_full ? 'text-rose-600 font-black' : 'text-slate-500'" x-text="'Beban: ' + item.req_p2.workload + '/' + item.req_p2.max_quota"></span>
-                                            <span class="text-indigo-600 dark:text-indigo-400 font-extrabold" x-text="item.req_p2.match_score > 0 ? '✨ Match: ' + item.req_p2.match_score : ''"></span>
+                                            <span class="text-indigo-600 dark:text-indigo-400 font-extrabold" x-text="item.req_p2.match_score > 0 ? 'Match: ' + item.req_p2.match_score : ''"></span>
                                         </div>
                                     </template>
                                 </div>
@@ -330,7 +333,7 @@
                                         <input type="hidden" name="pembimbing1_id" :value="item.recommended_p1.id">
                                         <input type="hidden" name="pembimbing2_id" :value="item.recommended_p2.id">
                                         <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-indigo-500/25 cursor-pointer">
-                                            ✨ ACC Rekomendasi AI
+                                            ACC Rekomendasi AI
                                         </button>
                                     </form>
                                 </template>

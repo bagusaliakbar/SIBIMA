@@ -330,7 +330,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Komparasi mahasiswa sudah vs belum seminar proposal berdasarkan Dosen Pembimbing 1.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartSeminarP1', 'grafik-seminar-pembimbing-1')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">
@@ -349,7 +350,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Komparasi mahasiswa sudah vs belum seminar proposal berdasarkan Dosen Pembimbing 2.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartSeminarP2', 'grafik-seminar-pembimbing-2')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">
@@ -371,7 +373,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Distribusi mahasiswa yang sudah dan belum melaksanakan seminar proposal tiap angkatan.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartCohortSeminar', 'grafik-seminar-per-angkatan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">
@@ -390,7 +393,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Jumlah mahasiswa aktif yang masih dalam proses bimbingan (belum lulus) per dosen.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartUnfinishedByAdvisor', 'grafik-belum-lulus-per-pembimbing')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">
@@ -410,7 +414,8 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Pemetaan tahapan mahasiswa yang belum lulus (Belum Seminar, Seminar, Sidang Akhir, dan Kritikal Semester ≥ 13) per Dosen Pembimbing.</p>
                 </div>
                 <button type="button" onclick="downloadChartAsPng('chartDistributionByAdvisor', 'grafik-distribusi-bimbingan-per-dosen')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1 self-start sm:self-auto">
-                    <span>📸 PNG</span>
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span>PNG</span>
                 </button>
             </div>
             <div class="h-80 sm:h-96 relative">
@@ -431,7 +436,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Proporsi mahasiswa di tiap tahapan skripsi.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartStages', 'grafik-tahapan-skripsi')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-72 relative flex items-center justify-center">
@@ -450,7 +456,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Komparasi mahasiswa yang sudah sidang/lulus vs yang belum sidang per tahun angkatan.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartCohortDefense', 'grafik-sidang-per-angkatan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-72 relative">
@@ -472,7 +479,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Volume aktivitas sesi bimbingan yang terlaksana selama 6 bulan terakhir.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartMonthlyTrends', 'grafik-tren-bimbingan-bulanan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-72 relative">
@@ -491,7 +499,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Monitoring kontinuitas bimbingan mahasiswa aktif.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartHealth', 'grafik-keaktifan-bimbingan')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-72 relative flex items-center justify-center">
@@ -513,7 +522,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Kapasitas beban bimbingan dosen aktif terhadap batas kuota institusi.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartWorkload', 'grafik-beban-kuota-dosen')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">
@@ -532,7 +542,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Sebaran nilai mutu kelulusan sidang skripsi (Grade A, B, C, D, E).</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartScores', 'grafik-distribusi-nilai-sidang')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">
@@ -554,7 +565,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Klasifikasi penelitian skripsi berdasarkan bidang konsentrasi keilmuan.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartTopics', 'grafik-topik-skripsi')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative flex items-center justify-center">
@@ -573,7 +585,8 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Rata-rata masa pengerjaan skripsi (dalam bulan) tiap gelombang pelaksanaan.</p>
                     </div>
                     <button type="button" onclick="downloadChartAsPng('chartWaveDuration', 'grafik-durasi-gelombang')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1">
-                        <span>📸 PNG</span>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>PNG</span>
                     </button>
                 </div>
                 <div class="h-80 relative">

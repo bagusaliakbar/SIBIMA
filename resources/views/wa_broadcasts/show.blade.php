@@ -165,7 +165,7 @@
 
                                 <td class="px-5 py-4 whitespace-nowrap font-mono text-[11px]">
                                     @if($log->recipient_phone)
-                                        <span class="text-slate-700 dark:text-slate-300 font-bold">📱 {{ $log->recipient_phone }}</span>
+                                        <span class="inline-flex items-center gap-1 text-slate-700 dark:text-slate-300 font-bold"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>{{ $log->recipient_phone }}</span>
                                     @else
                                         <span class="text-rose-500 font-bold text-[10px] bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded">
                                             Nomor Kosong

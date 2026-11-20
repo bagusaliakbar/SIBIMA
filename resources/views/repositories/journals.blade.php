@@ -213,7 +213,7 @@
                                 <span>Rekomendasi Pintar AI</span>
                             </span>
                             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300">
-                                🎓 Judul Skripsi Anda Terdeteksi
+                                Judul Skripsi Anda Terdeteksi
                             </span>
                             @if(!empty($userThesis->topic))
                                 <span class="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
@@ -329,9 +329,9 @@
                                 onchange="document.getElementById('journalFilterForm').submit()"
                                 class="text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 py-1.5 pl-3 pr-8 focus:ring-orange-500 focus:border-orange-500 {{ $docType !== 'all' ? 'ring-2 ring-orange-500/40 text-orange-600 dark:text-orange-400 font-black' : '' }}">
                             <option value="all" {{ $docType === 'all' ? 'selected' : '' }}>Semua Tipe Naskah</option>
-                            <option value="article" {{ $docType === 'article' ? 'selected' : '' }}>📄 Artikel Penelitian</option>
-                            <option value="proceeding" {{ $docType === 'proceeding' ? 'selected' : '' }}>🏛️ Prosiding Konferensi</option>
-                            <option value="review" {{ $docType === 'review' ? 'selected' : '' }}>📚 Literature Review</option>
+                            <option value="article" {{ $docType === 'article' ? 'selected' : '' }}>Artikel Penelitian</option>
+                            <option value="proceeding" {{ $docType === 'proceeding' ? 'selected' : '' }}>Prosiding Konferensi</option>
+                            <option value="review" {{ $docType === 'review' ? 'selected' : '' }}>Literature Review</option>
                         </select>
                     </div>
 
@@ -381,16 +381,16 @@
                     <a href="{{ route('repositories.journals', array_merge(request()->query(), ['sinta' => 'all', 'page' => 1])) }}"
                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors shadow-2xs"
                        title="Hapus filter akreditasi SINTA">
-                        <span>🎯 {{ $sintaLabels[$sintaFilter] ?? strtoupper($sintaFilter) }}</span>
+                        <span>{{ $sintaLabels[$sintaFilter] ?? strtoupper($sintaFilter) }}</span>
                         <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 hover:text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </a>
                 @endif
                 @if($docType !== 'all')
                     @php
                         $docTypeLabels = [
-                            'article' => '📄 Artikel Penelitian',
-                            'proceeding' => '🏛️ Prosiding Konferensi',
-                            'review' => '📚 Literature Review',
+                            'article' => 'Artikel Penelitian',
+                            'proceeding' => 'Prosiding Konferensi',
+                            'review' => 'Literature Review',
                         ];
                     @endphp
                     <a href="{{ route('repositories.journals', array_merge(request()->query(), ['doc_type' => 'all', 'page' => 1])) }}"
@@ -750,20 +750,20 @@
                                         $docTypeBadge = match($dType) {
                                             'review' => [
                                                 'class' => 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/70',
-                                                'icon' => '📚',
+                                                'path' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
                                             ],
                                             'proceeding' => [
                                                 'class' => 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800/70',
-                                                'icon' => '🏛️',
+                                                'path' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
                                             ],
                                             default => [
                                                 'class' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/70',
-                                                'icon' => '📄',
+                                                'path' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
                                             ],
                                         };
                                     @endphp
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold border shadow-2xs {{ $docTypeBadge['class'] }}">
-                                        <span>{{ $docTypeBadge['icon'] }}</span>
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $docTypeBadge['path'] }}"></path></svg>
                                         <span>{{ $item['doc_type_label'] }}</span>
                                     </span>
                                 @endif
@@ -799,7 +799,7 @@
                                         <svg class="w-3.5 h-3.5" :class="showTldr ? 'text-white' : 'text-orange-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                         </svg>
-                                        <span x-text="showTldr ? 'Tutup Ringkasan' : '✨ AI Quick Summary'"></span>
+                                        <span x-text="showTldr ? 'Tutup Ringkasan' : 'AI Quick Summary'"></span>
                                     </button>
                                 @endif
                             </div>
@@ -881,7 +881,7 @@
                                         </h4>
                                     </div>
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80">
-                                        ⚡ Ekstraksi Instan
+                                        Ekstraksi Instan
                                     </span>
                                 </div>
 
@@ -889,7 +889,7 @@
                                     <!-- 1. Masalah / Fokus Riset -->
                                     <div class="ai-tldr-card bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 font-black text-[11px] uppercase tracking-wide">
-                                            <span class="text-sm">🎯</span>
+                                            <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                             <span>Masalah / Tujuan</span>
                                         </div>
                                         <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-[11px] sm:text-xs">
@@ -900,7 +900,7 @@
                                     <!-- 2. Metode / Algoritma -->
                                     <div class="ai-tldr-card bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-black text-[11px] uppercase tracking-wide">
-                                            <span class="text-sm">⚙️</span>
+                                            <svg class="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                             <span>Metode / Algoritma</span>
                                         </div>
                                         <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-[11px] sm:text-xs">
@@ -911,7 +911,7 @@
                                     <!-- 3. Hasil Utama -->
                                     <div class="ai-tldr-card bg-white dark:bg-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
                                         <div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-black text-[11px] uppercase tracking-wide">
-                                            <span class="text-sm">📈</span>
+                                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                                             <span>Hasil Utama</span>
                                         </div>
                                         <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-[11px] sm:text-xs">
@@ -1157,16 +1157,16 @@
                         <!-- Helper Tip -->
                         <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
                             <span x-show="activeCitationFormat === 'fasilkom'">
-                                💡 Format resmi panduan skripsi FASILKOM UNSUB. Siap disalin langsung ke lembar daftar pustaka Microsoft Word.
+                                Format resmi panduan skripsi FASILKOM UNSUB. Siap disalin langsung ke lembar daftar pustaka Microsoft Word.
                             </span>
                             <span x-show="activeCitationFormat === 'ris'">
-                                💡 Format metadata standar untuk diimpor ke Mendeley Desktop/Reference Manager, Zotero, dan EndNote.
+                                Format metadata standar untuk diimpor ke Mendeley Desktop/Reference Manager, Zotero, dan EndNote.
                             </span>
                             <span x-show="activeCitationFormat === 'bibtex'">
-                                💡 Format entri sitasi untuk penulisan skripsi berbasis LaTeX / Overleaf.
+                                Format entri sitasi untuk penulisan skripsi berbasis LaTeX / Overleaf.
                             </span>
                             <span x-show="activeCitationFormat === 'apa' || activeCitationFormat === 'ieee'">
-                                💡 Format sitasi standar akademik internasional.
+                                Format sitasi standar akademik internasional.
                             </span>
                         </div>
                     </div>

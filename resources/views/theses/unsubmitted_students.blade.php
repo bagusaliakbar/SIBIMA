@@ -136,9 +136,9 @@
                                 onchange="this.form.submit()" 
                                 class="w-full py-2 px-3 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-semibold">
                             <option value="" {{ empty($semesterFilter) ? 'selected' : '' }}>Semua Status Semester</option>
-                            <option value="critical" {{ $semesterFilter === 'critical' ? 'selected' : '' }}>🔴 Semester Kritis (≥ 13)</option>
-                            <option value="warning" {{ $semesterFilter === 'warning' ? 'selected' : '' }}>🟡 Semester Perhatian (Sem 7–12)</option>
-                            <option value="normal" {{ $semesterFilter === 'normal' ? 'selected' : '' }}>🟢 Semester Normal (&lt; 7)</option>
+                            <option value="critical" {{ $semesterFilter === 'critical' ? 'selected' : '' }}>Semester Kritis (≥ 13)</option>
+                            <option value="warning" {{ $semesterFilter === 'warning' ? 'selected' : '' }}>Semester Perhatian (Sem 7–12)</option>
+                            <option value="normal" {{ $semesterFilter === 'normal' ? 'selected' : '' }}>Semester Normal (&lt; 7)</option>
                         </select>
                     </div>
 

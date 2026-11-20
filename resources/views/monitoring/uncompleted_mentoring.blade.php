@@ -97,21 +97,21 @@
                 <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'all'])) }}"
                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>📋 Semua Terlewat</span>
+                        <span>Semua Terlewat</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_uncompleted_count }}
                         </span>
                     </a>
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'overdue'])) }}"
                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>⚠️ Lewat Hari (H-1+)</span>
+                        <span>Lewat Hari (H-1+)</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_overdue_count }}
                         </span>
                     </a>
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'today'])) }}"
                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>📅 Hari Ini (Terlewat)</span>
+                        <span>Hari Ini (Terlewat)</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_today_count }}
                         </span>

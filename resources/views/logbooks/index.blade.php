@@ -538,12 +538,12 @@
                                                 </a>
                                             @else
                                                 <span class="inline-flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs font-bold shadow-2xs">
-                                                    🎥 Daring
+                                                    Daring
                                                 </span>
                                             @endif
                                         @else
                                             <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-600 text-xs font-bold shadow-2xs">
-                                                🏢 {{ $session->location ?: 'Tatap Muka' }}
+                                                {{ $session->location ?: 'Tatap Muka' }}
                                             </span>
                                         @endif
                                     </div>

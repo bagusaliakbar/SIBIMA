@@ -93,7 +93,7 @@
                                                     console.warn('[SIBIMA PWA] Push subscription sync notice:', e);
                                                 }
                                             }
-                                            new Notification('🔔 Notifikasi SIBIMA Aktif!', {
+                                            new Notification('Notifikasi SIBIMA Aktif', {
                                                 body: 'Perangkat Anda kini siap menerima pembaruan jadwal dan progres bimbingan secara langsung.',
                                                 icon: '{{ asset("icons/icon-192x192.png") }}'
                                             });

@@ -105,11 +105,11 @@
                 <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
                     <a href="{{ route('admin.logs.login-activity', array_merge(request()->query(), ['tab' => 'active', 'page' => 1])) }}"
                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all {{ $tab !== 'inactive' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
-                        <span>🏆 Peringkat Paling Aktif</span>
+                        <span>Peringkat Paling Aktif</span>
                     </a>
                     <a href="{{ route('admin.logs.login-activity', array_merge(request()->query(), ['tab' => 'inactive', 'page' => 1])) }}"
                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all {{ $tab === 'inactive' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400' }}">
-                        <span>⚠️ User Belum / Tidak Aktif</span>
+                        <span>User Belum / Tidak Aktif</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $tab === 'inactive' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $neverOrInactiveCount }}
                         </span>
@@ -209,15 +209,15 @@
                                     <td class="py-4 px-6 text-center whitespace-nowrap">
                                         @if($rank === 1)
                                             <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-black text-sm shadow-xs border border-amber-300 dark:border-amber-700" title="Juara 1 Login">
-                                                🥇
+                                                #1
                                             </div>
                                         @elseif($rank === 2)
                                             <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black text-sm shadow-xs border border-slate-300 dark:border-slate-600" title="Juara 2 Login">
-                                                🥈
+                                                #2
                                             </div>
                                         @elseif($rank === 3)
                                             <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-500 font-black text-sm shadow-xs border border-amber-200 dark:border-amber-800" title="Juara 3 Login">
-                                                🥉
+                                                #3
                                             </div>
                                         @else
                                             <span class="text-xs font-black text-slate-400 dark:text-slate-500">
@@ -521,7 +521,7 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Status Saat Ini</span>
-                                    <span class="text-xs font-black" :class="userData?.is_online ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'" x-text="userData?.is_online ? '🟢 Online' : '⚪ Offline'"></span>
+                                    <span class="text-xs font-black" :class="userData?.is_online ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'" x-text="userData?.is_online ? 'Online' : 'Offline'"></span>
                                 </div>
                             </div>
 

@@ -109,7 +109,90 @@
                 </div>
             </x-slot>
 
-            <table class="w-full text-left border-collapse">
+            <!-- Mobile Card View -->
+            <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($graduations as $item)
+                    @php
+                        $student = $item->student;
+                        $thesis = $item->thesis;
+                        $modalPayload = [
+                            'id' => $item->id,
+                            'student_name' => $student->name ?? '',
+                            'student_npm' => $student->identifier ?? '',
+                            'thesis_title' => $thesis->final_title ?? $thesis->title ?? '',
+                            'status' => $item->status,
+                            'hardcover_collected' => (bool)$item->hardcover_collected,
+                            'library_clearance' => (bool)$item->library_clearance,
+                            'lab_clearance' => (bool)$item->lab_clearance,
+                            'cd_or_repository_collected' => (bool)$item->cd_or_repository_collected,
+                            'skl_number' => $item->skl_number ?? '',
+                            'graduation_date' => $item->graduation_date ? $item->graduation_date->format('Y-m-d') : date('Y-m-d'),
+                            'gpa' => $item->gpa ? number_format($item->gpa, 2, '.', '') : '3.50',
+                            'predicate' => $item->predicate ?? 'Dengan Pujian (Cum Laude)',
+                            'rejection_reason' => $item->rejection_reason ?? '',
+                            'final_thesis_file' => $item->final_thesis_file ? (str_starts_with($item->final_thesis_file, 'http') ? $item->final_thesis_file : route('download.private', ['path' => $item->final_thesis_file])) : null,
+                            'journal_article_file' => $item->journal_article_file ? (str_starts_with($item->journal_article_file, 'http') ? $item->journal_article_file : route('download.private', ['path' => $item->journal_article_file])) : null,
+                            'plagiarism_file' => $item->plagiarism_file ? (str_starts_with($item->plagiarism_file, 'http') ? $item->plagiarism_file : route('download.private', ['path' => $item->plagiarism_file])) : null,
+                            'publication_link' => $item->publication_link ?? null,
+                            'student_notes' => $item->student_notes ?? '',
+                            'verify_url' => route('graduations.verify', $item)
+                        ];
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">{{ $student->name ?? 'Mahasiswa' }}</h4>
+                                <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">{{ $student->identifier ?? '-' }}</p>
+                            </div>
+                            <div class="shrink-0">
+                                @if($item->status === 'approved')
+                                    <x-status-badge type="emerald" label="SKL TERBIT" size="xs" />
+                                @elseif($item->status === 'rejected')
+                                    <x-status-badge type="rose" label="PERLU PERBAIKAN" size="xs" />
+                                @else
+                                    <x-status-badge type="amber" label="MENUNGGU" size="xs" />
+                                @endif
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">{{ $thesis->final_title ?? $thesis->title ?? '-' }}</p>
+
+                        <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60">
+                            <div class="inline-flex items-center gap-1">
+                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->hardcover_collected ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">HC</span>
+                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->lab_clearance ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">LAB</span>
+                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->library_clearance ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">PUS</span>
+                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->cd_or_repository_collected ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">CD</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">{{ $item->clearance_percentage }}% Lengkap</span>
+                        </div>
+
+                        @if($item->status === 'approved' && $item->skl_number)
+                            <p class="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400">No. SKL: {{ $item->skl_number }}</p>
+                        @endif
+
+                        <div class="flex items-center gap-2 pt-1">
+                            @if($item->status === 'approved')
+                                <a href="{{ route('graduations.download-skl', $item) }}" target="_blank" class="h-9 inline-flex items-center justify-center gap-1.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-bold transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Unduh SKL</span>
+                                </a>
+                            @endif
+                            <button type="button" @click="openVerificationModal({{ json_encode($modalPayload) }})" class="flex-1 h-9 inline-flex items-center justify-center gap-1.5 px-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                <span>Verifikasi</span>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Tidak ada pengajuan ditemukan</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Belum ada mahasiswa yang mengajukan bebas tanggungan pada kategori ini.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <table class="hidden sm:table w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/60 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         <th class="py-3.5 px-4 text-center w-12">No</th>

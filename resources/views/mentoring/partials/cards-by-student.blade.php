@@ -216,7 +216,7 @@
                                                                     </a>
                                                                 @else
                                                                     <span class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-800 uppercase tracking-wider">
-                                                                        🎥 Daring
+                                                                        Daring
                                                                     </span>
                                                                 @endif
                                                             @else

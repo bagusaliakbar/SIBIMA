@@ -32,7 +32,7 @@
                         <select name="wave_id" onchange="this.form.submit()" 
                                 class="block w-full sm:w-auto pl-4 pr-10 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-colors shadow-2xs min-w-[220px] cursor-pointer">
                             <option value="" {{ empty($selectedWaveId) ? 'selected' : '' }}>
-                                📅 Gelombang Aktif ({{ $activeWave?->name ?? 'Berjalan' }})
+                                Gelombang Aktif ({{ $activeWave?->name ?? 'Berjalan' }})
                             </option>
                             @foreach($waves as $wave)
                                 <option value="{{ $wave->id }}" {{ $selectedWaveId == $wave->id ? 'selected' : '' }}>
@@ -44,7 +44,98 @@
                 </div>
             </x-slot>
 
-            <table class="w-full text-left text-sm">
+            <!-- Mobile Card View -->
+            <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($examinations as $exam)
+                    @php
+                        $currentUserId = Auth::id();
+                        $isExaminer1 = ($exam->examiner1_id === $currentUserId);
+                        $isExaminer2 = ($exam->examiner2_id === $currentUserId);
+                        $isStaff = in_array(Auth::user()->role, ['admin', 'kaprodi']);
+                        $myRev = $exam->revisions->where('examiner_id', $currentUserId)->first();
+                        $rev1 = $exam->revisions->where('examiner_id', $exam->examiner1_id)->first();
+                        $rev2 = $exam->revisions->where('examiner_id', $exam->examiner2_id)->first();
+                        $approvedCount = ($rev1?->status === 'approved' ? 1 : 0) + ($rev2?->status === 'approved' ? 1 : 0);
+                        $semDate = \Carbon\Carbon::parse($exam->schedule->date)->format('Y-m-d');
+                        $semStart = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($exam->start_time)->format('H:i:s'));
+                        $semEnd = \Carbon\Carbon::parse($semDate . ' ' . \Carbon\Carbon::parse($exam->end_time)->format('H:i:s'));
+                        $isFinished = ($exam->thesis && $exam->thesis->seminarApplication && $exam->thesis->seminarApplication->status === 'completed')
+                            || $exam->isGraded()
+                            || $exam->isAllRevisionsApproved()
+                            || $semEnd->isPast();
+                        $app = $exam->thesis?->seminarApplications?->where('status', '!=', 'rejected')->sortByDesc('id')->first()
+                            ?? $exam->thesis?->seminarApplication;
+                        $filePath = $app?->file_skripsi;
+                        $docUrl = $filePath ? (filter_var($filePath, FILTER_VALIDATE_URL) ? $filePath : route('download.private', ['path' => $filePath, 'inline' => 1])) : null;
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-slate-100 dark:bg-slate-800">
+                                <img src="{{ $exam->thesis?->student?->avatar_url }}" alt="{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
+                                    @if($isExaminer1)
+                                        <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-md border border-indigo-200/60 dark:border-indigo-800/60">Penguji 1</span>
+                                    @elseif($isExaminer2)
+                                        <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[10px] font-bold rounded-md border border-sky-200/60 dark:border-sky-800/60">Penguji 2</span>
+                                    @elseif($isStaff)
+                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded-md border border-slate-200 dark:border-slate-700">P1 & P2</span>
+                                    @endif
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 italic">"{{ $exam->thesis?->title ?? '-' }}"</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60 text-xs">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Jadwal</span>
+                                <span class="font-bold text-slate-800 dark:text-slate-100 block">{{ $semStart->copy()->locale('id')->translatedFormat('d M Y') }}</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 tabular-nums">{{ $semStart->format('H:i') }} - {{ $semEnd->format('H:i') }} WIB</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Lokasi & Status</span>
+                                @if($exam->schedule->meeting_link && !$isFinished)
+                                    <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
+                                        <x-google-meet-icon class="w-3.5 h-3.5 shrink-0" />
+                                        <span class="truncate">{{ $exam->schedule->location }}</span>
+                                    </a>
+                                @else
+                                    <span class="font-medium text-slate-700 dark:text-slate-300 block truncate">{{ $exam->schedule->location }}</span>
+                                @endif
+                                <span class="text-[11px] font-semibold mt-0.5 block {{ $isStaff ? ($approvedCount === 2 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400') : ($myRev?->status === 'approved' ? 'text-emerald-600 dark:text-emerald-400' : ($myRev?->status === 'resubmitted' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400')) }}">
+                                    @if($isStaff)
+                                        {{ $approvedCount === 2 ? 'Selesai (2/2)' : ($approvedCount === 1 ? '1/2 Penguji ACC' : (($rev1?->status === 'resubmitted' || $rev2?->status === 'resubmitted') ? 'Revisi Masuk' : 'Menunggu Revisi')) }}
+                                    @else
+                                        {{ $myRev?->status === 'approved' ? 'Revisi Selesai' : ($myRev?->status === 'resubmitted' ? 'Revisi Masuk' : ($myRev ? 'Menunggu Mahasiswa' : 'Belum ada catatan')) }}
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                            @if($docUrl)
+                                <a href="{{ $docUrl }}" target="_blank" class="flex-1 inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border border-rose-200/70 dark:border-rose-800/60 text-xs font-bold transition-colors">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                    <span>Dokumen</span>
+                                </a>
+                            @endif
+                            <a href="{{ route('seminar-examiner.show', $exam->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-colors shadow-sm">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                <span>Catatan Revisi</span>
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-white">{{ !empty($search) ? 'Pencarian Tidak Ditemukan' : 'Tidak Ada Tugas Penguji Seminar' }}</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pilih gelombang lain pada filter di atas untuk melihat riwayat tugas penguji.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <table class="hidden sm:table w-full text-left text-sm">
                 <thead>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
                         <th class="px-6 py-4">Mahasiswa & Judul</th>
@@ -255,7 +346,7 @@
                             <td class="px-6 py-5 text-right">
                                 <div class="flex items-center justify-end">
                                     <a href="{{ route('seminar-examiner.show', $exam->id) }}" 
-                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-orange-600/20 hover:shadow-md hover:scale-[1.02] active:scale-95"
+                                       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
                                        title="Buka Catatan & Thread Revisi">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         <span>Catatan Revisi</span>

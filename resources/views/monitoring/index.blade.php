@@ -285,16 +285,16 @@
                                     Semua Status ACC ({{ $accCounts['all'] ?? 0 }})
                                 </option>
                                 <option value="ready_seminar" {{ ($accStatus ?? '') === 'ready_seminar' ? 'selected' : '' }}>
-                                    🎓 Siap Seminar UP ({{ $accCounts['ready_seminar'] ?? 0 }})
+                                    Siap Seminar UP ({{ $accCounts['ready_seminar'] ?? 0 }})
                                 </option>
                                 <option value="ready_defense" {{ ($accStatus ?? '') === 'ready_defense' ? 'selected' : '' }}>
-                                    🏛️ Siap Sidang Akhir ({{ $accCounts['ready_defense'] ?? 0 }})
+                                    Siap Sidang Akhir ({{ $accCounts['ready_defense'] ?? 0 }})
                                 </option>
                                 <option value="partial_acc" {{ ($accStatus ?? '') === 'partial_acc' ? 'selected' : '' }}>
-                                    ⏳ ACC Parsial 1/2 ({{ $accCounts['partial_acc'] ?? 0 }})
+                                    ACC Parsial 1/2 ({{ $accCounts['partial_acc'] ?? 0 }})
                                 </option>
                                 <option value="in_mentoring" {{ ($accStatus ?? '') === 'in_mentoring' ? 'selected' : '' }}>
-                                    📝 Dalam Bimbingan ({{ $accCounts['in_mentoring'] ?? 0 }})
+                                    Dalam Bimbingan ({{ $accCounts['in_mentoring'] ?? 0 }})
                                 </option>
                             </select>
                         </form>

@@ -795,7 +795,7 @@
                                     @endif
                                     @if($session->document_path)
                                         <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-orange-100 text-orange-800 dark:bg-orange-950/80 dark:text-orange-300">
-                                            📎 Berkas Naskah
+                                            Berkas Naskah
                                         </span>
                                     @endif
                                 </div>

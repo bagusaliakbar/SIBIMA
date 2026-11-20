@@ -103,7 +103,7 @@
                         <div>
                             <div class="flex items-center gap-2.5 flex-wrap">
                                 <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
-                                    📋 Kesiapan Pengajuan Yudisium & SKL
+                                    Kesiapan Pengajuan Yudisium & SKL
                                 </h3>
                                 <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider {{ $metCount === $totalCriteria ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80' }}">
                                     {{ $metCount }} dari {{ $totalCriteria }} Prasyarat Terpenuhi
@@ -170,7 +170,7 @@
                                         @if(!empty($c['extra_info']))
                                             <div class="mt-1.5 flex items-center gap-2 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-2xs">
-                                                    📌 {{ $c['extra_info'] }}
+                                                    {{ $c['extra_info'] }}
                                                 </span>
                                             </div>
                                         @endif
@@ -251,7 +251,7 @@
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                             <div class="space-y-3">
                                 <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    🎓 Surat Keterangan Lulus (SKL) Resmi Sah
+                                    Surat Keterangan Lulus (SKL) Resmi Sah
                                 </div>
                                 <h4 class="text-xl font-black text-white">Selamat, {{ Auth::user()->name }}! Anda Resmi Lulus</h4>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
@@ -532,7 +532,7 @@
                             <div class="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-base">💡</span>
+                                        <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         <div>
                                             <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200">Satu Folder Drive untuk Semua Berkas?</h5>
                                             <p class="text-[11px] text-slate-500 dark:text-slate-400">Tempelkan link folder di sini untuk mengisi kolom wajib secara otomatis.</p>
@@ -554,7 +554,7 @@
                                         <label for="edit_final_thesis_file" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
                                             1. Naskah Skripsi Lengkap Final <span class="text-rose-500">*</span>
                                         </label>
-                                        <button type="button" @click="pasteSingle('final_thesis_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">📋 Tempel</button>
+                                        <button type="button" @click="pasteSingle('final_thesis_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
                                     </div>
                                     <input type="url" name="final_thesis_file" id="edit_final_thesis_file" x-model="files.final_thesis_file" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
                                     @error('final_thesis_file') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
@@ -566,7 +566,7 @@
                                         <label for="edit_journal_article_file" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
                                             2. Artikel Jurnal Ilmiah <span class="text-rose-500">*</span>
                                         </label>
-                                        <button type="button" @click="pasteSingle('journal_article_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">📋 Tempel</button>
+                                        <button type="button" @click="pasteSingle('journal_article_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
                                     </div>
                                     <input type="url" name="journal_article_file" id="edit_journal_article_file" x-model="files.journal_article_file" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
                                     @error('journal_article_file') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
@@ -578,7 +578,7 @@
                                         <label for="edit_plagiarism_file" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
                                             3. Bukti Uji Plagiasi / Turnitin <span class="text-[10px] text-slate-400 font-normal uppercase">(Opsional)</span>
                                         </label>
-                                        <button type="button" @click="pasteSingle('plagiarism_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">📋 Tempel</button>
+                                        <button type="button" @click="pasteSingle('plagiarism_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
                                     </div>
                                     <input type="url" name="plagiarism_file" id="edit_plagiarism_file" x-model="files.plagiarism_file" placeholder="https://drive.google.com/..." class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
                                     @error('plagiarism_file') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
@@ -681,7 +681,7 @@
                     <div class="p-4 bg-orange-50/50 dark:bg-slate-900/50 border border-orange-200/80 dark:border-slate-700 rounded-xl">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
-                                <span class="text-base">💡</span>
+                                <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <div>
                                     <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200">Satu Folder Drive untuk Semua Berkas?</h5>
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400">Tempelkan link folder di sini untuk mengisi kolom wajib secara otomatis.</p>
@@ -705,7 +705,7 @@
                                     1. Naskah Skripsi Lengkap Final <span class="text-rose-500">*</span>
                                 </label>
                                 <button type="button" @click="pasteSingle('final_thesis_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
-                                    📋 Tempel
+                                    Tempel
                                 </button>
                             </div>
                             <p class="text-[11px] text-slate-400 dark:text-slate-500">
@@ -721,7 +721,7 @@
                                     </span>
                                 </template>
                                 <template x-if="files.final_thesis_file && !isDrive(files.final_thesis_file)">
-                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">🔗 Link Terisi</span>
+                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
                                 </template>
                                 <template x-if="!files.final_thesis_file">
                                     <span class="text-[10px] text-slate-400 italic">Wajib diisi</span>
@@ -740,7 +740,7 @@
                                     2. Artikel Jurnal Ilmiah (Siap Publikasi) <span class="text-rose-500">*</span>
                                 </label>
                                 <button type="button" @click="pasteSingle('journal_article_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
-                                    📋 Tempel
+                                    Tempel
                                 </button>
                             </div>
                             <p class="text-[11px] text-slate-400 dark:text-slate-500">
@@ -756,7 +756,7 @@
                                     </span>
                                 </template>
                                 <template x-if="files.journal_article_file && !isDrive(files.journal_article_file)">
-                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">🔗 Link Terisi</span>
+                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
                                 </template>
                                 <template x-if="!files.journal_article_file">
                                     <span class="text-[10px] text-slate-400 italic">Wajib diisi</span>
@@ -775,7 +775,7 @@
                                     3. Bukti Uji Plagiasi / Turnitin <span class="text-[10px] text-slate-400 font-normal uppercase">(Opsional)</span>
                                 </label>
                                 <button type="button" @click="pasteSingle('plagiarism_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
-                                    📋 Tempel
+                                    Tempel
                                 </button>
                             </div>
                             <p class="text-[11px] text-slate-400 dark:text-slate-500">
@@ -791,7 +791,7 @@
                                     </span>
                                 </template>
                                 <template x-if="files.plagiarism_file && !isDrive(files.plagiarism_file)">
-                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">🔗 Link Terisi</span>
+                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
                                 </template>
                                 <template x-if="!files.plagiarism_file">
                                     <span class="text-[10px] text-slate-400 italic">Opsional</span>

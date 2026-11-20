@@ -118,7 +118,7 @@
                         <div>
                             <div class="flex items-center gap-2.5 flex-wrap">
                                 <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
-                                    📋 Kesiapan Pendaftaran Seminar Proposal
+                                    Kesiapan Pendaftaran Seminar Proposal
                                 </h3>
                                 <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider {{ $metCount === $totalCriteria ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80' }}">
                                     {{ $metCount }} dari {{ $totalCriteria }} Prasyarat Terpenuhi
@@ -185,7 +185,7 @@
                                         @if(!empty($c['extra_info']))
                                             <div class="mt-1.5 flex items-center gap-2 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-2xs">
-                                                    📌 {{ $c['extra_info'] }}
+                                                    {{ $c['extra_info'] }}
                                                 </span>
                                             </div>
                                         @endif
@@ -623,7 +623,7 @@
                         <div>
                             <h4 class="text-xs font-black uppercase tracking-wider text-amber-900 dark:text-amber-100">Gelombang Pendaftaran Belum Dibuka</h4>
                             <p class="text-xs text-amber-700 dark:text-amber-300 mt-0.5 leading-relaxed">
-                                Seluruh persetujuan (ACC UP) dari dosen pembimbing Anda telah berstatus lengkap ✅. Namun, saat ini periode gelombang pendaftaran seminar belum dibuka oleh Program Studi. Tombol kirim berkas akan aktif secara otomatis saat gelombang dibuka.
+                                Seluruh persetujuan (ACC UP) dari dosen pembimbing Anda telah berstatus lengkap. Namun, saat ini periode gelombang pendaftaran seminar belum dibuka oleh Program Studi. Tombol kirim berkas akan aktif secara otomatis saat gelombang dibuka.
                             </p>
                         </div>
                     </div>
@@ -640,7 +640,7 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                                 </div>
                                 <div>
-                                    <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">💡 Punya 1 Folder Google Drive untuk Semua Berkas?</h4>
+                                    <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Punya 1 Folder Google Drive untuk Semua Berkas?</h4>
                                     <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">Jika seluruh scan berkas Anda berada di dalam satu folder Google Drive, tempelkan link foldernya di sini untuk mengisi 5 kolom sekaligus secara instan.</p>
                                 </div>
                             </div>
@@ -662,7 +662,7 @@
                     <div class="p-4 bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl space-y-2">
                         <div class="flex items-center justify-between text-xs font-bold">
                             <span class="text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📊 Status Kelengkapan Berkas:</span>
+                                <span>Status Kelengkapan Berkas:</span>
                                 <span class="font-black text-orange-600 dark:text-orange-400" x-text="totalFilled + ' dari ' + totalCount + ' Berkas Terisi'"></span>
                             </span>
                             <span class="text-xs font-black" :class="totalFilled === totalCount ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400'" x-text="percentFilled + '%'"></span>
@@ -763,7 +763,7 @@
                                                         @click="pasteSingle('{{ $field }}')" 
                                                         class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 rounded-md text-[10px] font-bold transition-all shadow-2xs cursor-pointer active:scale-95 shrink-0"
                                                         title="Tempel tautan dari clipboard">
-                                                    📋 Tempel
+                                                    Tempel
                                                 </button>
                                             </div>
                                             
@@ -789,7 +789,7 @@
                                                 </template>
                                                 <template x-if="files['{{ $field }}'] && !isDrive(files['{{ $field }}'])">
                                                     <span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400">
-                                                        <span>🔗 Link Terisi</span>
+                                                        <span>Link Terisi</span>
                                                     </span>
                                                 </template>
                                                 <template x-if="!files['{{ $field }}']">

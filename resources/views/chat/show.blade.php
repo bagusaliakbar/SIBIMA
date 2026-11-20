@@ -173,7 +173,7 @@
                             @if(auth()->user()->role === 'mahasiswa')
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, mohon izin mengonfirmasi permohonan bimbingan skripsi yang telah saya ajukan.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">📜</span>
+                                    <span class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Konfirmasi Bimbingan</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, mohon izin mengonfirmasi...</p>
@@ -181,7 +181,7 @@
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, draf revisi skripsi telah saya perbarui. Mohon berkenan meninjau kembali.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">📝</span>
+                                    <span class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Update Revisi</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, draf revisi skripsi telah...</p>
@@ -189,7 +189,7 @@
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, apakah ada waktu luang minggu ini untuk jadwal bimbingan tatap muka?'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">📅</span>
+                                    <span class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Jadwal Bimbingan</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, apakah ada waktu luang...</p>
@@ -197,7 +197,7 @@
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, terima kasih atas bimbingan dan arahan yang telah diberikan.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">🙏</span>
+                                    <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Ucapan Terima Kasih</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, terima kasih atas bimbingan...</p>
@@ -206,7 +206,7 @@
                             @else
                                 <button type="button" @click="useTemplate('Baik, permohonan bimbingan disetujui. Silakan siapkan draf dan bahan diskusi.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">✅</span>
+                                    <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Bimbingan Disetujui</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Baik, permohonan bimbingan disetujui...</p>
@@ -214,7 +214,7 @@
                                 </button>
                                 <button type="button" @click="useTemplate('Draf sudah saya periksa. Silakan cek catatan revisi lengkap yang telah saya tambahkan di Logbook.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">📌</span>
+                                    <span class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Cek Revisi Logbook</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Draf sudah saya periksa. Silakan cek...</p>
@@ -222,7 +222,7 @@
                                 </button>
                                 <button type="button" @click="useTemplate('Silakan temui saya di ruang dosen FASILKOM pada jam operasional kerja untuk konsultasi.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">🏫</span>
+                                    <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Jadwal Tatap Muka</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Silakan temui saya di ruang dosen FASILKOM...</p>
@@ -230,7 +230,7 @@
                                 </button>
                                 <button type="button" @click="useTemplate('Progres bimbingan bagus. Silakan lanjutkan pengerjaan ke bab berikutnya.'); showTemplates = false" 
                                     class="text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-orange-200 dark:hover:border-orange-500/30 transition-all flex items-start gap-2.5 group">
-                                    <span class="text-base shrink-0">👍</span>
+                                    <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Lanjutkan Bab</p>
                                         <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Progres bimbingan bagus. Silakan lanjutkan...</p>

@@ -129,7 +129,7 @@
                         {{ $kpiStats['total_pending'] ?? 0 }}
                     </div>
                     <p class="text-[11px] font-semibold mt-1 {{ ($kpiStats['total_pending'] ?? 0) > 0 ? 'text-amber-700 dark:text-amber-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                        {{ ($kpiStats['total_pending'] ?? 0) > 0 ? '⚠️ Butuh Verifikasi Akun' : '✅ Semua Akun Terverifikasi' }}
+                        {{ ($kpiStats['total_pending'] ?? 0) > 0 ? 'Butuh Verifikasi Akun' : 'Semua Akun Terverifikasi' }}
                     </p>
                 </div>
             </a>
@@ -216,7 +216,7 @@
                     {{-- Mahasiswa --}}
                     <a href="{{ route('users.index', ['role' => 'mahasiswa', 'status' => $status ?? 'all', 'entry_year' => $entryYear ?? '', 'search' => $search, 'per_page' => $perPage]) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'mahasiswa' ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>👨‍🎓 Mahasiswa</span>
+                        <span>Mahasiswa</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'mahasiswa' ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-200' }}">
                             {{ $roleCounts['mahasiswa'] ?? 0 }}
                         </span>
@@ -225,7 +225,7 @@
                     {{-- Dosen --}}
                     <a href="{{ route('users.index', ['role' => 'dosen', 'status' => $status ?? 'all', 'entry_year' => '', 'search' => $search, 'per_page' => $perPage]) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'dosen' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>👨‍🏫 Dosen</span>
+                        <span>Dosen</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'dosen' ? 'bg-white/20 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-200' }}">
                             {{ $roleCounts['dosen'] ?? 0 }}
                         </span>
@@ -234,7 +234,7 @@
                     {{-- Kaprodi --}}
                     <a href="{{ route('users.index', ['role' => 'kaprodi', 'status' => $status ?? 'all', 'entry_year' => '', 'search' => $search, 'per_page' => $perPage]) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all border shrink-0 {{ ($role ?? '') === 'kaprodi' ? 'bg-amber-600 text-white border-amber-600 shadow-2xs' : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                        <span>👔 Kaprodi</span>
+                        <span>Kaprodi</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($role ?? '') === 'kaprodi' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
                             {{ $roleCounts['kaprodi'] ?? 0 }}
                         </span>
@@ -308,11 +308,119 @@
                 <x-skeleton type="table" :rows="6" />
             </div>
 
+            <!-- Mobile Card View -->
+            <div x-show="!pageLoading" class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($users as $user)
+                    @php
+                        $cleanPhone = null;
+                        $waMessage = '';
+                        if ($user->phone_number) {
+                            $cleanPhone = preg_replace('/[^0-9]/', '', $user->phone_number);
+                            if (str_starts_with($cleanPhone, '0')) {
+                                $cleanPhone = '62' . substr($cleanPhone, 1);
+                            }
+                            $waMessage = $user->role === 'mahasiswa'
+                                ? "Halo {$user->name} ({$user->identifier}), saya Admin SIBIMA Program Studi. Terkait akun SIBIMA Anda:"
+                                : ($user->role === 'dosen' ? "Halo Bapak/Ibu {$user->name}, saya Admin SIBIMA Program Studi. Terkait akun dan bimbingan SIBIMA:" : "Halo {$user->name}, saya Admin SIBIMA Program Studi:");
+                            if (!$user->is_active) {
+                                $waMessage .= " Akun SIBIMA Anda saat ini menunggu aktivasi/verifikasi data.";
+                            }
+                        }
+                        $mThesisData = null;
+                        if ($user->role === 'mahasiswa' && $user->thesis) {
+                            $mStageText = 'Pengajuan Judul';
+                            $mStageColor = 'slate';
+                            if ($user->thesis->status === 'completed') { $mStageText = 'Lulus / Selesai'; $mStageColor = 'emerald'; }
+                            elseif ($user->thesis->isAccSidangFinal()) { $mStageText = 'Siap Sidang Skripsi (ACC Pembimbing)'; $mStageColor = 'indigo'; }
+                            elseif ($user->thesis->isAccUpFinal()) { $mStageText = 'Selesai Seminar UP (ACC Pembimbing)'; $mStageColor = 'blue'; }
+                            elseif ($user->thesis->completed_mentoring_count > 0) { $mStageText = "Bimbingan Reguler ({$user->thesis->completed_mentoring_count} Sesi Selesai)"; $mStageColor = 'amber'; }
+                            $mThesisData = [
+                                'id' => $user->thesis->id,
+                                'title' => $user->thesis->final_title ?: $user->thesis->title,
+                                'topic' => $user->thesis->topic ?: 'Belum diatur',
+                                'stage' => $mStageText,
+                                'stage_color' => $mStageColor,
+                                'pembimbing1' => $user->thesis->pembimbing1->name ?? 'Belum ditentukan',
+                                'pembimbing2' => $user->thesis->pembimbing2->name ?? 'Belum ditentukan',
+                                'url' => route('theses.show', $user->thesis->id),
+                                'is_old_cohort' => $user->entry_year ? ($user->entry_year <= $oldCohortThresholdYear) : false,
+                            ];
+                        }
+                        $mDosenData = null;
+                        if ($user->role === 'dosen' || $user->role === 'kaprodi') {
+                            $p1List = $user->thesesAsP1->map(fn($t) => ['student_name' => $t->student->name ?? '-', 'student_npm' => $t->student->identifier ?? '-', 'title' => $t->final_title ?: $t->title, 'role' => 'Pembimbing 1'])->values()->toArray();
+                            $p2List = $user->thesesAsP2->map(fn($t) => ['student_name' => $t->student->name ?? '-', 'student_npm' => $t->student->identifier ?? '-', 'title' => $t->final_title ?: $t->title, 'role' => 'Pembimbing 2'])->values()->toArray();
+                            $mDosenData = ['research_interests' => $user->research_interests ?: 'Belum diatur', 'max_quota' => $user->max_quota ?? 10, 'p1_count' => count($p1List), 'p2_count' => count($p2List), 'total_active' => count($p1List) + count($p2List), 'students' => array_merge($p1List, $p2List)];
+                        }
+                        $mUserData = [
+                            'id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'has_email_verified' => (bool)$user->email_verified_at,
+                            'email_verified_at' => $user->email_verified_at ? $user->email_verified_at->translatedFormat('d F Y, H:i') : null,
+                            'avatar_url' => $user->avatar_url, 'role' => $user->role, 'identifier' => $user->identifier, 'phone_number' => $user->phone_number,
+                            'has_wa' => !empty($user->phone_number), 'clean_phone' => $cleanPhone, 'wa_message' => rawurlencode($waMessage),
+                            'entry_year' => $user->entry_year, 'is_old_cohort' => $user->entry_year ? ($user->entry_year <= $oldCohortThresholdYear) : false,
+                            'is_active' => (bool)$user->is_active, 'registered_at' => $user->created_at ? $user->created_at->translatedFormat('d F Y, H:i') : '-',
+                            'last_login_at_human' => $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Belum pernah login',
+                            'last_login_at_full' => $user->last_login_at ? $user->last_login_at->translatedFormat('d F Y, H:i') : null,
+                            'edit_url' => route('users.edit', $user->id), 'toggle_url' => route('users.toggle', $user->id),
+                            'thesis' => $mThesisData, 'dosen' => $mDosenData,
+                        ];
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800" :class="isSelected({{ $user->id }}) ? 'bg-orange-50/60 dark:bg-orange-950/30' : ''">
+                        <div class="flex items-start gap-3">
+                            @if($user->role !== 'admin')
+                                <input type="checkbox" value="{{ $user->id }}" x-model.number="selectedUserIds" aria-label="Pilih {{ $user->name }}" class="mt-1 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer shrink-0">
+                            @endif
+                            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <button type="button" @click="selectedUser = {{ json_encode($mUserData) }}; openDetailModal = true" class="text-left font-bold text-sm text-slate-800 dark:text-slate-100 hover:text-orange-600 truncate cursor-pointer">{{ $user->name }}</button>
+                                    <x-status-badge :type="$user->role === 'dosen' ? 'blue' : ($user->role === 'kaprodi' ? 'orange' : 'slate')" :label="strtoupper($user->role)" size="xs" />
+                                </div>
+                                <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">{{ $user->identifier }} {{ $user->role === 'mahasiswa' && $user->entry_year ? '• Angkatan ' . $user->entry_year : '' }}</p>
+                                <p class="text-[11px] text-slate-400 truncate">{{ $user->email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/70">
+                            <form action="{{ route('users.toggle', $user->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="cursor-pointer">
+                                    @if($user->is_active)
+                                        <x-status-badge type="emerald" label="AKTIF" size="xs" />
+                                    @else
+                                        <x-status-badge type="orange" label="PENDING" size="xs" />
+                                    @endif
+                                </button>
+                            </form>
+                            <div class="flex items-center gap-1">
+                                <button type="button" @click="selectedUser = {{ json_encode($mUserData) }}; openDetailModal = true" class="p-2 text-slate-500 hover:text-indigo-600 rounded-lg cursor-pointer" title="Detail Pengguna" aria-label="Detail {{ $user->name }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                                <a href="{{ route('users.edit', $user->id) }}" class="p-2 text-slate-500 hover:text-blue-600 rounded-lg" title="Edit Pengguna" aria-label="Edit {{ $user->name }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </a>
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus pengguna ini?" data-confirm-title="Hapus Pengguna" data-confirm-type="danger" data-confirm-button="Ya, Hapus">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 rounded-lg cursor-pointer" title="Hapus Pengguna" aria-label="Hapus {{ $user->name }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Tidak ada data pengguna yang sesuai dengan filter yang dipilih.</p>
+                    </div>
+                @endforelse
+            </div>
+
             <table x-show="!pageLoading"
                    x-transition:enter="transition ease-out duration-200"
                    x-transition:enter-start="opacity-0"
                    x-transition:enter-end="opacity-100"
-                   class="w-full text-sm text-left">
+                   class="hidden sm:table w-full text-sm text-left">
                 <thead>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                         <th scope="col" class="py-4 px-4 text-center w-10">
@@ -359,16 +467,16 @@
                                 $stageText = 'Pengajuan Judul';
                                 $stageColor = 'slate';
                                 if ($user->thesis->status === 'completed') {
-                                    $stageText = '🎓 Lulus / Selesai';
+                                    $stageText = 'Lulus / Selesai';
                                     $stageColor = 'emerald';
                                 } elseif ($user->thesis->isAccSidangFinal()) {
-                                    $stageText = '🎯 Siap Sidang Skripsi (ACC Pembimbing)';
+                                    $stageText = 'Siap Sidang Skripsi (ACC Pembimbing)';
                                     $stageColor = 'indigo';
                                 } elseif ($user->thesis->isAccUpFinal()) {
-                                    $stageText = '📑 Selesai Seminar UP (ACC Pembimbing)';
+                                    $stageText = 'Selesai Seminar UP (ACC Pembimbing)';
                                     $stageColor = 'blue';
                                 } elseif ($user->thesis->completed_mentoring_count > 0) {
-                                    $stageText = "📝 Bimbingan Reguler ({$user->thesis->completed_mentoring_count} Sesi Selesai)";
+                                    $stageText = "Bimbingan Reguler ({$user->thesis->completed_mentoring_count} Sesi Selesai)";
                                     $stageColor = 'amber';
                                 }
 
@@ -749,11 +857,11 @@
                                                 <!-- Supervisors -->
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                        <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">👨‍🏫 Pembimbing 1 (Utama)</span>
+                                                        <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Pembimbing 1 (Utama)</span>
                                                         <p class="text-xs font-bold text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing1"></p>
                                                     </div>
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">👨‍🏫 Pembimbing 2 (Pendamping)</span>
+                                                        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Pembimbing 2 (Pendamping)</span>
                                                         <p class="text-xs font-bold text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing2"></p>
                                                     </div>
                                                 </div>
@@ -852,7 +960,7 @@
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border shadow-xs cursor-pointer"
                                             :class="selectedUser.is_active ? 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900' : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600'">
-                                        <span x-text="selectedUser.is_active ? '⛔ Nonaktifkan Akun' : '✅ Setujui & Aktifkan Akun'"></span>
+                                        <span x-text="selectedUser.is_active ? 'Nonaktifkan Akun' : 'Setujui & Aktifkan Akun'"></span>
                                     </button>
                                 </form>
 

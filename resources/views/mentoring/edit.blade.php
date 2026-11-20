@@ -332,7 +332,7 @@
                                     </span>
                                 </div>
                                 <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto">
-                                    <span x-text="customTimeMode ? '← Kembali ke Slot Waktu' : '⚙️ Input Manual / Kustom'"></span>
+                                    <span x-text="customTimeMode ? '← Kembali ke Slot Waktu' : 'Input Manual / Kustom'"></span>
                                 </button>
                             </div>
 
@@ -486,7 +486,7 @@
                                     </template>
                                     <template x-if="!isGoogleMeet() && !isZoom()">
                                         <span class="flex items-center gap-1 text-slate-600 dark:text-slate-300 font-medium">
-                                            🔗 Tautan Meeting Online
+                                            Tautan Meeting Online
                                         </span>
                                     </template>
                                 </div>

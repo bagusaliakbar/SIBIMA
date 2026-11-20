@@ -704,7 +704,7 @@ document.addEventListener('keydown', function(e) {
             </span>
         </button>
 
-        <!-- Button 5: Orange Circle with Edit/Pencil (📝) (Lapor Bug / Usulan Fitur) -->
+        <!-- Button 5: Orange Circle with Edit/Pencil (Lapor Bug / Usulan Fitur) -->
         <button onclick="window.openBugReportModal(); event.stopPropagation();"
                 type="button"
                 style="width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; max-width: 40px !important; max-height: 40px !important; border-radius: 9999px !important; background: #f97316; color: #ffffff; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; border: none !important; padding: 0 !important; overflow: hidden !important; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4); pointer-events: auto !important;"

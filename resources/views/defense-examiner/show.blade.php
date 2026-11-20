@@ -598,7 +598,7 @@
 
                                     <!-- Quick Revision Notes Template Chips -->
                                     <div class="space-y-1">
-                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">💡 Template Cepat (Klik untuk tambah):</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Template Cepat (Klik untuk tambah):</span>
                                         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                                             <button type="button" 
                                                     @click="appendTemplate('Mohon perbaiki format penulisan, margin, tata bahasa, dan pastikan daftar pustaka telah sesuai dengan format pedoman serta terupdate minimal 5 tahun terakhir.')"

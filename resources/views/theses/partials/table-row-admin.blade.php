@@ -396,7 +396,7 @@
                                                                                     $isFull = $dosen->total_workload >= $dosen->max_quota;
                                                                                 @endphp
                                                                                 <option value="{{ $dosen->id }}" class="{{ $isFull ? 'text-rose-500 font-bold' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-600' : 'text-slate-800') }}">
-                                                                                    {{ $isFull ? '🔴 [PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                    {{ $isFull ? '[PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '• Match: '.$score : '' }}
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
@@ -419,7 +419,7 @@
                                                                                     $isFull = $dosen->total_workload >= $dosen->max_quota;
                                                                                 @endphp
                                                                                 <option value="{{ $dosen->id }}" class="{{ $isFull ? 'text-rose-500 font-bold' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-600' : 'text-slate-800') }}">
-                                                                                    {{ $isFull ? '🔴 [PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                    {{ $isFull ? '[PENUH] ' : '' }}{{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '• Match: '.$score : '' }}
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
@@ -503,7 +503,7 @@
                                                                                     @php $score = $thesis->getMatchScore($dosen); @endphp
                                                                                     <option value="{{ $dosen->id }}" 
                                                                                             class="{{ $dosen->total_workload >= $dosen->max_quota ? 'text-rose-500' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500') }}">
-                                                                                        {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                        {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '• Match: '.$score : '' }}
                                                                                     </option>
                                                                                 @endforeach
                                                                             </select>
@@ -523,7 +523,7 @@
                                                                                     @php $score = $thesis->getMatchScore($dosen); @endphp
                                                                                     <option value="{{ $dosen->id }}" 
                                                                                             class="{{ $dosen->total_workload >= $dosen->max_quota ? 'text-rose-500' : ($dosen->total_workload >= $dosen->max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500') }}">
-                                                                                        {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '✨ Match: '.$score : '' }}
+                                                                                        {{ $dosen->name }} ({{ $dosen->total_workload }}/{{ $dosen->max_quota }}) {{ $score > 0 ? '• Match: '.$score : '' }}
                                                                                     </option>
                                                                                 @endforeach
                                                                             </select>

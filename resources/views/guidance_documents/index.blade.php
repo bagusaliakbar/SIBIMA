@@ -318,7 +318,7 @@
             <!-- Empty State Card -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 sm:p-16 text-center shadow-xs">
                 <div class="w-16 h-16 rounded-3xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-3xl mx-auto mb-4 shadow-xs">
-                    📂
+                    <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                 </div>
                 <h3 class="text-base font-bold text-slate-800 dark:text-white">Belum Ada Dokumen Panduan</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1.5 leading-relaxed">
@@ -373,7 +373,7 @@
                         <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800">
                             <div class="flex items-center gap-3">
                                 <span class="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-lg font-bold shadow-2xs">
-                                    📑
+                                    <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 </span>
                                 <div>
                                     <h3 class="text-sm font-bold text-slate-900 dark:text-white" x-text="isEditing ? 'Edit Dokumen Panduan' : 'Unggah Dokumen Panduan Baru'"></h3>
@@ -407,10 +407,10 @@
                                         x-model="formData.category" 
                                         required
                                         class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-semibold">
-                                    <option value="panduan_skripsi">📖 Buku Panduan Skripsi</option>
-                                    <option value="format_template">📝 Template Dokumen (Word/LaTeX)</option>
-                                    <option value="pedoman_bimbingan">⚖️ Pedoman Alur Bimbingan & Etika</option>
-                                    <option value="lainnya">📁 Berkas Pendukung / Formulir Lainnya</option>
+                                    <option value="panduan_skripsi">Buku Panduan Skripsi</option>
+                                    <option value="format_template">Template Dokumen (Word/LaTeX)</option>
+                                    <option value="pedoman_bimbingan">Pedoman Alur Bimbingan & Etika</option>
+                                    <option value="lainnya">Berkas Pendukung / Formulir Lainnya</option>
                                 </select>
                             </div>
 

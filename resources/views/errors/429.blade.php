@@ -25,6 +25,6 @@
 
 @section('extra')
 <div class="pt-8 border-t border-slate-200/80 dark:border-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400">
-    <span>🔒 Pembatasan ini otomatis terbuka kembali setelah jeda beberapa saat.</span>
+    <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>Pembatasan ini otomatis terbuka kembali setelah jeda beberapa saat.</span>
 </div>
 @endsection

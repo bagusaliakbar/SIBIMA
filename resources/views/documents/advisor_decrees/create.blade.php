@@ -68,7 +68,7 @@
                             <input type="hidden" name="dosen_id" value="{{ Auth::id() }}">
                             <div class="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 flex items-center justify-between">
                                 <div>
-                                    <div class="text-xs font-black text-orange-900 dark:text-orange-200">👨‍🏫 Surat Tugas Pembimbingan BKD (Dosen)</div>
+                                    <div class="text-xs font-black text-orange-900 dark:text-orange-200">Surat Tugas Pembimbingan BKD (Dosen)</div>
                                     <div class="text-[11px] text-orange-700 dark:text-orange-400 mt-0.5">Menerbitkan surat tugas resmi untuk pelaporan BKD & SISTER bagi <strong>{{ Auth::user()->name }}</strong>.</div>
                                 </div>
                                 <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-orange-600 text-white uppercase tracking-wider">Khusus BKD</span>
@@ -82,7 +82,7 @@
                                             @click="targetType = 'collective'; fetchCandidates()"
                                             :class="targetType === 'collective' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
                                             class="p-3.5 rounded-2xl text-left border border-slate-200/60 dark:border-slate-700 transition cursor-pointer">
-                                        <div class="text-xs font-black">🏢 Kolektif Seluruh Mahasiswa</div>
+                                        <div class="text-xs font-black">Kolektif Seluruh Mahasiswa</div>
                                         <div class="text-[11px] opacity-80 mt-0.5">SK Penetapan menyeluruh untuk arsip fakultas/prodi.</div>
                                     </button>
 
@@ -90,7 +90,7 @@
                                             @click="targetType = 'individual_dosen'; fetchCandidates()"
                                             :class="targetType === 'individual_dosen' ? 'bg-orange-600 text-white shadow-md shadow-orange-600/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
                                             class="p-3.5 rounded-2xl text-left border border-slate-200/60 dark:border-slate-700 transition cursor-pointer">
-                                        <div class="text-xs font-black">👨‍🏫 Khusus Dosen (Surat Tugas BKD)</div>
+                                        <div class="text-xs font-black">Khusus Dosen (Surat Tugas BKD)</div>
                                         <div class="text-[11px] opacity-80 mt-0.5">SK/Surat tugas khusus memuat daftar bimbingan 1 dosen.</div>
                                     </button>
                                 </div>
@@ -122,9 +122,9 @@
                                 </label>
                                 <select x-model="decreeStatus" @change="fetchCandidates()"
                                         class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-semibold focus:ring-orange-500 focus:border-orange-500">
-                                    <option value="unassigned" x-text="targetType === 'collective' ? '⚠️ Hanya yang Belum Di-SK-kan (Default)' : '⚠️ Belum Ada Surat Tugas Dosen Ini (Default)'"></option>
+                                    <option value="unassigned" x-text="targetType === 'collective' ? 'Hanya yang Belum Di-SK-kan (Default)' : 'Belum Ada Surat Tugas Dosen Ini (Default)'"></option>
                                     <option value="all">Semua Mahasiswa (Belum & Sudah Ada Dokumen)</option>
-                                    <option value="assigned" x-text="targetType === 'collective' ? '✅ Sudah Pernah Di-SK-kan' : '✅ Sudah Terbit Surat Tugas Dosen Ini'"></option>
+                                    <option value="assigned" x-text="targetType === 'collective' ? 'Sudah Pernah Di-SK-kan' : 'Sudah Terbit Surat Tugas Dosen Ini'"></option>
                                 </select>
                                 <p class="text-[10px] text-slate-400 mt-1" x-text="targetType === 'collective' ? 'Mahasiswa yang baru memiliki Surat Tugas mandiri dosen tetap dihitung belum di-SK-kan.' : 'Surat Tugas bisa diterbitkan 2x (masing-masing untuk Pembimbing 1 & Pembimbing 2).'"></p>
                             </div>
@@ -229,7 +229,7 @@
                         <!-- Manual Students List (if any added) -->
                         <div x-show="manualStudents.length > 0" class="space-y-2">
                             <div class="text-[11px] font-black uppercase text-orange-600 tracking-wider flex items-center gap-1.5">
-                                <span>✍️ Mahasiswa Tambahan Manual (<span x-text="manualStudents.length"></span>)</span>
+                                <span>Mahasiswa Tambahan Manual (<span x-text="manualStudents.length"></span>)</span>
                             </div>
                             <div class="border border-orange-200 dark:border-orange-900/60 rounded-2xl overflow-hidden divide-y divide-orange-100 dark:divide-orange-950/60 bg-orange-50/30 dark:bg-orange-950/10">
                                 <template x-for="(st, idx) in manualStudents" :key="'man-card-' + idx">
@@ -291,13 +291,13 @@
                                                     <template x-if="targetType === 'collective'">
                                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold"
                                                               :class="candidate.has_sk ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
-                                                              x-text="candidate.has_sk ? ('✅ Sudah Di-SK-kan: ' + candidate.sk_info.decree_number) : '⚠️ Belum Ada SK'"></span>
+                                                              x-text="candidate.has_sk ? ('Sudah Di-SK-kan: ' + candidate.sk_info.decree_number) : 'Belum Ada SK'"></span>
                                                     </template>
 
                                                     <template x-if="targetType === 'individual_dosen'">
                                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold"
                                                               :class="candidate.has_decree ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
-                                                              x-text="candidate.has_decree ? ('✅ Sudah Ada Surat Tugas Dosen Ini: ' + candidate.decree_info.decree_number) : '⚠️ Belum Ada Surat Tugas Dosen Ini'"></span>
+                                                              x-text="candidate.has_decree ? ('Sudah Ada Surat Tugas Dosen Ini: ' + candidate.decree_info.decree_number) : 'Belum Ada Surat Tugas Dosen Ini'"></span>
                                                     </template>
 
                                                     <!-- Badge Surat Tugas Mandiri Dosen (Bisa 2x: untuk Pembimbing 1 & Pembimbing 2) -->
@@ -325,7 +325,7 @@
                                             <div class="text-slate-700 dark:text-slate-300 italic text-[11.5px] leading-relaxed" x-text="candidate.title"></div>
 
                                             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800/80">
-                                                <span class="text-slate-600 dark:text-slate-400">📅 <strong>Pengajuan:</strong> <span x-text="candidate.submission_date"></span> (<span x-text="candidate.submission_period"></span>)</span>
+                                                <span class="text-slate-600 dark:text-slate-400"><strong>Pengajuan:</strong> <span x-text="candidate.submission_date"></span> (<span x-text="candidate.submission_period"></span>)</span>
                                                 <span>P1: <strong class="text-slate-800 dark:text-slate-200" x-text="candidate.pembimbing1_name"></strong> <span class="text-slate-400" x-text="'(' + candidate.pembimbing1_nidn + ')'"></span></span>
                                                 <span>P2: <strong class="text-slate-800 dark:text-slate-200" x-text="candidate.pembimbing2_name"></strong> <span class="text-slate-400" x-text="'(' + candidate.pembimbing2_nidn + ')'"></span></span>
                                             </div>
@@ -448,7 +448,7 @@
 
                         <button type="submit" :disabled="(selectedCount + manualStudents.length === 0) || isSubmitting"
                                 class="w-full py-3.5 px-4 bg-white text-orange-600 hover:bg-orange-50 active:scale-[0.99] rounded-2xl font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                            <span x-show="!isSubmitting">⚖️ Terbitkan & Simpan SK Sekarang</span>
+                            <span x-show="!isSubmitting">Terbitkan & Simpan SK Sekarang</span>
                             <span x-show="isSubmitting" class="flex items-center gap-2">
                                 <svg class="w-4 h-4 animate-spin text-orange-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                                 <span>Memproses Dokumen...</span>

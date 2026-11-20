@@ -94,7 +94,7 @@
             <x-input-label for="birth_date" :value="__('Tanggal Lahir')" />
             <x-text-input id="birth_date" name="birth_date" type="date" max="{{ date('Y-m-d') }}" class="mt-1 block w-full" :value="old('birth_date', $user->birth_date?->format('Y-m-d'))" />
             <p class="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                🎂 Tanggal lahir Anda digunakan untuk ucapan & kejutan spesial dari civitas akademika SIBIMA FASILKOM UNSUB.
+                Tanggal lahir Anda digunakan untuk ucapan & kejutan spesial dari civitas akademika SIBIMA FASILKOM UNSUB.
             </p>
             <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
         </div>

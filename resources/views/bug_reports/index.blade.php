@@ -173,7 +173,75 @@
 
         <!-- Table Card -->
         <x-table-card title="Daftar Tiket Kendala & Usulan Fitur" :footer="$bugReports->links()">
-            <table class="w-full text-left text-sm">
+            <!-- Mobile Card View -->
+            <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($bugReports as $report)
+                    @php
+                        $isFeature = $report->is_feature_request || str_starts_with($report->ticket_number, 'REQ-');
+                        $severityType = match($report->severity) {
+                            'critical' => 'rose',
+                            'high' => 'orange',
+                            'medium' => 'amber',
+                            'low' => 'emerald',
+                            default => 'slate',
+                        };
+                        $statusType = match($report->status) {
+                            'open' => 'amber',
+                            'in_progress' => 'blue',
+                            'resolved' => 'emerald',
+                            'rejected' => 'slate',
+                            default => 'slate',
+                        };
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800 {{ request('highlight') == $report->id ? 'ring-2 ring-inset ring-orange-500 bg-orange-50/20' : '' }}">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="px-1.5 py-0.5 rounded-md text-[9px] font-black {{ $isFeature ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60' }}">{{ $isFeature ? 'FITUR' : 'BUG' }}</span>
+                                    <span class="font-mono text-xs font-bold {{ $isFeature ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400' }}">{{ $report->ticket_number }}</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1 leading-snug">{{ $report->title }}</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{{ $report->category_label }} • {{ $report->created_at->locale('id')->diffForHumans() }}</p>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                <x-status-badge :type="$statusType" :label="$report->status_label" size="xs" />
+                                <x-status-badge :type="$severityType" :label="strtoupper($report->severity)" size="xs" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60">
+                            <img src="{{ $report->user->avatar_url }}" alt="{{ $report->user->name }}" class="w-7 h-7 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $report->user->name }}</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">{{ ucfirst($report->user->role) }} • {{ $report->user->identifier ?? $report->user->email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                            <button type="button" onclick="window.openBugReviewModal({{ $report->id }}); event.stopPropagation();" class="flex-1 h-9 inline-flex items-center justify-center gap-1.5 px-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-colors cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                <span>Tinjau & Tangani</span>
+                            </button>
+                            @if(Auth::user()->role === 'admin')
+                                <form action="{{ route('admin.bug-reports.destroy', $report->id) }}" method="POST" data-confirm="Hapus laporan bug ini secara permanen?" data-confirm-title="Hapus Laporan Bug" data-confirm-type="danger" data-confirm-button="Ya, Hapus">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 transition-colors cursor-pointer" title="Hapus Laporan" aria-label="Hapus laporan {{ $report->ticket_number }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada laporan bug yang cocok.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Sistem berjalan dengan baik dan lancar.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <table class="hidden sm:table w-full text-left text-sm">
                 <thead>
                     <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                         <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Tiket & Waktu</th>

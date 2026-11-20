@@ -612,16 +612,16 @@
                             <!-- Helper Tip -->
                             <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
                                 <span x-show="activeCitationFormat === 'fasilkom'">
-                                    💡 Format resmi panduan skripsi FASILKOM UNSUB untuk lembar daftar pustaka Microsoft Word.
+                                    Format resmi panduan skripsi FASILKOM UNSUB untuk lembar daftar pustaka Microsoft Word.
                                 </span>
                                 <span x-show="activeCitationFormat === 'ris'">
-                                    💡 Format metadata untuk Mendeley Desktop/Reference Manager, Zotero, dan EndNote.
+                                    Format metadata untuk Mendeley Desktop/Reference Manager, Zotero, dan EndNote.
                                 </span>
                                 <span x-show="activeCitationFormat === 'bibtex'">
-                                    💡 Format entri sitasi untuk LaTeX / Overleaf.
+                                    Format entri sitasi untuk LaTeX / Overleaf.
                                 </span>
                                 <span x-show="activeCitationFormat === 'apa' || activeCitationFormat === 'ieee'">
-                                    💡 Format sitasi standar akademik internasional.
+                                    Format sitasi standar akademik internasional.
                                 </span>
                             </div>
                         </div>

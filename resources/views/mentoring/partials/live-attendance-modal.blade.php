@@ -319,7 +319,7 @@
                                                         <a :href="getWaLink(item)" 
                                                            target="_blank" 
                                                            class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/80 rounded-lg text-[10px] font-bold transition-all shadow-2xs">
-                                                            <span>📲 Chat WA</span>
+                                                            <span>Chat WA</span>
                                                         </a>
                                                     </template>
                                                 </div>
@@ -418,7 +418,7 @@
                                             <a :href="getWaLink(item)" 
                                                target="_blank" 
                                                class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/80 rounded-lg text-[10px] font-bold transition-all shadow-2xs">
-                                                <span>📲 Chat WA</span>
+                                                <span>Chat WA</span>
                                             </a>
                                         </template>
                                     </div>

@@ -19,7 +19,53 @@
                     </button>
                 </x-slot>
 
-                <table class="w-full text-left text-sm">
+                <!-- Mobile Card View -->
+                <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($announcements as $announcement)
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">{{ $announcement->title }}</h4>
+                                    <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{{ $announcement->created_at->locale('id')->translatedFormat('d M Y') }}</p>
+                                </div>
+                                <x-status-badge 
+                                    :type="$announcement->type === 'info' ? 'blue' : ($announcement->type === 'warning' ? 'orange' : 'red')" 
+                                    :label="strtoupper($announcement->type)" />
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{{ Str::limit($announcement->content, 120) }}</p>
+                            <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/70">
+                                <form action="{{ route('announcements.toggle', $announcement->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="cursor-pointer">
+                                        @if($announcement->is_active)
+                                            <x-status-badge type="emerald" label="AKTIF" />
+                                        @else
+                                            <x-status-badge type="slate" label="NON-AKTIF" />
+                                        @endif
+                                    </button>
+                                </form>
+                                <div class="flex items-center gap-1">
+                                    <button type="button" @click="openModal = true; editMode = true; currentAnnouncement = {{ json_encode($announcement) }}" aria-label="Edit pengumuman {{ $announcement->title }}" title="Edit Pengumuman" class="p-2 text-slate-500 hover:text-blue-600 rounded-xl transition-colors cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    </button>
+                                    <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus pengumuman ini?" data-confirm-title="Hapus Pengumuman" data-confirm-type="danger" data-confirm-button="Ya, Hapus">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" aria-label="Hapus pengumuman {{ $announcement->title }}" title="Hapus Pengumuman" class="p-2 text-slate-500 hover:text-rose-600 rounded-xl transition-colors cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center">
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Semua pengumuman sistem akan tampil di sini.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                <table class="hidden sm:table w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                             <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Tanggal</th>

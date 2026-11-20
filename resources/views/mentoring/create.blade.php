@@ -381,7 +381,7 @@
                         <div x-show="selectionMode === 'all'" x-cloak class="p-4 bg-orange-50 dark:bg-orange-500/10 border border-orange-200/80 dark:border-orange-500/25 rounded-2xl flex items-center justify-between gap-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
-                                    🌐
+                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-orange-950 dark:text-orange-200">Sesi Bimbingan Massal</h4>
@@ -412,7 +412,7 @@
                                     <button type="button" 
                                             @click="selectAllFiltered()" 
                                             class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer">
-                                        ☑️ Centang Semua
+                                        Centang Semua
                                     </button>
                                     <button type="button" 
                                             @click="clearAllSelection()" 
@@ -531,7 +531,7 @@
                                 </span>
                             </div>
                             <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto">
-                                <span x-text="customTimeMode ? '← Kembali ke Slot Waktu' : '⚙️ Input Manual / Kustom'"></span>
+                                <span x-text="customTimeMode ? '← Kembali ke Slot Waktu' : 'Input Manual / Kustom'"></span>
                             </button>
                         </div>
 
@@ -627,13 +627,13 @@
                                 <button type="button" 
                                         @click="pasteClipboard()" 
                                         class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer">
-                                    <span>📋 Tempel Link</span>
+                                    <span>Tempel Link</span>
                                 </button>
                                 <button type="button" 
                                         @click="openGoogleMeetNew()" 
                                         class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/25 rounded-lg text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-500/25 transition-all shadow-2xs active:scale-95 cursor-pointer">
                                     <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                    <span>⚡ Buat Google Meet Instan</span>
+                                    <span>Buat Google Meet Instan</span>
                                 </button>
                             </div>
                         </div>
@@ -655,7 +655,7 @@
                                     <span>Ruang Google Meet baru telah dibuka di tab sebelah. Salin link ruangannya dan tempelkan di sini.</span>
                                 </div>
                                 <button type="button" @click="pasteClipboard()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs shrink-0 transition-all shadow-xs cursor-pointer">
-                                    📋 Tempel Sekarang
+                                    Tempel Sekarang
                                 </button>
                             </div>
 
@@ -675,7 +675,7 @@
                                     </template>
                                     <template x-if="!isGoogleMeet() && !isZoom()">
                                         <span class="flex items-center gap-1 text-slate-600 dark:text-slate-300 font-medium">
-                                            🔗 Tautan Meeting Online
+                                            Tautan Meeting Online
                                         </span>
                                     </template>
                                 </div>
@@ -753,7 +753,7 @@
                                 <!-- Modal Header -->
                                 <div class="flex items-center gap-3.5 mb-5 pb-4 border-b border-slate-100 dark:border-slate-700/80">
                                     <div class="w-11 h-11 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-xl shrink-0">
-                                        📋
+                                        <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                     </div>
                                     <div>
                                         <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">

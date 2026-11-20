@@ -108,15 +108,18 @@
         <div>
             @if($isGraduated)
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
-                    🎓 Lulus
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                    <span>Lulus</span>
                 </span>
             @elseif(($completedCount >= 16 || ($p1Count >= 8 && $p2Count >= 8)) && !$hasMyAccSidang)
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
-                    🟢 Siap Sidang
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>Siap Sidang</span>
                 </span>
             @elseif(($completedCount >= 8 || ($p1Count >= 4 && $p2Count >= 4)) && !$hasMyAccUp)
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">
-                    🔵 Siap UP
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    <span>Siap UP</span>
                 </span>
             @elseif($completedCount === 0)
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">

@@ -377,7 +377,7 @@
                         <div class="p-4 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/50 space-y-2">
                             <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-orange-700 dark:text-orange-300">
                                 <span class="flex items-center gap-1.5">
-                                    <span>📌</span>
+                                    <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                     <span>Catatan Revisi Awal Hasil Seminar</span>
                                 </span>
                                 <span>{{ $firstExaminerMsg->created_at->format('d M Y, H:i') }}</span>
@@ -388,7 +388,7 @@
                             @if($revision->revision_file)
                                 <div class="pt-2 border-t border-orange-200/50 dark:border-orange-800/40 flex items-center justify-between gap-2">
                                     <span class="text-[10px] text-orange-600 dark:text-orange-400 font-semibold truncate">
-                                        📎 Terdapat berkas catatan dari penguji
+                                        Terdapat berkas catatan dari penguji
                                     </span>
                                     <button type="button" 
                                             @click="switchDocument('{{ $revision->revision_file }}', 'Catatan Penguji')" 
@@ -433,7 +433,7 @@
                                                 <button type="button" 
                                                         @click="switchDocument('{{ $msg->file_path }}', 'Lampiran Pesan ({{ $msg->created_at->format('H:i') }})')"
                                                         class="px-2 py-0.5 rounded-lg text-[10px] font-bold {{ $isMe ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300' }} transition-colors cursor-pointer">
-                                                    👁️ Preview Kiri
+                                                    Preview Kiri
                                                 </button>
                                                 <a href="{{ $msg->file_path }}" target="_blank" class="text-[10px] {{ $isMe ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400' }} hover:underline">
                                                     ↗ Tab
@@ -542,7 +542,7 @@
                                             @click="pasteLink()" 
                                             class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 rounded-xl text-[10px] font-bold border border-slate-200 dark:border-slate-600 shrink-0 cursor-pointer"
                                             title="Tempel dari Clipboard">
-                                        📋 Tempel
+                                        Tempel
                                     </button>
                                 </div>
 

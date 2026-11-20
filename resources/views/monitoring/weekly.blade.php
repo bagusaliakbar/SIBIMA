@@ -204,9 +204,9 @@
                             style="padding-right: 2.25rem !important; padding-left: 0.875rem !important;"
                             class="py-2 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-xs font-semibold shadow-2xs cursor-pointer">
                         <option value="">-- Semua Status Kepatuhan --</option>
-                        <option value="compliant" {{ ($filters['compliance_status'] ?? '') === 'compliant' ? 'selected' : '' }}>🟢 Lengkap (>= 1x P1 & P2)</option>
-                        <option value="partial" {{ ($filters['compliance_status'] ?? '') === 'partial' ? 'selected' : '' }}>🟡 Sebagian (Hanya 1 Dosen)</option>
-                        <option value="inactive" {{ ($filters['compliance_status'] ?? '') === 'inactive' ? 'selected' : '' }}>🔴 Belum Bimbingan (0x)</option>
+                        <option value="compliant" {{ ($filters['compliance_status'] ?? '') === 'compliant' ? 'selected' : '' }}>Lengkap (>= 1x P1 & P2)</option>
+                        <option value="partial" {{ ($filters['compliance_status'] ?? '') === 'partial' ? 'selected' : '' }}>Sebagian (Hanya 1 Dosen)</option>
+                        <option value="inactive" {{ ($filters['compliance_status'] ?? '') === 'inactive' ? 'selected' : '' }}>Belum Bimbingan (0x)</option>
                     </select>
 
                     <!-- Filter Dosen Pembimbing -->

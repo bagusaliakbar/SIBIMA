@@ -28,7 +28,70 @@
                 </button>
             </x-slot>
             
-            <table class="w-full text-left border-collapse">
+            <!-- Mobile Card View -->
+            <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($waves as $wave)
+                    @php
+                        $today = now()->toDateString();
+                        $isWithinRange = $wave->start_date && $wave->end_date && $today >= $wave->start_date->toDateString() && $today <= $wave->end_date->toDateString();
+                        $isActive = $wave->is_active && $isWithinRange;
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $wave->name }}</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Dibuat {{ $wave->created_at->locale('id')->translatedFormat('d M Y') }}</p>
+                            </div>
+                            <div class="shrink-0">
+                                @if($isActive)
+                                    <x-status-badge type="emerald" label="AKTIF" />
+                                @elseif($wave->is_active && !$isWithinRange)
+                                    <x-status-badge type="orange" label="PENDING/EXPIRED" />
+                                @else
+                                    <x-status-badge type="slate" label="ARSIP" />
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                            <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/70 rounded-md">{{ $wave->start_date ? $wave->start_date->locale('id')->translatedFormat('d M Y') : '-' }}</span>
+                            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/70 rounded-md">{{ $wave->end_date ? $wave->end_date->locale('id')->translatedFormat('d M Y') : '-' }}</span>
+                        </div>
+
+                        @if($wave->description)
+                            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{{ $wave->description }}</p>
+                        @endif
+
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/70">
+                            <form action="{{ route('waves.toggle', $wave) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center px-3 py-1.5 {{ $wave->is_active ? 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60' : 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60' }} text-[11px] font-bold rounded-lg transition-colors cursor-pointer">
+                                    {{ $wave->is_active ? 'Arsipkan' : 'Aktifkan' }}
+                                </button>
+                            </form>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick='editWave(@json($wave))' class="p-2 text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-xl transition-colors cursor-pointer" title="Edit Gelombang" aria-label="Edit Gelombang {{ $wave->name }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"></path></svg>
+                                </button>
+                                <form action="{{ route('waves.destroy', $wave) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus gelombang ini?" data-confirm-title="Hapus Gelombang" data-confirm-type="danger" data-confirm-button="Ya, Hapus">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer" title="Hapus Gelombang" aria-label="Hapus Gelombang {{ $wave->name }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Silakan tambahkan gelombang pelaksanaan baru untuk mulai menerima pengajuan seminar dan sidang.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <table class="hidden sm:table w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                         <th class="py-5 px-6 font-black text-[10px] uppercase tracking-[0.2em]">NAMA GELOMBANG</th>

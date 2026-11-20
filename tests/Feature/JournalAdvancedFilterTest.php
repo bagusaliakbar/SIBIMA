@@ -158,7 +158,7 @@ HTML;
         $response->assertSee('Akreditasi SINTA:');
         $response->assertSee('Tipe:');
         $response->assertSee('SINTA 2 – SINTA 4 (Syarat Skripsi)');
-        $response->assertSee('📄 Artikel Penelitian');
+        $response->assertSee('Artikel Penelitian');
         $response->assertSee('Filter Aktif:');
         $response->assertSee('Klasifikasi Citra Menggunakan Convolutional Neural Network');
     }
