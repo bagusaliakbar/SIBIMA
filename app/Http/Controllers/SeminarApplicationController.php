@@ -313,11 +313,9 @@ class SeminarApplicationController extends Controller
 
                     foreach ($gdriveCandidates as $candidateUrl) {
                         try {
-                            $resp = Http::withoutVerifying()
-                                ->timeout(4)
-                                ->get($candidateUrl);
+                            $resp = \App\Support\UrlSecurity::safeHttpGet($candidateUrl, [], 4, 2);
 
-                            if ($resp->successful() && strlen($resp->body()) > 200) {
+                            if ($resp && $resp->successful() && strlen($resp->body()) > 200) {
                                 $cType = $resp->header('Content-Type');
                                 if ($cType && str_starts_with($cType, 'image/')) {
                                     return [
@@ -335,14 +333,11 @@ class SeminarApplicationController extends Controller
                     }
                 }
             } elseif (\App\Support\UrlSecurity::isSafeExternalUrl($rawPath)) {
-                // Direct image URL (validated against SSRF)
+                // Direct image URL (validated against SSRF, no redirects, TLS verified in production)
                 try {
-                    $resp = Http::withoutVerifying()
-                        ->withOptions(['allow_redirects' => false])
-                        ->timeout(4)
-                        ->get($rawPath);
+                    $resp = \App\Support\UrlSecurity::safeHttpGet($rawPath, [], 4, 0);
 
-                    if ($resp->successful() && strlen($resp->body()) > 200) {
+                    if ($resp && $resp->successful() && strlen($resp->body()) > 200) {
                         $cType = $resp->header('Content-Type');
                         if ($cType && str_starts_with($cType, 'image/')) {
                             return [

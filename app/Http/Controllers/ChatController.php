@@ -109,7 +109,7 @@ class ChatController extends Controller
         $message = $this->chatService->sendMessage($user, $request->only('message'));
 
         if ($request->ajax()) {
-            return response()->json(['success' => true, 'message' => $message->load('sender')]);
+            return response()->json(['success' => true, 'message' => $message->load('sender:id,name,role')]);
         }
 
         return redirect()->route('chat.show', $user->id);

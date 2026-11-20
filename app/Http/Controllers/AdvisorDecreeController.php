@@ -24,7 +24,11 @@ class AdvisorDecreeController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'], true)) {
+            abort(403, 'Akses terbatas untuk Administrator, Kaprodi, dan Dosen.');
+        }
+
+        $isStaff = in_array($user->role, ['admin', 'kaprodi'], true);
 
         $query = AdvisorDecree::with(['creator', 'dosen', 'wave']);
 
@@ -454,10 +458,13 @@ class AdvisorDecreeController extends Controller
             abort(403);
         }
 
-        if ($user->role === 'dosen') {
+        $isStaff = in_array($user->role, ['admin', 'kaprodi'], true);
+        if (!$isStaff) {
             $request->merge([
                 'target_type' => 'individual_dosen',
                 'dosen_id' => $user->id,
+                'custom_decree_number' => null,
+                'manual_theses' => [],
             ]);
         }
 
@@ -466,12 +473,12 @@ class AdvisorDecreeController extends Controller
         }
 
         $selectedThesesIds = $request->input('selected_theses', []);
-        $manualTheses = $request->input('manual_theses', []);
+        $manualTheses = $isStaff ? $request->input('manual_theses', []) : [];
 
         if (empty($selectedThesesIds) && empty($manualTheses)) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['selected_theses' => 'Pilih minimal satu mahasiswa dari daftar atau tambahkan mahasiswa secara manual.']);
+                ->withErrors(['selected_theses' => 'Pilih minimal satu mahasiswa dari daftar' . ($isStaff ? ' atau tambahkan mahasiswa secara manual.' : '.')]);
         }
 
         $request->validate([
@@ -501,8 +508,8 @@ class AdvisorDecreeController extends Controller
 
         // Generate decree number atomically via LetterSetting
         $decreeDate = Carbon::parse($request->decree_date);
-        $decreeNumber = DB::transaction(function () use ($decreeDate, $request) {
-            if ($request->filled('custom_decree_number')) {
+        $decreeNumber = DB::transaction(function () use ($decreeDate, $request, $isStaff) {
+            if ($isStaff && $request->filled('custom_decree_number')) {
                 return trim($request->custom_decree_number);
             }
 
@@ -540,9 +547,22 @@ class AdvisorDecreeController extends Controller
         $lecturersToNotify = collect();
 
         if (!empty($selectedThesesIds)) {
-            $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
-                ->whereIn('id', $selectedThesesIds)
-                ->get();
+            $uniqueSelectedIds = array_values(array_unique(array_map('intval', $selectedThesesIds)));
+            $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+                ->whereIn('id', $uniqueSelectedIds);
+
+            if (!$isStaff) {
+                $thesesQuery->where(function ($q) use ($user) {
+                    $q->where('pembimbing1_id', $user->id)
+                      ->orWhere('pembimbing2_id', $user->id);
+                });
+            }
+
+            $theses = $thesesQuery->get();
+
+            if (!$isStaff && $theses->count() !== count($uniqueSelectedIds)) {
+                abort(403, 'Anda hanya dapat mencantumkan mahasiswa bimbingan Anda sendiri.');
+            }
 
             foreach ($theses as $thesis) {
                 $thesesData[] = [
@@ -596,10 +616,23 @@ class AdvisorDecreeController extends Controller
         // Unique verification token
         $verificationToken = Str::random(32) . time();
 
-        // Signer user
-        $signerUser = User::where('name', $request->signatory_name)->first()
-            ?? User::where('role', 'kaprodi')->first()
-            ?? $user;
+        // Signer user & signatory metadata (non-staff cannot forge signatory identity or stamp)
+        if ($isStaff) {
+            $signatoryTitle = $request->signatory_title;
+            $signatoryName = $request->signatory_name;
+            $signatoryIdentifier = $request->signatory_identifier;
+            $includeStamp = $request->boolean('include_stamp', true);
+            $signerUser = User::where('name', $signatoryName)->first()
+                ?? User::where('role', 'kaprodi')->first()
+                ?? $user;
+        } else {
+            $viceDean = User::where('name', 'LIKE', '%Bambang Tjahjo Utomo%')->first();
+            $signatoryTitle = 'Wakil Dekan Fakultas Ilmu Komputer Universitas Subang';
+            $signatoryName = $viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT';
+            $signatoryIdentifier = $viceDean ? $viceDean->identifier : '0413056812';
+            $includeStamp = true;
+            $signerUser = $viceDean ?? User::where('role', 'kaprodi')->first();
+        }
 
         $decree = AdvisorDecree::create([
             'decree_number' => $decreeNumber,
@@ -610,11 +643,11 @@ class AdvisorDecreeController extends Controller
             'dosen_id' => $request->target_type === 'individual_dosen' ? $request->dosen_id : null,
             'wave_id' => $request->wave_id ?: null,
             'decree_date' => $decreeDate,
-            'signatory_title' => $request->signatory_title,
-            'signatory_name' => $request->signatory_name,
-            'signatory_identifier' => $request->signatory_identifier,
+            'signatory_title' => $signatoryTitle,
+            'signatory_name' => $signatoryName,
+            'signatory_identifier' => $signatoryIdentifier,
             'signer_user_id' => $signerUser ? $signerUser->id : null,
-            'include_stamp' => $request->boolean('include_stamp', true),
+            'include_stamp' => $includeStamp,
             'theses_data' => $thesesData,
             'total_students' => count($thesesData),
             'verification_token' => $verificationToken,
@@ -650,7 +683,11 @@ class AdvisorDecreeController extends Controller
     public function show(AdvisorDecree $advisorDecree)
     {
         $user = Auth::user();
-        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'], true)) {
+            abort(403, 'Akses terbatas untuk Administrator, Kaprodi, dan Dosen.');
+        }
+
+        $isStaff = in_array($user->role, ['admin', 'kaprodi'], true);
 
         if (!$isStaff && $user->role === 'dosen') {
             if (!$this->isDosenAuthorizedForDecree($advisorDecree, $user)) {
@@ -810,7 +847,25 @@ class AdvisorDecreeController extends Controller
             'selected_theses.min' => 'Pilih minimal satu mahasiswa bimbingan.',
         ]);
 
-        if ($request->filled('custom_decree_number')) {
+        // Enforce strict thesis ownership for non-staff lecturers BEFORE consuming letter sequence numbers
+        $uniqueSelectedIds = array_values(array_unique(array_map('intval', $request->selected_theses)));
+        $thesesQuery = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
+            ->whereIn('id', $uniqueSelectedIds);
+
+        if (!$isStaff) {
+            $thesesQuery->where(function ($q) use ($targetDosen) {
+                $q->where('pembimbing1_id', $targetDosen->id)
+                  ->orWhere('pembimbing2_id', $targetDosen->id);
+            });
+        }
+
+        $theses = $thesesQuery->get();
+
+        if (!$isStaff && $theses->count() !== count($uniqueSelectedIds)) {
+            abort(403, 'Anda hanya dapat menerbitkan Surat Tugas untuk mahasiswa bimbingan Anda sendiri.');
+        }
+
+        if ($isStaff && $request->filled('custom_decree_number')) {
             $decreeNumber = trim($request->custom_decree_number);
         } else {
             $decreeNumber = DB::transaction(function () use ($request) {
@@ -838,11 +893,6 @@ class AdvisorDecreeController extends Controller
                 );
             });
         }
-
-        // Collect student records sorted: Pembimbing I first, then Pembimbing II
-        $theses = Thesis::with(['student', 'pembimbing1', 'pembimbing2'])
-            ->whereIn('id', $request->selected_theses)
-            ->get();
 
         $p1Data = [];
         $p2Data = [];
@@ -876,6 +926,10 @@ class AdvisorDecreeController extends Controller
         $verificationToken = Str::random(32) . time();
         $viceDean = User::where('name', 'LIKE', '%Bambang Tjahjo Utomo%')->first();
 
+        $defaultSignatoryTitle = 'Wakil Dekan Fakultas Ilmu Komputer Universitas Subang';
+        $defaultSignatoryName = $viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT';
+        $defaultSignatoryIdentifier = $viceDean ? $viceDean->identifier : '0413056812';
+
         $decree = AdvisorDecree::create([
             'decree_number' => $decreeNumber,
             'title' => 'Surat Tugas Pembimbingan Skripsi Mahasiswa',
@@ -885,11 +939,11 @@ class AdvisorDecreeController extends Controller
             'dosen_id' => $targetDosen->id,
             'wave_id' => null,
             'decree_date' => $request->decree_date,
-            'signatory_title' => $request->signatory_title ?? 'Wakil Dekan Fakultas Ilmu Komputer Universitas Subang',
-            'signatory_name' => $request->signatory_name ?? ($viceDean ? $viceDean->name : 'BAMBANG TJAHJO UTOMO, MT'),
-            'signatory_identifier' => $request->signatory_identifier ?? ($viceDean ? $viceDean->identifier : '0413056812'),
+            'signatory_title' => $isStaff ? ($request->signatory_title ?? $defaultSignatoryTitle) : $defaultSignatoryTitle,
+            'signatory_name' => $isStaff ? ($request->signatory_name ?? $defaultSignatoryName) : $defaultSignatoryName,
+            'signatory_identifier' => $isStaff ? ($request->signatory_identifier ?? $defaultSignatoryIdentifier) : $defaultSignatoryIdentifier,
             'signer_user_id' => $viceDean ? $viceDean->id : null,
-            'include_stamp' => $request->boolean('include_stamp', true),
+            'include_stamp' => $isStaff ? $request->boolean('include_stamp', true) : true,
             'theses_data' => $thesesData,
             'total_students' => count($thesesData),
             'verification_token' => $verificationToken,
@@ -918,7 +972,11 @@ class AdvisorDecreeController extends Controller
     public function pdf(Request $request, AdvisorDecree $advisorDecree)
     {
         $user = Auth::user();
-        $isStaff = in_array($user->role, ['admin', 'kaprodi']);
+        if (!in_array($user->role, ['admin', 'kaprodi', 'dosen'], true)) {
+            abort(403, 'Akses terbatas untuk Administrator, Kaprodi, dan Dosen.');
+        }
+
+        $isStaff = in_array($user->role, ['admin', 'kaprodi'], true);
 
         if (!$isStaff && $user->role === 'dosen') {
             if (!$this->isDosenAuthorizedForDecree($advisorDecree, $user)) {

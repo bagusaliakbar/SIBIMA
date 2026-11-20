@@ -822,6 +822,14 @@
                     msg = msg.replace(/\{hari_berlalu\}/g, '3 hari yang lalu');
                     msg = msg.replace(/\{link_revisi\}/g, this.examType === 'defense' ? '{{ route('student-defense-revisions.index') }}' : '{{ route('student-seminar-revisions.index') }}');
 
+                    // Escape HTML before converting WhatsApp bold/italic markers (prevents Stored DOM XSS)
+                    msg = String(msg)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+
                     // Format bold and italic for preview
                     msg = msg.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
                     msg = msg.replace(/_([^_]+)_/g, '<em>$1</em>');

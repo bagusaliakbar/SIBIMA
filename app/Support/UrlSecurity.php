@@ -2,11 +2,14 @@
 
 namespace App\Support;
 
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
+
 class UrlSecurity
 {
     /**
      * Validate that an external URL uses HTTP/HTTPS and does not resolve to
-     * loopback, private, link-local, or reserved IP ranges (SSRF protection).
+     * loopback, private, link-local, or reserved IPv4/IPv6 ranges (SSRF protection).
      */
     public static function isSafeExternalUrl(?string $url): bool
     {
@@ -45,20 +48,88 @@ class UrlSecurity
             return self::isPublicIp($host);
         }
 
-        // Resolve DNS records for the hostname
-        $ips = @gethostbynamel($host);
-        if (!is_array($ips) || empty($ips)) {
-            // If DNS cannot resolve on the server, reject server-side fetch
+        // Resolve BOTH IPv4 (A) and IPv6 (AAAA) DNS records to prevent IPv6 SSRF bypass
+        $ips = [];
+        $records = @dns_get_record($host, DNS_A | DNS_AAAA);
+        if (is_array($records)) {
+            foreach ($records as $rec) {
+                if (!empty($rec['ip'])) {
+                    $ips[] = $rec['ip'];
+                }
+                if (!empty($rec['ipv6'])) {
+                    $ips[] = $rec['ipv6'];
+                }
+            }
+        }
+
+        // Fallback to IPv4 lookup if dns_get_record is restricted
+        if (empty($ips)) {
+            $fallbackIps = @gethostbynamel($host);
+            if (is_array($fallbackIps)) {
+                $ips = $fallbackIps;
+            }
+        }
+
+        if (empty($ips)) {
             return false;
         }
 
-        foreach ($ips as $ip) {
+        foreach (array_unique($ips) as $ip) {
             if (!self::isPublicIp($ip)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Perform an SSRF-safe HTTP GET request that validates EVERY redirect hop
+     * against isSafeExternalUrl() and enforces TLS verification in production.
+     */
+    public static function safeHttpGet(string $url, array $headers = [], int $timeout = 10, int $maxRedirects = 3): ?Response
+    {
+        $currentUrl = $url;
+        $verifyTls = !app()->environment('local');
+
+        for ($hop = 0; $hop <= $maxRedirects; $hop++) {
+            if (!self::isSafeExternalUrl($currentUrl)) {
+                return null;
+            }
+
+            $client = Http::withHeaders($headers)
+                ->withOptions([
+                    'allow_redirects' => false,
+                    'verify' => $verifyTls,
+                ])
+                ->timeout($timeout);
+
+            $response = $client->get($currentUrl);
+            $status = $response->status();
+
+            if (in_array($status, [301, 302, 303, 307, 308], true)) {
+                $location = $response->header('Location');
+                if (empty($location)) {
+                    return $response;
+                }
+
+                // Resolve relative redirect URLs against current URL
+                if (!preg_match('#^https?://#i', $location)) {
+                    $parsed = parse_url($currentUrl);
+                    $origin = ($parsed['scheme'] ?? 'https') . '://' . ($parsed['host'] ?? '') . (isset($parsed['port']) ? ':' . $parsed['port'] : '');
+                    $location = str_starts_with($location, '/')
+                        ? $origin . $location
+                        : $origin . '/' . ltrim($location, '/');
+                }
+
+                $currentUrl = $location;
+                continue;
+            }
+
+            return $response;
+        }
+
+        return null;
     }
 
     /**
@@ -116,4 +187,3 @@ class UrlSecurity
         ) !== false;
     }
 }
-

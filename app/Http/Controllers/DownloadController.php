@@ -218,15 +218,19 @@ class DownloadController extends Controller
             }
         }
 
-        // 7. Templates
+        // 7. Templates (require matching database record)
         if (str_starts_with($path, 'seminar_templates/')) {
             $template = \App\Models\SeminarTemplate::where('file_path', $path)->first();
-            return $this->deliverFile($path, $template ? $template->original_name : null, $inline);
+            if ($template) {
+                return $this->deliverFile($path, $template->original_name, $inline);
+            }
         }
 
         if (str_starts_with($path, 'thesis_defense_templates/')) {
             $template = \App\Models\ThesisDefenseTemplate::where('file_path', $path)->first();
-            return $this->deliverFile($path, $template ? $template->original_name : null, $inline);
+            if ($template) {
+                return $this->deliverFile($path, $template->original_name, $inline);
+            }
         }
 
         // 8. Fallback for admin if path didn't match any standard prefixes but they are authorized
@@ -243,16 +247,33 @@ class DownloadController extends Controller
     protected function deliverFile(string $path, ?string $downloadName = null, bool $inline = false)
     {
         $disk = Storage::disk(config('filesystems.default'));
+        $safeDownloadName = $downloadName
+            ? trim(preg_replace('/["\\\\\r\n]+/', '_', $downloadName))
+            : null;
+
         if ($inline) {
             $fullPath = $disk->path($path);
             if (file_exists($fullPath)) {
-                $headers = [
-                    'Content-Disposition' => 'inline' . ($downloadName ? '; filename="' . $downloadName . '"' : ''),
+                $mime = mime_content_type($fullPath) ?: 'application/octet-stream';
+                $safeInlineMimes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp',
                 ];
-                return response()->file($fullPath, $headers);
+
+                if (in_array(strtolower($mime), $safeInlineMimes, true)) {
+                    $headers = [
+                        'Content-Type' => $mime,
+                        'X-Content-Type-Options' => 'nosniff',
+                        'Content-Disposition' => 'inline' . ($safeDownloadName ? '; filename="' . $safeDownloadName . '"' : ''),
+                    ];
+                    return response()->file($fullPath, $headers);
+                }
             }
         }
 
-        return $downloadName ? $disk->download($path, $downloadName) : $disk->download($path);
+        return $safeDownloadName ? $disk->download($path, $safeDownloadName) : $disk->download($path);
     }
 }

@@ -139,6 +139,10 @@ class DashboardController extends Controller
 
     public function onlineUsers()
     {
+        if (!in_array(Auth::user()?->role, ['admin', 'kaprodi'], true)) {
+            abort(403, 'Akses terbatas untuk Administrator dan Kaprodi.');
+        }
+
         $data = \Illuminate\Support\Facades\Cache::remember('dashboard_online_users_json', 15, function () {
             $allUsers = \App\Models\User::select('id', 'name', 'role', 'identifier')->get();
             $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values()->map(function($u) {

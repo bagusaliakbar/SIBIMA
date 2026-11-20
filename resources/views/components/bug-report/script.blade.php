@@ -340,6 +340,13 @@ window.fetchMyReportsDirect = async function() {
         if (data.success && data.reports && data.reports.length > 0) {
             if (emptyState) emptyState.style.display = 'none';
             if (listContainer) {
+                const escapeBugHtml = (str) => String(str ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+
                 listContainer.innerHTML = data.reports.map(item => {
                     const isFeature = item.is_feature_request || (item.ticket_number && item.ticket_number.startsWith('REQ-'));
                     const typeBadge = isFeature
@@ -347,27 +354,34 @@ window.fetchMyReportsDirect = async function() {
                         : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">BUG SISTEM</span>`;
                     const ticketColor = isFeature ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400';
 
+                    const safeTicket = escapeBugHtml(item.ticket_number);
+                    const safeCreated = escapeBugHtml(item.created_at_human);
+                    const safeTitle = escapeBugHtml(item.title);
+                    const safeStatus = escapeBugHtml(item.status_label);
+                    const safeDesc = escapeBugHtml(item.description);
+                    const safeAdminNotes = escapeBugHtml(item.admin_notes);
+
                     return `
                     <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-800/60 shadow-2xs space-y-3">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-[11px] font-mono font-bold ${ticketColor}">${item.ticket_number}</span>
+                                    <span class="text-[11px] font-mono font-bold ${ticketColor}">${safeTicket}</span>
                                     ${typeBadge}
                                     <span class="text-slate-300 dark:text-slate-700">&bull;</span>
-                                    <span class="text-[10px] text-slate-400">${item.created_at_human}</span>
+                                    <span class="text-[10px] text-slate-400">${safeCreated}</span>
                                 </div>
-                                <h4 class="text-sm font-bold text-slate-900 dark:text-white">${item.title}</h4>
+                                <h4 class="text-sm font-bold text-slate-900 dark:text-white">${safeTitle}</h4>
                             </div>
                             <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                                ${item.status_label}
+                                ${safeStatus}
                             </span>
                         </div>
-                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${item.description}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${safeDesc}</p>
                         ${item.admin_notes ? `
                             <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border-l-4 border-emerald-500 text-xs text-slate-700 dark:text-slate-300 space-y-1">
                                 <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">Tanggapan Tim SIBIMA:</div>
-                                <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">${item.admin_notes}</p>
+                                <p class="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">${safeAdminNotes}</p>
                             </div>
                         ` : ''}
                     </div>

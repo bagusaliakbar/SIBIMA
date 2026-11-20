@@ -7,10 +7,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/verify-signature/{token}', [App\Http\Controllers\SignatureController::class, 'verify'])->name('signature.verify');
-Route::get('/verify/document/{token}', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('document.verify');
-Route::get('/verify/skl/{token}', [App\Http\Controllers\GraduationController::class, 'verifySkl'])->name('skl.verify');
-Route::get('/verify/sk-pembimbing/{token}', [App\Http\Controllers\AdvisorDecreeController::class, 'verify'])->name('sk-pembimbing.verify');
+Route::middleware('throttle:30,1')->group(function () {
+    Route::get('/verify-signature/{token}', [App\Http\Controllers\SignatureController::class, 'verify'])->name('signature.verify');
+    Route::get('/verify/document/{token}', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('document.verify');
+    Route::get('/verify/skl/{token}', [App\Http\Controllers\GraduationController::class, 'verifySkl'])->name('skl.verify');
+    Route::get('/verify/sk-pembimbing/{token}', [App\Http\Controllers\AdvisorDecreeController::class, 'verify'])->name('sk-pembimbing.verify');
+});
 Route::get('/faq', [App\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
@@ -375,15 +377,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/advisor-decrees/{advisorDecree}', [App\Http\Controllers\AdvisorDecreeController::class, 'destroy'])->name('advisor-decrees.destroy');
 });
 
-// Clear Cache & Migrate Endpoint (Restricted to Admin or valid DEPLOY_SECRET_KEY)
-Route::get('/clear-cache', function (\Illuminate\Http\Request $request) {
+// Clear Cache & Migrate Endpoint (Restricted to Admin direct navigation or valid DEPLOY_SECRET_KEY via X-Deploy-Key header / query)
+Route::match(['get', 'post'], '/clear-cache', function (\Illuminate\Http\Request $request) {
     $isAdmin = auth()->check() && auth()->user()->role === 'admin';
     $deployKey = (string) config('app.deploy_secret_key', '');
-    $providedKey = (string) $request->query('key', '');
+    $providedKey = (string) ($request->header('X-Deploy-Key') ?: $request->query('key', ''));
     $hasValidKey = $deployKey !== '' && $providedKey !== '' && hash_equals($deployKey, $providedKey);
 
     if (!$isAdmin && !$hasValidKey) {
         abort(403, 'Unauthorized access to cache clear');
+    }
+
+    // Block cross-site GET-CSRF subresource triggers (e.g., <img>/<iframe>) when relying on browser Admin cookie
+    if (!$hasValidKey && $request->isMethod('get')) {
+        $secFetchSite = strtolower((string) $request->header('Sec-Fetch-Site', ''));
+        $secFetchMode = strtolower((string) $request->header('Sec-Fetch-Mode', ''));
+        if ($secFetchSite === 'cross-site' || ($secFetchMode !== '' && !in_array($secFetchMode, ['navigate', 'same-origin'], true))) {
+            abort(403, 'Cross-site cache clear request blocked.');
+        }
     }
 
     try {

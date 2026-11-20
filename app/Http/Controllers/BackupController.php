@@ -60,9 +60,11 @@ class BackupController extends Controller implements HasMiddleware
                 "Cadangan database berhasil dibuat! ({$result['filename']} - {$result['size_formatted']}, {$result['tables_count']} tabel)"
             );
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Create backup failed: ' . $e->getMessage());
+
             return redirect()->route('admin.backups.index')->with(
                 'error',
-                'Gagal membuat cadangan database: ' . $e->getMessage()
+                'Gagal membuat cadangan database. Silakan periksa log sistem.'
             );
         }
     }
@@ -97,6 +99,10 @@ class BackupController extends Controller implements HasMiddleware
      */
     public function restore(string $filename)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Restorasi database hanya diperbolehkan untuk Administrator.');
+        }
+
         $safeFilename = basename($filename);
 
         try {
@@ -106,11 +112,15 @@ class BackupController extends Controller implements HasMiddleware
                 'success',
                 "Restorasi database berhasil! {$result['executed_queries']} kueri SQL berhasil dieksekusi dari file {$safeFilename}."
             );
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('admin.backups.index')->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return redirect()->route('admin.backups.index')->with(
-                'error',
-                'Gagal melakukan restorasi database: ' . $e->getMessage()
-            );
+            \Illuminate\Support\Facades\Log::error('Database restore failed: ' . $e->getMessage());
+            $safeMsg = str_contains($e->getMessage(), 'dilarang oleh kebijakan keamanan')
+                ? $e->getMessage()
+                : 'Gagal melakukan restorasi database. Silakan periksa log sistem.';
+
+            return redirect()->route('admin.backups.index')->with('error', $safeMsg);
         }
     }
 
@@ -119,6 +129,10 @@ class BackupController extends Controller implements HasMiddleware
      */
     public function uploadAndRestore(Request $request)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unggah dan restorasi database hanya diperbolehkan untuk Administrator.');
+        }
+
         $request->validate([
             'backup_file' => 'required|file|max:102400',
         ], [
@@ -143,11 +157,15 @@ class BackupController extends Controller implements HasMiddleware
                 'success',
                 "File backup berhasil diunggah dan database telah berhasil dipulihkan! ({$result['executed_queries']} kueri dieksekusi)"
             );
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('admin.backups.index')->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return redirect()->route('admin.backups.index')->with(
-                'error',
-                'Gagal memulihkan database dari file unggahan: ' . $e->getMessage()
-            );
+            \Illuminate\Support\Facades\Log::error('Upload restore failed: ' . $e->getMessage());
+            $safeMsg = str_contains($e->getMessage(), 'dilarang oleh kebijakan keamanan')
+                ? $e->getMessage()
+                : 'Gagal memulihkan database dari file unggahan. Silakan periksa log sistem.';
+
+            return redirect()->route('admin.backups.index')->with('error', $safeMsg);
         }
     }
 
@@ -156,6 +174,10 @@ class BackupController extends Controller implements HasMiddleware
      */
     public function destroy(string $filename)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Penghapusan berkas cadangan hanya diperbolehkan untuk Administrator.');
+        }
+
         $safeFilename = basename($filename);
 
         try {
@@ -166,9 +188,11 @@ class BackupController extends Controller implements HasMiddleware
                 "File backup {$safeFilename} berhasil dihapus."
             );
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Delete backup failed: ' . $e->getMessage());
+
             return redirect()->route('admin.backups.index')->with(
                 'error',
-                'Gagal menghapus file backup: ' . $e->getMessage()
+                'Gagal menghapus file backup. Silakan periksa log sistem.'
             );
         }
     }

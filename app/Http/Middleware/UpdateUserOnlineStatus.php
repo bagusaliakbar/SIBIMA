@@ -38,6 +38,7 @@ class UpdateUserOnlineStatus
 
             // Passive background polling must NOT extend idle session or online presence
             $isPassiveRequest = $request->header('X-SIBIMA-Passive') === '1'
+                || $request->routeIs('dashboard.online-users')
                 || ($request->routeIs('notifications.index') && ($request->expectsJson() || $request->ajax()));
 
             $idleTimeoutMinutes = max(1, (int) config('session.idle_timeout', 60));

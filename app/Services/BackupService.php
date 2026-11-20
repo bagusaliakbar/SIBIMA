@@ -510,11 +510,13 @@ class BackupService
             '/\bLOAD\s+DATA\b/i',
             '/\b(GRANT|REVOKE)\s+/i',
             '/\b(CREATE|ALTER|DROP|RENAME)\s+USER\b/i',
-            '/\bCREATE\s+(AGGREGATE\s+)?FUNCTION\b/i',
-            '/\bINSTALL\s+PLUGIN\b/i',
-            '/\bSET\s+GLOBAL\b/i',
+            '/\bCREATE\s+(DEFINER\s*=\s*\S+\s+)?(AGGREGATE\s+)?(FUNCTION|PROCEDURE|TRIGGER|EVENT)\b/i',
+            '/\b(PREPARE|EXECUTE|DEALLOCATE)\s+/i',
+            '/\bINSTALL\s+(PLUGIN|COMPONENT)\b/i',
+            '/\bSET\s+(GLOBAL|PERSIST)\b/i',
             '/\bATTACH\s+DATABASE\b/i',
             '/\bPRAGMA\s+writable_schema\b/i',
+            '/\/\*!/',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {

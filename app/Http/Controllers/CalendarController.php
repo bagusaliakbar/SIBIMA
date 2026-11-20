@@ -19,11 +19,13 @@ class CalendarController extends Controller
 
     public function events(Request $request)
     {
-        $start = $request->query('start');
-        $end = $request->query('end');
+        $validated = $request->validate([
+            'start' => 'nullable|date',
+            'end' => 'nullable|date',
+        ]);
 
-        $startDate = Carbon::parse($start)->toDateString();
-        $endDate = Carbon::parse($end)->toDateString();
+        $startDate = !empty($validated['start']) ? Carbon::parse($validated['start'])->toDateString() : now()->startOfMonth()->toDateString();
+        $endDate = !empty($validated['end']) ? Carbon::parse($validated['end'])->toDateString() : now()->endOfMonth()->toDateString();
 
         $events = [];
 
@@ -111,8 +113,8 @@ class CalendarController extends Controller
         $mentoringSessions = MentoringSession::forUser($user)
             ->with(['thesis.student', 'dosen'])
             ->whereBetween('scheduled_at', [
-                Carbon::parse($start)->startOfDay(),
-                Carbon::parse($end)->endOfDay()
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay()
             ])
             ->get();
 

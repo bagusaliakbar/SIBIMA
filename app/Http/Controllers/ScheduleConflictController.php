@@ -16,6 +16,10 @@ class ScheduleConflictController extends Controller
 
     public function checkDosenAvailability(Request $request)
     {
+        if (!in_array(\Illuminate\Support\Facades\Auth::user()?->role, ['admin', 'kaprodi', 'dosen'], true)) {
+            abort(403, 'Akses terbatas untuk Administrator, Kaprodi, dan Dosen.');
+        }
+
         $request->validate([
             'dosen_ids' => 'required|array',
             'dosen_ids.*' => 'exists:users,id',

@@ -718,13 +718,13 @@ class ThesisRepositoryController extends Controller
                 ]);
             }
 
-            // Proxy-stream and cache through SIBIMA backend to prevent browser CORS block
+            // Proxy-stream and cache through SIBIMA backend with SSRF-safe redirect hop validation
             try {
-                $remoteRes = Http::withHeaders([
+                $remoteRes = \App\Support\UrlSecurity::safeHttpGet($filePath, [
                     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                ])->withOptions(['allow_redirects' => ['max' => 3]])->timeout(25)->withoutVerifying()->get($filePath);
+                ], 25, 3);
 
-                if ($remoteRes->successful()) {
+                if ($remoteRes && $remoteRes->successful()) {
                     $body = $remoteRes->body();
                     if (str_starts_with($body, '%PDF')) {
                         Storage::disk('public')->put($cachedRelPath, $body);

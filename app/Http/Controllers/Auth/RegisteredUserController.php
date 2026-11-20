@@ -44,7 +44,13 @@ class RegisteredUserController extends Controller
             $rules['entry_year'] = ['required', 'integer', 'min:2000', 'max:' . (date('Y') + 1)];
         }
 
-        $validated = $request->validate($rules);
+        if (config('services.turnstile.secret_key') && ! app()->environment('testing')) {
+            $rules['cf-turnstile-response'] = ['required', new \App\Rules\Turnstile];
+        }
+
+        $validated = $request->validate($rules, [
+            'cf-turnstile-response.required' => 'Mohon selesaikan verifikasi keamanan Cloudflare Turnstile.',
+        ]);
 
         $username = !empty($validated['username']) ? $validated['username'] : $validated['identifier'];
 

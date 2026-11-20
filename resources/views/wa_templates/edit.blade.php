@@ -206,6 +206,14 @@
                         text = text.replaceAll('{' + key + '}', val);
                     }
 
+                    // Escape HTML before converting WhatsApp bold markers (prevents DOM XSS)
+                    text = String(text)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+
                     // Format WA bold *text* to <strong>text</strong>
                     text = text.replace(/\*(.*?)\*/g, '<strong class="font-bold text-white">$1</strong>');
 
