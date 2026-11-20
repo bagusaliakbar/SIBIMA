@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
       x-data="{ 
           darkMode: localStorage.getItem('darkMode') === 'true', 
@@ -48,6 +49,10 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 overflow-hidden selection:bg-orange-100 selection:text-orange-900 transition-colors duration-300">
+        <a href="#main-content"
+           class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[90] focus:px-4 focus:py-2.5 focus:rounded-xl focus:bg-orange-600 focus:text-white focus:text-xs focus:font-bold focus:shadow-lg">
+            Lewati ke Konten Utama
+        </a>
         @php
             $isBugReportEnabled = \App\Models\Setting::isBugReportEnabled();
         @endphp
@@ -59,7 +64,7 @@
                 @include('layouts.partials.topbar')
 
                 <!-- Page Content (Mobile Optimized Padding & Safe Area) -->
-                <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-24 sm:pb-6 flex flex-col">
+                <main id="main-content" tabindex="-1" class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8 z-10 w-full relative pb-24 sm:pb-6 flex flex-col focus:outline-none">
                     @isset($header)
                         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between shrink-0">
                             {{ $header }}

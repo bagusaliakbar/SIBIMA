@@ -33,10 +33,10 @@ class ContentSecurityPolicy
 
             $csp = [
                 "default-src 'self' https: data: blob:{$localDevOrigins}",
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com data: blob:{$localDevOrigins}",
-                "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data: blob:{$localDevOrigins}",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data: blob:{$localDevOrigins}",
+                "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data: blob:{$localDevOrigins}",
                 "img-src 'self' data: blob: https:{$localDevOrigins}",
-                "font-src 'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://cdnjs.cloudflare.com{$localDevOrigins}",
+                "font-src 'self' data: https://fonts.bunny.net https://cdnjs.cloudflare.com{$localDevOrigins}",
                 "connect-src 'self' https: wss: ws:{$localDevOrigins}",
                 "frame-src 'self' https://challenges.cloudflare.com https://drive.google.com https://docs.google.com blob: data:",
                 "frame-ancestors 'self'",

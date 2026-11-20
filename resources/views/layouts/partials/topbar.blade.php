@@ -9,7 +9,7 @@
                         </button>
                         <div class="flex items-center gap-1.5 sm:gap-2">
                             <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-7 h-7 sm:w-8 sm:h-8 object-contain">
-                            <h1 class="text-base sm:text-lg font-black text-slate-800 dark:text-white tracking-tighter">SIBIMA</h1>
+                            <span class="text-base sm:text-lg font-black text-slate-800 dark:text-white tracking-tighter">SIBIMA</span>
                         </div>
                     </div>
 
@@ -20,13 +20,13 @@
                                 :aria-expanded="!sidebarCollapsed"
                                 :aria-label="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'"
                                 class="h-10 px-3.5 rounded-xl flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-slate-700/60 transition-all border border-slate-200/80 dark:border-slate-700/60 shadow-xs cursor-pointer group"
-                                :title="sidebarCollapsed ? 'Perluas Sidebar (Expanded)' : 'Kecilkan Sidebar (Collapsed)'">
+                                :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'">
                             <div class="w-5 h-5 flex items-center justify-center transition-colors">
                                 <svg aria-hidden="true" class="w-5 h-5 transition-transform duration-300" :class="{ 'rotate-180': sidebarCollapsed }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h14" />
                                 </svg>
                             </div>
-                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" x-text="sidebarCollapsed ? 'Buka Menu' : 'Minimize'"></span>
+                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" x-text="sidebarCollapsed ? 'Buka Menu' : 'Kecilkan'"></span>
                         </button>
                     </div>
 

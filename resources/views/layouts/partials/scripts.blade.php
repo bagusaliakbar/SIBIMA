@@ -123,5 +123,72 @@
                     overrideValidationMessages();
                 });
                 observer.observe(document.body, { childList: true, subtree: true });
+
+                // Global Non-Intrusive Form Double-Submit & Loading Feedback Guard
+                const unlockForm = (form) => {
+                    if (!form) return;
+                    delete form.dataset.sibimaSubmitting;
+                    form.querySelectorAll('[data-sibima-locked="1"]').forEach((btn) => {
+                        btn.disabled = false;
+                        btn.removeAttribute('aria-busy');
+                        btn.classList.remove('opacity-75', 'cursor-wait');
+                        if (btn.dataset.sibimaOriginalHtml !== undefined) {
+                            btn.innerHTML = btn.dataset.sibimaOriginalHtml;
+                            delete btn.dataset.sibimaOriginalHtml;
+                        }
+                        delete btn.dataset.sibimaLocked;
+                    });
+                };
+
+                document.addEventListener('submit', function(e) {
+                    const form = e.target;
+                    if (!form || !(form instanceof HTMLFormElement)) return;
+                    if (e.defaultPrevented) return;
+
+                    const method = (form.getAttribute('method') || 'GET').toUpperCase();
+                    if (method === 'GET') return;
+                    if (form.target === '_blank' || form.hasAttribute('data-no-loading')) return;
+
+                    if (form.dataset.sibimaSubmitting === '1') {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    form.dataset.sibimaSubmitting = '1';
+                    const submitter = e.submitter || form.querySelector('button[type="submit"], button:not([type]), input[type="submit"]');
+
+                    // Defer disabling to next tick so browser FormData still includes submitter name/value
+                    window.setTimeout(() => {
+                        if (submitter && !submitter.disabled && !submitter.hasAttribute('data-no-loading')) {
+                            submitter.dataset.sibimaLocked = '1';
+                            submitter.disabled = true;
+                            submitter.setAttribute('aria-busy', 'true');
+                            submitter.classList.add('opacity-75', 'cursor-wait');
+
+                            const isIconOnly = submitter.tagName === 'BUTTON' && submitter.textContent.trim() === '';
+                            if (submitter.tagName === 'BUTTON' && !isIconOnly) {
+                                submitter.dataset.sibimaOriginalHtml = submitter.innerHTML;
+                                const label = submitter.dataset.loadingText || 'Memproses...';
+                                const spinner = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                                spinner.setAttribute('class', 'w-4 h-4 animate-spin shrink-0 inline-block mr-1.5');
+                                spinner.setAttribute('fill', 'none');
+                                spinner.setAttribute('viewBox', '0 0 24 24');
+                                spinner.setAttribute('aria-hidden', 'true');
+                                spinner.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>';
+                                const textSpan = document.createElement('span');
+                                textSpan.textContent = label;
+                                submitter.replaceChildren(spinner, textSpan);
+                            }
+                        }
+                    }, 0);
+
+                    // Safety fallback unlock for download responses that keep the page open
+                    window.setTimeout(() => unlockForm(form), 12000);
+                });
+
+                // Restore locked forms when returning via browser back-forward cache (bfcache)
+                window.addEventListener('pageshow', function() {
+                    document.querySelectorAll('form[data-sibima-submitting="1"]').forEach(unlockForm);
+                });
             });
         </script>
