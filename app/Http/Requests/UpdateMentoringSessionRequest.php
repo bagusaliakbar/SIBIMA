@@ -36,6 +36,8 @@ class UpdateMentoringSessionRequest extends FormRequest
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'apply_to_group' => 'nullable|boolean',
+            'add_thesis_ids' => 'nullable|array',
+            'add_thesis_ids.*' => 'required|integer|exists:theses,id',
         ];
     }
 
@@ -46,6 +48,7 @@ class UpdateMentoringSessionRequest extends FormRequest
             'scheduled_at.after' => 'Waktu bimbingan baru harus di masa mendatang.',
             'topic.required' => 'Topik bimbingan wajib diisi.',
             'type.required' => 'Tipe bimbingan wajib dipilih.',
+            'add_thesis_ids.*.exists' => 'Salah satu mahasiswa tambahan yang dipilih tidak ditemukan.',
         ];
     }
 }

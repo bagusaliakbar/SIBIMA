@@ -11,6 +11,7 @@ use App\Notifications\MentoringScheduledByDosenNotification;
 use App\Notifications\MentoringRescheduledNotification;
 use App\Notifications\MentoringCancelledNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MentoringService
@@ -30,7 +31,9 @@ class MentoringService
     }
 
     /**
-     * Update / Reschedule an existing mentoring session (Single or Group).
+     * Update / Reschedule an existing mentoring session (Single or Group),
+     * optionally adding missed students atomically so notifications are only sent once
+     * with the final saved schedule.
      */
     public function updateSession(MentoringSession $session, array $data)
     {
@@ -44,89 +47,79 @@ class MentoringService
         $data['scheduled_at'] = $scheduledAt;
         $targetDosenId = $session->dosen_id ?? Auth::id();
         $applyToGroup = !empty($data['apply_to_group']);
+        $rawAddThesisIds = array_values(array_unique(array_filter(array_map('intval', $data['add_thesis_ids'] ?? []))));
+
+        $session->loadMissing('thesis.student');
 
         if ($applyToGroup) {
             // Find all peer sessions of this lecturer at the exact same original scheduled_at (not completed)
-            $groupSessions = MentoringSession::where('dosen_id', $targetDosenId)
+            $targetSessions = MentoringSession::where('dosen_id', $targetDosenId)
                 ->where('scheduled_at', $session->scheduled_at)
                 ->where('status', '!=', 'completed')
                 ->with('thesis.student')
                 ->get();
-            
-            if (!$groupSessions->contains('id', $session->id)) {
-                $groupSessions->push($session);
+
+            if (!$targetSessions->contains('id', $session->id)) {
+                $targetSessions->push($session);
             }
-
-            $groupSessionIds = $groupSessions->pluck('id')->toArray();
-
-            // 1. Check Dosen conflict (excluding all group sessions)
-            $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
-                ->whereNotIn('id', $groupSessionIds)
-                ->where('scheduled_at', $scheduledAt)
-                ->where('status', '!=', 'rejected')
-                ->first();
-
-            if ($existingDosenSession) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'scheduled_at' => 'Terdapat jadwal bimbingan lain pada tanggal dan jam tersebut untuk dosen pembimbing ini.',
-                ]);
-            }
-
-            // 2. Check Student conflict for each student in the group (excluding this group's sessions)
-            foreach ($groupSessions as $groupSession) {
-                $stThesis = $groupSession->thesis;
-                if ($stThesis) {
-                    $existingStudentSession = MentoringSession::whereHas('thesis', function($q) use ($stThesis) {
-                            $q->where('student_id', $stThesis->student_id);
-                        })
-                        ->whereNotIn('id', $groupSessionIds)
-                        ->where('scheduled_at', $scheduledAt)
-                        ->where('status', '!=', 'rejected')
-                        ->first();
-
-                    if ($existingStudentSession) {
-                        throw \Illuminate\Validation\ValidationException::withMessages([
-                            'scheduled_at' => "Mahasiswa {$stThesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
-                        ]);
-                    }
-                }
-            }
-
-            $timeChanged = $session->scheduled_at->format('Y-m-d H:i:00') !== $scheduledAt;
-            $oldDate = $session->scheduled_at->format('d/m/Y H:i');
-
-            // Update each session in the group
-            foreach ($groupSessions as $groupSession) {
-                $groupSession->update([
-                    'scheduled_at' => $scheduledAt,
-                    'topic'        => $data['topic'],
-                    'type'         => $data['type'],
-                    'location'     => $data['location'] ?? null,
-                    'notes'        => $data['notes'] ?? null,
-                    'student_attendance_status' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? 'pending' : $groupSession->student_attendance_status,
-                    'student_attendance_reason' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $groupSession->student_attendance_reason,
-                    'student_confirmed_at'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $groupSession->student_confirmed_at,
-                ]);
-
-                if ($groupSession->thesis?->student) {
-                    $groupSession->thesis->student->notify(new MentoringRescheduledNotification($groupSession));
-                }
-            }
-
-            ActivityLog::log(
-                'Reschedule Bimbingan Bersama', 
-                "{$user->name} memperbarui jadwal bimbingan bersama untuk {$groupSessions->count()} mahasiswa (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}", 
-                'Bimbingan', 
-                $session
-            );
-
-            return ['type' => 'group', 'count' => $groupSessions->count(), 'session' => $session];
+        } else {
+            $targetSessions = collect([$session]);
         }
 
-        // Single session update
-        // 1. Check Dosen conflict (excluding this session)
+        $targetSessionIds = $targetSessions->pluck('id')->toArray();
+
+        $timeChanged = $session->scheduled_at->format('Y-m-d H:i:00') !== $scheduledAt;
+        $detailsChanged = $timeChanged
+            || (string) $session->topic !== (string) $data['topic']
+            || (string) $session->type !== (string) $data['type']
+            || (string) ($session->location ?? '') !== (string) ($data['location'] ?? '')
+            || (string) ($session->notes ?? '') !== (string) ($data['notes'] ?? '');
+
+        // Resolve & validate any missed students staged for addition
+        $thesesToAdd = collect();
+        if (!empty($rawAddThesisIds)) {
+            $enrolledThesisIds = $targetSessions->pluck('thesis_id')->filter()->unique()->toArray();
+            if (!$timeChanged) {
+                $siblingThesisIds = MentoringSession::where('dosen_id', $targetDosenId)
+                    ->where('scheduled_at', $session->scheduled_at)
+                    ->where('status', '!=', 'rejected')
+                    ->pluck('thesis_id')
+                    ->toArray();
+                $enrolledThesisIds = array_values(array_unique(array_merge($enrolledThesisIds, $siblingThesisIds)));
+            }
+
+            $candidateThesisIds = array_values(array_diff($rawAddThesisIds, $enrolledThesisIds));
+
+            if (!empty($candidateThesisIds)) {
+                $thesesQuery = Thesis::with('student')
+                    ->whereIn('id', $candidateThesisIds)
+                    ->where('status', 'active');
+
+                if ($user->role === 'dosen') {
+                    $thesesQuery->where(function ($q) use ($user) {
+                        $q->where('pembimbing1_id', $user->id)
+                          ->orWhere('pembimbing2_id', $user->id);
+                    });
+                } elseif (in_array($user->role, ['admin', 'kaprodi']) && $targetDosenId) {
+                    $thesesQuery->where(function ($q) use ($targetDosenId) {
+                        $q->where('pembimbing1_id', $targetDosenId)
+                          ->orWhere('pembimbing2_id', $targetDosenId);
+                    });
+                }
+
+                $thesesToAdd = $thesesQuery->get();
+            }
+
+            if ($thesesToAdd->isEmpty()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'add_thesis_ids' => 'Mahasiswa yang dipilih tidak valid atau sudah terdaftar pada jadwal bimbingan ini.',
+                ]);
+            }
+        }
+
+        // 1. Check Dosen conflict at the new scheduled_at (excluding target sessions)
         $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
-            ->where('id', '!=', $session->id)
+            ->whereNotIn('id', $targetSessionIds)
             ->where('scheduled_at', $scheduledAt)
             ->where('status', '!=', 'rejected')
             ->first();
@@ -137,52 +130,150 @@ class MentoringService
             ]);
         }
 
-        // 2. Check Student conflict (excluding this session)
-        $thesis = $session->thesis;
-        if ($thesis) {
-            $existingStudentSession = MentoringSession::whereHas('thesis', function($q) use ($thesis) {
+        // 2. Check Student conflict for each existing student at the new scheduled_at
+        foreach ($targetSessions as $existingSession) {
+            $stThesis = $existingSession->thesis;
+            if ($stThesis) {
+                $existingStudentSession = MentoringSession::whereHas('thesis', function ($q) use ($stThesis) {
+                        $q->where('student_id', $stThesis->student_id);
+                    })
+                    ->whereNotIn('id', $targetSessionIds)
+                    ->where('scheduled_at', $scheduledAt)
+                    ->where('status', '!=', 'rejected')
+                    ->first();
+
+                if ($existingStudentSession) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'scheduled_at' => "Mahasiswa {$stThesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                    ]);
+                }
+            }
+        }
+
+        // 3. Check Student conflict for each newly added student at the new scheduled_at
+        foreach ($thesesToAdd as $thesis) {
+            $existingStudentSession = MentoringSession::whereHas('thesis', function ($q) use ($thesis) {
                     $q->where('student_id', $thesis->student_id);
                 })
-                ->where('id', '!=', $session->id)
                 ->where('scheduled_at', $scheduledAt)
                 ->where('status', '!=', 'rejected')
                 ->first();
 
             if ($existingStudentSession) {
+                $studentName = $thesis->student->name ?? 'Mahasiswa';
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'scheduled_at' => "Mahasiswa {$thesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                    'add_thesis_ids' => "Mahasiswa {$studentName} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
                 ]);
             }
         }
 
-        $timeChanged = $session->scheduled_at->format('Y-m-d H:i:00') !== $scheduledAt;
         $oldDate = $session->scheduled_at->format('d/m/Y H:i');
+        $shouldUpdateExisting = $detailsChanged || $thesesToAdd->isEmpty();
+        $rescheduleNotifications = [];
+        $addedNotifications = [];
+        $createdSessions = collect();
 
-        // Update fields
-        $session->update([
-            'scheduled_at' => $scheduledAt,
-            'topic'        => $data['topic'],
-            'type'         => $data['type'],
-            'location'     => $data['location'] ?? null,
-            'notes'        => $data['notes'] ?? null,
-            'student_attendance_status' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? 'pending' : $session->student_attendance_status,
-            'student_attendance_reason' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $session->student_attendance_reason,
-            'student_confirmed_at'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $session->student_confirmed_at,
-        ]);
+        DB::transaction(function () use (
+            $user,
+            $session,
+            $targetSessions,
+            $thesesToAdd,
+            $targetDosenId,
+            $scheduledAt,
+            $data,
+            $timeChanged,
+            $oldDate,
+            $shouldUpdateExisting,
+            &$rescheduleNotifications,
+            &$addedNotifications,
+            &$createdSessions
+        ) {
+            if ($shouldUpdateExisting) {
+                foreach ($targetSessions as $existingSession) {
+                    $existingSession->update([
+                        'scheduled_at' => $scheduledAt,
+                        'topic'        => $data['topic'],
+                        'type'         => $data['type'],
+                        'location'     => $data['location'] ?? null,
+                        'notes'        => $data['notes'] ?? null,
+                        'student_attendance_status' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? 'pending' : $existingSession->student_attendance_status,
+                        'student_attendance_reason' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_attendance_reason,
+                        'student_confirmed_at'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_confirmed_at,
+                    ]);
 
-        ActivityLog::log(
-            'Reschedule Bimbingan', 
-            "{$user->name} memperbarui jadwal bimbingan {$thesis->student->name} (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}", 
-            'Bimbingan', 
-            $session
-        );
+                    if ($existingSession->thesis?->student) {
+                        $rescheduleNotifications[] = [$existingSession->thesis->student, $existingSession];
+                    }
+                }
 
-        // Send notifications if rescheduled
-        if ($thesis && $thesis->student) {
-            $thesis->student->notify(new MentoringRescheduledNotification($session));
+                if ($targetSessions->count() > 1) {
+                    ActivityLog::log(
+                        'Reschedule Bimbingan Bersama',
+                        "{$user->name} memperbarui jadwal bimbingan bersama untuk {$targetSessions->count()} mahasiswa (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}",
+                        'Bimbingan',
+                        $session
+                    );
+                } else {
+                    $studentName = $session->thesis?->student?->name ?? 'Mahasiswa';
+                    ActivityLog::log(
+                        'Reschedule Bimbingan',
+                        "{$user->name} memperbarui jadwal bimbingan {$studentName} (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}",
+                        'Bimbingan',
+                        $session
+                    );
+                }
+            }
+
+            foreach ($thesesToAdd as $thesis) {
+                $newSession = MentoringSession::create([
+                    'thesis_id'                 => $thesis->id,
+                    'dosen_id'                  => $targetDosenId,
+                    'scheduled_at'              => $scheduledAt,
+                    'topic'                     => $data['topic'],
+                    'type'                      => $data['type'],
+                    'location'                  => $data['location'] ?? null,
+                    'notes'                     => $data['notes'] ?? null,
+                    'status'                    => 'approved',
+                    'student_attendance_status' => 'pending',
+                    'student_attendance_reason' => null,
+                    'student_confirmed_at'      => null,
+                ]);
+
+                $createdSessions->push($newSession);
+
+                ActivityLog::log(
+                    'Penambahan Peserta Bimbingan',
+                    "{$user->name} menambahkan {$thesis->student->name} ke jadwal bimbingan bersama ({$data['topic']})",
+                    'Bimbingan',
+                    $newSession
+                );
+
+                if ($thesis->student) {
+                    $addedNotifications[] = [$thesis->student, $newSession];
+                }
+            }
+        });
+
+        // Dispatch notifications only after the transaction succeeds
+        foreach ($rescheduleNotifications as [$student, $updatedSession]) {
+            $student->notify(new MentoringRescheduledNotification($updatedSession));
         }
 
-        return ['type' => 'single', 'count' => 1, 'session' => $session];
+        foreach ($addedNotifications as [$student, $newSession]) {
+            $student->notify(new MentoringScheduledByDosenNotification($newSession));
+        }
+
+        $totalSessionsCount = $targetSessions->count() + $createdSessions->count();
+
+        return [
+            'type'            => $totalSessionsCount > 1 ? 'group' : 'single',
+            'count'           => $targetSessions->count(),
+            'updated_count'   => $shouldUpdateExisting ? $targetSessions->count() : 0,
+            'added_count'     => $createdSessions->count(),
+            'added_students'  => $thesesToAdd->map(fn ($t) => $t->student?->name)->filter()->implode(', '),
+            'details_changed' => $detailsChanged,
+            'session'         => $session,
+        ];
     }
 
     private function handleDosenStore(array $data)

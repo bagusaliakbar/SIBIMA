@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\MentoringSession;
 use App\Models\Thesis;
 use App\Models\User;
+use App\Notifications\MentoringRescheduledNotification;
 use App\Notifications\MentoringScheduledByDosenNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -205,5 +206,224 @@ class AddStudentToMentoringSessionTest extends TestCase
         ]);
 
         $response->assertStatus(403);
+    }
+
+    public function test_edit_page_stages_missed_students_inside_main_form_without_immediate_post_form()
+    {
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $studentA = User::factory()->create(['role' => 'mahasiswa']);
+        $studentB = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Terlewat']);
+
+        $thesisA = Thesis::create([
+            'student_id' => $studentA->id,
+            'title' => 'Skripsi A',
+            'status' => 'active',
+            'pembimbing1_id' => $dosen->id,
+        ]);
+
+        Thesis::create([
+            'student_id' => $studentB->id,
+            'title' => 'Skripsi B',
+            'status' => 'active',
+            'pembimbing1_id' => $dosen->id,
+        ]);
+
+        $session = MentoringSession::create([
+            'thesis_id' => $thesisA->id,
+            'dosen_id' => $dosen->id,
+            'scheduled_at' => now()->addDays(2),
+            'topic' => 'Bimbingan Bab 1',
+            'type' => 'offline',
+            'status' => 'approved',
+        ]);
+
+        $response = $this->actingAs($dosen)->get(route('mentoring-sessions.edit', $session));
+
+        $response->assertStatus(200);
+        $response->assertSee('name="add_thesis_ids[]"', false);
+        $response->assertDontSee(route('mentoring-sessions.add-students', $session->id), false);
+    }
+
+    public function test_dosen_can_reschedule_and_add_missed_students_atomically_with_single_accurate_notification()
+    {
+        Notification::fake();
+
+        $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dr. Budi Dosen']);
+        $studentA = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Ahmad Santoso']);
+        $studentB = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Rina Wijaya']);
+        $studentC = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Dedi Pratama']);
+
+        $thesisA = Thesis::create(['student_id' => $studentA->id, 'title' => 'Skripsi A', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+        $thesisB = Thesis::create(['student_id' => $studentB->id, 'title' => 'Skripsi B', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+        $thesisC = Thesis::create(['student_id' => $studentC->id, 'title' => 'Skripsi C', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+
+        $oldTime = now()->addDays(2)->setTime(9, 0, 0);
+        $sessionA = MentoringSession::create([
+            'thesis_id' => $thesisA->id,
+            'dosen_id' => $dosen->id,
+            'scheduled_at' => $oldTime,
+            'topic' => 'Topik Lama',
+            'type' => 'offline',
+            'location' => 'Ruang Lama',
+            'status' => 'approved',
+            'student_attendance_status' => 'attending',
+        ]);
+
+        $newDate = now()->addDays(5)->format('Y-m-d');
+        $newScheduledAt = "{$newDate} 14:30:00";
+
+        $response = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $sessionA), [
+            'scheduled_date' => $newDate,
+            'scheduled_hour' => '14',
+            'scheduled_minute' => '30',
+            'topic' => 'Topik Baru Hasil Reschedule',
+            'type' => 'online',
+            'location' => 'https://meet.google.com/new-room-abc',
+            'notes' => 'Bawa revisi terbaru',
+            'add_thesis_ids' => [$thesisB->id, $thesisC->id],
+        ]);
+
+        $response->assertRedirect(route('mentoring-sessions.index'));
+        $response->assertSessionHas('success');
+
+        // Existing session A updated to new schedule
+        $sessionA->refresh();
+        $this->assertEquals($newScheduledAt, $sessionA->scheduled_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('Topik Baru Hasil Reschedule', $sessionA->topic);
+        $this->assertEquals('pending', $sessionA->student_attendance_status);
+
+        // New students B and C created directly on NEW schedule (never on old schedule)
+        foreach ([$thesisB, $thesisC] as $thesis) {
+            $this->assertDatabaseHas('mentoring_sessions', [
+                'thesis_id' => $thesis->id,
+                'dosen_id' => $dosen->id,
+                'scheduled_at' => $newScheduledAt,
+                'topic' => 'Topik Baru Hasil Reschedule',
+                'type' => 'online',
+                'location' => 'https://meet.google.com/new-room-abc',
+                'notes' => 'Bawa revisi terbaru',
+                'status' => 'approved',
+                'student_attendance_status' => 'pending',
+            ]);
+        }
+
+        // Student A receives exactly 1 reschedule notification (and NOT new-schedule notification)
+        Notification::assertSentToTimes($studentA, MentoringRescheduledNotification::class, 1);
+        Notification::assertNotSentTo($studentA, MentoringScheduledByDosenNotification::class);
+
+        // Students B & C receive exactly 1 scheduled notification with NEW time (and NOT duplicate reschedule notification)
+        foreach ([$studentB, $studentC] as $newStudent) {
+            Notification::assertSentToTimes($newStudent, MentoringScheduledByDosenNotification::class, 1);
+            Notification::assertNotSentTo($newStudent, MentoringRescheduledNotification::class);
+            Notification::assertSentTo(
+                $newStudent,
+                MentoringScheduledByDosenNotification::class,
+                fn ($n) => $n->session->scheduled_at->format('Y-m-d H:i:s') === $newScheduledAt
+                    && $n->session->topic === 'Topik Baru Hasil Reschedule'
+            );
+        }
+    }
+
+    public function test_adding_missed_students_via_update_without_changing_schedule_only_notifies_new_students()
+    {
+        Notification::fake();
+
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $studentA = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Lama']);
+        $studentB = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Mahasiswa Baru']);
+
+        $thesisA = Thesis::create(['student_id' => $studentA->id, 'title' => 'Skripsi A', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+        $thesisB = Thesis::create(['student_id' => $studentB->id, 'title' => 'Skripsi B', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+
+        $scheduledAt = now()->addDays(3)->setTime(10, 0, 0);
+        $sessionA = MentoringSession::create([
+            'thesis_id' => $thesisA->id,
+            'dosen_id' => $dosen->id,
+            'scheduled_at' => $scheduledAt,
+            'topic' => 'Bimbingan Tetap',
+            'type' => 'offline',
+            'location' => 'Ruang 101',
+            'notes' => 'Catatan tetap',
+            'status' => 'approved',
+            'student_attendance_status' => 'attending',
+        ]);
+
+        $response = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $sessionA), [
+            'scheduled_date' => $scheduledAt->format('Y-m-d'),
+            'scheduled_hour' => '10',
+            'scheduled_minute' => '00',
+            'topic' => 'Bimbingan Tetap',
+            'type' => 'offline',
+            'location' => 'Ruang 101',
+            'notes' => 'Catatan tetap',
+            'add_thesis_ids' => [$thesisB->id],
+        ]);
+
+        $response->assertRedirect(route('mentoring-sessions.index'));
+        $response->assertSessionHas('success');
+
+        // Student A's attendance status preserved & NOT spammed with reschedule notification
+        $sessionA->refresh();
+        $this->assertEquals('attending', $sessionA->student_attendance_status);
+        Notification::assertNotSentTo($studentA, MentoringRescheduledNotification::class);
+
+        // Student B created & notified once
+        $this->assertDatabaseHas('mentoring_sessions', [
+            'thesis_id' => $thesisB->id,
+            'scheduled_at' => $scheduledAt->format('Y-m-d H:i:s'),
+        ]);
+        Notification::assertSentToTimes($studentB, MentoringScheduledByDosenNotification::class, 1);
+    }
+
+    public function test_reschedule_and_add_missed_student_fails_atomically_on_new_time_conflict()
+    {
+        Notification::fake();
+
+        $dosen = User::factory()->create(['role' => 'dosen']);
+        $otherDosen = User::factory()->create(['role' => 'dosen']);
+        $studentA = User::factory()->create(['role' => 'mahasiswa']);
+        $studentB = User::factory()->create(['role' => 'mahasiswa', 'name' => 'Siti Bentrok']);
+
+        $thesisA = Thesis::create(['student_id' => $studentA->id, 'title' => 'Skripsi A', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+        $thesisB = Thesis::create(['student_id' => $studentB->id, 'title' => 'Skripsi B', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
+
+        $oldTime = now()->addDays(2)->setTime(9, 0, 0);
+        $newDate = now()->addDays(4)->format('Y-m-d');
+        $newTime = "{$newDate} 15:00:00";
+
+        $sessionA = MentoringSession::create([
+            'thesis_id' => $thesisA->id,
+            'dosen_id' => $dosen->id,
+            'scheduled_at' => $oldTime,
+            'topic' => 'Topik Awal',
+            'type' => 'offline',
+            'status' => 'approved',
+        ]);
+
+        // Student B conflicts at the NEW rescheduled time
+        MentoringSession::create([
+            'thesis_id' => $thesisB->id,
+            'dosen_id' => $otherDosen->id,
+            'scheduled_at' => $newTime,
+            'topic' => 'Jadwal Lain',
+            'type' => 'online',
+            'status' => 'approved',
+        ]);
+
+        $response = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $sessionA), [
+            'scheduled_date' => $newDate,
+            'scheduled_hour' => '15',
+            'scheduled_minute' => '00',
+            'topic' => 'Topik Baru',
+            'type' => 'online',
+            'add_thesis_ids' => [$thesisB->id],
+        ]);
+
+        $response->assertSessionHasErrors('add_thesis_ids');
+
+        // Existing session A must remain unchanged & zero notifications sent
+        $sessionA->refresh();
+        $this->assertEquals($oldTime->format('Y-m-d H:i:s'), $sessionA->scheduled_at->format('Y-m-d H:i:s'));
+        Notification::assertNothingSent();
     }
 }

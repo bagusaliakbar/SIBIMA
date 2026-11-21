@@ -126,6 +126,20 @@ class MentoringSessionController extends Controller
         try {
             $result = $this->mentoringService->updateSession($mentoringSession, $request->validated());
 
+            $addedCount = $result['added_count'] ?? 0;
+            $updatedCount = $result['updated_count'] ?? ($result['count'] ?? 1);
+            $addedStudents = $result['added_students'] ?? '';
+
+            if ($addedCount > 0 && $updatedCount > 0) {
+                return redirect()->route('mentoring-sessions.index')
+                    ->with('success', "Jadwal bimbingan berhasil diperbarui untuk {$updatedCount} mahasiswa dan {$addedCount} mahasiswa baru ({$addedStudents}) berhasil ditambahkan. Notifikasi telah dikirimkan.");
+            }
+
+            if ($addedCount > 0 && $updatedCount === 0) {
+                return redirect()->route('mentoring-sessions.index')
+                    ->with('success', "Berhasil menambahkan {$addedCount} mahasiswa ({$addedStudents}) ke jadwal bimbingan ini dan notifikasi telah dikirimkan.");
+            }
+
             if (($result['count'] ?? 1) > 1) {
                 return redirect()->route('mentoring-sessions.index')
                     ->with('success', "Jadwal bimbingan bersama berhasil diperbarui untuk {$result['count']} mahasiswa dan notifikasi perubahan jadwal telah dikirimkan.");

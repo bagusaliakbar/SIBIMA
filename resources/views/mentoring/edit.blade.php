@@ -19,8 +19,22 @@
         apply_to_group: true,
         groupExpanded: false,
         addStudentModalOpen: false,
-        selectedThesesToAdd: [],
+        stagedThesesToAdd: {{ json_encode(array_values(array_map('intval', old('add_thesis_ids', [])))) }},
+        modalSelection: [],
         addStudentSearch: '',
+        type: {{ json_encode(old('type', $mentoringSession->type)) }},
+        topic: {{ json_encode(old('topic', $mentoringSession->topic)) }},
+        location: {{ json_encode(old('location', $mentoringSession->location ?? '')) }},
+        meetOpened: false,
+        customTimeMode: false,
+        today: '{{ date('Y-m-d') }}',
+        scheduledDate: '{{ old('scheduled_date', $mentoringSession->scheduled_at->isPast() ? date('Y-m-d') : $mentoringSession->scheduled_at->format('Y-m-d')) }}',
+        selectedTime: '{{ old('scheduled_hour', $mentoringSession->scheduled_at->format('H')) }}:{{ old('scheduled_minute', sprintf('%02d', (int)round((int)$mentoringSession->scheduled_at->format('i') / 5) * 5 % 60)) }}',
+        timeSlots: {
+            'Pagi': ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
+            'Siang & Sore': ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
+            'Malam': ['18:30', '19:00', '19:30', '20:00']
+        },
         availableTheses: {{ json_encode(($availableTheses ?? collect())->map(fn($t) => [
             'id' => (int)$t->id,
             'name' => $t->student?->name ?? 'Mahasiswa',
@@ -31,6 +45,15 @@
                 ? (($t->pembimbing1_id === Auth::id()) ? 'Pembimbing 1' : (($t->pembimbing2_id === Auth::id()) ? 'Pembimbing 2' : 'Dosen'))
                 : ($t->pembimbing1?->name ? 'P1: ' . $t->pembimbing1->name : 'Bimbingan'),
         ])->values()) }},
+        get allSlots() {
+            return [...this.timeSlots['Pagi'], ...this.timeSlots['Siang & Sore'], ...this.timeSlots['Malam']];
+        },
+        get selectedHour() {
+            return this.selectedTime.split(':')[0] || '09';
+        },
+        get selectedMinute() {
+            return this.selectedTime.split(':')[1] || '00';
+        },
         get filteredAvailableTheses() {
             if (!this.addStudentSearch.trim()) return this.availableTheses;
             const q = this.addStudentSearch.toLowerCase();
@@ -40,19 +63,109 @@
                 t.title.toLowerCase().includes(q)
             );
         },
-        toggleAddThesis(id) {
-            if (this.selectedThesesToAdd.includes(id)) {
-                this.selectedThesesToAdd = this.selectedThesesToAdd.filter(x => x !== id);
+        get stagedThesesObjects() {
+            return this.availableTheses.filter(t => this.stagedThesesToAdd.includes(t.id));
+        },
+        init() {
+            this.validateAndAdjustTime();
+        },
+        formatPreviewDate() {
+            if (!this.scheduledDate) return '-';
+            try {
+                const d = new Date(this.scheduledDate + 'T00:00:00');
+                return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            } catch (e) {
+                return this.scheduledDate;
+            }
+        },
+        openAddStudentModal() {
+            this.modalSelection = [...this.stagedThesesToAdd];
+            this.addStudentSearch = '';
+            this.addStudentModalOpen = true;
+        },
+        toggleModalThesis(id) {
+            if (this.modalSelection.includes(id)) {
+                this.modalSelection = this.modalSelection.filter(x => x !== id);
             } else {
-                this.selectedThesesToAdd.push(id);
+                this.modalSelection.push(id);
             }
         },
         selectAllAvailable() {
             const ids = this.filteredAvailableTheses.map(t => t.id);
-            this.selectedThesesToAdd = [...new Set([...this.selectedThesesToAdd, ...ids])];
+            this.modalSelection = [...new Set([...this.modalSelection, ...ids])];
         },
         clearAllAvailable() {
-            this.selectedThesesToAdd = [];
+            this.modalSelection = [];
+        },
+        confirmStagedStudents() {
+            this.stagedThesesToAdd = [...this.modalSelection];
+            this.addStudentModalOpen = false;
+            if (this.stagedThesesToAdd.length > 0 && typeof window.sibimaToast === 'function') {
+                window.sibimaToast(
+                    this.stagedThesesToAdd.length + ' mahasiswa masuk daftar tunggu. Klik Simpan Perubahan Jadwal untuk menyimpan dan mengirim notifikasi.',
+                    'info',
+                    'Belum Disimpan'
+                );
+            }
+        },
+        removeStagedThesis(id) {
+            this.stagedThesesToAdd = this.stagedThesesToAdd.filter(x => x !== id);
+        },
+        isToday() {
+            return this.scheduledDate === this.today;
+        },
+        isSlotDisabled(slot) {
+            if (!this.isToday()) return false;
+            const [h, m] = slot.split(':').map(Number);
+            const now = new Date();
+            const currentH = now.getHours();
+            const currentM = now.getMinutes();
+            if (h < currentH) return true;
+            if (h === currentH) return m <= currentM;
+            return false;
+        },
+        selectTimeSlot(slot) {
+            if (this.isSlotDisabled(slot)) return;
+            this.selectedTime = slot;
+        },
+        onDateChange() {
+            if (this.scheduledDate < this.today) {
+                this.scheduledDate = this.today;
+            }
+            this.validateAndAdjustTime();
+        },
+        validateAndAdjustTime() {
+            if (this.isSlotDisabled(this.selectedTime)) {
+                const firstAvailable = this.allSlots.find(s => !this.isSlotDisabled(s));
+                if (firstAvailable) {
+                    this.selectedTime = firstAvailable;
+                } else {
+                    const d = new Date(this.scheduledDate);
+                    d.setDate(d.getDate() + 1);
+                    this.scheduledDate = d.toISOString().split('T')[0];
+                    this.selectedTime = '08:00';
+                }
+            }
+        },
+        openGoogleMeetNew() {
+            window.open('https://meet.google.com/new', '_blank');
+            this.meetOpened = true;
+        },
+        async pasteClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    this.location = text.trim();
+                }
+            } catch (e) {
+                window.sibimaToast('Silakan tekan Ctrl + V untuk menempelkan tautan.', 'info', 'Pintasan Tempel');
+            }
+        },
+        isGoogleMeet() {
+            return this.location && this.location.includes('meet.google.com');
+        },
+        isZoom() {
+            return this.location && (this.location.includes('zoom.us') || this.location.includes('zoom.com'));
         }
     }">
         <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors space-y-6">
@@ -103,10 +216,11 @@
                             <span>Ada mahasiswa bimbingan yang terlewat dipilih?</span>
                         </div>
                         <button type="button" 
-                                @click="addStudentModalOpen = true; selectedThesesToAdd = []; addStudentSearch = '';" 
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer self-start sm:self-auto">
+                                @click="openAddStudentModal()" 
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer self-start sm:self-auto">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                             <span>Tambah Mahasiswa Terlewat</span>
+                            <span x-show="stagedThesesToAdd.length > 0" x-cloak class="px-1.5 py-0.2 rounded bg-orange-600 text-white text-[11px] font-bold" x-text="'+' + stagedThesesToAdd.length"></span>
                         </button>
                     </div>
                 @endif
@@ -132,10 +246,11 @@
                                 Bimbingan Bersama
                             </span>
                             <button type="button" 
-                                    @click="addStudentModalOpen = true; selectedThesesToAdd = []; addStudentSearch = '';" 
-                                    class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-xs font-bold transition-all shadow-xs cursor-pointer">
+                                    @click="openAddStudentModal()" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-md text-xs font-bold transition-all shadow-xs cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                                 <span>Tambah Mahasiswa</span>
+                                <span x-show="stagedThesesToAdd.length > 0" x-cloak class="px-1.5 py-0.2 rounded bg-white/20 text-white text-[11px] font-bold" x-text="'+' + stagedThesesToAdd.length"></span>
                             </button>
                         </div>
                     </div>
@@ -173,6 +288,55 @@
                 </div>
             @endif
 
+            <!-- Staged Missed Students Preview (Not Yet Saved / Not Yet Notified) -->
+            <div x-show="stagedThesesObjects.length > 0" x-cloak class="p-4 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 rounded-lg space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h4 class="text-xs font-bold text-amber-950 dark:text-amber-100">
+                                    Mahasiswa Baru Akan Ditambahkan (<span x-text="stagedThesesObjects.length"></span>)
+                                </h4>
+                                <span class="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/70 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-700/60 text-[11px] font-bold">
+                                    Menunggu Disimpan
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-amber-800 dark:text-amber-300 mt-0.5">
+                                Belum tersimpan dan belum mengirim notifikasi. Notifikasi WhatsApp &amp; sistem akan dikirim otomatis setelah Anda klik <strong>Simpan Perubahan Jadwal</strong>.
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button"
+                            @click="openAddStudentModal()"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-amber-300 dark:border-amber-700 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer self-start sm:self-auto shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        <span>Ubah Pilihan</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pt-1">
+                    <template x-for="st in stagedThesesObjects" :key="st.id">
+                        <div class="flex items-center gap-2 p-2 bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700/70 rounded-lg shadow-2xs">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="st.name"></p>
+                                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400" x-text="st.npm"></p>
+                            </div>
+                            <button type="button"
+                                    @click="removeStagedThesis(st.id)"
+                                    aria-label="Hapus mahasiswa dari daftar tambahan"
+                                    title="Batalkan penambahan mahasiswa ini"
+                                    class="p-1 rounded-md text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
             @if (session('success'))
                 <div class="p-4 rounded-md bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
                     <div class="flex items-center gap-3">
@@ -202,105 +366,18 @@
                 </div>
             @endif
 
-            <form action="{{ route('mentoring-sessions.update', $mentoringSession) }}" method="POST" class="space-y-6" x-data="{
-                type: '{{ old('type', $mentoringSession->type) }}',
-                location: '{{ old('location', $mentoringSession->location ?? '') }}',
-                meetOpened: false,
-                customTimeMode: false,
-                today: '{{ date('Y-m-d') }}',
-                scheduledDate: '{{ old('scheduled_date', $mentoringSession->scheduled_at->isPast() ? date('Y-m-d') : $mentoringSession->scheduled_at->format('Y-m-d')) }}',
-                selectedTime: '{{ old('scheduled_hour', $mentoringSession->scheduled_at->format('H')) }}:{{ old('scheduled_minute', sprintf('%02d', (int)round((int)$mentoringSession->scheduled_at->format('i') / 5) * 5 % 60)) }}',
-                
-                timeSlots: {
-                    'Pagi': ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
-                    'Siang & Sore': ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                    'Malam': ['18:30', '19:00', '19:30', '20:00']
-                },
-
-                get allSlots() {
-                    return [...this.timeSlots['Pagi'], ...this.timeSlots['Siang & Sore'], ...this.timeSlots['Malam']];
-                },
-
-                get selectedHour() {
-                    return this.selectedTime.split(':')[0] || '09';
-                },
-
-                get selectedMinute() {
-                    return this.selectedTime.split(':')[1] || '00';
-                },
-
-                init() {
-                    this.validateAndAdjustTime();
-                },
-
-                isToday() {
-                    return this.scheduledDate === this.today;
-                },
-
-                isSlotDisabled(slot) {
-                    if (!this.isToday()) return false;
-                    const [h, m] = slot.split(':').map(Number);
-                    const now = new Date();
-                    const currentH = now.getHours();
-                    const currentM = now.getMinutes();
-                    if (h < currentH) return true;
-                    if (h === currentH) return m <= currentM;
-                    return false;
-                },
-
-                selectTimeSlot(slot) {
-                    if (this.isSlotDisabled(slot)) return;
-                    this.selectedTime = slot;
-                },
-
-                onDateChange() {
-                    if (this.scheduledDate < this.today) {
-                        this.scheduledDate = this.today;
-                    }
-                    this.validateAndAdjustTime();
-                },
-
-                validateAndAdjustTime() {
-                    if (this.isSlotDisabled(this.selectedTime)) {
-                        const firstAvailable = this.allSlots.find(s => !this.isSlotDisabled(s));
-                        if (firstAvailable) {
-                            this.selectedTime = firstAvailable;
-                        } else {
-                            const d = new Date(this.scheduledDate);
-                            d.setDate(d.getDate() + 1);
-                            this.scheduledDate = d.toISOString().split('T')[0];
-                            this.selectedTime = '08:00';
-                        }
-                    }
-                },
-
-                openGoogleMeetNew() {
-                    window.open('https://meet.google.com/new', '_blank');
-                    this.meetOpened = true;
-                },
-                async pasteClipboard() {
-                    try {
-                        const text = await navigator.clipboard.readText();
-                        if (text) {
-                            this.location = text.trim();
-                        }
-                    } catch (e) {
-                        window.sibimaToast('Silakan tekan Ctrl + V untuk menempelkan tautan.', 'info', 'Pintasan Tempel');
-                    }
-                },
-                isGoogleMeet() {
-                    return this.location && this.location.includes('meet.google.com');
-                },
-                isZoom() {
-                    return this.location && (this.location.includes('zoom.us') || this.location.includes('zoom.com'));
-                }
-            }">
+            <form action="{{ route('mentoring-sessions.update', $mentoringSession) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
 
                 <!-- Hidden inputs for backend compatibility -->
                 <input type="hidden" name="scheduled_hour" :value="selectedHour">
                 <input type="hidden" name="scheduled_minute" :value="selectedMinute">
+
+                <!-- Hidden inputs for staged missed students -->
+                <template x-for="id in stagedThesesToAdd" :key="id">
+                    <input type="hidden" name="add_thesis_ids[]" :value="id">
+                </template>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Row 1: Tanggal & Waktu -->
@@ -394,7 +471,7 @@
                         <input type="text" 
                                name="topic" 
                                id="topic" 
-                               value="{{ old('topic', $mentoringSession->topic) }}" 
+                               x-model="topic"
                                required 
                                placeholder="Contoh: Revisi Bab 1 & Metodologi Penelitian" 
                                class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
@@ -564,7 +641,7 @@
                             Kembali
                         </a>
                         <button type="submit" class="px-5 py-2 bg-orange-600 hover:bg-orange-700 rounded-md text-sm font-semibold text-white shadow-sm transition-colors border border-transparent cursor-pointer">
-                            Simpan Perubahan Jadwal
+                            <span x-text="stagedThesesToAdd.length > 0 ? 'Simpan Perubahan & Tambah (' + stagedThesesToAdd.length + ') Mahasiswa' : 'Simpan Perubahan Jadwal'">Simpan Perubahan Jadwal</span>
                         </button>
                     </div>
                 </div>
@@ -742,13 +819,12 @@
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                          class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-700 relative z-10">
                         
-                        <form action="{{ route('mentoring-sessions.add-students', $mentoringSession->id) }}" method="POST" class="flex flex-col overflow-hidden max-h-[85vh]">
-                            @csrf
+                        <div class="flex flex-col overflow-hidden max-h-[85vh]">
 
                             <!-- Header -->
                             <div class="p-6 sm:p-7 pb-4 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between shrink-0">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                    <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-xs shrink-0">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                                     </div>
                                     <div>
@@ -756,7 +832,7 @@
                                             Tambah Mahasiswa ke Jadwal Ini
                                         </h3>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                            Pilih mahasiswa bimbingan yang terlewat untuk digabungkan.
+                                            Pilih mahasiswa bimbingan yang terlewat untuk digabungkan saat jadwal disimpan.
                                         </p>
                                     </div>
                                 </div>
@@ -767,19 +843,20 @@
 
                             <!-- Scrollable Body Content -->
                             <div class="p-6 sm:p-7 pt-4 space-y-4 overflow-y-auto flex-1">
-                                <!-- Session Schedule Info Card -->
-                                <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-between gap-3 text-xs">
-                                    <div>
-                                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">Jadwal Sesi</span>
+                                <!-- Session Schedule Info Card (Live Preview of Main Form Values) -->
+                                <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 text-xs">
+                                    <div class="min-w-0">
+                                        <span class="text-[11px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">Jadwal Sesi (Sesuai Form)</span>
                                         <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-                                            {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB
+                                            <span x-text="formatPreviewDate()"></span> • <span x-text="selectedTime"></span> WIB
                                         </p>
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs mt-0.5">
-                                            Topik: {{ $mentoringSession->topic }}
+                                            Topik: <span x-text="topic || '-'"></span>
                                         </p>
                                     </div>
-                                    <span class="px-2 py-0.5 text-[11px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }} shrink-0">
-                                        {{ ucfirst($mentoringSession->type) }}
+                                    <span class="px-2 py-0.5 text-[11px] font-bold rounded shrink-0"
+                                          :class="type === 'online' ? 'bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60' : 'bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60'"
+                                          x-text="type === 'online' ? 'Online' : 'Offline'">
                                     </span>
                                 </div>
 
@@ -811,17 +888,17 @@
                                                        x-model="addStudentSearch" 
                                                        placeholder="Cari nama, NPM, atau judul skripsi..." 
                                                        style="padding-left: 2.5rem !important;"
-                                                       class="w-full pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                                                       class="w-full pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all">
                                             </div>
                                             <button type="button" 
                                                     @click="selectAllAvailable()" 
-                                                    class="px-2.5 py-1.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors shrink-0 cursor-pointer">
+                                                    class="px-2.5 py-1.5 text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 rounded-lg transition-colors shrink-0 cursor-pointer">
                                                 Pilih Semua
                                             </button>
                                             <button type="button" 
                                                     @click="clearAllAvailable()" 
-                                                    x-show="selectedThesesToAdd.length > 0"
-                                                    class="px-2.5 py-1.5 text-[11px] font-bold text-slate-500 hover:text-rose-600 rounded-lg transition-colors shrink-0 cursor-pointer">
+                                                    x-show="modalSelection.length > 0"
+                                                    class="px-2.5 py-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors shrink-0 cursor-pointer">
                                                 Reset
                                             </button>
                                         </div>
@@ -830,15 +907,15 @@
                                         <div class="max-h-56 overflow-y-auto space-y-1.5 pr-1 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-2 bg-slate-50/40 dark:bg-slate-900/30">
                                             <template x-for="t in filteredAvailableTheses" :key="t.id">
                                                 <label class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none"
-                                                     :class="selectedThesesToAdd.includes(t.id) 
+                                                     :class="modalSelection.includes(t.id) 
                                                          ? 'bg-orange-50/90 dark:bg-orange-950/50 border-orange-400 dark:border-orange-600 shadow-2xs' 
                                                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'">
                                                     
                                                     <!-- Checkbox -->
                                                     <input type="checkbox" 
                                                            :value="t.id" 
-                                                           :checked="selectedThesesToAdd.includes(t.id)" 
-                                                           @change="toggleAddThesis(t.id)"
+                                                           :checked="modalSelection.includes(t.id)" 
+                                                           @change="toggleModalThesis(t.id)"
                                                            class="w-4 h-4 text-orange-600 rounded border-slate-300 dark:border-slate-600 focus:ring-orange-500 cursor-pointer">
                                                     
                                                     <!-- Avatar / Initials -->
@@ -870,15 +947,10 @@
                                             </template>
                                         </div>
 
-                                        <!-- Hidden Inputs for Form Submission -->
-                                        <template x-for="id in selectedThesesToAdd" :key="id">
-                                            <input type="hidden" name="thesis_ids[]" :value="id">
-                                        </template>
-
                                         <!-- Notification Info -->
                                         <div class="p-2.5 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/40 rounded-xl text-[11px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
                                             <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <span>Mahasiswa yang ditambahkan otomatis menerima notifikasi WhatsApp dan sistem pada jadwal yang sama.</span>
+                                            <span>Mahasiswa terpilih akan masuk daftar tunggu terlebih dahulu. Perubahan jadwal &amp; notifikasi WhatsApp/Web baru dikirim setelah Anda menekan <strong>Simpan Perubahan Jadwal</strong>.</span>
                                         </div>
                                     </div>
                                 </template>
@@ -888,21 +960,22 @@
                             <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-end gap-3 shrink-0 rounded-b-3xl">
                                 <button type="button" 
                                         @click="addStudentModalOpen = false" 
-                                        class="px-5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-xl text-xs font-bold transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                        class="px-5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer">
                                     <span x-text="availableTheses.length === 0 ? 'Tutup' : 'Batal'"></span>
                                 </button>
-                                <button type="submit" 
+                                <button type="button" 
+                                        @click="confirmStagedStudents()"
                                         x-show="availableTheses.length > 0"
-                                        :disabled="selectedThesesToAdd.length === 0"
-                                        :class="selectedThesesToAdd.length === 0 
+                                        :disabled="modalSelection.length === 0 && stagedThesesToAdd.length === 0"
+                                        :class="(modalSelection.length === 0 && stagedThesesToAdd.length === 0)
                                             ? 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed border border-slate-300 dark:border-slate-600 shadow-none' 
-                                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/25 cursor-pointer hover:scale-[1.02] active:scale-95'"
+                                            : 'bg-orange-600 hover:bg-orange-700 text-white shadow-sm cursor-pointer'"
                                         class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                    <span x-text="selectedThesesToAdd.length > 0 ? 'Tambahkan (' + selectedThesesToAdd.length + ') Mahasiswa' : 'Pilih Mahasiswa'"></span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                    <span x-text="modalSelection.length > 0 ? 'Masukkan ke Daftar (' + modalSelection.length + ' Mahasiswa)' : (stagedThesesToAdd.length > 0 ? 'Kosongkan Daftar Tambahan' : 'Pilih Mahasiswa')"></span>
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
