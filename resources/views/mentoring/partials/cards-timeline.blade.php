@@ -1,7 +1,12 @@
                         <!-- 1. TAMPILAN PER SESI BIMBINGAN (TIMELINE CHRONOLOGICAL) -->
                         <div x-show="cardGrouping === 'session'" class="space-y-10">
                             @foreach($timelineSections as $section)
-                                <div class="space-y-4">
+                                @php
+                                    $sectionHasActionable = $section['groups']->contains(fn($items) => $items->contains(fn($s) => in_array($s->status, ['pending', 'approved'])));
+                                    $sectionHasCompleted = $section['groups']->contains(fn($items) => !$items->contains(fn($s) => in_array($s->status, ['pending', 'approved'])));
+                                @endphp
+                                <div x-show="sessionStatusFilter === 'all' || (sessionStatusFilter === 'actionable' ? {{ $sectionHasActionable ? 'true' : 'false' }} : {{ $sectionHasCompleted ? 'true' : 'false' }})"
+                                     class="space-y-4">
                                     <!-- Timeline Section Header -->
                                     <div class="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-200/80 dark:border-slate-800">
                                         <div class="flex items-center gap-2.5 flex-wrap">

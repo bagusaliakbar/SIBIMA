@@ -105,28 +105,33 @@
                             $tomorrowGroups = collect();
                             $upcomingGroups = collect();
                             $overdueGroups = collect();
+                            $pastCompletedGroups = collect();
 
                             foreach($sessionsBySessionGroup as $gKey => $sessionItems) {
                                 $first = $sessionItems->first();
                                 $scheduledAt = $first->scheduled_at;
-                                $isOverdue = $scheduledAt->isPast() && !$scheduledAt->isToday() && $sessionItems->contains(fn($s) => $s->status !== 'completed' || $s->is_absent);
+                                $isPastDay = $scheduledAt->isPast() && !$scheduledAt->isToday();
+                                $hasUnfinished = $sessionItems->contains(fn($s) => in_array($s->status, ['pending', 'approved']) || $s->is_absent);
 
                                 if ($scheduledAt->isToday()) {
                                     $todayGroups->put($gKey, $sessionItems);
                                 } elseif ($scheduledAt->isTomorrow()) {
                                     $tomorrowGroups->put($gKey, $sessionItems);
-                                } elseif ($isOverdue) {
+                                } elseif ($isPastDay && $hasUnfinished) {
                                     $overdueGroups->put($gKey, $sessionItems);
+                                } elseif ($isPastDay) {
+                                    $pastCompletedGroups->put($gKey, $sessionItems);
                                 } else {
                                     $upcomingGroups->put($gKey, $sessionItems);
                                 }
                             }
 
                             // Sort chronologically
-                            $upcomingGroups = $upcomingGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
                             $todayGroups = $todayGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
                             $tomorrowGroups = $tomorrowGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
+                            $upcomingGroups = $upcomingGroups->sortBy(fn($items) => $items->first()->scheduled_at->timestamp);
                             $overdueGroups = $overdueGroups->sortByDesc(fn($items) => $items->first()->scheduled_at->timestamp);
+                            $pastCompletedGroups = $pastCompletedGroups->sortByDesc(fn($items) => $items->first()->scheduled_at->timestamp);
 
                             if ($todayGroups->isNotEmpty()) {
                                 $timelineSections[] = [
@@ -166,6 +171,16 @@
                                     'badge' => $overdueGroups->count() . ' Sesi Perlu Ditinjau',
                                     'badge_class' => 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-800',
                                     'groups' => $overdueGroups,
+                                ];
+                            }
+                            if ($pastCompletedGroups->isNotEmpty()) {
+                                $timelineSections[] = [
+                                    'id' => 'past_completed',
+                                    'title' => 'Sesi Terdahulu (Selesai)',
+                                    'subtitle' => 'Sesi bimbingan sebelumnya yang telah selesai dilaksanakan',
+                                    'badge' => $pastCompletedGroups->count() . ' Sesi Selesai',
+                                    'badge_class' => 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+                                    'groups' => $pastCompletedGroups,
                                 ];
                             }
                         } else {
