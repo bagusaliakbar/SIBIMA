@@ -254,6 +254,7 @@ class SecurityHardeningTest extends TestCase
             ->post(route('mentoring-sessions.store'), [
                 'dosen_id' => $otherDosen->id,
                 'scheduled_at' => now()->addDays(2)->format('Y-m-d H:i'),
+                'scheduled_end_at' => now()->addDays(2)->addHour()->format('Y-m-d H:i'),
                 'topic' => 'Percobaan Booking Dosen Bukan Pembimbing',
                 'type' => 'offline',
                 'location' => 'Ruang Dosen',

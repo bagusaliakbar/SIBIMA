@@ -316,7 +316,7 @@
                                                         <span>{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
                                                     </div>
                                                     <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                                                        <span class="font-bold text-slate-700 dark:text-slate-300 font-mono tabular-nums">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                                        <span class="font-bold text-slate-700 dark:text-slate-300 font-mono tabular-nums">{{ $session->time_range }}</span>
                                                         <span>•</span>
                                                         @if($session->type === 'online')
                                                             @if($session->location)
@@ -469,7 +469,7 @@
                                                                 data-student-npm="{{ e($student?->identifier ?? '-') }}"
                                                                 data-topic="{{ e($session->topic) }}"
                                                                 data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                data-scheduled-time="{{ $session->time_range }}"
                                                                 data-is-group="{{ $isGroup ? '1' : '0' }}"
                                                                 data-group-count="{{ $groupCountMap[($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i')] ?? 1 }}"
                                                                 class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all cursor-pointer"
@@ -623,7 +623,7 @@
                                                                                 data-student-npm="{{ e($student?->identifier ?? '-') }}"
                                                                                 data-topic="{{ e($session->topic) }}"
                                                                                 data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                data-scheduled-time="{{ $session->time_range }}"
                                                                                 data-is-group="{{ $isGroup ? '1' : '0' }}"
                                                                                 data-group-count="{{ $groupCountMap[($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i')] ?? 1 }}"
                                                                                 class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer">

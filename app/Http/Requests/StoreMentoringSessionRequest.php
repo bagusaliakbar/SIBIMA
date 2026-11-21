@@ -24,6 +24,18 @@ class StoreMentoringSessionRequest extends FormRequest
                     'scheduled_at' => $this->scheduled_date . ' ' . $this->scheduled_time
                 ]);
             }
+
+            if (!$this->filled('scheduled_end_at')) {
+                if ($this->filled('scheduled_end_hour') && $this->filled('scheduled_end_minute')) {
+                    $this->merge([
+                        'scheduled_end_at' => $this->scheduled_date . ' ' . $this->scheduled_end_hour . ':' . $this->scheduled_end_minute,
+                    ]);
+                } elseif ($this->filled('scheduled_end_time')) {
+                    $this->merge([
+                        'scheduled_end_at' => $this->scheduled_date . ' ' . $this->scheduled_end_time,
+                    ]);
+                }
+            }
         }
 
         if ($this->has('thesis_ids')) {
@@ -41,6 +53,7 @@ class StoreMentoringSessionRequest extends FormRequest
 
         return [
             'scheduled_at' => 'required|date|after:now',
+            'scheduled_end_at' => 'required|date|after:scheduled_at',
             'topic' => 'required|string|max:255',
             'type' => 'required|in:offline,online',
             'location' => 'nullable|string|max:255',
@@ -55,7 +68,11 @@ class StoreMentoringSessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'scheduled_at.after' => 'Waktu bimbingan harus di masa mendatang.',
+            'scheduled_at.required' => 'Tanggal dan jam mulai bimbingan wajib diisi.',
+            'scheduled_at.after' => 'Waktu mulai bimbingan harus di masa mendatang.',
+            'scheduled_end_at.required' => 'Jam selesai bimbingan wajib diisi.',
+            'scheduled_end_at.date' => 'Format jam selesai bimbingan tidak valid.',
+            'scheduled_end_at.after' => 'Jam selesai bimbingan harus lebih akhir dari jam mulai.',
             'thesis_ids.required' => 'Pilih minimal satu mahasiswa untuk dijadwalkan bimbingan.',
             'thesis_ids.min' => 'Pilih minimal satu mahasiswa untuk dijadwalkan bimbingan.',
         ];

@@ -31,6 +31,25 @@ class MentoringService
     }
 
     /**
+     * Scope query to sessions whose time interval overlaps [startAt, endAt).
+     * Backward-compatible with legacy sessions where scheduled_end_at is NULL.
+     */
+    private function applyTimeOverlapScope($query, string $startAt, string $endAt)
+    {
+        return $query->where(function ($q) use ($startAt, $endAt) {
+            $q->where(function ($q1) use ($startAt, $endAt) {
+                $q1->whereNotNull('scheduled_end_at')
+                   ->where('scheduled_at', '<', $endAt)
+                   ->where('scheduled_end_at', '>', $startAt);
+            })->orWhere(function ($q2) use ($startAt, $endAt) {
+                $q2->whereNull('scheduled_end_at')
+                   ->where('scheduled_at', '>=', $startAt)
+                   ->where('scheduled_at', '<', $endAt);
+            });
+        });
+    }
+
+    /**
      * Update / Reschedule an existing mentoring session (Single or Group),
      * optionally adding missed students atomically so notifications are only sent once
      * with the final saved schedule.
@@ -44,7 +63,9 @@ class MentoringService
         }
 
         $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+        $scheduledEndAt = \Carbon\Carbon::parse($data['scheduled_end_at'])->format('Y-m-d H:i:00');
         $data['scheduled_at'] = $scheduledAt;
+        $data['scheduled_end_at'] = $scheduledEndAt;
         $targetDosenId = $session->dosen_id ?? Auth::id();
         $applyToGroup = !empty($data['apply_to_group']);
         $rawAddThesisIds = array_values(array_unique(array_filter(array_map('intval', $data['add_thesis_ids'] ?? []))));
@@ -68,7 +89,9 @@ class MentoringService
 
         $targetSessionIds = $targetSessions->pluck('id')->toArray();
 
-        $timeChanged = $session->scheduled_at->format('Y-m-d H:i:00') !== $scheduledAt;
+        $currentEndAt = $session->scheduled_end_at ? $session->scheduled_end_at->format('Y-m-d H:i:00') : null;
+        $timeChanged = $session->scheduled_at->format('Y-m-d H:i:00') !== $scheduledAt
+            || $currentEndAt !== $scheduledEndAt;
         $detailsChanged = $timeChanged
             || (string) $session->topic !== (string) $data['topic']
             || (string) $session->type !== (string) $data['type']
@@ -117,57 +140,64 @@ class MentoringService
             }
         }
 
-        // 1. Check Dosen conflict at the new scheduled_at (excluding target sessions)
-        $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
-            ->whereNotIn('id', $targetSessionIds)
-            ->where('scheduled_at', $scheduledAt)
-            ->where('status', '!=', 'rejected')
-            ->first();
+        // 1. Check Dosen conflict at the new time range (excluding target sessions)
+        $existingDosenSession = $this->applyTimeOverlapScope(
+            MentoringSession::where('dosen_id', $targetDosenId)
+                ->whereNotIn('id', $targetSessionIds)
+                ->where('status', '!=', 'rejected'),
+            $scheduledAt,
+            $scheduledEndAt
+        )->first();
 
         if ($existingDosenSession) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'scheduled_at' => 'Terdapat jadwal bimbingan lain pada tanggal dan jam tersebut untuk dosen pembimbing ini.',
+                'scheduled_at' => 'Terdapat jadwal bimbingan lain yang bentrok pada rentang waktu tersebut untuk dosen pembimbing ini.',
             ]);
         }
 
-        // 2. Check Student conflict for each existing student at the new scheduled_at
+        // 2. Check Student conflict for each existing student at the new time range
         foreach ($targetSessions as $existingSession) {
             $stThesis = $existingSession->thesis;
             if ($stThesis) {
-                $existingStudentSession = MentoringSession::whereHas('thesis', function ($q) use ($stThesis) {
-                        $q->where('student_id', $stThesis->student_id);
-                    })
-                    ->whereNotIn('id', $targetSessionIds)
-                    ->where('scheduled_at', $scheduledAt)
-                    ->where('status', '!=', 'rejected')
-                    ->first();
+                $existingStudentSession = $this->applyTimeOverlapScope(
+                    MentoringSession::whereHas('thesis', function ($q) use ($stThesis) {
+                            $q->where('student_id', $stThesis->student_id);
+                        })
+                        ->whereNotIn('id', $targetSessionIds)
+                        ->where('status', '!=', 'rejected'),
+                    $scheduledAt,
+                    $scheduledEndAt
+                )->first();
 
                 if ($existingStudentSession) {
                     throw \Illuminate\Validation\ValidationException::withMessages([
-                        'scheduled_at' => "Mahasiswa {$stThesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                        'scheduled_at' => "Mahasiswa {$stThesis->student->name} sudah memiliki jadwal bimbingan lain pada rentang waktu tersebut.",
                     ]);
                 }
             }
         }
 
-        // 3. Check Student conflict for each newly added student at the new scheduled_at
+        // 3. Check Student conflict for each newly added student at the new time range
         foreach ($thesesToAdd as $thesis) {
-            $existingStudentSession = MentoringSession::whereHas('thesis', function ($q) use ($thesis) {
-                    $q->where('student_id', $thesis->student_id);
-                })
-                ->where('scheduled_at', $scheduledAt)
-                ->where('status', '!=', 'rejected')
-                ->first();
+            $existingStudentSession = $this->applyTimeOverlapScope(
+                MentoringSession::whereHas('thesis', function ($q) use ($thesis) {
+                        $q->where('student_id', $thesis->student_id);
+                    })
+                    ->where('status', '!=', 'rejected'),
+                $scheduledAt,
+                $scheduledEndAt
+            )->first();
 
             if ($existingStudentSession) {
                 $studentName = $thesis->student->name ?? 'Mahasiswa';
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'add_thesis_ids' => "Mahasiswa {$studentName} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                    'add_thesis_ids' => "Mahasiswa {$studentName} sudah memiliki jadwal bimbingan lain pada rentang waktu tersebut.",
                 ]);
             }
         }
 
-        $oldDate = $session->scheduled_at->format('d/m/Y H:i');
+        $oldDate = $session->compact_date_time;
+        $newDateRange = \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . ' - ' . \Carbon\Carbon::parse($scheduledEndAt)->format('H:i');
         $shouldUpdateExisting = $detailsChanged || $thesesToAdd->isEmpty();
         $rescheduleNotifications = [];
         $addedNotifications = [];
@@ -180,9 +210,11 @@ class MentoringService
             $thesesToAdd,
             $targetDosenId,
             $scheduledAt,
+            $scheduledEndAt,
             $data,
             $timeChanged,
             $oldDate,
+            $newDateRange,
             $shouldUpdateExisting,
             &$rescheduleNotifications,
             &$addedNotifications,
@@ -191,11 +223,12 @@ class MentoringService
             if ($shouldUpdateExisting) {
                 foreach ($targetSessions as $existingSession) {
                     $existingSession->update([
-                        'scheduled_at' => $scheduledAt,
-                        'topic'        => $data['topic'],
-                        'type'         => $data['type'],
-                        'location'     => $data['location'] ?? null,
-                        'notes'        => $data['notes'] ?? null,
+                        'scheduled_at'     => $scheduledAt,
+                        'scheduled_end_at' => $scheduledEndAt,
+                        'topic'            => $data['topic'],
+                        'type'             => $data['type'],
+                        'location'         => $data['location'] ?? null,
+                        'notes'            => $data['notes'] ?? null,
                         'student_attendance_status' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? 'pending' : $existingSession->student_attendance_status,
                         'student_attendance_reason' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_attendance_reason,
                         'student_confirmed_at'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_confirmed_at,
@@ -209,7 +242,7 @@ class MentoringService
                 if ($targetSessions->count() > 1) {
                     ActivityLog::log(
                         'Reschedule Bimbingan Bersama',
-                        "{$user->name} memperbarui jadwal bimbingan bersama untuk {$targetSessions->count()} mahasiswa (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}",
+                        "{$user->name} memperbarui jadwal bimbingan bersama untuk {$targetSessions->count()} mahasiswa (dari {$oldDate} menjadi {$newDateRange}): {$data['topic']}",
                         'Bimbingan',
                         $session
                     );
@@ -217,7 +250,7 @@ class MentoringService
                     $studentName = $session->thesis?->student?->name ?? 'Mahasiswa';
                     ActivityLog::log(
                         'Reschedule Bimbingan',
-                        "{$user->name} memperbarui jadwal bimbingan {$studentName} (dari {$oldDate} menjadi " . \Carbon\Carbon::parse($scheduledAt)->format('d/m/Y H:i') . "): {$data['topic']}",
+                        "{$user->name} memperbarui jadwal bimbingan {$studentName} (dari {$oldDate} menjadi {$newDateRange}): {$data['topic']}",
                         'Bimbingan',
                         $session
                     );
@@ -229,6 +262,7 @@ class MentoringService
                     'thesis_id'                 => $thesis->id,
                     'dosen_id'                  => $targetDosenId,
                     'scheduled_at'              => $scheduledAt,
+                    'scheduled_end_at'          => $scheduledEndAt,
                     'topic'                     => $data['topic'],
                     'type'                      => $data['type'],
                     'location'                  => $data['location'] ?? null,
@@ -280,7 +314,9 @@ class MentoringService
     {
         $user = Auth::user();
         $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+        $scheduledEndAt = \Carbon\Carbon::parse($data['scheduled_end_at'])->format('Y-m-d H:i:00');
         $data['scheduled_at'] = $scheduledAt;
+        $data['scheduled_end_at'] = $scheduledEndAt;
 
         // Normalize thesis IDs from either thesis_ids array or thesis_id string
         $thesisIds = $data['thesis_ids'] ?? (isset($data['thesis_id']) ? (is_array($data['thesis_id']) ? $data['thesis_id'] : [$data['thesis_id']]) : []);
@@ -321,37 +357,41 @@ class MentoringService
         }
 
         if ($targetDosenId) {
-            $existingDosenSession = MentoringSession::where('dosen_id', $targetDosenId)
-                ->where('scheduled_at', $scheduledAt)
-                ->where('status', '!=', 'rejected')
-                ->first();
+            $existingDosenSession = $this->applyTimeOverlapScope(
+                MentoringSession::where('dosen_id', $targetDosenId)
+                    ->where('status', '!=', 'rejected'),
+                $scheduledAt,
+                $scheduledEndAt
+            )->first();
 
             if ($existingDosenSession) {
                 $dosenName = User::find($targetDosenId)?->name ?? 'Dosen yang dipilih';
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'scheduled_at' => ($user->role === 'dosen') 
-                        ? 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.' 
-                        : "{$dosenName} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                        ? 'Anda sudah memiliki jadwal bimbingan lain yang bentrok pada rentang waktu tersebut.' 
+                        : "{$dosenName} sudah memiliki jadwal bimbingan lain yang bentrok pada rentang waktu tersebut.",
                 ]);
             }
         }
 
-        // 2. Check each student for conflicting sessions at scheduled_at
+        // 2. Check each student for conflicting sessions at scheduled time range
         foreach ($theses as $thesis) {
             if ($user->role === 'dosen' && $thesis->pembimbing1_id !== Auth::id() && $thesis->pembimbing2_id !== Auth::id()) {
                 throw new \Exception("Akses ditolak untuk skripsi mahasiswa {$thesis->student->name}.", 403);
             }
 
-            $existingStudentSession = MentoringSession::whereHas('thesis', function($q) use ($thesis) {
-                    $q->where('student_id', $thesis->student_id);
-                })
-                ->where('scheduled_at', $scheduledAt)
-                ->where('status', '!=', 'rejected')
-                ->first();
+            $existingStudentSession = $this->applyTimeOverlapScope(
+                MentoringSession::whereHas('thesis', function($q) use ($thesis) {
+                        $q->where('student_id', $thesis->student_id);
+                    })
+                    ->where('status', '!=', 'rejected'),
+                $scheduledAt,
+                $scheduledEndAt
+            )->first();
 
             if ($existingStudentSession) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'scheduled_at' => "Mahasiswa {$thesis->student->name} sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.",
+                    'scheduled_at' => "Mahasiswa {$thesis->student->name} sudah memiliki jadwal bimbingan lain pada rentang waktu tersebut.",
                 ]);
             }
         }
@@ -399,28 +439,33 @@ class MentoringService
         }
         
         $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at'])->format('Y-m-d H:i:00');
+        $scheduledEndAt = \Carbon\Carbon::parse($data['scheduled_end_at'])->format('Y-m-d H:i:00');
 
-        $existingStudentSession = MentoringSession::whereHas('thesis', function($q) {
-                $q->where('student_id', Auth::id());
-            })
-            ->where('scheduled_at', $scheduledAt)
-            ->where('status', '!=', 'rejected')
-            ->first();
+        $existingStudentSession = $this->applyTimeOverlapScope(
+            MentoringSession::whereHas('thesis', function($q) {
+                    $q->where('student_id', Auth::id());
+                })
+                ->where('status', '!=', 'rejected'),
+            $scheduledAt,
+            $scheduledEndAt
+        )->first();
 
         if ($existingStudentSession) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'scheduled_at' => 'Anda sudah memiliki jadwal bimbingan lain pada tanggal dan jam yang sama.',
+                'scheduled_at' => 'Anda sudah memiliki jadwal bimbingan lain yang bentrok pada rentang waktu tersebut.',
             ]);
         }
 
-        $existingDosenSession = MentoringSession::where('dosen_id', $data['dosen_id'])
-            ->where('scheduled_at', $scheduledAt)
-            ->where('status', '!=', 'rejected')
-            ->first();
+        $existingDosenSession = $this->applyTimeOverlapScope(
+            MentoringSession::where('dosen_id', $data['dosen_id'])
+                ->where('status', '!=', 'rejected'),
+            $scheduledAt,
+            $scheduledEndAt
+        )->first();
 
         if ($existingDosenSession) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'scheduled_at' => 'Dosen pembimbing yang Anda pilih sudah memiliki jadwal bimbingan lain pada tanggal dan jam tersebut.',
+                'scheduled_at' => 'Dosen pembimbing yang Anda pilih sudah memiliki jadwal bimbingan lain pada rentang waktu tersebut.',
             ]);
         }
 
@@ -428,6 +473,7 @@ class MentoringService
             'thesis_id' => $thesis->id,
             'dosen_id' => $data['dosen_id'],
             'scheduled_at' => $scheduledAt,
+            'scheduled_end_at' => $scheduledEndAt,
             'topic' => $data['topic'],
             'type' => $data['type'],
             'location' => $data['location'] ?? null,
@@ -472,6 +518,7 @@ class MentoringService
             'thesis_id' => $thesis->id,
             'dosen_id' => $dosenId,
             'scheduled_at' => $data['scheduled_at'],
+            'scheduled_end_at' => $data['scheduled_end_at'] ?? null,
             'topic' => $data['topic'],
             'type' => $data['type'],
             'location' => $data['location'] ?? null,
@@ -851,6 +898,7 @@ class MentoringService
                 'thesis_id' => $thesis->id,
                 'dosen_id' => $session->dosen_id,
                 'scheduled_at' => $session->scheduled_at,
+                'scheduled_end_at' => $session->scheduled_end_at,
                 'topic' => $session->topic,
                 'type' => $session->type,
                 'location' => $session->location,

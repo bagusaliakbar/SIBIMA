@@ -31,6 +31,7 @@ class MentoringCancelledNotification extends Notification implements ShouldQueue
             'id' => $session->id,
             'topic' => $session->topic ?? '-',
             'scheduled_at' => $session->scheduled_at ? $session->scheduled_at->toIso8601String() : null,
+            'scheduled_end_at' => $session->scheduled_end_at ? $session->scheduled_end_at->toIso8601String() : null,
             'type' => $session->type,
             'location' => $session->location,
             'dosen_name' => $session->dosen->name ?? $session->thesis?->pembimbing1?->name ?? 'Dosen Pembimbing',
@@ -60,6 +61,9 @@ class MentoringCancelledNotification extends Notification implements ShouldQueue
     public function toFonnte($notifiable)
     {
         $scheduledAt = $this->sessionData['scheduled_at'] ? Carbon::parse($this->sessionData['scheduled_at'])->locale('id')->translatedFormat('l, d F Y H:i') : '-';
+        if (!empty($this->sessionData['scheduled_end_at']) && $scheduledAt !== '-') {
+            $scheduledAt .= ' - ' . Carbon::parse($this->sessionData['scheduled_end_at'])->format('H:i');
+        }
         $pembatal = $this->cancelledBy->name;
         $roleLabel = in_array($this->cancelledBy->role, ['dosen', 'admin', 'kaprodi']) ? 'Dosen Pembimbing' : 'Mahasiswa';
 
@@ -93,6 +97,9 @@ class MentoringCancelledNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         $scheduledAt = $this->sessionData['scheduled_at'] ? Carbon::parse($this->sessionData['scheduled_at'])->locale('id')->translatedFormat('d M Y H:i') : '-';
+        if (!empty($this->sessionData['scheduled_end_at']) && $scheduledAt !== '-') {
+            $scheduledAt .= ' - ' . Carbon::parse($this->sessionData['scheduled_end_at'])->format('H:i');
+        }
         return [
             'mentoring_id' => $this->sessionData['id'],
             'title'        => 'Pembatalan Jadwal Bimbingan',

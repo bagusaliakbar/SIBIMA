@@ -20,7 +20,7 @@
                                         <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         <span>{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
                                         <span class="text-slate-300 dark:text-slate-600">•</span>
-                                        <span class="text-slate-600 dark:text-slate-300 font-mono">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                        <span class="text-slate-600 dark:text-slate-300 font-mono">{{ $session->time_range }}</span>
                                         @if($session->scheduled_at->isToday())
                                             <span class="px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 text-[11px] font-bold uppercase tracking-wide">Hari Ini</span>
                                         @elseif($session->scheduled_at->isTomorrow())
@@ -321,7 +321,7 @@
                                                 data-topic="{{ $session->topic }}"
                                                 data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
                                                 data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                data-scheduled-time="{{ $session->time_range }}"
                                                 class="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 cursor-pointer">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                             <span>Batalkan Pengajuan Jadwal</span>

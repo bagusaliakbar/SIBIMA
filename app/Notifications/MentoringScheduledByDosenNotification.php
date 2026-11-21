@@ -47,7 +47,7 @@ class MentoringScheduledByDosenNotification extends Notification implements Shou
         $dosenName = $this->session->dosen->name ?? 'Dosen Pembimbing';
         $topic = $this->session->topic ?? '-';
         $notes = $this->session->notes ?? '-';
-        $date = Carbon::parse($this->session->scheduled_at)->locale('id')->translatedFormat('l, d F Y H:i');
+        $date = $this->session->formatted_date_time;
         $type = ucfirst($this->session->type ?? 'Offline');
         $location = $this->session->location ? " ({$this->session->location})" : '';
         $jenisLokasi = "{$type}{$location}";
@@ -89,8 +89,8 @@ class MentoringScheduledByDosenNotification extends Notification implements Shou
         $dosenName = $this->session->dosen->name ?? 'Dosen Pembimbing';
         $topic = !empty($this->session->topic) ? $this->session->topic : '-';
         $notes = !empty($this->session->notes) ? $this->session->notes : null;
-        $date = $this->session->scheduled_at 
-            ? Carbon::parse($this->session->scheduled_at)->locale('id')->translatedFormat('l, d F Y H:i') . ' WIB'
+        $date = $this->session->scheduled_at
+            ? $this->session->formatted_date_time . ' WIB'
             : '-';
         $type = ucfirst($this->session->type ?? 'Offline');
         $location = $this->session->location ? " ({$this->session->location})" : '';

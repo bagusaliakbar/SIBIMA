@@ -55,6 +55,7 @@ class ThesisWorkflowTest extends TestCase
                 'topic' => 'Diskusi Bab 1: Pendahuluan',
                 'notes' => 'Menyiapkan latar belakang masalah.',
                 'scheduled_at' => now()->addDays(2)->format('Y-m-d H:i'),
+                'scheduled_end_at' => now()->addDays(2)->addHour()->format('Y-m-d H:i'),
                 'type' => 'offline',
                 'dosen_id' => $p1->id,
             ]);
@@ -92,6 +93,7 @@ class ThesisWorkflowTest extends TestCase
         ]);
 
         $scheduledAt = now()->addDays(2)->format('Y-m-d H:i');
+        $scheduledEndAt = now()->addDays(2)->addHour()->format('Y-m-d H:i');
 
         // Create first session with P1
         $this->actingAs($student)
@@ -99,6 +101,7 @@ class ThesisWorkflowTest extends TestCase
                 'thesis_id' => $thesis->id,
                 'topic' => 'Bimbingan Pertama dengan P1',
                 'scheduled_at' => $scheduledAt,
+                'scheduled_end_at' => $scheduledEndAt,
                 'type' => 'online',
                 'dosen_id' => $p1->id,
             ])
@@ -110,6 +113,7 @@ class ThesisWorkflowTest extends TestCase
                 'thesis_id' => $thesis->id,
                 'topic' => 'Bimbingan Kedua dengan P2 di waktu sama',
                 'scheduled_at' => $scheduledAt,
+                'scheduled_end_at' => $scheduledEndAt,
                 'type' => 'online',
                 'dosen_id' => $p2->id,
             ]);

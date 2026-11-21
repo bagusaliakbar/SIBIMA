@@ -155,7 +155,7 @@ class CalendarController extends Controller
                 'id' => 'mentoring_' . $session->id,
                 'title' => 'BIM: ' . ($session->thesis->student->name ?? 'Mahasiswa') . ' (' . ($session->dosen->name ?? 'Dosen') . ')',
                 'start' => $session->scheduled_at->toIso8601String(),
-                'end' => $session->scheduled_at->copy()->addHour()->toIso8601String(),
+                'end' => ($session->scheduled_end_at ?? $session->scheduled_at->copy()->addHour())->toIso8601String(),
                 'backgroundColor' => $bgColor,
                 'textColor' => $textColor,
                 'borderColor' => $borderColor,

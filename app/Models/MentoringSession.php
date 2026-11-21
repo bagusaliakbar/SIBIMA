@@ -13,6 +13,7 @@ class MentoringSession extends Model
         'thesis_id',
         'dosen_id',
         'scheduled_at',
+        'scheduled_end_at',
         'topic',
         'type',
         'location',
@@ -30,8 +31,64 @@ class MentoringSession extends Model
 
     protected $casts = [
         'scheduled_at' => 'datetime',
+        'scheduled_end_at' => 'datetime',
         'student_confirmed_at' => 'datetime',
     ];
+
+    /**
+     * Format time range as "09:00 - 11:00 WIB" (or "09:00 WIB" for legacy sessions without end time).
+     */
+    public function getTimeRangeAttribute(): string
+    {
+        if (!$this->scheduled_at) {
+            return '-';
+        }
+
+        $start = $this->scheduled_at->format('H:i');
+
+        if ($this->scheduled_end_at) {
+            return "{$start} - {$this->scheduled_end_at->format('H:i')} WIB";
+        }
+
+        return "{$start} WIB";
+    }
+
+    /**
+     * Format full Indonesian date & time range without trailing "WIB"
+     * (e.g. "Senin, 24 November 2026 09:00 - 11:00") for WA templates & notifications.
+     */
+    public function getFormattedDateTimeAttribute(): string
+    {
+        if (!$this->scheduled_at) {
+            return '-';
+        }
+
+        $start = $this->scheduled_at->copy()->locale('id')->translatedFormat('l, d F Y H:i');
+
+        if ($this->scheduled_end_at) {
+            return "{$start} - {$this->scheduled_end_at->format('H:i')}";
+        }
+
+        return $start;
+    }
+
+    /**
+     * Format compact date & time range (e.g. "24/11/2026 09:00 - 11:00") for activity logs.
+     */
+    public function getCompactDateTimeAttribute(): string
+    {
+        if (!$this->scheduled_at) {
+            return '-';
+        }
+
+        $start = $this->scheduled_at->format('d/m/Y H:i');
+
+        if ($this->scheduled_end_at) {
+            return "{$start} - {$this->scheduled_end_at->format('H:i')}";
+        }
+
+        return $start;
+    }
 
     public function isStudentConfirmed(): bool
     {

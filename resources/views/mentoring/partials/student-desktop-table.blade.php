@@ -26,7 +26,7 @@
                                             <span class="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-[11px] font-black uppercase">Besok</span>
                                         @endif
                                     </div>
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-normal tabular-nums">{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-normal tabular-nums">{{ $session->time_range }}</span>
                                 </td>
                                 <td class="py-4 px-5 text-slate-700 dark:text-slate-300">
                                     <div class="font-medium text-slate-800 dark:text-slate-100 leading-snug">{{ $session->topic }}</div>
@@ -283,7 +283,7 @@
                                                         data-topic="{{ $session->topic }}"
                                                         data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
                                                         data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                        data-scheduled-time="{{ $session->time_range }}"
                                                         class="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline cursor-pointer flex items-center gap-1">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                     <span>Batalkan</span>

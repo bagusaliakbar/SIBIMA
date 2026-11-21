@@ -47,7 +47,7 @@ class MentoringReminderNotification extends Notification implements ShouldQueue
      */
     public function toFonnte($notifiable)
     {
-        $date = Carbon::parse($this->session->scheduled_at)->translatedFormat('l, d F Y H:i');
+        $date = $this->session->formatted_date_time;
         $topic = $this->session->topic ?? '-';
         $location = $this->session->location ?? 'Sesuai kesepakatan';
         $studentName = $this->session->thesis->student->name ?? 'Mahasiswa';

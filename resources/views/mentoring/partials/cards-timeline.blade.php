@@ -80,7 +80,7 @@
                                                                     <svg class="w-3 h-3 text-slate-400 dark:text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                                     </svg>
-                                                                    <span>{{ $firstSession->scheduled_at->format('H:i') }} WIB</span>
+                                                                    <span>{{ $firstSession->time_range }}</span>
                                                                 </div>
                                                             </div>
 
@@ -401,7 +401,7 @@
                                                                                     data-student-npm="{{ e($student?->identifier ?? '-') }}"
                                                                                     data-topic="{{ e($session->topic) }}"
                                                                                     data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                                    data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                    data-scheduled-time="{{ $session->time_range }}"
                                                                                     data-is-group="0"
                                                                                     data-group-count="1"
                                                                                     class="px-3 py-2 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:border-rose-800 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-2xs cursor-pointer">Tolak</button>
@@ -433,7 +433,7 @@
                                                                                         data-student-npm="{{ e($student?->identifier ?? '-') }}"
                                                                                         data-topic="{{ e($session->topic) }}"
                                                                                         data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                                        data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                        data-scheduled-time="{{ $session->time_range }}"
                                                                                         data-is-group="0"
                                                                                         data-group-count="1"
                                                                                         class="p-2 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:border-rose-800 rounded-xl transition-all shadow-2xs cursor-pointer flex items-center justify-center" 
@@ -716,7 +716,7 @@
                                                                                                 data-student-npm="{{ e($student?->identifier ?? '-') }}"
                                                                                                 data-topic="{{ e($session->topic) }}"
                                                                                                 data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                                                data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                                data-scheduled-time="{{ $session->time_range }}"
                                                                                                 data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
                                                                                                 data-group-count="{{ $totalMhs }}"
                                                                                                 class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:border-rose-800 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer">Tolak</button>
@@ -745,7 +745,7 @@
                                                                                                     data-student-npm="{{ e($student?->identifier ?? '-') }}"
                                                                                                     data-topic="{{ e($session->topic) }}"
                                                                                                     data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
-                                                                                                    data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
+                                                                                                    data-scheduled-time="{{ $session->time_range }}"
                                                                                                     data-is-group="{{ $totalMhs > 1 ? '1' : '0' }}"
                                                                                                     data-group-count="{{ $totalMhs }}"
                                                                                                     class="px-2 py-1.5 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:border-rose-800 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer flex items-center justify-center" 

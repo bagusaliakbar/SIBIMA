@@ -71,10 +71,12 @@ class MentoringRescheduleTest extends TestCase
 
         $newDate = now()->addDays(4)->format('Y-m-d');
         $newTime = '14:30';
+        $newEndTime = '16:30';
 
         $response = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $session), [
             'scheduled_date' => $newDate,
             'scheduled_time' => $newTime,
+            'scheduled_end_time' => $newEndTime,
             'topic' => 'Revisi Bab 1 dan Metodologi',
             'type' => 'online',
             'location' => 'https://meet.google.com/abc-defg-hij',
@@ -90,6 +92,8 @@ class MentoringRescheduleTest extends TestCase
         $this->assertEquals('online', $session->type);
         $this->assertEquals('https://meet.google.com/abc-defg-hij', $session->location);
         $this->assertEquals('Harap siapkan draft instrumen penelitian', $session->notes);
+        $this->assertEquals("{$newDate} {$newEndTime}:00", $session->scheduled_end_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('14:30 - 16:30 WIB', $session->time_range);
         // Student attendance should be reset to pending because time changed
         $this->assertEquals('pending', $session->student_attendance_status);
         $this->assertNull($session->student_confirmed_at);
@@ -105,6 +109,7 @@ class MentoringRescheduleTest extends TestCase
                 $this->assertStringContainsString('RESCHEDULE', $waMessage);
                 $this->assertStringContainsString('Dr. Hendra, M.Kom', $waMessage);
                 $this->assertStringContainsString('Revisi Bab 1 dan Metodologi', $waMessage);
+                $this->assertStringContainsString('14:30 - 16:30 WIB', $waMessage);
 
                 return true;
             }
@@ -156,6 +161,7 @@ class MentoringRescheduleTest extends TestCase
         // Dosen tries to reschedule Session 2 to the same time as Session 1
         $response = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $session2), [
             'scheduled_at' => $conflictTime,
+            'scheduled_end_at' => now()->addDays(3)->format('Y-m-d 11:00:00'),
             'topic' => 'Reschedule Sesi Mahasiswa 2',
             'type' => 'offline',
         ]);
@@ -190,6 +196,7 @@ class MentoringRescheduleTest extends TestCase
 
         $response2 = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $completedSession), [
             'scheduled_at' => now()->addDays(1)->format('Y-m-d H:i'),
+            'scheduled_end_at' => now()->addDays(1)->addHour()->format('Y-m-d H:i'),
             'topic' => 'Coba ubah',
             'type' => 'offline',
         ]);
@@ -232,6 +239,7 @@ class MentoringRescheduleTest extends TestCase
         $response = $this->actingAs($dosen)->put(route('mentoring-sessions.update', $session1), [
             'scheduled_date' => $newDate,
             'scheduled_time' => $newTime,
+            'scheduled_end_time' => '15:00',
             'topic' => 'Briefing Metodologi & Instrumen Penelitian',
             'type' => 'online',
             'location' => 'https://meet.google.com/group-meet-xyz',

@@ -30,6 +30,15 @@
         today: '{{ date('Y-m-d') }}',
         scheduledDate: '{{ old('scheduled_date', $mentoringSession->scheduled_at->isPast() ? date('Y-m-d') : $mentoringSession->scheduled_at->format('Y-m-d')) }}',
         selectedTime: '{{ old('scheduled_hour', $mentoringSession->scheduled_at->format('H')) }}:{{ old('scheduled_minute', sprintf('%02d', (int)round((int)$mentoringSession->scheduled_at->format('i') / 5) * 5 % 60)) }}',
+        selectedEndTime: '{{ old('scheduled_end_time', $mentoringSession->scheduled_end_at ? $mentoringSession->scheduled_end_at->format('H:i') : $mentoringSession->scheduled_at->copy()->addHour()->format('H:i')) }}',
+        durationMinutes: 60,
+        durationPresets: [
+            { label: '+30 mnt', minutes: 30 },
+            { label: '+1 Jam', minutes: 60 },
+            { label: '+1,5 Jam', minutes: 90 },
+            { label: '+2 Jam', minutes: 120 },
+            { label: '+3 Jam', minutes: 180 }
+        ],
         timeSlots: {
             'Pagi': ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
             'Siang & Sore': ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
@@ -67,7 +76,72 @@
             return this.availableTheses.filter(t => this.stagedThesesToAdd.includes(t.id));
         },
         init() {
+            this.detectPresetDuration();
             this.validateAndAdjustTime();
+        },
+        timeToMinutes(t) {
+            if (!t || !t.includes(':')) return 0;
+            const [h, m] = t.split(':').map(Number);
+            return (h || 0) * 60 + (m || 0);
+        },
+        minutesToTime(total) {
+            const clamped = Math.min(Math.max(total, 0), 23 * 60 + 55);
+            const h = String(Math.floor(clamped / 60)).padStart(2, '0');
+            const m = String(clamped % 60).padStart(2, '0');
+            return `${h}:${m}`;
+        },
+        detectPresetDuration() {
+            const diff = this.timeToMinutes(this.selectedEndTime) - this.timeToMinutes(this.selectedTime);
+            if (diff <= 0) {
+                this.durationMinutes = 60;
+                this.selectedEndTime = this.minutesToTime(this.timeToMinutes(this.selectedTime) + 60);
+                return;
+            }
+            const preset = this.durationPresets.find(p => p.minutes === diff);
+            this.durationMinutes = preset ? preset.minutes : null;
+        },
+        applyDuration(minutes) {
+            this.durationMinutes = minutes;
+            this.selectedEndTime = this.minutesToTime(this.timeToMinutes(this.selectedTime) + minutes);
+        },
+        syncEndTimeFromStart() {
+            const startMin = this.timeToMinutes(this.selectedTime);
+            if (this.durationMinutes) {
+                this.selectedEndTime = this.minutesToTime(startMin + this.durationMinutes);
+            } else if (this.timeToMinutes(this.selectedEndTime) <= startMin) {
+                this.durationMinutes = 60;
+                this.selectedEndTime = this.minutesToTime(startMin + 60);
+            }
+        },
+        onManualEndTimeChange() {
+            const startMin = this.timeToMinutes(this.selectedTime);
+            const endMin = this.timeToMinutes(this.selectedEndTime);
+            if (!this.selectedEndTime || endMin <= startMin) {
+                if (typeof window.sibimaToast === 'function') {
+                    window.sibimaToast('Jam selesai harus lebih akhir dari jam mulai.', 'warning', 'Waktu Tidak Valid');
+                }
+                this.applyDuration(30);
+                return;
+            }
+            const diff = endMin - startMin;
+            const preset = this.durationPresets.find(p => p.minutes === diff);
+            this.durationMinutes = preset ? preset.minutes : null;
+        },
+        get formattedDuration() {
+            const diff = this.timeToMinutes(this.selectedEndTime) - this.timeToMinutes(this.selectedTime);
+            if (diff <= 0) return '';
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            if (h > 0 && m > 0) return `${h} Jam ${m} Mnt`;
+            if (h > 0) return `${h} Jam`;
+            return `${m} Mnt`;
+        },
+        isSlotInRange(slot) {
+            const s = this.timeToMinutes(slot);
+            return s > this.timeToMinutes(this.selectedTime) && s < this.timeToMinutes(this.selectedEndTime);
+        },
+        isSlotEnd(slot) {
+            return slot === this.selectedEndTime;
         },
         formatPreviewDate() {
             if (!this.scheduledDate) return '-';
@@ -127,6 +201,7 @@
         selectTimeSlot(slot) {
             if (this.isSlotDisabled(slot)) return;
             this.selectedTime = slot;
+            this.syncEndTimeFromStart();
         },
         onDateChange() {
             if (this.scheduledDate < this.today) {
@@ -146,6 +221,7 @@
                     this.selectedTime = '08:00';
                 }
             }
+            this.syncEndTimeFromStart();
         },
         openGoogleMeetNew() {
             window.open('https://meet.google.com/new', '_blank');
@@ -200,7 +276,7 @@
                     <div class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 dark:border-slate-700 shrink-0">
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Jadwal Saat Ini</span>
                         <div class="text-xs font-bold text-slate-800 dark:text-slate-200">
-                            {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('d M Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB
+                            {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('d M Y') }} • {{ $mentoringSession->time_range }}
                         </div>
                         <span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }}">
                             {{ ucfirst($mentoringSession->type) }}
@@ -373,6 +449,7 @@
                 <!-- Hidden inputs for backend compatibility -->
                 <input type="hidden" name="scheduled_hour" :value="selectedHour">
                 <input type="hidden" name="scheduled_minute" :value="selectedMinute">
+                <input type="hidden" name="scheduled_end_time" :value="selectedEndTime">
 
                 <!-- Hidden inputs for staged missed students -->
                 <template x-for="id in stagedThesesToAdd" :key="id">
@@ -405,16 +482,50 @@
                                     </label>
                                     <span class="inline-flex items-center gap-1 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-lg border border-orange-200/60 dark:border-orange-900/50 whitespace-nowrap shadow-xs">
                                         <span x-text="selectedTime"></span>
+                                        <span class="text-orange-400">–</span>
+                                        <span x-text="selectedEndTime"></span>
                                         <span class="text-[11px] text-orange-500/90 font-bold">WIB</span>
                                     </span>
+                                    <span x-show="formattedDuration" class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" x-text="formattedDuration"></span>
                                 </div>
-                                <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto">
+                                <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto cursor-pointer">
                                     <span x-text="customTimeMode ? '← Kembali ke Slot Waktu' : 'Input Manual / Kustom'"></span>
                                 </button>
                             </div>
 
                             <!-- Modern Well-Spaced Slot Container -->
                             <div x-show="!customTimeMode" class="bg-slate-50/70 dark:bg-slate-900/40 p-4 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-5">
+                                <!-- Duration & End Time Bar (Required) -->
+                                <div class="p-3.5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/80 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Durasi / Batas Selesai <span class="text-orange-600">*</span></span>
+                                        </div>
+                                        <div class="flex flex-wrap items-center gap-1.5">
+                                            <template x-for="preset in durationPresets" :key="preset.minutes">
+                                                <button type="button"
+                                                        @click="applyDuration(preset.minutes)"
+                                                        :class="durationMinutes === preset.minutes
+                                                            ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
+                                                            : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400'"
+                                                        class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer"
+                                                        x-text="preset.label">
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2.5 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-700/80 shrink-0">
+                                        <label for="edit_end_time_slot_input" class="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">Sampai Jam:</label>
+                                        <input type="time"
+                                               id="edit_end_time_slot_input"
+                                               x-model="selectedEndTime"
+                                               @change="onManualEndTimeChange()"
+                                               required
+                                               class="w-32 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-1.5 px-2.5 text-slate-900 dark:text-slate-100 shadow-2xs focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-xs font-bold">
+                                    </div>
+                                </div>
+
                                 @php
                                     $slotGroups = [
                                         ['label' => 'Pagi', 'slots' => ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30']],
@@ -434,13 +545,17 @@
                                                 <button type="button" 
                                                         @click="selectTimeSlot('{{ $slot }}')" 
                                                         :disabled="isSlotDisabled('{{ $slot }}')"
-                                                        :title="isSlotDisabled('{{ $slot }}') ? 'Waktu telah terlewat' : 'Pilih jam {{ $slot }} WIB'"
+                                                        :title="isSlotDisabled('{{ $slot }}') ? 'Waktu telah terlewat' : 'Pilih jam mulai {{ $slot }} WIB'"
                                                         :class="selectedTime === '{{ $slot }}' 
                                                             ? 'bg-orange-600 text-white font-black border-orange-600 shadow-md shadow-orange-500/25 ring-2 ring-orange-500/30 scale-[1.03]' 
                                                             : (isSlotDisabled('{{ $slot }}') 
                                                                 ? 'bg-slate-100 dark:bg-slate-900/60 text-slate-300 dark:text-slate-600 border-slate-200/40 dark:border-slate-800 cursor-not-allowed line-through opacity-40' 
-                                                                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 shadow-sm')"
-                                                        class="w-full py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center">
+                                                                : (isSlotEnd('{{ $slot }}')
+                                                                    ? 'bg-orange-100 dark:bg-orange-950/70 text-orange-800 dark:text-orange-200 border-orange-400 dark:border-orange-500 ring-1 ring-orange-400/40 shadow-sm'
+                                                                    : (isSlotInRange('{{ $slot }}')
+                                                                        ? 'bg-orange-50/90 dark:bg-orange-950/35 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800/70 shadow-2xs'
+                                                                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 hover:bg-orange-50/50 shadow-sm')))"
+                                                        class="w-full py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center cursor-pointer">
                                                     <span>{{ $slot }}</span>
                                                 </button>
                                             @endforeach
@@ -449,7 +564,8 @@
                                 @endforeach
 
                                 <div class="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center gap-4 sm:gap-6 text-[11px] text-slate-600 dark:text-slate-300">
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Terpilih</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Jam Mulai</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-100 dark:bg-orange-950 border border-orange-400 inline-block shadow-sm"></span> <span class="font-medium">Rentang Selesai</span></span>
                                     <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 inline-block shadow-sm"></span> <span class="font-medium text-slate-700 dark:text-slate-200">Tersedia</span></span>
                                     <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 inline-block"></span> <span class="font-medium text-slate-500 dark:text-slate-400 line-through">Terlewat</span></span>
                                 </div>
@@ -457,10 +573,27 @@
 
                             <!-- Fallback Custom Time Picker -->
                             <div x-show="customTimeMode" class="bg-slate-50/60 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800">
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-2">Input Waktu Kustom (Jam & Menit Manual):</label>
-                                <input type="time" 
-                                       x-model="selectedTime"
-                                       class="block w-full sm:w-48 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm font-bold">
+                                <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-3">Input Rentang Waktu Kustom (Jam Mulai &amp; Jam Selesai):</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+                                    <div>
+                                        <label for="edit_custom_start_time" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Jam Mulai <span class="text-orange-600">*</span></label>
+                                        <input type="time" 
+                                               id="edit_custom_start_time"
+                                               x-model="selectedTime"
+                                               @change="syncEndTimeFromStart()"
+                                               required
+                                               class="block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm font-bold">
+                                    </div>
+                                    <div>
+                                        <label for="edit_custom_end_time" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Jam Selesai <span class="text-orange-600">*</span></label>
+                                        <input type="time" 
+                                               id="edit_custom_end_time"
+                                               x-model="selectedEndTime"
+                                               @change="onManualEndTimeChange()"
+                                               required
+                                               class="block w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2 px-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm font-bold">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -713,7 +846,7 @@
                                 <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
                                 <div class="flex justify-between items-start gap-3">
                                     <span class="text-slate-500 dark:text-slate-400 font-medium">Waktu Sesi:</span>
-                                    <span class="font-bold text-slate-800 dark:text-slate-200">{{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB</span>
+                                    <span class="font-bold text-slate-800 dark:text-slate-200">{{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $mentoringSession->time_range }}</span>
                                 </div>
                                 <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
                                 <div class="flex justify-between items-start gap-3">
@@ -848,7 +981,7 @@
                                     <div class="min-w-0">
                                         <span class="text-[11px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">Jadwal Sesi (Sesuai Form)</span>
                                         <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-                                            <span x-text="formatPreviewDate()"></span> • <span x-text="selectedTime"></span> WIB
+                                            <span x-text="formatPreviewDate()"></span> • <span x-text="selectedTime"></span> – <span x-text="selectedEndTime"></span> WIB
                                         </p>
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs mt-0.5">
                                             Topik: <span x-text="topic || '-'"></span>

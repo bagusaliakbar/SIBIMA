@@ -219,6 +219,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
         $this->actingAs($dosen)->post(route('mentoring-sessions.store'), [
             'thesis_id' => $thesis->id,
             'scheduled_at' => now()->addDay()->format('Y-m-d H:i'),
+            'scheduled_end_at' => now()->addDay()->addHour()->format('Y-m-d H:i'),
             'type' => 'offline',
             'location' => 'Ruang Dosen FIK 201',
             'topic' => 'Diskusi Metodologi dan Flowchart',

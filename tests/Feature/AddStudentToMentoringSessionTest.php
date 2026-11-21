@@ -276,6 +276,7 @@ class AddStudentToMentoringSessionTest extends TestCase
             'scheduled_date' => $newDate,
             'scheduled_hour' => '14',
             'scheduled_minute' => '30',
+            'scheduled_end_time' => '16:00',
             'topic' => 'Topik Baru Hasil Reschedule',
             'type' => 'online',
             'location' => 'https://meet.google.com/new-room-abc',
@@ -336,10 +337,12 @@ class AddStudentToMentoringSessionTest extends TestCase
         $thesisB = Thesis::create(['student_id' => $studentB->id, 'title' => 'Skripsi B', 'status' => 'active', 'pembimbing1_id' => $dosen->id]);
 
         $scheduledAt = now()->addDays(3)->setTime(10, 0, 0);
+        $scheduledEndAt = now()->addDays(3)->setTime(11, 30, 0);
         $sessionA = MentoringSession::create([
             'thesis_id' => $thesisA->id,
             'dosen_id' => $dosen->id,
             'scheduled_at' => $scheduledAt,
+            'scheduled_end_at' => $scheduledEndAt,
             'topic' => 'Bimbingan Tetap',
             'type' => 'offline',
             'location' => 'Ruang 101',
@@ -352,6 +355,7 @@ class AddStudentToMentoringSessionTest extends TestCase
             'scheduled_date' => $scheduledAt->format('Y-m-d'),
             'scheduled_hour' => '10',
             'scheduled_minute' => '00',
+            'scheduled_end_time' => '11:30',
             'topic' => 'Bimbingan Tetap',
             'type' => 'offline',
             'location' => 'Ruang 101',
@@ -414,6 +418,7 @@ class AddStudentToMentoringSessionTest extends TestCase
             'scheduled_date' => $newDate,
             'scheduled_hour' => '15',
             'scheduled_minute' => '00',
+            'scheduled_end_time' => '16:30',
             'topic' => 'Topik Baru',
             'type' => 'online',
             'add_thesis_ids' => [$thesisB->id],
