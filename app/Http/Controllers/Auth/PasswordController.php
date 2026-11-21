@@ -15,6 +15,10 @@ class PasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        if ($request->session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID)) {
+            abort(403, 'Perubahan password tidak diizinkan selama mode Login As.');
+        }
+
         $user = $request->user();
 
         $validated = $request->validateWithBag('updatePassword', [

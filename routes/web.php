@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard/online-users', [\App\Http\Controllers\DashboardController::class, 'onlineUsers'])
         ->name('dashboard.online-users');
+    Route::post('/impersonate/leave', [\App\Http\Controllers\ImpersonationController::class, 'leave'])
+        ->name('impersonate.leave');
     // Secure File Download Route
     Route::get('/download-private-file', [\App\Http\Controllers\DownloadController::class, 'downloadPrivateFile'])
         ->name('download.private');
@@ -308,6 +310,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/bulk-delete', [App\Http\Controllers\UserController::class, 'bulkDelete'])->name('users.bulk-delete');
         Route::post('/users/{user}/toggle', [App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle');
         Route::post('/users/{user}/reset-password', [App\Http\Controllers\UserController::class, 'resetPassword'])->name('users.reset-password');
+        Route::post('/users/{user}/impersonate', [App\Http\Controllers\ImpersonationController::class, 'start'])->name('users.impersonate');
         Route::resource('users', App\Http\Controllers\UserController::class)->except(['show']);
 
         // Wave Management

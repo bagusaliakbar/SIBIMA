@@ -80,7 +80,12 @@ class UpdateUserOnlineStatus
             }
 
             if (!$isPassiveRequest) {
-                Cache::put('user-is-online-' . Auth::id(), true, now()->addMinutes(3));
+                $impersonatorId = $request->session()->get(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID);
+                if ($impersonatorId) {
+                    Cache::put('user-is-online-' . $impersonatorId, true, now()->addMinutes(3));
+                } else {
+                    Cache::put('user-is-online-' . Auth::id(), true, now()->addMinutes(3));
+                }
             }
         }
 

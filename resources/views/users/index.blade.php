@@ -355,6 +355,8 @@
                                 'last_login_at_full' => $user->last_login_at ? $user->last_login_at->translatedFormat('d F Y, H:i') : null,
                                 'edit_url' => route('users.edit', $user->id),
                                 'toggle_url' => route('users.toggle', $user->id),
+                                'can_impersonate' => in_array($user->role, ['dosen', 'mahasiswa'], true) && $user->is_active && $user->id !== Auth::id() && !session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID),
+                                'impersonate_url' => route('users.impersonate', $user->id),
                                 'thesis' => $thesisData,
                                 'dosen' => $dosenData,
                             ];
@@ -459,10 +461,24 @@
                                 <div class="flex justify-end items-center gap-1">
                                     <!-- Quick Preview Button -->
                                     <button type="button" @click="selectedUser = {{ json_encode($userData) }}; openDetailModal = true" 
-                                            class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" 
+                                            class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer" 
                                             title="Lihat Detail & Profil Pengguna" aria-label="Lihat Detail & Profil Pengguna">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </button>
+
+                                    @if($userData['can_impersonate'])
+                                        <form action="{{ route('users.impersonate', $user->id) }}"
+                                              method="POST"
+                                              data-confirm="Anda akan masuk ke sistem sebagai {{ $user->name }} ({{ ucfirst($user->role) }}). Aktivitas Login As dicatat pada log audit sistem. Lanjutkan?"
+                                              data-confirm-title="Konfirmasi Login As"
+                                              data-confirm-type="warning"
+                                              data-confirm-button="Ya, Masuk Sebagai Pengguna">
+                                            @csrf
+                                            <button type="submit" class="p-2 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors cursor-pointer" title="Login As (Masuk sebagai {{ $user->name }})" aria-label="Masuk sebagai {{ $user->name }}">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                                            </button>
+                                        </form>
+                                    @endif
                                     
                                     <form action="{{ route('users.reset-password', $user->id) }}"
                                           method="POST"

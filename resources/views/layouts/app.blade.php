@@ -61,6 +61,40 @@
 
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 relative transition-colors duration-300">
+                @if(session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID))
+                    <div role="status" class="bg-amber-50 dark:bg-amber-950/80 border-b border-amber-300 dark:border-amber-800 px-3 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-950 dark:text-amber-100 shrink-0 z-30 print:hidden">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-7 h-7 rounded-lg bg-amber-500/20 dark:bg-amber-500/30 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </span>
+                            <div class="min-w-0">
+                                <span class="font-extrabold uppercase tracking-wider text-amber-800 dark:text-amber-300">Mode Login As Aktif:</span>
+                                <span class="ml-1">
+                                    Anda masuk sebagai <strong class="font-bold">{{ Auth::user()?->name }}</strong>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[11px] font-bold uppercase ml-1">{{ Auth::user()?->role }}</span>
+                                    @if(Auth::user()?->identifier)
+                                        <span class="font-mono text-[11px] text-amber-800 dark:text-amber-300 ml-1">({{ Auth::user()->identifier }})</span>
+                                    @endif
+                                </span>
+                                <span class="hidden md:inline text-amber-800/90 dark:text-amber-300/90 ml-1">
+                                    &mdash; Akun utama: {{ session(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_NAME) }}
+                                </span>
+                            </div>
+                        </div>
+                        <form action="{{ route('impersonate.leave') }}" method="POST" class="shrink-0">
+                            @csrf
+                            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                <span>Kembali ke {{ ucfirst(session(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ROLE, 'Admin')) }}</span>
+                            </button>
+                        </form>
+                    </div>
+                @endif
                 @include('layouts.partials.topbar')
 
                 <!-- Page Content (Mobile Optimized Padding & Safe Area) -->

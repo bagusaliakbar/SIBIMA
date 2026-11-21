@@ -97,6 +97,10 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        if ($request->session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID)) {
+            abort(403, 'Penghapusan akun tidak diizinkan selama mode Login As.');
+        }
+
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);

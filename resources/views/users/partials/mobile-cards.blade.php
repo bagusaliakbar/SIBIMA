@@ -52,6 +52,8 @@
                             'last_login_at_human' => $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Belum pernah login',
                             'last_login_at_full' => $user->last_login_at ? $user->last_login_at->translatedFormat('d F Y, H:i') : null,
                             'edit_url' => route('users.edit', $user->id), 'toggle_url' => route('users.toggle', $user->id),
+                            'can_impersonate' => in_array($user->role, ['dosen', 'mahasiswa'], true) && $user->is_active && $user->id !== Auth::id() && !session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID),
+                            'impersonate_url' => route('users.impersonate', $user->id),
                             'thesis' => $mThesisData, 'dosen' => $mDosenData,
                         ];
                     @endphp
@@ -86,6 +88,19 @@
                                 <button type="button" @click="selectedUser = {{ json_encode($mUserData) }}; openDetailModal = true" class="p-2 text-slate-500 hover:text-indigo-600 rounded-lg cursor-pointer" title="Detail Pengguna" aria-label="Detail {{ $user->name }}">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </button>
+                                @if($mUserData['can_impersonate'])
+                                    <form action="{{ route('users.impersonate', $user->id) }}"
+                                          method="POST"
+                                          data-confirm="Anda akan masuk ke sistem sebagai {{ $user->name }} ({{ ucfirst($user->role) }}). Aktivitas Login As dicatat pada log audit sistem. Lanjutkan?"
+                                          data-confirm-title="Konfirmasi Login As"
+                                          data-confirm-type="warning"
+                                          data-confirm-button="Ya, Masuk Sebagai Pengguna">
+                                        @csrf
+                                        <button type="submit" class="p-2 text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg cursor-pointer" title="Login As ({{ $user->name }})" aria-label="Masuk sebagai {{ $user->name }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('users.edit', $user->id) }}" class="p-2 text-slate-500 hover:text-blue-600 rounded-lg" title="Edit Pengguna" aria-label="Edit {{ $user->name }}">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>

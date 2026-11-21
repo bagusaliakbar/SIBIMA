@@ -56,15 +56,26 @@ class AuthenticatedSessionController extends Controller
         $isIdleLogout = $request->input('reason') === 'idle';
         $idleTimeoutMinutes = max(1, (int) config('session.idle_timeout', 60));
 
-        if ($userId = Auth::id()) {
+        $isImpersonating = $request->session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID);
+        $impersonatorId = $request->session()->get(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID);
+        $impersonatorName = $request->session()->get(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_NAME);
+
+        if ($isImpersonating && $impersonatorId) {
+            \Illuminate\Support\Facades\Cache::forget('user-is-online-' . $impersonatorId);
+        } elseif ($userId = Auth::id()) {
             \Illuminate\Support\Facades\Cache::forget('user-is-online-' . $userId);
+        }
+
+        $logoutDescription = $isIdleLogout
+            ? "Sesi berakhir otomatis karena tidak ada aktivitas selama {$idleTimeoutMinutes} menit."
+            : 'User keluar dari sistem.';
+        if ($isImpersonating && $impersonatorName) {
+            $logoutDescription .= " (Saat mode Login As oleh {$impersonatorName})";
         }
 
         ActivityLog::log(
             $isIdleLogout ? 'Auto Logout' : 'Logout',
-            $isIdleLogout
-                ? "Sesi berakhir otomatis karena tidak ada aktivitas selama {$idleTimeoutMinutes} menit."
-                : 'User keluar dari sistem.',
+            $logoutDescription,
             'Auth'
         );
 
