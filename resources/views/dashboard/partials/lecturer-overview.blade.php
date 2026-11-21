@@ -358,7 +358,9 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-orange-600 text-white">Gelombang Aktif</span>
                             <h4 class="text-sm font-black text-slate-800 dark:text-white">{{ $activeWaveInfo['name'] }}</h4>
-                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">({{ $activeWaveInfo['academic_year'] }} - {{ $activeWaveInfo['semester'] }})</span>
+                            @if(!empty($activeWaveInfo['academic_year']) || !empty($activeWaveInfo['semester']))
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">({{ trim(($activeWaveInfo['academic_year'] ?? '') . ' ' . ($activeWaveInfo['semester'] ?? '')) }})</span>
+                            @endif
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1">
                             Periode Pendaftaran: <strong>{{ \Carbon\Carbon::parse($activeWaveInfo['start_date'])->translatedFormat('d M Y') }}</strong> s.d. <strong>{{ \Carbon\Carbon::parse($activeWaveInfo['end_date'])->translatedFormat('d M Y') }}</strong>
@@ -372,8 +374,8 @@
                         <span class="text-slate-300 dark:text-slate-600">|</span>
                         <span class="text-emerald-600 font-black">{{ $activeWaveInfo['defense_applicant_count'] }} Sid</span>
                     </div>
-                    <span class="px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider {{ $activeWaveInfo['days_remaining'] <= 3 ? 'bg-rose-600 text-white shadow-rose-600/20' : 'bg-amber-500 text-white shadow-amber-500/20' }} shadow-md">
-                        {{ $activeWaveInfo['days_remaining'] > 0 ? ('Sisa ' . $activeWaveInfo['days_remaining'] . ' Hari') : 'Hari Terakhir!' }}
+                    <span class="px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider {{ $activeWaveInfo['days_remaining'] < 0 ? 'bg-slate-600 text-white shadow-slate-600/20' : ($activeWaveInfo['days_remaining'] <= 3 ? 'bg-rose-600 text-white shadow-rose-600/20' : 'bg-amber-500 text-white shadow-amber-500/20') }} shadow-md">
+                        {{ $activeWaveInfo['days_remaining'] < 0 ? 'Pendaftaran Berakhir' : ($activeWaveInfo['days_remaining'] === 0 ? 'Hari Terakhir!' : 'Sisa ' . $activeWaveInfo['days_remaining'] . ' Hari') }}
                     </span>
                 </div>
             </div>

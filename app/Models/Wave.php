@@ -26,9 +26,8 @@ class Wave extends Model
 
     public static function getCurrentActive()
     {
-        return self::active() 
-            ?: self::where('is_active', true)->orderBy('end_date', 'desc')->first() 
-            ?: self::orderBy('id', 'desc')->first();
+        return self::active()
+            ?: self::where('is_active', true)->orderBy('end_date', 'desc')->first();
     }
 
     public function defenseApplications()
